@@ -223,14 +223,15 @@ function renderStandings(drivers, constructors) {
 
     const posClass = pos <= 3 ? `pos-${pos}` : '';
 
+    const driverId = d.Driver.driverId;
     return `
-      <tr style="animation-delay: ${i * 0.04}s">
+      <tr style="animation-delay: ${i * 0.04}s; cursor: pointer;" onclick="window.location.href='driver.html?id=${driverId}'" title="View ${firstName} ${lastName} profile">
         <td class="pos-cell ${posClass}">${pos}</td>
         <td>
           <div class="driver-cell">
             <div class="team-color-bar" style="background:${color}; box-shadow: 0 0 6px ${color}44"></div>
             <div>
-              <div class="driver-name">${firstName.charAt(0)}. ${lastName.toUpperCase()}</div>
+              <div class="driver-name">${firstName.charAt(0)}. ${lastName.toUpperCase()} <span style="font-size:10px;color:var(--text-4);font-family:var(--font-mono)">↗</span></div>
               <span class="driver-team">${team}</span>
             </div>
           </div>
