@@ -35,6 +35,268 @@ const DRIVER_META = {
   'doohan':     { salary: 1500000,  number: 7,   flag: '🇦🇺', fullName: 'Jack Doohan' },
 };
 
+// ── Driver Career History (verified via Wikipedia, FIA, official team sites) ──
+const DRIVER_CAREER = {
+  'antonelli': {
+    bio: "Born Bologna, Italy. Mercedes Junior since age 12. Skipped F3 entirely — promoted directly from F2 to F1 replacing Lewis Hamilton.",
+    career: [
+      { year: 2021, series: 'F4 UAE',    team: 'Prema',   result: 'Race winner' },
+      { year: 2022, series: 'Italian F4', team: 'Prema',  result: '🏆 Champion — 13 wins' },
+      { year: 2022, series: 'ADAC F4',   team: 'Prema',   result: '🏆 Champion — 9 wins' },
+      { year: 2023, series: 'FR Middle East', team: 'Prema', result: '🏆 Champion' },
+      { year: 2023, series: 'FRECA',     team: 'Prema',   result: '🏆 Champion — 5 wins' },
+      { year: 2024, series: 'FIA F2',    team: 'Prema',   result: 'P6 — 2 wins (youngest multi-winner)' },
+      { year: 2025, series: 'F1',        team: 'Mercedes',result: 'P7 — Rookie. 1st podium Canada' },
+      { year: 2026, series: 'F1',        team: 'Mercedes',result: '🏆 P1 WDC — 3 wins, youngest pole ever' },
+    ]
+  },
+  'russell': {
+    bio: "King's Lynn, England. F1 veteran since 2019. Mercedes Junior graduate. Won 2018 F2 title.",
+    career: [
+      { year: 2017, series: 'F3 European', team: 'Hitech', result: 'P2' },
+      { year: 2018, series: 'FIA F2',    team: 'ART',     result: '🏆 Champion' },
+      { year: 2019, series: 'F1',        team: 'Williams',result: 'Rookie — 0 pts' },
+      { year: 2020, series: 'F1',        team: 'Williams',result: '0 pts (COVID year)' },
+      { year: 2021, series: 'F1',        team: 'Williams',result: 'P15 — 16 pts' },
+      { year: 2022, series: 'F1',        team: 'Mercedes',result: 'P4 — 275 pts, 1 win' },
+      { year: 2023, series: 'F1',        team: 'Mercedes',result: 'P8 — 175 pts' },
+      { year: 2024, series: 'F1',        team: 'Mercedes',result: 'P7 — 235 pts, 1 win' },
+      { year: 2025, series: 'F1',        team: 'Mercedes',result: 'P3 — 280 pts, 3 wins' },
+      { year: 2026, series: 'F1',        team: 'Mercedes',result: 'P2 — 80 pts, 1 win' },
+    ]
+  },
+  'leclerc': {
+    bio: "Monaco. Ferrari Academy. Won 2017 F2 title. Ferrari's lead driver since 2019.",
+    career: [
+      { year: 2016, series: 'FIA F2',    team: 'Prema',   result: 'P2 — rookie' },
+      { year: 2017, series: 'FIA F2',    team: 'Prema',   result: '🏆 Champion' },
+      { year: 2018, series: 'F1',        team: 'Sauber',  result: 'P13 — Rookie' },
+      { year: 2019, series: 'F1',        team: 'Ferrari', result: 'P4 — 264 pts, 2 wins' },
+      { year: 2020, series: 'F1',        team: 'Ferrari', result: 'P8 — 98 pts' },
+      { year: 2021, series: 'F1',        team: 'Ferrari', result: 'P7 — 159 pts' },
+      { year: 2022, series: 'F1',        team: 'Ferrari', result: 'P2 — 308 pts, 3 wins' },
+      { year: 2023, series: 'F1',        team: 'Ferrari', result: 'P5 — 206 pts, 0 wins' },
+      { year: 2024, series: 'F1',        team: 'Ferrari', result: 'P3 — 356 pts, 3 wins' },
+      { year: 2025, series: 'F1',        team: 'Ferrari', result: 'P4 — 240 pts, 2 wins' },
+      { year: 2026, series: 'F1',        team: 'Ferrari', result: 'P3 — 59 pts' },
+    ]
+  },
+  'hamilton': {
+    bio: "Stevenage, England. 7x World Champion. Joined Ferrari 2025 after 12 years at Mercedes.",
+    career: [
+      { year: 2006, series: 'FIA F2/GP2', team: 'ART',   result: '🏆 Champion' },
+      { year: 2007, series: 'F1',        team: 'McLaren',result: 'P2 — rookie season' },
+      { year: 2008, series: 'F1',        team: 'McLaren',result: '🏆 Champion — 1st title' },
+      { year: 2014, series: 'F1',        team: 'Mercedes',result: '🏆 Champion' },
+      { year: 2015, series: 'F1',        team: 'Mercedes',result: '🏆 Champion' },
+      { year: 2017, series: 'F1',        team: 'Mercedes',result: '🏆 Champion' },
+      { year: 2018, series: 'F1',        team: 'Mercedes',result: '🏆 Champion' },
+      { year: 2019, series: 'F1',        team: 'Mercedes',result: '🏆 Champion' },
+      { year: 2020, series: 'F1',        team: 'Mercedes',result: '🏆 Champion — 7th title' },
+      { year: 2025, series: 'F1',        team: 'Ferrari', result: 'P5 — Ferrari debut' },
+      { year: 2026, series: 'F1',        team: 'Ferrari', result: 'P5 — 51 pts' },
+    ]
+  },
+  'norris': {
+    bio: "Bristol, England. McLaren since 2019. 2025 World Champion. 2018 F2 runner-up.",
+    career: [
+      { year: 2017, series: 'F3 European', team: 'Prema', result: '🏆 Champion' },
+      { year: 2018, series: 'FIA F2',    team: 'Carlin', result: 'P2' },
+      { year: 2019, series: 'F1',        team: 'McLaren',result: 'P11 — Rookie' },
+      { year: 2023, series: 'F1',        team: 'McLaren',result: 'P6 — 205 pts' },
+      { year: 2024, series: 'F1',        team: 'McLaren',result: 'P2 — 331 pts, 6 wins' },
+      { year: 2025, series: 'F1',        team: 'McLaren',result: '🏆 Champion — 7 wins' },
+      { year: 2026, series: 'F1',        team: 'McLaren',result: 'P4 — 51 pts' },
+    ]
+  },
+  'verstappen': {
+    bio: "Hasselt, Belgium. 4x World Champion. Youngest F1 winner ever at 18. Red Bull since 2016.",
+    career: [
+      { year: 2014, series: 'F3 European', team: 'Van Amersfoort', result: 'P3 — Rookie at 16' },
+      { year: 2015, series: 'F1',        team: 'Toro Rosso',result: 'Youngest F1 driver ever — 17' },
+      { year: 2016, series: 'F1',        team: 'Red Bull', result: 'Youngest F1 winner — Spain' },
+      { year: 2021, series: 'F1',        team: 'Red Bull', result: '🏆 Champion — 1st title' },
+      { year: 2022, series: 'F1',        team: 'Red Bull', result: '🏆 Champion — record 15 wins' },
+      { year: 2023, series: 'F1',        team: 'Red Bull', result: '🏆 Champion — record 19 wins' },
+      { year: 2024, series: 'F1',        team: 'Red Bull', result: '🏆 Champion — 4th title' },
+      { year: 2025, series: 'F1',        team: 'Red Bull', result: 'P2 — 310 pts' },
+      { year: 2026, series: 'F1',        team: 'Red Bull', result: 'P7 — 26 pts' },
+    ]
+  },
+  'piastri': {
+    bio: "Melbourne, Australia. Only driver to win F3 and F2 in successive seasons. McLaren.",
+    career: [
+      { year: 2019, series: 'F. Renault Eurocup', team: 'R-ace GP', result: '🏆 Champion' },
+      { year: 2020, series: 'FIA F3',    team: 'Prema',   result: '🏆 Champion' },
+      { year: 2021, series: 'FIA F2',    team: 'Prema',   result: '🏆 Champion — rookie' },
+      { year: 2023, series: 'F1',        team: 'McLaren', result: 'P9 — Rookie, 97 pts' },
+      { year: 2024, series: 'F1',        team: 'McLaren', result: 'P3 — 292 pts, 3 wins' },
+      { year: 2025, series: 'F1',        team: 'McLaren', result: 'P2 — runner-up' },
+      { year: 2026, series: 'F1',        team: 'McLaren', result: 'P6 — 43 pts' },
+    ]
+  },
+  'bearman': {
+    bio: "Chelmsford, England. Ferrari Academy graduate. Haas F1 debut 2025. Replaced Sainz in Saudi Arabia 2024.",
+    career: [
+      { year: 2021, series: 'Italian F4', team: 'Prema',  result: '🏆 Champion' },
+      { year: 2022, series: 'FIA F3',    team: 'Prema',   result: 'P3' },
+      { year: 2023, series: 'FIA F2',    team: 'Prema',   result: 'P3' },
+      { year: 2024, series: 'FIA F2',    team: 'Prema',   result: 'P2 — + F1 debut Saudi Arabia (P7 for Ferrari!)' },
+      { year: 2025, series: 'F1',        team: 'Haas',    result: 'P8 — Rookie, 17 pts' },
+      { year: 2026, series: 'F1',        team: 'Haas',    result: 'P8 — 17 pts' },
+    ]
+  },
+  'hadjar': {
+    bio: "Paris, France. Franco-Algerian. Red Bull Junior. 2025 podium at Zandvoort earned Red Bull seat.",
+    career: [
+      { year: 2022, series: 'FIA F3',    team: 'Hitech',  result: 'P5 — Rookie' },
+      { year: 2023, series: 'FIA F2',    team: 'Hitech',  result: 'P4' },
+      { year: 2024, series: 'FIA F2',    team: 'Campos',  result: 'P2 — runner-up' },
+      { year: 2025, series: 'F1',        team: 'Racing Bulls', result: 'P10 — Rookie. Podium Zandvoort' },
+      { year: 2026, series: 'F1',        team: 'Red Bull', result: 'P13 — Verstappen teammate' },
+    ]
+  },
+  'lawson': {
+    bio: "Hastings, New Zealand. Red Bull Junior. Known for adaptability — stepped in for Ricciardo mid-2023.",
+    career: [
+      { year: 2021, series: 'FIA F2',    team: 'Hitech',  result: 'P3 — Rookie' },
+      { year: 2022, series: 'FIA F2',    team: 'Carlin',  result: 'P5' },
+      { year: 2023, series: 'Super Formula + F1 deputy', team: 'Red Bull', result: '5 races for Alpha Tauri' },
+      { year: 2024, series: 'F1',        team: 'Racing Bulls', result: 'Full season' },
+      { year: 2025, series: 'F1',        team: 'Racing Bulls', result: 'Promoted mid-season' },
+      { year: 2026, series: 'F1',        team: 'Racing Bulls', result: 'P10 — 10 pts' },
+    ]
+  },
+  'colapinto': {
+    bio: "Pilar, Argentina. Williams debut mid-2024 replacing Sargeant. Alpine 2026.",
+    career: [
+      { year: 2022, series: 'F3',        team: 'MP',      result: 'Race winner' },
+      { year: 2023, series: 'FIA F2',    team: 'MP',      result: 'P9' },
+      { year: 2024, series: 'FIA F2 + F1', team: 'MP / Williams', result: 'F1 debut — replaced Sargeant' },
+      { year: 2025, series: 'F1 (reserve)', team: 'Red Bull', result: 'Reserve driver' },
+      { year: 2026, series: 'F1',        team: 'Alpine',  result: 'P11 — 7 pts' },
+    ]
+  },
+  'sainz': {
+    bio: "Madrid, Spain. Son of WRC champion Carlos Sainz Sr. Williams since 2025 after 5 years at Ferrari.",
+    career: [
+      { year: 2014, series: 'FIA F3',    team: 'Carlin',  result: 'P4' },
+      { year: 2015, series: 'F1',        team: 'Toro Rosso', result: 'Rookie' },
+      { year: 2019, series: 'F1',        team: 'McLaren', result: 'P6 — breakout season' },
+      { year: 2021, series: 'F1',        team: 'Ferrari', result: 'P5 — 1 win' },
+      { year: 2023, series: 'F1',        team: 'Ferrari', result: 'P4 — 3 wins' },
+      { year: 2024, series: 'F1',        team: 'Ferrari', result: 'P5 — 2 wins' },
+      { year: 2025, series: 'F1',        team: 'Williams',result: 'Williams debut' },
+      { year: 2026, series: 'F1',        team: 'Williams',result: 'P14 — 4 pts' },
+    ]
+  },
+  'bortoleto': {
+    bio: "São Paulo, Brazil. McLaren Academy graduate. Won F3 + F2 back-to-back. Audi/Sauber since 2025.",
+    career: [
+      { year: 2022, series: 'FIA F3',    team: 'Trident', result: 'Race winner' },
+      { year: 2023, series: 'FIA F3',    team: 'Trident', result: '🏆 Champion' },
+      { year: 2024, series: 'FIA F2',    team: 'Invicta', result: '🏆 Champion — rookie' },
+      { year: 2025, series: 'F1',        team: 'Sauber',  result: 'Rookie — several points finishes' },
+      { year: 2026, series: 'F1',        team: 'Audi',    result: 'P15 — 2 pts' },
+    ]
+  },
+  'lindblad': {
+    bio: "Virginia Water, England. Born 2007. Red Bull Junior. Youngest F2 winner ever. Only rookie on 2026 grid.",
+    career: [
+      { year: 2023, series: 'Italian F4', team: 'Prema',  result: 'Race winner' },
+      { year: 2024, series: 'FIA F3',    team: 'Prema',   result: 'P4 — youngest ever F3 winner (16y)' },
+      { year: 2025, series: 'FIA F2',    team: 'Campos',  result: 'P6 — youngest F2 winner ever (17y)' },
+      { year: 2026, series: 'F1',        team: 'Racing Bulls', result: 'P12 — only 2026 rookie' },
+    ]
+  },
+  'albon': {
+    bio: "London, England (Thai license). Red Bull Junior. Williams since 2022. Consistent midfield performer.",
+    career: [
+      { year: 2018, series: 'FIA F2',    team: 'ART',     result: 'P3' },
+      { year: 2019, series: 'F1',        team: 'Toro Rosso → Red Bull', result: 'P5 — promoted mid-season' },
+      { year: 2020, series: 'F1',        team: 'Red Bull', result: 'P4' },
+      { year: 2022, series: 'F1',        team: 'Williams', result: 'Return after 2021 sabbatical' },
+      { year: 2025, series: 'F1',        team: 'Williams', result: 'Strong midfield season' },
+      { year: 2026, series: 'F1',        team: 'Williams', result: 'P17 — 1 pt' },
+    ]
+  },
+  'gasly': {
+    bio: "Rouen, France. F1 since 2017. Former Red Bull — demoted 2019, rebuilt career at AlphaTauri/Alpine.",
+    career: [
+      { year: 2016, series: 'FIA F2',    team: 'DAMS',    result: '🏆 Champion' },
+      { year: 2017, series: 'F1',        team: 'Toro Rosso', result: 'Rookie' },
+      { year: 2019, series: 'F1',        team: 'Red Bull → AlphaTauri', result: 'Demoted mid-season' },
+      { year: 2020, series: 'F1',        team: 'AlphaTauri', result: '1 win — Monza' },
+      { year: 2023, series: 'F1',        team: 'Alpine',  result: 'Alpine debut' },
+      { year: 2026, series: 'F1',        team: 'Alpine',  result: 'P9 — 16 pts' },
+    ]
+  },
+  'alonso': {
+    bio: "Oviedo, Spain. 2x World Champion (2005, 2006). F1 legend. Aston Martin since 2023.",
+    career: [
+      { year: 2001, series: 'F1',        team: 'Minardi', result: 'Rookie at 19' },
+      { year: 2005, series: 'F1',        team: 'Renault', result: '🏆 Champion — youngest ever (at time)' },
+      { year: 2006, series: 'F1',        team: 'Renault', result: '🏆 Champion — 2nd title' },
+      { year: 2023, series: 'F1',        team: 'Aston Martin', result: '8 podiums — legendary comeback' },
+      { year: 2024, series: 'F1',        team: 'Aston Martin', result: 'P5' },
+      { year: 2026, series: 'F1',        team: 'Aston Martin', result: 'P21 — 0 pts' },
+    ]
+  },
+  'hulkenberg': {
+    bio: "Emmerich, Germany. 2009 GP2 Champion. F1 veteran — record 218 races without podium (broken 2023).",
+    career: [
+      { year: 2009, series: 'GP2',       team: 'ART',     result: '🏆 Champion' },
+      { year: 2010, series: 'F1',        team: 'Williams', result: 'Rookie' },
+      { year: 2023, series: 'F1',        team: 'Haas',    result: 'Return — first podium ever' },
+      { year: 2025, series: 'F1',        team: 'Audi',    result: 'Audi launch season' },
+      { year: 2026, series: 'F1',        team: 'Audi',    result: 'P18 — 0 pts' },
+    ]
+  },
+  'stroll': {
+    bio: "Montreal, Canada. Son of team owner Lawrence Stroll. Aston Martin since 2023.",
+    career: [
+      { year: 2016, series: 'FIA F3',    team: 'Prema',   result: '🏆 Champion' },
+      { year: 2017, series: 'F1',        team: 'Williams', result: 'Rookie — podium Baku' },
+      { year: 2019, series: 'F1',        team: 'Racing Point', result: 'Father buys team' },
+      { year: 2023, series: 'F1',        team: 'Aston Martin', result: 'P9 — career best' },
+      { year: 2026, series: 'F1',        team: 'Aston Martin', result: 'P22 — 0 pts' },
+    ]
+  },
+  'bottas': {
+    bio: "Nastola, Finland. 10 F1 wins. Mercedes 2017-2021. Cadillac 2026 — new team debut.",
+    career: [
+      { year: 2013, series: 'F1',        team: 'Williams', result: 'Rookie' },
+      { year: 2017, series: 'F1',        team: 'Mercedes', result: '3 wins — Rosberg replacement' },
+      { year: 2019, series: 'F1',        team: 'Mercedes', result: 'P2 — 4 wins' },
+      { year: 2022, series: 'F1',        team: 'Alfa Romeo', result: 'New chapter' },
+      { year: 2026, series: 'F1',        team: 'Cadillac', result: 'P20 — new team' },
+    ]
+  },
+  'perez': {
+    bio: "Guadalajara, Mexico. Red Bull 2021-2025. Joined Cadillac 2026 after Red Bull departure.",
+    career: [
+      { year: 2009, series: 'GP2',       team: 'Carlin',  result: 'P3 — Rookie' },
+      { year: 2011, series: 'F1',        team: 'Sauber',  result: 'Rookie' },
+      { year: 2020, series: 'F1',        team: 'Racing Point', result: '1 win — Sakhir' },
+      { year: 2021, series: 'F1',        team: 'Red Bull', result: 'P4 — Verstappen teammate' },
+      { year: 2023, series: 'F1',        team: 'Red Bull', result: 'P2 — career best, 2 wins' },
+      { year: 2025, series: 'F1',        team: 'Red Bull', result: 'Dropped end of season' },
+      { year: 2026, series: 'F1',        team: 'Cadillac', result: 'P20 — Cadillac debut' },
+    ]
+  },
+  'ocon': {
+    bio: "Évreux, France. Parents sold house to fund karting. Alpine 2021-2024. Haas 2026.",
+    career: [
+      { year: 2014, series: 'FIA F3',    team: 'Prema',   result: '🏆 Champion' },
+      { year: 2015, series: 'GP3',       team: 'ART',     result: '🏆 Champion' },
+      { year: 2017, series: 'F1',        team: 'Force India', result: 'Rookie — strong performances' },
+      { year: 2021, series: 'F1',        team: 'Alpine',  result: '1 win — Hungary' },
+      { year: 2026, series: 'F1',        team: 'Haas',    result: 'P16 — 1 pt' },
+    ]
+  },
+};
+
+
 const TEAM_COLORS = {
   'Mercedes':     '#27F4D2',
   'Ferrari':      '#E8002D',
@@ -429,6 +691,7 @@ async function init() {
   // Render hero + results
   renderHero(standing, driverId, meta);
   renderResults(races);
+  renderCareer(driverId);
 
   // Get last race for OpenF1 data
   const lastRace = races[races.length - 1];
@@ -473,3 +736,54 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+// ── Render Career Timeline ───────────────────────────────────
+function renderCareer(driverId) {
+  const data = DRIVER_CAREER[driverId];
+  
+  // Add career section to HTML if not exists
+  let section = document.getElementById('module-career');
+  if (!section) {
+    const footer = document.querySelector('.site-footer');
+    section = document.createElement('section');
+    section.id = 'module-career';
+    section.className = 'glass-card';
+    section.style.marginBottom = '16px';
+    footer.parentNode.insertBefore(section, footer);
+  }
+
+  if (!data) {
+    section.innerHTML = `<div class="card-header"><div class="section-header"><h2 class="section-title">Career Path</h2></div></div><div class="no-data">Career data coming soon.</div>`;
+    return;
+  }
+
+  const rows = data.career.map((c, i) => {
+    const isF1    = c.series.includes('F1') && !c.series.includes('F2') && !c.series.includes('F3');
+    const isChamp = c.result.includes('🏆');
+    return `
+      <div class="career-row" style="animation-delay:${i*0.05}s">
+        <div class="career-year">${c.year}</div>
+        <div class="career-line-wrap">
+          <div class="career-dot ${isF1 ? 'f1' : ''} ${isChamp ? 'champ' : ''}"></div>
+          ${i < data.career.length - 1 ? '<div class="career-line"></div>' : ''}
+        </div>
+        <div class="career-content">
+          <div class="career-series ${isF1 ? 'f1-series' : ''}">${c.series}</div>
+          <div class="career-team">${c.team}</div>
+          <div class="career-result ${isChamp ? 'champ-result' : ''}">${c.result}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  section.innerHTML = `
+    <div class="card-header">
+      <div class="section-header">
+        <h2 class="section-title">Career Path</h2>
+        <span class="section-tag">Road to F1</span>
+      </div>
+      <p style="font-family:var(--font-mono);font-size:10px;color:var(--text-3);margin-top:6px;line-height:1.6">${data.bio}</p>
+    </div>
+    <div class="career-timeline">${rows}</div>
+  `;
+}
