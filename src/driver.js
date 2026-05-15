@@ -688,53 +688,46 @@ async function init() {
     fetchDriverResults(driverId),
   ]);
 
-  // Render hero + results
+  // Render hero + results — always first
   window._teamColor = getTeamColor(standing?.Constructors?.[0]?.name || '');
   renderHero(standing, driverId, meta);
   renderRecords(driverId, window._teamColor);
   renderResults(races);
+  renderHeatmap(driverId, window._teamColor);
+  renderCareerStats(driverId);
   renderCareer(driverId);
 
-  // Get last race for OpenF1 data
+  // OpenF1 section — independent, won't block above renders
   const lastRace = races[races.length - 1];
   if (!lastRace) {
-    document.getElementById('pits-body').innerHTML = `<div class="no-data">No race data yet.</div>`;
-    document.getElementById('laps-body').innerHTML = `<div class="no-data">No race data yet.</div>`;
+    document.getElementById('pits-body').innerHTML = '<div class="no-data">No race data yet.</div>';
+    document.getElementById('laps-body').innerHTML = '<div class="no-data">No race data yet.</div>';
     return;
   }
 
   const rawCountry = lastRace.Circuit?.Location?.country || '';
   const locality   = lastRace.Circuit?.Location?.locality || '';
   const raceName   = lastRace.raceName;
-  // OpenF1 uses country_name — map special cases
-  const COUNTRY_MAP = {
-    'USA': 'United States',
-    'UK':  'United Kingdom',
-    'UAE': 'United Arab Emirates',
-  };
-  const country = COUNTRY_MAP[rawCountry] || rawCountry;
-  const driverNum = meta.number;
-  const teamColor = getTeamColor(standing?.Constructors?.[0]?.name || '');
+  const COUNTRY_MAP = { 'USA': 'United States', 'UK': 'United Kingdom', 'UAE': 'United Arab Emirates' };
+  const country    = COUNTRY_MAP[rawCountry] || rawCountry;
+  const driverNum  = meta.number;
+  const teamColor  = window._teamColor;
 
-  // Find OpenF1 session
   const session = await fetchOpenF1Session(parseInt(SEASON), country, locality);
   if (!session) {
-    document.getElementById('pits-body').innerHTML = `<div class="no-data">OpenF1 session not found for ${raceName}.</div>`;
-    document.getElementById('laps-body').innerHTML = `<div class="no-data">OpenF1 session not found for ${raceName}.</div>`;
-  } else {
-    const sessionKey = session.session_key;
-    const [pits, stints, laps] = await Promise.all([
-      fetchPitStops(sessionKey, driverNum),
-      fetchStints(sessionKey, driverNum),
-      fetchLaps(sessionKey, driverNum),
-    ]);
-    renderPits(pits, stints, raceName);
-    renderLaps(laps, pits, teamColor);
+    document.getElementById('pits-body').innerHTML = '<div class="no-data">OpenF1 session not found for ' + raceName + '.</div>';
+    document.getElementById('laps-body').innerHTML = '<div class="no-data">OpenF1 session not found for ' + raceName + '.</div>';
+    return;
   }
 
-  // Always render records/heatmap/stats — independent of OpenF1
-  renderHeatmap(driverId, window._teamColor);
-  renderCareerStats(driverId);
+  const sessionKey = session.session_key;
+  const [pits, stints, laps] = await Promise.all([
+    fetchPitStops(sessionKey, driverNum),
+    fetchStints(sessionKey, driverNum),
+    fetchLaps(sessionKey, driverNum),
+  ]);
+  renderPits(pits, stints, raceName);
+  renderLaps(laps, pits, teamColor);
 }
 
 document.addEventListener('DOMContentLoaded', init);
