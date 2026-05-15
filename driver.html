@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Driver Profile — PaddockIntel</title>
+  <meta name="description" content="F1 driver economic profile — salary, prize money, value index, race results and pit stop data." />
+  <link rel="canonical" href="https://app.paddockintel.com/driver.html" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23e10600'/><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='18' fill='white'>PI</text></svg>" />
+  <link rel="stylesheet" href="src/driver.css" />
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- HEADER -->
+    <header class="site-header">
+      <div class="logo-group">
+        <a href="/" class="logo-back">
+          <div class="logo-badge">PI</div>
+        </a>
+        <div>
+          <div class="logo-text">Paddock<span>Intel</span></div>
+          <div class="logo-sub">Driver Economic Profile</div>
+        </div>
+      </div>
+      <a href="/" class="back-btn">← Dashboard</a>
+    </header>
+
+    <!-- DRIVER HERO -->
+    <section class="hero-card glass-card" id="hero-card">
+      <div class="loading-state"><div class="spinner"></div>Loading driver…</div>
+    </section>
+
+    <!-- VALUE INDEX CALLOUT -->
+    <div class="value-callout glass-card" id="value-callout" style="display:none">
+      <div class="value-label">💡 Value Index</div>
+      <div class="value-text" id="value-text"></div>
+    </div>
+
+    <!-- TWO COL GRID -->
+    <div class="two-col">
+
+      <!-- SEASON RESULTS -->
+      <section class="glass-card" id="module-results">
+        <div class="card-header">
+          <div class="section-header">
+            <h2 class="section-title">2026 Results</h2>
+            <span class="section-tag">By Race</span>
+          </div>
+        </div>
+        <div id="results-body">
+          <div class="loading-state"><div class="spinner"></div>Loading results…</div>
+        </div>
+      </section>
+
+      <!-- PIT STOPS + STINTS -->
+      <section class="glass-card" id="module-pits">
+        <div class="card-header">
+          <div class="section-header">
+            <h2 class="section-title">Last Race</h2>
+            <span class="section-tag blue">OpenF1</span>
+          </div>
+        </div>
+        <div id="pits-body">
+          <div class="loading-state"><div class="spinner"></div>Loading pit data…</div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- LAP TIMES CHART -->
+    <section class="glass-card" id="module-laps" style="margin-bottom:16px">
+      <div class="card-header">
+        <div class="section-header">
+          <h2 class="section-title">Lap Times</h2>
+          <span class="section-tag green">Last GP</span>
+        </div>
+      </div>
+      <div id="laps-body">
+        <div class="loading-state"><div class="spinner"></div>Loading lap data…</div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <div>© 2026 <a href="https://paddockintel.com" class="footer-link" target="_blank">PaddockIntel</a> · F1 Economic Intelligence</div>
+      <div>Data: Jolpica F1 · OpenF1 · Salary estimates via public reporting</div>
+      <div><a href="/" class="footer-link">← Back to Dashboard</a></div>
+    </footer>
+
+  </div>
+
+  <script src="src/driver.js"></script>
+</body>
+</html>
