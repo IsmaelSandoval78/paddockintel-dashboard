@@ -906,18 +906,11 @@ const DRIVER_RECORDS = {
 // ── Render Records Badge ─────────────────────────────────────
 function renderRecords(driverId, teamColor) {
   const data = DRIVER_RECORDS[driverId];
-  if (!data || !data.records.length) return;
-
-  let section = document.getElementById('module-records');
-  if (!section) {
-    const careerSection = document.getElementById('module-career');
-    section = document.createElement('section');
-    section.id = 'module-records';
-    section.className = 'glass-card';
-    section.style.marginBottom = '16px';
-    if (careerSection) {
-      careerSection.parentNode.insertBefore(section, careerSection);
-    }
+  const section = document.getElementById('module-records');
+  if (!section) return;
+  if (!data || !data.records.length) {
+    section.innerHTML = '<div class="no-data">No records data for this driver yet.</div>';
+    return;
   }
 
   const badges = data.records.map((r, i) => `
@@ -943,18 +936,11 @@ function renderRecords(driverId, teamColor) {
 // ── Render F1 Results Heatmap ────────────────────────────────
 function renderHeatmap(driverId, teamColor) {
   const data = DRIVER_RECORDS[driverId];
-  if (!data || !data.f1Results) return;
-
-  let section = document.getElementById('module-heatmap');
-  if (!section) {
-    const recordsSection = document.getElementById('module-records');
-    section = document.createElement('section');
-    section.id = 'module-heatmap';
-    section.className = 'glass-card';
-    section.style.marginBottom = '16px';
-    if (recordsSection) {
-      recordsSection.parentNode.insertBefore(section, recordsSection.nextSibling);
-    }
+  const section = document.getElementById('module-heatmap');
+  if (!section) return;
+  if (!data || !data.f1Results) {
+    section.innerHTML = '<div class="no-data">No heatmap data for this driver yet.</div>';
+    return;
   }
 
   function getColor(pos) {
@@ -1018,18 +1004,11 @@ function renderHeatmap(driverId, teamColor) {
 // ── Render Career Stats Table ────────────────────────────────
 function renderCareerStats(driverId) {
   const data = DRIVER_RECORDS[driverId];
-  if (!data || !data.careerStats) return;
-
-  let section = document.getElementById('module-careerstats');
-  if (!section) {
-    const heatmapSection = document.getElementById('module-heatmap');
-    section = document.createElement('section');
-    section.id = 'module-careerstats';
-    section.className = 'glass-card';
-    section.style.marginBottom = '16px';
-    if (heatmapSection) {
-      heatmapSection.parentNode.insertBefore(section, heatmapSection.nextSibling);
-    }
+  const section = document.getElementById('module-careerstats');
+  if (!section) return;
+  if (!data || !data.careerStats) {
+    section.innerHTML = '<div class="no-data">No career stats for this driver yet.</div>';
+    return;
   }
 
   const rows = data.careerStats.map((s, i) => {
