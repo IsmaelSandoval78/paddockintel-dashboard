@@ -51,18 +51,21 @@ const DRIVER_CAREER = {
     ]
   },
   'russell': {
-    bio: "King's Lynn, England. F1 veteran since 2019. Mercedes Junior graduate. Won 2018 F2 title.",
+    bio: "King's Lynn, England. 3x champion in junior series. Father sold business to fund his career. Mercedes Junior since 2017.",
     career: [
-      { year: 2017, series: 'F3 European', team: 'Hitech', result: 'P2' },
-      { year: 2018, series: 'FIA F2',    team: 'ART',     result: '🏆 Champion' },
-      { year: 2019, series: 'F1',        team: 'Williams',result: 'Rookie — 0 pts' },
-      { year: 2020, series: 'F1',        team: 'Williams',result: '0 pts (COVID year)' },
-      { year: 2021, series: 'F1',        team: 'Williams',result: 'P15 — 16 pts' },
-      { year: 2022, series: 'F1',        team: 'Mercedes',result: 'P4 — 275 pts, 1 win' },
+      { year: 2014, series: 'BRDC F4',   team: 'Lanan',   result: '🏆 Champion' },
+      { year: 2015, series: 'FIA F3 European', team: 'Carlin', result: 'P6 — Rookie' },
+      { year: 2016, series: 'FIA F3 European', team: 'Hitech', result: 'P3' },
+      { year: 2017, series: 'GP3',       team: 'ART',     result: '🏆 Champion — Rookie' },
+      { year: 2018, series: 'FIA F2',    team: 'ART',     result: '🏆 Champion — Rookie' },
+      { year: 2019, series: 'F1',        team: 'Williams',result: 'Rookie — P20, 0 pts' },
+      { year: 2020, series: 'F1',        team: 'Williams',result: 'P18 — Led Sakhir GP for Mercedes' },
+      { year: 2021, series: 'F1',        team: 'Williams',result: 'P15 — 16 pts, 1st podium Belgium' },
+      { year: 2022, series: 'F1',        team: 'Mercedes',result: 'P4 — 275 pts, 1 win (Brazil)' },
       { year: 2023, series: 'F1',        team: 'Mercedes',result: 'P8 — 175 pts' },
-      { year: 2024, series: 'F1',        team: 'Mercedes',result: 'P7 — 235 pts, 1 win' },
-      { year: 2025, series: 'F1',        team: 'Mercedes',result: 'P3 — 280 pts, 3 wins' },
-      { year: 2026, series: 'F1',        team: 'Mercedes',result: 'P2 — 80 pts, 1 win' },
+      { year: 2024, series: 'F1',        team: 'Mercedes',result: 'P6 — 245 pts, 2 wins' },
+      { year: 2025, series: 'F1',        team: 'Mercedes',result: 'P4 — 319 pts, 2 wins' },
+      { year: 2026, series: 'F1',        team: 'Mercedes',result: 'P2 — 80 pts, 1 win (Australia)' },
     ]
   },
   'leclerc': {
@@ -807,6 +810,36 @@ const DRIVER_RECORDS = {
       { year:2024,series:'FIA F2',races:26,wins:2,poles:0,podiums:3,points:113,pos:'6th' },
       { year:2025,series:'F1',races:24,wins:0,poles:0,podiums:3,points:150,pos:'7th' },
       { year:2026,series:'F1',races:4,wins:3,poles:3,podiums:4,points:100,pos:'🏆 1st*' },
+    ]
+  },
+  'russell': {
+    records: [
+      { label: '2014 BRDC F4 Champion', value: 'Rookie season', race: 'Won at Snetterton final race', icon: '🏁' },
+      { label: '2017 GP3 Champion', value: 'ART Grand Prix', race: 'Rookie — 79pts ahead of P2', icon: '🏆' },
+      { label: '2018 F2 Champion', value: 'ART Grand Prix', race: '5th ever rookie F2 champion', icon: '🏆' },
+      { label: 'Record Pit Stops — Race', value: '7 stops', race: '2023 Dutch GP', icon: '🔧' },
+      { label: 'Led Sakhir GP 2020', value: 'Sub for Hamilton', race: 'Denied by pit crew error', icon: '😤' },
+      { label: 'First WDC Lead', value: 'After 2026 Australia', race: '156 races to reach P1', icon: '👑' },
+    ],
+    f1Results: {
+      2022: { BHR:4,SAU:5,AUS:3,EMI:4,MIA:5,ESP:3,MON:5,AZE:3,CAN:4,GBR:'R',AUT:4,FRA:3,HUN:1,BEL:4,NED:2,ITA:3,SIN:14,JPN:8,USA:5,MXC:4,SAP:1,ABU:5 },
+      2023: { BHR:7,SAU:4,AUS:'R',AZE:8,MIA:4,MON:5,ESP:3,CAN:'R',AUT:7,GBR:5,HUN:6,BEL:6,NED:17,ITA:5,SIN:16,JPN:7,QAT:4,USA:5,MXC:6,SAP:'R',LVG:8,ABU:3 },
+      2024: { BHR:5,SAU:6,AUS:17,JPN:7,CHN:6,MIA:8,EMI:7,MON:5,CAN:3,ESP:4,AUT:1,GBR:'R',HUN:8,BEL:'R',NED:7,ITA:7,AZE:3,SIN:4,USA:6,MXC:5,SAP:4,LVG:1,QAT:4,ABU:5 },
+      2025: { AUS:3,CHN:3,JPN:5,BHR:2,SAU:5,MIA:3,EMI:7,MON:11,ESP:4,CAN:1,AUT:5,GBR:10,BEL:5,HUN:3,NED:4,ITA:5,AZE:2,SIN:1,USA:6,MXC:7,SAP:4,LVG:2,QAT:6,ABU:5 },
+      2026: { AUS:1,CHN:2,JPN:4,MIA:4 }
+    },
+    careerStats: [
+      { year:2014,series:'BRDC F4',races:24,wins:5,poles:3,podiums:11,points:483,pos:'🏆 1st' },
+      { year:2017,series:'GP3',races:15,wins:4,poles:4,podiums:7,points:220,pos:'🏆 1st' },
+      { year:2018,series:'FIA F2',races:24,wins:7,poles:5,podiums:11,points:287,pos:'🏆 1st' },
+      { year:2019,series:'F1',races:21,wins:0,poles:0,podiums:0,points:0,pos:'20th' },
+      { year:2020,series:'F1',races:17,wins:0,poles:0,podiums:0,points:3,pos:'18th' },
+      { year:2021,series:'F1',races:22,wins:0,poles:0,podiums:1,points:16,pos:'15th' },
+      { year:2022,series:'F1',races:22,wins:1,poles:1,podiums:8,points:275,pos:'4th' },
+      { year:2023,series:'F1',races:22,wins:0,poles:0,podiums:2,points:175,pos:'8th' },
+      { year:2024,series:'F1',races:24,wins:2,poles:4,podiums:4,points:245,pos:'6th' },
+      { year:2025,series:'F1',races:24,wins:2,poles:2,podiums:9,points:319,pos:'4th' },
+      { year:2026,series:'F1',races:4,wins:1,poles:1,podiums:2,points:80,pos:'2nd*' },
     ]
   },
   'verstappen': {
