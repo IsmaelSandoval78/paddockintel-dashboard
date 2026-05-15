@@ -73,15 +73,19 @@ function estimateConstructorPrize(points, totalPoints, position) {
   return Math.round(baseEqual + posBonus + pointsShare);
 }
 
-// ── Ergast API ───────────────────────────────────────────────
-const ERGAST_BASE = 'https://api.jolpi.ca/ergast/f1'; // community mirror
+// ── F1 API — via Vercel serverless proxy (/api/f1) ──────────
+// Proxy avoids CORS issues from calling Jolpica directly in browser
+
+async function f1Fetch(endpoint) {
+  const res = await fetch(`/api/f1?endpoint=${encodeURIComponent(endpoint)}`);
+  if (!res.ok) throw new Error(`F1 proxy returned ${res.status}`);
+  return res.json();
+}
 
 async function fetchDriverStandings() {
   try {
-    const res = await fetch(`${ERGAST_BASE}/current/driverStandings.json`);
-    const json = await res.json();
-    const list = json?.MRData?.StandingsTable?.StandingsLists?.[0]?.DriverStandings;
-    return list || [];
+    const json = await f1Fetch('current/driverStandings');
+    return json?.MRData?.StandingsTable?.StandingsLists?.[0]?.DriverStandings || [];
   } catch (e) {
     console.error('Driver standings fetch failed:', e);
     return [];
@@ -90,10 +94,8 @@ async function fetchDriverStandings() {
 
 async function fetchConstructorStandings() {
   try {
-    const res = await fetch(`${ERGAST_BASE}/current/constructorStandings.json`);
-    const json = await res.json();
-    const list = json?.MRData?.StandingsTable?.StandingsLists?.[0]?.ConstructorStandings;
-    return list || [];
+    const json = await f1Fetch('current/constructorStandings');
+    return json?.MRData?.StandingsTable?.StandingsLists?.[0]?.ConstructorStandings || [];
   } catch (e) {
     console.error('Constructor standings fetch failed:', e);
     return [];
@@ -102,10 +104,8 @@ async function fetchConstructorStandings() {
 
 async function fetchNextRace() {
   try {
-    const res = await fetch(`${ERGAST_BASE}/current/next.json`);
-    const json = await res.json();
-    const races = json?.MRData?.RaceTable?.Races;
-    return races?.[0] || null;
+    const json = await f1Fetch('current/next');
+    return json?.MRData?.RaceTable?.Races?.[0] || null;
   } catch (e) {
     console.error('Next race fetch failed:', e);
     return null;
