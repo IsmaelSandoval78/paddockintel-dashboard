@@ -246,3 +246,82 @@ body {
   .hero-name { font-size: 26px; }
   .driver-number-badge { width: 60px; height: 60px; font-size: 26px; }
 }
+
+/* ── Career Timeline ───────────────────────────────────────── */
+.career-timeline { padding: 8px 20px 20px; }
+
+.career-row {
+  display: grid;
+  grid-template-columns: 48px 28px 1fr;
+  gap: 0 12px;
+  animation: row-in 0.35s ease both;
+}
+
+.career-year {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  padding-top: 2px;
+  text-align: right;
+  letter-spacing: 0.04em;
+}
+
+.career-line-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.career-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--text-4);
+  border: 2px solid var(--bg);
+  flex-shrink: 0;
+  margin-top: 3px;
+  transition: transform var(--transition);
+}
+
+.career-dot.f1 { background: var(--red); box-shadow: 0 0 6px rgba(225,6,0,0.3); }
+.career-dot.champ { background: var(--gold); box-shadow: 0 0 8px rgba(232,170,0,0.4); transform: scale(1.3); }
+
+.career-line {
+  width: 2px;
+  flex: 1;
+  background: var(--border);
+  min-height: 28px;
+}
+
+.career-content {
+  padding-bottom: 20px;
+}
+
+.career-series {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-2);
+  letter-spacing: 0.02em;
+}
+
+.career-series.f1-series { color: var(--red); }
+
+.career-team {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-3);
+  letter-spacing: 0.08em;
+  margin-top: 1px;
+}
+
+.career-result {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-2);
+  margin-top: 3px;
+  line-height: 1.5;
+}
+
+.career-result.champ-result { color: var(--gold); }
