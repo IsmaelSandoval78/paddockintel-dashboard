@@ -721,20 +721,18 @@ async function init() {
   if (!session) {
     document.getElementById('pits-body').innerHTML = `<div class="no-data">OpenF1 session not found for ${raceName}.</div>`;
     document.getElementById('laps-body').innerHTML = `<div class="no-data">OpenF1 session not found for ${raceName}.</div>`;
-    return;
+  } else {
+    const sessionKey = session.session_key;
+    const [pits, stints, laps] = await Promise.all([
+      fetchPitStops(sessionKey, driverNum),
+      fetchStints(sessionKey, driverNum),
+      fetchLaps(sessionKey, driverNum),
+    ]);
+    renderPits(pits, stints, raceName);
+    renderLaps(laps, pits, teamColor);
   }
 
-  const sessionKey = session.session_key;
-
-  // Fetch pit + stints + laps in parallel
-  const [pits, stints, laps] = await Promise.all([
-    fetchPitStops(sessionKey, driverNum),
-    fetchStints(sessionKey, driverNum),
-    fetchLaps(sessionKey, driverNum),
-  ]);
-
-  renderPits(pits, stints, raceName);
-  renderLaps(laps, pits, teamColor);
+  // Always render records/heatmap/stats — independent of OpenF1
   renderHeatmap(driverId, window._teamColor);
   renderCareerStats(driverId);
 }
