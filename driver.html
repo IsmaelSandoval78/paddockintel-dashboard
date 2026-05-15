@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="src/driver.css" />
 </head>
 <body>
-
   <div class="app-container">
 
     <!-- HEADER -->
@@ -29,19 +28,22 @@
 
     <!-- DRIVER HERO -->
     <section class="hero-card glass-card" id="hero-card">
-      <div class="loading-state"><div class="spinner"></div>Loading driver…</div>
+      <div class="loading-state"><div class="spinner"></div>Loading driver...</div>
     </section>
 
     <!-- VALUE INDEX CALLOUT -->
     <div class="value-callout glass-card" id="value-callout" style="display:none">
-      <div class="value-label">💡 Value Index</div>
+      <div class="value-label">Value Index</div>
       <div class="value-text" id="value-text"></div>
     </div>
 
+    <!-- RECORDS & ACHIEVEMENTS -->
+    <section class="glass-card" id="module-records" style="margin-bottom:16px">
+      <div class="loading-state"><div class="spinner"></div>Loading records...</div>
+    </section>
+
     <!-- TWO COL GRID -->
     <div class="two-col">
-
-      <!-- SEASON RESULTS -->
       <section class="glass-card" id="module-results">
         <div class="card-header">
           <div class="section-header">
@@ -50,11 +52,9 @@
           </div>
         </div>
         <div id="results-body">
-          <div class="loading-state"><div class="spinner"></div>Loading results…</div>
+          <div class="loading-state"><div class="spinner"></div>Loading results...</div>
         </div>
       </section>
-
-      <!-- PIT STOPS + STINTS -->
       <section class="glass-card" id="module-pits">
         <div class="card-header">
           <div class="section-header">
@@ -63,13 +63,12 @@
           </div>
         </div>
         <div id="pits-body">
-          <div class="loading-state"><div class="spinner"></div>Loading pit data…</div>
+          <div class="loading-state"><div class="spinner"></div>Loading pit data...</div>
         </div>
       </section>
-
     </div>
 
-    <!-- LAP TIMES CHART -->
+    <!-- LAP TIMES -->
     <section class="glass-card" id="module-laps" style="margin-bottom:16px">
       <div class="card-header">
         <div class="section-header">
@@ -78,19 +77,33 @@
         </div>
       </div>
       <div id="laps-body">
-        <div class="loading-state"><div class="spinner"></div>Loading lap data…</div>
+        <div class="loading-state"><div class="spinner"></div>Loading lap data...</div>
       </div>
+    </section>
+
+    <!-- F1 RESULTS HEATMAP -->
+    <section class="glass-card" id="module-heatmap" style="margin-bottom:16px">
+      <div class="loading-state"><div class="spinner"></div>Loading heatmap...</div>
+    </section>
+
+    <!-- CAREER STATISTICS -->
+    <section class="glass-card" id="module-careerstats" style="margin-bottom:16px">
+      <div class="loading-state"><div class="spinner"></div>Loading career stats...</div>
+    </section>
+
+    <!-- CAREER PATH -->
+    <section class="glass-card" id="module-career" style="margin-bottom:16px">
+      <div class="loading-state"><div class="spinner"></div>Loading career path...</div>
     </section>
 
     <!-- FOOTER -->
     <footer class="site-footer">
-      <div>© 2026 <a href="https://paddockintel.com" class="footer-link" target="_blank">PaddockIntel</a> · F1 Economic Intelligence</div>
-      <div>Data: Jolpica F1 · OpenF1 · Salary estimates via public reporting</div>
-      <div><a href="/" class="footer-link">← Back to Dashboard</a></div>
+      <div>2026 PaddockIntel - F1 Economic Intelligence</div>
+      <div>Data: Jolpica F1 - OpenF1 - Salary estimates via public reporting</div>
+      <div><a href="/" class="footer-link">Back to Dashboard</a></div>
     </footer>
 
   </div>
-
   <script src="src/driver.js"></script>
 </body>
 </html>
