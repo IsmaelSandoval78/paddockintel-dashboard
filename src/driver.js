@@ -689,7 +689,9 @@ async function init() {
   ]);
 
   // Render hero + results
+  window._teamColor = getTeamColor(standing?.Constructors?.[0]?.name || '');
   renderHero(standing, driverId, meta);
+  renderRecords(driverId, window._teamColor);
   renderResults(races);
   renderCareer(driverId);
 
@@ -733,6 +735,8 @@ async function init() {
 
   renderPits(pits, stints, raceName);
   renderLaps(laps, pits, teamColor);
+  renderHeatmap(driverId, window._teamColor);
+  renderCareerStats(driverId);
 }
 
 document.addEventListener('DOMContentLoaded', init);
@@ -785,5 +789,286 @@ function renderCareer(driverId) {
       <p style="font-family:var(--font-mono);font-size:10px;color:var(--text-3);margin-top:6px;line-height:1.6">${data.bio}</p>
     </div>
     <div class="career-timeline">${rows}</div>
+  `;
+}
+
+// ── F1 Records & Results Data ────────────────────────────────
+const DRIVER_RECORDS = {
+  'antonelli': {
+    records: [
+      { label: 'Youngest Polesitter Ever', value: '19y 202d', race: '2026 Chinese GP', icon: '⚡' },
+      { label: 'Youngest Winner (2nd all-time)', value: '19y 202d', race: '2026 Chinese GP', icon: '🏆' },
+      { label: 'Youngest Hat-Trick', value: '19y 202d', race: '2026 Chinese GP', icon: '🎯' },
+      { label: 'Youngest WDC Leader Ever', value: '19y 216d', race: '2026 Japanese GP', icon: '👑' },
+      { label: 'Most Points — Debut Season', value: '150 pts', race: '2025 Season Record', icon: '📈' },
+      { label: 'Youngest Fastest Lap', value: '18y 225d', race: '2025 Japanese GP', icon: '⏱' },
+    ],
+    f1Results: {
+      2025: { AUS:4,CHN:6,JPN:6,BHR:11,SAU:6,MIA:6,EMI:'R',MON:18,ESP:'R',CAN:3,AUT:'R',GBR:'R',BEL:16,HUN:10,NED:16,ITA:9,AZE:4,SIN:5,USA:13,MXC:6,SAP:2,LVG:3,QAT:5,ABU:15 },
+      2026: { AUS:2,CHN:1,JPN:1,MIA:1 }
+    },
+    careerStats: [
+      { year:2021,series:'Italian F4',races:9,wins:0,poles:0,podiums:3,points:54,pos:'10th' },
+      { year:2022,series:'Italian F4',races:20,wins:13,poles:14,podiums:15,points:362,pos:'🏆 1st' },
+      { year:2022,series:'ADAC F4',races:15,wins:9,poles:7,podiums:12,points:313,pos:'🏆 1st' },
+      { year:2023,series:'FR Middle East',races:15,wins:3,poles:3,podiums:7,points:192,pos:'🏆 1st' },
+      { year:2023,series:'FRECA',races:20,wins:5,poles:4,podiums:11,points:300,pos:'🏆 1st' },
+      { year:2024,series:'FIA F2',races:26,wins:2,poles:0,podiums:3,points:113,pos:'6th' },
+      { year:2025,series:'F1',races:24,wins:0,poles:0,podiums:3,points:150,pos:'7th' },
+      { year:2026,series:'F1',races:4,wins:3,poles:3,podiums:4,points:100,pos:'🏆 1st*' },
+    ]
+  },
+  'verstappen': {
+    records: [
+      { label: 'Youngest F1 Driver Ever', value: '17y 166d', race: '2015 Australian GP', icon: '👶' },
+      { label: 'Youngest F1 Winner Ever', value: '18y 228d', race: '2016 Spanish GP', icon: '🏆' },
+      { label: 'Most Wins — Single Season', value: '19 wins', race: '2023 Season', icon: '📊' },
+      { label: '4x World Champion', value: '2021–2024', race: 'Red Bull Racing', icon: '👑' },
+      { label: 'Highest Points — Single Season', value: '575 pts', race: '2023 Season', icon: '📈' },
+    ],
+    f1Results: {
+      2023: { BHR:1,SAU:1,AUS:1,AZE:2,MIA:1,MON:1,ESP:1,CAN:1,AUT:1,GBR:3,HUN:2,BEL:1,NED:1,ITA:1,SIN:1,JPN:1,QAT:1,USA:1,MXC:1,SAP:1,LVG:2,ABU:1 },
+      2024: { BHR:1,SAU:1,AUS:3,JPN:1,CHN:1,MIA:1,EMI:2,MON:1,CAN:2,ESP:2,AUT:1,GBR:5,HUN:1,BEL:5,NED:1,ITA:6,AZE:1,SIN:1,USA:1,MXC:1,SAP:1,LVG:1,QAT:1,ABU:1 },
+      2025: { AUS:4,CHN:2,JPN:4,BHR:1,SAU:1,MIA:2,EMI:1,MON:3,ESP:2,CAN:2,AUT:1,GBR:1,BEL:1,HUN:3,NED:1,ITA:4,AZE:2,SIN:3,USA:2,MXC:2,SAP:2,LVG:3,QAT:2,ABU:4 },
+      2026: { AUS:5,CHN:3,JPN:5,MIA:4 }
+    },
+    careerStats: [
+      { year:2015,series:'F1',races:19,wins:0,poles:0,podiums:0,points:49,pos:'12th' },
+      { year:2016,series:'F1',races:21,wins:1,poles:0,podiums:7,points:204,pos:'5th' },
+      { year:2021,series:'F1',races:22,wins:10,poles:10,podiums:18,points:395,pos:'🏆 1st' },
+      { year:2022,series:'F1',races:22,wins:15,poles:15,podiums:17,points:454,pos:'🏆 1st' },
+      { year:2023,series:'F1',races:22,wins:19,poles:12,podiums:21,points:575,pos:'🏆 1st' },
+      { year:2024,series:'F1',races:24,wins:9,poles:6,podiums:14,points:437,pos:'🏆 1st' },
+      { year:2025,series:'F1',races:24,wins:7,poles:5,podiums:18,points:310,pos:'2nd' },
+      { year:2026,series:'F1',races:4,wins:0,poles:1,podiums:0,points:26,pos:'7th*' },
+    ]
+  },
+  'hamilton': {
+    records: [
+      { label: '7x World Champion', value: 'Joint Record', race: '2008–2020', icon: '👑' },
+      { label: 'Most F1 Wins Ever', value: '103 wins', race: 'All-time record', icon: '🏆' },
+      { label: 'Most Pole Positions', value: '104 poles', race: 'All-time record', icon: '⚡' },
+      { label: 'Most Podiums', value: '197 podiums', race: 'All-time record', icon: '🎯' },
+    ],
+    f1Results: {
+      2025: { AUS:3,CHN:4,JPN:7,BHR:3,SAU:3,MIA:4,EMI:3,MON:5,ESP:4,CAN:4,AUT:4,GBR:4,BEL:4,HUN:4,NED:4,ITA:3,AZE:3,SIN:3,USA:3,MXC:4,SAP:4,LVG:5,QAT:4,ABU:2 },
+      2026: { AUS:3,CHN:5,JPN:4,MIA:5 }
+    },
+    careerStats: [
+      { year:2006,series:'GP2',races:20,wins:5,poles:5,podiums:10,points:114,pos:'🏆 1st' },
+      { year:2007,series:'F1',races:17,wins:4,poles:6,podiums:12,points:109,pos:'2nd' },
+      { year:2008,series:'F1',races:18,wins:5,poles:7,podiums:11,points:98,pos:'🏆 1st' },
+      { year:2020,series:'F1',races:17,wins:11,poles:10,podiums:14,points:347,pos:'🏆 1st' },
+      { year:2025,series:'F1',races:24,wins:1,poles:0,podiums:8,points:220,pos:'5th' },
+      { year:2026,series:'F1',races:4,wins:0,poles:0,podiums:0,points:51,pos:'5th*' },
+    ]
+  },
+  'norris': {
+    records: [
+      { label: '2025 World Champion', value: '1st Title', race: '2025 Season', icon: '👑' },
+      { label: '2017 F3 European Champion', value: 'Prema Racing', race: 'Junior career', icon: '🏆' },
+      { label: 'McLaren since 2019', value: '7+ seasons', race: 'Longest stint', icon: '🧡' },
+    ],
+    f1Results: {
+      2024: { BHR:4,SAU:4,AUS:6,JPN:3,CHN:3,MIA:2,EMI:2,MON:2,CAN:3,ESP:2,AUT:2,GBR:1,HUN:3,BEL:1,NED:2,ITA:3,AZE:3,SIN:2,USA:1,MXC:2,SAP:1,LVG:1,QAT:2,ABU:3 },
+      2025: { AUS:2,CHN:3,JPN:2,BHR:2,SAU:2,MIA:3,EMI:2,MON:1,ESP:3,CAN:3,AUT:2,GBR:1,BEL:2,HUN:1,NED:3,ITA:2,AZE:1,SIN:2,USA:1,MXC:3,SAP:1,LVG:2,QAT:1,ABU:1 },
+      2026: { AUS:3,CHN:4,JPN:3,MIA:3 }
+    },
+    careerStats: [
+      { year:2017,series:'F3 European',races:20,wins:7,poles:6,podiums:12,points:286,pos:'🏆 1st' },
+      { year:2018,series:'FIA F2',races:24,wins:3,poles:5,podiums:9,points:208,pos:'2nd' },
+      { year:2019,series:'F1',races:21,wins:0,poles:0,podiums:0,points:49,pos:'11th' },
+      { year:2024,series:'F1',races:24,wins:6,poles:5,podiums:15,points:331,pos:'2nd' },
+      { year:2025,series:'F1',races:24,wins:7,poles:8,podiums:20,points:420,pos:'🏆 1st' },
+      { year:2026,series:'F1',races:4,wins:0,poles:0,podiums:0,points:51,pos:'4th*' },
+    ]
+  },
+  'leclerc': {
+    records: [
+      { label: '2017 F2 Champion', value: 'Prema Racing', race: 'Junior career', icon: '🏆' },
+      { label: 'Youngest Ferrari Pole', value: '2019 Bahrain', race: 'Ferrari history', icon: '⚡' },
+      { label: '2024 Best Season', value: '356 pts, 3 wins', race: '2024 Season', icon: '📈' },
+    ],
+    f1Results: {
+      2024: { BHR:2,SAU:3,AUS:'R',JPN:3,CHN:4,MIA:3,EMI:3,MON:1,CAN:4,ESP:1,AUT:3,GBR:3,HUN:4,BEL:2,NED:3,ITA:4,AZE:2,SIN:2,USA:4,MXC:3,SAP:2,LVG:3,QAT:3,ABU:3 },
+      2025: { AUS:3,CHN:5,JPN:5,BHR:2,SAU:5,MIA:5,EMI:4,MON:3,ESP:2,CAN:5,AUT:5,GBR:3,BEL:5,HUN:5,NED:5,ITA:4,AZE:4,SIN:4,USA:5,MXC:5,SAP:5,LVG:4,QAT:5,ABU:3 },
+      2026: { AUS:4,CHN:2,JPN:3,MIA:6 }
+    },
+    careerStats: [
+      { year:2017,series:'FIA F2',races:24,wins:7,poles:5,podiums:13,points:282,pos:'🏆 1st' },
+      { year:2018,series:'F1',races:21,wins:0,poles:0,podiums:0,points:39,pos:'13th' },
+      { year:2022,series:'F1',races:22,wins:3,poles:9,podiums:9,points:308,pos:'2nd' },
+      { year:2024,series:'F1',races:24,wins:3,poles:5,podiums:12,points:356,pos:'3rd' },
+      { year:2025,series:'F1',races:24,wins:2,poles:2,podiums:6,points:240,pos:'4th' },
+      { year:2026,series:'F1',races:4,wins:0,poles:0,podiums:1,points:59,pos:'3rd*' },
+    ]
+  },
+};
+
+// ── Render Records Badge ─────────────────────────────────────
+function renderRecords(driverId, teamColor) {
+  const data = DRIVER_RECORDS[driverId];
+  if (!data || !data.records.length) return;
+
+  let section = document.getElementById('module-records');
+  if (!section) {
+    const careerSection = document.getElementById('module-career');
+    section = document.createElement('section');
+    section.id = 'module-records';
+    section.className = 'glass-card';
+    section.style.marginBottom = '16px';
+    if (careerSection) {
+      careerSection.parentNode.insertBefore(section, careerSection);
+    }
+  }
+
+  const badges = data.records.map((r, i) => `
+    <div class="record-badge" style="animation-delay:${i*0.08}s">
+      <div class="record-icon">${r.icon}</div>
+      <div class="record-label">${r.label}</div>
+      <div class="record-value">${r.value}</div>
+      <div class="record-race">${r.race}</div>
+    </div>
+  `).join('');
+
+  section.innerHTML = `
+    <div class="card-header">
+      <div class="section-header">
+        <h2 class="section-title">Records & Achievements</h2>
+        <span class="section-tag gold">Verified</span>
+      </div>
+    </div>
+    <div class="records-grid">${badges}</div>
+  `;
+}
+
+// ── Render F1 Results Heatmap ────────────────────────────────
+function renderHeatmap(driverId, teamColor) {
+  const data = DRIVER_RECORDS[driverId];
+  if (!data || !data.f1Results) return;
+
+  let section = document.getElementById('module-heatmap');
+  if (!section) {
+    const recordsSection = document.getElementById('module-records');
+    section = document.createElement('section');
+    section.id = 'module-heatmap';
+    section.className = 'glass-card';
+    section.style.marginBottom = '16px';
+    if (recordsSection) {
+      recordsSection.parentNode.insertBefore(section, recordsSection.nextSibling);
+    }
+  }
+
+  function getColor(pos) {
+    if (pos === 1) return '#e8aa00';
+    if (pos === 2) return '#8e8e93';
+    if (pos === 3) return '#bf7f3c';
+    if (pos === 'R' || pos === 'DNF') return '#e10600';
+    if (typeof pos === 'number' && pos <= 6) return teamColor;
+    if (typeof pos === 'number' && pos <= 10) return `${teamColor}88`;
+    return 'rgba(0,0,0,0.06)';
+  }
+
+  function getTextColor(pos) {
+    if (pos === 1) return '#1c1c1e';
+    if (pos === 'R' || pos === 'DNF') return 'white';
+    if (typeof pos === 'number' && pos <= 3) return 'white';
+    return '#8e8e93';
+  }
+
+  const seasons = Object.keys(data.f1Results).sort();
+
+  const rows = seasons.map(year => {
+    const races = data.f1Results[year];
+    const cells = Object.entries(races).map(([gp, pos]) => `
+      <div class="heat-cell" title="${gp} ${year}: P${pos}" style="background:${getColor(pos)};color:${getTextColor(pos)}">
+        ${pos === 'R' ? 'R' : pos}
+      </div>
+    `).join('');
+
+    const wins = Object.values(races).filter(p => p === 1).length;
+    const dnfs = Object.values(races).filter(p => p === 'R').length;
+    const pts = Object.values(races).filter(p => typeof p === 'number').reduce((s, p) => {
+      const PTS = [25,18,15,12,10,8,6,4,2,1];
+      return s + (PTS[p-1] || 0);
+    }, 0);
+
+    return `
+      <div class="heat-row">
+        <div class="heat-year">${year}</div>
+        <div class="heat-cells">${cells}</div>
+        <div class="heat-summary">
+          <span class="heat-wins">${wins}W</span>
+          ${dnfs ? `<span class="heat-dnf">${dnfs}R</span>` : ''}
+          <span class="heat-pts">${pts}p</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  section.innerHTML = `
+    <div class="card-header">
+      <div class="section-header">
+        <h2 class="section-title">F1 Results Heatmap</h2>
+        <span class="section-tag" style="color:var(--gold);background:rgba(232,170,0,0.08);border-color:rgba(232,170,0,0.2)">🟡 P1 &nbsp; ⬛ Points &nbsp; 🔴 DNF</span>
+      </div>
+    </div>
+    <div class="heatmap-wrap">${rows}</div>
+  `;
+}
+
+// ── Render Career Stats Table ────────────────────────────────
+function renderCareerStats(driverId) {
+  const data = DRIVER_RECORDS[driverId];
+  if (!data || !data.careerStats) return;
+
+  let section = document.getElementById('module-careerstats');
+  if (!section) {
+    const heatmapSection = document.getElementById('module-heatmap');
+    section = document.createElement('section');
+    section.id = 'module-careerstats';
+    section.className = 'glass-card';
+    section.style.marginBottom = '16px';
+    if (heatmapSection) {
+      heatmapSection.parentNode.insertBefore(section, heatmapSection.nextSibling);
+    }
+  }
+
+  const rows = data.careerStats.map((s, i) => {
+    const isChamp = s.pos.includes('🏆');
+    const isF1 = s.series === 'F1';
+    return `
+      <tr style="animation-delay:${i*0.04}s" class="${isChamp ? 'champ-row' : ''}">
+        <td class="stat-year">${s.year}</td>
+        <td class="stat-series ${isF1 ? 'f1-series' : ''}">${s.series}</td>
+        <td class="stat-num">${s.races}</td>
+        <td class="stat-num wins">${s.wins}</td>
+        <td class="stat-num">${s.poles}</td>
+        <td class="stat-num">${s.podiums}</td>
+        <td class="stat-num pts">${s.points}</td>
+        <td class="stat-pos ${isChamp ? 'champ-pos' : ''}">${s.pos}</td>
+      </tr>
+    `;
+  }).join('');
+
+  section.innerHTML = `
+    <div class="card-header">
+      <div class="section-header">
+        <h2 class="section-title">Career Statistics</h2>
+        <span class="section-tag">All Series</span>
+      </div>
+    </div>
+    <div class="stats-table-wrap">
+      <table class="stats-table">
+        <thead>
+          <tr>
+            <th>Year</th><th>Series</th><th>Races</th>
+            <th>Wins</th><th>Poles</th><th>Pods</th>
+            <th>Points</th><th>Result</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
   `;
 }
