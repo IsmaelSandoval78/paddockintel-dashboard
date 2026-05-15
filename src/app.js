@@ -114,19 +114,17 @@ async function fetchNextRace() {
 
 // ── Weather ──────────────────────────────────────────────────
 const OW_KEY = 'c354b5d6b364acf3e035bc28a8366d11';
-async function fetchWeather(lat, lon) {
-  try {
-    const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OW_KEY}&units=metric`);
-    const data = await res.json();
-    if (!res.ok) return null;
-    return {
-      temp:        Math.round(data.main.temp),
-      feels_like:  Math.round(data.main.feels_like),
-      humidity:    data.main.humidity,
-      condition:   data.weather[0].main,
-      description: data.weather[0].description,
-      wind_speed:  Math.round(data.wind.speed * 3.6),
-    };
+const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OW_KEY}&units=metric`);
+const data = await res.json();
+if (!res.ok) return null;
+return {
+  temp:        Math.round(data.main.temp),
+  feels_like:  Math.round(data.main.feels_like),
+  humidity:    data.main.humidity,
+  condition:   data.weather[0].main,
+  description: data.weather[0].description,
+  wind_speed:  Math.round(data.wind.speed * 3.6),
+};
   } catch (e) {
     return null;
   }
