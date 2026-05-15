@@ -310,7 +310,8 @@ async function renderRaceCountdown(race) {
   const country     = race.Circuit.Location.country;
   const lat         = race.Circuit.Location.lat;
   const lon         = race.Circuit.Location.long;
-  const raceDate    = new Date(`${race.date}T${race.time || '14:00:00'}Z`);
+  const raceTime    = race.time ? race.time.replace(/Z$/i, '') : '14:00:00';
+  const raceDate    = new Date(`${race.date}T${raceTime}Z`);
 
   document.getElementById('race-name').textContent    = raceName;
   document.getElementById('race-circuit').textContent = `${circuit} · ${locality}, ${country}`;
