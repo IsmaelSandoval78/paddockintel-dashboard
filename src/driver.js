@@ -120,11 +120,23 @@ async function fetchLastRaceSession(driverId) {
   } catch { return null; }
 }
 
-async function fetchOpenF1Session(year, country) {
+async function fetchOpenF1Session(year, country, locality) {
   try {
-    const res = await fetch(`${OPENF1}/sessions?year=${year}&country_name=${encodeURIComponent(country)}&session_type=Race`);
-    const data = await res.json();
-    return data?.[0] || null;
+    // Try country first
+    let res = await fetch(`${OPENF1}/sessions?year=${year}&country_name=${encodeURIComponent(country)}&session_type=Race`);
+    let data = await res.json();
+    if (data?.length) return data[0];
+    // Fallback: try previous year (OpenF1 may lag)
+    res = await fetch(`${OPENF1}/sessions?year=${year - 1}&country_name=${encodeURIComponent(country)}&session_type=Race`);
+    data = await res.json();
+    if (data?.length) return data[0];
+    // Fallback: try location name
+    if (locality) {
+      res = await fetch(`${OPENF1}/sessions?year=${year}&location=${encodeURIComponent(locality)}&session_type=Race`);
+      data = await res.json();
+      if (data?.length) return data[0];
+    }
+    return null;
   } catch { return null; }
 }
 
@@ -426,13 +438,21 @@ async function init() {
     return;
   }
 
-  const country   = lastRace.Circuit?.Location?.country || '';
-  const raceName  = lastRace.raceName;
+  const rawCountry = lastRace.Circuit?.Location?.country || '';
+  const locality   = lastRace.Circuit?.Location?.locality || '';
+  const raceName   = lastRace.raceName;
+  // OpenF1 uses country_name — map special cases
+  const COUNTRY_MAP = {
+    'USA': 'United States',
+    'UK':  'United Kingdom',
+    'UAE': 'United Arab Emirates',
+  };
+  const country = COUNTRY_MAP[rawCountry] || rawCountry;
   const driverNum = meta.number;
   const teamColor = getTeamColor(standing?.Constructors?.[0]?.name || '');
 
   // Find OpenF1 session
-  const session = await fetchOpenF1Session(parseInt(SEASON), country);
+  const session = await fetchOpenF1Session(parseInt(SEASON), country, locality);
   if (!session) {
     document.getElementById('pits-body').innerHTML = `<div class="no-data">OpenF1 session not found for ${raceName}.</div>`;
     document.getElementById('laps-body').innerHTML = `<div class="no-data">OpenF1 session not found for ${raceName}.</div>`;
