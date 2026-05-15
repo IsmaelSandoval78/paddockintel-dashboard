@@ -74,11 +74,12 @@ function estimateConstructorPrize(points, totalPoints, position) {
 }
 
 // ── Ergast API ───────────────────────────────────────────────
-const ERGAST_BASE = 'https://api.jolpi.ca/ergast/f1'; // community mirror
+const ERGAST_BASE = 'https://api.jolpi.ca/ergast/f1';
+const SEASON = '2026';
 
 async function fetchDriverStandings() {
   try {
-    const res = await fetch(`${ERGAST_BASE}/current/driverStandings.json`);
+    const res = await fetch(`${ERGAST_BASE}/${SEASON}/driverStandings.json`);
     const json = await res.json();
     const list = json?.MRData?.StandingsTable?.StandingsLists?.[0]?.DriverStandings;
     return list || [];
@@ -90,7 +91,7 @@ async function fetchDriverStandings() {
 
 async function fetchConstructorStandings() {
   try {
-    const res = await fetch(`${ERGAST_BASE}/current/constructorStandings.json`);
+    const res = await fetch(`${ERGAST_BASE}/${SEASON}/constructorStandings.json`);
     const json = await res.json();
     const list = json?.MRData?.StandingsTable?.StandingsLists?.[0]?.ConstructorStandings;
     return list || [];
@@ -102,7 +103,7 @@ async function fetchConstructorStandings() {
 
 async function fetchNextRace() {
   try {
-    const res = await fetch(`${ERGAST_BASE}/current/next.json`);
+    const res = await fetch(`${ERGAST_BASE}/${SEASON}/next.json`);
     const json = await res.json();
     const races = json?.MRData?.RaceTable?.Races;
     return races?.[0] || null;
