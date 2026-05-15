@@ -306,13 +306,14 @@ function renderPits(pits, stints, raceName) {
                      : compound === 'INTERMEDIATE' ? 'compound-inter'
                      : compound === 'WET' ? 'compound-wet' : '';
 
+    const fastClass = isFast ? 'fast' : '';
     return `
       <div class="pit-item">
         <div class="pit-lap">LAP ${pit.lap_number}</div>
         <div class="pit-compound ${compClass}">${compound.charAt(0)}${compound.slice(1).toLowerCase()}</div>
         <div class="pit-bar-wrap"><div class="pit-bar-fill" style="width:${barPct}%"></div></div>
         <div>
-          <div class="pit-duration ${isFast?'fast'}">${dur.toFixed(1)}s</div>
+          <div class="pit-duration ${fastClass}">${dur.toFixed(1)}s</div>
           <div class="pit-label">Stop: ${stop.toFixed(1)}s</div>
         </div>
       </div>
