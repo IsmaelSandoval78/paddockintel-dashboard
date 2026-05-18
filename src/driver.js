@@ -501,8 +501,6 @@ function renderHeatmap(driverId, teamColor) {
     return '#8e8e93';
   }
 
-  const PTS_MAP = [25,18,15,12,10,8,6,4,2,1];
-
   const seasons = Object.keys(d.f1Results).sort();
   const rows = seasons.map(year => {
     const races = d.f1Results[year];
@@ -512,10 +510,16 @@ function renderHeatmap(driverId, teamColor) {
       </div>
     `).join('');
 
-    const vals = Object.values(races);
-    const wins = vals.filter(p => p === 1).length;
-    const dnfs = vals.filter(p => p === 'R' || p === 'DSQ').length;
-    const pts  = vals.reduce((s, p) => s + (typeof p === 'number' ? (PTS_MAP[p-1] || 0) : 0), 0);
+    const vals    = Object.values(races);
+    const wins    = vals.filter(p => p === 1).length;
+    const dnfs    = vals.filter(p => p === 'R' || p === 'DSQ').length;
+    // Read points directly from careerStats — avoids recalculating from positions
+    // (sprint pts, fastest lap pts, etc. would be missed otherwise)
+    const statRow = d.careerStats?.find(s => s.year === parseInt(year) && s.series === 'F1');
+    const pts     = statRow ? statRow.points : vals.reduce((s, p) => {
+      const PTS_MAP = [25,18,15,12,10,8,6,4,2,1];
+      return s + (typeof p === 'number' ? (PTS_MAP[p-1] || 0) : 0);
+    }, 0);
 
     return `
       <div class="heat-row">
