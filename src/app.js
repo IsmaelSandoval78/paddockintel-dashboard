@@ -18,6 +18,29 @@ const TEAM_COLORS = {
   'RB':           '#6692FF',
   'Kick Sauber':  '#52E252',
   'Haas':         '#B6BABD',
+  'Cadillac':     '#C8102E',
+  'Audi':         '#52E252',
+  'Racing Bulls': '#6692FF',
+};
+
+// ── Constructor name → profile ref mapping ───────────────────
+const CONSTRUCTOR_REF_MAP = {
+  'Mercedes':        'mercedes',
+  'Ferrari':         'ferrari',
+  'McLaren':         'mclaren',
+  'Red Bull':        'red_bull',
+  'Aston Martin':    'aston_martin',
+  'Alpine':          'alpine',
+  'Alpine F1 Team':  'alpine',
+  'Williams':        'williams',
+  'RB':              'rb',
+  'Racing Bulls':    'rb',
+  'Haas':            'haas',
+  'Haas F1 Team':    'haas',
+  'Kick Sauber':     'audi',
+  'Sauber':          'audi',
+  'Audi':            'audi',
+  'Cadillac':        'cadillac',
 };
 
 // ── Driver Salary Estimates ──────────────────────────────────
@@ -25,18 +48,18 @@ const DRIVER_SALARIES = {
   'Max Verstappen': 55000000, 'Lewis Hamilton': 40000000,
   'Charles Leclerc': 30000000, 'Lando Norris': 25000000,
   'George Russell': 15000000, 'Carlos Sainz': 10000000,
-  'Fernando Alonso': 15000000, 'Lance Stroll': 7000000,
+  'Fernando Alonso': 15000000, 'Lance Stroll': 10000000,
   'Oscar Piastri': 8000000, 'Pierre Gasly': 6000000,
   'Esteban Ocon': 6000000, 'Yuki Tsunoda': 3000000,
   'Valtteri Bottas': 2500000, 'Zhou Guanyu': 2000000,
-  'Nico Hulkenberg': 5000000, 'Kevin Magnussen': 3000000,
+  'Nico Hulkenberg': 2000000, 'Kevin Magnussen': 3000000,
   'Alexander Albon': 4000000, 'Logan Sargeant': 1000000,
-  'Daniel Ricciardo': 5000000, 'Sergio Perez': 15000000,
+  'Daniel Ricciardo': 5000000, 'Sergio Perez': 2000000,
   'Kimi Antonelli': 2000000, 'Andrea Kimi Antonelli': 2000000,
   'Oliver Bearman': 1500000, 'Isack Hadjar': 1500000,
   'Jack Doohan': 1500000, 'Gabriel Bortoleto': 1500000,
   'Liam Lawson': 3000000, 'Franco Colapinto': 2500000,
-  'Doohan': 1500000,
+  'Arvid Lindblad': 2000000,
 };
 
 // ── Circuit Attendance Estimates (3-day weekend) ─────────────
@@ -137,11 +160,10 @@ async function fetchNextRace() {
 
 async function fetchCircuitHistory(circuitId) {
   try {
-    // Get race winners at this circuit (position 1) across all seasons
     const res = await fetch(`${ERGAST_BASE}/circuits/${circuitId}/results/1.json?limit=50`);
     const json = await res.json();
     const races = json?.MRData?.RaceTable?.Races || [];
-    return races.slice(-5).reverse(); // last 5, most recent first
+    return races.slice(-5).reverse();
   } catch { return []; }
 }
 
@@ -360,9 +382,9 @@ function renderSidebarDrivers(drivers) {
   if (!el || !drivers.length) return;
 
   el.innerHTML = drivers.map(d => {
-    const team  = d.Constructors?.[0]?.name || '—';
-    const color = getTeamColor(team);
-    const pos   = parseInt(d.position);
+    const team     = d.Constructors?.[0]?.name || '—';
+    const color    = getTeamColor(team);
+    const pos      = parseInt(d.position);
     const posClass = pos <= 3 ? `pos-${pos}` : '';
 
     return `
@@ -387,15 +409,19 @@ function renderSidebarConstructors(constructors) {
   const maxPts = parseInt(constructors[0]?.points || 1);
 
   el.innerHTML = constructors.map(c => {
-    const name   = c.Constructor.name;
-    const pts    = parseInt(c.points);
-    const pos    = parseInt(c.position);
-    const color  = getTeamColor(name);
-    const barW   = Math.round((pts / maxPts) * 100);
-    const posClass = pos <= 3 ? `pos-${pos}` : '';
+    const name         = c.Constructor.name;
+    const pts          = parseInt(c.points);
+    const pos          = parseInt(c.position);
+    const color        = getTeamColor(name);
+    const barW         = Math.round((pts / maxPts) * 100);
+    const posClass     = pos <= 3 ? `pos-${pos}` : '';
+    const constructorRef = CONSTRUCTOR_REF_MAP[name] || name.toLowerCase().replace(/\s+/g, '_');
 
     return `
-      <div class="sb-constructor-row">
+      <div class="sb-constructor-row"
+           onclick="window.location.href='constructor.html?id=${constructorRef}'"
+           style="cursor:pointer"
+           title="View ${name} profile">
         <span class="sb-pos ${posClass}">${pos}</span>
         <span class="sb-color-dot" style="background:${color};box-shadow:0 0 6px ${color}66"></span>
         <div class="sb-info">
@@ -438,8 +464,8 @@ async function init() {
     addCircuitMarkers(allRaces, nextRace?.round);
     const done  = allRaces.filter(r => raceIsPast(r)).length;
     const total = allRaces.length;
-    const roundsTag  = document.getElementById('map-rounds-tag');
-    const statusTag  = document.getElementById('map-status-tag');
+    const roundsTag = document.getElementById('map-rounds-tag');
+    const statusTag = document.getElementById('map-status-tag');
     if (roundsTag) roundsTag.textContent = `${total} Rounds`;
     if (statusTag) {
       if (nextRace) {
