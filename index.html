@@ -3,26 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- SEO -->
-  <title>PaddockIntel Dashboard — F1 Economic Intelligence</title>
-  <meta name="description" content="Real-time F1 standings with salary estimates, constructor prize money tracker, and race countdown. Economic intelligence from PaddockIntel." />
+  <title>PaddockIntel — F1 Intelligence Dashboard</title>
+  <meta name="description" content="Real-time Formula 1 world map, standings, and race intelligence. Explore circuits, results, and economics from PaddockIntel." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://app.paddockintel.com" />
-
-  <!-- OG -->
-  <meta property="og:title" content="PaddockIntel Dashboard" />
-  <meta property="og:description" content="F1 standings + salary estimates + prize money tracker. Economic intelligence for motorsport." />
+  <meta property="og:title" content="PaddockIntel — F1 Intelligence Dashboard" />
+  <meta property="og:description" content="F1 circuit map, driver standings, constructor rankings, and race intelligence." />
   <meta property="og:url" content="https://app.paddockintel.com" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
-
-  <!-- Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23e10600'/><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='18' fill='white'>PI</text></svg>" />
-
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="src/styles.css" />
 </head>
-
 <body>
   <div class="app-container">
 
@@ -32,15 +25,12 @@
         <div class="logo-badge">PI</div>
         <div>
           <div class="logo-text">Paddock<span>Intel</span></div>
-          <div class="logo-sub">Economic Intelligence Dashboard</div>
+          <div class="logo-sub">F1 Intelligence Dashboard</div>
         </div>
       </div>
-
       <div class="header-right">
-        <div class="live-badge">
-          <div class="live-dot"></div>
-          Live Data
-        </div>
+        <a href="https://paddockintel.com" class="header-nav-link" target="_blank">↗ News</a>
+        <div class="live-badge"><div class="live-dot"></div>Live Data</div>
         <div class="season-badge">F1 · 2026 SEASON</div>
         <div class="last-updated" id="last-updated">Loading…</div>
       </div>
@@ -49,133 +39,81 @@
     <!-- ═══ TICKER ═══════════════════════════════════════════ -->
     <div class="ticker-bar" aria-hidden="true">
       <div class="ticker-inner" id="ticker-inner">
-        <span class="ticker-item">
-          <span class="highlight">PaddockIntel</span> — F1 Economic Intelligence · Loading standings…
-        </span>
+        <span class="ticker-item"><span class="highlight">PaddockIntel</span> — F1 Intelligence · Loading standings…</span>
       </div>
     </div>
 
-    <!-- ═══ MODULE 1: DRIVER STANDINGS ═══════════════════════ -->
-    <section id="module-standings" class="glass-card">
-      <div style="padding: 20px 20px 12px">
-        <div class="section-header">
-          <h2 class="section-title">Driver Standings</h2>
-          <span class="section-tag">WDC 2025</span>
-          <span class="section-tag" >Salary Est.</span>
-          <span class="section-tag" style="color: var(--yellow); background: rgba(232,255,0,0.08)">Prize Est.</span>
-        </div>
-        <p style="font-family: var(--font-mono); font-size: 10px; color: var(--grey-2); letter-spacing: 0.06em; margin-bottom: 4px;">
-          SALARY ESTIMATES BASED ON PUBLIC REPORTING (AUTOSPORT, RACEFANS, FORBES) · PRIZE ESTIMATES MODELED ON FOM PRIZE STRUCTURE
-        </p>
-      </div>
-      <div id="standings-wrap">
-        <div class="loading-state"><div class="spinner"></div>Loading driver standings…</div>
-      </div>
-    </section>
+    <!-- ═══ MAIN DASHBOARD GRID ══════════════════════════════ -->
+    <div class="dashboard-grid">
 
-    <!-- ═══ MODULE 2: PRIZE MONEY TRACKER ════════════════════ -->
-    <section id="module-prize" class="glass-card">
-      <div style="padding: 20px 20px 0">
-        <div class="section-header">
-          <h2 class="section-title">Constructor Prize Money</h2>
-          <span class="section-tag">WCC 2025</span>
-          <span class="section-tag" class="gold">~$1.1B FUND</span>
-        </div>
-        <p style="font-family: var(--font-mono); font-size: 10px; color: var(--grey-2); letter-spacing: 0.06em; margin-bottom: 0;">
-          MODELED ON FOM DISTRIBUTION FORMULA — COLUMN 1 (EQUAL) + COLUMN 2 (POSITION) + PERFORMANCE POOL · ALL FIGURES ESTIMATED
-        </p>
-      </div>
-      <div class="prize-grid" id="prize-grid">
-        <div class="loading-state"><div class="spinner"></div>Loading constructor data…</div>
-      </div>
-    </section>
-
-    <!-- ═══ MODULE 3: RACE COUNTDOWN + WEATHER ═══════════════ -->
-    <section id="module-countdown" class="glass-card">
-      <div style="padding: 20px 20px 0">
-        <div class="section-header">
-          <h2 class="section-title">Next Race</h2>
-          <span class="section-tag">Countdown</span>
-          <span class="section-tag" >Circuit Weather</span>
-        </div>
-      </div>
-
-      <div class="race-layout">
-        <div class="race-info">
-          <h2 id="race-name">Loading…</h2>
-          <div class="race-circuit" id="race-circuit">—</div>
-          <div class="race-date-str" id="race-date-str">—</div>
-
-          <div class="countdown-blocks">
-            <div class="cdown-block">
-              <span class="cdown-num" id="cdown-days">--</span>
-              <span class="cdown-label">Days</span>
-            </div>
-            <div class="cdown-block">
-              <span class="cdown-num" id="cdown-hours">--</span>
-              <span class="cdown-label">Hours</span>
-            </div>
-            <div class="cdown-block">
-              <span class="cdown-num" id="cdown-mins">--</span>
-              <span class="cdown-label">Mins</span>
-            </div>
-            <div class="cdown-block">
-              <span class="cdown-num" id="cdown-secs">--</span>
-              <span class="cdown-label">Secs</span>
-            </div>
+      <!-- MAP CARD -->
+      <div class="map-card glass-card">
+        <div class="map-topbar">
+          <div class="map-title-group">
+            <span class="map-card-title">2026 F1 Season</span>
+            <span class="section-tag" id="map-rounds-tag">24 Rounds</span>
+            <span class="section-tag gold" id="map-status-tag">Loading…</span>
+          </div>
+          <div class="map-legend">
+            <span class="legend-item"><span class="legend-dot ldone"></span>Completed</span>
+            <span class="legend-item"><span class="legend-dot lnext pulse-dot"></span>Next Race</span>
+            <span class="legend-item"><span class="legend-dot lupcoming"></span>Upcoming</span>
+            <span class="legend-hint">Click a circuit ↗</span>
           </div>
         </div>
+        <div id="world-map"></div>
+      </div>
 
-        <div class="weather-panel" id="weather-panel">
-          <div class="loading-state" style="padding: 12px; flex-direction: column; gap: 6px;">
-            <div class="spinner"></div>
-            <span style="font-size: 9px">Weather…</span>
-          </div>
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+
+        <!-- Circuit Detail Panel (hidden by default) -->
+        <div id="circuit-panel" class="circuit-panel glass-card" style="display:none">
+          <div id="circuit-panel-inner"></div>
         </div>
-      </div>
 
-      <!-- Economic insight callout -->
-      <div style="
-        margin: 0 20px 20px;
-        padding: 12px 16px;
-        background: rgba(232,255,0,0.04);
-        border: 1px solid rgba(232,255,0,0.12);
-        border-radius: var(--radius);
-        font-family: var(--font-mono);
-        font-size: 11px;
-        color: var(--grey-1);
-        letter-spacing: 0.05em;
-        line-height: 1.7;
-      ">
-        💡 <strong class="gold">Economic context:</strong>
-        Each F1 race generates an estimated $150–400M in direct economic impact for the host country.
-        Race hosting fees range from $25M (traditional circuits) to $65M+ (street circuits).
-        Prize fund distribution is calculated post-season based on final WCC standings.
-      </div>
-    </section>
+        <!-- Default: Standings -->
+        <div id="standings-panel" class="standings-panel">
+
+          <div class="glass-card sidebar-card">
+            <div class="sidebar-card-header">
+              <span class="sidebar-card-title">Driver Championship</span>
+              <span class="section-tag">WDC · Top 10</span>
+            </div>
+            <div id="sidebar-drivers">
+              <div class="loading-state" style="padding:28px"><div class="spinner"></div>Loading…</div>
+            </div>
+          </div>
+
+          <div class="glass-card sidebar-card">
+            <div class="sidebar-card-header">
+              <span class="sidebar-card-title">Constructor Championship</span>
+              <span class="section-tag gold">WCC · Top 5</span>
+            </div>
+            <div id="sidebar-constructors">
+              <div class="loading-state" style="padding:28px"><div class="spinner"></div>Loading…</div>
+            </div>
+          </div>
+
+        </div>
+      </aside>
+
+    </div><!-- /dashboard-grid -->
 
     <!-- ═══ FOOTER ════════════════════════════════════════════ -->
     <footer class="site-footer">
-      <div>
-        © 2025 <a href="https://paddockintel.com" class="footer-link" target="_blank">PaddockIntel</a>
-        · F1 Economic Intelligence
-      </div>
-      <div>
-        Data: Ergast F1 API · OpenWeather · Salary estimates via public reporting ·
-        Prize model estimated — not official FOM data
-      </div>
+      <div>© 2026 <a href="https://paddockintel.com" class="footer-link" target="_blank">PaddockIntel</a> · F1 Intelligence</div>
+      <div>Data: Ergast/jolpi.ca · OpenWeather · Salary estimates via public reporting · Prize model estimated</div>
       <div>
         <a href="https://paddockintel.com" class="footer-link" target="_blank">paddockintel.com</a>
         &nbsp;·&nbsp;
-        <a href="https://seo.paddockintel.com" class="footer-link" target="_blank">SEO Tool</a>
+        <a href="driver.html" class="footer-link">Driver Profiles</a>
       </div>
     </footer>
 
   </div><!-- /app-container -->
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="src/app.js"></script>
 </body>
 </html>
-Read
-app.js
-Déjame también ver los estilos actuales antes de planear.
