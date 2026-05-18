@@ -1,137 +1,59 @@
 /* ═══════════════════════════════════════════════════════════
-   PADDOCKINTEL DASHBOARD — app.js
-   F1 Standings + Prize Money + Race Countdown + Weather
+   PADDOCKINTEL DASHBOARD — app.js v3
+   World Map · Driver Standings · Constructor Standings · Circuit Intel
    ═══════════════════════════════════════════════════════════ */
 
-// ── Team Colors ─────────────────────────────────────────────
-const TEAM_COLORS = {
-  'Red Bull':       '#3671C6',
-  'Ferrari':        '#E8002D',
-  'Mercedes':       '#27F4D2',
-  'McLaren':        '#FF8000',
-  'Aston Martin':   '#229971',
-  'Alpine':         '#FF87BC',
-  'Williams':       '#64C4FF',
-  'RB':             '#6692FF',
-  'Kick Sauber':    '#52E252',
-  'Haas':           '#B6BABD',
-};
-
-// ── Driver Salary Estimates (USD, 2025 season) ───────────────
-// Based on public reporting — Autosport, RaceFans, Forbes
-const DRIVER_SALARIES = {
-  'Max Verstappen':           55000000,
-  'Lewis Hamilton':           40000000,
-  'Charles Leclerc':          30000000,
-  'Lando Norris':             25000000,
-  'George Russell':           15000000,
-  'Carlos Sainz':             10000000,
-  'Fernando Alonso':          15000000,
-  'Lance Stroll':              7000000,
-  'Oscar Piastri':             8000000,
-  'Pierre Gasly':              6000000,
-  'Esteban Ocon':              6000000,
-  'Yuki Tsunoda':              3000000,
-  'Valtteri Bottas':           2500000,
-  'Zhou Guanyu':               2000000,
-  'Nico Hulkenberg':           5000000,
-  'Kevin Magnussen':           3000000,
-  'Alexander Albon':           4000000,
-  'Logan Sargeant':            1000000,
-  'Daniel Ricciardo':          5000000,
-  'Sergio Perez':             15000000,
-  // 2026 drivers
-  'Kimi Antonelli':            2000000,
-  'Andrea Kimi Antonelli':     2000000,
-  'Oliver Bearman':            1500000,
-  'Isack Hadjar':              1500000,
-  'Jack Doohan':               1500000,
-  'Gabriel Bortoleto':         1500000,
-  'Liam Lawson':               3000000,
-  'Nyck de Vries':             2000000,
-  'Franco Colapinto':          2500000,
-  'Doohan':                    1500000,
-};
-
-// ── Prize Money Model ────────────────────────────────────────
-// 2024 prize fund: ~$1.13B distributed to constructors.
-// Simplified: Column 1 (equal split ~$60M each), Column 2 (finishing bonus by pts)
-// Total pot modeled at ~$1.1B for estimation purposes
-const TOTAL_PRIZE_FUND = 1100000000;
-
-function estimateConstructorPrize(points, totalPoints, position) {
-  // Position bonus (Columns 2 & 3 — approximate FOM formula)
-  const positionBonuses = [
-    68000000, 60000000, 54000000, 45000000, 38000000,
-    30000000, 22000000, 15000000, 10000000,  8000000
-  ];
-  const baseEqual = 38000000; // Column 1 equal share
-  const posBonus = positionBonuses[Math.min(position - 1, 9)] || 8000000;
-  // Points proportion of the "performance" pool
-  const performancePool = 200000000;
-  const pointsShare = totalPoints > 0 ? (points / totalPoints) * performancePool : 0;
-  return Math.round(baseEqual + posBonus + pointsShare);
-}
-
-// ── Ergast API ───────────────────────────────────────────────
 const ERGAST_BASE = 'https://api.jolpi.ca/ergast/f1';
 const SEASON = '2026';
 
-async function fetchDriverStandings() {
-  try {
-    const res = await fetch(`${ERGAST_BASE}/${SEASON}/driverStandings.json`);
-    const json = await res.json();
-    const list = json?.MRData?.StandingsTable?.StandingsLists?.[0]?.DriverStandings;
-    return list || [];
-  } catch (e) {
-    console.error('Driver standings fetch failed:', e);
-    return [];
-  }
-}
+// ── Team Colors ─────────────────────────────────────────────
+const TEAM_COLORS = {
+  'Red Bull':     '#3671C6',
+  'Ferrari':      '#E8002D',
+  'Mercedes':     '#27F4D2',
+  'McLaren':      '#FF8000',
+  'Aston Martin': '#229971',
+  'Alpine':       '#FF87BC',
+  'Williams':     '#64C4FF',
+  'RB':           '#6692FF',
+  'Kick Sauber':  '#52E252',
+  'Haas':         '#B6BABD',
+};
 
-async function fetchConstructorStandings() {
-  try {
-    const res = await fetch(`${ERGAST_BASE}/${SEASON}/constructorStandings.json`);
-    const json = await res.json();
-    const list = json?.MRData?.StandingsTable?.StandingsLists?.[0]?.ConstructorStandings;
-    return list || [];
-  } catch (e) {
-    console.error('Constructor standings fetch failed:', e);
-    return [];
-  }
-}
+// ── Driver Salary Estimates ──────────────────────────────────
+const DRIVER_SALARIES = {
+  'Max Verstappen': 55000000, 'Lewis Hamilton': 40000000,
+  'Charles Leclerc': 30000000, 'Lando Norris': 25000000,
+  'George Russell': 15000000, 'Carlos Sainz': 10000000,
+  'Fernando Alonso': 15000000, 'Lance Stroll': 7000000,
+  'Oscar Piastri': 8000000, 'Pierre Gasly': 6000000,
+  'Esteban Ocon': 6000000, 'Yuki Tsunoda': 3000000,
+  'Valtteri Bottas': 2500000, 'Zhou Guanyu': 2000000,
+  'Nico Hulkenberg': 5000000, 'Kevin Magnussen': 3000000,
+  'Alexander Albon': 4000000, 'Logan Sargeant': 1000000,
+  'Daniel Ricciardo': 5000000, 'Sergio Perez': 15000000,
+  'Kimi Antonelli': 2000000, 'Andrea Kimi Antonelli': 2000000,
+  'Oliver Bearman': 1500000, 'Isack Hadjar': 1500000,
+  'Jack Doohan': 1500000, 'Gabriel Bortoleto': 1500000,
+  'Liam Lawson': 3000000, 'Franco Colapinto': 2500000,
+  'Doohan': 1500000,
+};
 
-async function fetchNextRace() {
-  try {
-    const res = await fetch(`${ERGAST_BASE}/${SEASON}/next.json`);
-    const json = await res.json();
-    const races = json?.MRData?.RaceTable?.Races;
-    return races?.[0] || null;
-  } catch (e) {
-    console.error('Next race fetch failed:', e);
-    return null;
-  }
-}
-
-// ── Weather ──────────────────────────────────────────────────
-const OW_KEY = 'c354b5d6b364acf3e035bc28a8366d11';
-async function fetchWeather(lat, lon) {
-  try {
-    const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OW_KEY}&units=metric`);
-    const data = await res.json();
-    if (!res.ok) return null;
-    return {
-      temp:        Math.round(data.main.temp),
-      feels_like:  Math.round(data.main.feels_like),
-      humidity:    data.main.humidity,
-      condition:   data.weather[0].main,
-      description: data.weather[0].description,
-      wind_speed:  Math.round(data.wind.speed * 3.6),
-    };
-  } catch (e) {
-    return null;
-  }
-}
+// ── Circuit Attendance Estimates (3-day weekend) ─────────────
+const CIRCUIT_ATTENDANCE = {
+  bahrain:       '~80,000',  jeddah:        '~60,000',
+  albert_park:   '~280,000', suzuka:        '~300,000',
+  shanghai:      '~200,000', miami:         '~275,000',
+  imola:         '~180,000', monaco:        '~200,000',
+  villeneuve:    '~300,000', catalunya:     '~300,000',
+  red_bull_ring: '~300,000', silverstone:   '~480,000',
+  hungaroring:   '~200,000', spa:           '~350,000',
+  zandvoort:     '~105,000', monza:         '~160,000',
+  baku:          '~80,000',  marina_bay:    '~250,000',
+  americas:      '~440,000', rodriguez:     '~400,000',
+  interlagos:    '~280,000', vegas:         '~315,000',
+  losail:        '~80,000',  yas_marina:    '~95,000',
+};
 
 // ── Helpers ──────────────────────────────────────────────────
 function formatMoney(n) {
@@ -143,289 +65,396 @@ function formatMoney(n) {
 
 function flag(nat) {
   const FLAGS = {
-    'British': '🇬🇧', 'Dutch': '🇳🇱', 'German': '🇩🇪', 'Spanish': '🇪🇸',
-    'Finnish': '🇫🇮', 'French': '🇫🇷', 'Australian': '🇦🇺', 'Canadian': '🇨🇦',
-    'Mexican': '🇲🇽', 'Monegasque': '🇲🇨', 'Japanese': '🇯🇵', 'Chinese': '🇨🇳',
-    'Danish': '🇩🇰', 'Thai': '🇹🇭', 'American': '🇺🇸', 'Italian': '🇮🇹',
-    'New Zealander': '🇳🇿', 'Argentine': '🇦🇷', 'Brazilian': '🇧🇷', 'Swiss': '🇨🇭',
-    'Russian': '🇷🇺', 'Polish': '🇵🇱', 'Austrian': '🇦🇹', 'Belgian': '🇧🇪',
+    'British':'🇬🇧','Dutch':'🇳🇱','German':'🇩🇪','Spanish':'🇪🇸',
+    'Finnish':'🇫🇮','French':'🇫🇷','Australian':'🇦🇺','Canadian':'🇨🇦',
+    'Mexican':'🇲🇽','Monegasque':'🇲🇨','Japanese':'🇯🇵','Chinese':'🇨🇳',
+    'Danish':'🇩🇰','Thai':'🇹🇭','American':'🇺🇸','Italian':'🇮🇹',
+    'New Zealander':'🇳🇿','Argentine':'🇦🇷','Brazilian':'🇧🇷',
+    'Swiss':'🇨🇭','Russian':'🇷🇺','Polish':'🇵🇱','Austrian':'🇦🇹','Belgian':'🇧🇪',
   };
   return FLAGS[nat] || '🏁';
 }
 
-function getTeamColor(constructorName) {
-  for (const [key, color] of Object.entries(TEAM_COLORS)) {
-    if (constructorName.includes(key) || key.includes(constructorName)) return color;
+function getTeamColor(name) {
+  for (const [k, c] of Object.entries(TEAM_COLORS)) {
+    if (name && (name.includes(k) || k.includes(name))) return c;
   }
   return '#8a9bb0';
 }
 
-function getSalary(firstName, lastName) {
-  const full = `${firstName} ${lastName}`;
-  // Direct match
+function getSalary(first, last) {
+  const full = `${first} ${last}`;
   if (DRIVER_SALARIES[full] !== undefined) return DRIVER_SALARIES[full];
-  // Partial match
-  for (const [name, val] of Object.entries(DRIVER_SALARIES)) {
-    if (name.includes(lastName) || full.includes(name.split(' ')[1])) return val;
+  for (const [n, v] of Object.entries(DRIVER_SALARIES)) {
+    if (n.includes(last)) return v;
   }
-  return 2000000; // fallback
+  return 2000000;
 }
 
-// Estimate prize share per driver: team prize * rough % based on #1/#2 status
-function driverPrizeShare(driverIndex, teamPrize) {
-  // P1 driver gets ~55%, P2 ~45% — very rough heuristic
-  return Math.round(teamPrize * (driverIndex === 0 ? 0.55 : 0.45));
+function raceIsPast(race) {
+  const t = race.time ? race.time.replace(/Z$/i, '') : '14:00:00';
+  return new Date(`${race.date}T${t}Z`) < new Date();
 }
 
-// ── Build Ticker ─────────────────────────────────────────────
-function buildTicker(drivers) {
-  if (!drivers.length) return;
-  const content = drivers.slice(0, 8).map(d => {
-    const name = `${d.Driver.givenName} ${d.Driver.familyName}`;
-    return `<span class="ticker-item"><span class="pos-label">P${d.position}</span> <span class="highlight">${name}</span> · ${d.points} PTS</span>`;
-  }).join('');
-  // Duplicate for seamless loop
-  document.getElementById('ticker-inner').innerHTML = content + content;
+function formatRaceDate(dateStr) {
+  return new Date(dateStr + 'T12:00:00Z').toLocaleDateString('en-US', {
+    month: 'short', day: 'numeric', year: 'numeric',
+  });
 }
 
-// ── Render Standings ─────────────────────────────────────────
-function renderStandings(drivers, constructors) {
-  const el = document.getElementById('standings-body');
-  if (!el) return;
+// ── API Fetches ───────────────────────────────────────────────
+async function fetchAllRaces() {
+  try {
+    const res = await fetch(`${ERGAST_BASE}/${SEASON}.json?limit=30`);
+    const json = await res.json();
+    return json?.MRData?.RaceTable?.Races || [];
+  } catch { return []; }
+}
 
-  // Build a map: driverID -> team color + constructor
-  const teamMap = {};
-  constructors.forEach(c => {
-    // Ergast doesn't directly link drivers per constructor in standings,
-    // so we map by constructor name matching
-    teamMap[c.Constructor.name] = {
-      color: getTeamColor(c.Constructor.name),
-      prize: estimateConstructorPrize(
-        parseInt(c.points),
-        constructors.reduce((s, x) => s + parseInt(x.points), 0),
-        parseInt(c.position)
-      )
-    };
+async function fetchDriverStandings() {
+  try {
+    const res = await fetch(`${ERGAST_BASE}/${SEASON}/driverStandings.json`);
+    const json = await res.json();
+    return json?.MRData?.StandingsTable?.StandingsLists?.[0]?.DriverStandings || [];
+  } catch { return []; }
+}
+
+async function fetchConstructorStandings() {
+  try {
+    const res = await fetch(`${ERGAST_BASE}/${SEASON}/constructorStandings.json`);
+    const json = await res.json();
+    return json?.MRData?.StandingsTable?.StandingsLists?.[0]?.ConstructorStandings || [];
+  } catch { return []; }
+}
+
+async function fetchNextRace() {
+  try {
+    const res = await fetch(`${ERGAST_BASE}/${SEASON}/next.json`);
+    const json = await res.json();
+    return json?.MRData?.RaceTable?.Races?.[0] || null;
+  } catch { return null; }
+}
+
+async function fetchCircuitHistory(circuitId) {
+  try {
+    // Get race winners at this circuit (position 1) across all seasons
+    const res = await fetch(`${ERGAST_BASE}/circuits/${circuitId}/results/1.json?limit=50`);
+    const json = await res.json();
+    const races = json?.MRData?.RaceTable?.Races || [];
+    return races.slice(-5).reverse(); // last 5, most recent first
+  } catch { return []; }
+}
+
+async function fetchWeather(lat, lon) {
+  try {
+    const res = await fetch(`/api/weather?lat=${lat}&lon=${lon}`);
+    if (res.ok) return await res.json();
+    throw new Error();
+  } catch {
+    try {
+      const KEY = 'c354b5d6b364acf3e035bc28a8366d11';
+      const res = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${KEY}&units=metric`
+      );
+      const d = await res.json();
+      if (!res.ok) return null;
+      return {
+        temp:        Math.round(d.main.temp),
+        feels_like:  Math.round(d.main.feels_like),
+        humidity:    d.main.humidity,
+        condition:   d.weather[0].main,
+        description: d.weather[0].description,
+        wind_speed:  Math.round(d.wind.speed * 3.6),
+      };
+    } catch { return null; }
+  }
+}
+
+// ── Map ───────────────────────────────────────────────────────
+let map;
+
+function initMap() {
+  map = L.map('world-map', {
+    center: [25, 15],
+    zoom: 2,
+    zoomControl: true,
+    attributionControl: true,
+    scrollWheelZoom: true,
+    minZoom: 1,
+    maxZoom: 8,
   });
 
-  el.innerHTML = drivers.map((d, i) => {
-    const firstName = d.Driver.givenName;
-    const lastName  = d.Driver.familyName;
-    const nat       = d.Driver.nationality;
-    const team      = d.Constructors?.[0]?.name || 'Unknown';
-    const pts       = parseInt(d.points);
-    const wins      = parseInt(d.wins);
-    const pos       = parseInt(d.position);
-    const color     = getTeamColor(team);
-    const teamData  = teamMap[team] || { prize: 0 };
-    const salary    = getSalary(firstName, lastName);
-    const prize     = driverPrizeShare(i % 2, teamData.prize);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> © <a href="https://carto.com/attributions" target="_blank">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 19,
+  }).addTo(map);
+}
 
-    const posClass = pos <= 3 ? `pos-${pos}` : '';
+function addCircuitMarkers(races, nextRound) {
+  races.forEach(race => {
+    const lat = parseFloat(race.Circuit.Location.lat);
+    const lon = parseFloat(race.Circuit.Location.long);
+    const isPast = raceIsPast(race);
+    const isNext = nextRound && race.round === nextRound;
+    const status = isNext ? 'next' : isPast ? 'done' : 'upcoming';
 
-    const driverId = d.Driver.driverId;
+    const icon = L.divIcon({
+      className: '',
+      html: `<div class="circ-pin circ-${status}" title="Round ${race.round}: ${race.raceName}"><span>${race.round}</span></div>`,
+      iconSize: [26, 26],
+      iconAnchor: [13, 13],
+      tooltipAnchor: [13, -14],
+    });
+
+    const dotColor = isNext ? '#e8aa00' : isPast ? '#8e8e93' : '#e10600';
+
+    L.marker([lat, lon], { icon })
+      .addTo(map)
+      .bindTooltip(
+        `<div style="font-weight:700">Round ${race.round} — ${race.raceName}</div>` +
+        `<div style="opacity:.75">${race.Circuit.circuitName}</div>` +
+        `<div style="opacity:.65">${race.Circuit.Location.locality}, ${race.Circuit.Location.country}</div>` +
+        `<div style="color:${dotColor};margin-top:2px">${formatRaceDate(race.date)}${isNext ? ' · Next Race 🔴' : isPast ? ' · Completed' : ''}</div>`,
+        { direction: 'top', offset: [0, -4], className: 'circuit-tooltip' }
+      )
+      .on('click', () => openCircuitPanel(race));
+  });
+}
+
+// ── Circuit Panel ─────────────────────────────────────────────
+function openCircuitPanel(race) {
+  document.getElementById('standings-panel').style.display = 'none';
+  const panel = document.getElementById('circuit-panel');
+  panel.style.display = 'block';
+
+  const isPast = raceIsPast(race);
+  const statusLabel = isPast ? '✓ Completed' : '⏳ Upcoming';
+  const statusClass = isPast ? 'done' : 'upcoming';
+  const attendance = CIRCUIT_ATTENDANCE[race.Circuit.circuitId] || 'N/A';
+
+  document.getElementById('circuit-panel-inner').innerHTML = `
+    <div class="cp-header">
+      <button class="cp-back" onclick="closeCircuitPanel()">← Standings</button>
+      <span class="section-tag">Round ${race.round}</span>
+    </div>
+    <div class="cp-race-name">${race.raceName}</div>
+    <div class="cp-circuit-name">${race.Circuit.circuitName}</div>
+    <div class="cp-location">${race.Circuit.Location.locality}, ${race.Circuit.Location.country}</div>
+    <div class="cp-meta-row">
+      <span class="cp-chip">📅 ${formatRaceDate(race.date)}</span>
+      <span class="cp-chip cp-chip-${statusClass}">${statusLabel}</span>
+    </div>
+    <div class="cp-meta-row">
+      <span class="cp-chip">🏟️ Attendance: ${attendance}</span>
+    </div>
+
+    <div class="cp-divider"></div>
+    <div class="cp-section-label">Last 5 Champions at this circuit</div>
+    <div id="cp-champions">
+      <div class="loading-state" style="padding:16px 14px"><div class="spinner"></div>Loading history…</div>
+    </div>
+
+    <div class="cp-divider"></div>
+    <div class="cp-section-label">Circuit Weather — Live</div>
+    <div id="cp-weather">
+      <div class="loading-state" style="padding:14px"><div class="spinner"></div>Loading weather…</div>
+    </div>
+  `;
+
+  const lat = race.Circuit.Location.lat;
+  const lon = race.Circuit.Location.long;
+
+  Promise.all([
+    fetchCircuitHistory(race.Circuit.circuitId),
+    fetchWeather(lat, lon),
+  ]).then(([history, weather]) => {
+    renderChampions(history);
+    renderCircuitWeather(weather, race.Circuit.Location.locality);
+  });
+}
+
+function closeCircuitPanel() {
+  document.getElementById('circuit-panel').style.display = 'none';
+  document.getElementById('standings-panel').style.display = '';
+}
+
+function renderChampions(history) {
+  const el = document.getElementById('cp-champions');
+  if (!el) return;
+
+  if (!history.length) {
+    el.innerHTML = `<div class="cp-empty">No historical data available</div>`;
+    return;
+  }
+
+  let fastestLap = null;
+
+  const rows = history.map(race => {
+    const winner = race.Results?.[0];
+    if (!winner) return '';
+
+    if (!fastestLap) {
+      const fl = race.Results?.find(r => r.FastestLap?.rank === '1');
+      if (fl?.FastestLap?.Time?.time) {
+        fastestLap = {
+          season:      race.season,
+          driver:      `${fl.Driver.givenName.charAt(0)}. ${fl.Driver.familyName}`,
+          time:        fl.FastestLap.Time.time,
+          constructor: fl.Constructor?.name || '—',
+        };
+      }
+    }
+
+    const color = getTeamColor(winner.Constructor?.name || '');
     return `
-      <tr style="animation-delay: ${i * 0.04}s; cursor: pointer;" onclick="window.location.href='driver.html?id=${driverId}'" title="View ${firstName} ${lastName} profile">
-        <td class="pos-cell ${posClass}">${pos}</td>
-        <td>
-          <div class="driver-cell">
-            <div class="team-color-bar" style="background:${color}; box-shadow: 0 0 6px ${color}44"></div>
-            <div>
-              <div class="driver-name">${firstName.charAt(0)}. ${lastName.toUpperCase()} <span style="font-size:10px;color:var(--text-4);font-family:var(--font-mono)">↗</span></div>
-              <span class="driver-team">${team}</span>
-            </div>
-          </div>
-        </td>
-        <td class="mono" style="text-align:center">${flag(nat)}</td>
-        <td class="pts-cell">${pts}</td>
-        <td class="wins-cell">${wins}</td>
-        <td class="salary-cell">${formatMoney(salary)}/yr</td>
-        <td class="prize-cell">~${formatMoney(prize)}</td>
-      </tr>
+      <div class="cp-champion-row">
+        <span class="cp-champ-year">${race.season}</span>
+        <span class="cp-champ-bar" style="background:${color}"></span>
+        <span class="cp-champ-name">${winner.Driver.givenName.charAt(0)}. ${winner.Driver.familyName.toUpperCase()}</span>
+        <span class="cp-champ-team">${winner.Constructor?.name || '—'}</span>
+      </div>
     `;
   }).join('');
 
-  buildTicker(drivers);
+  let flHtml = '';
+  if (fastestLap) {
+    flHtml = `
+      <div class="cp-divider"></div>
+      <div class="cp-section-label">Fastest Lap (${fastestLap.season})</div>
+      <div class="cp-fl-row">
+        <span class="cp-fl-driver">${fastestLap.driver}</span>
+        <span class="cp-fl-time">${fastestLap.time}</span>
+      </div>
+      <div class="cp-fl-team">${fastestLap.constructor}</div>
+    `;
+  }
+
+  el.innerHTML = (rows || `<div class="cp-empty">No winner data found</div>`) + flHtml;
 }
 
-// ── Render Prize Money ───────────────────────────────────────
-function renderPrizeMoney(constructors) {
-  const el = document.getElementById('prize-grid');
+function renderCircuitWeather(weather, locality) {
+  const el = document.getElementById('cp-weather');
   if (!el) return;
+  if (!weather) {
+    el.innerHTML = `<div class="cp-empty" style="padding:8px 14px 14px">Weather unavailable — check API key</div>`;
+    return;
+  }
+  el.innerHTML = `
+    <div class="cp-weather">
+      <div class="cp-weather-main">
+        <span class="cp-weather-temp">${weather.temp}°C</span>
+        <span class="cp-weather-cond">${weather.condition}</span>
+      </div>
+      <div class="cp-weather-detail">
+        💧 ${weather.humidity}% · 💨 ${weather.wind_speed} km/h · Feels ${weather.feels_like}°C
+      </div>
+      <div class="cp-weather-loc">${locality} · Now</div>
+    </div>
+  `;
+}
 
-  const totalPts = constructors.reduce((s, c) => s + parseInt(c.points), 0);
-  const maxPrize = estimateConstructorPrize(
-    parseInt(constructors[0]?.points || 0), totalPts, 1
-  );
+// ── Sidebar: Top 10 Drivers ───────────────────────────────────
+function renderSidebarDrivers(drivers) {
+  const el = document.getElementById('sidebar-drivers');
+  if (!el || !drivers.length) return;
 
-  el.innerHTML = constructors.map((c, i) => {
+  el.innerHTML = drivers.map(d => {
+    const team  = d.Constructors?.[0]?.name || '—';
+    const color = getTeamColor(team);
+    const pos   = parseInt(d.position);
+    const posClass = pos <= 3 ? `pos-${pos}` : '';
+
+    return `
+      <div class="sb-driver-row" onclick="window.location.href='driver.html?id=${d.Driver.driverId}'" title="View ${d.Driver.givenName} ${d.Driver.familyName} profile">
+        <span class="sb-pos ${posClass}">${pos}</span>
+        <span class="sb-color-bar" style="background:${color};box-shadow:0 0 4px ${color}55"></span>
+        <div class="sb-info">
+          <span class="sb-name">${d.Driver.givenName.charAt(0)}. ${d.Driver.familyName.toUpperCase()}</span>
+          <span class="sb-sub">${team}</span>
+        </div>
+        <span class="sb-pts">${d.points}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── Sidebar: Top 5 Constructors ───────────────────────────────
+function renderSidebarConstructors(constructors) {
+  const el = document.getElementById('sidebar-constructors');
+  if (!el || !constructors.length) return;
+
+  const maxPts = parseInt(constructors[0]?.points || 1);
+
+  el.innerHTML = constructors.map(c => {
     const name   = c.Constructor.name;
     const pts    = parseInt(c.points);
     const pos    = parseInt(c.position);
     const color  = getTeamColor(name);
-    const prize  = estimateConstructorPrize(pts, totalPts, pos);
-    const barPct = Math.round((prize / maxPrize) * 100);
+    const barW   = Math.round((pts / maxPts) * 100);
+    const posClass = pos <= 3 ? `pos-${pos}` : '';
 
     return `
-      <div class="prize-card" style="animation-delay: ${i * 0.06}s">
-        <div class="prize-pos">P${pos} Constructor</div>
-        <div class="prize-team-name">
-          <span class="prize-team-dot" style="background:${color}; box-shadow: 0 0 6px ${color}66"></span>
-          ${name.toUpperCase()}
+      <div class="sb-constructor-row">
+        <span class="sb-pos ${posClass}">${pos}</span>
+        <span class="sb-color-dot" style="background:${color};box-shadow:0 0 6px ${color}66"></span>
+        <div class="sb-info">
+          <span class="sb-name">${name.toUpperCase()}</span>
+          <div class="sb-bar-wrap"><div class="sb-bar" style="width:${barW}%;background:${color}99"></div></div>
         </div>
-        <div class="prize-pts mono">${pts} PTS</div>
-        <div class="prize-bar-wrap">
-          <div class="prize-bar" style="width: ${barPct}%; background: linear-gradient(90deg, ${color}, ${color}88)"></div>
-        </div>
-        <span class="prize-amount">~${formatMoney(prize)}</span>
-        <span class="prize-label">Est. 2025 Prize Money</span>
+        <span class="sb-pts">${pts}</span>
       </div>
     `;
   }).join('');
 }
 
-// ── Countdown Logic ──────────────────────────────────────────
-function updateCountdown(raceDate) {
-  const now  = new Date();
-  const diff = raceDate - now;
-
-  if (diff <= 0) {
-    document.getElementById('cdown-days').textContent  = '00';
-    document.getElementById('cdown-hours').textContent = '00';
-    document.getElementById('cdown-mins').textContent  = '00';
-    document.getElementById('cdown-secs').textContent  = '00';
-    return;
-  }
-
-  const days  = Math.floor(diff / 86400000);
-  const hours = Math.floor((diff % 86400000) / 3600000);
-  const mins  = Math.floor((diff % 3600000)  / 60000);
-  const secs  = Math.floor((diff % 60000)    / 1000);
-
-  document.getElementById('cdown-days').textContent  = String(days).padStart(2, '0');
-  document.getElementById('cdown-hours').textContent = String(hours).padStart(2, '0');
-  document.getElementById('cdown-mins').textContent  = String(mins).padStart(2, '0');
-  document.getElementById('cdown-secs').textContent  = String(secs).padStart(2, '0');
+// ── Ticker ────────────────────────────────────────────────────
+function buildTicker(drivers) {
+  if (!drivers.length) return;
+  const content = drivers.slice(0, 10).map(d =>
+    `<span class="ticker-item"><span class="pos-label">P${d.position}</span> <span class="highlight">${d.Driver.givenName} ${d.Driver.familyName}</span> · ${d.points} PTS · ${d.Constructors?.[0]?.name || ''}</span>`
+  ).join('');
+  document.getElementById('ticker-inner').innerHTML = content + content;
 }
 
-// ── Render Race + Weather ────────────────────────────────────
-async function renderRaceCountdown(race) {
-  if (!race) {
-    document.getElementById('race-name').textContent    = 'No upcoming race data';
-    document.getElementById('race-circuit').textContent = '';
-    return;
-  }
-
-  const raceName    = race.raceName;
-  const circuit     = race.Circuit.circuitName;
-  const locality    = race.Circuit.Location.locality;
-  const country     = race.Circuit.Location.country;
-  const lat         = race.Circuit.Location.lat;
-  const lon         = race.Circuit.Location.long;
-  const raceTime    = race.time ? race.time.replace(/Z$/i, '') : '14:00:00';
-  const raceDate    = new Date(`${race.date}T${raceTime}Z`);
-
-  document.getElementById('race-name').textContent    = raceName;
-  document.getElementById('race-circuit').textContent = `${circuit} · ${locality}, ${country}`;
-  document.getElementById('race-date-str').textContent = raceDate.toLocaleDateString('en-US', {
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-  });
-
-  // Start countdown
-  updateCountdown(raceDate);
-  setInterval(() => updateCountdown(raceDate), 1000);
-
-  // Fetch weather
-  const weather = await fetchWeather(lat, lon);
-  const wPanel  = document.getElementById('weather-panel');
-
-  if (weather && !weather.error) {
-    wPanel.innerHTML = `
-      <div class="weather-condition">${weather.condition}</div>
-      <div class="weather-temp">${weather.temp}<span>°C</span></div>
-      <div class="weather-details">
-        <span>Feels like ${weather.feels_like}°C</span>
-        <span>💧 ${weather.humidity}% humidity</span>
-        <span>💨 ${weather.wind_speed} km/h</span>
-      </div>
-      <div class="weather-location">${locality} · Now</div>
-    `;
-  } else {
-    wPanel.innerHTML = `
-      <div class="weather-condition">Weather</div>
-      <div style="font-family: var(--font-mono); font-size: 11px; color: var(--grey-2); margin-top: 8px;">
-        Add OPENWEATHER_API_KEY<br>to Vercel env vars
-      </div>
-      <div class="weather-location">${locality}</div>
-    `;
-  }
-}
-
-// ── Update timestamp ─────────────────────────────────────────
 function setTimestamp() {
   const el = document.getElementById('last-updated');
-  if (el) {
-    el.textContent = `Updated ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} UTC`;
-  }
+  if (el) el.textContent = `Updated ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} UTC`;
 }
 
-// ── Loading helpers ──────────────────────────────────────────
-function showLoading(id) {
-  const el = document.getElementById(id);
-  if (el) el.innerHTML = `<div class="loading-state"><div class="spinner"></div>Loading data…</div>`;
-}
-
-function showError(id, msg) {
-  const el = document.getElementById(id);
-  if (el) el.innerHTML = `<div class="error-state">⚠ ${msg}</div>`;
-}
-
-// ── Main Init ────────────────────────────────────────────────
+// ── Main Init ─────────────────────────────────────────────────
 async function init() {
+  initMap();
   setTimestamp();
-  showLoading('standings-wrap');
-  showLoading('prize-grid');
 
-  const [drivers, constructors, nextRace] = await Promise.all([
+  const [allRaces, drivers, constructors, nextRace] = await Promise.all([
+    fetchAllRaces(),
     fetchDriverStandings(),
     fetchConstructorStandings(),
     fetchNextRace(),
   ]);
 
-  // Standings
-  if (drivers.length) {
-    document.getElementById('standings-wrap').innerHTML = `
-      <div class="standings-table-wrap">
-        <table class="standings-table">
-          <thead>
-            <tr>
-              <th>POS</th>
-              <th>Driver</th>
-              <th style="text-align:center">NAT</th>
-              <th>PTS</th>
-              <th>WINS</th>
-              <th>SALARY EST.</th>
-              <th>PRIZE EST.</th>
-            </tr>
-          </thead>
-          <tbody id="standings-body"></tbody>
-        </table>
-      </div>
-    `;
-    renderStandings(drivers, constructors);
-  } else {
-    showError('standings-wrap', 'Could not load driver standings. Ergast API may be unavailable.');
+  if (allRaces.length) {
+    addCircuitMarkers(allRaces, nextRace?.round);
+    const done  = allRaces.filter(r => raceIsPast(r)).length;
+    const total = allRaces.length;
+    const roundsTag  = document.getElementById('map-rounds-tag');
+    const statusTag  = document.getElementById('map-status-tag');
+    if (roundsTag) roundsTag.textContent = `${total} Rounds`;
+    if (statusTag) {
+      if (nextRace) {
+        statusTag.textContent = `Next: ${nextRace.raceName}`;
+        statusTag.className   = 'section-tag gold';
+      } else {
+        statusTag.textContent = `${done}/${total} Complete`;
+        statusTag.className   = 'section-tag green';
+      }
+    }
   }
 
-  // Prize Money
-  if (constructors.length) {
-    renderPrizeMoney(constructors);
-  } else {
-    showError('prize-grid', 'Could not load constructor data.');
-  }
-
-  // Race Countdown + Weather
-  await renderRaceCountdown(nextRace);
+  renderSidebarDrivers(drivers.slice(0, 10));
+  renderSidebarConstructors(constructors.slice(0, 5));
+  buildTicker(drivers);
 }
 
 document.addEventListener('DOMContentLoaded', init);
