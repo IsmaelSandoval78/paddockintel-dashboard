@@ -49,31 +49,65 @@
 
     <div class="dashboard-grid">
 
-      <div class="map-card glass-card">
-        <div class="map-topbar">
-          <div class="map-title-group">
-            <span class="map-card-title" data-i18n="map_title">2026 F1 Season</span>
-            <span class="section-tag" id="map-rounds-tag" data-i18n="map_rounds">24 Rounds</span>
-            <span class="section-tag gold" id="map-status-tag" data-i18n="loading">Loading…</span>
+      <div class="main-content">
+        
+        <div class="map-card glass-card">
+          <div class="map-topbar">
+            <div class="map-title-group">
+              <span class="map-card-title" data-i18n="map_title">2026 F1 Season</span>
+              <span class="section-tag" id="map-rounds-tag" data-i18n="map_rounds">24 Rounds</span>
+              <span class="section-tag gold" id="map-status-tag" data-i18n="loading">Loading…</span>
+            </div>
+            <div class="map-legend">
+              <span class="legend-item"><span class="legend-dot ldone"></span><span data-i18n="legend_completed">Completed</span></span>
+              <span class="legend-item"><span class="legend-dot lnext pulse-dot"></span><span data-i18n="legend_next">Next Race</span></span>
+              <span class="legend-item"><span class="legend-dot lupcoming"></span><span data-i18n="legend_upcoming">Upcoming</span></span>
+              <span class="legend-hint" data-i18n="legend_hint">Click a circuit ↗</span>
+            </div>
           </div>
-          <div class="map-legend">
-            <span class="legend-item"><span class="legend-dot ldone"></span><span data-i18n="legend_completed">Completed</span></span>
-            <span class="legend-item"><span class="legend-dot lnext pulse-dot"></span><span data-i18n="legend_next">Next Race</span></span>
-            <span class="legend-item"><span class="legend-dot lupcoming"></span><span data-i18n="legend_upcoming">Upcoming</span></span>
-            <span class="legend-hint" data-i18n="legend_hint">Click a circuit ↗</span>
-          </div>
+          <div id="world-map"></div>
         </div>
-        <div id="world-map"></div>
+
+        <div class="glass-card miami-simulator-card">
+            <div class="sim-header-row">
+                <div class="sim-title-group">
+                    <span class="sim-card-title">Miami GP 2026 Live Telemetry Matrix</span>
+                    <span class="section-tag gold" id="sim-lap-indicator">TELEMETRY MATRIX</span>
+                </div>
+                <div class="sim-selectors-group">
+                    <select id="sel-driver-1" class="sim-select-ui"></select>
+                    <select id="sel-driver-2" class="sim-select-ui"></select>
+                    <select id="sel-lap" class="sim-select-ui font-mono"></select>
+                </div>
+                <div class="sim-actions-group">
+                    <button id="btn-sim-play" class="sim-action-btn">▶ RUN ANALYSIS</button>
+                    <button id="btn-sim-reset" class="sim-action-btn alt">🔄 RESET</button>
+                </div>
+            </div>
+            
+            <div class="sim-telemetry-widescreen-box">
+                <div class="sim-chrono-display" id="sim-chrono">00:00<span>.000</span></div>
+                <div class="sim-map-canvas" id="telemetry-canvas">
+                    <svg width="100%" height="100%" viewBox="0 0 600 200" preserveAspectRatio="xMidYMid meet">
+                        <path id="miami-ghost-path" class="circuit-vector-path" 
+                            d="M 50,100 C 50,30 180,20 280,50 C 380,80 480,30 550,90 C 600,140 500,180 380,165 C 240,150 160,190 100,165 C 50,140 50,120 50,100 Z" />
+                        <path id="miami-glow-path" class="circuit-active-glow" 
+                            d="M 50,100 C 50,30 180,20 280,50 C 380,80 480,30 550,90 C 600,140 500,180 380,165 C 240,150 160,190 100,165 C 50,140 50,120 50,100 Z" />
+                    </svg>
+                    <div id="ghost-car-1" class="sim-gps-dot"></div>
+                    <div id="ghost-car-2" class="sim-gps-dot car-secondary"></div>
+                </div>
+            </div>
+        </div>
+
       </div>
 
       <aside class="sidebar">
-
         <div id="circuit-panel" class="circuit-panel glass-card" style="display:none">
           <div id="circuit-panel-inner"></div>
         </div>
 
         <div id="standings-panel" class="standings-panel">
-
           <div class="glass-card sidebar-card">
             <div class="sidebar-card-header">
               <span class="sidebar-card-title" data-i18n="wdc_title">Driver Championship</span>
@@ -93,23 +127,7 @@
               <div class="loading-state" style="padding:28px"><div class="spinner"></div><span data-i18n="loading">Loading…</span></div>
             </div>
           </div>
-
         </div>
-
-        <div class="glass-card miami-simulator-card">
-            <div class="sidebar-card-header">
-                <span class="sidebar-card-title">Miami GP 2026 Live Telemetry</span>
-                <span class="section-tag gold" id="sim-lap-indicator">LAP 1 / 57</span>
-            </div>
-            <div class="sim-controls">
-                <button id="btn-sim-play" class="sim-btn">▶ Play</button>
-                <button id="btn-sim-reset" class="sim-btn">🔄 Reset</button>
-                <div class="sim-speed-badge">1 Lap/s</div>
-            </div>
-            <div id="sim-leaderboard" class="sim-leaderboard-container">
-                </div>
-        </div>
-
       </aside>
 
     </div>

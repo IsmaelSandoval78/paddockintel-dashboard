@@ -1,21 +1,34 @@
 /* ═══════════════════════════════════════════════════════════
-   PADDOCKINTEL — src/js/simulator.js (v4 - Dual Ghost Matrix)
-   Dual-Driver Interaction, Dynamic Sector Stamper & Real-Time Delta Engine
+   PADDOCKINTEL — src/js/simulator.js (v4.1 - Widescreen Dual Ghost)
+   Panoramic Target Controls, Sector Stamping & Anti-Collision Engine
    ═══════════════════════════════════════════════════════════ */
 
 document.addEventListener("DOMContentLoaded", () => {
-    const container = document.getElementById("sim-leaderboard");
+    // Buscar los componentes nativos inyectados en el HTML
+    const s1 = document.getElementById("sel-driver-1");
+    const s2 = document.getElementById("sel-driver-2");
+    const slap = document.getElementById("sel-lap");
+    const playBtn = document.getElementById("btn-sim-play");
+    const resetBtn = document.getElementById("btn-sim-reset");
     const lapIndicatorEl = document.getElementById("sim-lap-indicator");
-    if (!container) return;
+    
+    const svgPath = document.getElementById("miami-ghost-path");
+    const glowPath = document.getElementById("miami-glow-path");
+    const canvas = document.getElementById("telemetry-canvas");
+    const chronoEl = document.getElementById("sim-chrono");
+    
+    const car1 = document.getElementById("ghost-car-1");
+    const car2 = document.getElementById("ghost-car-2");
 
-    // Base de datos local de respaldo en caso de retraso de red del JSON
+    if (!s1 || !svgPath) return; // Parar si no es la portada
+
     let telemetryDB = {
         drivers: {
             "antonelli": { name: "K. Antonelli", code: "ANT", color: "#27F4D2" },
             "verstappen": { name: "M. Verstappen", code: "VER", color: "#3671C6" },
             "leclerc": { name: "C. Leclerc", code: "LEC", color: "#E8002D" },
             "norris": { name: "L. Norris", code: "NOR", color: "#FF8000" },
-            "hamilton": { name: "L. Hamilton", code: "HAM", team: "Ferrari", color: "#E8002D" }
+            "hamilton": { name: "L. Hamilton", code: "HAM", color: "#E8002D" }
         },
         matrix: {
             "1": {
@@ -49,52 +62,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // 2. Inyectar la Consola de Mandos Interactiva de Apple
-    container.className = "sim-layout-split";
-    container.innerHTML = `
-        <div style="display:flex; flex-direction:column; gap:12px; width:100%;">
-            <div style="display:grid; grid-template-columns: 1fr 1fr 90px; gap:8px;">
-                <select id="sel-driver-1" class="sim-btn" style="background:#22252e; text-align:left;"></select>
-                <select id="sel-driver-2" class="sim-btn" style="background:#22252e; text-align:left;"></select>
-                <select id="sel-lap" class="sim-btn" style="background:#22252e; font-family:monospace;"></select>
-            </div>
-            <div class="sim-controls" style="margin-top:4px;">
-                <button id="btn-sim-play" class="sim-btn" style="background:var(--text-charcoal); min-width:130px;">▶ RUN ANALYSIS</button>
-                <div class="sim-live-chrono-block" id="sim-chrono">00:00<span>.000</span></div>
-                <button id="btn-sim-reset" class="sim-btn">🔄 RESET</button>
-            </div>
-        </div>
-        <div class="sim-map-canvas" id="telemetry-canvas" style="margin-top:12px; height:180px;">
-            <svg width="100%" height="100%" viewBox="0 0 320 220" preserveAspectRatio="xMidYMid meet">
-                <path id="miami-ghost-path" class="circuit-vector-path" 
-                    d="M 45,110 C 45,40 120,30 170,50 C 220,70 260,40 285,85 C 310,130 265,175 200,165 C 140,155 110,190 75,165 C 45,140 45,130 45,110 Z" />
-                <path id="miami-glow-path" class="circuit-active-glow" style="stroke: rgba(255,255,255,0.03);"
-                    d="M 45,110 C 45,40 120,30 170,50 C 220,70 260,40 285,85 C 310,130 265,175 200,165 C 140,155 110,190 75,165 C 45,140 45,130 45,110 Z" />
-            </svg>
-            <div id="ghost-car-1" class="sim-gps-dot" style="display:none; width:26px; height:26px; font-size:9px;"></div>
-            <div id="ghost-car-2" class="sim-gps-dot" style="display:none; width:26px; height:26px; font-size:9px; border-style:dashed;"></div>
-        </div>
-    `;
-
-    const s1 = document.getElementById("sel-driver-1");
-    const s2 = document.getElementById("sel-driver-2");
-    const slap = document.getElementById("sel-lap");
-    const playBtn = document.getElementById("btn-sim-play");
-    const resetBtn = document.getElementById("btn-sim-reset");
-    const svgPath = document.getElementById("miami-ghost-path");
-    const canvas = document.getElementById("telemetry-canvas");
-    const chronoEl = document.getElementById("sim-chrono");
-    
-    const car1 = document.getElementById("ghost-car-1");
-    const car2 = document.getElementById("ghost-car-2");
-
     let animationId = null;
     let startTime = null;
     let isRunning = false;
-    let animationDuration = 10000; // 10 segundos fijos por animación de vuelta
+    let animationDuration = 12000; // 12 segundos fijos de barrido cinematográfico
     let stampedSectors = new Set();
 
-    // 3. Poblar Dropdowns dinámicamente
     function populateSelectors() {
         s1.innerHTML = ""; s2.innerHTML = ""; slap.innerHTML = "";
         Object.entries(telemetryDB.drivers).forEach(([id, d]) => {
@@ -104,14 +77,12 @@ document.addEventListener("DOMContentLoaded", () => {
         Object.keys(telemetryDB.matrix).forEach(lap => {
             slap.innerHTML += `<option value="${lap}">LAP ${lap}</option>`;
         });
-        
-        // Predeterminados: Antonelli vs Verstappen
         s1.value = "antonelli";
         s2.value = "verstappen";
         slap.value = "15";
     }
 
-    // Cargar JSON de Python en paralelo
+    // Intentar leer el archivo JSON de Python de fondo
     fetch('/src/data-outputs/lap-comparison.json')
         .then(r => r.ok ? r.json() : null)
         .then(res => { if(res) { telemetryDB = res; populateSelectors(); resetSimulation(); } })
@@ -121,8 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!startTime) startTime = timestamp;
         const elapsed = timestamp - startTime;
 
-        const d1 = s1.value;
-        const d2 = s2.value;
+        const d1 = s1.value; const d2 = s2.value;
         const currentLapNum = slap.value;
 
         const p1Data = telemetryDB.matrix[currentLapNum][d1];
@@ -130,45 +100,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!p1Data || !p2Data) return;
 
-        const maxRealMs = Math.max(p1Data.total_ms, p2Data.total_ms);
-
         if (elapsed >= animationDuration) {
-            // Fin de la vuelta: Clavar tiempos finales reales
-            chronoEl.innerHTML = `GAP: ${( (p1Data.total_ms - p2Data.total_ms)/1000 ).toFixed(3)}s`;
+            const diff = ((p1Data.total_ms - p2Data.total_ms) / 1000).toFixed(3);
+            chronoEl.innerHTML = `GAP: ${diff > 0 ? '+' : ''}${diff}s`;
             isRunning = false;
             playBtn.textContent = "▶ RUN ANALYSIS";
-            stampSectorLabel(0.99, `🏁 FIN | ${telemetryDB.drivers[d1].code}: ${(p1Data.total_ms/1000).toFixed(2)}s | ${telemetryDB.drivers[d2].code}: ${(p2Data.total_ms/1000).toFixed(2)}s`, "bottom");
+            stampSectorLabel(0.98, `🏁 FIN | ${telemetryDB.drivers[d1].code}: ${(p1Data.total_ms/1000).toFixed(2)}s | ${telemetryDB.drivers[d2].code}: ${(p2Data.total_ms/1000).toFixed(2)}s`, "bottom");
             return;
         }
 
         const currentProgressPct = elapsed / animationDuration;
         const pathLength = svgPath.getTotalLength();
 
-        // ── FISICA GHOST 1 (Piloto 1) ──
+        // ── POSICIONAMIENTO COCHE 1 ──
+        const p1Distance = currentProgressPct * pathLength;
+        const pt1 = svgPath.getPointAtLength(p1Distance);
+        car1.style.left = `${(pt1.x / 600) * 100}%`; car1.style.top = `${(pt1.y / 200) * 100}%`;
+
+        // ── POSICIONAMIENTO COCHE 2 ──
+        const p2Distance = currentProgressPct * pathLength;
+        const pt2 = svgPath.getPointAtLength(p2Distance);
+        car2.style.left = `${(pt2.x / 600) * 100}%`; car2.style.top = `${(pt2.y / 200) * 100}%`;
+
+        // ── DELTA VIVO SIMULADO ──
         const p1TimePassed = currentProgressPct * p1Data.total_ms;
-        const p1Distance = (p1TimePassed / p1Data.total_ms) * pathLength;
-        const pt1 = svgPath.getPointAtLength(p1Distance % pathLength);
-        car1.style.left = `${(pt1.x / 320) * 100}%`; car1.style.top = `${(pt1.y / 220) * 100}%`;
-
-        // ── FISICA GHOST 2 (Piloto 2) ──
         const p2TimePassed = currentProgressPct * p2Data.total_ms;
-        const p2Distance = (p2TimePassed / p2Data.total_ms) * pathLength;
-        const pt2 = svgPath.getPointAtLength(p2Distance % pathLength);
-        car2.style.left = `${(pt2.x / 320) * 100}%`; car2.style.top = `${(pt2.y / 220) * 100}%`;
-
-        // ── CÁCULO DEL DELTA VIVO (Milisegundos de Transmisión) ──
         const liveDeltaSeconds = (p1TimePassed - p2TimePassed) / 1000;
         const leadingCode = liveDeltaSeconds <= 0 ? telemetryDB.drivers[d1].code : telemetryDB.drivers[d2].code;
         chronoEl.innerHTML = `${leadingCode} Δ <span>${Math.abs(liveDeltaSeconds).toFixed(3)}s</span>`;
 
-        // ── DETECTAR HITOS DE SECTORES (Sector 1 al 33%, Sector 2 al 66%) ──
+        // ── TRAZO DE SECTORES ──
         if (currentProgressPct >= 0.33 && !stampedSectors.has("s1")) {
             stampedSectors.add("s1");
-            stampSectorLabel(0.33, `S1 | ${telemetryDB.drivers[d1].code}: ${p1Data.s1}s | ${telemetryDB.drivers[d2].code}: ${p2Data.s1}s`, "top");
+            stampSectorLabel(0.33, `S1 | ${telemetryDB.drivers[d1].code}: ${p1Data.s1}s vs ${telemetryDB.drivers[d2].code}: ${p2Data.s1}s`, "top");
         }
         if (currentProgressPct >= 0.66 && !stampedSectors.has("s2")) {
             stampedSectors.add("s2");
-            stampSectorLabel(0.66, `S2 | ${telemetryDB.drivers[d1].code}: ${p1Data.s2}s | ${telemetryDB.drivers[d2].code}: ${p2Data.s2}s`, "right");
+            stampSectorLabel(0.66, `S2 | ${telemetryDB.drivers[d1].code}: ${p1Data.s2}s vs ${telemetryDB.drivers[d2].code}: ${p2Data.s2}s`, "right");
         }
 
         animationId = requestAnimationFrame(loop);
@@ -180,13 +148,13 @@ document.addEventListener("DOMContentLoaded", () => {
         stamp.className = "sim-telemetry-stamp";
         
         let ox = 0, oy = 0;
-        if (placement === "top") oy = -24;
-        if (placement === "bottom") oy = 24;
-        if (placement === "right") ox = 35;
+        if (placement === "top") oy = -20;
+        if (placement === "bottom") oy = 20;
+        if (placement === "right") ox = 10;
 
-        stamp.style.left = `${((point.x + ox) / 320) * 100}%`;
-        stamp.style.top = `${((point.y + oy) / 220) * 100}%`;
-        stamp.innerHTML = `<span class="stamp-name" style="font-size:8px;">${text}</span>`;
+        stamp.style.left = `${((point.x + ox) / 600) * 100}%`;
+        stamp.style.top = `${((point.y + oy) / 200) * 100}%`;
+        stamp.innerHTML = `<span class="stamp-name">${text}</span>`;
         canvas.appendChild(stamp);
     }
 
@@ -199,15 +167,15 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll('.sim-telemetry-stamp').forEach(el => el.remove());
 
         const d1 = s1.value; const d2 = s2.value;
-        if(!telemetryDB.drivers[d1]) return;
+        if(!telemetryDB.drivers[d1] || !telemetryDB.drivers[d2]) return;
 
         car1.style.display = "flex"; car2.style.display = "flex";
         car1.style.backgroundColor = telemetryDB.drivers[d1].color; car1.textContent = telemetryDB.drivers[d1].code;
         car2.style.backgroundColor = telemetryDB.drivers[d2].color; car2.textContent = telemetryDB.drivers[d2].code;
 
         const startPoint = svgPath.getPointAtLength(0);
-        car1.style.left = `${(startPoint.x / 320) * 100}%`; car1.style.top = `${(startPoint.y / 220) * 100}%`;
-        car2.style.left = `${(startPoint.x / 320) * 100}%`; car2.style.top = `${(startPoint.y / 220) * 100}%`;
+        car1.style.left = `${(startPoint.x / 600) * 100}%`; car1.style.top = `${(startPoint.y / 200) * 100}%`;
+        car2.style.left = `${(startPoint.x / 600) * 100}%`; car2.style.top = `${(startPoint.y / 200) * 100}%`;
     }
 
     playBtn.addEventListener("click", () => {
@@ -227,4 +195,6 @@ document.addEventListener("DOMContentLoaded", () => {
     s1.addEventListener("change", resetSimulation);
     s2.addEventListener("change", resetSimulation);
     slap.addEventListener("change", resetSimulation);
+
+    populateSelectors();
 });

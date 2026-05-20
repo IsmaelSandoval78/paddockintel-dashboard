@@ -169,6 +169,12 @@ body {
     gap: 24px;
 }
 
+.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
 @media (max-width: 1024px) {
     .dashboard-grid { grid-template-columns: 1fr; }
 }
@@ -189,7 +195,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    height: 640px;
+    height: 520px; /* Reducido sutilmente para balancear con el simulador abajo */
 }
 
 .map-topbar {
@@ -220,7 +226,7 @@ body {
     font-family: var(--font-sans);
 }
 
-/* Pines del Mapa estilo Apple */
+/* Pines del Mapa */
 .circ-pin {
     width: 24px;
     height: 24px;
@@ -314,12 +320,12 @@ body {
     font-size: 13px;
 }
 
-/* Barra de progreso de constructores estilo Apple */
+/* Barra de progreso de constructores */
 .sb-color-dot { width: 8px; height: 8px; border-radius: 50%; }
 .sb-bar-wrap { background: rgba(0,0,0,0.03); height: 4px; border-radius: 2px; width: 100%; margin-top: 4px; }
 .sb-bar { height: 100%; border-radius: 2px; }
 
-/* ═══ SITE FOOTER ═════════════════════════════════════════ */
+/* Footer */
 .site-footer {
     background: var(--card-sandblasted);
     border: 1px solid var(--card-border);
@@ -335,148 +341,142 @@ body {
 .footer-link { color: var(--text-charcoal); text-decoration: none; font-weight: 600; }
 
 
-/* ═══ HIGH-TECH TELEMETRY SIMULATOR CONTAINER (TikTok Look) ══ */
-.miami-simulator-card {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-/* El Garaje Oscuro Intermedio */
-.sim-layout-split {
-    background: #0f1115 !important;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: inset 0 4px 20px rgba(0,0,0,0.5);
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.sim-controls {
+/* ═══ WIDESCREEN TELEMETRY MATRIX (Cupertino Pit-Wall Edition) ═══ */
+.sim-header-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    gap: 16px;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    padding-bottom: 14px;
 }
 
-.sim-btn {
-    background: #22252e;
-    color: #ffffff;
-    border: 1px solid rgba(255,255,255,0.08);
-    padding: 8px 18px;
+.sim-title-group { display: flex; flex-direction: column; gap: 4px; }
+.sim-card-title { font-weight: 800; font-size: 16px; letter-spacing: -0.02em; color: var(--text-charcoal); }
+
+.sim-selectors-group { display: flex; gap: 8px; align-items: center; }
+.sim-select-ui {
+    background: #fff;
+    color: var(--text-charcoal);
+    border: 1px solid rgba(0,0,0,0.12);
+    padding: 6px 12px;
     border-radius: 8px;
-    font-family: var(--font-sans);
-    font-weight: 700;
-    font-size: 13px;
+    font-size: 12.5px;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
-}
-.sim-btn:hover {
-    background: #2c303c;
-    border-color: rgba(255,255,255,0.2);
+    outline: none;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
 }
 
-/* El Cronómetro de Telemetría Oficial */
-.sim-live-chrono-block {
+.sim-actions-group { display: flex; gap: 8px; }
+.sim-action-btn {
+    background: var(--text-charcoal);
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.sim-action-btn:hover { background: #434344; }
+.sim-action-btn.alt { background: rgba(0,0,0,0.05); color: var(--text-charcoal); }
+.sim-action-btn.alt:hover { background: rgba(0,0,0,0.1); }
+
+/* Caja de Fibra de Carbono Panorámica */
+.sim-telemetry-widescreen-box {
+    background: #0d0f12 !important;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 16px;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 20px;
+    align-items: center;
+    box-shadow: inset 0 4px 20px rgba(0,0,0,0.4);
+    margin-top: 14px;
+}
+
+/* Cronómetro Delta en Vivo Gigante */
+.sim-chrono-display {
     font-family: var(--font-mono);
-    font-size: 32px;
+    font-size: 24px;
     font-weight: 700;
     color: #ffffff;
     letter-spacing: -0.02em;
-    text-shadow: 0 0 12px rgba(255,255,255,0.15);
+    border-right: 1px solid rgba(255,255,255,0.08);
+    padding-right: 16px;
+    height: 100%;
+    display: flex;
+    align-items: center;
 }
+.sim-chrono-display span { color: #8e8e93; font-size: 16px; }
 
-.sim-live-chrono-block span {
-    color: #8e8e93;
-    font-size: 20px;
-}
-
-/* El Mapa de Asfalto Vectorial */
+/* El Mapa del Circuito Panorámico */
 .sim-map-canvas {
     position: relative;
     width: 100%;
-    height: 220px;
-    background: rgba(255,255,255,0.01);
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.03);
+    height: 200px;
     overflow: visible;
 }
 
 .circuit-vector-path {
-    stroke: rgba(255, 255, 255, 0.08);
-    stroke-width: 6;
+    stroke: rgba(255, 255, 255, 0.06);
+    stroke-width: 5;
     fill: none;
-    stroke-linecap: round;
-    stroke-linejoin: round;
 }
-
-/* La línea de trazado que se ilumina al pasar el coche */
 .circuit-active-glow {
-    stroke: rgba(39, 244, 210, 0.2);
-    stroke-width: 6;
+    stroke: rgba(255, 255, 255, 0.12);
+    stroke-width: 5;
     fill: none;
-    stroke-linecap: round;
-    stroke-linejoin: round;
     stroke-dasharray: 1000;
     stroke-dashoffset: 1000;
 }
 
-/* El Coche (El misil turquesa) */
+/* Nodos GPS Rediseñados para Evitar Encimamiento */
 .sim-gps-dot {
     position: absolute;
-    width: 32px;
-    height: 32px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
-    color: #0f1115;
+    color: #0d0f12;
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 9.5px;
     font-weight: 800;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 20px var(--color-glow);
-    border: 3px solid #ffffff;
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 14px rgba(255,255,255,0.2);
     transform: translate(-50%, -50%);
-    z-index: 100;
+    z-index: 50;
     pointer-events: none;
 }
+/* Distinción visual si quedan perfectamente empatados */
+.sim-gps-dot.car-secondary {
+    border: 2px dashed #0d0f12;
+    box-shadow: 0 0 14px rgba(255,255,255,0.4), 0 0 0 2px #fff;
+    z-index: 49;
+}
 
-/* Las banderas/estampas de tiempo en las curvas */
+/* Etiquetas flotantes fijas de sectores */
 .sim-telemetry-stamp {
     position: absolute;
-    background: #1c1e24;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #17191f;
+    border: 1px solid rgba(255,255,255,0.08);
     padding: 4px 8px;
     border-radius: 6px;
     display: flex;
-    flex-direction: column;
-    gap: 1px;
     transform: translate(-50%, -50%);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-    animation: stampPop 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     z-index: 10;
-    pointer-events: none;
 }
-
 .stamp-name {
-    font-family: var(--font-sans);
-    font-size: 9px;
-    font-weight: 700;
-    color: #8a8d98;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-}
-
-.stamp-time {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 8.5px;
     font-weight: 700;
-    color: #27F4D2; /* Mercedes Neon Teal */
-}
-
-@keyframes stampPop {
-    from { opacity: 0; transform: translate(-50%, -30%) scale(0.9); }
-    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    color: #27F4D2; /* Mercedes Cyan */
+    white-space: nowrap;
 }
