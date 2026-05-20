@@ -1,24 +1,24 @@
 /* ═══════════════════════════════════════════════════════════
-   PADDOCKINTEL — src/js/driver.js (v4 - Producción Limpia)
-   Driver Profile: Jolpica Results + OpenF1 Telemetry Integration
+   PADDOCKINTEL — src/js/driver.js (v5 - Executive Infographics)
+   Driver Profile: Jolpica Results + OpenF1 Telemetry + Advanced Analytics
    ═══════════════════════════════════════════════════════════ */
 
 const JOLPICA = 'https://api.jolpi.ca/ergast/f1';
 const OPENF1  = 'https://api.openf1.org/v1';
 const SEASON  = '2026';
 
-// Caché de datos para traducción instantánea sin recargas de red
 let driverCachedData = {
     standing: null,
     races: [],
     meta: null,
+    analytics: null, // Guardará la info avanzada de los CSVs
     pits: [],
     stints: [],
     laps: [],
     raceName: ''
 };
 
-// ── Helpers de Formato, Idioma y Estilos ──────────────────────────────
+// ── Helpers Canónicos ─────────────────────────────────────────
 const TEAM_COLORS = {
   'Mercedes': '#27F4D2', 'Ferrari': '#E8002D', 'McLaren': '#FF8000', 'Red Bull': '#3671C6',
   'Alpine': '#FF87BC', 'Haas': '#B6BABD', 'Racing Bulls': '#6692FF', 'RB': '#6692FF',
@@ -60,7 +60,6 @@ function getDriverId() {
   return params.get('id') || 'antonelli';
 }
 
-// Función traductora ultra-segura conectada al diccionario maestro global
 function _t(key) {
     const lang = localStorage.getItem("paddock_lang") || document.documentElement.lang || 'en';
     if (window.translations && window.translations[lang]) {
@@ -74,49 +73,7 @@ function getDriverMeta(driverId) {
   return F1_DRIVERS[driverId] || {};
 }
 
-// ── API Fetches ───────────────────────────────────────────────
-async function fetchDriverStanding(driverId) {
-  try {
-    const res  = await fetch(`${JOLPICA}/${SEASON}/drivers/${driverId}/driverStandings.json`);
-    const json = await res.json();
-    const list = json?.MRData?.StandingsTable?.StandingsLists;
-    return list?.[list.length - 1]?.DriverStandings?.[0] || null;
-  } catch { return null; }
-}
-
-async function fetchDriverResults(driverId) {
-  try {
-    const res  = await fetch(`${JOLPICA}/${SEASON}/drivers/${driverId}/results.json?limit=30`);
-    const json = await res.json();
-    return json?.MRData?.RaceTable?.Races || [];
-  } catch { return []; }
-}
-
-async function fetchOpenF1Session(year, country, locality) {
-  try {
-    let res  = await fetch(`${OPENF1}/sessions?year=${year}&country_name=${encodeURIComponent(country)}&session_type=Race`);
-    let data = await res.json();
-    if (data?.length) return data[0];
-    if (locality) {
-      res  = await fetch(`${OPENF1}/sessions?year=${year}&location=${encodeURIComponent(locality)}&session_type=Race`);
-      data = await res.json();
-      if (data?.length) return data[0];
-    }
-    return null;
-  } catch { return null; }
-}
-
-async function fetchPitStops(sessionKey, driverNumber) {
-  try { const res = await fetch(`${OPENF1}/pit?session_key=${sessionKey}&driver_number=${driverNumber}`); return await res.json(); } catch { return []; }
-}
-async function fetchStints(sessionKey, driverNumber) {
-  try { const res = await fetch(`${OPENF1}/stints?session_key=${sessionKey}&driver_number=${driverNumber}`); return await res.json(); } catch { return []; }
-}
-async function fetchLaps(sessionKey, driverNumber) {
-  try { const res = await fetch(`${OPENF1}/laps?session_key=${sessionKey}&driver_number=${driverNumber}`); return await res.json(); } catch { return []; }
-}
-
-// ── Render Componentes Premium ─────────────────────────────────
+// ── Renderizadores de Pantalla ────────────────────────────────
 
 function renderHero() {
   const contentEl = document.getElementById('driver-profile-content');
@@ -191,11 +148,6 @@ function renderEconomics(pts, salary, valueIdx, firstName, lastName) {
   const el = document.getElementById('driver-economics-content');
   if (!el) return;
 
-  if (pts === 0) {
-    el.innerHTML = `<div class="no-data">${_t('loading_economics')}</div>`;
-    return;
-  }
-
   const cpp = salary > 0 ? Math.round(salary / pts) : 0;
   const statusCrit = valueIdx > 20 ? _t('best_contract') : valueIdx > 10 ? _t('solid_value') : _t('high_cost');
 
@@ -220,11 +172,6 @@ function renderEconomics(pts, salary, valueIdx, firstName, lastName) {
 function renderResults() {
   const el = document.getElementById('driver-results-table');
   if (!el) return;
-
-  if (!driverCachedData.races.length) {
-    el.innerHTML = `<div class="no-data">${_t('no_race_data')}</div>`;
-    return;
-  }
 
   const currentLangCode = localStorage.getItem("paddock_lang") || 'en';
   const rows = [...driverCachedData.races].reverse().map((race, i) => {
@@ -278,6 +225,81 @@ function createOrGetModuleCard(id, titleKey, tagKey) {
         <div id="${id}-body" class="module-body-content"></div>
     `;
     return document.getElementById(`${id}-body`);
+}
+
+// ── NUEVO: Inyección de Infografías Apple Avanzadas desde el CSV ────────
+function renderAdvancedAnalytics() {
+    const data = driverCachedData.analytics;
+    if (!data) return;
+
+    // Infografía 1: Sunday Progress Index
+    const bodyProgress = createOrGetModuleCard('csv-progress-card', 'sunday_progress_title', 'verified_tag');
+    if (bodyProgress) {
+        const idx = data.progressIndex;
+        const isPositive = idx >= 0;
+        const arrow = isPositive ? '↑' : '↓';
+        const colorClass = isPositive ? 'text-green' : 'text-red';
+        const labelText = isPositive ? _t('positions_gained') : _t('positions_lost');
+        
+        bodyProgress.innerHTML = `
+          <div class="apple-analytics-flex">
+              <div class="apple-big-stat-block">
+                  <div class="apple-stat-big-num ${colorClass}">${arrow}${Math.abs(idx)}</div>
+                  <div class="apple-stat-big-desc">${labelText}</div>
+              </div>
+              <div class="apple-sub-metrics-list">
+                  <div class="apple-sub-metric-item">
+                      <span class="apple-sub-label">${_t('avg_start_label')}</span>
+                      <span class="apple-sub-val">P${data.avgStart}</span>
+                  </div>
+                  <div class="apple-sub-metric-item">
+                      <span class="apple-sub-label">${_t('avg_finish_label')}</span>
+                      <span class="apple-sub-val">P${data.avgFinish}</span>
+                  </div>
+              </div>
+          </div>
+        `;
+    }
+
+    // Infografía 2: Damage & Reliability Report
+    const bodyReliability = createOrGetModuleCard('csv-reliability-card', 'damage_reliability_title', 'verified_tag');
+    if (bodyReliability) {
+        const rel = data.reliability;
+        bodyReliability.innerHTML = `
+          <div class="apple-reliability-container">
+              <div class="apple-progress-row">
+                  <div class="apple-progress-text-split">
+                      <span>${_t('completion_rate_label')}</span>
+                      <strong>${rel.completionRate}%</strong>
+                  </div>
+                  <div class="apple-progress-bar-bg">
+                      <div class="apple-progress-bar-fill" style="width: ${rel.completionRate}%; background: #1d1d1f;"></div>
+                  </div>
+              </div>
+              <div class="apple-progress-row">
+                  <div class="apple-progress-text-split">
+                      <span>${_t('driver_error_label')}</span>
+                      <strong style="color: var(--f1-red);">${rel.driverErrorRate}%</strong>
+                  </div>
+                  <div class="apple-progress-bar-bg">
+                      <div class="apple-progress-bar-fill" style="width: ${rel.driverErrorRate}%; background: var(--f1-red); opacity: 0.8;"></div>
+                  </div>
+              </div>
+              <div class="apple-progress-row">
+                  <div class="apple-progress-text-split">
+                      <span>${_t('mech_failure_label')}</span>
+                      <strong style="color: #0066cc;">${rel.mechanicalFailureRate}%</strong>
+                  </div>
+                  <div class="apple-progress-bar-bg">
+                      <div class="apple-progress-bar-fill" style="width: ${rel.mechanicalFailureRate}%; background: #0066cc; opacity: 0.8;"></div>
+                  </div>
+              </div>
+              <div class="apple-reliability-footer">
+                  Total DNFs: <strong>${rel.totalDNFs}</strong>
+              </div>
+          </div>
+        `;
+    }
 }
 
 function renderPits() {
@@ -358,7 +380,7 @@ function renderLaps(teamColor) {
     return `
       <div class="lap-row">
         <div class="lap-num">L${l.lap_number}</div>
-        <div class="lap-bar-wrap">
+        <div class="apple-grid-bar-wrap">
           <div class="lap-bar-fill" style="width:${barPct}%;background:${barColor}"></div>
         </div>
         <div class="lap-time-val ${isFastest?'fastest':''}">${formatLapTime(ms)}</div>
@@ -403,39 +425,15 @@ function renderCareerTimeline() {
   `;
 }
 
-function renderRecordsGrid() {
-  const body = createOrGetModuleCard('history-records-card', 'records_title', 'verified_tag');
-  if (!body) return;
-  const d = driverCachedData.meta;
-
-  if (!d || !d.records?.length) {
-    body.innerHTML = `<div class="no-data">No records items available.</div>`;
-    return;
-  }
-
-  const badges = d.records.map(r => `
-    <div class="record-badge-premium">
-      <span class="record-icon">${r.icon}</span>
-      <div class="record-info-block">
-         <div class="record-label">${r.label}</div>
-         <div class="record-value">${r.value}</div>
-         <div class="record-race-sub">${r.race}</div>
-      </div>
-    </div>
-  `).join('');
-
-  body.innerHTML = `<div class="records-flex-grid">${badges}</div>`;
-}
-
-// ── Render Dinámico Global ────────────────────────────────────
+// ── Render Global ─────────────────────────────────────────────
 function renderAllComponents() {
     const teamColor = getTeamColor(driverCachedData.standing?.Constructors?.[0]?.name || '');
     renderHero();
     renderResults();
+    renderAdvancedAnalytics(); // Inyección de analítica precalculada
     renderPits();
     renderLaps(teamColor);
     renderCareerTimeline();
-    renderRecordsGrid();
 }
 
 // ── Inicialización ───────────────────────────────────────────
@@ -444,16 +442,20 @@ async function init() {
   const meta = getDriverMeta(driverId);
   driverCachedData.meta = meta;
 
-  const [standing, races] = await Promise.all([
+  // Carga paralela de Jolpica y el nuevo JSON precalculado por Python
+  const [standing, races, analyticsRes] = await Promise.all([
     fetchDriverStanding(driverId),
     fetchDriverResults(driverId),
+    fetch('src/data-outputs/driver-analytics.json').then(r => r.ok ? r.json() : {}).catch(() => ({}))
   ]);
 
   driverCachedData.standing = standing;
   driverCachedData.races = races;
+  driverCachedData.analytics = analyticsRes[driverId] || null;
 
   renderAllComponents();
 
+  // Bloque OpenF1 no-bloqueante
   const lastRace = races[races.length - 1];
   if (!lastRace) return;
 
@@ -484,9 +486,7 @@ async function init() {
   renderAllComponents();
 }
 
-// Escuchar el cambio de idioma dinámico sin recargar la página
 window.addEventListener('languageChanged', () => {
-    console.log("Idioma cambiado detectado en driver.js. Traduciendo en vivo...");
     renderAllComponents();
 });
 

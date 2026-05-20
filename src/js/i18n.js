@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   PADDOCKINTEL i18n — Diccionario Maestro Unificado (v5)
+   PADDOCKINTEL i18n — Diccionario Maestro Unificado (v6)
    ═══════════════════════════════════════════════════════════ */
 
 window.translations = {
@@ -75,7 +75,18 @@ window.translations = {
         career_path_title: "Trayectoria Profesional",
         road_to_f1: "Camino a la F1",
         records_title: "Récords e Hitos",
-        verified_tag: "Verificado"
+        verified_tag: "Verificado",
+
+        // --- INFOGRAFÍAS AVANZADAS DE LOS CSVs ---
+        sunday_progress_title: "Sunday Progress Index",
+        damage_reliability_title: "Damage & Reliability Report",
+        avg_start_label: "Salida Promedio",
+        avg_finish_label: "Llegada Promedio",
+        positions_gained: "Posiciones ganadas netas por carrera",
+        positions_lost: "Posiciones perdidas netas por carrera",
+        completion_rate_label: "Tasa de Carreras Completadas",
+        driver_error_label: "Abandonos por Error de Conducción",
+        mech_failure_label: "Abandonos por Falla Mecánica"
     },
     en: {
         // --- PORTADA (index.html & app.js) ---
@@ -149,7 +160,18 @@ window.translations = {
         career_path_title: "Career Path",
         road_to_f1: "Road to F1",
         records_title: "Records & Achievements",
-        verified_tag: "Verified"
+        verified_tag: "Verified",
+
+        // --- CSV ADVANCED INFOGRAPHICS ---
+        sunday_progress_title: "Sunday Progress Index",
+        damage_reliability_title: "Damage & Reliability Report",
+        avg_start_label: "Avg. Starting Grid",
+        avg_finish_label: "Avg. Race Finish",
+        positions_gained: "Net positions gained per Sunday",
+        positions_lost: "Net positions lost per Sunday",
+        completion_rate_label: "Race Completion Rate",
+        driver_error_label: "DNFs via Driver Error",
+        mech_failure_label: "DNFs via Mechanical Failure"
     }
 };
 

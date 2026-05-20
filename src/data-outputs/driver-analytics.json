@@ -1,0 +1,244 @@
+{
+  "hamilton": {
+    "avgStart": 5.5,
+    "avgFinish": 5.0,
+    "progressIndex": 0.5,
+    "reliability": {
+      "completionRate": 100.0,
+      "driverErrorRate": 0.0,
+      "mechanicalFailureRate": 0.0,
+      "totalDNFs": 0
+    }
+  },
+  "alonso": {
+    "avgStart": 18.2,
+    "avgFinish": 17.0,
+    "progressIndex": 1.2,
+    "reliability": {
+      "completionRate": 50.0,
+      "driverErrorRate": 0.0,
+      "mechanicalFailureRate": 50.0,
+      "totalDNFs": 2
+    }
+  },
+  "hulkenberg": {
+    "avgStart": 11.2,
+    "avgFinish": 15.8,
+    "progressIndex": -4.5,
+    "reliability": {
+      "completionRate": 50.0,
+      "driverErrorRate": 0.0,
+      "mechanicalFailureRate": 50.0,
+      "totalDNFs": 2
+    }
+  },
+  "perez": {
+    "avgStart": 19.5,
+    "avgFinish": 16.0,
+    "progressIndex": 3.5,
+    "reliability": {
+      "completionRate": 100.0,
+      "driverErrorRate": 0.0,
+      "mechanicalFailureRate": 0.0,
+      "totalDNFs": 0
+    }
+  },
+  "bottas": {
+    "avgStart": 19.2,
+    "avgFinish": 17.2,
+    "progressIndex": 2.0,
+    "reliability": {
+      "completionRate": 75.0,
+      "driverErrorRate": 0.0,
+      "mechanicalFailureRate": 25.0,
+      "totalDNFs": 1
+    }
+  },
+  "max_verstappen": {
+    "avgStart": 10.2,
+    "avgFinish": 8.8,
+    "progressIndex": 1.5,
+    "reliability": {
+      "completionRate": 75.0,
+      "driverErrorRate": 0.0,
+      "mechanicalFailureRate": 25.0,
+      "totalDNFs": 1
+    }
+  },
+  "sainz": {
+    "avgStart": 16.8,
+    "avgFinish": 12.0,
+    "progressIndex": 4.8,
+    "reliability": {
+      "completionRate": 100.0,
+      "driverErrorRate": 0.0,
+      "mechanicalFailureRate": 0.0,
+      "totalDNFs": 0
+    }
+  },
+  "ocon": {
+    "avgStart": 13.0,
+    "avgFinish": 12.0,
+    "progressIndex": 1.0,
+    "reliability": {
+      "completionRate": 100.0,
+      "driverErrorRate": 0.0,
+      "mechanicalFailureRate": 0.0,
+      "totalDNFs": 0
+    }
+  },
+  "stroll": {
+    "avgStart": 20.5,
+    "avgFinish": 18.2,
+    "progressIndex": 2.2,
+    "reliability": {
+      "completionRate": 50.0,
+      "driverErrorRate": 0.0,
+      "mechanicalFailureRate": 50.0,
+      "totalDNFs": 2
+    }
+  },
+  "gasly": {
+    "avgStart": 9.2,
+    "avgFinish": 11.0,
+    "progressIndex": -1.8,
+    "reliability": {
+      "completionRate": 75.0,
+      "driverErrorRate": 25.0,
+      "mechanicalFailureRate": 0.0,
+      "totalDNFs": 1
+    }
+  },
+  "leclerc": {
+    "avgStart": 3.8,
+    "avgFinish": 4.0,
+    "progressIndex": -0.2,
+    "reliability": {
+      "completionRate": 100.0,
+      "driverErrorRate": 0.0,
+      "mechanicalFailureRate": 0.0,
+      "totalDNFs": 0
+    }
+  },
+  "norris": {
+    "avgStart": 5.2,
+    "avgFinish": 8.0,
+    "progressIndex": -2.8,
+    "reliability": {
+      "completionRate": 75.0,
+      "driverErrorRate": 0.0,
+      "mechanicalFailureRate": 25.0,
+      "totalDNFs": 1
+    }
+  },
+  "russell": {
+    "avgStart": 2.5,
+    "avgFinish": 2.8,
+    "progressIndex": -0.2,
+    "reliability": {
+      "completionRate": 100.0,
+      "driverErrorRate": 0.0,
+      "mechanicalFailureRate": 0.0,
+      "totalDNFs": 0
+    }
+  },
+  "albon": {
+    "avgStart": 17.2,
+    "avgFinish": 16.0,
+    "progressIndex": 1.2,
+    "reliability": {
+      "completionRate": 75.0,
+      "driverErrorRate": 0.0,
+      "mechanicalFailureRate": 25.0,
+      "totalDNFs": 1
+    }
+  },
+  "piastri": {
+    "avgStart": 5.0,
+    "avgFinish": 11.2,
+    "progressIndex": -6.2,
+    "reliability": {
+      "completionRate": 50.0,
+      "driverErrorRate": 25.0,
+      "mechanicalFailureRate": 25.0,
+      "totalDNFs": 2
+    }
+  },
+  "lawson": {
+    "avgStart": 11.8,
+    "avgFinish": 12.2,
+    "progressIndex": -0.5,
+    "reliability": {
+      "completionRate": 75.0,
+      "driverErrorRate": 0.0,
+      "mechanicalFailureRate": 25.0,
+      "totalDNFs": 1
+    }
+  },
+  "bearman": {
+    "avgStart": 13.0,
+    "avgFinish": 11.2,
+    "progressIndex": 1.8,
+    "reliability": {
+      "completionRate": 75.0,
+      "driverErrorRate": 25.0,
+      "mechanicalFailureRate": 0.0,
+      "totalDNFs": 1
+    }
+  },
+  "colapinto": {
+    "avgStart": 12.8,
+    "avgFinish": 12.0,
+    "progressIndex": 0.8,
+    "reliability": {
+      "completionRate": 100.0,
+      "driverErrorRate": 0.0,
+      "mechanicalFailureRate": 0.0,
+      "totalDNFs": 0
+    }
+  },
+  "antonelli": {
+    "avgStart": 1.2,
+    "avgFinish": 1.2,
+    "progressIndex": 0.0,
+    "reliability": {
+      "completionRate": 100.0,
+      "driverErrorRate": 0.0,
+      "mechanicalFailureRate": 0.0,
+      "totalDNFs": 0
+    }
+  },
+  "bortoleto": {
+    "avgStart": 14.0,
+    "avgFinish": 13.8,
+    "progressIndex": 0.2,
+    "reliability": {
+      "completionRate": 75.0,
+      "driverErrorRate": 0.0,
+      "mechanicalFailureRate": 25.0,
+      "totalDNFs": 1
+    }
+  },
+  "hadjar": {
+    "avgStart": 10.5,
+    "avgFinish": 15.5,
+    "progressIndex": -5.0,
+    "reliability": {
+      "completionRate": 50.0,
+      "driverErrorRate": 25.0,
+      "mechanicalFailureRate": 25.0,
+      "totalDNFs": 2
+    }
+  },
+  "arvid_lindblad": {
+    "avgStart": 12.5,
+    "avgFinish": 12.0,
+    "progressIndex": 0.5,
+    "reliability": {
+      "completionRate": 100.0,
+      "driverErrorRate": 0.0,
+      "mechanicalFailureRate": 0.0,
+      "totalDNFs": 0
+    }
+  }
+}
