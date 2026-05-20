@@ -1,249 +1,35 @@
-#!/usr/bin/env python3
-"""
-PaddockIntel — generate-constructors.py
-Converts Ergast CSVs → src/data/f1-constructors.js
+name: Generate f1-constructors.js from CSV
 
-Run:  python3 scripts/generate-constructors.py
-Auto: triggered by GitHub Actions on CSV push
-"""
+on:
+  push:
+    paths:
+      - 'data/constructors.csv'
+      - 'data/constructor_standings.csv'
+      - 'data/constructor_results.csv'
 
-import csv
-import json
-import os
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-# ── Paths ────────────────────────────────────────────────────
-BASE     = os.path.join(os.path.dirname(__file__), '..', 'src', 'data')
-OUT_FILE = os.path.join(BASE, 'f1-constructors.js')
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
-CSV_CONSTRUCTORS = os.path.join(BASE, 'constructors.csv')
-CSV_STANDINGS    = os.path.join(BASE, 'constructor_standings.csv')
-CSV_RESULTS      = os.path.join(BASE, 'constructor_results.csv')
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas
 
-# ── 2026 Grid metadata ────────────────────────────────────────
-# Update chassis/engine/principal each season as needed
-TEAMS_2026 = {
-    '1':   {
-        'ref': 'mclaren', 'name': 'McLaren', 'color': '#FF8000',
-        'base': 'Woking, UK', 'principal': 'Andrea Stella',
-        'chassis': 'MCL40', 'engine': 'Mercedes',
-        'drivers': ['norris', 'piastri'],
-    },
-    '3':   {
-        'ref': 'williams', 'name': 'Williams', 'color': '#64C4FF',
-        'base': 'Grove, UK', 'principal': 'James Vowles',
-        'chassis': 'FW47', 'engine': 'Mercedes',
-        'drivers': ['sainz', 'albon'],
-    },
-    '6':   {
-        'ref': 'ferrari', 'name': 'Ferrari', 'color': '#E8002D',
-        'base': 'Maranello, Italy', 'principal': 'Frédéric Vasseur',
-        'chassis': 'SF-26', 'engine': 'Ferrari',
-        'drivers': ['leclerc', 'hamilton'],
-    },
-    '9':   {
-        'ref': 'red_bull', 'name': 'Red Bull', 'color': '#3671C6',
-        'base': 'Milton Keynes, UK', 'principal': 'Christian Horner',
-        'chassis': 'RB22', 'engine': 'Ford',
-        'drivers': ['verstappen', 'hadjar'],
-    },
-    '117': {
-        'ref': 'aston_martin', 'name': 'Aston Martin', 'color': '#229971',
-        'base': 'Silverstone, UK', 'principal': 'Andy Cowell',
-        'chassis': 'AMR26', 'engine': 'Honda',
-        'drivers': ['alonso', 'stroll'],
-    },
-    '131': {
-        'ref': 'mercedes', 'name': 'Mercedes', 'color': '#27F4D2',
-        'base': 'Brackley, UK', 'principal': 'Toto Wolff',
-        'chassis': 'W16', 'engine': 'Mercedes',
-        'drivers': ['antonelli', 'russell'],
-    },
-    '210': {
-        'ref': 'haas', 'name': 'Haas', 'color': '#B6BABD',
-        'base': 'Kannapolis, USA', 'principal': 'Ayao Komatsu',
-        'chassis': 'VF-26', 'engine': 'Ferrari',
-        'drivers': ['bearman', 'ocon'],
-    },
-    '214': {
-        'ref': 'alpine', 'name': 'Alpine', 'color': '#FF87BC',
-        'base': 'Enstone, UK', 'principal': 'Oliver Oakes',
-        'chassis': 'A526', 'engine': 'Renault',
-        'drivers': ['gasly', 'colapinto'],
-    },
-    '215': {
-        'ref': 'rb', 'name': 'Racing Bulls', 'color': '#6692FF',
-        'base': 'Faenza, Italy', 'principal': 'Laurent Mekies',
-        'chassis': 'VCARB 02', 'engine': 'Honda',
-        'drivers': ['lawson', 'lindblad'],
-    },
-    '216': {
-        'ref': 'cadillac', 'name': 'Cadillac', 'color': '#C8102E',
-        'base': 'Speedway, USA', 'principal': 'Graeme Lowdon',
-        'chassis': 'CADS1', 'engine': 'Ferrari',
-        'drivers': ['bottas', 'perez'],
-    },
-    '15':  {
-        'ref': 'audi', 'name': 'Audi', 'color': '#52E252',
-        'base': 'Hinwil, Switzerland', 'principal': 'Mattia Binotto',
-        'chassis': 'C46', 'engine': 'Ferrari',
-        'drivers': ['hulkenberg', 'bortoleto'],
-    },
-}
+      - name: Run generator script
+        run: python3 scripts/generate-constructors.py
 
-# ── raceId → season year mapping ─────────────────────────────
-# Based on Ergast raceId ranges (update as seasons progress)
-def get_year(rid):
-    if rid >= 1141: return 2026
-    if rid >= 1093: return 2025
-    if rid >= 1069: return 2024
-    if rid >= 1046: return 2023
-    if rid >= 1024: return 2022
-    if rid >= 1000: return 2021
-    if rid >= 975:  return 2020
-    if rid >= 953:  return 2019
-    if rid >= 931:  return 2018
-    if rid >= 905:  return 2017
-    if rid >= 880:  return 2016
-    if rid >= 855:  return 2015
-    if rid >= 828:  return 2014
-    if rid >= 800:  return 2013
-    if rid >= 773:  return 2012
-    return None
-
-def safe_int(v, default=0):
-    try: return int(v)
-    except: return default
-
-def safe_float(v, default=0.0):
-    try: return float(v)
-    except: return default
-
-# ── Load CSVs ─────────────────────────────────────────────────
-print("Loading CSVs...")
-
-constructors = {}
-with open(CSV_CONSTRUCTORS, encoding='utf-8') as f:
-    for row in csv.DictReader(f):
-        constructors[row['constructorId']] = row
-
-standings_raw = {}
-with open(CSV_STANDINGS, encoding='utf-8') as f:
-    for row in csv.DictReader(f):
-        cid = row['constructorId']
-        if cid not in standings_raw:
-            standings_raw[cid] = []
-        standings_raw[cid].append({
-            'raceId':   safe_int(row['raceId']),
-            'points':   safe_float(row['points']),
-            'position': safe_int(row['position']),
-            'wins':     safe_int(row['wins']),
-        })
-
-results_raw = {}
-with open(CSV_RESULTS, encoding='utf-8') as f:
-    for row in csv.DictReader(f):
-        cid = row['constructorId']
-        if cid not in results_raw:
-            results_raw[cid] = []
-        results_raw[cid].append({
-            'raceId': safe_int(row['raceId']),
-            'points': safe_float(row['points']),
-        })
-
-print(f"  Constructors: {len(constructors)}")
-print(f"  Standings entries: {sum(len(v) for v in standings_raw.values())}")
-print(f"  Results entries:   {sum(len(v) for v in results_raw.values())}")
-
-# ── Build output ──────────────────────────────────────────────
-output = {}
-
-for cid, meta in TEAMS_2026.items():
-    s_list = sorted(standings_raw.get(cid, []), key=lambda x: x['raceId'])
-
-    # Last standings entry per season = final championship result
-    season_last = {}
-    for s in s_list:
-        yr = get_year(s['raceId'])
-        if yr:
-            if yr not in season_last or s['raceId'] > season_last[yr]['raceId']:
-                season_last[yr] = s
-
-    # WCC titles = seasons where team finished P1
-    wcc_titles = sorted([yr for yr, s in season_last.items() if s['position'] == 1])
-
-    # Season history from 2014 onward
-    season_history = {}
-    for yr, s in sorted(season_last.items()):
-        if yr >= 2014:
-            season_history[str(yr)] = {
-                'position': s['position'],
-                'points':   s['points'],
-                'wins':     s['wins'],
-            }
-
-    # Points per race current season (for sparkline chart)
-    current_year = max((get_year(r['raceId']) for r in results_raw.get(cid, [])
-                        if get_year(r['raceId'])), default=2026)
-    results_current = sorted(
-        [r for r in results_raw.get(cid, []) if get_year(r['raceId']) == current_year],
-        key=lambda x: x['raceId']
-    )
-    pts_by_race = [r['points'] for r in results_current]
-
-    output[meta['ref']] = {
-        'constructorId':  cid,
-        'ref':            meta['ref'],
-        'name':           meta['name'],
-        'color':          meta['color'],
-        'base':           meta['base'],
-        'principal':      meta['principal'],
-        'chassis':        meta['chassis'],
-        'engine':         meta['engine'],
-        'drivers':        meta['drivers'],
-        'wccTitles':      wcc_titles,
-        'totalWccTitles': len(wcc_titles),
-        'seasonHistory':  season_history,
-        'ptsByRace':      pts_by_race,
-    }
-
-    latest = list(season_history.values())[-1] if season_history else {}
-    print(f"  {meta['name']:15s} WCC:{len(wcc_titles)} "
-          f"2026→P{latest.get('position','?')} {latest.get('points','?')}pts")
-
-# ── Write JS file ─────────────────────────────────────────────
-js_content = f"""/**
- * PaddockIntel — F1 Constructors Data
- * src/data/f1-constructors.js
- *
- * AUTO-GENERATED — do not edit manually.
- * Source: src/data/constructors.csv + constructor_standings.csv + constructor_results.csv
- * Regenerated automatically via GitHub Actions on CSV push.
- *
- * SCHEMA per constructor:
- *   constructorId  — Ergast numeric ID
- *   ref            — Ergast slug (used as object key)
- *   name           — Display name
- *   color          — Team hex color
- *   base           — Factory location
- *   principal      — Team Principal 2026
- *   chassis        — 2026 chassis
- *   engine         — 2026 power unit supplier
- *   drivers        — 2026 driver IDs (matches f1-drivers.js keys)
- *   wccTitles      — Array of WCC championship years
- *   totalWccTitles — Count of WCC titles
- *   seasonHistory  — {{year: {{position, points, wins}}}} from 2014
- *   ptsByRace      — Points per race current season (for sparkline)
- */
-
-const F1_CONSTRUCTORS = {json.dumps(output, indent=2)};
-
-if (typeof module !== 'undefined') {{
-  module.exports = {{ F1_CONSTRUCTORS }};
-}}
-"""
-
-with open(OUT_FILE, 'w', encoding='utf-8') as f:
-    f.write(js_content)
-
-print(f"\n✅ Written: {OUT_FILE}")
-print(f"   Teams: {len(output)}")
+      - name: Commit generated file
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/js/f1-constructors.js
+          git diff --staged --quiet || git commit -m "auto: regenerate f1-constructors.js from CSV"
+          git push
