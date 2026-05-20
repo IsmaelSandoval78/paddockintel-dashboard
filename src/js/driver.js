@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   PADDOCKINTEL — src/js/driver.js (v5 - Absolute Root Edition)
+   PADDOCKINTEL — src/js/driver.js (v6 - Fail-Safe Pro)
    Driver Profile: Jolpica Results + OpenF1 Telemetry + Advanced Analytics
    ═══════════════════════════════════════════════════════════ */
 
@@ -77,12 +77,11 @@ function getDriverMeta(driverId) {
 
 function renderHero() {
   const contentEl = document.getElementById('driver-profile-content');
-  const loadingEl = document.getElementById('driver-loading-state');
   const standing = driverCachedData.standing;
   const meta = driverCachedData.meta;
 
   if (!standing) {
-    if (loadingEl) loadingEl.innerHTML = `<div class="error-msg">Driver not found for ${SEASON} season.</div>`;
+    if (contentEl) contentEl.innerHTML = `<div class="no-data">Driver profile details unavailable.</div>`;
     return;
   }
 
@@ -98,9 +97,7 @@ function renderHero() {
   const flag      = meta?.flag   || '🏁';
 
   const valueIdx = salary > 0 ? (pts / (salary / 1000000)).toFixed(1) : '—';
-  document.title = `${firstName} ${lastName} — PaddockIntel Hub`;
 
-  if (loadingEl) loadingEl.style.display = 'none';
   if (contentEl) {
     contentEl.style.display = 'block';
     contentEl.innerHTML = `
@@ -172,6 +169,11 @@ function renderEconomics(pts, salary, valueIdx, firstName, lastName) {
 function renderResults() {
   const el = document.getElementById('driver-results-table');
   if (!el) return;
+
+  if (!driverCachedData.races.length) {
+    el.innerHTML = `<div class="no-data">${_t('no_race_data')}</div>`;
+    return;
+  }
 
   const currentLangCode = localStorage.getItem("paddock_lang") || 'en';
   const rows = [...driverCachedData.races].reverse().map((race, i) => {
@@ -423,35 +425,48 @@ function renderCareerTimeline() {
 }
 
 function renderAllComponents() {
-    const teamColor = getTeamColor(driverCachedData.standing?.Constructors?.[0]?.name || '');
-    renderHero();
-    renderResults();
-    renderAdvancedAnalytics();
-    renderPits();
-    renderLaps(teamColor);
-    renderCareerTimeline();
+    try {
+        const teamColor = getTeamColor(driverCachedData.standing?.Constructors?.[0]?.name || '');
+        renderHero();
+        renderResults();
+        renderAdvancedAnalytics();
+        renderPits();
+        renderLaps(teamColor);
+        renderCareerTimeline();
+    } catch (e) {
+        print("Error rendering components: ", e);
+    }
 }
 
-// ── Inicialización Segura con Rutas Absolutas a la Raíz (/) ─────
+// ── Inicialización Robustecida ─────────────────────────────────
 async function init() {
   const driverId = getDriverId();
   const meta = getDriverMeta(driverId);
   driverCachedData.meta = meta;
 
-  // 🛠️ OPTIMIZACIÓN: Fetch con barra invertida fija al inicio (/src/...) para evitar 404 de ruteo
-  const [standing, races, analyticsRes] = await Promise.all([
-    fetchDriverStanding(driverId),
-    fetchDriverResults(driverId),
-    fetch('/src/data-outputs/driver-analytics.json').then(r => r.ok ? r.json() : {}).catch(() => ({}))
-  ]);
+  try {
+      const [standing, races, analyticsRes] = await Promise.all([
+        fetchDriverStanding(driverId),
+        fetchDriverResults(driverId),
+        fetch('/src/data-outputs/driver-analytics.json').then(r => r.ok ? r.json() : {}).catch(() => ({}))
+      ]);
 
-  driverCachedData.standing = standing;
-  driverCachedData.races = races;
-  driverCachedData.analytics = analyticsRes[driverId] || null;
+      driverCachedData.standing = standing;
+      driverCachedData.races = races;
+      driverCachedData.analytics = analyticsRes[driverId] || null;
+  } catch (err) {
+      console.warn("API base fell back, processing partial components", err);
+  }
+
+  // INTERRUPTOR DE SEGURIDAD MÁXIMA: Desactivar loader pase lo que pase
+  const loadingEl = document.getElementById('driver-loading-state');
+  if (loadingEl) loadingEl.style.display = 'none';
 
   renderAllComponents();
 
-  const lastRace = races[races.length - 1];
+  // Bloque OpenF1 no-bloqueante posterior
+  const races = driverCachedData.races;
+  const lastRace = races && races.length ? races[races.length - 1] : null;
   if (!lastRace) return;
 
   const COUNTRY_MAP = { 'USA':'United States', 'UK':'United Kingdom', 'UAE':'United Arab Emirates' };
@@ -464,21 +479,25 @@ async function init() {
 
   if (!driverNum) return;
 
-  const session = await fetchOpenF1Session(parseInt(SEASON), country, locality);
-  if (!session) return;
+  try {
+      const session = await fetchOpenF1Session(parseInt(SEASON), country, locality);
+      if (!session) return;
 
-  const sessionKey = session.session_key;
-  const [pits, stints, laps] = await Promise.all([
-    fetchPitStops(sessionKey, driverNum),
-    fetchStints(sessionKey, driverNum),
-    fetchLaps(sessionKey, driverNum),
-  ]);
+      const sessionKey = session.session_key;
+      const [pits, stints, laps] = await Promise.all([
+        fetchPitStops(sessionKey, driverNum),
+        fetchStints(sessionKey, driverNum),
+        fetchLaps(sessionKey, driverNum),
+      ]);
 
-  driverCachedData.pits = pits;
-  driverCachedData.stints = stints;
-  driverCachedData.laps = laps;
+      driverCachedData.pits = pits;
+      driverCachedData.stints = stints;
+      driverCachedData.laps = laps;
 
-  renderAllComponents();
+      renderAllComponents();
+  } catch(e) {
+      console.log("OpenF1 telemetry paused or offline for this session", e);
+  }
 }
 
 window.addEventListener('languageChanged', () => {
