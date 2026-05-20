@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   PADDOCKINTEL — src/js/driver.js (v6 - Fail-Safe Pro)
+   PADDOCKINTEL — src/js/driver.js (v6 - Edición Definitiva)
    Driver Profile: Jolpica Results + OpenF1 Telemetry + Advanced Analytics
    ═══════════════════════════════════════════════════════════ */
 
@@ -71,6 +71,48 @@ function _t(key) {
 function getDriverMeta(driverId) {
   if (typeof F1_DRIVERS === 'undefined') return {};
   return F1_DRIVERS[driverId] || {};
+}
+
+// ── API Fetches (Llamadas obligatorias de red) ─────────────────
+async function fetchDriverStanding(driverId) {
+  try {
+    const res  = await fetch(`${JOLPICA}/${SEASON}/drivers/${driverId}/driverStandings.json`);
+    const json = await res.json();
+    const list = json?.MRData?.StandingsTable?.StandingsLists;
+    return list?.[list.length - 1]?.DriverStandings?.[0] || null;
+  } catch { return null; }
+}
+
+async function fetchDriverResults(driverId) {
+  try {
+    const res  = await fetch(`${JOLPICA}/${SEASON}/drivers/${driverId}/results.json?limit=30`);
+    const json = await res.json();
+    return json?.MRData?.RaceTable?.Races || [];
+  } catch { return []; }
+}
+
+async function fetchOpenF1Session(year, country, locality) {
+  try {
+    let res  = await fetch(`${OPENF1}/sessions?year=${year}&country_name=${encodeURIComponent(country)}&session_type=Race`);
+    let data = await res.json();
+    if (data?.length) return data[0];
+    if (locality) {
+      res  = await fetch(`${OPENF1}/sessions?year=${year}&location=${encodeURIComponent(locality)}&session_type=Race`);
+      data = await res.json();
+      if (data?.length) return data[0];
+    }
+    return null;
+  } catch { return null; }
+}
+
+async function fetchPitStops(sessionKey, driverNumber) {
+  try { const res = await fetch(`${OPENF1}/pit?session_key=${sessionKey}&driver_number=${driverNumber}`); return await res.json(); } catch { return []; }
+}
+async function fetchStints(sessionKey, driverNumber) {
+  try { const res = await fetch(`${OPENF1}/stints?session_key=${sessionKey}&driver_number=${driverNumber}`); return await res.json(); } catch { return []; }
+}
+async function fetchLaps(sessionKey, driverNumber) {
+  try { const res = await fetch(`${OPENF1}/laps?session_key=${sessionKey}&driver_number=${driverNumber}`); return await res.json(); } catch { return []; }
 }
 
 // ── Renderizadores de Pantalla ────────────────────────────────
@@ -434,7 +476,7 @@ function renderAllComponents() {
         renderLaps(teamColor);
         renderCareerTimeline();
     } catch (e) {
-        print("Error rendering components: ", e);
+        console.error("Error rendering components: ", e);
     }
 }
 
@@ -458,7 +500,7 @@ async function init() {
       console.warn("API base fell back, processing partial components", err);
   }
 
-  // INTERRUPTOR DE SEGURIDAD MÁXIMA: Desactivar loader pase lo que pase
+  // INTERRUPTOR DE SEGURIDAD MÁXIMA: Apagar loader sí o sí
   const loadingEl = document.getElementById('driver-loading-state');
   if (loadingEl) loadingEl.style.display = 'none';
 
