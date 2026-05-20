@@ -87,6 +87,11 @@ window.translations = {
         completion_rate_label: "Tasa de Carreras Completadas",
         driver_error_label: "Abandonos por Error de Conducción",
         mech_failure_label: "Abandonos por Falla Mecánica"
+
+        qualifying_battle_title: "Qualifying Battle Index",
+        teammate_duel_label: "Duelo vs Compañero",
+        avg_qualy_label: "Posición Promedio Sábados",
+        battle_desc: "Victorias vs derrotas en sesión clasificatoria directa",
     },
     en: {
         // --- PORTADA (index.html & app.js) ---
@@ -172,6 +177,11 @@ window.translations = {
         completion_rate_label: "Race Completion Rate",
         driver_error_label: "DNFs via Driver Error",
         mech_failure_label: "DNFs via Mechanical Failure"
+
+        qualifying_battle_title: "Qualifying Battle Index",
+        teammate_duel_label: "Teammate Duel Score",
+        avg_qualy_label: "Avg. Saturday Position",
+        battle_desc: "Head-to-head qualifying session record",
     }
 };
 
