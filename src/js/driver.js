@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   PADDOCKINTEL — src/js/driver.js (v3 - i18n & Premium Layout)
+   PADDOCKINTEL — src/js/driver.js (v4 - Producción Limpia)
    Driver Profile: Jolpica Results + OpenF1 Telemetry Integration
    ═══════════════════════════════════════════════════════════ */
 
@@ -18,81 +18,7 @@ let driverCachedData = {
     raceName: ''
 };
 
-// --- Ampliación del Diccionario i18n para Perfiles de Pilotos ---
-if (typeof translations !== 'undefined') {
-    translations.es = {
-        ...translations.es,
-        pts_label: "Puntos",
-        wins_label: "Victorias",
-        salary_label: "Salario Est.",
-        value_idx_label: "Pts por $1M",
-        wdc_pos: "Posición WDC",
-        table_gp: "Gran Prix",
-        table_pos: "Pos",
-        table_pts: "PTS",
-        cpp_calc: "Costo por Punto",
-        value_index: "Índice de Valor",
-        best_contract: "🔥 Uno de los mejores contratos de la parrilla.",
-        solid_value: "✅ Valor sólido para la escudería.",
-        high_cost: "⚠️ Costo elevado respecto a los puntos sumados.",
-        no_race_data: "No hay resultados de carrera disponibles todavía.",
-        no_openf1_pit: "Telemetría de Pit Stops no disponible para la última carrera.",
-        no_openf1_lap: "Tiempos por vuelta detallados no disponibles.",
-        pit_stops_title: "Análisis de Paradas (Boxes)",
-        lap_times_title: "Ritmo de Carrera Vuelta a Vuelta",
-        fastest_lap_label: "Vuelta rápida",
-        normal_lap_label: "Vuelta normal",
-        pit_lap_label: "Vuelta de parada",
-        avg_duration: "Duración Promedio",
-        best_stop: "Mejor Parada",
-        career_path_title: "Trayectoria Profesional",
-        road_to_f1: "Camino a la F1",
-        records_title: "Récords e Hitos",
-        verified_tag: "Verificado",
-        heatmap_title: "Matriz Histórica de Resultados F1",
-        career_stats_title: "Estadísticas Globales de Carrera",
-        all_series: "Todas las Categorías",
-        table_year: "Año", table_series: "Serie", table_races: "Carreras",
-        table_wins: "Victorias", table_poles: "Poles", table_podiums: "Podios"
-    };
-    translations.en = {
-        ...translations.en,
-        pts_label: "Points",
-        wins_label: "Wins",
-        salary_label: "Salary Est.",
-        value_idx_label: "Pts per $1M",
-        wdc_pos: "WDC Position",
-        table_gp: "Grand Prix",
-        table_pos: "Pos",
-        table_pts: "PTS",
-        cpp_calc: "Cost per Point",
-        value_index: "Value Index",
-        best_contract: "🔥 One of the best value contracts on the grid.",
-        solid_value: "✅ Solid value for the team.",
-        high_cost: "⚠️ High cost relative to points scored so far.",
-        no_race_data: "No race results yet for this season.",
-        no_openf1_pit: "No pit stop data available for last race via OpenF1.",
-        no_openf1_lap: "No lap time data available via OpenF1.",
-        pit_stops_title: "Pit Stops Analysis",
-        lap_times_title: "Race Pace Lap by Lap",
-        fastest_lap_label: "Fastest lap",
-        normal_lap_label: "Normal lap",
-        pit_lap_label: "Pit lap",
-        avg_duration: "Avg Duration",
-        best_stop: "Best Stop",
-        career_path_title: "Career Path",
-        road_to_f1: "Road to F1",
-        records_title: "Records & Achievements",
-        verified_tag: "Verified",
-        heatmap_title: "F1 Results Heatmap",
-        career_stats_title: "Career Statistics",
-        all_series: "All Series",
-        table_year: "Year", table_series: "Series", table_races: "Races",
-        table_wins: "Wins", table_poles: "Poles", table_podiums: "Pods"
-    };
-}
-
-// ── Helpers de Formato y Estilos ──────────────────────────────
+// ── Helpers de Formato, Idioma y Estilos ──────────────────────────────
 const TEAM_COLORS = {
   'Mercedes': '#27F4D2', 'Ferrari': '#E8002D', 'McLaren': '#FF8000', 'Red Bull': '#3671C6',
   'Alpine': '#FF87BC', 'Haas': '#B6BABD', 'Racing Bulls': '#6692FF', 'RB': '#6692FF',
@@ -134,9 +60,11 @@ function getDriverId() {
   return params.get('id') || 'antonelli';
 }
 
+// Función traductora ultra-segura conectada al diccionario maestro global
 function _t(key) {
-    if (typeof translations !== 'undefined' && typeof currentLang !== 'undefined') {
-        return translations[currentLang][key] || key;
+    const lang = localStorage.getItem("paddock_lang") || document.documentElement.lang || 'en';
+    if (window.translations && window.translations[lang]) {
+        return window.translations[lang][key] || key;
     }
     return key;
 }
@@ -256,7 +184,6 @@ function renderHero() {
     `;
   }
 
-  // Renderizar módulo "Moneyball" de Inteligencia Económica
   renderEconomics(pts, salary, valueIdx, firstName, lastName);
 }
 
@@ -299,13 +226,14 @@ function renderResults() {
     return;
   }
 
+  const currentLangCode = localStorage.getItem("paddock_lang") || 'en';
   const rows = [...driverCachedData.races].reverse().map((race, i) => {
     const result  = race.Results?.[0];
     const pos     = result?.position || '—';
     const pts     = parseFloat(result?.points || 0);
     const status  = result?.status || '';
     const isDNF   = status !== 'Finished' && !status.includes('Lap');
-    const date    = new Date(race.date).toLocaleDateString(typeof currentLang !== 'undefined' && currentLang === 'es' ? 'es-ES' : 'en-US', { month:'short', day:'numeric' });
+    const date    = new Date(race.date).toLocaleDateString(currentLangCode === 'es' ? 'es-ES' : 'en-US', { month:'short', day:'numeric' });
     const posNum  = parseInt(pos);
     const posClass = posNum === 1 ? 'p1' : posNum === 2 ? 'p2' : posNum === 3 ? 'p3' : '';
     const posBadge = isDNF ? `<span class="pos-badge dnf">DNF</span>` : `<span class="pos-badge ${posClass}">${pos}</span>`;
@@ -332,11 +260,11 @@ function renderResults() {
   `;
 }
 
-// ── Inyección Dinámica de Paneles de OpenF1 y Módulos de Historial ───────
 function createOrGetModuleCard(id, titleKey, tagKey) {
     let card = document.getElementById(id);
     if (!card) {
         const grid = document.querySelector('.driver-details-grid');
+        if (!grid) return null;
         card = document.createElement('div');
         card.id = id;
         card.className = 'glass-card structural-module-card';
@@ -358,6 +286,7 @@ function renderPits() {
   const raceName = driverCachedData.raceName;
   
   const body = createOrGetModuleCard('openf1-pits-card', 'pit_stops_title', 'live_data');
+  if (!body) return;
   if (!pits || !pits.length) {
     body.innerHTML = `<div class="no-data">${_t('no_openf1_pit')}</div>`;
     return;
@@ -402,6 +331,7 @@ function renderLaps(teamColor) {
   const pits = driverCachedData.pits;
   
   const body = createOrGetModuleCard('openf1-laps-card', 'lap_times_title', 'live_data');
+  if (!body) return;
   if (!laps || !laps.length) {
     body.innerHTML = `<div class="no-data">${_t('no_openf1_lap')}</div>`;
     return;
@@ -417,7 +347,7 @@ function renderLaps(teamColor) {
   const maxTime    = Math.max(...durations);
   const pitLaps    = new Set(pits.map(p => p.lap_number));
 
-  const rows = laps.slice(0, 30).map(l => { // Limitado a las primeras 30 vueltas para mantener limpieza
+  const rows = laps.slice(0, 30).map(l => {
     const ms = parseLapDuration(l.lap_duration);
     if (!ms || ms < 60000 || ms > 200000) return '';
     const isPit     = pitLaps.has(l.lap_number);
@@ -448,6 +378,7 @@ function renderLaps(teamColor) {
 
 function renderCareerTimeline() {
   const body = createOrGetModuleCard('history-career-card', 'career_path_title', 'road_to_f1');
+  if (!body) return;
   const d = driverCachedData.meta;
 
   if (!d || !d.career) {
@@ -474,6 +405,7 @@ function renderCareerTimeline() {
 
 function renderRecordsGrid() {
   const body = createOrGetModuleCard('history-records-card', 'records_title', 'verified_tag');
+  if (!body) return;
   const d = driverCachedData.meta;
 
   if (!d || !d.records?.length) {
@@ -520,10 +452,8 @@ async function init() {
   driverCachedData.standing = standing;
   driverCachedData.races = races;
 
-  // Renderizado inicial rápido (Jolpica + Metas)
   renderAllComponents();
 
-  // Bloque OpenF1 no bloqueante
   const lastRace = races[races.length - 1];
   if (!lastRace) return;
 
@@ -551,7 +481,6 @@ async function init() {
   driverCachedData.stints = stints;
   driverCachedData.laps = laps;
 
-  // Re-renderizar con los datos de OpenF1 acoplados
   renderAllComponents();
 }
 
