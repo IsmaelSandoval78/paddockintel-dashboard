@@ -1,44 +1,104 @@
 /* ═══════════════════════════════════════════════════════════
-   PADDOCKINTEL — driver.js  (UNIFIED v2)
-   Driver profile: Jolpica results + OpenF1 pit/lap data
-
-   ARCHITECTURE:
-   ─ f1-drivers.js  →  single source of truth (F1_DRIVERS)
-   ─ driver.js      →  reads F1_DRIVERS, renders everything
-   ─ DRIVER_META / DRIVER_CAREER / DRIVER_RECORDS are now
-     derived from F1_DRIVERS — no more duplicated data.
-
-   Usage: driver.html?id=norris
+   PADDOCKINTEL — src/js/driver.js (v3 - i18n & Premium Layout)
+   Driver Profile: Jolpica Results + OpenF1 Telemetry Integration
    ═══════════════════════════════════════════════════════════ */
-
-/* ----------------------------------------------------------
-   0. DEPENDENCY — f1-drivers.js must be loaded first
-      In driver.html add:
-        <script src="src/data/f1-drivers.js"></script>
-        <script src="src/driver.js"></script>
-   ---------------------------------------------------------- */
 
 const JOLPICA = 'https://api.jolpi.ca/ergast/f1';
 const OPENF1  = 'https://api.openf1.org/v1';
 const SEASON  = '2026';
 
-// ── Team colours (canonical) ─────────────────────────────────
-const TEAM_COLORS = {
-  'Mercedes':     '#27F4D2',
-  'Ferrari':      '#E8002D',
-  'McLaren':      '#FF8000',
-  'Red Bull':     '#3671C6',
-  'Alpine':       '#FF87BC',
-  'Haas':         '#B6BABD',
-  'Racing Bulls': '#6692FF',
-  'RB':           '#6692FF',
-  'Williams':     '#64C4FF',
-  'Aston Martin': '#229971',
-  'Audi':         '#52E252',
-  'Cadillac':     '#C8102E',
+// Caché de datos para traducción instantánea sin recargas de red
+let driverCachedData = {
+    standing: null,
+    races: [],
+    meta: null,
+    pits: [],
+    stints: [],
+    laps: [],
+    raceName: ''
 };
 
-// ── Helpers ──────────────────────────────────────────────────
+// --- Ampliación del Diccionario i18n para Perfiles de Pilotos ---
+if (typeof translations !== 'undefined') {
+    translations.es = {
+        ...translations.es,
+        pts_label: "Puntos",
+        wins_label: "Victorias",
+        salary_label: "Salario Est.",
+        value_idx_label: "Pts por $1M",
+        wdc_pos: "Posición WDC",
+        table_gp: "Gran Prix",
+        table_pos: "Pos",
+        table_pts: "PTS",
+        cpp_calc: "Costo por Punto",
+        value_index: "Índice de Valor",
+        best_contract: "🔥 Uno de los mejores contratos de la parrilla.",
+        solid_value: "✅ Valor sólido para la escudería.",
+        high_cost: "⚠️ Costo elevado respecto a los puntos sumados.",
+        no_race_data: "No hay resultados de carrera disponibles todavía.",
+        no_openf1_pit: "Telemetría de Pit Stops no disponible para la última carrera.",
+        no_openf1_lap: "Tiempos por vuelta detallados no disponibles.",
+        pit_stops_title: "Análisis de Paradas (Boxes)",
+        lap_times_title: "Ritmo de Carrera Vuelta a Vuelta",
+        fastest_lap_label: "Vuelta rápida",
+        normal_lap_label: "Vuelta normal",
+        pit_lap_label: "Vuelta de parada",
+        avg_duration: "Duración Promedio",
+        best_stop: "Mejor Parada",
+        career_path_title: "Trayectoria Profesional",
+        road_to_f1: "Camino a la F1",
+        records_title: "Récords e Hitos",
+        verified_tag: "Verificado",
+        heatmap_title: "Matriz Histórica de Resultados F1",
+        career_stats_title: "Estadísticas Globales de Carrera",
+        all_series: "Todas las Categorías",
+        table_year: "Año", table_series: "Serie", table_races: "Carreras",
+        table_wins: "Victorias", table_poles: "Poles", table_podiums: "Podios"
+    };
+    translations.en = {
+        ...translations.en,
+        pts_label: "Points",
+        wins_label: "Wins",
+        salary_label: "Salary Est.",
+        value_idx_label: "Pts per $1M",
+        wdc_pos: "WDC Position",
+        table_gp: "Grand Prix",
+        table_pos: "Pos",
+        table_pts: "PTS",
+        cpp_calc: "Cost per Point",
+        value_index: "Value Index",
+        best_contract: "🔥 One of the best value contracts on the grid.",
+        solid_value: "✅ Solid value for the team.",
+        high_cost: "⚠️ High cost relative to points scored so far.",
+        no_race_data: "No race results yet for this season.",
+        no_openf1_pit: "No pit stop data available for last race via OpenF1.",
+        no_openf1_lap: "No lap time data available via OpenF1.",
+        pit_stops_title: "Pit Stops Analysis",
+        lap_times_title: "Race Pace Lap by Lap",
+        fastest_lap_label: "Fastest lap",
+        normal_lap_label: "Normal lap",
+        pit_lap_label: "Pit lap",
+        avg_duration: "Avg Duration",
+        best_stop: "Best Stop",
+        career_path_title: "Career Path",
+        road_to_f1: "Road to F1",
+        records_title: "Records & Achievements",
+        verified_tag: "Verified",
+        heatmap_title: "F1 Results Heatmap",
+        career_stats_title: "Career Statistics",
+        all_series: "All Series",
+        table_year: "Year", table_series: "Series", table_races: "Races",
+        table_wins: "Wins", table_poles: "Poles", table_podiums: "Pods"
+    };
+}
+
+// ── Helpers de Formato y Estilos ──────────────────────────────
+const TEAM_COLORS = {
+  'Mercedes': '#27F4D2', 'Ferrari': '#E8002D', 'McLaren': '#FF8000', 'Red Bull': '#3671C6',
+  'Alpine': '#FF87BC', 'Haas': '#B6BABD', 'Racing Bulls': '#6692FF', 'RB': '#6692FF',
+  'Williams': '#64C4FF', 'Aston Martin': '#229971', 'Audi': '#52E252', 'Cadillac': '#C8102E'
+};
+
 function getTeamColor(name) {
   if (!name) return '#8e8e93';
   for (const [k, v] of Object.entries(TEAM_COLORS)) {
@@ -74,29 +134,19 @@ function getDriverId() {
   return params.get('id') || 'antonelli';
 }
 
-function setTitle(name) {
-  document.title = `${name} — PaddockIntel`;
+function _t(key) {
+    if (typeof translations !== 'undefined' && typeof currentLang !== 'undefined') {
+        return translations[currentLang][key] || key;
+    }
+    return key;
 }
 
-// ── Derive DRIVER_META from F1_DRIVERS ───────────────────────
-// F1_DRIVERS is loaded from src/data/f1-drivers.js
 function getDriverMeta(driverId) {
-  if (typeof F1_DRIVERS === 'undefined') {
-    console.warn('F1_DRIVERS not loaded — check script order in driver.html');
-    return {};
-  }
-  const d = F1_DRIVERS[driverId];
-  if (!d) return {};
-  return {
-    salary:   d.salary,
-    number:   d.number,
-    flag:     d.flag,
-    fullName: d.fullName,
-    bio:      d.bio,
-  };
+  if (typeof F1_DRIVERS === 'undefined') return {};
+  return F1_DRIVERS[driverId] || {};
 }
 
-// ── API calls ────────────────────────────────────────────────
+// ── API Fetches ───────────────────────────────────────────────
 async function fetchDriverStanding(driverId) {
   try {
     const res  = await fetch(`${JOLPICA}/${SEASON}/drivers/${driverId}/driverStandings.json`);
@@ -119,9 +169,6 @@ async function fetchOpenF1Session(year, country, locality) {
     let res  = await fetch(`${OPENF1}/sessions?year=${year}&country_name=${encodeURIComponent(country)}&session_type=Race`);
     let data = await res.json();
     if (data?.length) return data[0];
-    res  = await fetch(`${OPENF1}/sessions?year=${year - 1}&country_name=${encodeURIComponent(country)}&session_type=Race`);
-    data = await res.json();
-    if (data?.length) return data[0];
     if (locality) {
       res  = await fetch(`${OPENF1}/sessions?year=${year}&location=${encodeURIComponent(locality)}&session_type=Race`);
       data = await res.json();
@@ -132,31 +179,25 @@ async function fetchOpenF1Session(year, country, locality) {
 }
 
 async function fetchPitStops(sessionKey, driverNumber) {
-  try {
-    const res = await fetch(`${OPENF1}/pit?session_key=${sessionKey}&driver_number=${driverNumber}`);
-    return await res.json();
-  } catch { return []; }
+  try { const res = await fetch(`${OPENF1}/pit?session_key=${sessionKey}&driver_number=${driverNumber}`); return await res.json(); } catch { return []; }
 }
-
 async function fetchStints(sessionKey, driverNumber) {
-  try {
-    const res = await fetch(`${OPENF1}/stints?session_key=${sessionKey}&driver_number=${driverNumber}`);
-    return await res.json();
-  } catch { return []; }
+  try { const res = await fetch(`${OPENF1}/stints?session_key=${sessionKey}&driver_number=${driverNumber}`); return await res.json(); } catch { return []; }
 }
-
 async function fetchLaps(sessionKey, driverNumber) {
-  try {
-    const res = await fetch(`${OPENF1}/laps?session_key=${sessionKey}&driver_number=${driverNumber}`);
-    return await res.json();
-  } catch { return []; }
+  try { const res = await fetch(`${OPENF1}/laps?session_key=${sessionKey}&driver_number=${driverNumber}`); return await res.json(); } catch { return []; }
 }
 
-// ── Render Hero ──────────────────────────────────────────────
-function renderHero(standing, driverId, meta) {
-  const el = document.getElementById('hero-card');
+// ── Render Componentes Premium ─────────────────────────────────
+
+function renderHero() {
+  const contentEl = document.getElementById('driver-profile-content');
+  const loadingEl = document.getElementById('driver-loading-state');
+  const standing = driverCachedData.standing;
+  const meta = driverCachedData.meta;
+
   if (!standing) {
-    el.innerHTML = `<div class="error-msg">Driver not found for ${SEASON} season.</div>`;
+    if (loadingEl) loadingEl.innerHTML = `<div class="error-msg">Driver not found for ${SEASON} season.</div>`;
     return;
   }
 
@@ -172,83 +213,102 @@ function renderHero(standing, driverId, meta) {
   const flag      = meta?.flag   || '🏁';
 
   const valueIdx = salary > 0 ? (pts / (salary / 1000000)).toFixed(1) : '—';
+  document.title = `${firstName} ${lastName} — PaddockIntel Hub`;
 
-  setTitle(`${firstName} ${lastName}`);
-
-  el.innerHTML = `
-    <div class="hero-layout">
-      <div class="driver-number-badge" style="background:${color};box-shadow:0 4px 20px ${color}44">
-        ${number}
-      </div>
-      <div>
-        <div class="hero-name">${firstName.toUpperCase()} ${lastName.toUpperCase()}</div>
-        <div class="hero-team">
-          <span class="team-dot" style="background:${color}"></span>
-          ${team} · ${SEASON}
+  if (loadingEl) loadingEl.style.display = 'none';
+  if (contentEl) {
+    contentEl.style.display = 'block';
+    contentEl.innerHTML = `
+      <div class="hero-layout">
+        <div class="driver-number-badge" style="background:${color};box-shadow:0 4px 20px ${color}44">
+          ${number}
         </div>
-        <div class="hero-stats">
-          <div class="hero-stat-item">
-            <div class="hero-stat-val ${pos===1?'gold':''}">${pts}</div>
-            <div class="hero-stat-label">Points</div>
+        <div>
+          <div class="hero-name">${firstName.toUpperCase()} ${lastName.toUpperCase()}</div>
+          <div class="hero-team">
+            <span class="team-dot" style="background:${color}"></span>
+            ${team} · ${SEASON}
           </div>
-          <div class="hero-stat-item">
-            <div class="hero-stat-val">${wins}</div>
-            <div class="hero-stat-label">Wins</div>
-          </div>
-          <div class="hero-stat-item">
-            <div class="hero-stat-val green">${formatMoney(salary)}</div>
-            <div class="hero-stat-label">Salary Est.</div>
-          </div>
-          <div class="hero-stat-item">
-            <div class="hero-stat-val gold">${valueIdx}</div>
-            <div class="hero-stat-label">Pts per $1M</div>
+          <div class="hero-stats">
+            <div class="hero-stat-item">
+              <div class="hero-stat-val ${pos===1?'gold':''}">${pts}</div>
+              <div class="hero-stat-label">${_t('pts_label')}</div>
+            </div>
+            <div class="hero-stat-item">
+              <div class="hero-stat-val">${wins}</div>
+              <div class="hero-stat-label">${_t('wins_label')}</div>
+            </div>
+            <div class="hero-stat-item">
+              <div class="hero-stat-val green">${formatMoney(salary)}</div>
+              <div class="hero-stat-label">${_t('salary_label')}</div>
+            </div>
+            <div class="hero-stat-item">
+              <div class="hero-stat-val gold">${valueIdx}</div>
+              <div class="hero-stat-label">${_t('value_idx_label')}</div>
+            </div>
           </div>
         </div>
+        <div class="hero-right">
+          <div class="nationality-display">${flag}</div>
+          <div class="pos-display">P<span class="pos-num">${pos}</span> ${_t('wdc_pos')}</div>
+        </div>
       </div>
-      <div class="hero-right">
-        <div class="nationality-display">${flag}</div>
-        <div class="pos-display">P<span class="pos-num">${pos}</span> WDC</div>
-      </div>
-    </div>
-  `;
-
-  const callout   = document.getElementById('value-callout');
-  const valueText = document.getElementById('value-text');
-  if (pts > 0 && callout && valueText) {
-    callout.style.display = 'block';
-    const cpp = salary > 0 ? Math.round(salary / pts) : 0;
-    valueText.innerHTML = `
-      <strong>${firstName} ${lastName}</strong> earns ${formatMoney(salary)}/yr and has scored
-      <strong>${pts} points</strong> —
-      that's <strong>${formatMoney(cpp)} per point</strong> and a Value Index of
-      <strong>${valueIdx} pts/$1M</strong>.
-      ${valueIdx > 20 ? '🔥 One of the best value contracts on the grid.'
-        : valueIdx > 10 ? '✅ Solid value for the team.'
-        : '⚠️ High cost relative to points scored so far.'}
     `;
   }
+
+  // Renderizar módulo "Moneyball" de Inteligencia Económica
+  renderEconomics(pts, salary, valueIdx, firstName, lastName);
 }
 
-// ── Render Results ───────────────────────────────────────────
-function renderResults(races) {
-  const el = document.getElementById('results-body');
-  if (!races.length) {
-    el.innerHTML = `<div class="no-data">No race results yet for ${SEASON}.</div>`;
+function renderEconomics(pts, salary, valueIdx, firstName, lastName) {
+  const el = document.getElementById('driver-economics-content');
+  if (!el) return;
+
+  if (pts === 0) {
+    el.innerHTML = `<div class="no-data">${_t('loading_economics')}</div>`;
     return;
   }
 
-  const rows = [...races].reverse().map((race, i) => {
+  const cpp = salary > 0 ? Math.round(salary / pts) : 0;
+  const statusCrit = valueIdx > 20 ? _t('best_contract') : valueIdx > 10 ? _t('solid_value') : _t('high_cost');
+
+  el.innerHTML = `
+    <div class="economics-summary-grid">
+        <div class="econ-metric-card">
+            <div class="econ-label">${_t('cpp_calc')}</div>
+            <div class="econ-val green">${formatMoney(cpp)} <span class="econ-sub-label">/ pt</span></div>
+        </div>
+        <div class="econ-metric-card">
+            <div class="econ-label">${_t('value_index')}</div>
+            <div class="econ-val gold">${valueIdx} <span class="econ-sub-label">pts/$1M</span></div>
+        </div>
+    </div>
+    <div class="econ-callout-box">
+        <p><strong>${firstName} ${lastName}</strong> devenga un estimado de ${formatMoney(salary)} anuales aportando un rendimiento de <strong>${pts} puntos</strong> en la tabla general.</p>
+        <p class="econ-insight-status">${statusCrit}</p>
+    </div>
+  `;
+}
+
+function renderResults() {
+  const el = document.getElementById('driver-results-table');
+  if (!el) return;
+
+  if (!driverCachedData.races.length) {
+    el.innerHTML = `<div class="no-data">${_t('no_race_data')}</div>`;
+    return;
+  }
+
+  const rows = [...driverCachedData.races].reverse().map((race, i) => {
     const result  = race.Results?.[0];
     const pos     = result?.position || '—';
     const pts     = parseFloat(result?.points || 0);
     const status  = result?.status || '';
     const isDNF   = status !== 'Finished' && !status.includes('Lap');
-    const date    = new Date(race.date).toLocaleDateString('en-US', { month:'short', day:'numeric' });
+    const date    = new Date(race.date).toLocaleDateString(typeof currentLang !== 'undefined' && currentLang === 'es' ? 'es-ES' : 'en-US', { month:'short', day:'numeric' });
     const posNum  = parseInt(pos);
     const posClass = posNum === 1 ? 'p1' : posNum === 2 ? 'p2' : posNum === 3 ? 'p3' : '';
-    const posBadge = isDNF
-      ? `<span class="pos-badge dnf">DNF</span>`
-      : `<span class="pos-badge ${posClass}">${pos}</span>`;
+    const posBadge = isDNF ? `<span class="pos-badge dnf">DNF</span>` : `<span class="pos-badge ${posClass}">${pos}</span>`;
 
     return `
       <tr style="animation-delay:${i*0.04}s">
@@ -265,18 +325,41 @@ function renderResults(races) {
   el.innerHTML = `
     <table class="results-table">
       <thead>
-        <tr><th>Grand Prix</th><th>Pos</th><th style="text-align:right">PTS</th></tr>
+        <tr><th>${_t('table_gp')}</th><th>${_t('table_pos')}</th><th style="text-align:right">${_t('table_pts')}</th></tr>
       </thead>
       <tbody>${rows}</tbody>
     </table>
   `;
 }
 
-// ── Render Pit Stops ─────────────────────────────────────────
-function renderPits(pits, stints, raceName) {
-  const el = document.getElementById('pits-body');
-  if (!pits.length) {
-    el.innerHTML = `<div class="no-data">No pit stop data available for last race via OpenF1.</div>`;
+// ── Inyección Dinámica de Paneles de OpenF1 y Módulos de Historial ───────
+function createOrGetModuleCard(id, titleKey, tagKey) {
+    let card = document.getElementById(id);
+    if (!card) {
+        const grid = document.querySelector('.driver-details-grid');
+        card = document.createElement('div');
+        card.id = id;
+        card.className = 'glass-card structural-module-card';
+        grid.parentNode.insertBefore(card, grid.nextSibling);
+    }
+    card.innerHTML = `
+        <div class="sidebar-card-header">
+          <span class="sidebar-card-title">${_t(titleKey)}</span>
+          <span class="section-tag gold">${_t(tagKey)}</span>
+        </div>
+        <div id="${id}-body" class="module-body-content"></div>
+    `;
+    return document.getElementById(`${id}-body`);
+}
+
+function renderPits() {
+  const pits = driverCachedData.pits;
+  const stints = driverCachedData.stints;
+  const raceName = driverCachedData.raceName;
+  
+  const body = createOrGetModuleCard('openf1-pits-card', 'pit_stops_title', 'live_data');
+  if (!pits || !pits.length) {
+    body.innerHTML = `<div class="no-data">${_t('no_openf1_pit')}</div>`;
     return;
   }
 
@@ -287,357 +370,175 @@ function renderPits(pits, stints, raceName) {
     const dur    = pit.pit_duration || 0;
     const stop   = pit.stop_duration || dur;
     const barPct = maxDur > 0 ? Math.round((dur / maxDur) * 100) : 0;
-    const isFast = dur < avgDur;
-
     const stintAfter = stints.find(s => s.lap_start > pit.lap_number);
     const compound   = stintAfter?.compound || '—';
-    const compClass  = compound === 'SOFT'         ? 'compound-soft'
-                     : compound === 'MEDIUM'       ? 'compound-medium'
-                     : compound === 'HARD'         ? 'compound-hard'
-                     : compound === 'INTERMEDIATE' ? 'compound-inter'
-                     : compound === 'WET'          ? 'compound-wet' : '';
 
     return `
       <div class="pit-item">
         <div class="pit-lap">LAP ${pit.lap_number}</div>
-        <div class="pit-compound ${compClass}">${compound.charAt(0)}${compound.slice(1).toLowerCase()}</div>
+        <div class="pit-compound">${compound}</div>
         <div class="pit-bar-wrap"><div class="pit-bar-fill" style="width:${barPct}%"></div></div>
         <div>
-          <div class="pit-duration ${isFast?'fast':''}">${dur.toFixed(1)}s</div>
+          <div class="pit-duration">${dur.toFixed(2)}s</div>
           <div class="pit-label">Stop: ${stop.toFixed(1)}s</div>
         </div>
       </div>
     `;
   }).join('');
 
-  el.innerHTML = `
-    <div style="padding:8px 20px 0;font-family:var(--font-mono);font-size:9px;color:var(--text-3);letter-spacing:0.08em;text-transform:uppercase;">
-      ${raceName || 'Last Race'} · Via OpenF1
-    </div>
+  body.innerHTML = `
+    <div class="openf1-tag-header">${raceName} · Powered by OpenF1 API</div>
     <div class="pit-list">${pitRows}</div>
-    <div class="pit-summary">
-      <div class="pit-sum-item">
-        <div class="pit-sum-val">${pits.length}</div>
-        <div class="pit-sum-label">Pit Stops</div>
-      </div>
-      <div class="pit-sum-item">
-        <div class="pit-sum-val">${avgDur.toFixed(1)}s</div>
-        <div class="pit-sum-label">Avg Duration</div>
-      </div>
-      <div class="pit-sum-item">
-        <div class="pit-sum-val">${Math.min(...pits.map(p=>p.pit_duration||99)).toFixed(1)}s</div>
-        <div class="pit-sum-label">Best Stop</div>
-      </div>
+    <div class="pit-summary-row">
+        <span><strong>${pits.length}</strong> Pit Stops</span> | 
+        <span><strong>${_t('avg_duration')}:</strong> ${avgDur.toFixed(2)}s</span> | 
+        <span><strong>${_t('best_stop')}:</strong> ${Math.min(...pits.map(p=>p.pit_duration||99)).toFixed(2)}s</span>
     </div>
   `;
 }
 
-// ── Render Lap Times ─────────────────────────────────────────
-function renderLaps(laps, pits, teamColor) {
-  const el = document.getElementById('laps-body');
-  if (!laps.length) {
-    el.innerHTML = `<div class="no-data">No lap time data available via OpenF1.</div>`;
+function renderLaps(teamColor) {
+  const laps = driverCachedData.laps;
+  const pits = driverCachedData.pits;
+  
+  const body = createOrGetModuleCard('openf1-laps-card', 'lap_times_title', 'live_data');
+  if (!laps || !laps.length) {
+    body.innerHTML = `<div class="no-data">${_t('no_openf1_lap')}</div>`;
     return;
   }
 
-  const durations = laps
-    .map(l => parseLapDuration(l.lap_duration))
-    .filter(d => d && d > 60000 && d < 200000);
-
+  const durations = laps.map(l => parseLapDuration(l.lap_duration)).filter(d => d && d > 60000 && d < 200000);
   if (!durations.length) {
-    el.innerHTML = `<div class="no-data">Lap time data unavailable.</div>`;
+    body.innerHTML = `<div class="no-data">${_t('no_openf1_lap')}</div>`;
     return;
   }
 
   const minTime    = Math.min(...durations);
   const maxTime    = Math.max(...durations);
   const pitLaps    = new Set(pits.map(p => p.lap_number));
-  const fastestLap = laps.find(l => parseLapDuration(l.lap_duration) === minTime);
 
-  const rows = laps.map(l => {
+  const rows = laps.slice(0, 30).map(l => { // Limitado a las primeras 30 vueltas para mantener limpieza
     const ms = parseLapDuration(l.lap_duration);
     if (!ms || ms < 60000 || ms > 200000) return '';
     const isPit     = pitLaps.has(l.lap_number);
     const isFastest = ms === minTime;
-    const barPct    = maxTime > minTime
-      ? Math.round(100 - ((ms - minTime) / (maxTime - minTime)) * 80)
-      : 80;
+    const barPct    = maxTime > minTime ? Math.round(100 - ((ms - minTime) / (maxTime - minTime)) * 70) : 80;
     const barColor  = isFastest ? '#34c759' : isPit ? '#e10600' : teamColor;
-    const timeClass = isFastest ? 'fastest' : isPit ? 'pit-lap' : '';
+
     return `
       <div class="lap-row">
-        <div class="lap-num">${l.lap_number}</div>
+        <div class="lap-num">L${l.lap_number}</div>
         <div class="lap-bar-wrap">
-          <div class="lap-bar-fill" style="width:${barPct}%;background:${barColor};opacity:${isFastest?1:0.6}"></div>
+          <div class="lap-bar-fill" style="width:${barPct}%;background:${barColor}"></div>
         </div>
-        <div class="lap-time-val ${timeClass}">${formatLapTime(ms)}${isPit?' 🔧':''}</div>
+        <div class="lap-time-val ${isFastest?'fastest':''}">${formatLapTime(ms)}</div>
       </div>
     `;
   }).join('');
 
-  el.innerHTML = `
+  body.innerHTML = `
     <div class="lap-legend">
-      <div class="legend-item"><div class="legend-dot" style="background:#34c759"></div>Fastest lap</div>
-      <div class="legend-item"><div class="legend-dot" style="background:${teamColor};opacity:0.6"></div>Normal lap</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#e10600"></div>Pit lap</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#34c759"></span>${_t('fastest_lap_label')}</div>
+      <div class="legend-item"><span class="legend-dot" style="background:${teamColor}"></span>${_t('normal_lap_label')}</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#e10600"></span>${_t('pit_lap_label')}</div>
     </div>
     <div class="lap-chart-wrap">${rows}</div>
-    <div style="padding:0 20px 16px;font-family:var(--font-mono);font-size:10px;color:var(--text-3);">
-      Fastest: <strong style="color:var(--green)">${formatLapTime(minTime)}</strong>
-      · Lap ${fastestLap?.lap_number || '—'} · ${laps.length} laps total
-    </div>
   `;
 }
 
-// ── Render Career Timeline (from F1_DRIVERS) ─────────────────
-function renderCareer(driverId) {
-  let section = document.getElementById('module-career');
-  if (!section) {
-    const footer = document.querySelector('.site-footer');
-    section = document.createElement('section');
-    section.id        = 'module-career';
-    section.className = 'glass-card';
-    section.style.marginBottom = '16px';
-    footer.parentNode.insertBefore(section, footer);
-  }
+function renderCareerTimeline() {
+  const body = createOrGetModuleCard('history-career-card', 'career_path_title', 'road_to_f1');
+  const d = driverCachedData.meta;
 
-  const d = (typeof F1_DRIVERS !== 'undefined') ? F1_DRIVERS[driverId] : null;
-  if (!d) {
-    section.innerHTML = `
-      <div class="card-header"><div class="section-header"><h2 class="section-title">Career Path</h2></div></div>
-      <div class="no-data">Career data coming soon.</div>
-    `;
+  if (!d || !d.career) {
+    body.innerHTML = `<div class="no-data">${_t('loading_records')}</div>`;
     return;
   }
 
   const rows = d.career.map((c, i) => {
-    const isF1    = c.series === 'F1';
-    const isChamp = c.result.includes('🏆');
     return `
-      <div class="career-row" style="animation-delay:${i*0.05}s">
+      <div class="career-row">
         <div class="career-year">${c.year}</div>
-        <div class="career-line-wrap">
-          <div class="career-dot ${isF1?'f1':''} ${isChamp?'champ':''}"></div>
-          ${i < d.career.length - 1 ? '<div class="career-line"></div>' : ''}
-        </div>
         <div class="career-content">
-          <div class="career-series ${isF1?'f1-series':''}">${c.series}</div>
-          <div class="career-team">${c.team}</div>
-          <div class="career-result ${isChamp?'champ-result':''}">${c.result}</div>
+          <span class="career-series">${c.series}</span> — <strong>${c.team}</strong> (${c.result})
         </div>
       </div>
     `;
   }).join('');
 
-  section.innerHTML = `
-    <div class="card-header">
-      <div class="section-header">
-        <h2 class="section-title">Career Path</h2>
-        <span class="section-tag">Road to F1</span>
-      </div>
-      <p style="font-family:var(--font-mono);font-size:10px;color:var(--text-3);margin-top:6px;line-height:1.6">${d.bio}</p>
-    </div>
-    <div class="career-timeline">${rows}</div>
+  body.innerHTML = `
+    <p class="driver-bio-text">${d.bio || ''}</p>
+    <div class="career-timeline-vertical">${rows}</div>
   `;
 }
 
-// ── Render Records (from F1_DRIVERS) ─────────────────────────
-function renderRecords(driverId, teamColor) {
-  const section = document.getElementById('module-records');
-  if (!section) return;
+function renderRecordsGrid() {
+  const body = createOrGetModuleCard('history-records-card', 'records_title', 'verified_tag');
+  const d = driverCachedData.meta;
 
-  const d = (typeof F1_DRIVERS !== 'undefined') ? F1_DRIVERS[driverId] : null;
   if (!d || !d.records?.length) {
-    section.innerHTML = '<div class="no-data">No records data for this driver yet.</div>';
+    body.innerHTML = `<div class="no-data">No records items available.</div>`;
     return;
   }
 
-  const badges = d.records.map((r, i) => `
-    <div class="record-badge" style="animation-delay:${i*0.08}s">
-      <div class="record-icon">${r.icon}</div>
-      <div class="record-label">${r.label}</div>
-      <div class="record-value">${r.value}</div>
-      <div class="record-race">${r.race}</div>
+  const badges = d.records.map(r => `
+    <div class="record-badge-premium">
+      <span class="record-icon">${r.icon}</span>
+      <div class="record-info-block">
+         <div class="record-label">${r.label}</div>
+         <div class="record-value">${r.value}</div>
+         <div class="record-race-sub">${r.race}</div>
+      </div>
     </div>
   `).join('');
 
-  section.innerHTML = `
-    <div class="card-header">
-      <div class="section-header">
-        <h2 class="section-title">Records & Achievements</h2>
-        <span class="section-tag gold">Verified</span>
-      </div>
-    </div>
-    <div class="records-grid">${badges}</div>
-  `;
+  body.innerHTML = `<div class="records-flex-grid">${badges}</div>`;
 }
 
-// ── Render F1 Results Heatmap (from F1_DRIVERS) ───────────────
-function renderHeatmap(driverId, teamColor) {
-  const section = document.getElementById('module-heatmap');
-  if (!section) return;
-
-  const d = (typeof F1_DRIVERS !== 'undefined') ? F1_DRIVERS[driverId] : null;
-  if (!d || !d.f1Results) {
-    section.innerHTML = '<div class="no-data">No heatmap data for this driver yet.</div>';
-    return;
-  }
-
-  function getColor(pos) {
-    if (pos === 1)                                   return '#e8aa00';
-    if (pos === 2)                                   return '#8e8e93';
-    if (pos === 3)                                   return '#bf7f3c';
-    if (pos === 'R' || pos === 'DNF' || pos === 'DSQ') return '#e10600';
-    if (pos === 'DNS' || pos === 'WD' || pos === 'NC') return '#555';
-    if (typeof pos === 'number' && pos <= 6)         return teamColor;
-    if (typeof pos === 'number' && pos <= 10)        return `${teamColor}88`;
-    return 'rgba(0,0,0,0.06)';
-  }
-
-  function getTextColor(pos) {
-    if (pos === 1)                                   return '#1c1c1e';
-    if (pos === 'R' || pos === 'DNF' || pos === 'DSQ') return 'white';
-    if (typeof pos === 'number' && pos <= 3)         return 'white';
-    return '#8e8e93';
-  }
-
-  const seasons = Object.keys(d.f1Results).sort();
-  const rows = seasons.map(year => {
-    const races = d.f1Results[year];
-    const cells = Object.entries(races).map(([gp, pos]) => `
-      <div class="heat-cell" title="${gp} ${year}: ${pos}" style="background:${getColor(pos)};color:${getTextColor(pos)}">
-        ${pos === 'R' ? 'R' : pos === 'DSQ' ? 'D' : pos === 'DNS' ? '–' : pos === 'WD' ? 'W' : pos === 'NC' ? 'N' : pos}
-      </div>
-    `).join('');
-
-    const vals    = Object.values(races);
-    const wins    = vals.filter(p => p === 1).length;
-    const dnfs    = vals.filter(p => p === 'R' || p === 'DSQ').length;
-    // Read points directly from careerStats — avoids recalculating from positions
-    // (sprint pts, fastest lap pts, etc. would be missed otherwise)
-    const statRow = d.careerStats?.find(s => s.year === parseInt(year) && s.series === 'F1');
-    const pts     = statRow ? statRow.points : vals.reduce((s, p) => {
-      const PTS_MAP = [25,18,15,12,10,8,6,4,2,1];
-      return s + (typeof p === 'number' ? (PTS_MAP[p-1] || 0) : 0);
-    }, 0);
-
-    return `
-      <div class="heat-row">
-        <div class="heat-year">${year}</div>
-        <div class="heat-cells">${cells}</div>
-        <div class="heat-summary">
-          <span class="heat-wins">${wins}W</span>
-          ${dnfs ? `<span class="heat-dnf">${dnfs}R</span>` : ''}
-          <span class="heat-pts">${pts}p</span>
-        </div>
-      </div>
-    `;
-  }).join('');
-
-  section.innerHTML = `
-    <div class="card-header">
-      <div class="section-header">
-        <h2 class="section-title">F1 Results Heatmap</h2>
-        <span class="section-tag" style="color:var(--gold);background:rgba(232,170,0,0.08);border-color:rgba(232,170,0,0.2)">
-          🟡 P1 &nbsp; ⬛ Points &nbsp; 🔴 DNF
-        </span>
-      </div>
-    </div>
-    <div class="heatmap-wrap">${rows}</div>
-  `;
+// ── Render Dinámico Global ────────────────────────────────────
+function renderAllComponents() {
+    const teamColor = getTeamColor(driverCachedData.standing?.Constructors?.[0]?.name || '');
+    renderHero();
+    renderResults();
+    renderPits();
+    renderLaps(teamColor);
+    renderCareerTimeline();
+    renderRecordsGrid();
 }
 
-// ── Render Career Stats Table (from F1_DRIVERS) ───────────────
-function renderCareerStats(driverId) {
-  const section = document.getElementById('module-careerstats');
-  if (!section) return;
-
-  const d = (typeof F1_DRIVERS !== 'undefined') ? F1_DRIVERS[driverId] : null;
-  if (!d || !d.careerStats?.length) {
-    section.innerHTML = '<div class="no-data">No career stats for this driver yet.</div>';
-    return;
-  }
-
-  const rows = d.careerStats.map((s, i) => {
-    const isChamp = String(s.pos).includes('🏆');
-    const isF1    = s.series === 'F1';
-    return `
-      <tr style="animation-delay:${i*0.04}s" class="${isChamp?'champ-row':''}">
-        <td class="stat-year">${s.year}</td>
-        <td class="stat-series ${isF1?'f1-series':''}">${s.series}</td>
-        <td class="stat-num">${s.races}</td>
-        <td class="stat-num wins">${s.wins}</td>
-        <td class="stat-num">${s.poles}</td>
-        <td class="stat-num">${s.podiums}</td>
-        <td class="stat-num pts">${s.points}</td>
-        <td class="stat-pos ${isChamp?'champ-pos':''}">${s.pos}</td>
-      </tr>
-    `;
-  }).join('');
-
-  section.innerHTML = `
-    <div class="card-header">
-      <div class="section-header">
-        <h2 class="section-title">Career Statistics</h2>
-        <span class="section-tag">All Series</span>
-      </div>
-    </div>
-    <div class="stats-table-wrap">
-      <table class="stats-table">
-        <thead>
-          <tr>
-            <th>Year</th><th>Series</th><th>Races</th>
-            <th>Wins</th><th>Poles</th><th>Pods</th>
-            <th>Points</th><th>Result</th>
-          </tr>
-        </thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div>
-  `;
-}
-
-// ── MAIN ─────────────────────────────────────────────────────
+// ── Inicialización ───────────────────────────────────────────
 async function init() {
   const driverId = getDriverId();
-  const meta     = getDriverMeta(driverId);   // ← from F1_DRIVERS
+  const meta = getDriverMeta(driverId);
+  driverCachedData.meta = meta;
 
   const [standing, races] = await Promise.all([
     fetchDriverStanding(driverId),
     fetchDriverResults(driverId),
   ]);
 
-  const teamColor = getTeamColor(standing?.Constructors?.[0]?.name || '');
-  window._teamColor = teamColor;
+  driverCachedData.standing = standing;
+  driverCachedData.races = races;
 
-  renderHero(standing, driverId, meta);
-  renderRecords(driverId, teamColor);
-  renderResults(races);
-  renderHeatmap(driverId, teamColor);
-  renderCareerStats(driverId);
-  renderCareer(driverId);
+  // Renderizado inicial rápido (Jolpica + Metas)
+  renderAllComponents();
 
-  // OpenF1 — non-blocking
+  // Bloque OpenF1 no bloqueante
   const lastRace = races[races.length - 1];
-  if (!lastRace) {
-    document.getElementById('pits-body').innerHTML = '<div class="no-data">No race data yet.</div>';
-    document.getElementById('laps-body').innerHTML = '<div class="no-data">No race data yet.</div>';
-    return;
-  }
+  if (!lastRace) return;
 
   const COUNTRY_MAP = { 'USA':'United States', 'UK':'United Kingdom', 'UAE':'United Arab Emirates' };
   const rawCountry  = lastRace.Circuit?.Location?.country || '';
   const locality    = lastRace.Circuit?.Location?.locality || '';
   const country     = COUNTRY_MAP[rawCountry] || rawCountry;
-  const raceName    = lastRace.raceName;
-  const driverNum   = meta.number;
+  
+  driverCachedData.raceName = lastRace.raceName;
+  const driverNum = meta.number;
+
+  if (!driverNum) return;
 
   const session = await fetchOpenF1Session(parseInt(SEASON), country, locality);
-  if (!session) {
-    document.getElementById('pits-body').innerHTML = `<div class="no-data">OpenF1 session not found for ${raceName}.</div>`;
-    document.getElementById('laps-body').innerHTML = `<div class="no-data">OpenF1 session not found for ${raceName}.</div>`;
-    return;
-  }
+  if (!session) return;
 
   const sessionKey = session.session_key;
   const [pits, stints, laps] = await Promise.all([
@@ -646,8 +547,18 @@ async function init() {
     fetchLaps(sessionKey, driverNum),
   ]);
 
-  renderPits(pits, stints, raceName);
-  renderLaps(laps, pits, teamColor);
+  driverCachedData.pits = pits;
+  driverCachedData.stints = stints;
+  driverCachedData.laps = laps;
+
+  // Re-renderizar con los datos de OpenF1 acoplados
+  renderAllComponents();
 }
+
+// Escuchar el cambio de idioma dinámico sin recargar la página
+window.addEventListener('languageChanged', () => {
+    console.log("Idioma cambiado detectado en driver.js. Traduciendo en vivo...");
+    renderAllComponents();
+});
 
 document.addEventListener('DOMContentLoaded', init);
