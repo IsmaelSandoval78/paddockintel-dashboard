@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   PADDOCKINTEL i18n — Diccionario Maestro Unificado (v6)
+   PADDOCKINTEL i18n — Diccionario Maestro Unificado (v6.1)
    ═══════════════════════════════════════════════════════════ */
 
 window.translations = {
@@ -77,7 +77,7 @@ window.translations = {
         records_title: "Récords e Hitos",
         verified_tag: "Verificado",
 
-        // --- INFOGRAFÍAS AVANZADAS DE LOS CSVs ---
+        // --- INFOGRAFÍAS AVANZADAS DE LOS CSVs (Corregido con comas) ---
         sunday_progress_title: "Sunday Progress Index",
         damage_reliability_title: "Damage & Reliability Report",
         avg_start_label: "Salida Promedio",
@@ -86,12 +86,11 @@ window.translations = {
         positions_lost: "Posiciones perdidas netas por carrera",
         completion_rate_label: "Tasa de Carreras Completadas",
         driver_error_label: "Abandonos por Error de Conducción",
-        mech_failure_label: "Abandonos por Falla Mecánica"
-
+        mech_failure_label: "Abandonos por Falla Mecánica",
         qualifying_battle_title: "Qualifying Battle Index",
         teammate_duel_label: "Duelo vs Compañero",
         avg_qualy_label: "Posición Promedio Sábados",
-        battle_desc: "Victorias vs derrotas en sesión clasificatoria directa",
+        battle_desc: "Victorias vs derrotas en sesión clasificatoria directa"
     },
     en: {
         // --- PORTADA (index.html & app.js) ---
@@ -167,7 +166,7 @@ window.translations = {
         records_title: "Records & Achievements",
         verified_tag: "Verified",
 
-        // --- CSV ADVANCED INFOGRAPHICS ---
+        // --- CSV ADVANCED INFOGRAPHICS (Corregido con comas) ---
         sunday_progress_title: "Sunday Progress Index",
         damage_reliability_title: "Damage & Reliability Report",
         avg_start_label: "Avg. Starting Grid",
@@ -176,12 +175,11 @@ window.translations = {
         positions_lost: "Net positions lost per Sunday",
         completion_rate_label: "Race Completion Rate",
         driver_error_label: "DNFs via Driver Error",
-        mech_failure_label: "DNFs via Mechanical Failure"
-
+        mech_failure_label: "DNFs via Mechanical Failure",
         qualifying_battle_title: "Qualifying Battle Index",
         teammate_duel_label: "Teammate Duel Score",
         avg_qualy_label: "Avg. Saturday Position",
-        battle_desc: "Head-to-head qualifying session record",
+        battle_desc: "Head-to-head qualifying session record"
     }
 };
 
