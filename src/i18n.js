@@ -1,6 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   PADDOCKINTEL i18n — Diccionario Maestro Global (v5)
-   Centralizador único de traducciones para todo el Hub
+   PADDOCKINTEL i18n — Diccionario Maestro Unificado (v5)
    ═══════════════════════════════════════════════════════════ */
 
 window.translations = {
@@ -154,32 +153,33 @@ window.translations = {
     }
 };
 
-// Configurar el alcance global seguro unificando estados
-let currentLang = localStorage.getItem("paddock_lang") || 
-                  (navigator.language.startsWith("es") ? "es" : "en");
+// Determinar el idioma activo guardado o el del navegador
+window.currentLang = localStorage.getItem("paddock_lang") || 
+                     (navigator.language.startsWith("es") ? "es" : "en");
 
-function applyTranslations() {
+window.applyTranslations = function() {
     document.querySelectorAll("[data-i18n]").forEach(element => {
         const key = element.getAttribute("data-i18n");
-        if (window.translations[currentLang] && window.translations[currentLang][key]) {
-            element.textContent = window.translations[currentLang][key];
+        if (window.translations[window.currentLang] && window.translations[window.currentLang][key]) {
+            element.textContent = window.translations[window.currentLang][key];
         }
     });
     
     document.querySelectorAll(".lang-btn").forEach(btn => btn.classList.remove("active"));
-    const activeBtn = document.getElementById(`btn-lang-${currentLang}`);
+    const activeBtn = document.getElementById(`btn-lang-${window.currentLang}`);
     if (activeBtn) activeBtn.classList.add("active");
 
-    localStorage.setItem("paddock_lang", currentLang);
-    document.documentElement.lang = currentLang;
-}
+    localStorage.setItem("paddock_lang", window.currentLang);
+    document.documentElement.lang = window.currentLang;
+};
 
-function setLanguage(lang) {
+window.setLanguage = function(lang) {
     if (window.translations[lang]) {
-        currentLang = lang;
-        applyTranslations();
+        window.currentLang = lang;
+        window.applyTranslations();
         window.dispatchEvent(new Event("languageChanged"));
     }
-}
+};
 
-document.addEventListener("DOMContentLoaded", applyTranslations);
+// Inicializar el traductor al cargar la estructura de la página
+document.addEventListener("DOMContentLoaded", window.applyTranslations);
