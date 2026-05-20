@@ -95,9 +95,26 @@
           </div>
 
         </div>
+
+        <div class="glass-card miami-simulator-card">
+            <div class="sidebar-card-header">
+                <span class="sidebar-card-title">Miami GP 2026 Live Telemetry</span>
+                <span class="section-tag gold" id="sim-lap-indicator">LAP 1 / 57</span>
+            </div>
+            <div class="sim-controls">
+                <button id="btn-sim-play" class="sim-btn">▶ Play</button>
+                <button id="btn-sim-reset" class="sim-btn">🔄 Reset</button>
+                <div class="sim-speed-badge">1 Lap/s</div>
+            </div>
+            <div id="sim-leaderboard" class="sim-leaderboard-container">
+                </div>
+        </div>
+
       </aside>
 
-    </div><footer class="site-footer">
+    </div>
+
+    <footer class="site-footer">
       <div>© 2026 <a href="https://paddockintel.com" class="footer-link" target="_blank">PaddockIntel</a> · <span data-i18n="footer_intel">F1 Intelligence</span></div>
       <div data-i18n="footer_credits">Data: Ergast/jolpi.ca · OpenWeather · Salary estimates via public reporting · Prize model estimated</div>
       <div>
@@ -107,9 +124,13 @@
       </div>
     </footer>
 
-  </div><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   
   <script src="src/js/i18n.js"></script>
+  <script src="src/js/miami-sim-data.js"></script>
+  <script src="src/js/simulator.js"></script>
   <script src="src/js/app.js"></script>
 </body>
 </html>

@@ -333,3 +333,70 @@ body {
     gap: 8px;
 }
 .footer-link { color: var(--text-charcoal); text-decoration: none; font-weight: 600; }
+
+/* ═══ LIVE MIAMI SIMULATOR COMPONENT (Cupertino Edition) ══ */
+.miami-simulator-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.sim-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 4px;
+}
+.sim-btn {
+    background: var(--text-charcoal);
+    color: #ffffff;
+    border: none;
+    padding: 7px 16px;
+    border-radius: 8px;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 12.5px;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.sim-btn:hover {
+    background: #434344;
+    transform: translateY(-0.5px);
+}
+.sim-btn:active {
+    transform: translateY(0.5px);
+}
+.sim-speed-badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: rgba(0, 0, 0, 0.04);
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.01);
+}
+.sim-leaderboard-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.sim-driver-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.02);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.sim-live-gap {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-charcoal);
+    min-width: 65px;
+    text-align: right;
+}
