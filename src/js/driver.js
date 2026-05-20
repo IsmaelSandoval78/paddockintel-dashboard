@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   PADDOCKINTEL — src/js/driver.js (v7 - Autónomo e Infográfico)
+   PADDOCKINTEL — src/js/driver.js (v7.1 - Corrección de Boxes)
    Driver Profile: Jolpica Results + OpenF1 Telemetry + Native DB
    ═══════════════════════════════════════════════════════════ */
 
@@ -7,7 +7,7 @@ const JOLPICA = 'https://api.jolpi.ca/ergast/f1';
 const OPENF1  = 'https://api.openf1.org/v1';
 const SEASON  = '2026';
 
-// ── BASE DE DATOS INTERNA (Elimina la dependencia del archivo 404) ──
+// ── BASE DE DATOS INTERNA NATIVA ─────────────────────────────
 const F1_DRIVERS_DATABASE = {
   "antonelli": {
     "fullName": "Andrea Kimi Antonelli", "number": 12, "salary": 2000000, "flag": "🇮🇹",
@@ -157,7 +157,28 @@ async function fetchLaps(sessionKey, driverNumber) {
   try { const res = await fetch(`${OPENF1}/laps?session_key=${sessionKey}&driver_number=${driverNumber}`); return await res.json(); } catch { return []; }
 }
 
-// ── Renderizadores ────────────────────────────────────────────
+// ── Renderizadores Estructurales ───────────────────────────────
+
+// ¡RESTAURADA!: Función encargada de inyectar dinámicamente las tarjetas en la cuadrícula
+function createOrGetModuleCard(id, titleKey, tagKey) {
+    let card = document.getElementById(id);
+    if (!card) {
+        const grid = document.querySelector('.driver-details-grid');
+        if (!grid) return null;
+        card = document.createElement('div');
+        card.id = id;
+        card.className = 'glass-card structural-module-card';
+        grid.parentNode.insertBefore(card, grid.nextSibling);
+    }
+    card.innerHTML = `
+        <div class="sidebar-card-header">
+          <span class="sidebar-card-title">${_t(titleKey)}</span>
+          <span class="section-tag gold">${_t(tagKey)}</span>
+        </div>
+        <div id="${id}-body" class="module-body-content"></div>
+    `;
+    return document.getElementById(`${id}-body`);
+}
 
 function renderHero() {
   const contentEl = document.getElementById('driver-profile-content');
@@ -487,7 +508,8 @@ function renderCareerTimeline() {
   const d = driverCachedData.meta;
 
   if (!d || !d.career || !d.career.length) {
-    body.parentNode.style.display = 'none'; // Esconder si no hay historial nativo
+    const cardContainer = document.getElementById('history-career-card');
+    if (cardContainer) cardContainer.style.display = 'none';
     return;
   }
 
@@ -523,12 +545,12 @@ function renderAllComponents() {
     }
 }
 
-// ── Inicialización Autónoma y Segura ───────────────────────────
+// ── Inicialización Autónoma ───────────────────────────────────
 async function init() {
   const driverId = getDriverId();
   driverCachedData.meta = getDriverMeta(driverId);
 
-  // Forzar apagado del loader inicial de la interfaz de forma inmediata
+  // Apagar loader inicial
   const loadingEl = document.getElementById('driver-loading-state');
   if (loadingEl) loadingEl.style.display = 'none';
 
@@ -543,12 +565,12 @@ async function init() {
       driverCachedData.races = races;
       driverCachedData.analytics = analyticsRes[driverId] || null;
   } catch (err) {
-      console.warn("API network fallback activated", err);
+      console.warn("API fallback activated", err);
   }
 
   renderAllComponents();
 
-  // Bloque OpenF1 no-bloqueante
+  // Bloque OpenF1 no-bloqueante (blindado contra 429)
   const races = driverCachedData.races;
   const lastRace = races && races.length ? races[races.length - 1] : null;
   if (!lastRace) return;
@@ -569,9 +591,9 @@ async function init() {
 
       const sessionKey = session.session_key;
       const [pits, stints, laps] = await Promise.all([
-        fetchPitStops(sessionKey, driverNum),
-        fetchStints(sessionKey, driverNum),
-        fetchLaps(sessionKey, driverNum),
+        fetchPitStops(sessionKey, driverNum).catch(() => []),
+        fetchStints(sessionKey, driverNum).catch(() => []),
+        fetchLaps(sessionKey, driverNum).catch(() => [])
       ]);
 
       driverCachedData.pits = pits;
@@ -580,7 +602,7 @@ async function init() {
 
       renderAllComponents();
   } catch(e) {
-      console.log("Telemetry link offline for this session", e);
+      console.log("Telemetry links throttled via 429 error, fallback active.", e);
   }
 }
 
