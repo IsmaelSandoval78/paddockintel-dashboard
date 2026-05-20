@@ -1,10 +1,59 @@
 /* ═══════════════════════════════════════════════════════════
-   PADDOCKINTEL DASHBOARD — app.js v3
+   PADDOCKINTEL DASHBOARD — src/js/app.js v4 (i18n & Modular)
    World Map · Driver Standings · Constructor Standings · Circuit Intel
    ═══════════════════════════════════════════════════════════ */
 
 const ERGAST_BASE = 'https://api.jolpi.ca/ergast/f1';
 const SEASON = '2026';
+
+// Cache global en memoria para cambios de idioma en tiempo real sin recargas de red
+let cachedData = {
+    allRaces: [],
+    drivers: [],
+    constructors: [],
+    nextRace: null,
+    activeRacePanel: null // Almacena la carrera abierta actualmente para traducirla en vivo
+};
+
+// ── Ampliación del Diccionario i18n para componentes dinámicos de JS ───────
+if (typeof translations !== 'undefined') {
+    translations.es = {
+        ...translations.es,
+        updated: "Actualizado",
+        next_race_tag: "Próxima Carrera 🔴",
+        completed_tag: "Completado",
+        round_prefix: "Ronda",
+        attendance_label: "Asistencia",
+        champions_label: "Últimos 5 campeones en este circuito",
+        weather_label: "Clima del Circuito — En Vivo",
+        loading_history: "Cargando historial…",
+        loading_weather: "Cargando clima…",
+        no_history: "No hay datos históricos disponibles",
+        no_winner: "No se encontraron datos del ganador",
+        weather_error: "Clima no disponible",
+        now_label: "Ahora",
+        view_profile: "Ver perfil de",
+        back_btn: "← Clasificaciones"
+    };
+    translations.en = {
+        ...translations.en,
+        updated: "Updated",
+        next_race_tag: "Next Race 🔴",
+        completed_tag: "Completed",
+        round_prefix: "Round",
+        attendance_label: "Attendance",
+        champions_label: "Last 5 Champions at this circuit",
+        weather_label: "Circuit Weather — Live",
+        loading_history: "Loading history…",
+        loading_weather: "Loading weather…",
+        no_history: "No historical data available",
+        no_winner: "No winner data found",
+        weather_error: "Weather unavailable",
+        now_label: "Now",
+        view_profile: "View profile of",
+        back_btn: "← Standings"
+    };
+}
 
 // ── Team Colors ─────────────────────────────────────────────
 const TEAM_COLORS = {
@@ -43,41 +92,6 @@ const CONSTRUCTOR_REF_MAP = {
   'Cadillac':        'cadillac',
 };
 
-// ── Driver Salary Estimates ──────────────────────────────────
-const DRIVER_SALARIES = {
-  'Max Verstappen': 55000000, 'Lewis Hamilton': 40000000,
-  'Charles Leclerc': 30000000, 'Lando Norris': 25000000,
-  'George Russell': 15000000, 'Carlos Sainz': 10000000,
-  'Fernando Alonso': 15000000, 'Lance Stroll': 10000000,
-  'Oscar Piastri': 8000000, 'Pierre Gasly': 6000000,
-  'Esteban Ocon': 6000000, 'Yuki Tsunoda': 3000000,
-  'Valtteri Bottas': 2500000, 'Zhou Guanyu': 2000000,
-  'Nico Hulkenberg': 2000000, 'Kevin Magnussen': 3000000,
-  'Alexander Albon': 4000000, 'Logan Sargeant': 1000000,
-  'Daniel Ricciardo': 5000000, 'Sergio Perez': 2000000,
-  'Kimi Antonelli': 2000000, 'Andrea Kimi Antonelli': 2000000,
-  'Oliver Bearman': 1500000, 'Isack Hadjar': 1500000,
-  'Jack Doohan': 1500000, 'Gabriel Bortoleto': 1500000,
-  'Liam Lawson': 3000000, 'Franco Colapinto': 2500000,
-  'Arvid Lindblad': 2000000,
-};
-
-// ── Circuit Attendance Estimates (3-day weekend) ─────────────
-const CIRCUIT_ATTENDANCE = {
-  bahrain:       '~80,000',  jeddah:        '~60,000',
-  albert_park:   '~280,000', suzuka:        '~300,000',
-  shanghai:      '~200,000', miami:         '~275,000',
-  imola:         '~180,000', monaco:        '~200,000',
-  villeneuve:    '~300,000', catalunya:     '~300,000',
-  red_bull_ring: '~300,000', silverstone:   '~480,000',
-  hungaroring:   '~200,000', spa:           '~350,000',
-  zandvoort:     '~105,000', monza:         '~160,000',
-  baku:          '~80,000',  marina_bay:    '~250,000',
-  americas:      '~440,000', rodriguez:     '~400,000',
-  interlagos:    '~280,000', vegas:         '~315,000',
-  losail:        '~80,000',  yas_marina:    '~95,000',
-};
-
 // ── Helpers ──────────────────────────────────────────────────
 function formatMoney(n) {
   if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`;
@@ -105,24 +119,24 @@ function getTeamColor(name) {
   return '#8a9bb0';
 }
 
-function getSalary(first, last) {
-  const full = `${first} ${last}`;
-  if (DRIVER_SALARIES[full] !== undefined) return DRIVER_SALARIES[full];
-  for (const [n, v] of Object.entries(DRIVER_SALARIES)) {
-    if (n.includes(last)) return v;
-  }
-  return 2000000;
-}
-
 function raceIsPast(race) {
   const t = race.time ? race.time.replace(/Z$/i, '') : '14:00:00';
   return new Date(`${race.date}T${t}Z`) < new Date();
 }
 
 function formatRaceDate(dateStr) {
-  return new Date(dateStr + 'T12:00:00Z').toLocaleDateString('en-US', {
+  const langCode = typeof currentLang !== 'undefined' ? (currentLang === 'es' ? 'es-ES' : 'en-US') : 'en-US';
+  return new Date(dateStr + 'T12:00:00Z').toLocaleDateString(langCode, {
     month: 'short', day: 'numeric', year: 'numeric',
   });
+}
+
+// Helper rápido para obtener traducciones de interfaz en JS
+function _t(key) {
+    if (typeof translations !== 'undefined' && typeof currentLang !== 'undefined') {
+        return translations[currentLang][key] || key;
+    }
+    return key;
 }
 
 // ── API Fetches ───────────────────────────────────────────────
@@ -194,6 +208,7 @@ async function fetchWeather(lat, lon) {
 
 // ── Map ───────────────────────────────────────────────────────
 let map;
+let markerLayerGroup; // Grupo para limpiar marcadores al cambiar idioma si es necesario
 
 function initMap() {
   map = L.map('world-map', {
@@ -211,9 +226,14 @@ function initMap() {
     subdomains: 'abcd',
     maxZoom: 19,
   }).addTo(map);
+
+  markerLayerGroup = L.layerGroup().addTo(map);
 }
 
 function addCircuitMarkers(races, nextRound) {
+  if (!markerLayerGroup) return;
+  markerLayerGroup.clearLayers(); // Limpiar marcadores viejos
+
   races.forEach(race => {
     const lat = parseFloat(race.Circuit.Location.lat);
     const lon = parseFloat(race.Circuit.Location.long);
@@ -221,9 +241,11 @@ function addCircuitMarkers(races, nextRound) {
     const isNext = nextRound && race.round === nextRound;
     const status = isNext ? 'next' : isPast ? 'done' : 'upcoming';
 
+    const labelStatus = isNext ? ` · ${_t('next_race_tag')}` : isPast ? ` · ${_t('completed_tag')}` : '';
+
     const icon = L.divIcon({
       className: '',
-      html: `<div class="circ-pin circ-${status}" title="Round ${race.round}: ${race.raceName}"><span>${race.round}</span></div>`,
+      html: `<div class="circ-pin circ-${status}" title="${_t('round_prefix')} ${race.round}: ${race.raceName}"><span>${race.round}</span></div>`,
       iconSize: [26, 26],
       iconAnchor: [13, 13],
       tooltipAnchor: [13, -14],
@@ -232,12 +254,12 @@ function addCircuitMarkers(races, nextRound) {
     const dotColor = isNext ? '#e8aa00' : isPast ? '#8e8e93' : '#e10600';
 
     L.marker([lat, lon], { icon })
-      .addTo(map)
+      .addTo(markerLayerGroup)
       .bindTooltip(
-        `<div style="font-weight:700">Round ${race.round} — ${race.raceName}</div>` +
+        `<div style="font-weight:700">${_t('round_prefix')} ${race.round} — ${race.raceName}</div>` +
         `<div style="opacity:.75">${race.Circuit.circuitName}</div>` +
         `<div style="opacity:.65">${race.Circuit.Location.locality}, ${race.Circuit.Location.country}</div>` +
-        `<div style="color:${dotColor};margin-top:2px">${formatRaceDate(race.date)}${isNext ? ' · Next Race 🔴' : isPast ? ' · Completed' : ''}</div>`,
+        `<div style="color:${dotColor};margin-top:2px">${formatRaceDate(race.date)}${labelStatus}</div>`,
         { direction: 'top', offset: [0, -4], className: 'circuit-tooltip' }
       )
       .on('click', () => openCircuitPanel(race));
@@ -246,19 +268,30 @@ function addCircuitMarkers(races, nextRound) {
 
 // ── Circuit Panel ─────────────────────────────────────────────
 function openCircuitPanel(race) {
+  cachedData.activeRacePanel = race; // Guardar estado para renderizar dinámicamente si cambian de idioma
   document.getElementById('standings-panel').style.display = 'none';
   const panel = document.getElementById('circuit-panel');
   panel.style.display = 'block';
 
   const isPast = raceIsPast(race);
-  const statusLabel = isPast ? '✓ Completed' : '⏳ Upcoming';
+  const statusLabel = isPast ? `✓ ${_t('completed_tag')}` : `⏳ ${_t('legend_upcoming')}`;
   const statusClass = isPast ? 'done' : 'upcoming';
+  
+  // Mapeo dinámico de datos del circuito para asistencia estimado
+  const CIRCUIT_ATTENDANCE = {
+    bahrain: '~80,000', jeddah: '~60,000', albert_park: '~280,000', suzuka: '~300,000',
+    shanghai: '~200,000', miami: '~275,000', imola: '~180,000', monaco: '~200,000',
+    villeneuve: '~300,000', catalunya: '~300,000', red_bull_ring: '~300,000', silverstone: '~480,000',
+    hungaroring: '~200,000', spa: '~350,000', zandvoort: '~105,000', monza: '~160,000',
+    baku: '~80,000', marina_bay: '~250,000', americas: '~440,000', rodriguez: '~400,000',
+    interlagos: '~280,000', vegas: '~315,000', losail: '~80,000', yas_marina: '~95,000',
+  };
   const attendance = CIRCUIT_ATTENDANCE[race.Circuit.circuitId] || 'N/A';
 
   document.getElementById('circuit-panel-inner').innerHTML = `
     <div class="cp-header">
-      <button class="cp-back" onclick="closeCircuitPanel()">← Standings</button>
-      <span class="section-tag">Round ${race.round}</span>
+      <button class="cp-back" onclick="closeCircuitPanel()">${_t('back_btn')}</button>
+      <span class="section-tag">${_t('round_prefix')} ${race.round}</span>
     </div>
     <div class="cp-race-name">${race.raceName}</div>
     <div class="cp-circuit-name">${race.Circuit.circuitName}</div>
@@ -268,19 +301,19 @@ function openCircuitPanel(race) {
       <span class="cp-chip cp-chip-${statusClass}">${statusLabel}</span>
     </div>
     <div class="cp-meta-row">
-      <span class="cp-chip">🏟️ Attendance: ${attendance}</span>
+      <span class="cp-chip">🏟️ ${_t('attendance_label')}: ${attendance}</span>
     </div>
 
     <div class="cp-divider"></div>
-    <div class="cp-section-label">Last 5 Champions at this circuit</div>
+    <div class="cp-section-label">${_t('champions_label')}</div>
     <div id="cp-champions">
-      <div class="loading-state" style="padding:16px 14px"><div class="spinner"></div>Loading history…</div>
+      <div class="loading-state" style="padding:16px 14px"><div class="spinner"></div>${_t('loading_history')}</div>
     </div>
 
     <div class="cp-divider"></div>
-    <div class="cp-section-label">Circuit Weather — Live</div>
+    <div class="cp-section-label">${_t('weather_label')}</div>
     <div id="cp-weather">
-      <div class="loading-state" style="padding:14px"><div class="spinner"></div>Loading weather…</div>
+      <div class="loading-state" style="padding:14px"><div class="spinner"></div>${_t('loading_weather')}</div>
     </div>
   `;
 
@@ -297,6 +330,7 @@ function openCircuitPanel(race) {
 }
 
 function closeCircuitPanel() {
+  cachedData.activeRacePanel = null;
   document.getElementById('circuit-panel').style.display = 'none';
   document.getElementById('standings-panel').style.display = '';
 }
@@ -306,7 +340,7 @@ function renderChampions(history) {
   if (!el) return;
 
   if (!history.length) {
-    el.innerHTML = `<div class="cp-empty">No historical data available</div>`;
+    el.innerHTML = `<div class="cp-empty">${_t('no_history')}</div>`;
     return;
   }
 
@@ -352,14 +386,14 @@ function renderChampions(history) {
     `;
   }
 
-  el.innerHTML = (rows || `<div class="cp-empty">No winner data found</div>`) + flHtml;
+  el.innerHTML = (rows || `<div class="cp-empty">${_t('no_winner')}</div>`) + flHtml;
 }
 
 function renderCircuitWeather(weather, locality) {
   const el = document.getElementById('cp-weather');
   if (!el) return;
   if (!weather) {
-    el.innerHTML = `<div class="cp-empty" style="padding:8px 14px 14px">Weather unavailable — check API key</div>`;
+    el.innerHTML = `<div class="cp-empty" style="padding:8px 14px 14px">${_t('weather_error')}</div>`;
     return;
   }
   el.innerHTML = `
@@ -371,7 +405,7 @@ function renderCircuitWeather(weather, locality) {
       <div class="cp-weather-detail">
         💧 ${weather.humidity}% · 💨 ${weather.wind_speed} km/h · Feels ${weather.feels_like}°C
       </div>
-      <div class="cp-weather-loc">${locality} · Now</div>
+      <div class="cp-weather-loc">${locality} · ${_t('now_label')}</div>
     </div>
   `;
 }
@@ -386,9 +420,10 @@ function renderSidebarDrivers(drivers) {
     const color    = getTeamColor(team);
     const pos      = parseInt(d.position);
     const posClass = pos <= 3 ? `pos-${pos}` : '';
+    const tooltipText = `${_t('view_profile')} ${d.Driver.givenName} ${d.Driver.familyName}`;
 
     return `
-      <div class="sb-driver-row" onclick="window.location.href='driver.html?id=${d.Driver.driverId}'" title="View ${d.Driver.givenName} ${d.Driver.familyName} profile">
+      <div class="sb-driver-row" onclick="window.location.href='driver.html?id=${d.Driver.driverId}'" title="${tooltipText}">
         <span class="sb-pos ${posClass}">${pos}</span>
         <span class="sb-color-bar" style="background:${color};box-shadow:0 0 4px ${color}55"></span>
         <div class="sb-info">
@@ -416,12 +451,13 @@ function renderSidebarConstructors(constructors) {
     const barW         = Math.round((pts / maxPts) * 100);
     const posClass     = pos <= 3 ? `pos-${pos}` : '';
     const constructorRef = CONSTRUCTOR_REF_MAP[name] || name.toLowerCase().replace(/\s+/g, '_');
+    const tooltipText = `${_t('view_profile')} ${name}`;
 
     return `
       <div class="sb-constructor-row"
            onclick="window.location.href='constructor.html?id=${constructorRef}'"
            style="cursor:pointer"
-           title="View ${name} profile">
+           title="${tooltipText}">
         <span class="sb-pos ${posClass}">${pos}</span>
         <span class="sb-color-dot" style="background:${color};box-shadow:0 0 6px ${color}66"></span>
         <div class="sb-info">
@@ -445,14 +481,46 @@ function buildTicker(drivers) {
 
 function setTimestamp() {
   const el = document.getElementById('last-updated');
-  if (el) el.textContent = `Updated ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} UTC`;
+  if (el) el.textContent = `${_t('updated')} ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} UTC`;
+}
+
+// Función encargada puramente de renderizar la UI a partir de los datos cacheados
+function renderUI() {
+    setTimestamp();
+    
+    if (cachedData.allRaces.length) {
+        addCircuitMarkers(cachedData.allRaces, cachedData.nextRace?.round);
+        const done  = cachedData.allRaces.filter(r => raceIsPast(r)).length;
+        const total = cachedData.allRaces.length;
+        const roundsTag = document.getElementById('map-rounds-tag');
+        const statusTag = document.getElementById('map-status-tag');
+        if (roundsTag) roundsTag.textContent = `${total} ${_t('map_rounds')}`;
+        if (statusTag) {
+          if (cachedData.nextRace) {
+            statusTag.textContent = `${_t('legend_next')}: ${cachedData.nextRace.raceName}`;
+            statusTag.className   = 'section-tag gold';
+          } else {
+            statusTag.textContent = `${done}/${total} ${_t('completed_tag')}`;
+            statusTag.className   = 'section-tag green';
+          }
+        }
+    }
+
+    renderSidebarDrivers(cachedData.drivers.slice(0, 10));
+    renderSidebarConstructors(cachedData.constructors.slice(0, 5));
+    buildTicker(cachedData.drivers);
+    
+    // Si el usuario tenía el panel de un circuito abierto al cambiar idioma, lo vuelve a dibujar traducido
+    if (cachedData.activeRacePanel) {
+        openCircuitPanel(cachedData.activeRacePanel);
+    }
 }
 
 // ── Main Init ─────────────────────────────────────────────────
 async function init() {
   initMap();
-  setTimestamp();
 
+  // Hacer fetches iniciales a la API externa
   const [allRaces, drivers, constructors, nextRace] = await Promise.all([
     fetchAllRaces(),
     fetchDriverStandings(),
@@ -460,27 +528,20 @@ async function init() {
     fetchNextRace(),
   ]);
 
-  if (allRaces.length) {
-    addCircuitMarkers(allRaces, nextRace?.round);
-    const done  = allRaces.filter(r => raceIsPast(r)).length;
-    const total = allRaces.length;
-    const roundsTag = document.getElementById('map-rounds-tag');
-    const statusTag = document.getElementById('map-status-tag');
-    if (roundsTag) roundsTag.textContent = `${total} Rounds`;
-    if (statusTag) {
-      if (nextRace) {
-        statusTag.textContent = `Next: ${nextRace.raceName}`;
-        statusTag.className   = 'section-tag gold';
-      } else {
-        statusTag.textContent = `${done}/${total} Complete`;
-        statusTag.className   = 'section-tag green';
-      }
-    }
-  }
+  // Almacenar en caché global para i18n reactiva
+  cachedData.allRaces = allRaces;
+  cachedData.drivers = drivers;
+  cachedData.constructors = constructors;
+  cachedData.nextRace = nextRace;
 
-  renderSidebarDrivers(drivers.slice(0, 10));
-  renderSidebarConstructors(constructors.slice(0, 5));
-  buildTicker(drivers);
+  // Renderizar la interfaz por primera vez
+  renderUI();
 }
+
+// Escuchar el evento de cambio de idioma disparado por i18n.js
+window.addEventListener('languageChanged', () => {
+    console.log("Idioma cambiado detectado en app.js. Volviendo a renderizar UI...");
+    renderUI();
+});
 
 document.addEventListener('DOMContentLoaded', init);

@@ -1,119 +1,115 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PaddockIntel — F1 Intelligence Dashboard</title>
+  <title data-i18n="meta_title">PaddockIntel — F1 Intelligence Dashboard</title>
   <meta name="description" content="Real-time Formula 1 world map, standings, and race intelligence. Explore circuits, results, and economics from PaddockIntel." />
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://app.paddockintel.com" />
+  <link rel="canonical" href="https://hub.paddockintel.com" />
   <meta property="og:title" content="PaddockIntel — F1 Intelligence Dashboard" />
   <meta property="og:description" content="F1 circuit map, driver standings, constructor rankings, and race intelligence." />
-  <meta property="og:url" content="https://app.paddockintel.com" />
+  <meta property="og:url" content="https://hub.paddockintel.com" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23e10600'/><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='18' fill='white'>PI</text></svg>" />
+  
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="src/styles.css" />
+  <link rel="stylesheet" href="src/css/styles.css" />
 </head>
 <body>
   <div class="app-container">
 
-    <!-- ═══ HEADER ═══════════════════════════════════════════ -->
     <header class="site-header">
       <div class="logo-group">
         <div class="logo-badge">PI</div>
         <div>
           <div class="logo-text">Paddock<span>Intel</span></div>
-          <div class="logo-sub">F1 Intelligence Dashboard</div>
+          <div class="logo-sub" data-i18n="logo_sub">F1 Intelligence Dashboard</div>
         </div>
       </div>
       <div class="header-right">
-        <a href="https://paddockintel.com" class="header-nav-link" target="_blank">↗ News</a>
-        <div class="live-badge"><div class="live-dot"></div>Live Data</div>
-        <div class="season-badge">F1 · 2026 SEASON</div>
-        <div class="last-updated" id="last-updated">Loading…</div>
+        <div class="lang-selector">
+          <button onclick="setLanguage('es')" class="lang-btn" id="btn-lang-es">🇪🇸 ES</button>
+          <button onclick="setLanguage('en')" class="lang-btn" id="btn-lang-en">🇺🇸 EN</button>
+        </div>
+        
+        <a href="https://paddockintel.com" class="header-nav-link" target="_blank" data-i18n="nav_news">↗ News</a>
+        <div class="live-badge"><div class="live-dot"></div><span data-i18n="live_data">Live Data</span></div>
+        <div class="season-badge" data-i18n="season_badge">F1 · 2026 SEASON</div>
+        <div class="last-updated" id="last-updated" data-i18n="loading">Loading…</div>
       </div>
     </header>
 
-    <!-- ═══ TICKER ═══════════════════════════════════════════ -->
     <div class="ticker-bar" aria-hidden="true">
       <div class="ticker-inner" id="ticker-inner">
-        <span class="ticker-item"><span class="highlight">PaddockIntel</span> — F1 Intelligence · Loading standings…</span>
+        <span class="ticker-item"><span class="highlight">PaddockIntel</span> — <span data-i18n="ticker_loading">F1 Intelligence · Loading standings…</span></span>
       </div>
     </div>
 
-    <!-- ═══ MAIN DASHBOARD GRID ══════════════════════════════ -->
     <div class="dashboard-grid">
 
-      <!-- MAP CARD -->
       <div class="map-card glass-card">
         <div class="map-topbar">
           <div class="map-title-group">
-            <span class="map-card-title">2026 F1 Season</span>
-            <span class="section-tag" id="map-rounds-tag">24 Rounds</span>
-            <span class="section-tag gold" id="map-status-tag">Loading…</span>
+            <span class="map-card-title" data-i18n="map_title">2026 F1 Season</span>
+            <span class="section-tag" id="map-rounds-tag" data-i18n="map_rounds">24 Rounds</span>
+            <span class="section-tag gold" id="map-status-tag" data-i18n="loading">Loading…</span>
           </div>
           <div class="map-legend">
-            <span class="legend-item"><span class="legend-dot ldone"></span>Completed</span>
-            <span class="legend-item"><span class="legend-dot lnext pulse-dot"></span>Next Race</span>
-            <span class="legend-item"><span class="legend-dot lupcoming"></span>Upcoming</span>
-            <span class="legend-hint">Click a circuit ↗</span>
+            <span class="legend-item"><span class="legend-dot ldone"></span><span data-i18n="legend_completed">Completed</span></span>
+            <span class="legend-item"><span class="legend-dot lnext pulse-dot"></span><span data-i18n="legend_next">Next Race</span></span>
+            <span class="legend-item"><span class="legend-dot lupcoming"></span><span data-i18n="legend_upcoming">Upcoming</span></span>
+            <span class="legend-hint" data-i18n="legend_hint">Click a circuit ↗</span>
           </div>
         </div>
         <div id="world-map"></div>
       </div>
 
-      <!-- SIDEBAR -->
       <aside class="sidebar">
 
-        <!-- Circuit Detail Panel (hidden by default) -->
         <div id="circuit-panel" class="circuit-panel glass-card" style="display:none">
           <div id="circuit-panel-inner"></div>
         </div>
 
-        <!-- Default: Standings -->
         <div id="standings-panel" class="standings-panel">
 
           <div class="glass-card sidebar-card">
             <div class="sidebar-card-header">
-              <span class="sidebar-card-title">Driver Championship</span>
+              <span class="sidebar-card-title" data-i18n="wdc_title">Driver Championship</span>
               <span class="section-tag">WDC · Top 10</span>
             </div>
             <div id="sidebar-drivers">
-              <div class="loading-state" style="padding:28px"><div class="spinner"></div>Loading…</div>
+              <div class="loading-state" style="padding:28px"><div class="spinner"></div><span data-i18n="loading">Loading…</span></div>
             </div>
           </div>
 
           <div class="glass-card sidebar-card">
             <div class="sidebar-card-header">
-              <span class="sidebar-card-title">Constructor Championship</span>
+              <span class="sidebar-card-title" data-i18n="wcc_title">Constructor Championship</span>
               <span class="section-tag gold">WCC · Top 5</span>
             </div>
             <div id="sidebar-constructors">
-              <div class="loading-state" style="padding:28px"><div class="spinner"></div>Loading…</div>
+              <div class="loading-state" style="padding:28px"><div class="spinner"></div><span data-i18n="loading">Loading…</span></div>
             </div>
           </div>
 
         </div>
       </aside>
 
-    </div><!-- /dashboard-grid -->
-
-    <!-- ═══ FOOTER ════════════════════════════════════════════ -->
-    <footer class="site-footer">
-      <div>© 2026 <a href="https://paddockintel.com" class="footer-link" target="_blank">PaddockIntel</a> · F1 Intelligence</div>
-      <div>Data: Ergast/jolpi.ca · OpenWeather · Salary estimates via public reporting · Prize model estimated</div>
+    </div><footer class="site-footer">
+      <div>© 2026 <a href="https://paddockintel.com" class="footer-link" target="_blank">PaddockIntel</a> · <span data-i18n="footer_intel">F1 Intelligence</span></div>
+      <div data-i18n="footer_credits">Data: Ergast/jolpi.ca · OpenWeather · Salary estimates via public reporting · Prize model estimated</div>
       <div>
         <a href="https://paddockintel.com" class="footer-link" target="_blank">paddockintel.com</a>
         &nbsp;·&nbsp;
-        <a href="driver.html" class="footer-link">Driver Profiles</a>
+        <a href="driver.html" class="footer-link" data-i18n="footer_profiles">Driver Profiles</a>
       </div>
     </footer>
 
-  </div><!-- /app-container -->
-
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="src/app.js"></script>
+  </div><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  <script src="src/js/i18n.js"></script>
+  <script src="src/js/app.js"></script>
 </body>
 </html>
