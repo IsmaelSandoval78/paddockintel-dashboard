@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   PADDOCKINTEL — src/js/driver.js (v5 - Executive Infographics)
+   PADDOCKINTEL — src/js/driver.js (v5 - Absolute Root Edition)
    Driver Profile: Jolpica Results + OpenF1 Telemetry + Advanced Analytics
    ═══════════════════════════════════════════════════════════ */
 
@@ -11,7 +11,7 @@ let driverCachedData = {
     standing: null,
     races: [],
     meta: null,
-    analytics: null, // Guardará la info avanzada de los CSVs
+    analytics: null,
     pits: [],
     stints: [],
     laps: [],
@@ -227,12 +227,10 @@ function createOrGetModuleCard(id, titleKey, tagKey) {
     return document.getElementById(`${id}-body`);
 }
 
-// ── NUEVO: Inyección de Infografías Apple Avanzadas desde el CSV ────────
 function renderAdvancedAnalytics() {
     const data = driverCachedData.analytics;
     if (!data) return;
 
-    // Infografía 1: Sunday Progress Index
     const bodyProgress = createOrGetModuleCard('csv-progress-card', 'sunday_progress_title', 'verified_tag');
     if (bodyProgress) {
         const idx = data.progressIndex;
@@ -261,7 +259,6 @@ function renderAdvancedAnalytics() {
         `;
     }
 
-    // Infografía 2: Damage & Reliability Report
     const bodyReliability = createOrGetModuleCard('csv-reliability-card', 'damage_reliability_title', 'verified_tag');
     if (bodyReliability) {
         const rel = data.reliability;
@@ -380,7 +377,7 @@ function renderLaps(teamColor) {
     return `
       <div class="lap-row">
         <div class="lap-num">L${l.lap_number}</div>
-        <div class="apple-grid-bar-wrap">
+        <div class="lap-bar-wrap">
           <div class="lap-bar-fill" style="width:${barPct}%;background:${barColor}"></div>
         </div>
         <div class="lap-time-val ${isFastest?'fastest':''}">${formatLapTime(ms)}</div>
@@ -425,28 +422,27 @@ function renderCareerTimeline() {
   `;
 }
 
-// ── Render Global ─────────────────────────────────────────────
 function renderAllComponents() {
     const teamColor = getTeamColor(driverCachedData.standing?.Constructors?.[0]?.name || '');
     renderHero();
     renderResults();
-    renderAdvancedAnalytics(); // Inyección de analítica precalculada
+    renderAdvancedAnalytics();
     renderPits();
     renderLaps(teamColor);
     renderCareerTimeline();
 }
 
-// ── Inicialización ───────────────────────────────────────────
+// ── Inicialización Segura con Rutas Absolutas a la Raíz (/) ─────
 async function init() {
   const driverId = getDriverId();
   const meta = getDriverMeta(driverId);
   driverCachedData.meta = meta;
 
-  // Carga paralela de Jolpica y el nuevo JSON precalculado por Python
+  // 🛠️ OPTIMIZACIÓN: Fetch con barra invertida fija al inicio (/src/...) para evitar 404 de ruteo
   const [standing, races, analyticsRes] = await Promise.all([
     fetchDriverStanding(driverId),
     fetchDriverResults(driverId),
-    fetch('src/data-outputs/driver-analytics.json').then(r => r.ok ? r.json() : {}).catch(() => ({}))
+    fetch('/src/data-outputs/driver-analytics.json').then(r => r.ok ? r.json() : {}).catch(() => ({}))
   ]);
 
   driverCachedData.standing = standing;
@@ -455,7 +451,6 @@ async function init() {
 
   renderAllComponents();
 
-  // Bloque OpenF1 no-bloqueante
   const lastRace = races[races.length - 1];
   if (!lastRace) return;
 
