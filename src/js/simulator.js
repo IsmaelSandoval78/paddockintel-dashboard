@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   PADDOCKINTEL — src/js/simulator.js (Race Simulation Engine)
+   PADDOCKINTEL — src/js/simulator.js (Dynamic Horizontal Engine)
    ═══════════════════════════════════════════════════════════ */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -10,12 +10,16 @@ document.addEventListener("DOMContentLoaded", () => {
     let isPlaying = false;
     let intervalId = null;
 
-    const leaderboardEl = document.getElementById("sim-leaderboard");
+    const trackLineEl = document.getElementById("sim-leaderboard");
     const lapIndicatorEl = document.getElementById("sim-lap-indicator");
     const playBtn = document.getElementById("btn-sim-play");
     const resetBtn = document.getElementById("btn-sim-reset");
 
-    // Función matemática para interpolar los gaps entre vueltas clave
+    // Reconfigurar contenedor para que sea una pista horizontal
+    if(trackLineEl) {
+        trackLineEl.className = "sim-track-line";
+    }
+
     function getInterpolatedLapData(lap) {
         let prev = data.laps[0];
         let next = data.laps[data.laps.length - 1];
@@ -33,7 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return prevGap + (nextGap - prevGap) * factor;
         });
 
-        // Mantenemos el orden de la vuelta clave más cercana
         return { order: lap >= next.lap ? next.order : prev.order, gaps: interpolatedGaps };
     }
 
@@ -41,27 +44,26 @@ document.addEventListener("DOMContentLoaded", () => {
         lapIndicatorEl.textContent = `LAP ${currentLap} / ${data.totalLaps}`;
         const lapData = getInterpolatedLapData(currentLap);
         
-        leaderboardEl.innerHTML = "";
+        // Limpiar pista horizontal
+        trackLineEl.innerHTML = "";
+
+        // Encontrar la distancia máxima de esta vuelta para escalar la pista de 0% a 100%
+        const maxGap = Math.max(...lapData.gaps, 1.0);
 
         lapData.order.forEach((driverId, index) => {
             const driver = data.drivers[driverId];
             const gap = lapData.gaps[index];
-            const gapText = index === 0 ? "LEADER" : `+${gap.toFixed(1)}s`;
             
-            // Inversamente proporcional para la barra de progreso visual
-            const barWidth = Math.max(20, 100 - (gap * 4)); 
+            // Cálculo de física elástica: El líder (gap 0) va al 85% (derecha). 
+            // Los de atrás se posicionan relativamente según su distancia en segundos.
+            const leftPercentage = index === 0 ? 85 : Math.max(5, 85 - ((gap / maxGap) * 75));
 
-            leaderboardEl.innerHTML += `
-                <div class="sim-driver-row">
-                    <div class="sb-pos">${index + 1}</div>
-                    <div class="sb-color-bar" style="background:${driver.color}"></div>
-                    <div class="sb-info">
-                        <span class="sb-name">${driver.name}</span>
-                        <div class="sb-bar-wrap">
-                            <div class="sb-bar" style="width:${barWidth}%; background:${driver.color}; opacity:0.8"></div>
-                        </div>
+            trackLineEl.innerHTML += `
+                <div class="sim-capsule-capsule" style="left: ${leftPercentage}%">
+                    <span class="sim-capsule-pos">P${index + 1}</span>
+                    <div class="sim-capsule-badge" style="background:${driver.color}">
+                        ${driver.code}
                     </div>
-                    <div class="sim-live-gap">${gapText}</div>
                 </div>
             `;
         });
@@ -78,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 pause();
             }
-        }, 1000); // 1 vuelta por segundo
+        }, 300); // Velocidad de carrera fluida
     }
 
     function pause() {
@@ -97,6 +99,5 @@ document.addEventListener("DOMContentLoaded", () => {
         updateUI();
     });
 
-    // Inicializar primera vuelta
     updateUI();
 });
