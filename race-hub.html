@@ -15,7 +15,7 @@
         }
 
         body {
-            background-color: #050608; /* Negro absoluto de fondo */
+            background-color: #050608; 
             margin: 0;
             display: flex;
             justify-content: center;
@@ -24,7 +24,6 @@
             overflow: hidden;
         }
 
-        /* Contenedor espejo de Smartphone Premium */
         .cinematic-container {
             width: var(--phone-width);
             height: var(--phone-height);
@@ -37,7 +36,6 @@
             flex-direction: column;
         }
 
-        /* Capa Superior de Información HUD */
         .ui-top {
             position: absolute;
             top: 40px;
@@ -76,11 +74,9 @@
             padding: 4px 8px;
             border-radius: 6px;
             font-size: 11px;
-            letter-spacing: -0.01em;
             box-shadow: 0 2px 8px rgba(225,6,0,0.4);
         }
 
-        /* Área de Renderizado del Circuito */
         .render-canvas {
             flex-grow: 1;
             position: relative;
@@ -95,7 +91,6 @@
             overflow: visible;
         }
 
-        /* Estilos del Trazo de la Pista */
         .circuit-vector-path {
             stroke: rgba(255, 255, 255, 0.06);
             stroke-width: 8;
@@ -110,37 +105,33 @@
             stroke-linecap: round;
             stroke-linejoin: round;
             opacity: 0.3;
-            transition: stroke-dashoffset 0.1s linear;
         }
 
-        /* Nodos SVG de los pilotos */
         .svg-driver-node circle {
             stroke: #ffffff;
             stroke-width: 2.5;
-            transition: transform 0.1s linear;
         }
 
         .svg-driver-node text {
             font-family: var(--font-mono);
             font-weight: 900;
-            font-size: 10px;
-            fill: #090b0e;
+            font-size: 9px;
+            fill: #ffffff;
         }
 
-        /* Panel Inferior de Control y Tiempos */
         .ui-bottom {
-            background: linear-gradient(to top, #000000 80%, transparent 100%);
-            padding: 24px 24px 34px;
+            background: linear-gradient(to top, #000000 85%, transparent 100%);
+            padding: 20px 24px 30px;
             z-index: 100;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 14px;
         }
 
         .chrono-main {
             font-family: var(--font-mono);
             color: #ffffff;
-            font-size: 38px;
+            font-size: 36px;
             font-weight: 700;
             text-align: center;
             letter-spacing: -0.02em;
@@ -148,27 +139,24 @@
 
         .chrono-main span {
             color: #4b4e57;
-            font-size: 24px;
+            font-size: 22px;
         }
 
-        /* Mini Torre de Tiempos Vertical */
         .leaderboard-mini {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            max-height: 140px;
-            overflow: hidden;
+            gap: 6px;
+            min-height: 115px;
         }
 
         .mini-card {
             background: rgba(255,255,255,0.03);
-            padding: 8px 12px;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.02);
+            padding: 7px 12px;
+            border-radius: 9px;
+            border: 1px solid rgba(255,255,255,0.01);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .mini-card .left-info {
@@ -182,14 +170,12 @@
             font-size: 11px;
             font-weight: 700;
             color: #5c5f66;
-            min-width: 16px;
         }
 
         .mini-card .name {
             color: #ffffff;
-            font-size: 12px;
+            font-size: 11.5px;
             font-weight: 700;
-            letter-spacing: -0.01em;
         }
 
         .mini-card .gap {
@@ -204,15 +190,13 @@
             bottom: 12px;
             left: 50%;
             transform: translateX(-50%);
-            color: #5c5f66;
+            color: #44474f;
             text-decoration: none;
             font-size: 10px;
             font-weight: 700;
             letter-spacing: 0.05em;
-            transition: color 0.2s;
             z-index: 110;
         }
-        .btn-back:hover { color: #fff; }
     </style>
 </head>
 <body>
@@ -221,38 +205,38 @@
         
         <div class="ui-top">
             <div class="race-header">
-                <p id="label-race-year">FORMULA 1 · VUELTA 1</p>
-                <h1 id="label-race-name">MIAMI GRAND PRIX</h1>
+                <p>FORMULA 1 · VUELTA 1</p>
+                <h1>MIAMI GRAND PRIX</h1>
             </div>
             <div class="pi-badge">PI</div>
         </div>
 
-        <div class="render-canvas" id="render-canvas">
+        <div class="render-canvas">
             <svg id="cinematic-circuit-svg" viewBox="0 0 300 500">
                 <path id="miami-vertical-path" class="circuit-vector-path" 
-                    d="M 150,440 C 30,440 20,330 30,260 C 40,160 110,120 150,60 C 190,20 270,30 270,140 C 270,260 190,310 150,360 C 100,410 270,440 150,440 Z" />
+                    d="M 150,430 C 30,430 20,320 30,250 C 40,150 110,110 150,50 C 190,10 270,20 270,130 C 270,250 190,300 150,350 C 100,400 270,430 150,430 Z" />
                 
                 <path id="active-glow-path" class="circuit-active-glow" style="stroke: #27F4D2;"
-                    d="M 150,440 C 30,440 20,330 30,260 C 40,160 110,120 150,60 C 190,20 270,30 270,140 C 270,260 190,310 150,360 C 100,410 270,440 150,440 Z" />
+                    d="M 150,430 C 30,430 20,320 30,250 C 40,150 110,110 150,50 C 190,10 270,20 270,130 C 270,250 190,300 150,350 C 100,400 270,430 150,430 Z" />
 
                 <g id="svg-node-verstappen" class="svg-driver-node">
-                    <circle r="12" fill="#3671C6" />
+                    <circle r="11" fill="#3671C6" />
                     <text text-anchor="middle" dominant-baseline="central">VER</text>
                 </g>
                 <g id="svg-node-antonelli" class="svg-driver-node">
-                    <circle r="12" fill="#27F4D2" />
+                    <circle r="11" fill="#27F4D2" />
                     <text text-anchor="middle" dominant-baseline="central">ANT</text>
                 </g>
                 <g id="svg-node-norris" class="svg-driver-node">
-                    <circle r="12" fill="#FF8000" />
+                    <circle r="11" fill="#FF8000" />
                     <text text-anchor="middle" dominant-baseline="central">NOR</text>
                 </g>
                 <g id="svg-node-hamilton" class="svg-driver-node">
-                    <circle r="12" fill="#E8002D" />
+                    <circle r="11" fill="#E8002D" />
                     <text text-anchor="middle" dominant-baseline="central">HAM</text>
                 </g>
                 <g id="svg-node-leclerc" class="svg-driver-node">
-                    <circle r="12" fill="#E8002D" />
+                    <circle r="11" fill="#E8002D" />
                     <text text-anchor="middle" dominant-baseline="central">LEC</text>
                 </g>
             </svg>
@@ -261,11 +245,10 @@
         <div class="ui-bottom">
             <div class="chrono-main" id="cinematic-chrono">00:00<span>.000</span></div>
             
-            <div class="leaderboard-mini" id="web-mini-tower">
-                </div>
+            <div class="leaderboard-mini" id="web-mini-tower"></div>
             
-            <div style="margin-top: 4px;">
-                <button id="btn-trigger-cinematic" class="sim-action-btn" style="width: 100%; padding: 14px; font-size: 13px; background: #ffffff; color: #090b0e; font-weight: 800; border-radius: 12px;">
+            <div>
+                <button id="btn-trigger-cinematic" class="sim-action-btn" style="width: 100%; padding: 13px; font-size: 13px; background: #ffffff; color: #090b0e; font-weight: 800; border-radius: 12px; border: none; cursor: pointer;">
                     ▶ ASÍ FUE LA VUELTA 1
                 </button>
             </div>
@@ -274,7 +257,6 @@
         <a href="index.html" class="btn-back">← VOLVER AL DASHBOARD</a>
     </div>
 
-    <script src="src/js/i18n.js"></script>
     <script src="src/js/miami-sim-data.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -295,11 +277,9 @@
             const totalLength = trackPath.getTotalLength();
             const durationMs = data.simulationDurationSeconds * 1000;
 
-            // Ocultar barras de destello inicialmente
             glowPath.style.strokeDasharray = totalLength;
             glowPath.style.strokeDashoffset = totalLength;
 
-            // Función de cálculo de fotogramas interpolados para el Top 5
             function getFrameData(progress) {
                 let prev = data.timeline[0];
                 let next = data.timeline[data.timeline.length - 1];
@@ -309,10 +289,14 @@
                     if (data.timeline[i].progress >= progress) { next = data.timeline[i]; break; }
                 }
 
-                if (prev.progress === next.progress) return { order: prev.order, gaps: prev.gaps };
-                const factor = (progress - prev.progress) / (next.progress - prev.progress);
+                if (prev.progress === next.progress) {
+                    const top5 = prev.order.slice(0, 5);
+                    return { order: top5, gaps: prev.gaps.slice(0, 5) };
+                }
 
+                const factor = (progress - prev.progress) / (next.progress - prev.progress);
                 const currentGaps = {};
+                
                 prev.order.forEach((driverId, idx) => {
                     const prevGap = prev.gaps[idx];
                     const nextIdx = next.order.indexOf(driverId);
@@ -321,9 +305,11 @@
                 });
 
                 const sortedDrivers = Object.keys(currentGaps).sort((a,b) => currentGaps[a] - currentGaps[b]);
+                const targeted = sortedDrivers.filter(id => ["verstappen", "antonelli", "leclerc", "norris", "hamilton"].includes(id)).slice(0,4);
+                
                 return {
-                    order: sortedDrivers.filter(id => ["verstappen", "antonelli", "leclerc", "norris", "hamilton"].includes(id)),
-                    gaps: sortedDrivers.map(id => currentGaps[id])
+                    order: targeted,
+                    gaps: targeted.map(id => currentGaps[id])
                 };
             }
 
@@ -332,7 +318,6 @@
                 const elapsed = timestamp - startTime;
 
                 if (elapsed >= durationMs) {
-                    // Fin del recorrido: Congelar datos de meta
                     renderTimelineFrame(1.0);
                     chronoEl.innerHTML = `01:36<span>.280</span>`;
                     actionBtn.textContent = "▶ ASÍ FUE LA VUELTA 1";
@@ -343,7 +328,6 @@
                 const progress = elapsed / durationMs;
                 renderTimelineFrame(progress);
 
-                // Reloj digital sincronizado
                 const currentRealSeconds = progress * data.realLapTimeSeconds;
                 const mins = Math.floor(currentRealSeconds / 60);
                 const secs = Math.floor(currentRealSeconds % 60);
@@ -357,51 +341,43 @@
                 const frame = getFrameData(progress);
                 const pathLength = trackPath.getTotalLength();
                 
-                // Progreso base del líder de la carrera en el circuito
                 const leaderDist = progress * pathLength;
                 glowPath.style.strokeDashoffset = pathLength - leaderDist;
 
                 let sumX = 0, sumY = 0, activeCount = 0;
 
-                // 1. Mover los coches sobre el trazado del mapa
                 frame.order.forEach((driverId, index) => {
                     const node = document.getElementById(`svg-node-${driverId}`);
                     if (!node) return;
 
                     const gap = frame.gaps[index];
-                    // El líder va al frente, los de atrás se desfasan según su gap en segundos
-                    let driverDist = leaderDist - (gap * 18);
-                    if (driverDist < 0) driverDist = 0; // Evitar que se salgan al revés en la largada
+                    let driverDist = leaderDist - (gap * 16);
+                    if (driverDist < 0) driverDist = 0;
 
                     const pt = trackPath.getPointAtLength(driverDist % pathLength);
-                    
-                    // Aplicar coordenadas al nodo SVG interno
                     node.setAttribute("transform", `translate(${pt.x}, ${pt.y})`);
 
-                    // Acumular coordenadas para calcular el centro de masa del grupo
                     sumX += pt.x;
                     sumY += pt.y;
                     activeCount++;
                 });
 
-                // 2. 🛠️ EFECTO HELICÓPTERO: Mover la cámara (viewBox) siguiendo el promedio de los coches
+                // CÁMARA HELICÓPTERO (Paneo Dinámico del viewBox)
                 if (activeCount > 0) {
                     const avgX = sumX / activeCount;
                     const avgY = sumY / activeCount;
                     
-                    // Dimensiones base del lente de la cámara (Ancho: 180, Alto: 300 para hacer zoom)
-                    const camWidth = 190;
-                    const camHeight = 310;
+                    const camWidth = 150; 
+                    const camHeight = 250;
                     const viewBoxX = avgX - (camWidth / 2);
                     const viewBoxY = avgY - (camHeight / 2);
 
-                    // Reajustar la visualización del mapa en tiempo real
                     svg.setAttribute("viewBox", `${viewBoxX} ${viewBoxY} ${camWidth} ${camHeight}`);
                 }
 
-                // 3. Pintar y reordenar de forma suave la mini torre de tiempos inferior
+                // Actualizar mini torre
                 towerEl.innerHTML = "";
-                frame.order.slice(0, 4).forEach((driverId, index) => {
+                frame.order.forEach((driverId, index) => {
                     const driver = data.drivers[driverId];
                     const gap = frame.gaps[index];
                     const gapText = index === 0 ? "LEADER" : `+${gap.toFixed(3)}s`;
@@ -424,7 +400,7 @@
                 startTime = null;
                 actionBtn.textContent = "▶ ASÍ FUE LA VUELTA 1";
                 chronoEl.innerHTML = `00:00<span>.000</span>`;
-                svg.setAttribute("viewBox", "0 0 300 500"); // Resetear lente original
+                svg.setAttribute("viewBox", "0 0 300 500");
                 glowPath.style.strokeDashoffset = totalLength;
                 renderTimelineFrame(0.0);
             }
@@ -441,7 +417,6 @@
                 }
             });
 
-            // Inicializar grilla base
             resetSimulation();
         });
     </script>

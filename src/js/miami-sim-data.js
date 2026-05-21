@@ -1,459 +1,56 @@
 /* ═══════════════════════════════════════════════════════════
-   PADDOCKINTEL — src/js/miami-sim-data.js (v5 - Grid Completa 22 Pilotos)
+   PADDOCKINTEL — src/js/miami-sim-data.js (v5.1 - Purified Data)
    Matrix de Telemetría Oficial Vuelta 1 - GP de Miami 2026
-   ════════════════════════════════¡Se ve espectacular en el simulador de pantalla, Ismael! El contraste del chasis oscuro con los nodos de colores estilo transmisión oficial de televisión es exactamente el *look and feel* que engancha a la gente. Pero como bien dices, verlos ahí parados en la largada es solo el principio; ahora necesitamos que ruede la telemetría con la **física cinematográfica de seguimiento de cámara**.
+   ═══════════════════════════════════════════════════════════ */
 
-Para lograr que la cámara "vuele" encima de los 4 líderes (manteniéndolos enfocados en el centro mientras el mapa se desplaza suavemente por debajo), hicimos una reingeniería clave: **metimos los coches directamente dentro del contenedor del mapa vectorial (SVG)**. De esta forma, cuando JavaScript manipula el encuadre (`viewBox`), la cámara se mueve de forma nativa por aceleración de hardware, creando ese efecto drone de TikTok impecable.
-
-Como especificaste, aquí tienes el archivo **`race-hub.html`** completamente reescrito, funcional y listo para reemplazar de punta a punta:
-
-```html
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Race Hub — PaddockIntel Cinematic</title>
-    <link rel="stylesheet" href="src/css/styles.css">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23e10600'/><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='18' fill='white'>PI</text></svg>" />
-    
-    <style>
-        /* ═══ MAQUETACIÓN CINEMÁTICA VERTICAL (Format 9:16) ═══ */
-        :root {
-            --phone-width: 405px;
-            --phone-height: 720px;
+window.miamiGridTelemetry = {
+    totalLaps: 57,
+    simulationDurationSeconds: 30, 
+    realLapTimeSeconds: 96.280,   
+    drivers: {
+        "verstappen": { name: "M. Verstappen", code: "VER", team: "Red Bull", color: "#3671C6" },
+        "antonelli":  { name: "K. Antonelli",  code: "ANT", team: "Mercedes", color: "#27F4D2" },
+        "leclerc":     { name: "C. Leclerc",    code: "LEC", team: "Ferrari", color: "#E8002D" },
+        "norris":      { name: "L. Norris",     code: "NOR", team: "McLaren", color: "#FF8000" },
+        "hamilton":    { name: "L. Hamilton",   code: "HAM", team: "Ferrari", color: "#E8002D" },
+        "russell":     { name: "G. Russell",    code: "RUS", team: "Mercedes", color: "#27F4D2" },
+        "piastri":     { name: "O. Piastri",    code: "PIA", team: "McLaren", color: "#FF8000" },
+        "sainz":       { name: "C. Sainz",      code: "SAI", team: "Aston Martin", color: "#229971" },
+        "perez":       { name: "S. Pérez",      code: "PER", team: "Red Bull", color: "#3671C6" },
+        "alonso":      { name: "F. Alonso",     code: "ALO", team: "Aston Martin", color: "#229971" },
+        "gasly":       { name: "P. Gasly",      code: "GAS", team: "Alpine", color: "#FF87BC" },
+        "albon":       { name: "A. Albon",      code: "ALB", team: "Williams", color: "#64C4FF" },
+        "tsunoda":     { name: "Y. Tsunoda",    code: "TSU", team: "RB", color: "#6692FF" },
+        "hulkenberg":  { name: "N. Hülkenberg", code: "HUL", team: "Audi", color: "#52E252" },
+        "bearman":     { name: "O. Bearman",    code: "BEA", team: "Haas", color: "#B6BABD" },
+        "ocon":        { name: "E. Ocon",       code: "OCO", team: "Alpine", color: "#FF87BC" },
+        "stroll":      { name: "L. Stroll",     code: "STR", team: "Cadillac", color: "#C8102E" },
+        "ricciardo":   { name: "D. Ricciardo",  code: "RIC", team: "Cadillac", color: "#C8102E" },
+        "magnussen":   { name: "K. Magnussen",  code: "MAG", team: "Haas", color: "#B6BABD" },
+        "bottas":      { name: "V. Bottas",     code: "BOT", team: "Williams", color: "#64C4FF" },
+        "zhou":        { name: "G. Zhou",       code: "ZHO", team: "Audi", color: "#52E252" },
+        "bortoleto":   { name: "G. Bortoleto",  code: "BOR", team: "RB", color: "#6692FF" }
+    },
+    timeline: [
+        {
+            progress: 0.0,
+            order: ["verstappen", "antonelli", "leclerc", "norris", "hamilton", "russell", "piastri", "sainz", "perez", "alonso", "gasly", "albon", "tsunoda", "hulkenberg", "bearman", "ocon", "stroll", "ricciardo", "magnussen", "bottas", "zhou", "bortoleto"],
+            gaps:  [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1]
+        },
+        {
+            progress: 0.33,
+            order: ["verstappen", "antonelli", "norris", "leclerc", "hamilton", "russell", "piastri", "perez", "sainz", "alonso", "albon", "gasly", "tsunoda", "bearman", "hulkenberg", "ocon", "ricciardo", "stroll", "magnussen", "bottas", "bortoleto", "zhou"],
+            gaps:  [0.0, 0.4, 1.1, 1.5, 2.1, 2.6, 3.1, 3.8, 4.2, 4.9, 5.5, 5.9, 6.4, 7.1, 7.5, 8.2, 8.9, 9.4, 10.1, 10.8, 11.2, 12.0]
+        },
+        {
+            progress: 0.66,
+            order: ["antonelli", "verstappen", "norris", "hamilton", "leclerc", "russell", "piastri", "perez", "sainz", "alonso", "albon", "tsunoda", "gasly", "bearman", "ricciardo", "hulkenberg", "ocon", "stroll", "magnussen", "bortoleto", "bottas", "zhou"],
+            gaps:  [0.0, 0.2, 1.8, 2.4, 2.9, 3.8, 4.2, 5.1, 5.6, 6.5, 7.1, 7.8, 8.2, 9.0, 9.8, 10.2, 10.9, 11.5, 12.3, 13.1, 13.6, 14.8]
+        },
+        {
+            progress: 1.0,
+            order: ["antonelli", "verstappen", "norris", "hamilton", "leclerc", "russell", "piastri", "perez", "sainz", "alonso", "albon", "tsunoda", "bearman", "gasly", "ricciardo", "hulkenberg", "stroll", "ocon", "magnussen", "bortoleto", "bottas", "zhou"],
+            gaps:  [0.0, 0.6, 2.1, 2.8, 3.4, 4.2, 4.9, 5.8, 6.2, 7.1, 8.0, 8.6, 9.5, 9.9, 10.6, 11.2, 12.1, 12.5, 13.4, 14.1, 14.8, 16.2]
         }
-
-        body {
-            background-color: #050608; /* Negro absoluto de fondo */
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Contenedor espejo de Smartphone Premium */
-        .cinematic-container {
-            width: var(--phone-width);
-            height: var(--phone-height);
-            background: #0d0f12;
-            position: relative;
-            box-shadow: 0 25px 70px rgba(0,0,0,0.8), 0 0 0 12px #191b20;
-            border-radius: 40px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Capa Superior de Información HUD */
-        .ui-top {
-            position: absolute;
-            top: 40px;
-            left: 0;
-            width: 100%;
-            padding: 0 24px;
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            pointer-events: none;
-        }
-
-        .race-header h1 {
-            color: #ffffff;
-            font-size: 19px;
-            margin: 0;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-
-        .race-header p {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            color: #8a8d98;
-            margin: 2px 0 0;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .pi-badge {
-            background: var(--f1-red);
-            color: #fff;
-            font-weight: 900;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            letter-spacing: -0.01em;
-            box-shadow: 0 2px 8px rgba(225,6,0,0.4);
-        }
-
-        /* Área de Renderizado del Circuito */
-        .render-canvas {
-            flex-grow: 1;
-            position: relative;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% 50%, #13161c 0%, #0d0f12 100%);
-        }
-
-        #cinematic-circuit-svg {
-            width: 100%;
-            height: 100%;
-            overflow: visible;
-        }
-
-        /* Estilos del Trazo de la Pista */
-        .circuit-vector-path {
-            stroke: rgba(255, 255, 255, 0.06);
-            stroke-width: 8;
-            fill: none;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .circuit-active-glow {
-            stroke-width: 8;
-            fill: none;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            opacity: 0.3;
-            transition: stroke-dashoffset 0.1s linear;
-        }
-
-        /* Nodos SVG de los pilotos */
-        .svg-driver-node circle {
-            stroke: #ffffff;
-            stroke-width: 2.5;
-            transition: transform 0.1s linear;
-        }
-
-        .svg-driver-node text {
-            font-family: var(--font-mono);
-            font-weight: 900;
-            font-size: 10px;
-            fill: #090b0e;
-        }
-
-        /* Panel Inferior de Control y Tiempos */
-        .ui-bottom {
-            background: linear-gradient(to top, #000000 80%, transparent 100%);
-            padding: 24px 24px 34px;
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .chrono-main {
-            font-family: var(--font-mono);
-            color: #ffffff;
-            font-size: 38px;
-            font-weight: 700;
-            text-align: center;
-            letter-spacing: -0.02em;
-        }
-
-        .chrono-main span {
-            color: #4b4e57;
-            font-size: 24px;
-        }
-
-        /* Mini Torre de Tiempos Vertical */
-        .leaderboard-mini {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            max-height: 140px;
-            overflow: hidden;
-        }
-
-        .mini-card {
-            background: rgba(255,255,255,0.03);
-            padding: 8px 12px;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.02);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .mini-card .left-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .mini-card .rank {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            font-weight: 700;
-            color: #5c5f66;
-            min-width: 16px;
-        }
-
-        .mini-card .name {
-            color: #ffffff;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: -0.01em;
-        }
-
-        .mini-card .gap {
-            color: #ffffff;
-            font-family: var(--font-mono);
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .btn-back {
-            position: absolute;
-            bottom: 12px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #5c5f66;
-            text-decoration: none;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-            transition: color 0.2s;
-            z-index: 110;
-        }
-        .btn-back:hover { color: #fff; }
-    </style>
-</head>
-<body>
-
-    <div class="cinematic-container">
-        
-        <div class="ui-top">
-            <div class="race-header">
-                <p id="label-race-year">FORMULA 1 · VUELTA 1</p>
-                <h1 id="label-race-name">MIAMI GRAND PRIX</h1>
-            </div>
-            <div class="pi-badge">PI</div>
-        </div>
-
-        <div class="render-canvas" id="render-canvas">
-            <svg id="cinematic-circuit-svg" viewBox="0 0 300 500">
-                <path id="miami-vertical-path" class="circuit-vector-path" 
-                    d="M 150,440 C 30,440 20,330 30,260 C 40,160 110,120 150,60 C 190,20 270,30 270,140 C 270,260 190,310 150,360 C 100,410 270,440 150,440 Z" />
-                
-                <path id="active-glow-path" class="circuit-active-glow" style="stroke: #27F4D2;"
-                    d="M 150,440 C 30,440 20,330 30,260 C 40,160 110,120 150,60 C 190,20 270,30 270,140 C 270,260 190,310 150,360 C 100,410 270,440 150,440 Z" />
-
-                <g id="svg-node-verstappen" class="svg-driver-node">
-                    <circle r="12" fill="#3671C6" />
-                    <text text-anchor="middle" dominant-baseline="central">VER</text>
-                </g>
-                <g id="svg-node-antonelli" class="svg-driver-node">
-                    <circle r="12" fill="#27F4D2" />
-                    <text text-anchor="middle" dominant-baseline="central">ANT</text>
-                </g>
-                <g id="svg-node-norris" class="svg-driver-node">
-                    <circle r="12" fill="#FF8000" />
-                    <text text-anchor="middle" dominant-baseline="central">NOR</text>
-                </g>
-                <g id="svg-node-hamilton" class="svg-driver-node">
-                    <circle r="12" fill="#E8002D" />
-                    <text text-anchor="middle" dominant-baseline="central">HAM</text>
-                </g>
-                <g id="svg-node-leclerc" class="svg-driver-node">
-                    <circle r="12" fill="#E8002D" />
-                    <text text-anchor="middle" dominant-baseline="central">LEC</text>
-                </g>
-            </svg>
-        </div>
-
-        <div class="ui-bottom">
-            <div class="chrono-main" id="cinematic-chrono">00:00<span>.000</span></div>
-            
-            <div class="leaderboard-mini" id="web-mini-tower">
-                </div>
-            
-            <div style="margin-top: 4px;">
-                <button id="btn-trigger-cinematic" class="sim-action-btn" style="width: 100%; padding: 14px; font-size: 13px; background: #ffffff; color: #090b0e; font-weight: 800; border-radius: 12px;">
-                    ▶ ASÍ FUE LA VUELTA 1
-                </button>
-            </div>
-        </div>
-
-        <a href="index.html" class="btn-back">← VOLVER AL DASHBOARD</a>
-    </div>
-
-    <script src="src/js/i18n.js"></script>
-    <script src="src/js/miami-sim-data.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const data = window.miamiGridTelemetry;
-            if (!data) return;
-
-            const svg = document.getElementById("cinematic-circuit-svg");
-            const trackPath = document.getElementById("miami-vertical-path");
-            const glowPath = document.getElementById("active-glow-path");
-            const chronoEl = document.getElementById("cinematic-chrono");
-            const towerEl = document.getElementById("web-mini-tower");
-            const actionBtn = document.getElementById("btn-trigger-cinematic");
-
-            let animationId = null;
-            let startTime = null;
-            let isRunning = false;
-            
-            const totalLength = trackPath.getTotalLength();
-            const durationMs = data.simulationDurationSeconds * 1000;
-
-            // Ocultar barras de destello inicialmente
-            glowPath.style.strokeDasharray = totalLength;
-            glowPath.style.strokeDashoffset = totalLength;
-
-            // Función de cálculo de fotogramas interpolados para el Top 5
-            function getFrameData(progress) {
-                let prev = data.timeline[0];
-                let next = data.timeline[data.timeline.length - 1];
-
-                for (let i = 0; i < data.timeline.length; i++) {
-                    if (data.timeline[i].progress <= progress) prev = data.timeline[i];
-                    if (data.timeline[i].progress >= progress) { next = data.timeline[i]; break; }
-                }
-
-                if (prev.progress === next.progress) return { order: prev.order, gaps: prev.gaps };
-                const factor = (progress - prev.progress) / (next.progress - prev.progress);
-
-                const currentGaps = {};
-                prev.order.forEach((driverId, idx) => {
-                    const prevGap = prev.gaps[idx];
-                    const nextIdx = next.order.indexOf(driverId);
-                    const nextGap = nextIdx !== -1 ? next.gaps[nextIdx] : prevGap;
-                    currentGaps[driverId] = prevGap + (nextGap - prevGap) * factor;
-                });
-
-                const sortedDrivers = Object.keys(currentGaps).sort((a,b) => currentGaps[a] - currentGaps[b]);
-                return {
-                    order: sortedDrivers.filter(id => ["verstappen", "antonelli", "leclerc", "norris", "hamilton"].includes(id)),
-                    gaps: sortedDrivers.map(id => currentGaps[id])
-                };
-            }
-
-            function loop(timestamp) {
-                if (!startTime) startTime = timestamp;
-                const elapsed = timestamp - startTime;
-
-                if (elapsed >= durationMs) {
-                    // Fin del recorrido: Congelar datos de meta
-                    renderTimelineFrame(1.0);
-                    chronoEl.innerHTML = `01:36<span>.280</span>`;
-                    actionBtn.textContent = "▶ ASÍ FUE LA VUELTA 1";
-                    isRunning = false;
-                    return;
-                }
-
-                const progress = elapsed / durationMs;
-                renderTimelineFrame(progress);
-
-                // Reloj digital sincronizado
-                const currentRealSeconds = progress * data.realLapTimeSeconds;
-                const mins = Math.floor(currentRealSeconds / 60);
-                const secs = Math.floor(currentRealSeconds % 60);
-                const mils = Math.floor((currentRealSeconds % 1) * 1000);
-                chronoEl.innerHTML = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}<span>.${String(mils).padStart(3,'0')}</span>`;
-
-                animationId = requestAnimationFrame(loop);
-            }
-
-            function renderTimelineFrame(progress) {
-                const frame = getFrameData(progress);
-                const pathLength = trackPath.getTotalLength();
-                
-                // Progreso base del líder de la carrera en el circuito
-                const leaderDist = progress * pathLength;
-                glowPath.style.strokeDashoffset = pathLength - leaderDist;
-
-                let sumX = 0, sumY = 0, activeCount = 0;
-
-                // 1. Mover los coches sobre el trazado del mapa
-                frame.order.forEach((driverId, index) => {
-                    const node = document.getElementById(`svg-node-${driverId}`);
-                    if (!node) return;
-
-                    const gap = frame.gaps[index];
-                    // El líder va al frente, los de atrás se desfasan según su gap en segundos
-                    let driverDist = leaderDist - (gap * 18);
-                    if (driverDist < 0) driverDist = 0; // Evitar que se salgan al revés en la largada
-
-                    const pt = trackPath.getPointAtLength(driverDist % pathLength);
-                    
-                    // Aplicar coordenadas al nodo SVG interno
-                    node.setAttribute("transform", `translate(${pt.x}, ${pt.y})`);
-
-                    // Acumular coordenadas para calcular el centro de masa del grupo
-                    sumX += pt.x;
-                    sumY += pt.y;
-                    activeCount++;
-                });
-
-                // 2. 🛠️ EFECTO HELICÓPTERO: Mover la cámara (viewBox) siguiendo el promedio de los coches
-                if (activeCount > 0) {
-                    const avgX = sumX / activeCount;
-                    const avgY = sumY / activeCount;
-                    
-                    // Dimensiones base del lente de la cámara (Ancho: 180, Alto: 300 para hacer zoom)
-                    const camWidth = 190;
-                    const camHeight = 310;
-                    const viewBoxX = avgX - (camWidth / 2);
-                    const viewBoxY = avgY - (camHeight / 2);
-
-                    // Reajustar la visualización del mapa en tiempo real
-                    svg.setAttribute("viewBox", `${viewBoxX} ${viewBoxY} ${camWidth} ${camHeight}`);
-                }
-
-                // 3. Pintar y reordenar de forma suave la mini torre de tiempos inferior
-                towerEl.innerHTML = "";
-                frame.order.slice(0, 4).forEach((driverId, index) => {
-                    const driver = data.drivers[driverId];
-                    const gap = frame.gaps[index];
-                    const gapText = index === 0 ? "LEADER" : `+${gap.toFixed(3)}s`;
-
-                    towerEl.innerHTML += `
-                        <div class="mini-card" style="border-left: 4px solid ${driver.color}">
-                            <div class="left-info">
-                                <span class="rank">P${index + 1}</span>
-                                <span class="name">${driver.name.toUpperCase()}</span>
-                            </div>
-                            <span class="gap">${gapText}</span>
-                        </div>
-                    `;
-                });
-            }
-
-            function resetSimulation() {
-                cancelAnimationFrame(animationId);
-                isRunning = false;
-                startTime = null;
-                actionBtn.textContent = "▶ ASÍ FUE LA VUELTA 1";
-                chronoEl.innerHTML = `00:00<span>.000</span>`;
-                svg.setAttribute("viewBox", "0 0 300 500"); // Resetear lente original
-                glowPath.style.strokeDashoffset = totalLength;
-                renderTimelineFrame(0.0);
-            }
-
-            actionBtn.addEventListener("click", () => {
-                if (isRunning) {
-                    cancelAnimationFrame(animationId);
-                    actionBtn.textContent = "▶ ASÍ FUE LA VUELTA 1";
-                    isRunning = false;
-                } else {
-                    isRunning = true;
-                    actionBtn.textContent = "⏸ PAUSE ANALYTICS";
-                    animationId = requestAnimationFrame(loop);
-                }
-            });
-
-            // Inicializar grilla base
-            resetSimulation();
-        });
-    </script>
-</body>
-</html>
+    ]
+};
