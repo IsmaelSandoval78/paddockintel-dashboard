@@ -195,7 +195,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    height: 520px; /* Reducido sutilmente para balancear con el simulador abajo */
+    height: 480px;
 }
 
 .map-topbar {
@@ -320,11 +320,6 @@ body {
     font-size: 13px;
 }
 
-/* Barra de progreso de constructores */
-.sb-color-dot { width: 8px; height: 8px; border-radius: 50%; }
-.sb-bar-wrap { background: rgba(0,0,0,0.03); height: 4px; border-radius: 2px; width: 100%; margin-top: 4px; }
-.sb-bar { height: 100%; border-radius: 2px; }
-
 /* Footer */
 .site-footer {
     background: var(--card-sandblasted);
@@ -341,33 +336,20 @@ body {
 .footer-link { color: var(--text-charcoal); text-decoration: none; font-weight: 600; }
 
 
-/* ═══ WIDESCREEN TELEMETRY MATRIX (Cupertino Pit-Wall Edition) ═══ */
+/* ═══ HIGH-FIDELITY LIVE TELEMETRY WALL (22 DRIVERS) ════════ */
+.miami-simulator-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
 .sim-header-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    gap: 16px;
-    border-bottom: 1px solid rgba(0,0,0,0.06);
-    padding-bottom: 14px;
 }
-
 .sim-title-group { display: flex; flex-direction: column; gap: 4px; }
 .sim-card-title { font-weight: 800; font-size: 16px; letter-spacing: -0.02em; color: var(--text-charcoal); }
-
-.sim-selectors-group { display: flex; gap: 8px; align-items: center; }
-.sim-select-ui {
-    background: #fff;
-    color: var(--text-charcoal);
-    border: 1px solid rgba(0,0,0,0.12);
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 12.5px;
-    font-weight: 600;
-    cursor: pointer;
-    outline: none;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-}
 
 .sim-actions-group { display: flex; gap: 8px; }
 .sim-action-btn {
@@ -383,100 +365,99 @@ body {
 }
 .sim-action-btn:hover { background: #434344; }
 .sim-action-btn.alt { background: rgba(0,0,0,0.05); color: var(--text-charcoal); }
-.sim-action-btn.alt:hover { background: rgba(0,0,0,0.1); }
 
-/* Caja de Fibra de Carbono Panorámica */
+/* Consola de Fibra de Carbono Oscura */
 .sim-telemetry-widescreen-box {
-    background: #0d0f12 !important;
+    background: #090b0e !important;
     border: 1px solid rgba(255, 255, 255, 0.04);
     border-radius: 16px;
     padding: 20px;
     display: grid;
-    grid-template-columns: 180px 1fr;
+    grid-template-columns: 140px 1fr;
     gap: 20px;
-    align-items: center;
-    box-shadow: inset 0 4px 20px rgba(0,0,0,0.4);
-    margin-top: 14px;
+    align-items: start;
+    box-shadow: inset 0 4px 30px rgba(0,0,0,0.6);
 }
 
-/* Cronómetro Delta en Vivo Gigante */
-.sim-chrono-display {
-    font-family: var(--font-mono);
-    font-size: 24px;
-    font-weight: 700;
-    color: #ffffff;
-    letter-spacing: -0.02em;
+.sim-chrono-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
     border-right: 1px solid rgba(255,255,255,0.08);
     padding-right: 16px;
-    height: 100%;
-    display: flex;
-    align-items: center;
 }
-.sim-chrono-display span { color: #8e8e93; font-size: 16px; }
+.chrono-label { font-family: var(--font-sans); font-size: 10px; font-weight: 700; color: #8a8d98; letter-spacing: 0.05em; }
+.sim-chrono-display { font-family: var(--font-mono); font-size: 20px; font-weight: 700; color: #ffffff; }
+.sim-chrono-display span { color: #5c5f66; font-size: 14px; }
 
-/* El Mapa del Circuito Panorámico */
-.sim-map-canvas {
+/* El Muro contenedor Absoluto */
+.sim-telemetry-wall {
     position: relative;
     width: 100%;
-    height: 200px;
-    overflow: visible;
+    height: 528px; /* 22 pilotos * 24px de altura exacta */
+    overflow: hidden;
 }
 
-.circuit-vector-path {
-    stroke: rgba(255, 255, 255, 0.06);
-    stroke-width: 5;
-    fill: none;
-}
-.circuit-active-glow {
-    stroke: rgba(255, 255, 255, 0.12);
-    stroke-width: 5;
-    fill: none;
-    stroke-dasharray: 1000;
-    stroke-dashoffset: 1000;
-}
-
-/* Nodos GPS Rediseñados para Evitar Encimamiento */
-.sim-gps-dot {
+/* Fila Dinámica de Telemetría (Física de fluidos) */
+.sim-telemetry-row {
     position: absolute;
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    color: #0d0f12;
-    font-family: var(--font-mono);
-    font-size: 9.5px;
-    font-weight: 800;
+    left: 0;
+    width: 100%;
+    height: 20px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    border: 2px solid #ffffff;
-    box-shadow: 0 0 14px rgba(255,255,255,0.2);
-    transform: translate(-50%, -50%);
-    z-index: 50;
-    pointer-events: none;
-}
-/* Distinción visual si quedan perfectamente empatados */
-.sim-gps-dot.car-secondary {
-    border: 2px dashed #0d0f12;
-    box-shadow: 0 0 14px rgba(255,255,255,0.4), 0 0 0 2px #fff;
-    z-index: 49;
+    gap: 12px;
+    /* Efecto elástico y armonioso premium al adelantar o estirarse */
+    transition: top 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Etiquetas flotantes fijas de sectores */
-.sim-telemetry-stamp {
-    position: absolute;
-    background: #17191f;
-    border: 1px solid rgba(255,255,255,0.08);
-    padding: 4px 8px;
-    border-radius: 6px;
-    display: flex;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    z-index: 10;
-}
-.stamp-name {
+.sim-row-pos {
     font-family: var(--font-mono);
-    font-size: 8.5px;
+    font-size: 11px;
     font-weight: 700;
-    color: #27F4D2; /* Mercedes Cyan */
-    white-space: nowrap;
+    color: #5c5f66;
+    min-width: 22px;
+}
+.sim-row-pill {
+    font-family: var(--font-mono);
+    font-weight: 800;
+    font-size: 10px;
+    color: #090b0e;
+    padding: 2px 5px;
+    border-radius: 4px;
+    min-width: 32px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* Canaleta de asfalto horizontal */
+.sim-row-track-lane {
+    flex-grow: 1;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Barra elástica de Gap (Crece de derecha a izquierda) */
+.sim-row-bar-elastic {
+    position: absolute;
+    right: 0;
+    height: 6px;
+    border-radius: 3px;
+    opacity: 0.75;
+    /* Transición elástica de ensanchamiento horizontal */
+    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sim-row-gap-text {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: #ffffff;
+    min-width: 70px;
+    text-align: right;
+    z-index: 10;
 }
