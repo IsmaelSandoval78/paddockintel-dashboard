@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Race Hub — PaddockIntel Cinematic</title>
+    <link rel="stylesheet" href="src/css/styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23e10600'/><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='18' fill='white'>PI</text></svg>" />
+    
+    <style>
+        /* --- ESTILOS EXCLUSIVOS PARA MODO VERTICAL 9:16 --- */
+        :root {
+            --phone-width: 405px;
+            --phone-height: 720px;
+        }
+
+        body {
+            background-color: #000; /* Fondo negro puro para resaltar el render */
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* El contenedor que simula el teléfono (9:16) */
+        .cinematic-container {
+            width: var(--phone-width);
+            height: var(--phone-height);
+            background: #0d0f12;
+            position: relative;
+            box-shadow: 0 0 100px rgba(0,0,0,0.5), 0 0 0 12px #1c1e24;
+            border-radius: 40px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Overlay de UI superior (TikTok Style) */
+        .ui-top {
+            position: absolute;
+            top: 40px;
+            left: 0;
+            width: 100%;
+            padding: 0 24px;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .race-header {
+            color: #fff;
+        }
+
+        .race-header h1 {
+            font-size: 18px;
+            margin: 0;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .race-header p {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--text-muted);
+            margin: 2px 0 0;
+        }
+
+        .pi-badge {
+            background: var(--f1-red);
+            color: #fff;
+            font-weight: 900;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        /* El área del renderizado de telemetría */
+        .render-canvas {
+            flex-grow: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #cinematic-circuit-svg {
+            width: 90%;
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.05));
+        }
+
+        /* Los 4 Pilotos Líderes (Nodos Gigantes para Móvil) */
+        .driver-node {
+            position: absolute;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: var(--font-mono);
+            font-weight: 900;
+            font-size: 14px;
+            color: #000;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            transform: translate(-50%, -50%);
+            transition: all 0.1s linear;
+            z-index: 50;
+        }
+
+        /* Panel inferior de datos en vivo */
+        .ui-bottom {
+            background: linear-gradient(to top, #000 70%, transparent);
+            padding: 30px 24px 50px;
+            z-index: 100;
+        }
+
+        .chrono-main {
+            font-family: var(--font-mono);
+            color: #fff;
+            font-size: 44px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .chrono-main span {
+            color: #45484f;
+            font-size: 28px;
+        }
+
+        .leaderboard-mini {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .mini-card {
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.03);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mini-card .name {
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .mini-card .gap {
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            font-size: 10px;
+        }
+
+        .btn-back {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            text-decoration: none;
+            font-size: 11px;
+            opacity: 0.5;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cinematic-container">
+        <div class="ui-top">
+            <div class="race-header">
+                <p id="label-race-year">SEASON 2026</p>
+                <h1 id="label-race-name">MIAMI GRAND PRIX</h1>
+            </div>
+            <div class="pi-badge">PI</div>
+        </div>
+
+        <div class="render-canvas" id="render-canvas">
+            <svg id="cinematic-circuit-svg" viewBox="0 0 300 500" preserveAspectRatio="xMidYMid meet">
+                <path id="miami-vertical-path" class="circuit-vector-path" 
+                    d="M 150,450 C 50,450 50,350 50,300 C 50,200 120,150 150,100 C 180,50 250,50 250,150 C 250,250 180,300 150,350 C 120,400 250,450 150,450 Z" 
+                    style="stroke: rgba(255,255,255,0.1); stroke-width: 8;" />
+                
+                <path id="active-line-path" class="circuit-active-glow" 
+                    d="M 150,450 C 50,450 50,350 50,300 C 50,200 120,150 150,100 C 180,50 250,50 250,150 C 250,250 180,300 150,350 C 120,400 250,450 150,450 Z" 
+                    style="stroke: var(--f1-red); stroke-width: 8; opacity: 0.4;" />
+            </svg>
+
+            <div id="node-1" class="driver-node">ANT</div>
+            <div id="node-2" class="driver-node">VER</div>
+            <div id="node-3" class="driver-node">LEC</div>
+            <div id="node-4" class="driver-node">NOR</div>
+        </div>
+
+        <div class="ui-bottom">
+            <div class="chrono-main" id="cinematic-chrono">00:00<span>.000</span></div>
+            
+            <div class="leaderboard-mini">
+                <div class="mini-card" style="border-left: 4px solid #27F4D2;">
+                    <span class="name">ANTONELLI</span>
+                    <span class="gap">LEADER</span>
+                </div>
+                <div class="mini-card" style="border-left: 4px solid #3671C6;">
+                    <span class="name">VERSTAPPEN</span>
+                    <span class="gap">+0.280s</span>
+                </div>
+                <div class="mini-card" style="border-left: 4px solid #E8002D;">
+                    <span class="name">LECLERC</span>
+                    <span class="gap">+0.840s</span>
+                </div>
+                <div class="mini-card" style="border-left: 4px solid #FF8000;">
+                    <span class="name">NORRIS</span>
+                    <span class="gap">+1.120s</span>
+                </div>
+            </div>
+            
+            <div style="margin-top: 25px; text-align: center;">
+                <button onclick="startCinematic()" class="sim-action-btn" style="width: 100%; padding: 15px; font-size: 14px; background: #fff; color: #000;">
+                    ▶ ASÍ FUE LA VUELTA 1
+                </button>
+            </div>
+        </div>
+
+        <a href="index.html" class="btn-back">← VOLVER AL DASHBOARD</a>
+    </div>
+
+    <script src="src/js/i18n.js"></script>
+    <script src="src/js/miami-sim-data.js"></script>
+    <script>
+        // Lógica ultra-minimalista para inicializar posiciones
+        const path = document.getElementById('miami-vertical-path');
+        const length = path.getTotalLength();
+        
+        function updateNode(id, percent, color) {
+            const node = document.getElementById(id);
+            const point = path.getPointAtLength(percent * length);
+            node.style.left = `${(point.x / 300) * 100}%`;
+            node.style.top = `${(point.y / 500) * 100}%`;
+            node.style.backgroundColor = color;
+        }
+
+        // Posiciones iniciales de grilla
+        updateNode('node-1', 0.0, '#27F4D2');
+        updateNode('node-2', 0.98, '#3671C6');
+        updateNode('node-3', 0.96, '#E8002D');
+        updateNode('node-4', 0.94, '#FF8000');
+
+        function startCinematic() {
+            alert("Iniciando motor de seguimiento cinematográfico...");
+            // Aquí conectaremos el loop de RequestAnimationFrame que moverá la "cámara"
+        }
+    </script>
+</body>
+</html>
