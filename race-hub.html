@@ -8,98 +8,97 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23e10600'/><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='18' fill='white'>PI</text></svg>" />
     
     <style>
-        /* ═══ MAQUETACIÓN CINEMÁTICA VERTICAL (Format 9:16) ═══ */
+        /* ═══ CONSOLA DE TELEMETRÍA VERTICAL ABSOLUTA (Format 9:16) ═══ */
         :root {
             --phone-width: 405px;
             --phone-height: 720px;
+            --m-teal: #27F4D2;
+            --r-blue: #3671C6;
+            --f-red: #E8002D;
+            --m-orange: #FF8000;
         }
 
         body {
-            background-color: #050608; 
+            background-color: #040507; 
             margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             overflow: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Contenedor espejo de Smartphone Premium */
+        /* Chasis Contenedor del Smartphone */
         .cinematic-container {
             width: var(--phone-width);
             height: var(--phone-height);
-            background: #0d0f12;
+            background: #0b0d10;
             position: relative;
-            box-shadow: 0 25px 70px rgba(0,0,0,0.8), 0 0 0 12px #191b20;
-            border-radius: 40px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.9), 0 0 0 12px #16181d;
+            border-radius: 36px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            box-sizing: border-box;
         }
 
-        /* Capa Superior de Información HUD */
+        /* HUD Superior de Transmisión */
         .ui-top {
-            position: absolute;
-            top: 40px;
-            left: 0;
-            width: 100%;
-            padding: 0 24px;
-            z-index: 100;
+            padding: 32px 20px 10px;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            pointer-events: none;
+            background: linear-gradient(to bottom, #0b0d10 60%, transparent);
+            z-index: 100;
         }
 
         .race-header h1 {
             color: #ffffff;
-            font-size: 19px;
+            font-size: 18px;
             margin: 0;
             font-weight: 800;
-            letter-spacing: -0.02em;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            letter-spacing: -0.03em;
         }
 
         .race-header p {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            color: #8a8d98;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: #6c6f78;
             margin: 2px 0 0;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.06em;
         }
 
         .pi-badge {
-            background: var(--f1-red);
-            color: #fff;
+            background: #e10600;
+            color: #ffffff;
             font-weight: 900;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            box-shadow: 0 2px 8px rgba(225,6,0,0.4);
+            padding: 3px 7px;
+            border-radius: 5px;
+            font-size: 10px;
+            box-shadow: 0 0 12px rgba(225, 6, 0, 0.3);
         }
 
-        /* Área de Renderizado del Circuito */
+        /* Área de Renderizado de Pista (Ajustada para prevenir desbordes) */
         .render-canvas {
             flex-grow: 1;
-            position: relative;
             width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% 50%, #13161c 0%, #0d0f12 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            height: 320px; /* Altura controlada para blindar el UX */
+            position: relative;
+            background: radial-gradient(circle at 50% 50%, #11141a 0%, #0b0d10 100%);
+            overflow: hidden;
         }
 
         #cinematic-circuit-svg {
             width: 100%;
             height: 100%;
             overflow: visible;
-            transition: viewBox 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .circuit-vector-path {
-            stroke: rgba(255, 255, 255, 0.08);
+            stroke: rgba(255, 255, 255, 0.05);
             stroke-width: 6;
             fill: none;
             stroke-linecap: round;
@@ -111,60 +110,59 @@
             fill: none;
             stroke-linecap: round;
             stroke-linejoin: round;
-            opacity: 0.4;
+            opacity: 0.25;
         }
 
+        /* Monoplazas en el Radar Vectorial */
         .svg-driver-node circle {
             stroke: #ffffff;
-            stroke-width: 2;
+            stroke-width: 1.8;
+            transition: transform 0.05s linear;
         }
 
         .svg-driver-node text {
-            font-family: var(--font-mono);
+            font-family: 'JetBrains Mono', monospace;
             font-weight: 900;
-            font-size: 8.5px;
+            font-size: 8px;
             fill: #ffffff;
         }
 
-        /* Panel Inferior Rediseñado (Safe Zone) */
+        /* HUD Inferior de Control de Mandos (Totalmente Blindado) */
         .ui-bottom {
-            background: linear-gradient(to top, #050608 85%, transparent 100%);
-            padding: 20px 24px 40px;
-            z-index: 100;
+            background: #050608;
+            padding: 16px 20px 24px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            box-sizing: border-box;
+            gap: 12px;
+            z-index: 100;
+            border-top: 1px solid rgba(255,255,255,0.02);
         }
 
         .chrono-main {
-            font-family: var(--font-mono);
+            font-family: 'JetBrains Mono', monospace;
             color: #ffffff;
-            font-size: 36px;
+            font-size: 34px;
             font-weight: 700;
             text-align: center;
             letter-spacing: -0.02em;
-            margin: 0;
-            padding: 0;
         }
 
         .chrono-main span {
-            color: #4b4e57;
-            font-size: 22px;
+            color: #40434c;
+            font-size: 20px;
         }
 
-        /* Mini Torre de Tiempos Vertical */
+        /* Torre de Tiempos Miniaturizada */
         .leaderboard-mini {
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            min-height: 120px;
+            gap: 5px;
         }
 
         .mini-card {
-            background: rgba(255,255,255,0.03);
-            padding: 8px 12px;
-            border-radius: 9px;
+            background: rgba(255,255,255,0.02);
+            padding: 7px 12px;
+            border-radius: 8px;
             border: 1px solid rgba(255,255,255,0.01);
             display: flex;
             justify-content: space-between;
@@ -174,41 +172,58 @@
         .mini-card .left-info {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .mini-card .rank {
-            font-family: var(--font-mono);
-            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
             font-weight: 700;
-            color: #5c5f66;
+            color: #484b52;
         }
 
         .mini-card .name {
             color: #ffffff;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
+            letter-spacing: -0.01em;
         }
 
         .mini-card .gap {
             color: #ffffff;
-            font-family: var(--font-mono);
-            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10.5px;
             font-weight: 600;
         }
 
+        /* Botón Maestro de Lanzamiento */
+        .btn-play-cinematic {
+            width: 100%;
+            background: #ffffff;
+            color: #050608;
+            border: none;
+            padding: 12px;
+            font-size: 12.5px;
+            font-weight: 800;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255,255,255,0.1);
+            transition: transform 0.2s, background 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+        .btn-play-cinematic:hidden { display: none; }
+        .btn-play-cinematic:active { transform: scale(0.98); background: #e5e5e5; }
+
         .btn-back {
-            position: absolute;
-            bottom: 14px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #44474f;
+            text-align: center;
+            color: #3d4047;
             text-decoration: none;
-            font-size: 10px;
+            font-size: 9.5px;
             font-weight: 700;
             letter-spacing: 0.05em;
-            z-index: 110;
             text-transform: uppercase;
+            margin-top: 2px;
         }
         .btn-back:hover { color: #ffffff; }
     </style>
@@ -219,7 +234,7 @@
         
         <div class="ui-top">
             <div class="race-header">
-                <p>FORMULA 1 · VUELTA 1</p>
+                <p>Análisis de Carrera · Vuelta 1</p>
                 <h1>MIAMI GRAND PRIX</h1>
             </div>
             <div class="pi-badge">PI</div>
@@ -228,70 +243,53 @@
         <div class="render-canvas">
             <svg id="cinematic-circuit-svg" viewBox="0 0 300 500">
                 <path id="miami-vertical-path" class="circuit-vector-path" 
-                    d="M 150,430 C 30,430 20,320 30,250 C 40,150 110,110 150,50 C 190,10 270,20 270,130 C 270,250 190,300 150,350 C 100,400 270,430 150,430 Z" />
+                    d="M 150,440 C 40,440 25,330 35,260 C 45,160 115,120 150,60 C 185,10 265,20 265,130 C 265,250 185,300 150,360 C 105,410 260,440 150,440 Z" />
                 
-                <path id="active-glow-path" class="circuit-active-glow" style="stroke: #27F4D2;"
-                    d="M 150,430 C 30,430 20,320 30,250 C 40,150 110,110 150,50 C 190,10 270,20 270,130 C 270,250 190,300 150,350 C 100,400 270,430 150,430 Z" />
+                <path id="active-glow-path" class="circuit-active-glow" style="stroke: var(--m-teal);"
+                    d="M 150,440 C 40,440 25,330 35,260 C 45,160 115,120 150,60 C 185,10 265,20 265,130 C 265,250 185,300 150,360 C 105,410 260,440 150,440 Z" />
 
-                <g id="svg-node-verstappen" class="svg-driver-node">
-                    <circle r="11" fill="#3671C6" />
-                    <text text-anchor="middle" dominant-baseline="central">VER</text>
-                </g>
-                <g id="svg-node-antonelli" class="svg-driver-node">
-                    <circle r="11" fill="#27F4D2" />
-                    <text text-anchor="middle" dominant-baseline="central">ANT</text>
-                </g>
-                <g id="svg-node-norris" class="svg-driver-node">
-                    <circle r="11" fill="#FF8000" />
-                    <text text-anchor="middle" dominant-baseline="central">NOR</text>
-                </g>
-                <g id="svg-node-hamilton" class="svg-driver-node">
-                    <circle r="11" fill="#E8002D" />
-                    <text text-anchor="middle" dominant-baseline="central">HAM</text>
-                </g>
-                <g id="svg-node-leclerc" class="svg-driver-node">
-                    <circle r="11" fill="#E8002D" />
-                    <text text-anchor="middle" dominant-baseline="central">LEC</text>
-                </g>
+                <g id="svg-node-antonelli" class="svg-driver-node"><circle r="10" fill="var(--m-teal)" /><text text-anchor="middle" dominant-baseline="central">ANT</text></g>
+                <g id="svg-node-verstappen" class="svg-driver-node"><circle r="10" fill="var(--r-blue)" /><text text-anchor="middle" dominant-baseline="central">VER</text></g>
+                <g id="svg-node-norris" class="svg-driver-node"><circle r="10" fill="var(--m-orange)" /><text text-anchor="middle" dominant-baseline="central">NOR</text></g>
+                <g id="svg-node-hamilton" class="svg-driver-node"><circle r="10" fill="var(--f-red)" /><text text-anchor="middle" dominant-baseline="central">HAM</text></g>
+                <g id="svg-node-leclerc" class="svg-driver-node"><circle r="10" fill="var(--f-red)" /><text text-anchor="middle" dominant-baseline="central">LEC</text></g>
             </svg>
         </div>
 
         <div class="ui-bottom">
             <div class="chrono-main" id="cinematic-chrono">00:00<span>.000</span></div>
             
-            <div class="leaderboard-mini" id="web-mini-tower"></div>
+            <div class="leaderboard-mini" id="web-mini-tower">
+                </div>
             
-            <button id="btn-trigger-cinematic" class="sim-action-btn" style="width: 100%; padding: 14px; font-size: 13px; background: #ffffff; color: #090b0e; font-weight: 800; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(255,255,255,0.1);">
+            <button id="btn-trigger-cinematic" class="btn-play-cinematic">
                 ▶ ASÍ FUE LA VUELTA 1
             </button>
+            
+            <a href="index.html" class="btn-back">← Volver al Dashboard</a>
         </div>
-
-        <a href="index.html" class="btn-back">← Volver al Dashboard</a>
     </div>
 
     <script>
-        // DATA MATRIX INTEGRADA PARA ELIMINAR ASYNC BUGS
-        const miamiTelemetryMatrix = {
-            simulationDurationSeconds: 30,
+        const telemetryDB = {
+            durationSeconds: 30,
             realLapTimeSeconds: 96.280,
             drivers: {
-                "verstappen": { name: "M. Verstappen", code: "VER", color: "#3671C6" },
-                "antonelli":  { name: "K. Antonelli",  code: "ANT", color: "#27F4D2" },
-                "leclerc":     { name: "C. Leclerc",    code: "LEC", color: "#E8002D" },
-                "norris":      { name: "L. Norris",     code: "NOR", color: "#FF8000" },
-                "hamilton":    { name: "L. Hamilton",   code: "HAM", color: "#E8002D" }
+                "antonelli":  { name: "K. Antonelli",  code: "ANT", color: "var(--m-teal)" },
+                "verstappen": { name: "M. Verstappen", code: "VER", color: "var(--r-blue)" },
+                "norris":      { name: "L. Norris",     code: "NOR", color: "var(--m-orange)" },
+                "hamilton":    { name: "L. Hamilton",   code: "HAM", color: "var(--f-red)" },
+                "leclerc":     { name: "C. Leclerc",    code: "LEC", color: "var(--f-red)" }
             },
             timeline: [
-                { progress: 0.0,  order: ["verstappen", "antonelli", "leclerc", "norris", "hamilton"], gaps: [0.0, 0.15, 0.32, 0.50, 0.68] },
-                { progress: 0.33, order: ["verstappen", "antonelli", "norris", "leclerc", "hamilton"], gaps: [0.0, 0.42, 1.12, 1.55, 2.10] },
-                { progress: 0.66, order: ["antonelli", "verstappen", "norris", "hamilton", "leclerc"], gaps: [0.0, 0.25, 1.82, 2.44, 2.91] },
-                { progress: 1.0,  order: ["antonelli", "verstappen", "norris", "hamilton", "leclerc"], gaps: [0.0, 0.61, 2.14, 2.85, 3.40] }
+                { progress: 0.0,  order: ["verstappen", "antonelli", "leclerc", "norris", "hamilton"], gaps: [0.0, 0.120, 0.310, 0.490, 0.650] },
+                { progress: 0.33, order: ["verstappen", "antonelli", "norris", "leclerc", "hamilton"], gaps: [0.0, 0.410, 1.080, 1.420, 1.950] },
+                { progress: 0.66, order: ["antonelli", "verstappen", "norris", "hamilton", "leclerc"], gaps: [0.0, 0.220, 1.610, 2.150, 2.580] },
+                { progress: 1.0,  order: ["antonelli", "verstappen", "norris", "hamilton", "leclerc"], gaps: [0.0, 0.600, 2.100, 2.800, 3.400] }
             ]
         };
 
         document.addEventListener("DOMContentLoaded", () => {
-            const data = miamiTelemetryMatrix;
-
             const svg = document.getElementById("cinematic-circuit-svg");
             const trackPath = document.getElementById("miami-vertical-path");
             const glowPath = document.getElementById("active-glow-path");
@@ -302,61 +300,61 @@
             let animationId = null;
             let startTime = null;
             let isRunning = false;
-            let currentProgress = 0;
-            
-            const totalLength = trackPath.getTotalLength();
-            const durationMs = data.simulationDurationSeconds * 1000;
+            let progress = 0;
 
-            glowPath.style.strokeDasharray = totalLength;
-            glowPath.style.strokeDashoffset = totalLength;
+            const pathLength = trackPath.getTotalLength();
+            const totalDurationMs = telemetryDB.durationSeconds * 1000;
 
-            function getFrameData(progress) {
-                let prev = data.timeline[0];
-                let next = data.timeline[data.timeline.length - 1];
+            glowPath.style.strokeDasharray = pathLength;
+            glowPath.style.strokeDashoffset = pathLength;
 
-                for (let i = 0; i < data.timeline.length; i++) {
-                    if (data.timeline[i].progress <= progress) prev = data.timeline[i];
-                    if (data.timeline[i].progress >= progress) { next = data.timeline[i]; break; }
+            // Algoritmo de interpolación lineal ultra-seguro por piloto
+            function getDriverState(driverId, currentProgress) {
+                const timeline = telemetryDB.timeline;
+                let prev = timeline[0];
+                let next = timeline[timeline.length - 1];
+
+                for (let i = 0; i < timeline.length; i++) {
+                    if (timeline[i].progress <= currentProgress) prev = timeline[i];
+                    if (timeline[i].progress >= currentProgress) { next = timeline[i]; break; }
                 }
 
-                if (prev.progress === next.progress) return { order: prev.order, gaps: prev.gaps };
-                
-                const factor = (progress - prev.progress) / (next.progress - prev.progress);
-                const currentGaps = {};
-                
-                prev.order.forEach((driverId, idx) => {
-                    const prevGap = prev.gaps[idx];
-                    const nextIdx = next.order.indexOf(driverId);
-                    const nextGap = nextIdx !== -1 ? next.gaps[nextIdx] : prevGap;
-                    currentGaps[driverId] = prevGap + (nextGap - prevGap) * factor;
-                });
+                const prevIdx = prev.order.indexOf(driverId);
+                const nextIdx = next.order.indexOf(driverId);
+                const prevGap = prev.gaps[prevIdx];
+                const nextGap = next.gaps[nextIdx];
 
-                const sortedDrivers = Object.keys(currentGaps).sort((a,b) => currentGaps[a] - currentGaps[b]);
-                return {
-                    order: sortedDrivers,
-                    gaps: sortedDrivers.map(id => currentGaps[id])
-                };
+                let factor = 0;
+                if (next.progress !== prev.progress) {
+                    factor = (currentProgress - prev.progress) / (next.progress - prev.progress);
+                }
+
+                const gap = prevGap + (nextGap - prevGap) * factor;
+                const activeOrder = currentProgress >= next.progress ? next.order : prev.order;
+                const rank = activeOrder.indexOf(driverId) + 1;
+
+                return { gap, rank };
             }
 
             function loop(timestamp) {
                 if (!startTime) startTime = timestamp;
                 const elapsed = timestamp - startTime;
 
-                if (elapsed >= durationMs) {
-                    // Fin de la vuelta: fijar estados finales
-                    renderTimelineFrame(1.0);
+                if (elapsed >= totalDurationMs) {
+                    progress = 1.0;
+                    renderFrame(1.0);
                     chronoEl.innerHTML = `01:36<span>.280</span>`;
                     actionBtn.textContent = "▶ ASÍ FUE LA VUELTA 1";
                     isRunning = false;
-                    startTime = null; // PERMITE REINICIAR AL DAR CLIC NUEVAMENTE
+                    startTime = null;
                     return;
                 }
 
-                currentProgress = elapsed / durationMs;
-                renderTimelineFrame(currentProgress);
+                progress = elapsed / totalDurationMs;
+                renderFrame(progress);
 
-                // Reloj digital de carrera
-                const currentRealSeconds = currentProgress * data.realLapTimeSeconds;
+                // Reloj oficial digital
+                const currentRealSeconds = progress * telemetryDB.realLapTimeSeconds;
                 const mins = Math.floor(currentRealSeconds / 60);
                 const secs = Math.floor(currentRealSeconds % 60);
                 const mils = Math.floor((currentRealSeconds % 1) * 1000);
@@ -365,21 +363,22 @@
                 animationId = requestAnimationFrame(loop);
             }
 
-            function renderTimelineFrame(progress) {
-                const frame = getFrameData(progress);
-                const pathLength = trackPath.getTotalLength();
-                
-                const leaderDist = progress * pathLength;
+            function renderFrame(currentProgress) {
+                const driverIds = Object.keys(telemetryDB.drivers);
+                const leaderDist = currentProgress * pathLength;
                 glowPath.style.strokeDashoffset = pathLength - leaderDist;
 
-                let sumX = 0, sumY = 0, activeCount = 0;
+                let sumX = 0, sumY = 0, count = 0;
+                const currentRankings = [];
 
-                frame.order.forEach((driverId, index) => {
-                    const node = document.getElementById(`svg-node-${driverId}`);
+                driverIds.forEach(id => {
+                    const node = document.getElementById(`svg-node-${id}`);
                     if (!node) return;
 
-                    const gap = frame.gaps[index];
-                    let driverDist = leaderDist - (gap * 22); // Factor elástico de distancia
+                    const state = getDriverState(id, currentProgress);
+                    
+                    // Separación elástica en píxeles según la distancia al P1
+                    let driverDist = leaderDist - (state.gap * 28);
                     if (driverDist < 0) driverDist = 0;
 
                     const pt = trackPath.getPointAtLength(driverDist % pathLength);
@@ -387,36 +386,37 @@
 
                     sumX += pt.x;
                     sumY += pt.y;
-                    activeCount++;
+                    count++;
+
+                    currentRankings.push({ id, rank: state.rank, gap: state.gap });
                 });
 
-                // CÁMARA HELICÓPTERO (Paneo Dinámico del viewBox)
-                if (progress > 0.001 && activeCount > 0) {
-                    const avgX = sumX / activeCount;
-                    const avgY = sumY / activeCount;
-                    
-                    const camWidth = 160; 
-                    const camHeight = 260;
-                    const viewBoxX = avgX - (camWidth / 2);
-                    const viewBoxY = avgY - (camHeight / 2);
+                // Reordenar torre según el orden real actual
+                currentRankings.sort((a, b) => a.rank - b.rank);
 
-                    svg.setAttribute("viewBox", `${viewBoxX} ${viewBoxY} ${camWidth} ${camHeight}`);
+                // 🛠️ MOVIMIENTO DE CÁMARA HELICÓPTERO DINÁMICO
+                if (currentProgress > 0.001 && count > 0) {
+                    const avgX = sumX / count;
+                    const avgY = sumY / count;
+                    
+                    // Zoom dinámico de recuadro
+                    const camWidth = 140; 
+                    const camHeight = 220;
+                    svg.setAttribute("viewBox", `${avgX - camWidth/2} ${avgY - camHeight/2} ${camWidth} ${camHeight}`);
                 } else {
-                    // Vista global estática en la grilla antes de arrancar
+                    // Vista completa de parrilla antes del semáforo
                     svg.setAttribute("viewBox", "0 0 300 500");
                 }
 
-                // Actualizar torre de tiempos
+                // Inyectar Filas en la Torre
                 towerEl.innerHTML = "";
-                frame.order.slice(0, 4).forEach((driverId, index) => {
-                    const driver = data.drivers[driverId];
-                    const gap = frame.gaps[index];
-                    const gapText = index === 0 ? "LEADER" : `+${gap.toFixed(3)}s`;
-
+                currentRankings.slice(0, 4).forEach(item => {
+                    const driver = telemetryDB.drivers[item.id];
+                    const gapText = item.rank === 1 ? "LEADER" : `+${item.gap.toFixed(3)}s`;
                     towerEl.innerHTML += `
                         <div class="mini-card" style="border-left: 4px solid ${driver.color}">
                             <div class="left-info">
-                                <span class="rank">P${index + 1}</span>
+                                <span class="rank">P${item.rank}</span>
                                 <span class="name">${driver.name.toUpperCase()}</span>
                             </div>
                             <span class="gap">${gapText}</span>
@@ -425,32 +425,21 @@
                 });
             }
 
-            function resetSimulation() {
-                cancelAnimationFrame(animationId);
-                isRunning = false;
-                startTime = null;
-                currentProgress = 0;
-                actionBtn.textContent = "▶ ASÍ FUE LA VUELTA 1";
-                chronoEl.innerHTML = `00:00<span>.000</span>`;
-                svg.setAttribute("viewBox", "0 0 300 500");
-                glowPath.style.strokeDashoffset = totalLength;
-                renderTimelineFrame(0.0);
-            }
-
             actionBtn.addEventListener("click", () => {
                 if (isRunning) {
                     cancelAnimationFrame(animationId);
                     actionBtn.textContent = "▶ ASÍ FUE LA VUELTA 1";
                     isRunning = false;
-                    startTime = null; 
+                    startTime = null;
                 } else {
                     isRunning = true;
-                    actionBtn.textContent = "⏸ PAUSE ANALYTICS";
+                    actionBtn.textContent = "⏸ PAUSAR TELEMETRÍA";
                     animationId = requestAnimationFrame(loop);
                 }
             });
 
-            resetSimulation();
+            // Forzar renderizado en frío (Vuelta 0)
+            renderFrame(0.0);
         });
     </script>
 </body>
