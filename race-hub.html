@@ -24,6 +24,7 @@
             overflow: hidden;
         }
 
+        /* Contenedor espejo de Smartphone Premium */
         .cinematic-container {
             width: var(--phone-width);
             height: var(--phone-height);
@@ -36,6 +37,7 @@
             flex-direction: column;
         }
 
+        /* Capa Superior de Información HUD */
         .ui-top {
             position: absolute;
             top: 40px;
@@ -77,55 +79,62 @@
             box-shadow: 0 2px 8px rgba(225,6,0,0.4);
         }
 
+        /* Área de Renderizado del Circuito */
         .render-canvas {
             flex-grow: 1;
             position: relative;
             width: 100%;
             height: 100%;
             background: radial-gradient(circle at 50% 50%, #13161c 0%, #0d0f12 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         #cinematic-circuit-svg {
             width: 100%;
             height: 100%;
             overflow: visible;
+            transition: viewBox 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .circuit-vector-path {
-            stroke: rgba(255, 255, 255, 0.06);
-            stroke-width: 8;
+            stroke: rgba(255, 255, 255, 0.08);
+            stroke-width: 6;
             fill: none;
             stroke-linecap: round;
             stroke-linejoin: round;
         }
 
         .circuit-active-glow {
-            stroke-width: 8;
+            stroke-width: 6;
             fill: none;
             stroke-linecap: round;
             stroke-linejoin: round;
-            opacity: 0.3;
+            opacity: 0.4;
         }
 
         .svg-driver-node circle {
             stroke: #ffffff;
-            stroke-width: 2.5;
+            stroke-width: 2;
         }
 
         .svg-driver-node text {
             font-family: var(--font-mono);
             font-weight: 900;
-            font-size: 9px;
+            font-size: 8.5px;
             fill: #ffffff;
         }
 
+        /* Panel Inferior Rediseñado (Safe Zone) */
         .ui-bottom {
-            background: linear-gradient(to top, #000000 85%, transparent 100%);
-            padding: 20px 24px 30px;
+            background: linear-gradient(to top, #050608 85%, transparent 100%);
+            padding: 20px 24px 40px;
             z-index: 100;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 16px;
+            box-sizing: border-box;
         }
 
         .chrono-main {
@@ -135,6 +144,8 @@
             font-weight: 700;
             text-align: center;
             letter-spacing: -0.02em;
+            margin: 0;
+            padding: 0;
         }
 
         .chrono-main span {
@@ -142,16 +153,17 @@
             font-size: 22px;
         }
 
+        /* Mini Torre de Tiempos Vertical */
         .leaderboard-mini {
             display: flex;
             flex-direction: column;
             gap: 6px;
-            min-height: 115px;
+            min-height: 120px;
         }
 
         .mini-card {
             background: rgba(255,255,255,0.03);
-            padding: 7px 12px;
+            padding: 8px 12px;
             border-radius: 9px;
             border: 1px solid rgba(255,255,255,0.01);
             display: flex;
@@ -174,7 +186,7 @@
 
         .mini-card .name {
             color: #ffffff;
-            font-size: 11.5px;
+            font-size: 12px;
             font-weight: 700;
         }
 
@@ -187,7 +199,7 @@
 
         .btn-back {
             position: absolute;
-            bottom: 12px;
+            bottom: 14px;
             left: 50%;
             transform: translateX(-50%);
             color: #44474f;
@@ -196,7 +208,9 @@
             font-weight: 700;
             letter-spacing: 0.05em;
             z-index: 110;
+            text-transform: uppercase;
         }
+        .btn-back:hover { color: #ffffff; }
     </style>
 </head>
 <body>
@@ -247,21 +261,36 @@
             
             <div class="leaderboard-mini" id="web-mini-tower"></div>
             
-            <div>
-                <button id="btn-trigger-cinematic" class="sim-action-btn" style="width: 100%; padding: 13px; font-size: 13px; background: #ffffff; color: #090b0e; font-weight: 800; border-radius: 12px; border: none; cursor: pointer;">
-                    ▶ ASÍ FUE LA VUELTA 1
-                </button>
-            </div>
+            <button id="btn-trigger-cinematic" class="sim-action-btn" style="width: 100%; padding: 14px; font-size: 13px; background: #ffffff; color: #090b0e; font-weight: 800; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(255,255,255,0.1);">
+                ▶ ASÍ FUE LA VUELTA 1
+            </button>
         </div>
 
-        <a href="index.html" class="btn-back">← VOLVER AL DASHBOARD</a>
+        <a href="index.html" class="btn-back">← Volver al Dashboard</a>
     </div>
 
-    <script src="src/js/miami-sim-data.js"></script>
     <script>
+        // DATA MATRIX INTEGRADA PARA ELIMINAR ASYNC BUGS
+        const miamiTelemetryMatrix = {
+            simulationDurationSeconds: 30,
+            realLapTimeSeconds: 96.280,
+            drivers: {
+                "verstappen": { name: "M. Verstappen", code: "VER", color: "#3671C6" },
+                "antonelli":  { name: "K. Antonelli",  code: "ANT", color: "#27F4D2" },
+                "leclerc":     { name: "C. Leclerc",    code: "LEC", color: "#E8002D" },
+                "norris":      { name: "L. Norris",     code: "NOR", color: "#FF8000" },
+                "hamilton":    { name: "L. Hamilton",   code: "HAM", color: "#E8002D" }
+            },
+            timeline: [
+                { progress: 0.0,  order: ["verstappen", "antonelli", "leclerc", "norris", "hamilton"], gaps: [0.0, 0.15, 0.32, 0.50, 0.68] },
+                { progress: 0.33, order: ["verstappen", "antonelli", "norris", "leclerc", "hamilton"], gaps: [0.0, 0.42, 1.12, 1.55, 2.10] },
+                { progress: 0.66, order: ["antonelli", "verstappen", "norris", "hamilton", "leclerc"], gaps: [0.0, 0.25, 1.82, 2.44, 2.91] },
+                { progress: 1.0,  order: ["antonelli", "verstappen", "norris", "hamilton", "leclerc"], gaps: [0.0, 0.61, 2.14, 2.85, 3.40] }
+            ]
+        };
+
         document.addEventListener("DOMContentLoaded", () => {
-            const data = window.miamiGridTelemetry;
-            if (!data) return;
+            const data = miamiTelemetryMatrix;
 
             const svg = document.getElementById("cinematic-circuit-svg");
             const trackPath = document.getElementById("miami-vertical-path");
@@ -273,6 +302,7 @@
             let animationId = null;
             let startTime = null;
             let isRunning = false;
+            let currentProgress = 0;
             
             const totalLength = trackPath.getTotalLength();
             const durationMs = data.simulationDurationSeconds * 1000;
@@ -289,11 +319,8 @@
                     if (data.timeline[i].progress >= progress) { next = data.timeline[i]; break; }
                 }
 
-                if (prev.progress === next.progress) {
-                    const top5 = prev.order.slice(0, 5);
-                    return { order: top5, gaps: prev.gaps.slice(0, 5) };
-                }
-
+                if (prev.progress === next.progress) return { order: prev.order, gaps: prev.gaps };
+                
                 const factor = (progress - prev.progress) / (next.progress - prev.progress);
                 const currentGaps = {};
                 
@@ -305,11 +332,9 @@
                 });
 
                 const sortedDrivers = Object.keys(currentGaps).sort((a,b) => currentGaps[a] - currentGaps[b]);
-                const targeted = sortedDrivers.filter(id => ["verstappen", "antonelli", "leclerc", "norris", "hamilton"].includes(id)).slice(0,4);
-                
                 return {
-                    order: targeted,
-                    gaps: targeted.map(id => currentGaps[id])
+                    order: sortedDrivers,
+                    gaps: sortedDrivers.map(id => currentGaps[id])
                 };
             }
 
@@ -318,17 +343,20 @@
                 const elapsed = timestamp - startTime;
 
                 if (elapsed >= durationMs) {
+                    // Fin de la vuelta: fijar estados finales
                     renderTimelineFrame(1.0);
                     chronoEl.innerHTML = `01:36<span>.280</span>`;
                     actionBtn.textContent = "▶ ASÍ FUE LA VUELTA 1";
                     isRunning = false;
+                    startTime = null; // PERMITE REINICIAR AL DAR CLIC NUEVAMENTE
                     return;
                 }
 
-                const progress = elapsed / durationMs;
-                renderTimelineFrame(progress);
+                currentProgress = elapsed / durationMs;
+                renderTimelineFrame(currentProgress);
 
-                const currentRealSeconds = progress * data.realLapTimeSeconds;
+                // Reloj digital de carrera
+                const currentRealSeconds = currentProgress * data.realLapTimeSeconds;
                 const mins = Math.floor(currentRealSeconds / 60);
                 const secs = Math.floor(currentRealSeconds % 60);
                 const mils = Math.floor((currentRealSeconds % 1) * 1000);
@@ -351,7 +379,7 @@
                     if (!node) return;
 
                     const gap = frame.gaps[index];
-                    let driverDist = leaderDist - (gap * 16);
+                    let driverDist = leaderDist - (gap * 22); // Factor elástico de distancia
                     if (driverDist < 0) driverDist = 0;
 
                     const pt = trackPath.getPointAtLength(driverDist % pathLength);
@@ -363,21 +391,24 @@
                 });
 
                 // CÁMARA HELICÓPTERO (Paneo Dinámico del viewBox)
-                if (activeCount > 0) {
+                if (progress > 0.001 && activeCount > 0) {
                     const avgX = sumX / activeCount;
                     const avgY = sumY / activeCount;
                     
-                    const camWidth = 150; 
-                    const camHeight = 250;
+                    const camWidth = 160; 
+                    const camHeight = 260;
                     const viewBoxX = avgX - (camWidth / 2);
                     const viewBoxY = avgY - (camHeight / 2);
 
                     svg.setAttribute("viewBox", `${viewBoxX} ${viewBoxY} ${camWidth} ${camHeight}`);
+                } else {
+                    // Vista global estática en la grilla antes de arrancar
+                    svg.setAttribute("viewBox", "0 0 300 500");
                 }
 
-                // Actualizar mini torre
+                // Actualizar torre de tiempos
                 towerEl.innerHTML = "";
-                frame.order.forEach((driverId, index) => {
+                frame.order.slice(0, 4).forEach((driverId, index) => {
                     const driver = data.drivers[driverId];
                     const gap = frame.gaps[index];
                     const gapText = index === 0 ? "LEADER" : `+${gap.toFixed(3)}s`;
@@ -398,6 +429,7 @@
                 cancelAnimationFrame(animationId);
                 isRunning = false;
                 startTime = null;
+                currentProgress = 0;
                 actionBtn.textContent = "▶ ASÍ FUE LA VUELTA 1";
                 chronoEl.innerHTML = `00:00<span>.000</span>`;
                 svg.setAttribute("viewBox", "0 0 300 500");
@@ -410,6 +442,7 @@
                     cancelAnimationFrame(animationId);
                     actionBtn.textContent = "▶ ASÍ FUE LA VUELTA 1";
                     isRunning = false;
+                    startTime = null; 
                 } else {
                     isRunning = true;
                     actionBtn.textContent = "⏸ PAUSE ANALYTICS";
