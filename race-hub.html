@@ -26,7 +26,6 @@
             gap: 20px;
         }
 
-        /* Grilla de Tres Columnas en Espejo Quirúrgico */
         .telemetry-mirror-grid {
             display: grid;
             grid-template-columns: 1fr 340px 1fr;
@@ -57,7 +56,6 @@
         .driver-info h2 { font-size: 22px; font-weight: 800; margin: 0; letter-spacing: -0.02em; }
         .driver-info p { font-size: 11px; color: #86868b; text-transform: uppercase; margin: 2px 0 0; font-weight: 700; }
 
-        /* Layout Interno Optimizado */
         .garage-telemetry-split {
             display: grid;
             grid-template-columns: 180px 1fr;
@@ -66,7 +64,6 @@
         }
         .garage-telemetry-split.reversed { grid-template-columns: 1fr 180px; }
 
-        /* Contenedor del Monoplaza */
         .car-telemetry-system {
             display: grid;
             grid-template-columns: 45px 70px 45px;
@@ -86,43 +83,16 @@
         .tyre-column.left-side { align-items: flex-end; text-align: right; }
         .tyre-column.right-side { align-items: flex-start; text-align: left; }
 
-        .tyre-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        .wheel-element {
-            width: 20px;
-            height: 34px;
-            background: #171a21;
-            border: 2px solid #fff;
-            border-radius: 4px;
-            transition: background 0.2s ease, box-shadow 0.2s ease;
-            box-sizing: border-box;
-        }
-        
-        .wheel-temp-lbl {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            font-weight: 700;
-            color: #86868b;
-        }
+        .tyre-box { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .wheel-element { width: 20px; height: 34px; background: #171a21; border: 2px solid #fff; border-radius: 4px; transition: background 0.2s, box-shadow 0.2s; box-sizing: border-box; }
+        .wheel-temp-lbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; color: #86868b; }
 
         .f1-body-shape {
-            width: 44px;
-            height: 190px;
-            background: rgba(255,255,255,0.03);
-            border: 2px solid rgba(255,255,255,0.15);
-            border-radius: 12px 12px 4px 4px;
-            margin: 0 auto;
-            position: relative;
+            width: 44px; height: 190px; background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.15); border-radius: 12px 12px 4px 4px; margin: 0 auto; position: relative;
         }
         .f1-wing-front { width: 90px; height: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); position: absolute; top: 20px; left: -25px; border-radius: 2px; }
         .f1-wing-rear { width: 80px; height: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); position: absolute; bottom: 10px; left: -20px; border-radius: 2px; }
     
-        /* Barras de Pedales AWS */
         .metrics-live-stack { display: flex; flex-direction: column; gap: 14px; width: 100%; }
         .metric-gauge-row { display: flex; flex-direction: column; gap: 4px; }
         .gauge-header-text { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #86868b; }
@@ -130,65 +100,28 @@
         .gauge-bar-track { height: 8px; background: rgba(255,255,255,0.03); border-radius: 4px; overflow: hidden; }
         .gauge-bar-fill { height: 100%; width: 0%; transition: width 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
 
-        /* Centro de Mando Central */
         .center-dashboard-core {
-            background: #0f1217;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            border-radius: 16px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: inset 0 4px 20px rgba(0,0,0,0.4);
-            box-sizing: border-box;
+            background: #0f1217; border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; box-shadow: inset 0 4px 20px rgba(0,0,0,0.4); box-sizing: border-box;
         }
-        .weather-monitor-box {
-            width: 100%; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 12px;
-        }
+        .weather-monitor-box { width: 100%; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 12px; }
         .weather-grid-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
         .w-item { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #86868b; background: rgba(0,0,0,0.15); padding: 4px; border-radius: 4px; }
 
-        /* Dropdowns estilo AWS */
         .control-dropdowns { display: flex; gap: 10px; }
         .aws-select {
-            background: #1c2026;
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.12);
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 12.5px;
-            font-weight: 700;
-            cursor: pointer;
-            outline: none;
+            background: #1c2026; color: #fff; border: 1px solid rgba(255,255,255,0.12); padding: 6px 12px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; outline: none;
         }
 
-        /* Línea de Tiempo Scrubber */
-        .apple-scrubber-card {
-            background: #0f1217;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 20px 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+        .apple-scrubber-card { background: #0f1217; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 20px 24px; display: flex; flex-direction: column; gap: 12px; }
         .scrubber-top-row { display: flex; justify-content: space-between; align-items: center; }
         .scrubber-title { font-size: 12px; font-weight: 800; color: #86868b; text-transform: uppercase; letter-spacing: 0.05em; }
         .scrubber-lap-badge { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: #e10600; }
         
-        .timeline-slider-input {
-            -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.08); outline: none; cursor: pointer;
-        }
-        .timeline-slider-input::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.5); cursor: pointer; transition: transform 0.1s;
-        }
+        .timeline-slider-input { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.08); outline: none; cursor: pointer; }
+        .timeline-slider-input::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.5); cursor: pointer; transition: transform 0.1s; }
         .timeline-slider-input::-webkit-slider-thumb:hover { transform: scale(1.25); }
 
-        .box-strategy-alert {
-            background: rgba(225, 6, 0, 0.12); border: 1px solid rgba(225, 6, 0, 0.3); padding: 10px; border-radius: 8px;
-            color: #ff3b30; font-size: 12px; font-weight: 700; text-align: center; display: none; width: 100%; box-sizing: border-box;
-        }
+        .box-strategy-alert { background: rgba(225, 6, 0, 0.12); border: 1px solid rgba(225, 6, 0, 0.3); padding: 10px; border-radius: 8px; color: #ff3b30; font-size: 12px; font-weight: 700; text-align: center; display: none; width: 100%; box-sizing: border-box; }
         .back-nav-link { text-align: center; color: #3d4047; text-decoration: none; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
         .back-nav-link:hover { color: #ffffff; }
     </style>
@@ -203,8 +136,8 @@
                 <h1>GRAND PRIX TELEMETRY <span>MIRROR CONSOLE</span></h1>
             </div>
             <div class="control-dropdowns">
-                <select id="sel-driver-1" class="aws-select" style="border-color: #27F4D2;"></select>
-                <select id="sel-driver-2" class="aws-select" style="border-color: #3671C6;"></select>
+                <select id="sel-driver-1" class="aws-select"></select>
+                <select id="sel-driver-2" class="aws-select"></select>
             </div>
         </header>
 
@@ -213,10 +146,10 @@
             <div class="driver-garage-card" id="card-p1">
                 <div class="garage-header">
                     <div class="driver-info">
-                        <p id="p1-team-lbl">LOADING...</p>
-                        <h2 id="p1-name-lbl">PILOTO 1</h2>
+                        <p id="p1-team-lbl">MERCEDES AMG</p>
+                        <h2 id="p1-name-lbl">Kimi ANTONELLI</h2>
                     </div>
-                    <span class="rank-huge" id="p1-rank-hud">--</span>
+                    <span class="rank-huge" id="p1-rank-hud">P1</span>
                 </div>
 
                 <div class="garage-telemetry-split">
@@ -225,10 +158,7 @@
                             <div class="tyre-box"><span id="p1-t-fl" class="wheel-temp-lbl">--°C</span><div id="p1-w-fl" class="wheel-element"></div></div>
                             <div class="tyre-box"><span id="p1-t-rl" class="wheel-temp-lbl">--°C</span><div id="p1-w-rl" class="wheel-element"></div></div>
                         </div>
-                        <div class="f1-body-shape">
-                            <div class="f1-wing-front"></div>
-                            <div class="f1-wing-rear"></div>
-                        </div>
+                        <div class="f1-body-shape"><div class="f1-wing-front"></div><div class="f1-wing-rear"></div></div>
                         <div class="tyre-column right-side">
                             <div class="tyre-box"><span id="p1-t-fr" class="wheel-temp-lbl">--°C</span><div id="p1-w-fr" class="wheel-element"></div></div>
                             <div class="tyre-box"><span id="p1-t-rr" class="wheel-temp-lbl">--°C</span><div id="p1-w-rr" class="wheel-element"></div></div>
@@ -268,7 +198,7 @@
                 </svg>
 
                 <div>
-                    <span class="card-title" style="font-size:10px; color:#6c6f78;">DELTA EN VIVO</span>
+                    <span class="card-title" style="font-size:10px; color:#6c6f78;">DELTA DIRECTO ENTRE AMBOS</span>
                     <div id="lbl-gap-core" style="font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:700; color:#ff9900; margin-top:2px;">0.000s</div>
                 </div>
             </div>
@@ -276,10 +206,10 @@
             <div class="driver-garage-card" id="card-p2">
                 <div class="garage-header" style="flex-direction: row-reverse;">
                     <div class="driver-info" style="text-align: right;">
-                        <p id="p2-team-lbl">LOADING...</p>
-                        <h2 id="p2-name-lbl">PILOTO 2</h2>
+                        <p id="p2-team-lbl">RED BULL RACING</p>
+                        <h2 id="p2-name-lbl">Max VERSTAPPEN</h2>
                     </div>
-                    <span class="rank-huge" id="p2-rank-hud">--</span>
+                    <span class="rank-huge" id="p2-rank-hud">P2</span>
                 </div>
 
                 <div class="garage-telemetry-split reversed">
@@ -303,10 +233,7 @@
                             <div class="tyre-box"><span id="p2-t-fl" class="wheel-temp-lbl">--°C</span><div id="p2-w-fl" class="wheel-element"></div></div>
                             <div class="tyre-box"><span id="p2-t-rl" class="wheel-temp-lbl">--°C</span><div id="p2-w-rl" class="wheel-element"></div></div>
                         </div>
-                        <div class="f1-body-shape">
-                            <div class="f1-wing-front"></div>
-                            <div class="f1-wing-rear"></div>
-                        </div>
+                        <div class="f1-body-shape"><div class="f1-wing-front"></div><div class="f1-wing-rear"></div></div>
                         <div class="tyre-column right-side">
                             <div class="tyre-box"><span id="p2-t-fr" class="wheel-temp-lbl">--°C</span><div id="p2-w-fr" class="wheel-element"></div></div>
                             <div class="tyre-box"><span id="p2-t-rr" class="wheel-temp-lbl">--°C</span><div id="p2-w-rr" class="wheel-element"></div></div>
@@ -351,13 +278,30 @@
 
             let telemetryData = null;
 
-            // Diccionario local para mapear equipos/códigos adicionales no provistos por la telemetría compacta
+            // 🛠️ DIRECTORIO COMPLETO DE LOS 22 DRIVERS DE LA TEMPORADA 2026
             const driversDirectory = {
-                "antonelli":  { name: "Kimi Antonelli", team: "Mercedes AMG", color: "#27F4D2" },
                 "verstappen": { name: "Max Verstappen", team: "Red Bull Racing", color: "#3671C6" },
-                "norris":      { name: "Lando Norris", team: "McLaren F1", color: "#FF8000" },
-                "hamilton":    { name: "Lewis Hamilton", team: "Scuderia Ferrari", color: "#E8002D" },
-                "leclerc":     { name: "Charles Leclerc", team: "Scuderia Ferrari", color: "#E8002D" }
+                "perez":      { name: "Sergio Pérez", team: "Red Bull Racing", color: "#3671C6" },
+                "antonelli":  { name: "Kimi Antonelli", team: "Mercedes AMG", color: "#27F4D2" },
+                "russell":    { name: "George Russell", team: "Mercedes AMG", color: "#27F4D2" },
+                "leclerc":    { name: "Charles Leclerc", team: "Scuderia Ferrari", color: "#E8002D" },
+                "hamilton":   { name: "Lewis Hamilton", team: "Scuderia Ferrari", color: "#E8002D" },
+                "norris":     { name: "Lando Norris", team: "McLaren F1", color: "#FF8000" },
+                "piastri":    { name: "Oscar Piastri", team: "McLaren F1", color: "#FF8000" },
+                "alonso":     { name: "Fernando Alonso", team: "Aston Martin", color: "#229971" },
+                "sainz":      { name: "Carlos Sainz", team: "Aston Martin", color: "#229971" },
+                "gasly":      { name: "Pierre Gasly", team: "Alpine F1", color: "#FF87BC" },
+                "ocon":       { name: "Esteban Ocon", team: "Alpine F1", color: "#FF87BC" },
+                "albon":      { name: "Alex Albon", team: "Williams Racing", color: "#64C4FF" },
+                "bottas":     { name: "Valtteri Bottas", team: "Williams Racing", color: "#64C4FF" },
+                "tsunoda":    { name: "Yuki Tsunoda", team: "Visa Cash App RB", color: "#6692FF" },
+                "bortoleto":  { name: "Gabriel Bortoleto", team: "Visa Cash App RB", color: "#6692FF" },
+                "hulkenberg": { name: "Nico Hülkenberg", team: "Audi F1 Team", color: "#52E252" },
+                "zhou":       { name: "Guanyu Zhou", team: "Audi F1 Team", color: "#52E252" },
+                "bearman":    { name: "Oliver Bearman", team: "Haas F1 Team", color: "#B6BABD" },
+                "magnussen":  { name: "Kevin Magnussen", team: "Haas F1 Team", color: "#B6BABD" },
+                "stroll":     { name: "Lance Stroll", team: "Cadillac Racing", color: "#C8102E" },
+                "ricciardo":  { name: "Daniel Ricciardo", team: "Cadillac Racing", color: "#C8102E" }
             };
 
             function populateSelectors() {
@@ -377,7 +321,7 @@
                     populateSelectors();
                     updateDashboardFrame(1);
                 })
-                .catch(err => console.error("❌ Error cargando base de datos:", err));
+                .catch(err => console.error("❌ Fallo leyendo JSON:", err));
 
             function updateDashboardFrame(lap) {
                 if (!telemetryData || !telemetryData.laps[lap]) return;
@@ -386,15 +330,14 @@
                 const id1 = s1.value;
                 const id2 = s2.value;
 
-                // Extraer de forma dinámica las propiedades del JSON basándose en los selectores
-                const p1 = currentLapData.drivers[id1] || currentLapData.drivers["antonelli"];
-                const p2 = currentLapData.drivers[id2] || currentLapData.drivers["verstappen"];
+                const p1 = currentLapData.drivers[id1];
+                const p2 = currentLapData.drivers[id2];
 
                 lapBadge.textContent = `LAP ${lap} / ${telemetryData.totalLaps}`;
                 trackTempLbl.textContent = `ASFALTO: ${currentLapData.trackTemp}°C`;
                 strategyBanner.style.display = currentLapData.pitAlert ? "block" : "none";
 
-                // --- 🟢 RENDER DINÁMICO PANEL IZQUIERDO (PILOTO 1) ---
+                // --- 🟢 RENDER PANEL IZQUIERDO (PILOTO 1) ---
                 document.getElementById("p1-name-lbl").textContent = driversDirectory[id1].name;
                 document.getElementById("p1-team-lbl").textContent = driversDirectory[id1].team;
                 document.getElementById("card-p1").style.borderTop = `4px solid ${driversDirectory[id1].color}`;
@@ -417,7 +360,7 @@
                 document.getElementById("p1-t-rr").textContent = `${p1.tyres.rr}°C`;
                 document.getElementById("p1-w-rr").style.backgroundColor = getThermalColor(p1.tyres.rr);
 
-                // --- 🔵 RENDER DINÁMICO PANEL DERECHO (PILOTO 2) ---
+                // --- 🔵 RENDER PANEL DERECHO (PILOTO 2) ---
                 document.getElementById("p2-name-lbl").textContent = driversDirectory[id2].name;
                 document.getElementById("p2-team-lbl").textContent = driversDirectory[id2].team;
                 document.getElementById("card-p2").style.borderTop = `4px solid ${driversDirectory[id2].color}`;
@@ -440,19 +383,23 @@
                 document.getElementById("p2-t-rr").textContent = `${p2.tyres.rr}°C`;
                 document.getElementById("p2-w-rr").style.backgroundColor = getThermalColor(p2.tyres.rr);
 
-                // --- CLASIFICACIÓN DE INTERVALOS EN EL RADAR ---
-                // Determina la distancia relativa basándose en quién tiene ventaja en el JSON
-                if (p1.gap === "LEADER") {
-                    gapCore.textContent = p2.gap === "LEADER" ? "0.000s" : `+${p2.gap}`;
-                    document.getElementById("p1-rank-hud").textContent = "P1";
-                    document.getElementById("p2-rank-hud").textContent = "P2";
+                // --- 🧮 CÁLCULO EXCLUSIVO: DELTA DIRECTO ENTRE LOS DOS SELECCIONADOS ---
+                const gap1 = p1.gap === "LEADER" ? 0.0 : parseFloat(p1.gap);
+                const gap2 = p2.gap === "LEADER" ? 0.0 : parseFloat(p2.gap);
+                const directDelta = Math.abs(gap1 - gap2);
+                
+                gapCore.textContent = directDelta === 0 ? "0.000s" : `${directDelta.toFixed(3)}s`;
+
+                // Clasificar quién va adelante en el HUD del garage
+                if (gap1 <= gap2) {
+                    document.getElementById("p1-rank-hud").textContent = "ADV";
+                    document.getElementById("p2-rank-hud").textContent = "DEF";
                 } else {
-                    gapCore.textContent = `+${p1.gap}`;
-                    document.getElementById("p1-rank-hud").textContent = "P2";
-                    document.getElementById("p2-rank-hud").textContent = "P1";
+                    document.getElementById("p1-rank-hud").textContent = "DEF";
+                    document.getElementById("p2-rank-hud").textContent = "ADV";
                 }
 
-                // Desplazamiento cartesiano de los pines en el mini mapa central
+                // Desplazamiento cartesiano en el radar central
                 const ptP1 = rPath.getPointAtLength((p1.pos_pct * pathLength) % pathLength);
                 rP1.setAttribute("cx", ptP1.x); rP1.setAttribute("cy", ptP1.y);
 
@@ -461,12 +408,11 @@
             }
 
             function getThermalColor(temp) {
-                if (temp < 93) return "#24b353"; 
-                if (temp < 102) return "#ffb700"; 
+                if (temp < 98) return "#24b353"; 
+                if (temp < 108) return "#ffb700"; 
                 return "#e10600"; 
             }
 
-            // Escuchar cambios en los selectores superiores
             s1.addEventListener("change", () => updateDashboardFrame(slider.value));
             s2.addEventListener("change", () => updateDashboardFrame(slider.value));
             slider.addEventListener("input", () => updateDashboardFrame(slider.value));
