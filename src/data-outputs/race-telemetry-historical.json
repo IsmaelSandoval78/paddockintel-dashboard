@@ -1,0 +1,1831 @@
+{
+    "simulationDurationSeconds": 30,
+    "realLapTimeSeconds": 96.28,
+    "totalLaps": 57,
+    "laps": {
+        "1": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "5.310s",
+                    "speed": 318,
+                    "throttle": 90,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 88,
+                        "fr": 95,
+                        "rl": 88,
+                        "rr": 88
+                    },
+                    "pos_pct": 0.2236
+                },
+                "verstappen": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 100,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 90,
+                        "fr": 96,
+                        "rl": 87,
+                        "rr": 88
+                    },
+                    "pos_pct": 0.2868
+                }
+            }
+        },
+        "2": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "5.220s",
+                    "speed": 319,
+                    "throttle": 97,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 92,
+                        "fr": 94,
+                        "rl": 88,
+                        "rr": 90
+                    },
+                    "pos_pct": 0.2024
+                },
+                "verstappen": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 92,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 93,
+                        "fr": 92,
+                        "rl": 85,
+                        "rr": 91
+                    },
+                    "pos_pct": 0.5545
+                }
+            }
+        },
+        "3": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "5.130s",
+                    "speed": 320,
+                    "throttle": 96,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 92,
+                        "fr": 95,
+                        "rl": 89,
+                        "rr": 90
+                    },
+                    "pos_pct": 0.4776
+                },
+                "verstappen": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 90,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 91,
+                        "fr": 95,
+                        "rl": 86,
+                        "rr": 89
+                    },
+                    "pos_pct": 0.3828
+                }
+            }
+        },
+        "4": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "5.040s",
+                    "speed": 318,
+                    "throttle": 96,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 93,
+                        "fr": 93,
+                        "rl": 89,
+                        "rr": 88
+                    },
+                    "pos_pct": 0.0814
+                },
+                "verstappen": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 97,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 92,
+                        "fr": 95,
+                        "rl": 89,
+                        "rr": 90
+                    },
+                    "pos_pct": 0.5161
+                }
+            }
+        },
+        "5": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "4.950s",
+                    "speed": 319,
+                    "throttle": 96,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 92,
+                        "fr": 97,
+                        "rl": 88,
+                        "rr": 93
+                    },
+                    "pos_pct": 0.7271
+                },
+                "verstappen": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 94,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 91,
+                        "fr": 96,
+                        "rl": 88,
+                        "rr": 88
+                    },
+                    "pos_pct": 0.3894
+                }
+            }
+        },
+        "6": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "4.860s",
+                    "speed": 318,
+                    "throttle": 91,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 92,
+                        "fr": 97,
+                        "rl": 87,
+                        "rr": 93
+                    },
+                    "pos_pct": 0.5562
+                },
+                "verstappen": {
+                    "gap": "LEADER",
+                    "speed": 320,
+                    "throttle": 100,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 92,
+                        "fr": 97,
+                        "rl": 90,
+                        "rr": 90
+                    },
+                    "pos_pct": 0.8092
+                }
+            }
+        },
+        "7": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "4.770s",
+                    "speed": 318,
+                    "throttle": 88,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 90,
+                        "fr": 95,
+                        "rl": 88,
+                        "rr": 91
+                    },
+                    "pos_pct": 0.2058
+                },
+                "verstappen": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 93,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 91,
+                        "fr": 96,
+                        "rl": 87,
+                        "rr": 89
+                    },
+                    "pos_pct": 0.5463
+                }
+            }
+        },
+        "8": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "4.680s",
+                    "speed": 319,
+                    "throttle": 90,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 93,
+                        "fr": 94,
+                        "rl": 91,
+                        "rr": 90
+                    },
+                    "pos_pct": 0.4301
+                },
+                "verstappen": {
+                    "gap": "LEADER",
+                    "speed": 320,
+                    "throttle": 92,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 93,
+                        "fr": 94,
+                        "rl": 90,
+                        "rr": 93
+                    },
+                    "pos_pct": 0.2645
+                }
+            }
+        },
+        "9": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "4.590s",
+                    "speed": 320,
+                    "throttle": 89,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 93,
+                        "fr": 96,
+                        "rl": 88,
+                        "rr": 93
+                    },
+                    "pos_pct": 0.8769
+                },
+                "verstappen": {
+                    "gap": "LEADER",
+                    "speed": 320,
+                    "throttle": 94,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 91,
+                        "fr": 99,
+                        "rl": 88,
+                        "rr": 91
+                    },
+                    "pos_pct": 0.9
+                }
+            }
+        },
+        "10": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "4.500s",
+                    "speed": 318,
+                    "throttle": 90,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 95,
+                        "fr": 98,
+                        "rl": 90,
+                        "rr": 91
+                    },
+                    "pos_pct": 0.7948
+                },
+                "verstappen": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 97,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 95,
+                        "fr": 97,
+                        "rl": 92,
+                        "rr": 94
+                    },
+                    "pos_pct": 0.7059
+                }
+            }
+        },
+        "11": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "4.410s",
+                    "speed": 318,
+                    "throttle": 94,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 93,
+                        "fr": 98,
+                        "rl": 91,
+                        "rr": 90
+                    },
+                    "pos_pct": 0.6278
+                },
+                "verstappen": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 96,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 93,
+                        "fr": 99,
+                        "rl": 90,
+                        "rr": 91
+                    },
+                    "pos_pct": 0.8721
+                }
+            }
+        },
+        "12": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "4.320s",
+                    "speed": 319,
+                    "throttle": 87,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 93,
+                        "fr": 96,
+                        "rl": 90,
+                        "rr": 91
+                    },
+                    "pos_pct": 0.6648
+                },
+                "verstappen": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 97,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 97,
+                        "fr": 97,
+                        "rl": 90,
+                        "rr": 91
+                    },
+                    "pos_pct": 0.7803
+                }
+            }
+        },
+        "13": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "4.230s",
+                    "speed": 319,
+                    "throttle": 94,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 97,
+                        "fr": 98,
+                        "rl": 93,
+                        "rr": 94
+                    },
+                    "pos_pct": 0.898
+                },
+                "verstappen": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 100,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 93,
+                        "fr": 100,
+                        "rl": 93,
+                        "rr": 93
+                    },
+                    "pos_pct": 0.0865
+                }
+            }
+        },
+        "14": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "4.140s",
+                    "speed": 318,
+                    "throttle": 92,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 93,
+                        "fr": 101,
+                        "rl": 91,
+                        "rr": 95
+                    },
+                    "pos_pct": 0.1175
+                },
+                "verstappen": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 91,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 94,
+                        "fr": 97,
+                        "rl": 89,
+                        "rr": 92
+                    },
+                    "pos_pct": 0.7606
+                }
+            }
+        },
+        "15": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 318,
+                    "throttle": 90,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 98,
+                        "fr": 97,
+                        "rl": 92,
+                        "rr": 96
+                    },
+                    "pos_pct": 0.7353
+                },
+                "verstappen": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 93,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 95,
+                        "fr": 101,
+                        "rl": 91,
+                        "rr": 94
+                    },
+                    "pos_pct": 0.6491
+                }
+            }
+        },
+        "16": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 322,
+                    "throttle": 88,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 95,
+                        "fr": 101,
+                        "rl": 91,
+                        "rr": 94
+                    },
+                    "pos_pct": 0.915
+                },
+                "verstappen": {
+                    "gap": "0.110s",
+                    "speed": 321,
+                    "throttle": 97,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 98,
+                        "fr": 101,
+                        "rl": 92,
+                        "rr": 93
+                    },
+                    "pos_pct": 0.0706
+                }
+            }
+        },
+        "17": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 96,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 98,
+                        "fr": 100,
+                        "rl": 91,
+                        "rr": 95
+                    },
+                    "pos_pct": 0.185
+                },
+                "verstappen": {
+                    "gap": "0.220s",
+                    "speed": 320,
+                    "throttle": 93,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 94,
+                        "fr": 100,
+                        "rl": 94,
+                        "rr": 95
+                    },
+                    "pos_pct": 0.5565
+                }
+            }
+        },
+        "18": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 323,
+                    "throttle": 88,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 96,
+                        "fr": 100,
+                        "rl": 94,
+                        "rr": 96
+                    },
+                    "pos_pct": 0.858
+                },
+                "verstappen": {
+                    "gap": "0.330s",
+                    "speed": 321,
+                    "throttle": 97,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 95,
+                        "fr": 98,
+                        "rl": 92,
+                        "rr": 93
+                    },
+                    "pos_pct": 0.1685
+                }
+            }
+        },
+        "19": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 91,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 97,
+                        "fr": 100,
+                        "rl": 96,
+                        "rr": 97
+                    },
+                    "pos_pct": 0.7013
+                },
+                "verstappen": {
+                    "gap": "0.440s",
+                    "speed": 321,
+                    "throttle": 97,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 98,
+                        "fr": 99,
+                        "rl": 94,
+                        "rr": 95
+                    },
+                    "pos_pct": 0.1436
+                }
+            }
+        },
+        "20": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 323,
+                    "throttle": 97,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 96,
+                        "fr": 100,
+                        "rl": 96,
+                        "rr": 95
+                    },
+                    "pos_pct": 0.1885
+                },
+                "verstappen": {
+                    "gap": "0.550s",
+                    "speed": 320,
+                    "throttle": 100,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 99,
+                        "fr": 100,
+                        "rl": 95,
+                        "rr": 98
+                    },
+                    "pos_pct": 0.2829
+                }
+            }
+        },
+        "21": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 322,
+                    "throttle": 97,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 97,
+                        "fr": 101,
+                        "rl": 94,
+                        "rr": 96
+                    },
+                    "pos_pct": 0.2854
+                },
+                "verstappen": {
+                    "gap": "0.660s",
+                    "speed": 321,
+                    "throttle": 93,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 98,
+                        "fr": 103,
+                        "rl": 96,
+                        "rr": 98
+                    },
+                    "pos_pct": 0.3394
+                }
+            }
+        },
+        "22": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 91,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 101,
+                        "fr": 102,
+                        "rl": 96,
+                        "rr": 98
+                    },
+                    "pos_pct": 0.2275
+                },
+                "verstappen": {
+                    "gap": "0.770s",
+                    "speed": 321,
+                    "throttle": 91,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 100,
+                        "fr": 101,
+                        "rl": 93,
+                        "rr": 97
+                    },
+                    "pos_pct": 0.0933
+                }
+            }
+        },
+        "23": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 96,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 101,
+                        "fr": 104,
+                        "rl": 95,
+                        "rr": 94
+                    },
+                    "pos_pct": 0.0886
+                },
+                "verstappen": {
+                    "gap": "0.880s",
+                    "speed": 320,
+                    "throttle": 99,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 97,
+                        "fr": 101,
+                        "rl": 92,
+                        "rr": 97
+                    },
+                    "pos_pct": 0.3519
+                }
+            }
+        },
+        "24": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 87,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 100,
+                        "fr": 105,
+                        "rl": 95,
+                        "rr": 95
+                    },
+                    "pos_pct": 0.8515
+                },
+                "verstappen": {
+                    "gap": "0.990s",
+                    "speed": 321,
+                    "throttle": 93,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 99,
+                        "fr": 102,
+                        "rl": 94,
+                        "rr": 99
+                    },
+                    "pos_pct": 0.79
+                }
+            }
+        },
+        "25": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 88,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 99,
+                        "fr": 101,
+                        "rl": 95,
+                        "rr": 97
+                    },
+                    "pos_pct": 0.6822
+                },
+                "verstappen": {
+                    "gap": "1.100s",
+                    "speed": 321,
+                    "throttle": 98,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 101,
+                        "fr": 103,
+                        "rl": 97,
+                        "rr": 99
+                    },
+                    "pos_pct": 0.5571
+                }
+            }
+        },
+        "26": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 97,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 99,
+                        "fr": 102,
+                        "rl": 94,
+                        "rr": 95
+                    },
+                    "pos_pct": 0.4136
+                },
+                "verstappen": {
+                    "gap": "1.210s",
+                    "speed": 321,
+                    "throttle": 92,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 101,
+                        "fr": 104,
+                        "rl": 97,
+                        "rr": 95
+                    },
+                    "pos_pct": 0.6749
+                }
+            }
+        },
+        "27": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 92,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 100,
+                        "fr": 103,
+                        "rl": 97,
+                        "rr": 99
+                    },
+                    "pos_pct": 0.1609
+                },
+                "verstappen": {
+                    "gap": "1.320s",
+                    "speed": 321,
+                    "throttle": 99,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 102,
+                        "fr": 106,
+                        "rl": 98,
+                        "rr": 96
+                    },
+                    "pos_pct": 0.2561
+                }
+            }
+        },
+        "28": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 322,
+                    "throttle": 92,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 100,
+                        "fr": 104,
+                        "rl": 94,
+                        "rr": 96
+                    },
+                    "pos_pct": 0.4655
+                },
+                "verstappen": {
+                    "gap": "1.430s",
+                    "speed": 321,
+                    "throttle": 94,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 104,
+                        "fr": 103,
+                        "rl": 97,
+                        "rr": 99
+                    },
+                    "pos_pct": 0.0647
+                }
+            }
+        },
+        "29": {
+            "pitAlert": false,
+            "trackTemp": 42,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 322,
+                    "throttle": 91,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 102,
+                        "fr": 102,
+                        "rl": 98,
+                        "rr": 99
+                    },
+                    "pos_pct": 0.0969
+                },
+                "verstappen": {
+                    "gap": "1.540s",
+                    "speed": 320,
+                    "throttle": 93,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 103,
+                        "fr": 103,
+                        "rl": 95,
+                        "rr": 96
+                    },
+                    "pos_pct": 0.6626
+                }
+            }
+        },
+        "30": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 322,
+                    "throttle": 97,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 100,
+                        "fr": 104,
+                        "rl": 97,
+                        "rr": 96
+                    },
+                    "pos_pct": 0.3771
+                },
+                "verstappen": {
+                    "gap": "1.650s",
+                    "speed": 321,
+                    "throttle": 95,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 104,
+                        "fr": 103,
+                        "rl": 95,
+                        "rr": 97
+                    },
+                    "pos_pct": 0.3336
+                }
+            }
+        },
+        "31": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 323,
+                    "throttle": 89,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 103,
+                        "fr": 107,
+                        "rl": 95,
+                        "rr": 100
+                    },
+                    "pos_pct": 0.9115
+                },
+                "verstappen": {
+                    "gap": "1.760s",
+                    "speed": 321,
+                    "throttle": 97,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 104,
+                        "fr": 103,
+                        "rl": 99,
+                        "rr": 101
+                    },
+                    "pos_pct": 0.3939
+                }
+            }
+        },
+        "32": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 92,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 101,
+                        "fr": 106,
+                        "rl": 95,
+                        "rr": 101
+                    },
+                    "pos_pct": 0.5608
+                },
+                "verstappen": {
+                    "gap": "1.870s",
+                    "speed": 321,
+                    "throttle": 92,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 104,
+                        "fr": 105,
+                        "rl": 98,
+                        "rr": 100
+                    },
+                    "pos_pct": 0.4161
+                }
+            }
+        },
+        "33": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 323,
+                    "throttle": 88,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 102,
+                        "fr": 107,
+                        "rl": 97,
+                        "rr": 99
+                    },
+                    "pos_pct": 0.364
+                },
+                "verstappen": {
+                    "gap": "1.980s",
+                    "speed": 321,
+                    "throttle": 91,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 106,
+                        "fr": 104,
+                        "rl": 95,
+                        "rr": 100
+                    },
+                    "pos_pct": 0.282
+                }
+            }
+        },
+        "34": {
+            "pitAlert": true,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 80,
+                    "throttle": 11,
+                    "brake": 90,
+                    "tyres": {
+                        "fl": 75,
+                        "fr": 75,
+                        "rl": 80,
+                        "rr": 80
+                    },
+                    "pos_pct": 0.6029
+                },
+                "verstappen": {
+                    "gap": "2.090s",
+                    "speed": 80,
+                    "throttle": 93,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 101,
+                        "fr": 108,
+                        "rl": 100,
+                        "rr": 102
+                    },
+                    "pos_pct": 0.3387
+                }
+            }
+        },
+        "35": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 322,
+                    "throttle": 91,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 104,
+                        "fr": 106,
+                        "rl": 101,
+                        "rr": 98
+                    },
+                    "pos_pct": 0.5432
+                },
+                "verstappen": {
+                    "gap": "2.200s",
+                    "speed": 320,
+                    "throttle": 96,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 102,
+                        "fr": 109,
+                        "rl": 99,
+                        "rr": 98
+                    },
+                    "pos_pct": 0.1723
+                }
+            }
+        },
+        "36": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 92,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 105,
+                        "fr": 106,
+                        "rl": 99,
+                        "rr": 99
+                    },
+                    "pos_pct": 0.5914
+                },
+                "verstappen": {
+                    "gap": "2.310s",
+                    "speed": 320,
+                    "throttle": 95,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 103,
+                        "fr": 107,
+                        "rl": 98,
+                        "rr": 101
+                    },
+                    "pos_pct": 0.5233
+                }
+            }
+        },
+        "37": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 322,
+                    "throttle": 90,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 105,
+                        "fr": 105,
+                        "rl": 97,
+                        "rr": 102
+                    },
+                    "pos_pct": 0.4113
+                },
+                "verstappen": {
+                    "gap": "2.420s",
+                    "speed": 321,
+                    "throttle": 95,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 107,
+                        "fr": 109,
+                        "rl": 98,
+                        "rr": 98
+                    },
+                    "pos_pct": 0.3656
+                }
+            }
+        },
+        "38": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 96,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 105,
+                        "fr": 107,
+                        "rl": 98,
+                        "rr": 100
+                    },
+                    "pos_pct": 0.9302
+                },
+                "verstappen": {
+                    "gap": "2.530s",
+                    "speed": 320,
+                    "throttle": 96,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 103,
+                        "fr": 108,
+                        "rl": 99,
+                        "rr": 99
+                    },
+                    "pos_pct": 0.0927
+                }
+            }
+        },
+        "39": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 87,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 107,
+                        "fr": 109,
+                        "rl": 98,
+                        "rr": 103
+                    },
+                    "pos_pct": 0.2848
+                },
+                "verstappen": {
+                    "gap": "2.640s",
+                    "speed": 321,
+                    "throttle": 93,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 105,
+                        "fr": 107,
+                        "rl": 98,
+                        "rr": 103
+                    },
+                    "pos_pct": 0.3152
+                }
+            }
+        },
+        "40": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 322,
+                    "throttle": 94,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 108,
+                        "fr": 109,
+                        "rl": 101,
+                        "rr": 103
+                    },
+                    "pos_pct": 0.941
+                },
+                "verstappen": {
+                    "gap": "2.750s",
+                    "speed": 321,
+                    "throttle": 92,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 107,
+                        "fr": 107,
+                        "rl": 100,
+                        "rr": 103
+                    },
+                    "pos_pct": 0.8732
+                }
+            }
+        },
+        "41": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 322,
+                    "throttle": 87,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 106,
+                        "fr": 107,
+                        "rl": 99,
+                        "rr": 100
+                    },
+                    "pos_pct": 0.314
+                },
+                "verstappen": {
+                    "gap": "2.860s",
+                    "speed": 320,
+                    "throttle": 93,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 106,
+                        "fr": 109,
+                        "rl": 100,
+                        "rr": 101
+                    },
+                    "pos_pct": 0.6964
+                }
+            }
+        },
+        "42": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 322,
+                    "throttle": 89,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 108,
+                        "fr": 112,
+                        "rl": 98,
+                        "rr": 102
+                    },
+                    "pos_pct": 0.6502
+                },
+                "verstappen": {
+                    "gap": "2.970s",
+                    "speed": 320,
+                    "throttle": 99,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 109,
+                        "fr": 111,
+                        "rl": 103,
+                        "rr": 105
+                    },
+                    "pos_pct": 0.3802
+                }
+            }
+        },
+        "43": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 88,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 109,
+                        "fr": 112,
+                        "rl": 99,
+                        "rr": 100
+                    },
+                    "pos_pct": 0.115
+                },
+                "verstappen": {
+                    "gap": "3.080s",
+                    "speed": 321,
+                    "throttle": 94,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 107,
+                        "fr": 112,
+                        "rl": 100,
+                        "rr": 102
+                    },
+                    "pos_pct": 0.3192
+                }
+            }
+        },
+        "44": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 322,
+                    "throttle": 97,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 105,
+                        "fr": 108,
+                        "rl": 99,
+                        "rr": 103
+                    },
+                    "pos_pct": 0.8048
+                },
+                "verstappen": {
+                    "gap": "3.190s",
+                    "speed": 321,
+                    "throttle": 91,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 105,
+                        "fr": 111,
+                        "rl": 103,
+                        "rr": 104
+                    },
+                    "pos_pct": 0.3606
+                }
+            }
+        },
+        "45": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 92,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 109,
+                        "fr": 110,
+                        "rl": 102,
+                        "rr": 104
+                    },
+                    "pos_pct": 0.3693
+                },
+                "verstappen": {
+                    "gap": "3.300s",
+                    "speed": 320,
+                    "throttle": 92,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 110,
+                        "fr": 113,
+                        "rl": 102,
+                        "rr": 102
+                    },
+                    "pos_pct": 0.2755
+                }
+            }
+        },
+        "46": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 322,
+                    "throttle": 92,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 108,
+                        "fr": 113,
+                        "rl": 103,
+                        "rr": 103
+                    },
+                    "pos_pct": 0.2856
+                },
+                "verstappen": {
+                    "gap": "3.410s",
+                    "speed": 320,
+                    "throttle": 93,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 110,
+                        "fr": 110,
+                        "rl": 101,
+                        "rr": 102
+                    },
+                    "pos_pct": 0.7072
+                }
+            }
+        },
+        "47": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 87,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 109,
+                        "fr": 110,
+                        "rl": 104,
+                        "rr": 105
+                    },
+                    "pos_pct": 0.0512
+                },
+                "verstappen": {
+                    "gap": "3.520s",
+                    "speed": 320,
+                    "throttle": 93,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 110,
+                        "fr": 109,
+                        "rl": 104,
+                        "rr": 103
+                    },
+                    "pos_pct": 0.9357
+                }
+            }
+        },
+        "48": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 323,
+                    "throttle": 96,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 111,
+                        "fr": 115,
+                        "rl": 101,
+                        "rr": 106
+                    },
+                    "pos_pct": 0.0677
+                },
+                "verstappen": {
+                    "gap": "3.630s",
+                    "speed": 321,
+                    "throttle": 93,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 108,
+                        "fr": 112,
+                        "rl": 103,
+                        "rr": 106
+                    },
+                    "pos_pct": 0.1364
+                }
+            }
+        },
+        "49": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 91,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 111,
+                        "fr": 113,
+                        "rl": 100,
+                        "rr": 107
+                    },
+                    "pos_pct": 0.7965
+                },
+                "verstappen": {
+                    "gap": "3.740s",
+                    "speed": 321,
+                    "throttle": 91,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 109,
+                        "fr": 114,
+                        "rl": 102,
+                        "rr": 106
+                    },
+                    "pos_pct": 0.8646
+                }
+            }
+        },
+        "50": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 323,
+                    "throttle": 95,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 111,
+                        "fr": 111,
+                        "rl": 105,
+                        "rr": 106
+                    },
+                    "pos_pct": 0.5251
+                },
+                "verstappen": {
+                    "gap": "3.850s",
+                    "speed": 321,
+                    "throttle": 91,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 111,
+                        "fr": 112,
+                        "rl": 105,
+                        "rr": 103
+                    },
+                    "pos_pct": 0.4511
+                }
+            }
+        },
+        "51": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 96,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 111,
+                        "fr": 113,
+                        "rl": 103,
+                        "rr": 105
+                    },
+                    "pos_pct": 0.6434
+                },
+                "verstappen": {
+                    "gap": "3.960s",
+                    "speed": 320,
+                    "throttle": 91,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 110,
+                        "fr": 115,
+                        "rl": 105,
+                        "rr": 107
+                    },
+                    "pos_pct": 0.9104
+                }
+            }
+        },
+        "52": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 322,
+                    "throttle": 91,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 110,
+                        "fr": 113,
+                        "rl": 102,
+                        "rr": 106
+                    },
+                    "pos_pct": 0.4821
+                },
+                "verstappen": {
+                    "gap": "4.070s",
+                    "speed": 321,
+                    "throttle": 95,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 110,
+                        "fr": 113,
+                        "rl": 104,
+                        "rr": 107
+                    },
+                    "pos_pct": 0.9077
+                }
+            }
+        },
+        "53": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 322,
+                    "throttle": 95,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 110,
+                        "fr": 115,
+                        "rl": 102,
+                        "rr": 107
+                    },
+                    "pos_pct": 0.4477
+                },
+                "verstappen": {
+                    "gap": "4.180s",
+                    "speed": 320,
+                    "throttle": 93,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 112,
+                        "fr": 116,
+                        "rl": 104,
+                        "rr": 104
+                    },
+                    "pos_pct": 0.4573
+                }
+            }
+        },
+        "54": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 321,
+                    "throttle": 89,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 111,
+                        "fr": 113,
+                        "rl": 102,
+                        "rr": 104
+                    },
+                    "pos_pct": 0.8333
+                },
+                "verstappen": {
+                    "gap": "4.290s",
+                    "speed": 320,
+                    "throttle": 90,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 110,
+                        "fr": 116,
+                        "rl": 106,
+                        "rr": 107
+                    },
+                    "pos_pct": 0.382
+                }
+            }
+        },
+        "55": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 322,
+                    "throttle": 89,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 111,
+                        "fr": 116,
+                        "rl": 104,
+                        "rr": 105
+                    },
+                    "pos_pct": 0.2989
+                },
+                "verstappen": {
+                    "gap": "4.400s",
+                    "speed": 321,
+                    "throttle": 92,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 113,
+                        "fr": 113,
+                        "rl": 107,
+                        "rr": 109
+                    },
+                    "pos_pct": 0.489
+                }
+            }
+        },
+        "56": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 323,
+                    "throttle": 88,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 114,
+                        "fr": 116,
+                        "rl": 104,
+                        "rr": 109
+                    },
+                    "pos_pct": 0.691
+                },
+                "verstappen": {
+                    "gap": "4.510s",
+                    "speed": 321,
+                    "throttle": 99,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 113,
+                        "fr": 114,
+                        "rl": 106,
+                        "rr": 109
+                    },
+                    "pos_pct": 0.2643
+                }
+            }
+        },
+        "57": {
+            "pitAlert": false,
+            "trackTemp": 39,
+            "drivers": {
+                "antonelli": {
+                    "gap": "LEADER",
+                    "speed": 323,
+                    "throttle": 87,
+                    "brake": 5,
+                    "tyres": {
+                        "fl": 114,
+                        "fr": 118,
+                        "rl": 106,
+                        "rr": 108
+                    },
+                    "pos_pct": 0.838
+                },
+                "verstappen": {
+                    "gap": "4.620s",
+                    "speed": 321,
+                    "throttle": 99,
+                    "brake": 2,
+                    "tyres": {
+                        "fl": 111,
+                        "fr": 115,
+                        "rl": 107,
+                        "rr": 109
+                    },
+                    "pos_pct": 0.1279
+                }
+            }
+        }
+    }
+}
