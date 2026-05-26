@@ -43,6 +43,7 @@
             gap: 20px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.4);
             box-sizing: border-box;
+            transition: border-top 0.3s ease;
         }
 
         .garage-header {
@@ -56,7 +57,7 @@
         .driver-info h2 { font-size: 22px; font-weight: 800; margin: 0; letter-spacing: -0.02em; }
         .driver-info p { font-size: 11px; color: #86868b; text-transform: uppercase; margin: 2px 0 0; font-weight: 700; }
 
-        /* Layout Interno Optimizado sin desbordamientos */
+        /* Layout Interno Optimizado */
         .garage-telemetry-split {
             display: grid;
             grid-template-columns: 180px 1fr;
@@ -65,7 +66,7 @@
         }
         .garage-telemetry-split.reversed { grid-template-columns: 1fr 180px; }
 
-        /* Contenedor del Monoplaza y sus 4 neumáticos */
+        /* Contenedor del Monoplaza */
         .car-telemetry-system {
             display: grid;
             grid-template-columns: 45px 70px 45px;
@@ -85,7 +86,6 @@
         .tyre-column.left-side { align-items: flex-end; text-align: right; }
         .tyre-column.right-side { align-items: flex-start; text-align: left; }
 
-        /* Módulos de gomas limpios */
         .tyre-box {
             display: flex;
             flex-direction: column;
@@ -99,7 +99,7 @@
             background: #171a21;
             border: 2px solid #fff;
             border-radius: 4px;
-            transition: background 0.3s structure, box-shadow 0.3s ease;
+            transition: background 0.2s ease, box-shadow 0.2s ease;
             box-sizing: border-box;
         }
         
@@ -110,7 +110,6 @@
             color: #86868b;
         }
 
-        /* Silueta Central del Chasis */
         .f1-body-shape {
             width: 44px;
             height: 190px;
@@ -123,15 +122,15 @@
         .f1-wing-front { width: 90px; height: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); position: absolute; top: 20px; left: -25px; border-radius: 2px; }
         .f1-wing-rear { width: 80px; height: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); position: absolute; bottom: 10px; left: -20px; border-radius: 2px; }
     
-        /* Indicadores de Telemetría Dinámica (Pedales de AWS) */
+        /* Barras de Pedales AWS */
         .metrics-live-stack { display: flex; flex-direction: column; gap: 14px; width: 100%; }
         .metric-gauge-row { display: flex; flex-direction: column; gap: 4px; }
         .gauge-header-text { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #86868b; }
         .gauge-header-text span.value { color: #ffffff; font-weight: 700; }
         .gauge-bar-track { height: 8px; background: rgba(255,255,255,0.03); border-radius: 4px; overflow: hidden; }
-        .gauge-bar-fill { height: 100%; width: 0%; transition: width 0.15s linear; }
+        .gauge-bar-fill { height: 100%; width: 0%; transition: width 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
 
-        /* Panel Central de Datos del Circuito */
+        /* Centro de Mando Central */
         .center-dashboard-core {
             background: #0f1217;
             border: 1px solid rgba(255, 255, 255, 0.04);
@@ -150,7 +149,21 @@
         .weather-grid-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
         .w-item { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #86868b; background: rgba(0,0,0,0.15); padding: 4px; border-radius: 4px; }
 
-        /* Línea de Tiempo del Historial Estilo Apple */
+        /* Dropdowns estilo AWS */
+        .control-dropdowns { display: flex; gap: 10px; }
+        .aws-select {
+            background: #1c2026;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.12);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* Línea de Tiempo Scrubber */
         .apple-scrubber-card {
             background: #0f1217;
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -176,18 +189,23 @@
             background: rgba(225, 6, 0, 0.12); border: 1px solid rgba(225, 6, 0, 0.3); padding: 10px; border-radius: 8px;
             color: #ff3b30; font-size: 12px; font-weight: 700; text-align: center; display: none; width: 100%; box-sizing: border-box;
         }
+        .back-nav-link { text-align: center; color: #3d4047; text-decoration: none; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
+        .back-nav-link:hover { color: #ffffff; }
     </style>
 </head>
 <body>
 
     <div class="mclaren-workspace">
         
-        <header class="hub-header" style="background:#0f1217;">
+        <header class="hub-header" style="background:#0f1217; display: flex; justify-content: space-between; align-items: center;">
             <div class="hub-title-group">
                 <p>Telemetry Mission Control — Suite Avanzada de Análisis</p>
                 <h1>GRAND PRIX TELEMETRY <span>MIRROR CONSOLE</span></h1>
             </div>
-            <div class="live-badge"><div class="live-dot" style="background:#ff9900;"></div><span>DATA ARCHIVE MODE</span></div>
+            <div class="control-dropdowns">
+                <select id="sel-driver-1" class="aws-select" style="border-color: #27F4D2;"></select>
+                <select id="sel-driver-2" class="aws-select" style="border-color: #3671C6;"></select>
+            </div>
         </header>
 
         <div class="telemetry-mirror-grid">
@@ -195,40 +213,40 @@
             <div class="driver-garage-card" id="card-p1">
                 <div class="garage-header">
                     <div class="driver-info">
-                        <p id="ant-team">MERCEDES AMG</p>
-                        <h2 id="ant-name">Kimi ANTONELLI</h2>
+                        <p id="p1-team-lbl">LOADING...</p>
+                        <h2 id="p1-name-lbl">PILOTO 1</h2>
                     </div>
-                    <span class="rank-huge" id="ant-rank-hud">P1</span>
+                    <span class="rank-huge" id="p1-rank-hud">--</span>
                 </div>
 
                 <div class="garage-telemetry-split">
                     <div class="car-telemetry-system">
                         <div class="tyre-column left-side">
-                            <div class="tyre-box"><span id="ant-t-fl" class="wheel-temp-lbl">--°C</span><div id="ant-w-fl" class="wheel-element"></div></div>
-                            <div class="tyre-box"><span id="ant-t-rl" class="wheel-temp-lbl">--°C</span><div id="ant-w-rl" class="wheel-element"></div></div>
+                            <div class="tyre-box"><span id="p1-t-fl" class="wheel-temp-lbl">--°C</span><div id="p1-w-fl" class="wheel-element"></div></div>
+                            <div class="tyre-box"><span id="p1-t-rl" class="wheel-temp-lbl">--°C</span><div id="p1-w-rl" class="wheel-element"></div></div>
                         </div>
                         <div class="f1-body-shape">
                             <div class="f1-wing-front"></div>
                             <div class="f1-wing-rear"></div>
                         </div>
                         <div class="tyre-column right-side">
-                            <div class="tyre-box"><span id="ant-t-fr" class="wheel-temp-lbl">--°C</span><div id="ant-w-fr" class="wheel-element"></div></div>
-                            <div class="tyre-box"><span id="ant-t-rr" class="wheel-temp-lbl">--°C</span><div id="ant-w-rr" class="wheel-element"></div></div>
+                            <div class="tyre-box"><span id="p1-t-fr" class="wheel-temp-lbl">--°C</span><div id="p1-w-fr" class="wheel-element"></div></div>
+                            <div class="tyre-box"><span id="p1-t-rr" class="wheel-temp-lbl">--°C</span><div id="p1-w-rr" class="wheel-element"></div></div>
                         </div>
                     </div>
 
                     <div class="metrics-live-stack">
                         <div class="metric-gauge-row">
-                            <div class="gauge-header-text"><span>VELOCIDAD DE VUELO</span><span class="value" id="ant-v-speed">0 km/h</span></div>
-                            <div class="gauge-bar-track"><div id="ant-b-speed" class="gauge-bar-fill" style="background:#27F4D2;"></div></div>
+                            <div class="gauge-header-text"><span>VELOCIDAD DE VUELO</span><span class="value" id="p1-v-speed">0 km/h</span></div>
+                            <div class="gauge-bar-track"><div id="p1-b-speed" class="gauge-bar-fill"></div></div>
                         </div>
                         <div class="metric-gauge-row">
-                            <div class="gauge-header-text"><span>PEDAL ACELERADOR</span><span class="value" id="ant-v-throttle">0%</span></div>
-                            <div class="gauge-bar-track"><div id="ant-b-throttle" class="gauge-bar-fill" style="background:#0084ff;"></div></div>
+                            <div class="gauge-header-text"><span>PEDAL ACELERADOR</span><span class="value" id="p1-v-throttle">0%</span></div>
+                            <div class="gauge-bar-track"><div id="p1-b-throttle" class="gauge-bar-fill" style="background:#0084ff;"></div></div>
                         </div>
                         <div class="metric-gauge-row">
-                            <div class="gauge-header-text"><span>PRESIÓN DE FRENO</span><span class="value" id="ant-v-brake">0%</span></div>
-                            <div class="gauge-bar-track"><div id="ant-b-brake" class="gauge-bar-fill" style="background:#e10600;"></div></div>
+                            <div class="gauge-header-text"><span>PRESIÓN DE FRENO</span><span class="value" id="p1-v-brake">0%</span></div>
+                            <div class="gauge-bar-track"><div id="p1-b-brake" class="gauge-bar-fill" style="background:#e10600;"></div></div>
                         </div>
                     </div>
                 </div>
@@ -245,53 +263,53 @@
 
                 <svg width="180" height="240" viewBox="0 0 300 500">
                     <path class="circuit-vector-path" d="M 150,440 C 40,440 25,330 35,260 C 45,160 115,120 150,60 C 185,10 265,20 265,130 C 265,250 185,300 150,350 C 105,410 260,440 150,440 Z" style="stroke:rgba(255,255,255,0.06); stroke-width:8;" />
-                    <circle id="radar-ant" r="14" fill="#27F4D2" cx="150" cy="440" stroke="#fff" stroke-width="2.5" />
-                    <circle id="radar-ver" r="14" fill="#3671C6" cx="150" cy="440" stroke="#fff" stroke-width="2.5" />
+                    <circle id="radar-p1" r="14" cx="150" cy="440" stroke="#fff" stroke-width="2.5" />
+                    <circle id="radar-p2" r="14" cx="150" cy="440" stroke="#fff" stroke-width="2.5" />
                 </svg>
 
                 <div>
-                    <span class="card-title" style="font-size:10px; color:#6c6f78;">INTERVALO DE CARRERA</span>
+                    <span class="card-title" style="font-size:10px; color:#6c6f78;">DELTA EN VIVO</span>
                     <div id="lbl-gap-core" style="font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:700; color:#ff9900; margin-top:2px;">0.000s</div>
                 </div>
             </div>
 
-            <div class="driver-garage-card" id="card-p2" style="border-top: 4px solid #3671C6;">
+            <div class="driver-garage-card" id="card-p2">
                 <div class="garage-header" style="flex-direction: row-reverse;">
                     <div class="driver-info" style="text-align: right;">
-                        <p id="ver-team">RED BULL RACING</p>
-                        <h2 id="ver-name">Max VERSTAPPEN</h2>
+                        <p id="p2-team-lbl">LOADING...</p>
+                        <h2 id="p2-name-lbl">PILOTO 2</h2>
                     </div>
-                    <span class="rank-huge" id="ver-rank-hud">P2</span>
+                    <span class="rank-huge" id="p2-rank-hud">--</span>
                 </div>
 
                 <div class="garage-telemetry-split reversed">
                     <div class="metrics-live-stack">
                         <div class="metric-gauge-row">
-                            <div class="gauge-header-text"><span>VELOCIDAD DE VUELO</span><span class="value" id="ver-v-speed">0 km/h</span></div>
-                            <div class="gauge-bar-track"><div id="ver-b-speed" class="gauge-bar-fill" style="background:#3671C6;"></div></div>
+                            <div class="gauge-header-text"><span>VELOCIDAD DE VUELO</span><span class="value" id="p2-v-speed">0 km/h</span></div>
+                            <div class="gauge-bar-track"><div id="p2-b-speed" class="gauge-bar-fill"></div></div>
                         </div>
                         <div class="metric-gauge-row">
-                            <div class="gauge-header-text"><span>PEDAL ACELERADOR</span><span class="value" id="ver-v-throttle">0%</span></div>
-                            <div class="gauge-bar-track"><div id="ver-b-throttle" class="gauge-bar-fill" style="background:#0084ff;"></div></div>
+                            <div class="gauge-header-text"><span>PEDAL ACELERADOR</span><span class="value" id="p2-v-throttle">0%</span></div>
+                            <div class="gauge-bar-track"><div id="p2-b-throttle" class="gauge-bar-fill" style="background:#0084ff;"></div></div>
                         </div>
                         <div class="metric-gauge-row">
-                            <div class="gauge-header-text"><span>PRESIÓN DE FRENO</span><span class="value" id="ver-v-brake">0%</span></div>
-                            <div class="gauge-bar-track"><div id="ver-b-brake" class="gauge-bar-fill" style="background:#e10600;"></div></div>
+                            <div class="gauge-header-text"><span>PRESIÓN DE FRENO</span><span class="value" id="p2-v-brake">0%</span></div>
+                            <div class="gauge-bar-track"><div id="p2-b-brake" class="gauge-bar-fill" style="background:#e10600;"></div></div>
                         </div>
                     </div>
 
                     <div class="car-telemetry-system">
                         <div class="tyre-column left-side">
-                            <div class="tyre-box"><span id="ver-t-fl" class="wheel-temp-lbl">--°C</span><div id="ver-w-fl" class="wheel-element"></div></div>
-                            <div class="tyre-box"><span id="ver-t-rl" class="wheel-temp-lbl">--°C</span><div id="ver-w-rl" class="wheel-element"></div></div>
+                            <div class="tyre-box"><span id="p2-t-fl" class="wheel-temp-lbl">--°C</span><div id="p2-w-fl" class="wheel-element"></div></div>
+                            <div class="tyre-box"><span id="p2-t-rl" class="wheel-temp-lbl">--°C</span><div id="p2-w-rl" class="wheel-element"></div></div>
                         </div>
                         <div class="f1-body-shape">
                             <div class="f1-wing-front"></div>
                             <div class="f1-wing-rear"></div>
                         </div>
                         <div class="tyre-column right-side">
-                            <div class="tyre-box"><span id="ver-t-fr" class="wheel-temp-lbl">--°C</span><div id="ver-w-fr" class="wheel-element"></div></div>
-                            <div class="tyre-box"><span id="ver-t-rr" class="wheel-temp-lbl">--°C</span><div id="ver-w-rr" class="wheel-element"></div></div>
+                            <div class="tyre-box"><span id="p2-t-fr" class="wheel-temp-lbl">--°C</span><div id="p2-w-fr" class="wheel-element"></div></div>
+                            <div class="tyre-box"><span id="p2-t-rr" class="wheel-temp-lbl">--°C</span><div id="p2-w-rr" class="wheel-element"></div></div>
                         </div>
                     </div>
                 </div>
@@ -318,6 +336,8 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
+            const s1 = document.getElementById("sel-driver-1");
+            const s2 = document.getElementById("sel-driver-2");
             const slider = document.getElementById("scrubber-input-range");
             const lapBadge = document.getElementById("hud-lap-badge");
             const gapCore = document.getElementById("lbl-gap-core");
@@ -325,86 +345,119 @@
             const strategyBanner = document.getElementById("strategy-banner-popup");
             
             const rPath = document.querySelector(".circuit-vector-path");
-            const rAnt = document.getElementById("radar-ant");
-            const rVer = document.getElementById("radar-ver");
+            const rP1 = document.getElementById("radar-p1");
+            const rP2 = document.getElementById("radar-p2");
             const pathLength = rPath.getTotalLength();
 
             let telemetryData = null;
+
+            // Diccionario local para mapear equipos/códigos adicionales no provistos por la telemetría compacta
+            const driversDirectory = {
+                "antonelli":  { name: "Kimi Antonelli", team: "Mercedes AMG", color: "#27F4D2" },
+                "verstappen": { name: "Max Verstappen", team: "Red Bull Racing", color: "#3671C6" },
+                "norris":      { name: "Lando Norris", team: "McLaren F1", color: "#FF8000" },
+                "hamilton":    { name: "Lewis Hamilton", team: "Scuderia Ferrari", color: "#E8002D" },
+                "leclerc":     { name: "Charles Leclerc", team: "Scuderia Ferrari", color: "#E8002D" }
+            };
+
+            function populateSelectors() {
+                s1.innerHTML = ""; s2.innerHTML = "";
+                Object.entries(driversDirectory).forEach(([id, d]) => {
+                    s1.innerHTML += `<option value="${id}">${d.name}</option>`;
+                    s2.innerHTML += `<option value="${id}">${d.name}</option>`;
+                });
+                s1.value = "antonelli";
+                s2.value = "verstappen";
+            }
 
             fetch('src/data-outputs/race-telemetry-historical.json')
                 .then(res => res.json())
                 .then(json => {
                     telemetryData = json;
+                    populateSelectors();
                     updateDashboardFrame(1);
                 })
-                .catch(err => console.error("❌ Fallo crítico leyendo JSON:", err));
+                .catch(err => console.error("❌ Error cargando base de datos:", err));
 
             function updateDashboardFrame(lap) {
                 if (!telemetryData || !telemetryData.laps[lap]) return;
 
                 const currentLapData = telemetryData.laps[lap];
+                const id1 = s1.value;
+                const id2 = s2.value;
+
+                // Extraer de forma dinámica las propiedades del JSON basándose en los selectores
+                const p1 = currentLapData.drivers[id1] || currentLapData.drivers["antonelli"];
+                const p2 = currentLapData.drivers[id2] || currentLapData.drivers["verstappen"];
+
                 lapBadge.textContent = `LAP ${lap} / ${telemetryData.totalLaps}`;
                 trackTempLbl.textContent = `ASFALTO: ${currentLapData.trackTemp}°C`;
-                
                 strategyBanner.style.display = currentLapData.pitAlert ? "block" : "none";
 
-                // --- MERCEDES AMG (ANTONELLI) ---
-                const ant = currentLapData.drivers.antonelli;
-                document.getElementById("ant-v-speed").textContent = `${ant.speed} km/h`;
-                document.getElementById("ant-b-speed").style.width = `${(ant.speed / 360) * 100}%`;
-                document.getElementById("ant-v-throttle").textContent = `${ant.throttle}%`;
-                document.getElementById("ant-b-throttle").style.width = `${ant.throttle}%`;
-                document.getElementById("ant-v-brake").textContent = `${ant.brake}%`;
-                document.getElementById("ant-b-brake").style.width = `${ant.brake}%`;
+                // --- 🟢 RENDER DINÁMICO PANEL IZQUIERDO (PILOTO 1) ---
+                document.getElementById("p1-name-lbl").textContent = driversDirectory[id1].name;
+                document.getElementById("p1-team-lbl").textContent = driversDirectory[id1].team;
+                document.getElementById("card-p1").style.borderTop = `4px solid ${driversDirectory[id1].color}`;
+                rP1.setAttribute("fill", driversDirectory[id1].color);
 
-                document.getElementById("ant-t-fl").textContent = `${ant.tyres.fl}°C`;
-                document.getElementById("ant-w-fl").style.backgroundColor = getThermalColor(ant.tyres.fl);
-                document.getElementById("ant-t-fr").textContent = `${ant.tyres.fr}°C`;
-                document.getElementById("ant-w-fr").style.backgroundColor = getThermalColor(ant.tyres.fr);
-                document.getElementById("ant-t-rl").textContent = `${ant.tyres.rl}°C`;
-                document.getElementById("ant-w-rl").style.backgroundColor = getThermalColor(ant.tyres.rl);
-                document.getElementById("ant-t-rr").textContent = `${ant.tyres.rr}°C`;
-                document.getElementById("ant-w-rr").style.backgroundColor = getThermalColor(ant.tyres.rr);
+                document.getElementById("p1-v-speed").textContent = `${p1.speed} km/h`;
+                document.getElementById("p1-b-speed").style.width = `${(p1.speed / 360) * 100}%`;
+                document.getElementById("p1-b-speed").style.backgroundColor = driversDirectory[id1].color;
+                document.getElementById("p1-v-throttle").textContent = `${p1.throttle}%`;
+                document.getElementById("p1-b-throttle").style.width = `${p1.throttle}%`;
+                document.getElementById("p1-v-brake").textContent = `${p1.brake}%`;
+                document.getElementById("p1-b-brake").style.width = `${p1.brake}%`;
 
-                // --- RED BULL RACING (VERSTAPPEN) ---
-                const ver = currentLapData.drivers.verstappen;
-                document.getElementById("ver-v-speed").textContent = `${ver.speed} km/h`;
-                document.getElementById("ver-b-speed").style.width = `${(ver.speed / 360) * 100}%`;
-                document.getElementById("ver-v-throttle").textContent = `${ver.throttle}%`;
-                document.getElementById("ver-b-throttle").style.width = `${ver.throttle}%`;
-                document.getElementById("ver-v-brake").textContent = `${ver.brake}%`;
-                document.getElementById("ver-b-brake").style.width = `${ver.brake}%`;
+                document.getElementById("p1-t-fl").textContent = `${p1.tyres.fl}°C`;
+                document.getElementById("p1-w-fl").style.backgroundColor = getThermalColor(p1.tyres.fl);
+                document.getElementById("p1-t-fr").textContent = `${p1.tyres.fr}°C`;
+                document.getElementById("p1-w-fr").style.backgroundColor = getThermalColor(p1.tyres.fr);
+                document.getElementById("p1-t-rl").textContent = `${p1.tyres.rl}°C`;
+                document.getElementById("p1-w-rl").style.backgroundColor = getThermalColor(p1.tyres.rl);
+                document.getElementById("p1-t-rr").textContent = `${p1.tyres.rr}°C`;
+                document.getElementById("p1-w-rr").style.backgroundColor = getThermalColor(p1.tyres.rr);
 
-                document.getElementById("ver-t-fl").textContent = `${ver.tyres.fl}°C`;
-                document.getElementById("ver-w-fl").style.backgroundColor = getThermalColor(ver.tyres.fl);
-                document.getElementById("ver-t-fr").textContent = `${ver.tyres.fr}°C`;
-                document.getElementById("ver-w-fr").style.backgroundColor = getThermalColor(ver.tyres.fr);
-                document.getElementById("ver-t-rl").textContent = `${ver.tyres.rl}°C`;
-                document.getElementById("ver-w-rl").style.backgroundColor = getThermalColor(ver.tyres.rl);
-                document.getElementById("ver-t-rr").textContent = `${ver.tyres.rr}°C`;
-                document.getElementById("ver-w-rr").style.backgroundColor = getThermalColor(ver.tyres.rr);
+                // --- 🔵 RENDER DINÁMICO PANEL DERECHO (PILOTO 2) ---
+                document.getElementById("p2-name-lbl").textContent = driversDirectory[id2].name;
+                document.getElementById("p2-team-lbl").textContent = driversDirectory[id2].team;
+                document.getElementById("card-p2").style.borderTop = `4px solid ${driversDirectory[id2].color}`;
+                rP2.setAttribute("fill", driversDirectory[id2].color);
 
-                // GAPS
-                if (ant.gap === "LEADER") {
-                    gapCore.textContent = `${ver.gap}`;
-                    document.getElementById("ant-rank-hud").textContent = "P1";
-                    document.getElementById("ver-rank-hud").textContent = "P2";
-                    document.getElementById("card-p1").style.borderTop = "4px solid #27F4D2";
-                    document.getElementById("card-p2").style.borderTop = "1px solid rgba(255,255,255,0.04)";
+                document.getElementById("p2-v-speed").textContent = `${p2.speed} km/h`;
+                document.getElementById("p2-b-speed").style.width = `${(p2.speed / 360) * 100}%`;
+                document.getElementById("p2-b-speed").style.backgroundColor = driversDirectory[id2].color;
+                document.getElementById("p2-v-throttle").textContent = `${p2.throttle}%`;
+                document.getElementById("p2-b-throttle").style.width = `${p2.throttle}%`;
+                document.getElementById("p2-v-brake").textContent = `${p2.brake}%`;
+                document.getElementById("p2-b-brake").style.width = `${p2.brake}%`;
+
+                document.getElementById("p2-t-fl").textContent = `${p2.tyres.fl}°C`;
+                document.getElementById("p2-w-fl").style.backgroundColor = getThermalColor(p2.tyres.fl);
+                document.getElementById("p2-t-fr").textContent = `${p2.tyres.fr}°C`;
+                document.getElementById("p2-w-fr").style.backgroundColor = getThermalColor(p2.tyres.fr);
+                document.getElementById("p2-t-rl").textContent = `${p2.tyres.rl}°C`;
+                document.getElementById("p2-w-rl").style.backgroundColor = getThermalColor(p2.tyres.rl);
+                document.getElementById("p2-t-rr").textContent = `${p2.tyres.rr}°C`;
+                document.getElementById("p2-w-rr").style.backgroundColor = getThermalColor(p2.tyres.rr);
+
+                // --- CLASIFICACIÓN DE INTERVALOS EN EL RADAR ---
+                // Determina la distancia relativa basándose en quién tiene ventaja en el JSON
+                if (p1.gap === "LEADER") {
+                    gapCore.textContent = p2.gap === "LEADER" ? "0.000s" : `+${p2.gap}`;
+                    document.getElementById("p1-rank-hud").textContent = "P1";
+                    document.getElementById("p2-rank-hud").textContent = "P2";
                 } else {
-                    gapCore.textContent = `${ant.gap}`;
-                    document.getElementById("ant-rank-hud").textContent = "P2";
-                    document.getElementById("ver-rank-hud").textContent = "P1";
-                    document.getElementById("card-p2").style.borderTop = "4px solid #3671C6";
-                    document.getElementById("card-p1").style.borderTop = "1px solid rgba(255,255,255,0.04)";
+                    gapCore.textContent = `+${p1.gap}`;
+                    document.getElementById("p1-rank-hud").textContent = "P2";
+                    document.getElementById("p2-rank-hud").textContent = "P1";
                 }
 
-                // RADAR PINES
-                const ptAnt = rPath.getPointAtLength((ant.pos_pct * pathLength) % pathLength);
-                rAnt.setAttribute("cx", ptAnt.x); rAnt.setAttribute("cy", ptAnt.y);
+                // Desplazamiento cartesiano de los pines en el mini mapa central
+                const ptP1 = rPath.getPointAtLength((p1.pos_pct * pathLength) % pathLength);
+                rP1.setAttribute("cx", ptP1.x); rP1.setAttribute("cy", ptP1.y);
 
-                const ptVer = rPath.getPointAtLength((ver.pos_pct * pathLength) % pathLength);
-                rVer.setAttribute("cx", ptVer.x); rVer.setAttribute("cy", ptVer.y);
+                const ptP2 = rPath.getPointAtLength((p2.pos_pct * pathLength) % pathLength);
+                rP2.setAttribute("cx", ptP2.x); rP2.setAttribute("cy", ptP2.y);
             }
 
             function getThermalColor(temp) {
@@ -413,9 +466,10 @@
                 return "#e10600"; 
             }
 
-            slider.addEventListener("input", () => {
-                updateDashboardFrame(slider.value);
-            });
+            // Escuchar cambios en los selectores superiores
+            s1.addEventListener("change", () => updateDashboardFrame(slider.value));
+            s2.addEventListener("change", () => updateDashboardFrame(slider.value));
+            slider.addEventListener("input", () => updateDashboardFrame(slider.value));
         });
     </script>
 </body>
