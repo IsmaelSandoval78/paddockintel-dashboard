@@ -3,7 +3,7 @@ import os
 import random
 
 def generate_historical_telemetry():
-    print("🏁 [PaddockIntel Engine] Iniciando procesamiento de parrilla masiva (22 Pilotos)...")
+    print("🏁 [PaddockIntel Engine] Calculando métricas de rendimiento AWS para 22 pilotos...")
     
     total_laps = 57
     drivers = [
@@ -31,25 +31,29 @@ def generate_historical_telemetry():
             "drivers": {}
         }
         
-        # Generar una base lineal de gaps escalonados para los 22 pilotos en esta vuelta
         for index, driver in enumerate(drivers):
-            # El líder (P1) tiene gap 0, los de atrás van acumulando segundos secuencialmente
             if index == 0:
                 driver_gap = 0.0
             else:
-                # El pelotón se estira más conforme avanza la carrera
-                driver_gap = index * (0.3 + (lap * 0.012)) + random.uniform(-0.2, 0.2)
+                driver_gap = index * (0.3 + (lap * 0.012)) + random.uniform(-0.1, 0.1)
             
-            # Dinámica de pedales y velocidades según la posición en la grilla
-            if is_pit_lap and index % 4 == 0:  # Simular que algunos entran a boxes en la 34
+            if is_pit_lap and index % 4 == 0:
                 speed = 80
                 throttle = 10
                 brake = 85
+                # Métricas AWS en Pitlane
+                throttle_lap_pct = 45
+                heavy_brake_pct = 25
+                cornering_lap_pct = 30
                 t_mod = -15
             else:
-                speed = int(315 + random.uniform(-5, 8) - (index * 0.8))
-                throttle = int(90 + random.randint(-5, 10))
-                brake = int(random.randint(0, 8))
+                speed = int(318 + random.uniform(-4, 6) - (index * 0.7))
+                throttle = int(92 + random.randint(-4, 8))
+                brake = int(random.randint(0, 5))
+                # Métricas AWS simuladas de telemetría de carrera estilo Monza/Miami
+                throttle_lap_pct = int(78 + random.uniform(-2, 3) - (index * 0.4))
+                heavy_brake_pct = int(6 + random.uniform(-1, 2))
+                cornering_lap_pct = 100 - (throttle_lap_pct + heavy_brake_pct)
                 t_mod = int(lap * 0.38)
 
             lap_data["drivers"][driver] = {
@@ -57,14 +61,16 @@ def generate_historical_telemetry():
                 "speed": max(80, speed),
                 "throttle": min(100, max(0, throttle)),
                 "brake": min(100, max(0, brake)),
+                "aws_throttle_pct": min(100, max(0, throttle_lap_pct)),
+                "aws_brake_pct": min(100, max(0, heavy_brake_pct)),
+                "aws_cornering_pct": min(100, max(0, cornering_lap_pct)),
                 "tyres": {
                     "fl": int(90 + t_mod + random.randint(-2, 2)),
                     "fr": int(91 + t_mod + random.randint(-1, 3)),
                     "rl": int(87 + (t_mod * 0.8) + random.randint(-2, 2)),
                     "rr": int(88 + (t_mod * 0.8) + random.randint(-1, 3))
                 },
-                # Mapeo cartesiano simulado del progreso en la pista
-                "pos_pct": round((0.05 + (index * 0.04) + (lap * 0.015)) % 1.0, 4)
+                "pos_pct": round((0.05 + (index * 0.041) + (lap * 0.012)) % 1.0, 4)
             }
             
         database["laps"][str(lap)] = lap_data
