@@ -453,6 +453,25 @@ body{
 ::-webkit-scrollbar{width:3px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+.lang-toggle{
+  display:flex;gap:1px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:4px;overflow:hidden;
+  backdrop-filter:blur(12px);
+}
+.lang-btn{
+  font-family:var(--mono);font-size:.65rem;
+  padding:4px 10px;cursor:pointer;
+  color:var(--muted);transition:all .15s;
+  letter-spacing:.08em;
+}
+.lang-btn:hover{color:var(--text);background:rgba(255,255,255,0.06);}
+.lang-btn.active{
+  color:var(--gold);background:rgba(201,149,12,0.12);
+  box-shadow:inset 0 1px 0 rgba(201,149,12,0.2);
+}
 </style>
 </head>
 <body>
@@ -463,16 +482,21 @@ body{
   <a class="tb-logo" href="https://paddockintel.com" target="_blank">
     <img src="https://storage.ghost.io/c/e9/56/e9564752-0448-4f02-87a0-7f1aadb43372/content/images/2026/02/paddockintel-logo-light-xl.png" alt="PaddockIntel">
   </a>
-  <div class="tb-divider">F1 Data Hub</div>
+  <div class="tb-divider" data-i18n="hubTitle">F1 Data Hub</div>
   <div class="tb-nav">
-    <div class="tb-tab active" onclick="switchView('map')">🗺 2026 Calendar</div>
-    <div class="tb-tab" onclick="switchView('drivers')">👤 Driver Hub</div>
-    <div class="tb-tab" onclick="switchView('constructors')">🏎 Constructor Hub</div>
-    <a class="tb-tab" href="/race-hub.html" style="text-decoration:none;">🏁 Race Hub</a>
+    <div class="tb-tab active" onclick="switchView('map')">🗺 <span data-i18n="navCalendar">2026 Calendar</span></div>
+    <div class="tb-tab" onclick="switchView('drivers')">👤 <span data-i18n="navDrivers">Driver Hub</span></div>
+    <div class="tb-tab" onclick="switchView('constructors')">🏎 <span data-i18n="navConstructors">Constructor Hub</span></div>
+    <a class="tb-tab" href="/race-hub.html" style="text-decoration:none;">🏁 <span data-i18n="navRaceHub">Race Hub</span></a>
   </div>
   <div class="tb-right">
     <div class="tb-badge">2026 · 22 ROUNDS</div>
-    <a class="tb-link" href="https://paddockintel.com" target="_blank">← Back to PaddockIntel</a>
+    <div class="lang-toggle" id="lang-toggle">
+      <div class="lang-btn active" onclick="setLang('en')">EN</div>
+      <div class="lang-btn" onclick="setLang('es')">ES</div>
+      <div class="lang-btn" onclick="setLang('pt')">PT</div>
+    </div>
+    <a class="tb-link" href="https://paddockintel.com" target="_blank">← PaddockIntel</a>
   </div>
 </div>
 
@@ -488,36 +512,36 @@ body{
       <!-- DEFAULT -->
       <div id="panel-default" class="default-panel">
         <div class="dp-intro">
-          <div class="dp-intro-title">F1 Data Hub</div>
+          <div class="dp-intro-title" data-i18n="hubTitle">F1 Data Hub</div>
           <div class="dp-intro-sub">
-            <span>76 seasons</span> · 865 drivers · 214 constructors<br>
-            Click any circuit marker to explore its history.
+            <span><span data-i18n="introSeasons">76 seasons</span> · <span data-i18n="introDrivers">865 drivers</span> · <span data-i18n="introConstructors">214 constructors</span><br>
+            <span data-i18n="introSub">Click any circuit marker to explore its history.</span>
           </div>
         </div>
         <div style="padding:12px 16px 8px;">
           <div class="hub-cta" onclick="switchView('drivers')">
             <div class="hub-cta-icon">👤</div>
             <div class="hub-cta-info">
-              <div class="hub-cta-title">Driver Hub</div>
-              <div class="hub-cta-sub">865 drivers · by era · full career history</div>
+              <div class="hub-cta-title" data-i18n="navDrivers">Driver Hub</div>
+              <div class="hub-cta-sub" data-i18n="driverSub">865 drivers · by era · full career history</div>
             </div>
             <div class="hub-cta-arr">›</div>
           </div>
           <div class="hub-cta" onclick="switchView('constructors')">
             <div class="hub-cta-icon">🏎</div>
             <div class="hub-cta-info">
-              <div class="hub-cta-title">Constructor Hub</div>
-              <div class="hub-cta-sub">214 constructors · wins · title history</div>
+              <div class="hub-cta-title" data-i18n="navConstructors">Constructor Hub</div>
+              <div class="hub-cta-sub" data-i18n="conSub">214 constructors · wins · title history</div>
             </div>
             <div class="hub-cta-arr">›</div>
           </div>
         </div>
         <div class="dp-section">
-          <div class="dp-section-title">All-Time Top Drivers</div>
+          <div class="dp-section-title" data-i18n="topDrivers">All-Time Top Drivers</div>
           <div id="dp-drivers"></div>
         </div>
         <div class="dp-section">
-          <div class="dp-section-title">All-Time Top Constructors</div>
+          <div class="dp-section-title" data-i18n="topConstructors">All-Time Top Constructors</div>
           <div id="dp-cons"></div>
         </div>
       </div>
@@ -530,11 +554,11 @@ body{
   <div id="driver-view">
     <div class="hub-topbar">
       <div class="hub-back" onclick="switchView('map')">← Map</div>
-      <div class="hub-title">Driver <em>Hub</em></div>
+      <div class="hub-title"><span data-i18n="navDrivers">Driver Hub</span></div>
       <div class="hub-count" id="driver-count"></div>
     </div>
     <div class="hub-controls">
-      <input class="search-bar" id="driver-search" placeholder="Search by name or code..." oninput="filterDrivers()">
+      <input class="search-bar" id="driver-search" data-i18n-placeholder="searchDrivers" placeholder="Search by name or code..." oninput="filterDrivers()">
       <div class="era-row" id="era-row"></div>
     </div>
     <div class="hub-scroll">
@@ -547,11 +571,11 @@ body{
   <div id="constructor-view">
     <div class="hub-topbar">
       <div class="hub-back" onclick="switchView('map')">← Map</div>
-      <div class="hub-title">Constructor <em>Hub</em></div>
+      <div class="hub-title"><span data-i18n="navConstructors">Constructor Hub</span></div>
       <div class="hub-count" id="con-count"></div>
     </div>
     <div class="hub-controls">
-      <input class="search-bar" id="con-search" placeholder="Search by name or nationality..." oninput="filterCons()">
+      <input class="search-bar" id="con-search" data-i18n-placeholder="searchCons" placeholder="Search by name or nationality..." oninput="filterCons()">
     </div>
     <div class="hub-scroll">
       <div id="con-detail-box"></div>
@@ -646,6 +670,7 @@ function initMap(){
   });
 }
 
+function T(k){ return LANGS[currentLang]?.[k] || LANGS.en[k] || k; }
 function showCircuit(r){
   document.getElementById('panel-default').style.display='none';
   const p=document.getElementById('panel-circuit');
@@ -673,34 +698,34 @@ function showCircuit(r){
     </div>
     <div class="stat-grid">
       <div class="stat-cell">
-        <div class="s-label">Total GPs</div>
+        <div class="s-label">${T('totalGPs')}</div>
         <div class="s-val gold">${r.totalRaces}</div>
-        <div class="s-sub">at this venue</div>
+        <div class="s-sub">${T('atVenue')}</div>
       </div>
       <div class="stat-cell">
-        <div class="s-label">Avg Pit Stop</div>
+        <div class="s-label">${T('avgPit')}</div>
         <div class="s-val">${r.avgPitStop?r.avgPitStop+'s':'N/A'}</div>
-        <div class="s-sub">all-time</div>
+        <div class="s-sub">${T('allTime')}</div>
       </div>
       <div class="stat-cell full">
-        <div class="s-label">Lap Record</div>
+        <div class="s-label">${T('lapRecord')}</div>
         <div class="s-val gold">${fl?fl.time:'N/A'}</div>
         <div class="s-sub">${fl?fl.driver+' · '+fl.year+' · '+fl.speed.toFixed(1)+' km/h':''}</div>
       </div>
       <div class="stat-cell full">
-        <div class="s-label">Most Wins at Venue</div>
+        <div class="s-label">${T('mostWins')}</div>
         <div class="s-val">${mw?mw.driver:'N/A'}</div>
-        <div class="s-sub">${mw?mw.wins+' victories':''}</div>
+        <div class="s-sub">${mw?mw.wins+' '+T('victories'):''}</div>
       </div>
     </div>
-    <div class="sec-hd">Last 5 Winners</div>
+    <div class="sec-hd">${T('last5Winners')}</div>
     <div class="row-list">${(r.last5Winners||[]).map((w,i)=>`
       <div class="row-item">
         <div class="ri-year">${w.year}</div>
         <div class="ri-name">${w.driver}</div>
         ${i===0?'<div class="ri-badge red">Latest</div>':''}
       </div>`).join('')}</div>
-    <div class="sec-hd">Last 5 WDC Champions</div>
+    <div class="sec-hd">${T('last5Champs')}</div>
     <div class="row-list">${champs.map(c=>`
       <div class="row-item">
         <div class="ri-year">${c.y}</div>
@@ -783,13 +808,13 @@ function showDriver(id){
     <div class="dc-name">${d.name}</div>
     <div class="dc-sub">${nf(d.nat)} ${d.nat}${d.code?' · '+d.code:''}${d.dob?' · b. '+d.dob:''}</div>
     <div class="dc-stats">
-      <div class="dc-stat"><div class="dc-stat-l">Wins</div><div class="dc-stat-v">${w}</div></div>
-      <div class="dc-stat"><div class="dc-stat-l">GPs</div><div class="dc-stat-v">${c.races||0}</div></div>
-      <div class="dc-stat"><div class="dc-stat-l">Titles</div><div class="dc-stat-v">${titles.length}</div></div>
-      <div class="dc-stat"><div class="dc-stat-l">Era</div><div class="dc-stat-v" style="font-size:.95rem">${c.firstYear||''}–${c.lastYear||''}</div></div>
+      <div class="dc-stat"><div class="dc-stat-l">${T('wins')}</div><div class="dc-stat-v">${w}</div></div>
+      <div class="dc-stat"><div class="dc-stat-l">${T('races')}</div><div class="dc-stat-v">${c.races||0}</div></div>
+      <div class="dc-stat"><div class="dc-stat-l">${T('titles')}</div><div class="dc-stat-v">${titles.length}</div></div>
+      <div class="dc-stat"><div class="dc-stat-l">${T('era')}</div><div class="dc-stat-v" style="font-size:.95rem">${c.firstYear||''}–${c.lastYear||''}</div></div>
     </div>
     ${titles.length?`<div class="dc-pills"><span class="pill pill-red">🏆 WDC: ${titles.join(', ')}</span></div>`:''}
-    <div class="dc-timeline-label">Seasons competed</div>
+    <div class="dc-timeline-label">${T('activeSeasons')}</div>
     <div class="dc-timeline">${yrs.map(y=>`<div class="cy ${titles.includes(y)?'champ':''}">${y}</div>`).join('')}</div>
     <div class="dc-close" onclick="this.closest('.detail-card').remove()">✕ close</div>
   </div>`;
@@ -828,10 +853,10 @@ function showCon(id){
     <div class="dc-name">${c.name}</div>
     <div class="dc-sub">${nf(c.nat)} ${c.nat}</div>
     <div class="dc-stats">
-      <div class="dc-stat"><div class="dc-stat-l">Wins</div><div class="dc-stat-v">${w}</div></div>
-      <div class="dc-stat"><div class="dc-stat-l">GPs</div><div class="dc-stat-v">${career.races||0}</div></div>
+      <div class="dc-stat"><div class="dc-stat-l">${T('wins')}</div><div class="dc-stat-v">${w}</div></div>
+      <div class="dc-stat"><div class="dc-stat-l">${T('races')}</div><div class="dc-stat-v">${career.races||0}</div></div>
       <div class="dc-stat"><div class="dc-stat-l">WCC</div><div class="dc-stat-v">${titles.length}</div></div>
-      <div class="dc-stat"><div class="dc-stat-l">Era</div><div class="dc-stat-v" style="font-size:.95rem">${career.firstYear||''}–${career.lastYear||''}</div></div>
+      <div class="dc-stat"><div class="dc-stat-l">${T('era')}</div><div class="dc-stat-v" style="font-size:.95rem">${career.firstYear||''}–${career.lastYear||''}</div></div>
     </div>
     ${titles.length?`<div class="dc-pills"><span class="pill pill-red">🏆 WCC: ${titles.join(', ')}</span></div>`:''}
     <div class="dc-close" onclick="this.closest('.detail-card').remove()">✕ close</div>
@@ -842,6 +867,162 @@ function showCon(id){
 // ── INIT ────────────────────────────────────────────────────
 renderDefault();
 requestAnimationFrame(()=>{ setTimeout(initMap, 80); });
+</script>
+
+<script>
+// ── I18N ─────────────────────────────────────────────────────
+const LANGS = {
+  en: {
+    hubTitle: 'F1 Data Hub',
+    navCalendar: '2026 Calendar',
+    navDrivers: 'Driver Hub',
+    navConstructors: 'Constructor Hub',
+    navRaceHub: 'Race Hub',
+    introSeasons: '76 seasons',
+    introDrivers: '865 drivers',
+    introConstructors: '214 constructors',
+    introSub: 'Click any circuit marker to explore its history.',
+    driverSub: '865 drivers · by era · full career history',
+    conSub: '214 constructors · wins · title history',
+    topDrivers: 'All-Time Top Drivers',
+    topConstructors: 'All-Time Top Constructors',
+    searchDrivers: 'Search by name or code...',
+    searchCons: 'Search by name or nationality...',
+    selectCircuit: 'Select a circuit',
+    selectCircuitSub: 'Click any marker on the map to view circuit stats, all-time records, and recent winners.',
+    totalGPs: 'Total GPs',
+    atVenue: 'at this venue',
+    avgPit: 'Avg Pit Stop',
+    allTime: 'all-time',
+    lapRecord: 'Lap Record',
+    mostWins: 'Most Wins at Venue',
+    victories: 'victories',
+    last5Winners: 'Last 5 Winners',
+    last5Champs: 'Last 5 WDC Champions',
+    latest: 'Latest',
+    activeSeasons: 'Seasons competed',
+    races: 'GPs',
+    wins: 'Wins',
+    titles: 'Titles',
+    era: 'Era',
+    back: '← Map',
+    allTime2: 'All Time',
+  },
+  es: {
+    hubTitle: 'Hub de Datos F1',
+    navCalendar: 'Calendario 2026',
+    navDrivers: 'Hub de Pilotos',
+    navConstructors: 'Hub de Constructores',
+    navRaceHub: 'Hub de Carreras',
+    introSeasons: '76 temporadas',
+    introDrivers: '865 pilotos',
+    introConstructors: '214 constructores',
+    introSub: 'Haz clic en cualquier marcador para explorar la historia del circuito.',
+    driverSub: '865 pilotos · por era · carrera completa',
+    conSub: '214 constructores · victorias · historial de títulos',
+    topDrivers: 'Mejores Pilotos de la Historia',
+    topConstructors: 'Mejores Constructores de la Historia',
+    searchDrivers: 'Buscar por nombre o código...',
+    searchCons: 'Buscar por nombre o nacionalidad...',
+    selectCircuit: 'Selecciona un circuito',
+    selectCircuitSub: 'Haz clic en cualquier marcador para ver estadísticas del circuito, récords históricos y ganadores recientes.',
+    totalGPs: 'GPs Totales',
+    atVenue: 'en este circuito',
+    avgPit: 'Pit Stop Promedio',
+    allTime: 'histórico',
+    lapRecord: 'Récord de Vuelta',
+    mostWins: 'Más Victorias en el Circuito',
+    victories: 'victorias',
+    last5Winners: 'Últimos 5 Ganadores',
+    last5Champs: 'Últimos 5 Campeones del Mundo',
+    latest: 'Último',
+    activeSeasons: 'Temporadas activo',
+    races: 'Carreras',
+    wins: 'Victorias',
+    titles: 'Títulos',
+    era: 'Era',
+    back: '← Mapa',
+    allTime2: 'Todos',
+  },
+  pt: {
+    hubTitle: 'Hub de Dados F1',
+    navCalendar: 'Calendário 2026',
+    navDrivers: 'Hub de Pilotos',
+    navConstructors: 'Hub de Construtores',
+    navRaceHub: 'Hub de Corridas',
+    introSeasons: '76 temporadas',
+    introDrivers: '865 pilotos',
+    introConstructors: '214 construtores',
+    introSub: 'Clique em qualquer marcador para explorar a história do circuito.',
+    driverSub: '865 pilotos · por era · carreira completa',
+    conSub: '214 construtores · vitórias · histórico de títulos',
+    topDrivers: 'Melhores Pilotos de Todos os Tempos',
+    topConstructors: 'Melhores Construtores de Todos os Tempos',
+    searchDrivers: 'Buscar por nome ou código...',
+    searchCons: 'Buscar por nome ou nacionalidade...',
+    selectCircuit: 'Selecione um circuito',
+    selectCircuitSub: 'Clique em qualquer marcador para ver estatísticas do circuito, recordes históricos e vencedores recentes.',
+    totalGPs: 'GPs Totais',
+    atVenue: 'neste circuito',
+    avgPit: 'Pit Stop Médio',
+    allTime: 'histórico',
+    lapRecord: 'Recorde de Volta',
+    mostWins: 'Mais Vitórias no Circuito',
+    victories: 'vitórias',
+    last5Winners: 'Últimos 5 Vencedores',
+    last5Champs: 'Últimos 5 Campeões do Mundo',
+    latest: 'Último',
+    activeSeasons: 'Temporadas ativo',
+    races: 'Corridas',
+    wins: 'Vitórias',
+    titles: 'Títulos',
+    era: 'Era',
+    back: '← Mapa',
+    allTime2: 'Todos',
+  }
+};
+
+let currentLang = 'en';
+
+function setLang(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang;
+  
+  // Toggle buttons
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.toLowerCase() === lang);
+  });
+
+  // Update all data-i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (LANGS[lang][key]) el.textContent = LANGS[lang][key];
+  });
+
+  // Update placeholders
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (LANGS[lang][key]) el.placeholder = LANGS[lang][key];
+  });
+
+  // Update back buttons in hubs
+  document.querySelectorAll('.hub-back').forEach(b => {
+    b.textContent = LANGS[lang].back;
+  });
+
+  // Update era "All Time" button
+  const allBtn = document.querySelector('.era-btn');
+  if (allBtn) allBtn.textContent = LANGS[lang].allTime2;
+
+  // Store preference
+  try { localStorage.setItem('pi_lang', lang); } catch(e) {}
+}
+
+// Load saved lang on boot
+try {
+  const saved = localStorage.getItem('pi_lang');
+  if (saved && LANGS[saved]) setTimeout(() => setLang(saved), 100);
+} catch(e) {}
 </script>
 </body>
 </html>
