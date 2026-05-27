@@ -1,164 +1,51 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title data-i18n="meta_title">PaddockIntel — F1 Intelligence Dashboard</title>
-  <meta name="description" content="Real-time Formula 1 world map, standings, and race intelligence. Explore circuits, results, and economics from PaddockIntel." />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://hub.paddockintel.com" />
-  <meta property="og:title" content="PaddockIntel — F1 Intelligence Dashboard" />
-  <meta property="og:description" content="F1 circuit map, driver standings, constructor rankings, and race intelligence." />
-  <meta property="og:url" content="https://hub.paddockintel.com" />
-  <meta property="og:type" content="website" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23e10600'/><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='18' fill='white'>PI</text></svg>" />
-  
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="public/css/styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PaddockIntel — Global Mission Control</title>
+    <link rel="stylesheet" href="public/css/styles.css" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23e10600'/><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='18' fill='white'>PI</text></svg>" />
+    <style>
+        body { background-color: #050709; color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .lobby-container { text-align: center; max-width: 800px; padding: 40px; background: #0f1217; border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        h1 { font-family: 'JetBrains Mono', monospace; font-size: 36px; margin-bottom: 10px; color: #ffffff; }
+        h1 span { color: #e10600; }
+        p { color: #86868b; font-size: 14px; margin-bottom: 40px; line-height: 1.6; }
+        .nav-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .nav-card { background: #15181f; border: 1px solid rgba(255,255,255,0.08); padding: 30px 20px; border-radius: 12px; text-decoration: none; color: #fff; transition: all 0.3s ease; }
+        .nav-card:hover { transform: translateY(-5px); border-color: #ff9900; background: #1c2026; }
+        .nav-card h3 { margin: 0 0 10px 0; font-size: 16px; letter-spacing: 0.05em; }
+        .nav-card span { font-size: 11px; color: #6c6f78; }
+        .status-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-bottom: 15px; }
+        .status-online { background: rgba(36, 179, 83, 0.15); color: #24b353; border: 1px solid rgba(36, 179, 83, 0.3); }
+        .status-pending { background: rgba(255, 153, 0, 0.15); color: #ff9900; border: 1px solid rgba(255, 153, 0, 0.3); }
+    </style>
 </head>
 <body>
-  <div class="app-container">
 
-    <header class="site-header">
-      <div class="logo-group">
-        <div class="logo-badge">PI</div>
-        <div>
-          <div class="logo-text">Paddock<span>Intel</span></div>
-          <div class="logo-sub" data-i18n="logo_sub">F1 Intelligence Dashboard</div>
-        </div>
-      </div>
-      <div class="header-right">
-        <div class="lang-selector">
-          <button onclick="setLanguage('es')" class="lang-btn" id="btn-lang-es">🇪🇸 ES</button>
-          <button onclick="setLanguage('en')" class="lang-btn" id="btn-lang-en">🇺🇸 EN</button>
-        </div>
+    <div class="lobby-container">
+        <h1>PADDOCK<span>INTEL</span> 2026</h1>
+        <p>Sistema Central de Análisis de Datos y Telemetría de la Fórmula 1. Seleccione un módulo para iniciar la interfaz de ingeniería de pista.</p>
         
-        <a href="https://paddockintel.com" class="header-nav-link" target="_blank" data-i18n="nav_news">↗ News</a>
-        <div class="live-badge"><div class="live-dot"></div><span data-i18n="live_data">Live Data</span></div>
-        <div class="season-badge" data-i18n="season_badge">F1 · 2026 SEASON</div>
-        <div class="last-updated" id="last-updated" data-i18n="loading">Loading…</div>
-      </div>
-    </header>
-
-    <div class="ticker-bar" aria-hidden="true">
-      <div class="ticker-inner" id="ticker-inner">
-        <span class="ticker-item"><span class="highlight">PaddockIntel</span> — <span data-i18n="ticker_loading">F1 Intelligence · Loading standings…</span></span>
-      </div>
+        <div class="nav-grid">
+            <a href="race-hub.html" class="nav-card">
+                <div class="status-badge status-online">🟢 ONLINE</div>
+                <h3>RACE HUB</h3>
+                <span>Telemetría en Espejo y Trazados FIA</span>
+            </a>
+            <a href="constructor.html" class="nav-card">
+                <div class="status-badge status-pending">🟡 IN DEVELOPMENT</div>
+                <h3>CONSTRUCTORS</h3>
+                <span>Análisis de Escuderías y Desarrollo</span>
+            </a>
+            <a href="driver.html" class="nav-card">
+                <div class="status-badge status-pending">🟡 IN DEVELOPMENT</div>
+                <h3>DRIVER INTEL</h3>
+                <span>Perfiles Analíticos Individuales</span>
+            </a>
+        </div>
     </div>
 
-    <div class="dashboard-grid">
-
-      <div class="main-content">
-        
-        <div class="map-card glass-card">
-          <div class="map-topbar">
-            <div class="map-title-group" style="display: flex; align-items: center; gap: 12px;">
-              <span class="map-card-title" data-i18n="map_title">2026 F1 Season</span>
-              
-              <select id="master-race-selector" class="sim-select-ui" style="font-weight: 700; border-color: rgba(0,0,0,0.15);">
-                  <option value="all">🌍 All Circuits</option>
-                  <option value="miami" selected>🌴 Miami GP</option>
-                  <option value="monaco">🇲🇨 Monaco GP</option>
-                  <option value="monza">🇮🇹 Italian GP</option>
-                  <option value="silverstone">🇬🇧 British GP</option>
-                  <option value="spa">🇧🇪 Belgian GP</option>
-              </select>
-
-              <button id="btn-go-race-hub" class="sim-action-btn" style="padding: 6px 12px; font-size: 11px; background: var(--apple-blue);">
-                  ANALYZE CIRCUIT ↗
-              </button>
-            </div>
-            
-            <div class="map-legend">
-              <span class="legend-item"><span class="legend-dot ldone"></span><span data-i18n="legend_completed">Completed</span></span>
-              <span class="legend-item"><span class="legend-dot lnext pulse-dot"></span><span data-i18n="legend_next">Next Race</span></span>
-              <span class="legend-item"><span class="legend-dot lupcoming"></span><span data-i18n="legend_upcoming">Upcoming</span></span>
-            </div>
-          </div>
-          <div id="world-map"></div>
-        </div>
-
-        <div class="glass-card miami-simulator-card">
-            <div class="sim-header-row">
-                <div class="sim-title-group">
-                    <span class="sim-card-title">Miami GP 2026 — Live Grid Tracker</span>
-                    <span class="section-tag gold" id="sim-lap-indicator">LAP 1 TELEMETRY</span>
-                </div>
-                <div class="sim-actions-group">
-                    <button id="btn-sim-play" class="sim-action-btn">▶ START TELEMETRY</button>
-                    <button id="btn-sim-reset" class="sim-action-btn alt">🔄 RESET</button>
-                </div>
-            </div>
-            
-            <div class="sim-telemetry-widescreen-box">
-                <div class="sim-chrono-wrapper">
-                    <div class="chrono-label">LAP TIME</div>
-                    <div class="sim-chrono-display" id="sim-chrono">00:00<span>.000</span></div>
-                </div>
-                
-                <div class="sim-telemetry-wall" id="sim-telemetry-wall">
-                    </div>
-            </div>
-        </div>
-
-      </div>
-
-      <aside class="sidebar">
-        <div id="circuit-panel" class="circuit-panel glass-card" style="display:none">
-          <div id="circuit-panel-inner"></div>
-        </div>
-
-        <div id="standings-panel" class="standings-panel">
-          <div class="glass-card sidebar-card">
-            <div class="sidebar-card-header">
-              <span class="sidebar-card-title" data-i18n="wdc_title">Driver Championship</span>
-              <span class="section-tag">WDC · Top 10</span>
-            </div>
-            <div id="sidebar-drivers">
-              <div class="loading-state" style="padding:28px"><div class="spinner"></div><span data-i18n="loading">Loading…</span></div>
-            </div>
-          </div>
-
-          <div class="glass-card sidebar-card">
-            <div class="sidebar-card-header">
-              <span class="sidebar-card-title" data-i18n="wcc_title">Constructor Championship</span>
-              <span class="section-tag gold">WCC · Top 5</span>
-            </div>
-            <div id="sidebar-constructors">
-              <div class="loading-state" style="padding:28px"><div class="spinner"></div><span data-i18n="loading">Loading…</span></div>
-            </div>
-          </div>
-        </div>
-      </aside>
-
-    </div>
-
-    <footer class="site-footer">
-      <div>© 2026 <a href="https://paddockintel.com" class="footer-link" target="_blank">PaddockIntel</a> · <span data-i18n="footer_intel">F1 Intelligence</span></div>
-      <div data-i18n="footer_credits">Data: Ergast/jolpi.ca · OpenWeather · Salary estimates via public reporting · Prize model estimated</div>
-      <div>
-        <a href="https://paddockintel.com" class="footer-link" target="_blank">paddockintel.com</a>
-        &nbsp;·&nbsp;
-        <a href="driver.html" class="footer-link" data-i18n="footer_profiles">Driver Profiles</a>
-      </div>
-    </footer>
-
-  </div>
-
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="public/js/i18n.js"></script>
-  <script src="public/js/miami-sim-data.js"></script>
-  <script src="public/js/simulator.js"></script>
-  
-  <script>
-    document.getElementById("btn-go-race-hub").addEventListener("click", () => {
-        const selectedRace = document.getElementById("master-race-selector").value;
-        // Redirigir enviando la carrera activa como parámetro URL seguro
-        window.location.href = `race-hub.html?race=${selectedRace}`;
-    });
-  </script>
-  
-  <script src="public/js/app.js"></script>
 </body>
 </html>
