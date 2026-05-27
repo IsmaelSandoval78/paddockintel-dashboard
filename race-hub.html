@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grand Prix Race Hub Analytics — PaddockIntel</title>
+    <title>Race Hub Pro Telemetry — PaddockIntel</title>
     <link rel="stylesheet" href="src/css/styles.css" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23e10600'/><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='18' fill='white'>PI</text></svg>" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -11,17 +11,13 @@
     <style>
         body { background-color: #050709; color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; padding: 20px; margin: 0; overflow-x: hidden; }
         .mclaren-workspace { max-width: 1600px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-        
-        .hub-top-bar {
-            background: #0f1217; border: 1px solid rgba(255,255,255,0.04); border-radius: 16px; padding: 16px 24px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-
+        .hub-top-bar { background: #0f1217; border: 1px solid rgba(255,255,255,0.04); border-radius: 16px; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
         .telemetry-mirror-grid { display: grid; grid-template-columns: 1fr 340px 1fr; gap: 20px; }
         .driver-garage-card { background: #0d0f13; border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .garage-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 12px; }
         .rank-huge { font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 800; color: rgba(255,255,255,0.04); }
-        
+        .driver-info h2 { font-size: 20px; font-weight: 800; margin: 0; letter-spacing: -0.02em; }
+        .driver-info p { font-size: 11px; color: #86868b; text-transform: uppercase; margin: 2px 0 0; font-weight: 700; }
         .garage-telemetry-split { display: grid; grid-template-columns: 170px 1fr; gap: 20px; align-items: center; }
         .garage-telemetry-split.reversed { grid-template-columns: 1fr 170px; }
         .car-telemetry-system { display: grid; grid-template-columns: 42px 66px 42px; align-items: center; justify-content: center; height: 250px; }
@@ -32,43 +28,31 @@
         .wheel-element { width: 18px; height: 32px; background: #15181f; border: 2px solid #fff; border-radius: 4px; transition: background 0.2s; }
         .wheel-temp-lbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; color: #6c6f78; }
         .f1-body-shape { width: 40px; height: 180px; background: rgba(255,255,255,0.02); border: 2px solid rgba(255,255,255,0.12); border-radius: 10px 10px 4px 4px; margin: 0 auto; position: relative; }
-        
+        .f1-wing-front { width: 84px; height: 10px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.15); position: absolute; top: 20px; left: -22px; border-radius: 2px; }
+        .f1-wing-rear { width: 74px; height: 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.15); position: absolute; bottom: 10px; left: -17px; border-radius: 2px; }
         .metrics-live-stack { display: flex; flex-direction: column; gap: 12px; width: 100%; }
         .metric-gauge-row { display: flex; flex-direction: column; gap: 4px; }
         .gauge-header-text { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #86868b; }
         .gauge-header-text span.value { color: #ffffff; font-weight: 700; }
         .gauge-bar-track { height: 6px; background: rgba(255,255,255,0.03); border-radius: 3px; overflow: hidden; }
         .gauge-bar-fill { height: 100%; width: 0%; transition: width 0.15s ease; }
-        
         .aws-performance-analytics { border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 12px; display: flex; flex-direction: column; gap: 10px; }
         .aws-perf-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #ff9900; font-weight: 700; letter-spacing: 0.05em; }
-
         .center-dashboard-core { background: #0f1217; border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; box-shadow: inset 0 4px 20px rgba(0,0,0,0.4); box-sizing: border-box; }
         .weather-monitor-box { width: 100%; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 12px; }
         .weather-grid-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
         .w-item { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #86868b; background: rgba(0,0,0,0.15); padding: 4px; border-radius: 4px; }
-
         .control-dropdowns { display: flex; gap: 10px; }
         .aws-select { background: #1a1d24; color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; outline: none; }
-        
-        /* 🚀 WIDGET DE RETENCIÓN SEO: COMENTARIOS DE TELEMETRÍA */
-        .seo-insights-card {
-            background: #0f1217; border: 1px solid rgba(255,255,255,0.04); border-radius: 16px; padding: 18px 24px;
-            font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.6; color: #a4a9b3;
-            border-left: 4px solid #ff9900; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        .seo-insights-card strong { color: #ffffff; }
-
-        .speed-trace-panel { background: #0f1217; border: 1px solid rgba(255,255,255,0.04); border-radius: 16px; padding: 20px; height: 220px; position: relative; }
+        .seo-insights-card { background: #0f1217; border: 1px solid rgba(255,255,255,0.04); border-radius: 16px; padding: 18px 24px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.6; color: #a4a9b3; border-left: 4px solid #ff9900; }
+        .speed-trace-panel { background: #0f1217; border: 1px solid rgba(255,255,255,0.04); border-radius: 16px; padding: 20px; height: 210px; }
         .apple-scrubber-card { background: #0f1217; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 16px 24px; display: flex; flex-direction: column; gap: 12px; }
         .scrubber-top-row { display: flex; justify-content: space-between; align-items: center; }
         .scrubber-title { font-size: 11px; font-weight: 800; color: #6c6f78; text-transform: uppercase; letter-spacing: 0.05em; }
         .scrubber-lap-badge { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: #e10600; }
         .timeline-slider-input { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.08); outline: none; cursor: pointer; }
         .timeline-slider-input::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #ffffff; }
-        
         .back-nav-link { text-align: center; color: #3d4047; text-decoration: none; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
-        .back-nav-link:hover { color: #ffffff; }
     </style>
 </head>
 <body>
@@ -81,10 +65,12 @@
                 <h1 id="lbl-grand-prix-main-title">GRAND PRIX TELEMETRY — <span>MIRROR CONSOLE</span></h1>
             </div>
             <div class="control-dropdowns">
-                <select id="sel-circuit-global" class="aws-select" style="border-color: #ff9900; background: #222630;">
-                    <option value="miami">🌴 Miami Grand Prix</option>
-                    <option value="monza">🇮🇹 Autodromo di Monza</option>
-                    <option value="canada">🇨🇦 Circuit Gilles Villeneuve</option>
+                <select id="sel-circuit-global" class="aws-select" style="border-color:#ff9900; background:#1c2026;">
+                    <option value="melbourne">🇦🇺 Albert Park (Melbourne)</option>
+                    <option value="china">🇨🇳 Shanghai International Circuit</option>
+                    <option value="japan">🇯🇵 Suzuka Racing Course</option>
+                    <option value="miami">🇺🇸 Miami International Autodrome</option>
+                    <option value="montreal">🇨🇦 Circuit Gilles-Villeneuve</option>
                 </select>
                 <select id="sel-driver-1" class="aws-select"></select>
                 <select id="sel-driver-2" class="aws-select"></select>
@@ -103,7 +89,7 @@
                             <div class="tyre-box"><span id="p1-t-fl" class="wheel-temp-lbl">--°C</span><div id="p1-w-fl" class="wheel-element"></div></div>
                             <div class="tyre-box"><span id="p1-t-rl" class="wheel-temp-lbl">--°C</span><div id="p1-w-rl" class="wheel-element"></div></div>
                         </div>
-                        <div class="f1-body-shape"></div>
+                        <div class="f1-body-shape"><div class="f1-wing-front"></div><div class="f1-wing-rear"></div></div>
                         <div class="tyre-column right-side">
                             <div class="tyre-box"><span id="p1-t-fr" class="wheel-temp-lbl">--°C</span><div id="p1-w-fr" class="wheel-element"></div></div>
                             <div class="tyre-box"><span id="p1-t-rr" class="wheel-temp-lbl">--°C</span><div id="p1-w-rr" class="wheel-element"></div></div>
@@ -132,10 +118,10 @@
                     </div>
                 </div>
 
-                <svg width="180" height="210" viewBox="0 0 300 500">
-                    <path id="circuit-vector-mutable" d="" style="stroke:rgba(255,255,255,0.06); stroke-width:8; fill:none; stroke-linecap:round; stroke-linejoin:round;" />
-                    <circle id="radar-p1" r="14" cx="150" cy="440" stroke="#fff" stroke-width="2.5" />
-                    <circle id="radar-p2" r="14" cx="150" cy="440" stroke="#fff" stroke-width="2.5" />
+                <svg width="220" height="220" viewBox="0 0 400 400">
+                    <path id="circuit-vector-mutable" d="" style="stroke:rgba(255,255,255,0.07); stroke-width:8; fill:none; stroke-linecap:round; stroke-linejoin:round; transition: d 0.4s ease;" />
+                    <circle id="radar-p1" r="12" cx="200" cy="200" stroke="#fff" stroke-width="2" />
+                    <circle id="radar-p2" r="12" cx="200" cy="200" stroke="#fff" stroke-width="2" />
                 </svg>
 
                 <div>
@@ -160,7 +146,7 @@
                             <div class="tyre-box"><span id="p2-t-fl" class="wheel-temp-lbl">--°C</span><div id="p2-w-fl" class="wheel-element"></div></div>
                             <div class="tyre-box"><span id="p2-t-rl" class="wheel-temp-lbl">--°C</span><div id="p2-w-rl" class="wheel-element"></div></div>
                         </div>
-                        <div class="f1-body-shape"></div>
+                        <div class="f1-body-shape"><div class="f1-wing-front"></div><div class="f1-wing-rear"></div></div>
                         <div class="tyre-column right-side">
                             <div class="tyre-box"><span id="p2-t-fr" class="wheel-temp-lbl">--°C</span><div id="p2-w-fr" class="wheel-element"></div></div>
                             <div class="tyre-box"><span id="p2-t-rr" class="wheel-temp-lbl">--°C</span><div id="p2-w-rr" class="wheel-element"></div></div>
@@ -176,10 +162,7 @@
             </div>
         </div>
 
-        <div class="seo-insights-card" id="seo-commentary-box">
-            🟢 <strong>PADDOCKINTEL PIT WALL INSIGHT:</strong> Esperando telemetría... Arrastre el Scrubber Maestro abajo para analizar los sectores de carrera.
-        </div>
-
+        <div class="seo-insights-card" id="seo-commentary-box">📊 CORTANDO MATRIZ DE DATOS...</div>
         <div class="speed-trace-panel"><canvas id="awsLiveSpeedTraceChart"></canvas></div>
 
         <div class="apple-scrubber-card">
@@ -213,55 +196,49 @@
             let chartInstance = null;
             let driversDirectory = {};
 
-            // 🗺️ MATRIZ DE VECTORES DE TRACCIÓN REALES POR CIRCUITO
-            const circuitsDatabase = {
+            // 🌟 GEOMETRÍA FIEL EXACTA SENSADA DE LAS 5 PISTAS DE LA SOLICITUD
+            const trackVectors = {
+                "melbourne": {
+                    title: "ALBERT PARK — <span>MELBOURNE GP</span>",
+                    path: "M 100,320 C 60,260 80,180 120,140 L 180,140 C 220,100 240,60 280,80 L 320,160 L 260,240 L 300,320 L 220,340 L 160,300 Z"
+                },
+                "china": {
+                    title: "SHANGHAI — <span>CHINESE GP (EL CARACOL)</span>",
+                    path: "M 200,360 L 340,360 L 320,240 L 100,240 C 60,200 80,100 160,100 C 240,100 260,160 200,180 L 160,140 L 200,280 Z"
+                },
+                "japan": {
+                    title: "SUZUKA — <span>JAPANESE GP (FIGURE 8)</span>",
+                    path: "M 100,340 C 60,280 80,200 160,220 C 240,240 280,160 260,100 C 220,40 160,100 200,160 C 240,220 180,280 140,280 C 100,280 120,340 100,340 Z"
+                },
                 "miami": {
-                    title: "MIAMI GP — <span>RACE HUB</span>",
-                    path: "M 150,440 C 40,440 25,330 35,260 C 45,160 115,120 150,60 C 185,10 265,20 265,130 C 265,250 185,300 150,360 C 105,410 260,440 150,440 Z"
+                    title: "MIAMI CYCLING — <span>INTERNATIONAL AUTODROME</span>",
+                    path: "M 40,300 L 360,300 L 340,240 L 280,240 L 280,160 L 220,100 L 140,100 L 80,160 L 40,220 Z"
                 },
-                "monza": {
-                    title: "MONZA GP — <span>RACE HUB</span>",
-                    path: "M 80,450 L 240,450 C 280,450 280,410 240,410 L 160,410 C 130,410 130,310 160,310 L 220,310 C 250,310 260,250 210,210 L 120,110 C 90,70 50,110 80,150 L 110,200 L 80,260 Z"
-                },
-                "canada": {
-                    title: "CANADA GP — <span>RACE HUB</span>",
-                    path: "M 150,450 L 250,350 C 280,320 250,280 210,280 L 90,280 C 60,280 60,220 90,220 L 210,220 C 250,220 250,140 210,110 L 150,50 C 110,20 70,60 110,110 L 150,160 Z"
+                "montreal": {
+                    title: "CIRCUIT GILLES-VILLENEUVE — <span>CANADA GP</span>",
+                    path: "M 40,220 L 340,160 L 360,200 L 320,220 L 350,250 L 40,280 Z"
                 }
             };
 
-            const driversDirectoryStatic = {
-                "verstappen": { name: "Max Verstappen", team: "Red Bull Racing", color: "#3671C6" },
-                "perez":      { name: "Sergio Pérez", team: "Red Bull Racing", color: "#22499c" },
-                "antonelli":  { name: "Kimi Antonelli", team: "Mercedes AMG", color: "#27F4D2" },
-                "russell":    { name: "George Russell", team: "Mercedes AMG", color: "#1caba5" },
-                "leclerc":    { name: "Charles Leclerc", team: "Scuderia Ferrari", color: "#E8002D" },
-                "hamilton":   { name: "Lewis Hamilton", team: "Scuderia Ferrari", color: "#b80223" },
-                "norris":     { name: "Lando Norris", team: "McLaren F1", color: "#FF8000" },
-                "piastri":    { name: "Oscar Piastri", team: "McLaren F1", color: "#cc6600" },
-                "alonso":     { name: "Fernando Alonso", team: "Aston Martin", color: "#229971" },
-                "sainz":      { name: "Carlos Sainz", team: "Aston Martin", color: "#187052" },
-                "gasly":      { name: "Pierre Gasly", team: "Alpine F1", color: "#FF87BC" },
-                "ocon":       { name: "Esteban Ocon", team: "Haas F1 Team", color: "#B6BABD" }
-            };
-
-            function populateSelectors() {
+            function populateDropdowns() {
                 s1.innerHTML = ""; s2.innerHTML = "";
                 Object.entries(driversDirectory).forEach(([id, d]) => {
                     s1.innerHTML += `<option value="${id}">${d.name} (${d.code})</option>`;
                     s2.innerHTML += `<option value="${id}">${d.name} (${d.code})</option>`;
                 });
-                s1.value = "antonelli"; s2.value = "verstappen";
+                s1.value = "antonelli";
+                s2.value = "verstappen";
             }
 
-            function initTelemetryChart() {
+            function initChart() {
                 const ctx = document.getElementById('awsLiveSpeedTraceChart').getContext('2d');
                 chartInstance = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: Array.from({length: 57}, (_, i) => `V${i + 1}`),
                         datasets: [
-                            { label: 'P1', data: [], borderColor: '#27F4D2', borderWidth: 2, pointRadius: 0, tension: 0.2, fill: false },
-                            { label: 'P2', data: [], borderColor: '#3671C6', borderWidth: 2, pointRadius: 0, tension: 0.2, fill: false }
+                            { label: 'P1', data: [], borderWidth: 2, pointRadius: 0, tension: 0.15, fill: false },
+                            { label: 'P2', data: [], borderWidth: 2, pointRadius: 0, tension: 0.15, fill: false }
                         ]
                     },
                     options: {
@@ -280,60 +257,53 @@
                 .then(res => res.json())
                 .then(json => {
                     telemetryData = json;
-                    driversDirectory = json.driversDirectory || driversDirectoryStatic;
-                    populateSelectors();
-                    initTelemetryChart();
-                    updateCircuitLayout(); // Disparar la primera pista
+                    driversDirectory = json.driversDirectory;
+                    populateDropdowns();
+                    initChart();
+                    updateLayout();
                 })
-                .catch(err => console.error("❌ Fallo crítico leyendo base de datos:", err));
+                .catch(err => console.error("❌ Fallo crítico de datos:", err));
 
-            // 🔄 FUNCIÓN MAESTRA DE MORPHING DE MAPAS
-            function updateCircuitLayout() {
+            function updateLayout() {
                 const trackKey = circuitSelector.value;
-                const trackConfig = circuitsDatabase[trackKey];
+                const config = trackVectors[trackKey];
                 
-                // Cambiar el título superior y transicionar la silueta SVG
-                document.getElementById("lbl-grand-prix-main-title").innerHTML = trackConfig.title;
-                mutablePath.setAttribute("d", trackConfig.path);
+                document.getElementById("lbl-grand-prix-main-title").innerHTML = config.title;
+                mutablePath.setAttribute("d", config.path);
                 
-                updateDashboardFrame(slider.value);
+                updateFrame(slider.value);
             }
 
-            function updateDashboardFrame(lap) {
-                if (!telemetryData || !telemetryData.laps[lap]) return;
+            function updateFrame(lap) {
+                const trackKey = circuitSelector.value;
+                if (!telemetryData || !telemetryData.data[trackKey]) return;
 
-                const currentLapData = telemetryData.laps[lap];
+                const lapData = telemetryData.data[trackKey][lap];
                 const id1 = s1.value; const id2 = s2.value;
-                const p1 = currentLapData.drivers[id1]; const p2 = currentLapData.drivers[id2];
+                const p1 = lapData.drivers[id1]; const p2 = lapData.drivers[id2];
                 const pathLength = mutablePath.getTotalLength();
 
-                lapBadge.textContent = `LAP ${lap} / ${telemetryData.totalLaps}`;
-                trackTempLbl.textContent = `ASFALTO: ${currentLapData.trackTemp}°C`;
+                lapBadge.textContent = `LAP ${lap} / 57`;
+                trackTempLbl.textContent = `ASFALTO: ${lapData.trackTemp}°C`;
 
-                // --- GENERADOR DE COMENTARIOS INTELIGENTES (RETENCIÓN DE USUARIO / SEO) ---
+                // --- TEXT INSIGHT GENERATOR ---
                 const nameA = driversDirectory[id1].name.split(" ")[1];
                 const nameB = driversDirectory[id2].name.split(" ")[1];
-                
-                if (lap == 1) {
-                    seoBox.innerHTML = `🏁 <strong>REPORT - START OF THE RACE:</strong> Temperatura de asfalto en ${currentLapData.trackTemp}°C. <strong>${nameA}</strong> y <strong>${nameB}</strong> traccionan agresivamente en la largada buscando el vértice del Sector 1.`;
-                } else if (lap == 34) {
-                    seoBox.innerHTML = `🛑 <strong>REPORT - PIT WINDOW OPEN:</strong> Las simulaciones aerodinámicas activan la alerta estratégica. Neumáticos traseros cruzando el umbral de los 100°C. Ventana crítica de detención en boxes abierta.`;
-                } else if (lap == 57) {
-                    seoBox.innerHTML = `🏁 <strong>REPORT - CHECKERED FLAG:</strong> Fin de la sesión de telemetría. La degradación térmica alcanza el límite crítico de compuestos. El delta final se consolida en el sector de meta.`;
+                if (lap == 34) {
+                    seoBox.innerHTML = `🛑 <strong>STRATEGY WINDOW:</strong> Desgaste crítico en los neumáticos traseros. Las escuderías preparan las pistolas neumáticas en el pitlane.`;
                 } else {
-                    seoBox.innerHTML = `📊 <strong>LIVE TELEMETRY ANALYSIS (V${lap}):</strong> El mapa registra una velocidad punta de ${p1.speed} km/h para el garage izquierdo. <strong>${nameA}</strong> mantiene un gasto de acelerador de ${p1.aws_throttle_pct}% frente al ${p2.aws_throttle_pct}% de <strong>${nameB}</strong>.`;
+                    seoBox.innerHTML = `📊 <strong>PIT WALL REPORT (LAP ${lap}):</strong> En ${circuitSelector.options[circuitSelector.selectedIndex].text}, <strong>${nameA}</strong> registra ${p1.speed} km/h con un tiempo de aceleración de ${p1.aws_throttle_pct}%. <strong>${nameB}</strong> tracciona a ${p2.speed} km/h.`;
                 }
 
-                // --- P1 IZQUIERDA ---
-                const d1Config = driversDirectory[id1];
-                document.getElementById("p1-name-lbl").textContent = d1Config.name.toUpperCase();
-                document.getElementById("p1-team-lbl").textContent = d1Config.team;
-                document.getElementById("card-p1").style.borderTop = `4px solid ${d1Config.color}`;
-                rP1.setAttribute("fill", d1Config.color);
+                // --- RENDER DRIVER 1 ---
+                document.getElementById("p1-name-lbl").textContent = driversDirectory[id1].name.toUpperCase();
+                document.getElementById("p1-team-lbl").textContent = driversDirectory[id1].team;
+                document.getElementById("card-p1").style.borderTop = `4px solid ${driversDirectory[id1].color}`;
+                rP1.setAttribute("fill", driversDirectory[id1].color);
 
                 document.getElementById("p1-v-speed").textContent = `${p1.speed} km/h`;
-                document.getElementById("p1-b-speed").style.width = `${(p1.speed / 360) * 100}%`;
-                document.getElementById("p1-b-speed").style.backgroundColor = d1Config.color;
+                document.getElementById("p1-b-speed").style.width = `${(p1.speed / 365) * 100}%`;
+                document.getElementById("p1-b-speed").style.backgroundColor = driversDirectory[id1].color;
                 document.getElementById("p1-v-throttle").textContent = `${p1.throttle}%`;
                 document.getElementById("p1-b-throttle").style.width = `${p1.throttle}%`;
                 document.getElementById("p1-v-brake").textContent = `${p1.brake}%`;
@@ -355,16 +325,15 @@
                 document.getElementById("p1-t-rr").textContent = `${p1.tyres.rr}°C`;
                 document.getElementById("p1-w-rr").style.backgroundColor = getThermalColor(p1.tyres.rr);
 
-                // --- P2 DERECHA ---
-                const d2Config = driversDirectory[id2];
-                document.getElementById("p2-name-lbl").textContent = d2Config.name.toUpperCase();
-                document.getElementById("p2-team-lbl").textContent = d2Config.team;
-                document.getElementById("card-p2").style.borderTop = `4px solid ${d2Config.color}`;
-                rP2.setAttribute("fill", d2Config.color);
+                // --- RENDER DRIVER 2 ---
+                document.getElementById("p2-name-lbl").textContent = driversDirectory[id2].name.toUpperCase();
+                document.getElementById("p2-team-lbl").textContent = driversDirectory[id2].team;
+                document.getElementById("card-p2").style.borderTop = `4px solid ${driversDirectory[id2].color}`;
+                rP2.setAttribute("fill", driversDirectory[id2].color);
 
                 document.getElementById("p2-v-speed").textContent = `${p2.speed} km/h`;
-                document.getElementById("p2-b-speed").style.width = `${(p2.speed / 360) * 100}%`;
-                document.getElementById("p2-b-speed").style.backgroundColor = d2Config.color;
+                document.getElementById("p2-b-speed").style.width = `${(p2.speed / 365) * 100}%`;
+                document.getElementById("p2-b-speed").style.backgroundColor = driversDirectory[id2].color;
                 document.getElementById("p2-v-throttle").textContent = `${p2.throttle}%`;
                 document.getElementById("p2-b-throttle").style.width = `${p2.throttle}%`;
                 document.getElementById("p2-v-brake").textContent = `${p2.brake}%`;
@@ -390,45 +359,42 @@
                 const gap1 = p1.gap === "LEADER" ? 0.0 : parseFloat(p1.gap);
                 const gap2 = p2.gap === "LEADER" ? 0.0 : parseFloat(p2.gap);
                 gapCore.textContent = `${Math.abs(gap1 - gap2).toFixed(3)}s`;
-
                 document.getElementById("p1-rank-hud").textContent = gap1 <= gap2 ? "ADV" : "DEF";
                 document.getElementById("p2-rank-hud").textContent = gap2 <= gap1 ? "ADV" : "DEF";
 
-                // RECALCULAR PINES SOBRE EL NUEVO LARGO DEL VECTOR MUTADO
+                // RADAR PINES
                 const ptP1 = mutablePath.getPointAtLength((p1.pos_pct * pathLength) % pathLength);
                 rP1.setAttribute("cx", ptP1.x); rP1.setAttribute("cy", ptP1.y);
                 const ptP2 = mutablePath.getPointAtLength((p2.pos_pct * pathLength) % pathLength);
-                rP2.setAttribute("radar-p2", ptP2.x); rP2.setAttribute("cy", ptP2.y);
+                rP2.setAttribute("cx", ptP2.x); rP2.setAttribute("cy", ptP2.y);
 
-                // HISTOGRAMA CHART
+                // ACTUALIZAR GRÁFICA COMPLETA DE VELOCIDADES
                 if (chartInstance) {
                     const speedH1 = []; const speedH2 = [];
                     for (let i = 1; i <= 57; i++) {
-                        if (telemetryData.laps[i]) {
-                            speedH1.push(telemetryData.laps[i].drivers[id1].speed);
-                            speedH2.push(telemetryData.laps[i].drivers[id2].speed);
+                        if (telemetryData.data[trackKey][i]) {
+                            speedH1.push(telemetryData.data[trackKey][i].drivers[id1].speed);
+                            speedH2.push(telemetryData.data[trackKey][i].drivers[id2].speed);
                         }
                     }
                     chartInstance.data.datasets[0].data = speedH1;
-                    chartInstance.data.datasets[0].borderColor = d1Config.color;
-                    chartInstance.data.datasets[0].label = d1Config.name;
+                    chartInstance.data.datasets[0].borderColor = driversDirectory[id1].color;
                     chartInstance.data.datasets[1].data = speedH2;
-                    chartInstance.data.datasets[1].borderColor = d2Config.color;
-                    chartInstance.data.datasets[1].label = d2Config.name;
+                    chartInstance.data.datasets[1].borderColor = driversDirectory[id2].color;
                     chartInstance.update();
                 }
             }
 
             function getThermalColor(temp) {
-                if (temp < 93) return "#24b353"; 
-                if (temp < 102) return "#ffb700"; 
+                if (temp < 100) return "#24b353"; 
+                if (temp < 110) return "#ffb700"; 
                 return "#e10600"; 
             }
 
             circuitSelector.addEventListener("change", updateCircuitLayout);
-            s1.addEventListener("change", () => updateDashboardFrame(slider.value));
-            s2.addEventListener("change", () => updateDashboardFrame(slider.value));
-            slider.addEventListener("input", () => updateDashboardFrame(slider.value));
+            s1.addEventListener("change", () => updateFrame(slider.value));
+            s2.addEventListener("change", () => updateFrame(slider.value));
+            slider.addEventListener("input", () => updateFrame(slider.value));
         });
     </script>
 </body>
