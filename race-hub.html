@@ -624,18 +624,6 @@ function fmtDate(d){
 // ── PREMIUM CHART SYSTEM ─────────────────────────────────────────────────────
 // Pure Canvas API — full control, no Chart.js limitations
 
-const TEAM_COLORS = {
-  'Red Bull':'#3671C6','Ferrari':'#E8002D','Mercedes':'#00D2BE',
-  'McLaren':'#FF8000','Aston Martin':'#358C75','Alpine':'#FF87BC',
-  'Williams':'#005AFF','AlphaTauri':'#5E8FAA','RB':'#6692FF',
-  'Alfa Romeo':'#C92D4B','Haas':'#888888','Sauber':'#00E701',
-  'Racing Point':'#F596C8','Force India':'#FF80C7','Renault':'#FFD800',
-  'Toro Rosso':'#469BFF',
-};
-function teamColor(name){
-  for(const[k,v] of Object.entries(TEAM_COLORS)) if(name&&name.includes(k)) return v;
-  return '#94a3b8';
-}
 
 // Driver color: use team color
 function driverColor(code, results){
@@ -941,7 +929,6 @@ function copyScorecard(){
 
 // ── SIDEBAR ──────────────────────────────────────────────────
 let activeYear = 'all', searchQ = '', activeRaceId = null, currentRace = null;
-let gapChart = null;
 const years = [...new Set(RD.index.map(r=>r.year))].sort((a,b)=>b-a);
 
 function buildSidebar(){
@@ -1513,7 +1500,7 @@ function setLang(lang){
   const esb = document.getElementById('empty-sub');
   if(esb) esb.textContent = RL('selectRaceSub');
   // If race loaded, re-render tabs
-  if(activeRaceId) {
+  if(typeof activeRaceId !== "undefined" && activeRaceId) {
     document.querySelectorAll('.sec-tab').forEach((t,i)=>{
       const keys = ['results','gapChart','pitStrategy','qualifying','driverVsDriver'];
       t.textContent = RL(keys[i]);
