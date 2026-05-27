@@ -633,6 +633,7 @@ function driverColor(code, results){
 
 // ── POSITION CHART ───────────────────────────────────────────────────────────
 function renderPositionChart(race, canvasId){
+  if(!race || !race.laps) return;
   const canvas = document.getElementById(canvasId);
   if(!canvas) return;
   const ctx = canvas.getContext('2d');
@@ -772,6 +773,7 @@ function renderPositionChart(race, canvasId){
 
 // ── STINT / STRATEGY CHART ───────────────────────────────────────────────────
 function renderStintChart(race, canvasId){
+  if(!race || !race.results) return;
   const canvas = document.getElementById(canvasId);
   if(!canvas) return;
   const ctx = canvas.getContext('2d');
@@ -964,15 +966,15 @@ function renderList(){
 function loadRace(raceId){
   activeRaceId = raceId;
   renderList();
-  const race = RD.races[raceId];
-  const meta = RD.index.find(r=>r.raceId===raceId);
+  const race = RD.races[String(raceId)];
+  if(!race){ console.error('Race not found:', raceId); return; }
+  currentRace = race;
+  const meta = RD.index.find(r=>String(r.raceId)===String(raceId));
   document.getElementById('empty-state').style.display='none';
-  const content = document.getElementById('race-content');
-  content.style.display='block';
-  content.innerHTML = buildRaceHTML(race, meta);
-  renderGapChart(race);
-  renderPitHeatmap(race);
-  renderDvD(race);
+  const page = document.getElementById('race-content');
+  page.style.display='block';
+  page.innerHTML = buildRaceHTML(race, meta||{country:'',round:0,year:0});
+  setTimeout(()=>renderDvD(race), 60);
   document.getElementById('content').scrollTop=0;
 }
 
@@ -1125,18 +1127,19 @@ function switchTab(name, el){
   document.querySelectorAll('.sec-panel').forEach(p=>p.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('panel-'+name).classList.add('active');
-  // Render charts when tab becomes visible
+  if(!currentRace) return;
   setTimeout(()=>{
-    if(name==='positions') {
+    if(name==='positions'){
       renderPositionChart(currentRace,'pos-canvas');
       buildChartLegend(currentRace,'leg-pos',10);
     }
-    if(name==='gap') {
+    if(name==='gap'){
       renderGapChart(currentRace,'gap-canvas');
       buildChartLegend(currentRace,'leg-gap',8);
     }
     if(name==='stints') renderStintChart(currentRace,'stint-canvas');
-  }, 30);
+    if(name==='dvd') renderDvD(currentRace);
+  }, 60);
 }
 
 
