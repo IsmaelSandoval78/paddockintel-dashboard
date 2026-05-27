@@ -53,6 +53,7 @@
         .timeline-slider-input { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.08); outline: none; cursor: pointer; }
         .timeline-slider-input::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #ffffff; }
         .back-nav-link { text-align: center; color: #3d4047; text-decoration: none; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
+        .back-nav-link:hover { color: #ffffff; }
     </style>
 </head>
 <body>
@@ -195,7 +196,6 @@
             let chartInstance = null;
             let driversDirectory = {};
 
-            // 🌟 GEOMETRÍA FIEL CONFIRMADA 2026
             const trackVectors = {
                 "melbourne": {
                     title: "ALBERT PARK — <span>MELBOURNE GP</span>",
@@ -219,7 +219,6 @@
                 }
             };
 
-            // Paleta Hexadecimal Oficial FIA 2026 para mapear dinámicamente cualquier piloto de la API
             const teamColorsHex = {
                 "red bull": "#3671C6", "ferrari": "#E8002D", "mercedes": "#27F4D2", 
                 "mclaren": "#FF8000", "aston martin": "#229971", "williams": "#64C4FF", 
@@ -236,14 +235,15 @@
                 
                 const keys = Object.keys(driversDirectory);
                 s1.value = keys.includes("antonelli") ? "antonelli" : keys[0];
-                s2.value = keys.includes("verstappen") ? "verstappen" : keys[1] || keys[0];
+                s2.value = keys.includes("verstappen") ? "verstappen" : (keys[1] || keys[0]);
             }
 
             function getDriverColor(driverId) {
                 const driver = driversDirectory[driverId];
                 if (!driver) return "#7a828e";
+                if (!driver.team) return driver.color || "#7a828e";
                 const teamLower = driver.team.toLowerCase();
-                for (const [key, color]header of Object.entries(teamColorsHex)) {
+                for (const [key, color] of Object.entries(teamColorsHex)) {
                     if (teamLower.includes(key)) return color;
                 }
                 return driver.color || "#7a828e";
@@ -279,11 +279,10 @@
                     driversDirectory = json.driversDirectory;
                     populateDropdowns();
                     initChart();
-                    updateCircuitLayout(); // 🛠️ CORREGIDO AQUÍ: Sincronizado perfectamente con el cargado inicial
+                    updateCircuitLayout(); 
                 })
                 .catch(err => console.error("❌ Fallo crítico de datos:", err));
 
-            // 🛠️ CORRECCIÓN AERODINÁMICA DEL BUG DEL SELECTOR
             function updateCircuitLayout() {
                 const trackKey = circuitSelector.value;
                 const config = trackVectors[trackKey];
@@ -302,6 +301,9 @@
 
                 const lapData = telemetryData.data[trackKey][lap];
                 const id1 = s1.value; const id2 = s2.value;
+                
+                if (!lapData.drivers[id1] || !lapData.drivers[id2]) return;
+                
                 const p1 = lapData.drivers[id1]; const p2 = lapData.drivers[id2];
                 const pathLength = mutablePath.getTotalLength();
 
@@ -416,7 +418,6 @@
                 return "#e10600"; 
             }
 
-            // 🛠️ ENGANCHE CORRECTO DEL LISTENER AL CONMUTADOR
             circuitSelector.addEventListener("change", updateCircuitLayout);
             s1.addEventListener("change", () => updateFrame(slider.value));
             s2.addEventListener("change", () => updateFrame(slider.value));

@@ -7,7 +7,6 @@ def generate_clean_2026_telemetry():
     
     circuits = ["melbourne", "china", "japan", "miami", "montreal"]
     
-    # Grid de respaldo pulido y verificado
     drivers_2026 = {
         "verstappen": {"name": "Max Verstappen", "code": "VER", "team": "Red Bull Racing"},
         "perez": {"name": "Sergio Pérez", "code": "PER", "team": "Red Bull Racing"},
@@ -18,10 +17,10 @@ def generate_clean_2026_telemetry():
         "norris": {"name": "Lando Norris", "code": "NOR", "team": "McLaren F1"},
         "piastri": {"name": "Oscar Piastri", "code": "PIA", "team": "McLaren F1"},
         "alonso": {"name": "Fernando Alonso", "code": "ALO", "team": "Aston Martin"},
-        "stroll": {"name": "Lance Stroll", "code": "Aston Martin"},
+        "stroll": {"name": "Lance Stroll", "code": "STR", "team": "Aston Martin"},
         "sainz": {"name": "Carlos Sainz", "code": "SAI", "team": "Williams Racing"},
+        "colapinto": {"name": "Franco Colapinto", "code": "COL", "team": "Williams Racing"},
         "albon": {"name": "Alex Albon", "code": "ALB", "team": "Williams Racing"},
-        "colapinto": {"name": "Franco Colapinto", "code": "COL", "team": "Williams Racing"}, # 🇦🇷 Asegurado en el grid
         "gasly": {"name": "Pierre Gasly", "code": "GAS", "team": "Alpine F1"},
         "doohan": {"name": "Jack Doohan", "code": "DOO", "team": "Alpine F1"},
         "tsunoda": {"name": "Yuki Tsunoda", "code": "TSU", "team": "Visa Cash App RB"},
@@ -77,7 +76,7 @@ def generate_clean_2026_telemetry():
     
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(master_database, f, indent=4)
-    print("✅ [PaddockIntel Engine] Datos listos.")
+    print("✅ [PaddockIntel Engine] Datos purificados listos.")
 
 if __name__ == "__main__":
     generate_clean_2026_telemetry()
