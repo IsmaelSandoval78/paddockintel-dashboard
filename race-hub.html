@@ -436,6 +436,19 @@ function fmtDate(d){
   return new Date(d+'T12:00:00Z').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
 }
 
+const TEAM_COLORS = {
+  'Red Bull':'#3671C6','Ferrari':'#E8002D','Mercedes':'#27F4D2',
+  'McLaren':'#FF8000','Aston Martin':'#229971','Alpine':'#FF87BC',
+  'Williams':'#64C4FF','AlphaTauri':'#5E8FAA','RB':'#6692FF',
+  'Alfa Romeo':'#C92D4B','Haas':'#B6BABD','Sauber':'#52E252',
+  'Racing Point':'#F596C8','Force India':'#FF80C7','Renault':'#FFD800',
+  'Toro Rosso':'#469BFF',
+};
+function teamColor(name){
+  for(const[k,v] of Object.entries(TEAM_COLORS)) if(name&&name.includes(k)) return v;
+  return '#6b7280';
+}
+
 // ── SIDEBAR ──────────────────────────────────────────────────
 let activeYear = 'all', searchQ = '', activeRaceId = null;
 let gapChart = null;
