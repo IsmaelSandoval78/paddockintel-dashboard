@@ -929,6 +929,121 @@ function copyScorecard(){
   });
 }
 
+
+// ── GAP CHART ────────────────────────────────────────────────────────────────
+function renderGapChart(race, canvasId){
+  const canvas = document.getElementById(canvasId);
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth; const H = canvas.offsetHeight || 320;
+  canvas.width = W * devicePixelRatio; canvas.height = H * devicePixelRatio;
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+
+  const PAD = {top:20, right:80, bottom:36, left:50};
+  const cW = W - PAD.left - PAD.right;
+  const cH = H - PAD.top - PAD.bottom;
+
+  ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,W,H);
+
+  const laps = race.laps;
+  const totalLaps = laps.length;
+
+  // Collect valid gaps, find max
+  const top8 = race.results.slice(0,8);
+  let maxGap = 0;
+  top8.forEach(r=>{
+    const gaps = race.gapChart[r.code]||[];
+    gaps.forEach(g=>{ if(g!==null && g>maxGap) maxGap=g; });
+  });
+  maxGap = Math.min(maxGap * 1.1, 120); // cap at 120s, add 10% headroom
+
+  // Round maxGap to nice number
+  const step = maxGap < 30 ? 5 : maxGap < 60 ? 10 : 20;
+  maxGap = Math.ceil(maxGap/step)*step;
+
+  // Grid
+  ctx.strokeStyle = 'rgba(0,0,0,0.05)'; ctx.lineWidth = 1;
+  for(let g=0; g<=maxGap; g+=step){
+    const y = PAD.top + (1 - g/maxGap) * cH;
+    ctx.beginPath(); ctx.moveTo(PAD.left,y); ctx.lineTo(PAD.left+cW,y); ctx.stroke();
+    ctx.fillStyle = '#8a8a8a'; ctx.font = '9px Share Tech Mono';
+    ctx.textAlign = 'right';
+    ctx.fillText(g+'s', PAD.left-6, y+3);
+  }
+  for(let i=0; i<laps.length; i+=10){
+    const x = PAD.left + (i/(totalLaps-1)) * cW;
+    ctx.beginPath(); ctx.moveTo(x,PAD.top); ctx.lineTo(x,PAD.top+cH); ctx.stroke();
+    ctx.fillStyle = '#8a8a8a'; ctx.font = '9px Share Tech Mono';
+    ctx.textAlign = 'center';
+    ctx.fillText(laps[i], x, PAD.top+cH+16);
+  }
+  ctx.fillStyle = '#8a8a8a'; ctx.font = '9px Share Tech Mono';
+  ctx.textAlign = 'center';
+  ctx.fillText(laps[laps.length-1], PAD.left+cW, PAD.top+cH+16);
+
+  // Axis labels
+  ctx.save(); ctx.fillStyle='#aaa'; ctx.font='9px Share Tech Mono';
+  ctx.textAlign='center'; ctx.translate(12, PAD.top+cH/2);
+  ctx.rotate(-Math.PI/2); ctx.fillText('GAP TO LEADER (s)',0,0); ctx.restore();
+  ctx.fillStyle='#aaa'; ctx.font='9px Share Tech Mono'; ctx.textAlign='center';
+  ctx.fillText('LAP', PAD.left+cW/2, H-4);
+
+  // Draw lines
+  top8.forEach((result, di)=>{
+    const code = result.code;
+    if(di===0) return; // leader has 0 gap always, skip
+    const gaps = race.gapChart[code]||[];
+    const color = driverColor(code, race.results);
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = di <= 2 ? 2.5 : 1.8;
+    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+
+    let started = false;
+    ctx.beginPath();
+    gaps.forEach((gap, i)=>{
+      if(gap === null || gap < 0) { started=false; return; }
+      const clampedGap = Math.min(gap, maxGap);
+      const x = PAD.left + (i/(totalLaps-1)) * cW;
+      const y = PAD.top + (clampedGap/maxGap) * cH;
+      if(!started){ ctx.moveTo(x,y); started=true; }
+      else ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+
+    // Label at end
+    const lastValid = gaps.reduce((acc,g,i)=>g!==null&&g>=0?i:acc, -1);
+    if(lastValid >= 0){
+      const gap = Math.min(gaps[lastValid], maxGap);
+      const x = PAD.left + (lastValid/(totalLaps-1)) * cW + 5;
+      const y = PAD.top + (gap/maxGap) * cH;
+      ctx.fillStyle = color; ctx.font = 'bold 9px Share Tech Mono';
+      ctx.textAlign = 'left';
+      ctx.fillText(code, Math.min(x, W-PAD.right+2), Math.max(PAD.top+5, Math.min(y+3, PAD.top+cH)));
+    }
+  });
+
+  // Pit markers on gap chart
+  top8.slice(1).forEach(r=>{
+    const code = r.code;
+    const color = driverColor(code, race.results);
+    (race.pitStops[code]||[]).forEach(s=>{
+      if(!s.dur || s.dur>=60) return;
+      const lapIdx = laps.indexOf(s.lap);
+      if(lapIdx<0) return;
+      const x = PAD.left + (lapIdx/(totalLaps-1))*cW;
+      const gaps = race.gapChart[code]||[];
+      const gap = gaps[lapIdx];
+      if(gap===null || gap<0) return;
+      const y = PAD.top + (Math.min(gap,maxGap)/maxGap)*cH;
+      ctx.fillStyle = color;
+      ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='#fff'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2); ctx.stroke();
+    });
+  });
+}
+
 // ── SIDEBAR ──────────────────────────────────────────────────
 let activeYear = 'all', searchQ = '', activeRaceId = null, currentRace = null;
 const years = [...new Set(RD.index.map(r=>r.year))].sort((a,b)=>b-a);
@@ -1151,91 +1266,8 @@ const DRIVER_PALETTE = [
   '#60a5fa','#fbbf24','#e879f9','#94a3b8','#f87171',
 ];
 
-let hiddenDrivers = new Set();
 
-function renderGapChart(race){
-  if(gapChart){gapChart.destroy();gapChart=null;}
-  hiddenDrivers.clear();
-  const ctx = document.getElementById('gap-canvas');
-  if(!ctx) return;
 
-  const drivers = Object.keys(race.gapChart);
-  // Sort by final gap (ascending = better finish)
-  const finalGaps = drivers.map(d=>{
-    const arr = race.gapChart[d].filter(v=>v!==null);
-    return {code:d, finalGap: arr.length ? arr[arr.length-1] : 999};
-  }).sort((a,b)=>a.finalGap-b.finalGap);
-  const sorted = finalGaps.map(f=>f.code);
-
-  // Legend
-  const legend = document.getElementById('gap-legend');
-  legend.innerHTML = sorted.map((code,i)=>`
-    <div class="legend-item" onclick="toggleDriver('${code}')" id="leg-${code}">
-      <div class="legend-dot" style="background:${DRIVER_PALETTE[i%DRIVER_PALETTE.length]}"></div>
-      ${code}
-    </div>`).join('');
-
-  const datasets = sorted.map((code,i)=>({
-    label: code,
-    data: race.laps.map((lap,idx)=>({x:lap, y:race.gapChart[code][idx]})),
-    borderColor: DRIVER_PALETTE[i%DRIVER_PALETTE.length],
-    backgroundColor: 'transparent',
-    borderWidth: code===sorted[0]?2:1.5,
-    pointRadius: 0,
-    pointHoverRadius: 3,
-    tension: 0.2,
-    spanGaps: true,
-  }));
-
-  gapChart = new Chart(ctx, {
-    type:'line',
-    data:{datasets},
-    options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      animation:false,
-      plugins:{
-        legend:{display:false},
-        tooltip:{
-          mode:'index',intersect:false,
-          backgroundColor:'rgba(255,255,255,0.98)',
-          titleColor:'#e10600',bodyColor:'#4a4a4a',
-          borderColor:'rgba(0,0,0,0.08)',borderWidth:1,
-          titleFont:{family:'Share Tech Mono',size:11},
-          bodyFont:{family:'Share Tech Mono',size:10},
-          callbacks:{
-            title: items=>'Lap '+items[0].label,
-            label: item=>`${item.dataset.label}: +${item.raw.y?.toFixed(1)||'—'}s`,
-          }
-        }
-      },
-      scales:{
-        x:{
-          type:'linear',
-          title:{display:true,text:'LAP',color:'#6b7280',font:{family:'Share Tech Mono',size:10}},
-          grid:{color:'rgba(0,0,0,0.05)'},
-          ticks:{color:'#8a8a8a',font:{family:'Share Tech Mono',size:9}},
-        },
-        y:{
-          min:0,suggestedMax:90,
-          title:{display:true,text:'GAP TO LEADER (s)',color:'#8a8a8a',font:{family:'Share Tech Mono',size:9}},
-          grid:{color:'rgba(0,0,0,0.05)'},
-          ticks:{color:'#8a8a8a',font:{family:'Share Tech Mono',size:8},callback:v=>v+'s'},
-          min:0,
-        }
-      }
-    }
-  });
-}
-
-function toggleDriver(code){
-  const idx = gapChart.data.datasets.findIndex(d=>d.label===code);
-  if(idx===-1) return;
-  const meta = gapChart.getDatasetMeta(idx);
-  meta.hidden = !meta.hidden;
-  document.getElementById('leg-'+code)?.classList.toggle('hidden', meta.hidden);
-  gapChart.update();
-}
 
 // ── PIT HEATMAP ──────────────────────────────────────────────
 function pitColor(dur){
