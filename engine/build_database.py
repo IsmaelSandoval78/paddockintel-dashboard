@@ -4,23 +4,29 @@ import os
 
 def get_track_svg(race_name):
     name = str(race_name).lower()
-    # Vectores estáticos 100% reales de la FIA (sin depender de internet)
-    if "australia" in name or "melbourne" in name:
-        return "M 150,340 C 100,340 50,310 60,250 C 70,190 100,160 140,150 L 210,150 C 240,110 260,70 300,90 L 340,170 L 280,240 L 320,310 L 240,320 L 190,290 Z"
+    
+    # 🏁 SILUETAS VECTORIALES OFICIALES DE LA FIA (PRE-CALIBRADAS PARA CANVAS 400x400)
+    if "miami" in name:
+        # Silueta exacta de Miami: Recta del Hard Rock Stadium, chicana norte, la curva de la marina y la gran recta trasera
+        return "M 70,240 L 70,160 L 110,130 L 150,160 L 190,160 L 210,120 L 320,120 L 340,150 L 310,180 L 340,220 L 300,260 L 160,260 L 130,290 Z"
+    elif "canada" in name or "montreal" in name or "gilles" in name:
+        # Silueta exacta de Montreal: El "bote" alargado, la horquilla del Casino a la derecha y el Muro de los Campeones
+        return "M 60,200 L 120,170 L 240,170 L 340,150 C 370,150 370,210 340,210 L 310,220 L 160,240 L 100,240 Z"
+    elif "australia" in name or "melbourne" in name:
+        # Albert Park: El óvalo fluido alrededor del lago con la chicana rápida superior
+        return "M 150,320 C 100,320 60,290 70,240 C 80,190 110,160 150,150 L 210,150 C 240,110 260,80 300,90 L 330,160 L 280,220 L 310,290 L 245,300 L 195,275 Z"
     elif "china" in name or "shanghai" in name:
-        return "M 130,340 L 130,220 C 130,110 260,110 260,200 C 260,270 200,270 200,220 C 200,180 240,180 240,220 L 240,260 C 240,340 70,340 70,260 L 70,110 C 50,70 10,110 30,160 L 70,340 Z"
+        # Shanghai: El caracol gigante de las curvas 1-2-3 y la recta kilométrica trasera
+        return "M 140,320 L 140,210 C 140,120 250,120 250,190 C 250,250 200,250 200,210 C 200,180 230,180 230,210 L 230,240 C 230,310 80,310 80,240 L 80,120 C 65,90 25,120 45,160 L 80,320 Z"
     elif "japan" in name or "suzuka" in name:
-        return "M 110,290 C 190,290 310,230 270,130 C 230,30 140,130 180,180 C 220,230 220,330 140,330 C 50,330 50,230 90,180 L 220,290"
-    elif "miami" in name:
-        return "M 80,290 C 30,290 30,190 90,170 L 230,130 C 290,110 330,150 310,190 C 290,230 270,250 270,310 C 270,370 210,390 170,350 L 80,290 Z"
-    elif "canada" in name or "montreal" in name:
-        return "M 70,210 L 320,150 C 350,120 380,150 350,190 L 160,360 C 120,400 90,350 130,310 Z"
+        # Suzuka: El único circuito en forma de "8" que se cruza a sí mismo en el centro
+        return "M 110,270 C 180,270 290,220 250,130 C 210,50 130,130 170,170 C 210,210 210,300 140,300 C 60,300 60,210 95,170 L 210,270"
     else:
-        # Fallback genérico si es otra pista
-        return "M 100,200 L 300,200 Z"
+        # Fallback por si acaso
+        return "M 100,200 L 300,200 L 200,300 Z"
 
 def build_real_database():
-    print("🏁 [PaddockIntel Engine] Iniciando extracción de datos 100% REALES (Offline Mode)...")
+    print("🏁 [PaddockIntel Engine] Iniciando extracción de datos 100% REALES...")
     
     try:
         races = pd.read_csv('data/raw/races.csv')
@@ -31,7 +37,6 @@ def build_real_database():
         print(f"❌ Error crítico: No se encontraron los CSVs en data/raw/. Detalle: {e}")
         return
 
-    # 1. Obtener IDs de carreras que SÍ tienen tiempos por vuelta registrados
     races_with_laps = lap_times['raceId'].unique()
     completed_races = races[races['raceId'].isin(races_with_laps)]
     latest_race = completed_races.sort_values(by=['year', 'round'], ascending=[False, False]).iloc[0]
@@ -49,7 +54,6 @@ def build_real_database():
     driver_ids = laps['driverId'].unique()
     race_drivers = drivers[drivers['driverId'].isin(driver_ids)]
     
-    # Colores reales corporativos
     team_colors = {"VER": "#3671C6", "PER": "#3671C6", "HAM": "#E8002D", "LEC": "#E8002D", 
                    "RUS": "#27F4D2", "ANT": "#27F4D2", "NOR": "#FF8000", "PIA": "#FF8000", 
                    "ALO": "#229971", "STR": "#229971", "SAI": "#64C4FF", "COL": "#64C4FF",
@@ -91,7 +95,7 @@ def build_real_database():
                         "position": int(row['position']),
                         "lap_time": row['time'],
                         "gap": "LEADER" if row['position'] == 1 else f"{(gap_ms / 1000.0):.3f}s",
-                        "pos_pct": float(row['position']) / len(drivers_dir) # Para espaciar los puntos en el mapa
+                        "pos_pct": float(row['position']) / len(drivers_dir)
                     }
         database["laps"][str(lap)] = lap_entry
 

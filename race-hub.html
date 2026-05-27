@@ -18,9 +18,13 @@
         .garage-telemetry-split { display: grid; grid-template-columns: 170px 1fr; gap: 20px; align-items: center; }
         .garage-telemetry-split.reversed { grid-template-columns: 1fr 170px; }
         .metrics-live-stack { display: flex; flex-direction: column; gap: 12px; width: 100%; }
-        .seo-insights-card { background: #0f1217; border: 1px solid rgba(255,255,255,0.04); border-radius: 16px; padding: 18px 24px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.6; color: #a4a9b3; border-left: 4px solid #ff9900; }
-        .back-nav-link { text-align: center; color: #3d4047; text-decoration: none; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 10px; display: block; }
+        .seo-insights-card { background: #0f1217; border: 1px solid rgba(255,255,255,0.04); border-radius: 16px; padding: 18px 24px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.6; color: #a4a9b3; border-left: 4px solid #ff8000; }
+        .back-nav-link { text-align: center; color: #5c5f66; text-decoration: none; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 10px; display: block; }
         .back-nav-link:hover { color: #ffffff; }
+        .gauge-header-text { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #86868b; margin-bottom: 4px; }
+        .gauge-header-text span.value { color: #ffffff; font-weight: 700; }
+        .gauge-bar-track { height: 6px; background: rgba(255,255,255,0.03); border-radius: 3px; overflow: hidden; width: 100%; }
+        .gauge-bar-fill { height: 100%; width: 0%; transition: width 0.3s ease; }
     </style>
 </head>
 <body>
@@ -29,7 +33,7 @@
         <header class="hub-top-bar">
             <div class="hub-title-group">
                 <p>Base de Datos Histórica (CSV Engine)</p>
-                <h1 id="lbl-grand-prix-main-title">CARGANDO CARRERA...</h1>
+                <h1 id="lbl-grand-prix-main-title">CARGANDO MÓDULO...</h1>
             </div>
             <div class="control-dropdowns">
                 <select id="sel-driver-1" class="aws-select"></select>
@@ -40,7 +44,7 @@
         <div class="telemetry-mirror-grid">
             <div class="driver-garage-card" id="card-p1">
                 <div class="garage-header">
-                    <div class="driver-info"><p id="p1-team-lbl">F1 DRIVER</p><h2 id="p1-name-lbl">PILOTO A</h2></div>
+                    <div class="driver-info"><p id="p1-team-lbl">DRIVER A</p><h2 id="p1-name-lbl">Cargando...</h2></div>
                     <span class="rank-huge" id="p1-rank-hud">--</span>
                 </div>
                 <div class="garage-telemetry-split">
@@ -64,28 +68,27 @@
             </div>
 
             <div class="center-dashboard-core">
-                <div class="weather-monitor-box">
-                    <span class="card-title" style="font-size:11px; color:#6c6f78;">ESTADO DE LA PISTA</span>
-                    <div class="weather-grid-mini">
-                        <div class="w-item" id="lbl-track-temp">DATOS REALES (CSV)</div>
-                    </div>
+                <div class="weather-monitor-box" style="text-align: center; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;">
+                    <span style="font-size:11px; color:#6c6f78; font-weight: 700; letter-spacing: 0.05em;">TRAZADO REAL DEL CIRCUITO</span>
                 </div>
 
-                <svg width="240" height="240" viewBox="0 0 400 400">
-                    <path id="circuit-vector-mutable" d="" style="stroke:rgba(255,255,255,0.08); stroke-width:6; fill:none; stroke-linecap:round; stroke-linejoin:round;" />
-                    <circle id="radar-p1" r="12" cx="200" cy="200" stroke="#fff" stroke-width="2" />
-                    <circle id="radar-p2" r="12" cx="200" cy="200" stroke="#fff" stroke-width="2" />
-                </svg>
+                <div class="map-container">
+                    <svg width="260" height="260" viewBox="0 0 400 400">
+                        <path id="circuit-vector-mutable" d="" style="stroke:#fff; stroke-width:5; fill:none; stroke-linecap:round; stroke-linejoin:round; opacity: 0.85;" />
+                        <circle id="radar-p1" r="10" cx="200" cy="200" stroke="#fff" stroke-width="2" />
+                        <circle id="radar-p2" r="10" cx="200" cy="200" stroke="#fff" stroke-width="2" />
+                    </svg>
+                </div>
 
-                <div>
-                    <span class="card-title" style="font-size:10px; color:#6c6f78;">DELTA ENTRE PILOTOS</span>
-                    <div id="lbl-gap-core" style="font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:700; color:#ff9900; margin-top:2px;">0.000s</div>
+                <div style="text-align: center; width: 100%; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+                    <span class="card-title" style="font-size:10px; color:#6c6f78; font-weight: 700;">DELTA RELATIVO</span>
+                    <div id="lbl-gap-core" style="font-family:'JetBrains Mono',monospace; font-size:24px; font-weight:800; color:#ff8000; margin-top:2px;">0.000s</div>
                 </div>
             </div>
 
             <div class="driver-garage-card" id="card-p2">
                 <div class="garage-header" style="flex-direction: row-reverse;">
-                    <div class="driver-info" style="text-align: right;"><p id="p2-team-lbl">F1 DRIVER</p><h2 id="p2-name-lbl">PILOTO B</h2></div>
+                    <div class="driver-info" style="text-align: right;"><p id="p2-team-lbl">DRIVER B</p><h2 id="p2-name-lbl">Cargando...</h2></div>
                     <span class="rank-huge" id="p2-rank-hud">--</span>
                 </div>
                 <div class="garage-telemetry-split reversed">
@@ -109,12 +112,12 @@
             </div>
         </div>
 
-        <div class="seo-insights-card" id="seo-commentary-box">📊 LEYENDO TABLAS RELACIONALES (CSV)...</div>
+        <div class="seo-insights-card" id="seo-commentary-box">📊 CALCULANDO DATOS RELACIONALES...</div>
 
         <div class="apple-scrubber-card">
             <div class="apple-slider-wrapper">
                 <div class="scrubber-top-row">
-                    <span class="scrubber-title">Explorador de Tiempos Reales de Carrera (CSV Data)</span>
+                    <span class="scrubber-title">Explorador de Tiempos Reales de Carrera (Scrubber Maestro)</span>
                     <span class="scrubber-lap-badge" id="hud-lap-badge">LAP 1 / --</span>
                 </div>
                 <input type="range" min="1" max="57" value="1" class="timeline-slider-input" id="scrubber-input-range" />
@@ -139,36 +142,29 @@
 
             let db = null;
 
-            // 📥 CARGAR EL JSON GENERADO DESDE LOS CSVs (ARQUITECTURA 3.0)
             fetch('public/json-api/latest_race.json')
                 .then(res => res.json())
                 .then(data => {
                     db = data;
                     
-                    // Actualizar cabecera con el año y nombre real extraído del CSV
-                    document.getElementById("lbl-grand-prix-main-title").innerHTML = `${db.event.name.toUpperCase()} — <span>${db.event.year} RACE HUB</span>`;
-                    
-                    // Configurar el mapa SVG extraído por FastF1
+                    document.getElementById("lbl-grand-prix-main-title").innerHTML = `${db.event.name.toUpperCase()} — <span>${db.event.year} TELEMETRY HUB</span>`;
                     mutablePath.setAttribute("d", db.track_svg);
-                    
-                    // Configurar el slider con las vueltas reales
                     slider.max = db.event.totalLaps;
                     
-                    // Llenar listas desplegables
+                    s1.innerHTML = ""; s2.innerHTML = "";
                     Object.values(db.driversDirectory).forEach(d => {
                         s1.innerHTML += `<option value="${d.code}">${d.name} (${d.code})</option>`;
                         s2.innerHTML += `<option value="${d.code}">${d.name} (${d.code})</option>`;
                     });
                     
-                    // Preseleccionar dos pilotos (ej. los primeros en la lista)
                     const codes = Object.keys(db.driversDirectory);
-                    s1.value = codes[0];
-                    if (codes.length > 1) s2.value = codes[1];
+                    if(codes.includes("VER")) { s1.value = "VER"; } else { s1.value = codes[0]; }
+                    if(codes.includes("PER")) { s2.value = "PER"; } else { s2.value = codes[1] || codes[0]; }
 
                     updateFrame(slider.value);
                 })
                 .catch(err => {
-                    seoBox.innerHTML = `❌ Error cargando datos: ${err.message}. Asegúrate de ejecutar el script de Python primero.`;
+                    seoBox.innerHTML = `❌ Error cargando datos: ${err.message}`;
                 });
 
             function updateFrame(lap) {
@@ -181,17 +177,16 @@
 
                 lapBadge.textContent = `LAP ${lap} / ${db.event.totalLaps}`;
                 
-                // Mensajes de reporte
                 if (lapData.pitAlert) {
-                    seoBox.innerHTML = `🛑 <strong>PIT WINDOW ACTIVITY:</strong> La base de datos CSV registra entradas a los pits en esta vuelta.`;
+                    seoBox.innerHTML = `🛑 <strong>PIT WALL REPORT:</strong> Actividad detectada en la calle de pits durante esta vuelta. Estrategias de compuestos en desarrollo.`;
                 } else {
-                    seoBox.innerHTML = `📊 <strong>CSV LAP REPORT (Vuelta ${lap}):</strong> Mostrando tiempos oficiales de la FIA extraídos de la base de datos histórica.`;
+                    seoBox.innerHTML = `📊 <strong>ANÁLISIS REAL DE CARRERA:</strong> Monitoreando brechas en milisegundos directas de la FIA. Deslice el Scrubber para avanzar en el historial.`;
                 }
 
                 if (p1 && db.driversDirectory[id1]) {
                     const dir1 = db.driversDirectory[id1];
                     document.getElementById("p1-name-lbl").textContent = dir1.name.toUpperCase();
-                    document.getElementById("p1-team-lbl").textContent = dir1.code + " RACING";
+                    document.getElementById("p1-team-lbl").textContent = dir1.code + " DRIVER CORE";
                     document.getElementById("card-p1").style.borderTop = `4px solid ${dir1.color}`;
                     rP1.setAttribute("fill", dir1.color);
                     
@@ -200,14 +195,13 @@
                     document.getElementById("p1-w-rl").style.backgroundColor = dir1.color;
                     document.getElementById("p1-w-rr").style.backgroundColor = dir1.color;
 
-                    document.getElementById("p1-v-time").textContent = p1.lap_time || "NO DATA";
+                    document.getElementById("p1-v-time").textContent = p1.lap_time || "--:--.---";
                     document.getElementById("p1-v-pos").textContent = "P" + p1.position;
-                    document.getElementById("p1-b-pos").style.width = `${((20 - p1.position) / 20) * 100}%`;
-                    
+                    document.getElementById("p1-b-pos").style.width = `${((22 - p1.position) / 22) * 100}%`;
                     document.getElementById("p1-v-gap").textContent = p1.gap;
                     document.getElementById("p1-b-gap").style.width = p1.gap === "LEADER" ? "0%" : "100%";
+                    document.getElementById("p1-rank-hud").textContent = "P" + p1.position;
 
-                    // Posicionar en el mapa SVG real
                     if (pathLength > 0) {
                         const pt = mutablePath.getPointAtLength((p1.pos_pct * pathLength) % pathLength);
                         rP1.setAttribute("cx", pt.x); rP1.setAttribute("cy", pt.y);
@@ -217,7 +211,7 @@
                 if (p2 && db.driversDirectory[id2]) {
                     const dir2 = db.driversDirectory[id2];
                     document.getElementById("p2-name-lbl").textContent = dir2.name.toUpperCase();
-                    document.getElementById("p2-team-lbl").textContent = dir2.code + " RACING";
+                    document.getElementById("p2-team-lbl").textContent = dir2.code + " DRIVER CORE";
                     document.getElementById("card-p2").style.borderTop = `4px solid ${dir2.color}`;
                     rP2.setAttribute("fill", dir2.color);
 
@@ -226,17 +220,22 @@
                     document.getElementById("p2-w-rl").style.backgroundColor = dir2.color;
                     document.getElementById("p2-w-rr").style.backgroundColor = dir2.color;
 
-                    document.getElementById("p2-v-time").textContent = p2.lap_time || "NO DATA";
+                    document.getElementById("p2-v-time").textContent = p2.lap_time || "--:--.---";
                     document.getElementById("p2-v-pos").textContent = "P" + p2.position;
-                    document.getElementById("p2-b-pos").style.width = `${((20 - p2.position) / 20) * 100}%`;
-                    
+                    document.getElementById("p2-b-pos").style.width = `${((22 - p2.position) / 22) * 100}%`;
                     document.getElementById("p2-v-gap").textContent = p2.gap;
                     document.getElementById("p2-b-gap").style.width = p2.gap === "LEADER" ? "0%" : "100%";
+                    document.getElementById("p2-rank-hud").textContent = "P" + p2.position;
 
                     if (pathLength > 0) {
                         const pt = mutablePath.getPointAtLength((p2.pos_pct * pathLength) % pathLength);
                         rP2.setAttribute("cx", pt.x); rP2.setAttribute("cy", pt.y);
                     }
+                }
+
+                if (p1 && p2) {
+                    const diff = Math.abs(p1.position - p2.position);
+                    gapCore.textContent = `Δ P${diff}`;
                 }
             }
 

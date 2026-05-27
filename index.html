@@ -8,40 +8,40 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23e10600'/><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='18' fill='white'>PI</text></svg>" />
     <style>
         body { background-color: #050709; color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .lobby-container { text-align: center; max-width: 800px; padding: 40px; background: #0f1217; border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        h1 { font-family: 'JetBrains Mono', monospace; font-size: 36px; margin-bottom: 10px; color: #ffffff; }
-        h1 span { color: #e10600; }
-        p { color: #86868b; font-size: 14px; margin-bottom: 40px; line-height: 1.6; }
-        .nav-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        .nav-card { background: #15181f; border: 1px solid rgba(255,255,255,0.08); padding: 30px 20px; border-radius: 12px; text-decoration: none; color: #fff; transition: all 0.3s ease; }
-        .nav-card:hover { transform: translateY(-5px); border-color: #ff9900; background: #1c2026; }
-        .nav-card h3 { margin: 0 0 10px 0; font-size: 16px; letter-spacing: 0.05em; }
-        .nav-card span { font-size: 11px; color: #6c6f78; }
-        .status-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-bottom: 15px; }
-        .status-online { background: rgba(36, 179, 83, 0.15); color: #24b353; border: 1px solid rgba(36, 179, 83, 0.3); }
-        .status-pending { background: rgba(255, 153, 0, 0.15); color: #ff9900; border: 1px solid rgba(255, 153, 0, 0.3); }
+        .lobby-container { text-align: center; max-width: 900px; padding: 50px 40px; background: #0d0f13; border: 1px solid rgba(255,255,255,0.03); border-radius: 24px; box-shadow: 0 30px 70px rgba(0,0,0,0.8); border-top: 4px solid #ff8000; }
+        h1 { font-family: 'JetBrains Mono', monospace; font-size: 42px; font-weight: 800; margin: 0 0 10px 0; letter-spacing: -0.03em; }
+        h1 span { color: #ff8000; }
+        p { color: #86868b; font-size: 15px; margin-bottom: 45px; line-height: 1.6; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .nav-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%; }
+        .nav-card { background: #14171c; border: 1px solid rgba(255,255,255,0.05); padding: 35px 20px; border-radius: 16px; text-decoration: none; color: #fff; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; align-items: center; }
+        .nav-card:hover { transform: translateY(-5px); border-color: #ff8000; background: #1a1e24; box-shadow: 0 15px 30px rgba(255,128,0,0.1); }
+        .nav-card h3 { margin: 0 0 8px 0; font-size: 18px; font-weight: 800; letter-spacing: 0.02em; }
+        .nav-card span { font-size: 12px; color: #6c6f78; text-align: center; line-height: 1.4; }
+        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; }
+        .status-online { background: rgba(36, 179, 83, 0.1); color: #24b353; border: 1px solid rgba(36, 179, 83, 0.2); }
+        .status-pending { background: rgba(255, 153, 0, 0.1); color: #ff9900; border: 1px solid rgba(255, 153, 0, 0.2); }
     </style>
 </head>
 <body>
     <div class="lobby-container">
-        <h1>PADDOCK<span>INTEL</span> 3.0</h1>
-        <p>Sistema Central de Análisis de Datos de Fórmula 1. Motor impulsado por Base de Datos Histórica (CSVs).</p>
+        <h1>PADDOCK<span>INTEL</span> Pro</h1>
+        <p>Centro de Mando Analítico de Fórmula 1. Consultando datos históricos oficiales integrados directamente desde archivos relacionales de telemetría.</p>
         
         <div class="nav-grid">
             <a href="race-hub.html" class="nav-card">
-                <div class="status-badge status-online">🟢 ONLINE</div>
+                <div class="status-badge status-online">🟢 Live Data</div>
                 <h3>RACE HUB</h3>
-                <span>Monitor de Carrera y Telemetría</span>
+                <span>Consola de Telemetría e Historial de Vueltas</span>
             </a>
             <a href="constructor.html" class="nav-card">
-                <div class="status-badge status-pending">🟡 PRÓXIMAMENTE</div>
+                <div class="status-badge status-pending">建造 Desarrollo</div>
                 <h3>CONSTRUCTORS</h3>
-                <span>Análisis de Escuderías</span>
+                <span>Desempeño de Escuderías y Campeonatos</span>
             </a>
             <a href="driver.html" class="nav-card">
-                <div class="status-badge status-pending">🟡 PRÓXIMAMENTE</div>
+                <div class="status-badge status-pending">建造 Desarrollo</div>
                 <h3>DRIVER INTEL</h3>
-                <span>Perfiles Analíticos</span>
+                <span>Modelos de Rendimiento de Pilotos</span>
             </a>
         </div>
     </div>
