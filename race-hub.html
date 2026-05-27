@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Race Hub Pro Telemetry — PaddockIntel</title>
-    <link rel="stylesheet" href="src/css/styles.css" />
+    <link rel="stylesheet" href="public/css/styles.css" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23e10600'/><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='18' fill='white'>PI</text></svg>" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -271,7 +271,7 @@
                 });
             }
 
-            fetch('src/data-outputs/race-telemetry-historical.json')
+            fetch('public/json-api/race-telemetry-historical.json')
                 .then(res => res.json())
                 .then(json => {
                     telemetryData = json;
