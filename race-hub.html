@@ -24,34 +24,38 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
 #topbar{
   position:sticky;top:0;z-index:100;
   height:52px;display:flex;align-items:center;
-  background:rgba(10,14,20,0.97);
-  border-bottom:1px solid var(--border);
-  backdrop-filter:blur(12px);
+  background:rgba(255,255,255,0.97);
+  border-bottom:1px solid rgba(0,0,0,0.08);
+  backdrop-filter:blur(24px) saturate(180%);
+  -webkit-backdrop-filter:blur(24px) saturate(180%);
+  box-shadow:0 1px 0 rgba(0,0,0,0.06),0 2px 16px rgba(0,0,0,0.08);
   padding:0 20px;gap:12px;
 }
-.tb-logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.tb-logo{display:flex;align-items:center;gap:8px;text-decoration:none;border-right:1px solid rgba(0,0,0,0.08);padding-right:16px;height:100%;}
 .tb-logo img{height:20px;}
-.tb-sep{font-family:var(--mono);font-size:.6rem;color:var(--muted);}
+.tb-sep{font-family:var(--mono);font-size:.6rem;color:#888;}
 .tb-sep::before{content:'//';color:var(--red);margin-right:6px;}
 .tb-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
 .tb-back{
-  font-family:var(--mono);font-size:.65rem;color:var(--muted);
+  font-family:var(--mono);font-size:.65rem;color:#666;
   text-decoration:none;padding:4px 10px;
-  border:1px solid var(--border2);border-radius:2px;
+  border:1px solid rgba(0,0,0,0.12);border-radius:2px;
   transition:all .15s;
 }
-.tb-back:hover{color:var(--gold);border-color:var(--gold);}
+.tb-back:hover{color:#111;border-color:rgba(0,0,0,0.3);}
 
 /* LAYOUT */
 #app{display:flex;height:calc(100vh - 52px);}
 #sidebar{
   width:260px;flex-shrink:0;
-  background:var(--bg2);
-  border-right:1px solid var(--border2);
+  background:rgba(6,8,16,0.85);
+  border-right:1px solid rgba(255,255,255,0.06);
   display:flex;flex-direction:column;
   overflow:hidden;
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
 }
-#content{flex:1;overflow-y:auto;padding:24px;}
+#content{flex:1;overflow-y:auto;padding:24px;background:var(--bg);}
 
 /* SIDEBAR */
 .sb-head{
@@ -66,11 +70,14 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
 }
 .sb-search{
   width:100%;padding:6px 10px;
-  background:var(--bg3);border:1px solid var(--border2);
-  border-radius:3px;color:var(--text);
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:4px;color:var(--text);
   font-family:var(--mono);font-size:.7rem;outline:none;
+  transition:all .2s;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);
 }
-.sb-search:focus{border-color:var(--gold);}
+.sb-search:focus{border-color:rgba(225,6,0,0.5);box-shadow:inset 0 1px 3px rgba(0,0,0,0.2),0 0 0 3px rgba(225,6,0,0.08);}
 .sb-search::placeholder{color:var(--muted);}
 .sb-year-filter{
   display:flex;flex-wrap:wrap;gap:4px;padding:8px 16px;
@@ -78,29 +85,34 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
 }
 .yf-btn{
   font-family:var(--mono);font-size:.6rem;
-  padding:3px 8px;border-radius:2px;cursor:pointer;
-  border:1px solid var(--border2);color:var(--muted);transition:all .12s;
+  padding:3px 8px;border-radius:3px;cursor:pointer;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.04);
+  color:var(--muted);transition:all .12s;
 }
-.yf-btn:hover{color:var(--text2);}
-.yf-btn.active{color:var(--gold);border-color:var(--gold);background:rgba(201,149,12,0.08);}
+.yf-btn:hover{color:var(--text2);background:rgba(255,255,255,0.08);}
+.yf-btn.active{color:var(--gold);border-color:rgba(201,149,12,0.4);background:rgba(201,149,12,0.1);box-shadow:0 0 10px rgba(201,149,12,0.12);}
 .sb-list{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
 .sb-race{
   padding:10px 16px;
   border-bottom:1px solid rgba(255,255,255,0.03);
-  cursor:pointer;transition:background .12s;
+  cursor:pointer;transition:all .12s;
 }
-.sb-race:hover{background:var(--glass);}
-.sb-race.active{background:rgba(201,149,12,0.07);border-left:2px solid var(--gold);}
+.sb-race:hover{background:rgba(255,255,255,0.04);}
+.sb-race.active{background:rgba(225,6,0,0.08);border-left:2px solid var(--red);}
 .sbr-name{font-family:var(--body);font-weight:600;font-size:.88rem;color:var(--text);line-height:1.2;}
 .sbr-meta{font-family:var(--mono);font-size:.6rem;color:var(--muted);margin-top:2px;}
 
 /* RACE CONTENT */
 .race-hero{
-  background:linear-gradient(135deg,rgba(225,6,0,0.1) 0%,rgba(201,149,12,0.05) 100%);
-  border:1px solid var(--border);border-radius:6px;
+  background:linear-gradient(135deg,rgba(225,6,0,0.12) 0%,rgba(201,149,12,0.06) 100%);
+  border:1px solid rgba(225,6,0,0.2);
+  border-radius:8px;
   padding:20px 24px;margin-bottom:20px;
   display:flex;align-items:flex-start;justify-content:space-between;
   flex-wrap:wrap;gap:16px;
+  backdrop-filter:blur(12px);
+  box-shadow:0 4px 24px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.06);
 }
 .rh-round{font-family:var(--mono);font-size:.62rem;color:var(--red);letter-spacing:.18em;margin-bottom:6px;}
 .rh-name{font-family:var(--head);font-weight:900;font-size:2rem;text-transform:uppercase;letter-spacing:.04em;line-height:1;}
@@ -109,16 +121,18 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
 .share-btn{
   display:inline-flex;align-items:center;gap:6px;
   font-family:var(--mono);font-size:.65rem;
-  padding:6px 14px;border-radius:3px;cursor:pointer;
-  border:1px solid var(--border);color:var(--muted);
-  background:var(--bg3);transition:all .15s;
+  padding:6px 14px;border-radius:4px;cursor:pointer;
+  border:1px solid rgba(255,255,255,0.1);color:var(--text2);
+  background:rgba(255,255,255,0.06);transition:all .2s;
   white-space:nowrap;
+  backdrop-filter:blur(8px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.08);
 }
-.share-btn:hover{color:var(--gold);border-color:var(--gold);}
+.share-btn:hover{color:var(--gold2);border-color:rgba(201,149,12,0.4);background:rgba(201,149,12,0.08);}
 .share-btn.active-share{color:var(--green);border-color:var(--green);}
 
 /* SECTION TABS */
-.sec-tabs{display:flex;gap:2px;margin-bottom:20px;border-bottom:1px solid var(--border2);}
+.sec-tabs{display:flex;gap:2px;margin-bottom:20px;border-bottom:1px solid rgba(255,255,255,0.06);}
 .sec-tab{
   font-family:var(--head);font-weight:700;font-size:.8rem;
   letter-spacing:.1em;text-transform:uppercase;
@@ -126,7 +140,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
   border-bottom:2px solid transparent;transition:all .15s;
 }
 .sec-tab:hover{color:var(--text2);}
-.sec-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.sec-tab.active{color:var(--gold2);border-bottom-color:var(--gold);}
 .sec-panel{display:none;}
 .sec-panel.active{display:block;}
 
@@ -136,9 +150,11 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
   gap:10px;margin-bottom:20px;
 }
 .podium-card{
-  background:var(--bg3);border:1px solid var(--border2);
-  border-radius:5px;padding:16px;text-align:center;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  border-radius:8px;padding:16px;text-align:center;
   position:relative;overflow:hidden;
+  backdrop-filter:blur(12px);
+  box-shadow:0 4px 20px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.07);
 }
 .podium-card::before{
   content:'';position:absolute;top:0;left:0;right:0;height:3px;
@@ -167,7 +183,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
   font-family:var(--body);font-size:.88rem;color:var(--text);
   padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.025);
 }
-.r-table tr:hover td{background:var(--glass);}
+.r-table tr:hover td{background:rgba(255,255,255,0.04);}
 .pos-cell{font-family:var(--mono);font-size:.75rem;font-weight:600;color:var(--muted);width:32px;}
 .pos-cell.p1{color:var(--gold2);}
 .pos-cell.p2{color:#c0c4cc;}
@@ -181,9 +197,9 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
 
 /* GAP CHART */
 .chart-wrap{
-  background:var(--bg3);border:1px solid var(--border2);
-  border-radius:5px;padding:16px;margin-bottom:20px;
-  overflow:hidden;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  border-radius:8px;padding:16px;margin-bottom:20px;
+  overflow:hidden;backdrop-filter:blur(12px);box-shadow:0 2px 16px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.06);
 }
 .chart-title{
   font-family:var(--head);font-weight:700;font-size:.75rem;
@@ -204,8 +220,8 @@ canvas{display:block;width:100%!important;}
 
 /* PIT HEATMAP */
 .pit-wrap{
-  background:var(--bg3);border:1px solid var(--border2);
-  border-radius:5px;padding:16px;margin-bottom:20px;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  border-radius:8px;padding:16px;margin-bottom:20px;backdrop-filter:blur(12px);box-shadow:0 2px 16px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.06);
 }
 .pit-grid{overflow-x:auto;}
 .pit-row{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
@@ -237,27 +253,28 @@ canvas{display:block;width:100%!important;}
 .q-table{width:100%;border-collapse:collapse;}
 .q-table th{font-family:var(--mono);font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;padding:8px 10px;text-align:left;border-bottom:1px solid var(--border2);}
 .q-table td{font-family:var(--body);font-size:.88rem;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.025);}
-.q-table tr:hover td{background:var(--glass);}
+.q-table tr:hover td{background:rgba(255,255,255,0.04);}
 .q-time{font-family:var(--mono);font-size:.75rem;color:var(--text2);}
 .q-time.best{color:var(--gold2);}
 
 /* DRIVER vs DRIVER SCORECARD */
 .dvd-wrap{
-  background:var(--bg3);border:1px solid var(--border2);
-  border-radius:5px;padding:16px;margin-bottom:20px;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  border-radius:8px;padding:16px;margin-bottom:20px;backdrop-filter:blur(12px);box-shadow:0 2px 16px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.06);
 }
 .dvd-selectors{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
 .dvd-select{
-  background:var(--bg4);border:1px solid var(--border2);
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
   color:var(--text);font-family:var(--mono);font-size:.72rem;
-  padding:6px 10px;border-radius:3px;outline:none;cursor:pointer;
+  padding:6px 10px;border-radius:4px;outline:none;cursor:pointer;
+  transition:all .15s;
 }
-.dvd-select:focus{border-color:var(--gold);}
+.dvd-select:focus{border-color:rgba(201,149,12,0.5);}
 .dvd-vs{font-family:var(--head);font-weight:900;font-size:1.2rem;color:var(--red);}
 .dvd-card{
   display:grid;grid-template-columns:1fr auto 1fr;
-  gap:0;background:var(--bg4);border-radius:4px;
-  overflow:hidden;border:1px solid var(--border2);
+  gap:0;background:rgba(255,255,255,0.05);border-radius:6px;
+  overflow:hidden;border:1px solid rgba(255,255,255,0.1);
   margin-bottom:12px;
 }
 .dvd-driver{padding:16px;}
@@ -277,7 +294,7 @@ canvas{display:block;width:100%!important;}
   background:var(--border2);gap:1px;
 }
 .dvd-stat-cell{
-  background:var(--bg3);padding:8px 12px;
+  background:rgba(255,255,255,0.03);padding:8px 12px;
   font-family:var(--mono);font-size:.72rem;color:var(--text2);
 }
 .dvd-stat-cell.label{text-align:center;color:var(--muted);font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;}
@@ -293,8 +310,10 @@ canvas{display:block;width:100%!important;}
 }
 #sharecard.open{display:flex;}
 #sc-inner{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:6px;padding:24px;width:500px;max-width:95vw;
+  background:rgba(10,14,22,0.92);border:1px solid rgba(255,255,255,0.12);
+  border-radius:10px;padding:24px;width:500px;max-width:95vw;
+  backdrop-filter:blur(32px);
+  box-shadow:0 24px 64px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.08);
 }
 .sc-title{font-family:var(--head);font-weight:900;font-size:1.2rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
 .sc-sub{font-family:var(--mono);font-size:.65rem;color:var(--muted);margin-bottom:16px;}
@@ -323,6 +342,7 @@ canvas{display:block;width:100%!important;}
 .empty-state{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   height:60vh;color:var(--muted);text-align:center;
+  background:transparent;
 }
 .empty-icon{font-size:3rem;margin-bottom:16px;opacity:.4;}
 .empty-title{font-family:var(--head);font-weight:700;font-size:1.2rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
@@ -331,6 +351,20 @@ canvas{display:block;width:100%!important;}
 ::-webkit-scrollbar{width:3px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+.lang-toggle{
+  display:flex;gap:1px;
+  background:rgba(0,0,0,0.06);
+  border:1px solid rgba(0,0,0,0.1);
+  border-radius:4px;overflow:hidden;
+}
+.lang-btn{
+  font-family:var(--mono);font-size:.65rem;
+  padding:4px 10px;cursor:pointer;
+  color:#777;transition:all .15s;letter-spacing:.08em;
+}
+.lang-btn:hover{color:#111;background:rgba(0,0,0,0.05);}
+.lang-btn.active{color:#fff;background:var(--red);box-shadow:inset 0 1px 0 rgba(255,255,255,0.15);}
 </style>
 </head>
 <body>
@@ -341,6 +375,11 @@ canvas{display:block;width:100%!important;}
   </a>
   <div class="tb-sep">Race Hub</div>
   <div class="tb-right">
+    <div class="lang-toggle" id="lang-toggle">
+      <div class="lang-btn active" onclick="setLang('en')">EN</div>
+      <div class="lang-btn" onclick="setLang('es')">ES</div>
+      <div class="lang-btn" onclick="setLang('pt')">PT</div>
+    </div>
     <a class="tb-back" href="https://hub.paddockintel.com">← F1 Hub</a>
     <a class="tb-back" href="https://paddockintel.com" target="_blank">← PaddockIntel</a>
   </div>
@@ -361,8 +400,8 @@ canvas{display:block;width:100%!important;}
   <div id="content">
     <div class="empty-state" id="empty-state">
       <div class="empty-icon">🏁</div>
-      <div class="empty-title">Select a Race</div>
-      <div class="empty-sub">135 races · 2020–2026<br>Gap charts · Pit strategy · Driver vs Driver<br>Shareable scorecards for X</div>
+      <div class="empty-title" id="empty-title" data-i18n="selectRace">Select a Race</div>
+      <div class="empty-sub" id="empty-sub" data-i18n="selectRaceSub">135 races · 2020–2026<br>Gap charts · Pit strategy · Driver vs Driver<br>Shareable scorecards for X</div>
     </div>
     <div id="race-content" style="display:none;"></div>
   </div>
@@ -372,14 +411,14 @@ canvas{display:block;width:100%!important;}
 <div id="sharecard">
   <div id="sc-inner">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-      <div class="sc-title">Share Scorecard</div>
+      <div class="sc-title" data-i18n="shareTitle">Share Scorecard</div>
       <div class="sc-close" onclick="closeShare()">✕</div>
     </div>
     <div class="sc-sub" id="sc-sub"></div>
     <div id="sc-preview"></div>
     <div class="sc-actions">
-      <div class="sc-btn primary" onclick="copyScorecard()">📋 Copy for X/Twitter</div>
-      <div class="sc-btn" onclick="closeShare()">Cancel</div>
+      <div class="sc-btn primary" id="copy-btn" onclick="copyScorecard()">📋 Copy for X/Twitter</div>
+      <div class="sc-btn" onclick="closeShare()" data-i18n="cancel">Cancel</div>
     </div>
   </div>
 </div>
@@ -464,6 +503,7 @@ function loadRace(raceId){
 }
 
 function buildRaceHTML(race, meta){
+  const R = k => RL(k);
   const top3 = race.results.slice(0,3);
   const gpName = race.name.replace(' Grand Prix','');
 
@@ -475,17 +515,17 @@ function buildRaceHTML(race, meta){
         <div class="rh-sub">${meta.location} · ${fmtDate(race.date)} · ${race.laps.length} laps</div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
-        <div class="rh-date">${race.results.length} classified</div>
-        <div class="share-btn" onclick="openShare(${race.raceId})">📤 Share Scorecard</div>
+        <div class="rh-date">${race.results.length} ${R('classified')}</div>
+        <div class="share-btn" onclick="openShare(${race.raceId})">${R('shareScorecard')}</div>
       </div>
     </div>
 
     <div class="sec-tabs">
-      <div class="sec-tab active" onclick="switchTab('results',this)">Results</div>
-      <div class="sec-tab" onclick="switchTab('gap',this)">Gap Chart</div>
-      <div class="sec-tab" onclick="switchTab('pits',this)">Pit Strategy</div>
-      <div class="sec-tab" onclick="switchTab('quali',this)">Qualifying</div>
-      <div class="sec-tab" onclick="switchTab('dvd',this)">Driver vs Driver</div>
+      <div class="sec-tab active" onclick="switchTab('results',this)">${R('results')}</div>
+      <div class="sec-tab" onclick="switchTab('gap',this)">${R('gapChart')}</div>
+      <div class="sec-tab" onclick="switchTab('pits',this)">${R('pitStrategy')}</div>
+      <div class="sec-tab" onclick="switchTab('quali',this)">${R('qualifying')}</div>
+      <div class="sec-tab" onclick="switchTab('dvd',this)">${R('driverVsDriver')}</div>
     </div>
 
     <!-- RESULTS -->
@@ -502,8 +542,8 @@ function buildRaceHTML(race, meta){
       </div>
       <table class="r-table">
         <thead><tr>
-          <th>Pos</th><th>Driver</th><th>Team</th>
-          <th>Grid</th><th>Laps</th><th>Status</th><th>Pts</th>
+          <th>${R('pos')}</th><th>${R('driver')}</th><th>${R('team')}</th>
+          <th>${R('grid')}</th><th>${R('laps')}</th><th>${R('status')}</th><th>${R('pts')}</th>
         </tr></thead>
         <tbody>${race.results.map(r=>{
           const posNum = parseInt(r.pos);
@@ -528,7 +568,7 @@ function buildRaceHTML(race, meta){
     <!-- GAP CHART -->
     <div class="sec-panel" id="panel-gap">
       <div class="chart-wrap">
-        <div class="chart-title">Gap to Leader — Lap by Lap</div>
+        <div class="chart-title">${R('gapTitle')}</div>
         <div class="chart-legend" id="gap-legend"></div>
         <canvas id="gap-canvas" height="320"></canvas>
       </div>
@@ -537,18 +577,18 @@ function buildRaceHTML(race, meta){
     <!-- PIT STRATEGY -->
     <div class="sec-panel" id="panel-pits">
       <div class="pit-wrap">
-        <div class="chart-title" style="margin-bottom:12px;">Pit Stop Strategy Heatmap</div>
+        <div class="chart-title" style="margin-bottom:12px;">${R('pitTitle')}</div>
         <div class="pit-grid" id="pit-grid"></div>
         <div class="pit-legend">
-          <span>Pit stop duration:</span>
+          <span>${R('pitDur')}</span>
           <div class="pit-scale">
-            <div class="pit-scale-bar" style="background:#22c55e;"></div><span>&lt;24s</span>
+            <div class="pit-scale-bar" style="background:#22c55e;"></div><span>${R('fast')}</span>
           </div>
           <div class="pit-scale">
-            <div class="pit-scale-bar" style="background:#f59e0b;"></div><span>24–27s</span>
+            <div class="pit-scale-bar" style="background:#f59e0b;"></div><span>${R('med')}</span>
           </div>
           <div class="pit-scale">
-            <div class="pit-scale-bar" style="background:#ef4444;"></div><span>>27s</span>
+            <div class="pit-scale-bar" style="background:#ef4444;"></div><span>${R('slow')}</span>
           </div>
         </div>
       </div>
@@ -557,9 +597,9 @@ function buildRaceHTML(race, meta){
     <!-- QUALIFYING -->
     <div class="sec-panel" id="panel-quali">
       <div class="chart-wrap">
-        <div class="chart-title">Qualifying Results</div>
+        <div class="chart-title">${R('qualiTitle')}</div>
         <table class="q-table">
-          <thead><tr><th>Pos</th><th>Driver</th><th>Q1</th><th>Q2</th><th>Q3</th></tr></thead>
+          <thead><tr><th>${R('pos')}</th><th>${R('driver')}</th><th>Q1</th><th>Q2</th><th>Q3</th></tr></thead>
           <tbody>${race.qualifying.map(q=>`
             <tr>
               <td class="pos-cell ${q.pos<=3?'p'+q.pos:''}">${q.pos}</td>
@@ -576,7 +616,7 @@ function buildRaceHTML(race, meta){
     <!-- DRIVER VS DRIVER -->
     <div class="sec-panel" id="panel-dvd">
       <div class="dvd-wrap">
-        <div class="chart-title" style="margin-bottom:12px;">Driver vs Driver</div>
+        <div class="chart-title" style="margin-bottom:12px;">${R('dvdTitle')}</div>
         <div class="dvd-selectors">
           <select class="dvd-select" id="dvd-a" onchange="renderDvD(currentRace)"></select>
           <div class="dvd-vs">VS</div>
@@ -830,14 +870,156 @@ function closeShare(){document.getElementById('sharecard').classList.remove('ope
 function copyScorecard(){
   const text = document.getElementById('sc-preview').textContent;
   navigator.clipboard.writeText(text).then(()=>{
-    const btn = document.querySelector('#sc-inner .sc-btn.primary');
-    btn.textContent='✓ Copied!';
-    setTimeout(()=>btn.textContent='📋 Copy for X/Twitter',2000);
+    const btn = document.getElementById('copy-btn');
+    btn.textContent=RL('copied');
+    setTimeout(()=>btn.textContent=RL('copyBtn'),2000);
   });
 }
 
 // ── INIT ────────────────────────────────────────────────────
 buildSidebar();
+</script>
+
+<script>
+const RACE_LANGS = {
+  en: {
+    raceHub:'Race Hub',
+    selectRace:'Select a Race',
+    selectRaceSub:'135 races · 2020–2026\nGap charts · Pit strategy · Driver vs Driver\nShareable scorecards for X',
+    searchRace:'Search race or venue...',
+    results:'Results',
+    gapChart:'Gap Chart',
+    pitStrategy:'Pit Strategy',
+    qualifying:'Qualifying',
+    driverVsDriver:'Driver vs Driver',
+    shareScorecard:'📤 Share Scorecard',
+    classified:'classified',
+    gapTitle:'Gap to Leader — Lap by Lap',
+    pitTitle:'Pit Stop Strategy Heatmap',
+    qualiTitle:'Qualifying Results',
+    dvdTitle:'Driver vs Driver',
+    pos:'Pos',driver:'Driver',team:'Team',grid:'Grid',laps:'Laps',status:'Status',pts:'Pts',
+    finishPos:'Finish Position',points:'Points',gridPos:'Grid Position',
+    lapsComp:'Laps Completed',pitStops:'Pit Stops',avgPit:'Avg Pit Duration',fastestLap:'Fastest Lap',
+    shareTitle:'Share Scorecard',
+    copyBtn:'📋 Copy for X/Twitter',
+    copied:'✓ Copied!',
+    cancel:'Cancel',
+    podium:'PODIUM',
+    lap:'Lap',
+    pitDur:'Pit stop duration:',
+    fast:'< 24s', med:'24–27s', slow:'> 27s',
+    latest:'Latest',
+  },
+  es: {
+    raceHub:'Hub de Carreras',
+    selectRace:'Selecciona una Carrera',
+    selectRaceSub:'135 carreras · 2020–2026\nGráficos de gaps · Estrategia de pits · Piloto vs Piloto\nScorecards para compartir en X',
+    searchRace:'Buscar carrera o circuito...',
+    results:'Resultados',
+    gapChart:'Gráfico de Gaps',
+    pitStrategy:'Estrategia de Pits',
+    qualifying:'Clasificación',
+    driverVsDriver:'Piloto vs Piloto',
+    shareScorecard:'📤 Compartir Scorecard',
+    classified:'clasificados',
+    gapTitle:'Gap al Líder — Vuelta a Vuelta',
+    pitTitle:'Mapa de Calor — Estrategia de Pits',
+    qualiTitle:'Resultados de Clasificación',
+    dvdTitle:'Piloto vs Piloto',
+    pos:'Pos',driver:'Piloto',team:'Equipo',grid:'Parrilla',laps:'Vueltas',status:'Estado',pts:'Pts',
+    finishPos:'Posición Final',points:'Puntos',gridPos:'Posición en Parrilla',
+    lapsComp:'Vueltas Completadas',pitStops:'Paradas en Pits',avgPit:'Duración Promedio Pit',fastestLap:'Vuelta Rápida',
+    shareTitle:'Compartir Scorecard',
+    copyBtn:'📋 Copiar para X/Twitter',
+    copied:'✓ ¡Copiado!',
+    cancel:'Cancelar',
+    podium:'PODIO',
+    lap:'Vuelta',
+    pitDur:'Duración de pit stop:',
+    fast:'< 24s', med:'24–27s', slow:'> 27s',
+    latest:'Último',
+  },
+  pt: {
+    raceHub:'Hub de Corridas',
+    selectRace:'Selecione uma Corrida',
+    selectRaceSub:'135 corridas · 2020–2026\nGráficos de gaps · Estratégia de pits · Piloto vs Piloto\nScorecards para compartilhar no X',
+    searchRace:'Buscar corrida ou circuito...',
+    results:'Resultados',
+    gapChart:'Gráfico de Gaps',
+    pitStrategy:'Estratégia de Pits',
+    qualifying:'Qualificação',
+    driverVsDriver:'Piloto vs Piloto',
+    shareScorecard:'📤 Compartilhar Scorecard',
+    classified:'classificados',
+    gapTitle:'Gap para o Líder — Volta a Volta',
+    pitTitle:'Mapa de Calor — Estratégia de Pits',
+    qualiTitle:'Resultados da Qualificação',
+    dvdTitle:'Piloto vs Piloto',
+    pos:'Pos',driver:'Piloto',team:'Equipe',grid:'Grid',laps:'Voltas',status:'Status',pts:'Pts',
+    finishPos:'Posição Final',points:'Pontos',gridPos:'Posição no Grid',
+    lapsComp:'Voltas Completadas',pitStops:'Paradas nos Pits',avgPit:'Duração Média Pit',fastestLap:'Volta Mais Rápida',
+    shareTitle:'Compartilhar Scorecard',
+    copyBtn:'📋 Copiar para X/Twitter',
+    copied:'✓ Copiado!',
+    cancel:'Cancelar',
+    podium:'PÓDIO',
+    lap:'Volta',
+    pitDur:'Duração do pit stop:',
+    fast:'< 24s', med:'24–27s', slow:'> 27s',
+    latest:'Último',
+  }
+};
+
+let currentLang = 'en';
+function RL(k){ return RACE_LANGS[currentLang]?.[k] || RACE_LANGS.en[k] || k; }
+
+function setLang(lang){
+  currentLang = lang;
+  document.documentElement.lang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b=>{
+    b.classList.toggle('active', b.textContent.toLowerCase()===lang);
+  });
+  // Static elements
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.getAttribute('data-i18n');
+    if(RACE_LANGS[lang][k]) el.textContent = RACE_LANGS[lang][k];
+  });
+  // Search placeholder
+  const sb = document.getElementById('sb-search');
+  if(sb) sb.placeholder = RL('searchRace');
+  // Empty state
+  const es = document.getElementById('empty-title');
+  if(es) es.textContent = RL('selectRace');
+  const esb = document.getElementById('empty-sub');
+  if(esb) esb.textContent = RL('selectRaceSub');
+  // If race loaded, re-render tabs
+  if(activeRaceId) {
+    document.querySelectorAll('.sec-tab').forEach((t,i)=>{
+      const keys = ['results','gapChart','pitStrategy','qualifying','driverVsDriver'];
+      t.textContent = RL(keys[i]);
+    });
+    // pit legend
+    const pl = document.querySelector('.pit-legend');
+    if(pl) pl.innerHTML = `
+      <span>${RL('pitDur')}</span>
+      <div class="pit-scale"><div class="pit-scale-bar" style="background:#22c55e;"></div><span>${RL('fast')}</span></div>
+      <div class="pit-scale"><div class="pit-scale-bar" style="background:#f59e0b;"></div><span>${RL('med')}</span></div>
+      <div class="pit-scale"><div class="pit-scale-bar" style="background:#ef4444;"></div><span>${RL('slow')}</span></div>`;
+    // chart titles
+    document.querySelectorAll('.chart-title').forEach((t,i)=>{
+      const titles = ['gapTitle','pitTitle','qualiTitle'];
+      if(titles[i]) t.textContent = RL(titles[i]);
+    });
+  }
+  try{ localStorage.setItem('pi_lang', lang); }catch(e){}
+}
+
+// Load saved
+try{
+  const saved = localStorage.getItem('pi_lang');
+  if(saved && RACE_LANGS[saved]) setTimeout(()=>setLang(saved),150);
+}catch(e){}
 </script>
 </body>
 </html>
