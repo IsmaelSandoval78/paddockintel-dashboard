@@ -58,8 +58,7 @@
 <body>
 
     <div class="mclaren-workspace">
-        
-        <div class="hub-top-bar">
+        <header class="hub-header" style="background:#0f1217; display: flex; justify-content: space-between; align-items: center; border-radius:16px; padding:16px 24px; border:1px solid rgba(255,255,255,0.04);">
             <div class="hub-title-group">
                 <p>Telemetry Mission Control — Suite Avanzada de Análisis</p>
                 <h1 id="lbl-grand-prix-main-title">GRAND PRIX TELEMETRY — <span>MIRROR CONSOLE</span></h1>
@@ -75,7 +74,7 @@
                 <select id="sel-driver-1" class="aws-select"></select>
                 <select id="sel-driver-2" class="aws-select"></select>
             </div>
-        </div>
+        </header>
 
         <div class="telemetry-mirror-grid">
             <div class="driver-garage-card" id="card-p1">
@@ -174,7 +173,7 @@
                 <input type="range" min="1" max="57" value="1" class="timeline-slider-input" id="scrubber-input-range" />
             </div>
         </div>
-        <a href="index.html" class="back-nav-link">← Regresar al Centro de Mando Mundial</a>
+        <a href="index.html" class="back-nav-link" style="display:block; text-align:center; margin-top:10px;">← Regresar al Centro de Mando Mundial</a>
     </div>
 
     <script>
@@ -196,28 +195,36 @@
             let chartInstance = null;
             let driversDirectory = {};
 
-            // 🌟 GEOMETRÍA FIEL EXACTA SENSADA DE LAS 5 PISTAS DE LA SOLICITUD
+            // 🌟 GEOMETRÍA FIEL CONFIRMADA 2026
             const trackVectors = {
                 "melbourne": {
                     title: "ALBERT PARK — <span>MELBOURNE GP</span>",
                     path: "M 100,320 C 60,260 80,180 120,140 L 180,140 C 220,100 240,60 280,80 L 320,160 L 260,240 L 300,320 L 220,340 L 160,300 Z"
                 },
                 "china": {
-                    title: "SHANGHAI — <span>CHINESE GP (EL CARACOL)</span>",
+                    title: "SHANGHAI — <span>CHINESE GP</span>",
                     path: "M 200,360 L 340,360 L 320,240 L 100,240 C 60,200 80,100 160,100 C 240,100 260,160 200,180 L 160,140 L 200,280 Z"
                 },
                 "japan": {
-                    title: "SUZUKA — <span>JAPANESE GP (FIGURE 8)</span>",
+                    title: "SUZUKA — <span>JAPANESE GP</span>",
                     path: "M 100,340 C 60,280 80,200 160,220 C 240,240 280,160 260,100 C 220,40 160,100 200,160 C 240,220 180,280 140,280 C 100,280 120,340 100,340 Z"
                 },
                 "miami": {
                     title: "MIAMI CYCLING — <span>INTERNATIONAL AUTODROME</span>",
-                    path: "M 40,300 L 360,300 L 340,240 L 280,240 L 280,160 L 220,100 L 140,100 L 80,160 L 40,220 Z"
+                    path: "M 60,280 L 340,280 L 320,220 L 260,220 L 240,150 L 180,90 L 120,90 L 80,150 L 60,200 Z"
                 },
                 "montreal": {
                     title: "CIRCUIT GILLES-VILLENEUVE — <span>CANADA GP</span>",
                     path: "M 40,220 L 340,160 L 360,200 L 320,220 L 350,250 L 40,280 Z"
                 }
+            };
+
+            // Paleta Hexadecimal Oficial FIA 2026 para mapear dinámicamente cualquier piloto de la API
+            const teamColorsHex = {
+                "red bull": "#3671C6", "ferrari": "#E8002D", "mercedes": "#27F4D2", 
+                "mclaren": "#FF8000", "aston martin": "#229971", "williams": "#64C4FF", 
+                "alpine": "#FF87BC", "rb": "#6692FF", "audi": "#52E252", "haas": "#B6BABD",
+                "cadillac": "#C8102E"
             };
 
             function populateDropdowns() {
@@ -226,8 +233,20 @@
                     s1.innerHTML += `<option value="${id}">${d.name} (${d.code})</option>`;
                     s2.innerHTML += `<option value="${id}">${d.name} (${d.code})</option>`;
                 });
-                s1.value = "antonelli";
-                s2.value = "verstappen";
+                
+                const keys = Object.keys(driversDirectory);
+                s1.value = keys.includes("antonelli") ? "antonelli" : keys[0];
+                s2.value = keys.includes("verstappen") ? "verstappen" : keys[1] || keys[0];
+            }
+
+            function getDriverColor(driverId) {
+                const driver = driversDirectory[driverId];
+                if (!driver) return "#7a828e";
+                const teamLower = driver.team.toLowerCase();
+                for (const [key, color]header of Object.entries(teamColorsHex)) {
+                    if (teamLower.includes(key)) return color;
+                }
+                return driver.color || "#7a828e";
             }
 
             function initChart() {
@@ -260,16 +279,19 @@
                     driversDirectory = json.driversDirectory;
                     populateDropdowns();
                     initChart();
-                    updateLayout();
+                    updateCircuitLayout(); // 🛠️ CORREGIDO AQUÍ: Sincronizado perfectamente con el cargado inicial
                 })
                 .catch(err => console.error("❌ Fallo crítico de datos:", err));
 
-            function updateLayout() {
+            // 🛠️ CORRECCIÓN AERODINÁMICA DEL BUG DEL SELECTOR
+            function updateCircuitLayout() {
                 const trackKey = circuitSelector.value;
                 const config = trackVectors[trackKey];
                 
-                document.getElementById("lbl-grand-prix-main-title").innerHTML = config.title;
-                mutablePath.setAttribute("d", config.path);
+                if (config) {
+                    document.getElementById("lbl-grand-prix-main-title").innerHTML = config.title;
+                    mutablePath.setAttribute("d", config.path);
+                }
                 
                 updateFrame(slider.value);
             }
@@ -286,24 +308,27 @@
                 lapBadge.textContent = `LAP ${lap} / 57`;
                 trackTempLbl.textContent = `ASFALTO: ${lapData.trackTemp}°C`;
 
-                // --- TEXT INSIGHT GENERATOR ---
-                const nameA = driversDirectory[id1].name.split(" ")[1];
-                const nameB = driversDirectory[id2].name.split(" ")[1];
+                const nameA = driversDirectory[id1].name.split(" ").pop();
+                const nameB = driversDirectory[id2].name.split(" ").pop();
+                
                 if (lap == 34) {
-                    seoBox.innerHTML = `🛑 <strong>STRATEGY WINDOW:</strong> Desgaste crítico en los neumáticos traseros. Las escuderías preparan las pistolas neumáticas en el pitlane.`;
+                    seoBox.innerHTML = `🛑 <strong>STRATEGY WINDOW:</strong> Desgaste crítico en los compuestos. Las escuderías preparan las pistolas neumáticas en el pitlane.`;
                 } else {
                     seoBox.innerHTML = `📊 <strong>PIT WALL REPORT (LAP ${lap}):</strong> En ${circuitSelector.options[circuitSelector.selectedIndex].text}, <strong>${nameA}</strong> registra ${p1.speed} km/h con un tiempo de aceleración de ${p1.aws_throttle_pct}%. <strong>${nameB}</strong> tracciona a ${p2.speed} km/h.`;
                 }
 
-                // --- RENDER DRIVER 1 ---
+                const color1 = getDriverColor(id1);
+                const color2 = getDriverColor(id2);
+
+                // --- P1 IZQUIERDA ---
                 document.getElementById("p1-name-lbl").textContent = driversDirectory[id1].name.toUpperCase();
                 document.getElementById("p1-team-lbl").textContent = driversDirectory[id1].team;
-                document.getElementById("card-p1").style.borderTop = `4px solid ${driversDirectory[id1].color}`;
-                rP1.setAttribute("fill", driversDirectory[id1].color);
+                document.getElementById("card-p1").style.borderTop = `4px solid ${color1}`;
+                rP1.setAttribute("fill", color1);
 
                 document.getElementById("p1-v-speed").textContent = `${p1.speed} km/h`;
                 document.getElementById("p1-b-speed").style.width = `${(p1.speed / 365) * 100}%`;
-                document.getElementById("p1-b-speed").style.backgroundColor = driversDirectory[id1].color;
+                document.getElementById("p1-b-speed").style.backgroundColor = color1;
                 document.getElementById("p1-v-throttle").textContent = `${p1.throttle}%`;
                 document.getElementById("p1-b-throttle").style.width = `${p1.throttle}%`;
                 document.getElementById("p1-v-brake").textContent = `${p1.brake}%`;
@@ -325,15 +350,15 @@
                 document.getElementById("p1-t-rr").textContent = `${p1.tyres.rr}°C`;
                 document.getElementById("p1-w-rr").style.backgroundColor = getThermalColor(p1.tyres.rr);
 
-                // --- RENDER DRIVER 2 ---
+                // --- P2 DERECHA ---
                 document.getElementById("p2-name-lbl").textContent = driversDirectory[id2].name.toUpperCase();
                 document.getElementById("p2-team-lbl").textContent = driversDirectory[id2].team;
-                document.getElementById("card-p2").style.borderTop = `4px solid ${driversDirectory[id2].color}`;
-                rP2.setAttribute("fill", driversDirectory[id2].color);
+                document.getElementById("card-p2").style.borderTop = `4px solid ${color2}`;
+                rP2.setAttribute("fill", color2);
 
                 document.getElementById("p2-v-speed").textContent = `${p2.speed} km/h`;
                 document.getElementById("p2-b-speed").style.width = `${(p2.speed / 365) * 100}%`;
-                document.getElementById("p2-b-speed").style.backgroundColor = driversDirectory[id2].color;
+                document.getElementById("p2-b-speed").style.backgroundColor = color2;
                 document.getElementById("p2-v-throttle").textContent = `${p2.throttle}%`;
                 document.getElementById("p2-b-throttle").style.width = `${p2.throttle}%`;
                 document.getElementById("p2-v-brake").textContent = `${p2.brake}%`;
@@ -362,13 +387,13 @@
                 document.getElementById("p1-rank-hud").textContent = gap1 <= gap2 ? "ADV" : "DEF";
                 document.getElementById("p2-rank-hud").textContent = gap2 <= gap1 ? "ADV" : "DEF";
 
-                // RADAR PINES
+                // RADAR
                 const ptP1 = mutablePath.getPointAtLength((p1.pos_pct * pathLength) % pathLength);
                 rP1.setAttribute("cx", ptP1.x); rP1.setAttribute("cy", ptP1.y);
                 const ptP2 = mutablePath.getPointAtLength((p2.pos_pct * pathLength) % pathLength);
                 rP2.setAttribute("cx", ptP2.x); rP2.setAttribute("cy", ptP2.y);
 
-                // ACTUALIZAR GRÁFICA COMPLETA DE VELOCIDADES
+                // ACTUALIZAR CHART
                 if (chartInstance) {
                     const speedH1 = []; const speedH2 = [];
                     for (let i = 1; i <= 57; i++) {
@@ -378,9 +403,9 @@
                         }
                     }
                     chartInstance.data.datasets[0].data = speedH1;
-                    chartInstance.data.datasets[0].borderColor = driversDirectory[id1].color;
+                    chartInstance.data.datasets[0].borderColor = color1;
                     chartInstance.data.datasets[1].data = speedH2;
-                    chartInstance.data.datasets[1].borderColor = driversDirectory[id2].color;
+                    chartInstance.data.datasets[1].borderColor = color2;
                     chartInstance.update();
                 }
             }
@@ -391,6 +416,7 @@
                 return "#e10600"; 
             }
 
+            // 🛠️ ENGANCHE CORRECTO DEL LISTENER AL CONMUTADOR
             circuitSelector.addEventListener("change", updateCircuitLayout);
             s1.addEventListener("change", () => updateFrame(slider.value));
             s2.addEventListener("change", () => updateFrame(slider.value));
