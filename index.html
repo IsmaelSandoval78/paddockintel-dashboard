@@ -47,7 +47,7 @@ body{
   position:fixed;top:0;left:0;right:0;z-index:1000;
   height:56px;
   display:flex;align-items:center;gap:0;
-  background:rgba(6,8,16,0.55);
+  background:rgba(5,7,14,0.45);
   border-bottom:1px solid rgba(255,255,255,0.07);
   backdrop-filter:blur(24px) saturate(180%);
   -webkit-backdrop-filter:blur(24px) saturate(180%);
@@ -103,21 +103,22 @@ body{
 #main{flex:1;display:flex;overflow:hidden;position:relative;min-height:0;}
 
 /* ── MAP VIEW ────────────────────────────────────────────── */
-#map-view{display:flex;width:100%;height:100%;}
-#map-container{flex:1;position:relative;height:100%;min-height:0;}
-#leaflet-map{width:100%;height:100%;}
+#map-view{display:flex;width:100%;height:100%;position:relative;}
+#map-container{position:absolute;inset:0;z-index:1;}
+#leaflet-map{width:100%;height:100%;z-index:1;}
 
 /* ── RIGHT PANEL ─────────────────────────────────────────── */
 #right-panel{
-  width:340px;flex-shrink:0;
-  background:rgba(6,8,16,0.6);
-  border-left:1px solid rgba(255,255,255,0.07);
+  position:absolute;right:0;top:0;bottom:0;
+  width:340px;z-index:10;
+  background:rgba(5,7,14,0.55);
+  border-left:1px solid rgba(255,255,255,0.09);
   overflow-y:auto;overflow-x:hidden;
   scrollbar-width:thin;
-  scrollbar-color:var(--border2) transparent;
-  backdrop-filter:blur(32px) saturate(160%);
-  -webkit-backdrop-filter:blur(32px) saturate(160%);
-  box-shadow:-1px 0 0 rgba(201,149,12,0.08);
+  scrollbar-color:rgba(255,255,255,0.1) transparent;
+  backdrop-filter:blur(40px) saturate(200%) brightness(0.9);
+  -webkit-backdrop-filter:blur(40px) saturate(200%) brightness(0.9);
+  box-shadow:-1px 0 0 rgba(201,149,12,0.1), -20px 0 60px rgba(0,0,0,0.4);
 }
 
 /* ── CIRCUIT PANEL ───────────────────────────────────────── */
@@ -162,11 +163,12 @@ body{
   border-bottom:1px solid rgba(255,255,255,0.05);
 }
 .stat-cell{
-  background:rgba(255,255,255,0.03);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
+  background:rgba(255,255,255,0.04);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
   padding:13px 16px;
   border:0;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.06);
 }
 .stat-cell.full{grid-column:1/-1;}
 .s-label{
@@ -253,9 +255,9 @@ body{
   box-shadow:0 2px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06);
 }
 .hub-cta:hover{
-  border-color:rgba(201,149,12,0.4);
-  background:rgba(201,149,12,0.07);
-  box-shadow:0 4px 20px rgba(0,0,0,0.4), 0 0 0 1px rgba(201,149,12,0.15), inset 0 1px 0 rgba(255,255,255,0.08);
+  border-color:rgba(201,149,12,0.45);
+  background:rgba(201,149,12,0.08);
+  box-shadow:0 4px 24px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,149,12,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
   transform:translateY(-1px);
 }
 .hub-cta-icon{font-size:1.2rem;flex-shrink:0;}
@@ -265,9 +267,9 @@ body{
 .hub-cta-arr{color:var(--gold);font-size:.85rem;}
 
 /* ── DRIVER HUB ──────────────────────────────────────────── */
-#driver-view{display:none;flex-direction:column;width:100%;height:100%;overflow:hidden;}
+#driver-view{display:none;flex-direction:column;width:100%;height:100%;overflow:hidden;background:var(--bg);}
 #driver-view.active{display:flex;}
-#constructor-view{display:none;flex-direction:column;width:100%;height:100%;overflow:hidden;}
+#constructor-view{display:none;flex-direction:column;width:100%;height:100%;overflow:hidden;background:var(--bg);}
 #constructor-view.active{display:flex;}
 
 .hub-topbar{
