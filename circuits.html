@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 F1 Circuits — PaddockIntel</title>
+<meta name="description" content="All 22 Formula 1 circuits of the 2026 season. Track specs, lap records, winner history and venue data.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#f5f5f7;--white:#fff;
+  --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.04);
+  --red:#e10600;--gold:#b8860b;--gold2:#d4a017;
+  --text:#1a1a1a;--text2:#4a4a4a;--muted:#8a8a8a;
+  --mono:'Share Tech Mono',monospace;
+  --head:'Barlow Condensed',sans-serif;
+  --body:'Rajdhani',sans-serif;
+  --topbar-h:52px;--radius:8px;
+  --shadow:0 1px 4px rgba(0,0,0,0.06),0 2px 12px rgba(0,0,0,0.04);
+  --shadow-lg:0 4px 24px rgba(0,0,0,0.10),0 8px 40px rgba(0,0,0,0.06);
+}
+html,body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100%;}
+
+/* ── TOPBAR ─────────────────────────────────────────────── */
+#topbar{
+  position:sticky;top:0;z-index:100;
+  height:var(--topbar-h);
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  box-shadow:0 1px 0 rgba(0,0,0,0.05),0 2px 12px rgba(0,0,0,0.05);
+  display:flex;align-items:center;padding:0 20px;gap:12px;
+}
+.tb-logo{
+  display:flex;align-items:center;gap:8px;text-decoration:none;
+  border-right:1px solid var(--border);padding-right:14px;height:100%;flex-shrink:0;
+}
+.tb-logo img{height:18px;}
+.tb-section{font-family:var(--mono);font-size:.58rem;color:#888;letter-spacing:.08em;}
+.tb-section::before{content:'//';color:var(--red);margin-right:6px;}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.tb-link{
+  font-family:var(--mono);font-size:.62rem;color:#666;
+  text-decoration:none;padding:4px 10px;
+  border:1px solid var(--border);border-radius:3px;white-space:nowrap;
+}
+.tb-link:hover{color:#1a1a1a;border-color:rgba(0,0,0,0.2);}
+.lang-toggle{display:flex;gap:1px;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.1);border-radius:4px;overflow:hidden;}
+.lang-btn{font-family:var(--mono);font-size:.62rem;padding:4px 9px;cursor:pointer;color:#777;transition:all .15s;}
+.lang-btn.active{color:#fff;background:var(--red);}
+
+/* ── PAGE HEADER ─────────────────────────────────────────── */
+.page-header{
+  background:#fff;border-bottom:1px solid var(--border);
+  padding:28px 24px 24px;
+}
+.page-header-inner{max-width:1200px;margin:0 auto;}
+.page-eyebrow{
+  font-family:var(--mono);font-size:.62rem;color:var(--red);
+  letter-spacing:.2em;text-transform:uppercase;margin-bottom:8px;
+}
+.page-title{
+  font-family:var(--head);font-weight:900;font-size:2.8rem;
+  text-transform:uppercase;letter-spacing:.04em;color:#1a1a1a;
+  line-height:1;margin-bottom:8px;
+}
+.page-sub{
+  font-family:var(--mono);font-size:.72rem;color:var(--muted);
+  line-height:1.6;max-width:600px;
+}
+
+/* ── FILTER BAR ──────────────────────────────────────────── */
+.filter-bar{
+  background:#fff;border-bottom:1px solid var(--border);
+  padding:12px 24px;
+  position:sticky;top:var(--topbar-h);z-index:50;
+}
+.filter-bar-inner{
+  max-width:1200px;margin:0 auto;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.filter-search{
+  flex:1;min-width:200px;max-width:320px;
+  padding:8px 12px;
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:var(--radius);color:#1a1a1a;
+  font-family:var(--mono);font-size:.75rem;outline:none;
+  transition:all .2s;
+}
+.filter-search:focus{border-color:rgba(225,6,0,0.3);box-shadow:0 0 0 3px rgba(225,6,0,0.06);}
+.filter-search::placeholder{color:#bbb;}
+.filter-chips{display:flex;gap:5px;flex-wrap:wrap;}
+.chip{
+  font-family:var(--mono);font-size:.58rem;
+  padding:4px 10px;border-radius:20px;cursor:pointer;
+  border:1px solid var(--border);background:#fff;color:var(--muted);
+  transition:all .15s;white-space:nowrap;
+}
+.chip:hover{color:#1a1a1a;border-color:rgba(0,0,0,0.2);}
+.chip.active{color:var(--red);border-color:rgba(225,6,0,0.25);background:rgba(225,6,0,0.04);}
+.circuit-count{
+  margin-left:auto;font-family:var(--mono);font-size:.62rem;color:var(--muted);
+  white-space:nowrap;
+}
+
+/* ── CIRCUIT GRID ────────────────────────────────────────── */
+.circuit-grid{
+  max-width:1200px;margin:0 auto;
+  padding:24px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+  gap:16px;
+}
+
+/* ── CIRCUIT CARD ────────────────────────────────────────── */
+.circuit-card{
+  background:#fff;border:1px solid var(--border);
+  border-radius:10px;overflow:hidden;
+  box-shadow:var(--shadow);
+  transition:all .2s;cursor:pointer;
+}
+.circuit-card:hover{
+  transform:translateY(-3px);
+  box-shadow:var(--shadow-lg);
+  border-color:rgba(225,6,0,0.15);
+}
+.circuit-card.expanded{
+  grid-column:1/-1;
+  cursor:default;
+  transform:none;
+  border-color:rgba(225,6,0,0.2);
+}
+
+/* Card top accent */
+.card-accent{height:3px;background:linear-gradient(90deg,var(--red) 0%,var(--gold) 100%);}
+
+/* Card header */
+.card-header{padding:16px 18px 12px;display:flex;gap:12px;align-items:flex-start;}
+.card-round{
+  flex-shrink:0;
+  width:36px;height:36px;border-radius:6px;
+  background:rgba(225,6,0,0.06);border:1px solid rgba(225,6,0,0.12);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--head);font-weight:900;font-size:1rem;color:var(--red);
+}
+.card-info{flex:1;min-width:0;}
+.card-country{
+  font-family:var(--mono);font-size:.58rem;color:var(--muted);
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px;
+}
+.card-gp-name{
+  font-family:var(--head);font-weight:900;font-size:1.25rem;
+  text-transform:uppercase;letter-spacing:.03em;color:#1a1a1a;
+  line-height:1;margin-bottom:2px;
+}
+.card-circuit-name{
+  font-family:var(--body);font-weight:500;font-size:.78rem;
+  color:var(--muted);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.card-date{
+  flex-shrink:0;text-align:right;
+  font-family:var(--mono);font-size:.6rem;color:var(--muted);
+  line-height:1.7;
+}
+
+/* Badges */
+.card-badges{
+  display:flex;gap:5px;flex-wrap:wrap;
+  padding:0 18px 10px;
+}
+.badge{
+  font-family:var(--mono);font-size:.56rem;
+  padding:3px 8px;border-radius:3px;
+  font-weight:600;letter-spacing:.04em;
+}
+.badge-overtaking{color:#fff;}
+.badge-speed{color:#fff;}
+
+/* Key stats row */
+.card-stats{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:var(--border2);
+  border-top:1px solid var(--border2);
+  border-bottom:1px solid var(--border2);
+}
+.cs-item{
+  background:#fafafa;padding:10px 12px;text-align:center;
+}
+.cs-label{
+  font-family:var(--mono);font-size:.52rem;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;
+}
+.cs-val{
+  font-family:var(--head);font-weight:800;font-size:1rem;color:#1a1a1a;
+}
+.cs-val.red{color:var(--red);}
+.cs-val.gold{color:var(--gold);}
+
+/* Lap record */
+.card-laprecord{
+  padding:10px 18px;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border2);
+}
+.lr-label{
+  font-family:var(--mono);font-size:.56rem;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.1em;flex-shrink:0;
+}
+.lr-time{
+  font-family:var(--mono);font-size:.9rem;font-weight:600;color:var(--red);
+}
+.lr-driver{
+  font-family:var(--body);font-size:.82rem;color:var(--text2);margin-left:4px;
+}
+.lr-year{
+  font-family:var(--mono);font-size:.6rem;color:var(--muted);margin-left:auto;
+}
+
+/* Recent winners preview */
+.card-winners{padding:10px 18px 14px;}
+.cw-title{
+  font-family:var(--mono);font-size:.56rem;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;
+}
+.cw-list{display:flex;gap:6px;flex-wrap:wrap;}
+.cw-item{
+  font-family:var(--mono);font-size:.62rem;
+  padding:3px 8px;border-radius:3px;
+  background:var(--bg);border:1px solid var(--border2);
+  color:var(--text2);
+}
+.cw-item.latest{
+  background:rgba(225,6,0,0.05);border-color:rgba(225,6,0,0.15);color:var(--red);
+}
+
+/* ── EXPANDED CARD ────────────────────────────────────────── */
+.expanded-body{
+  display:none;
+  padding:0;
+  border-top:1px solid var(--border2);
+}
+.circuit-card.expanded .expanded-body{display:block;}
+
+.exp-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:0;
+}
+@media(max-width:900px){.exp-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:600px){.exp-grid{grid-template-columns:1fr;}}
+
+.exp-section{
+  padding:18px 20px;
+  border-right:1px solid var(--border2);
+  border-bottom:1px solid var(--border2);
+}
+.exp-section:last-child{border-right:none;}
+.exp-section-title{
+  font-family:var(--head);font-weight:700;font-size:.68rem;
+  text-transform:uppercase;letter-spacing:.15em;color:var(--red);
+  margin-bottom:12px;padding-bottom:6px;
+  border-bottom:1px solid var(--border2);
+}
+.exp-description{
+  font-family:var(--body);font-size:.92rem;color:var(--text2);
+  line-height:1.65;
+}
+
+.win-row{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 0;border-bottom:1px solid var(--border2);
+}
+.win-year{font-family:var(--mono);font-size:.62rem;color:var(--muted);width:36px;}
+.win-name{font-family:var(--body);font-weight:600;font-size:.86rem;color:#1a1a1a;flex:1;}
+.win-badge{
+  font-family:var(--mono);font-size:.54rem;
+  color:var(--red);background:rgba(225,6,0,0.06);
+  padding:2px 6px;border-radius:2px;
+}
+
+.exp-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.exp-stat{
+  background:var(--bg);border-radius:5px;padding:10px 12px;
+  border:1px solid var(--border2);
+}
+.exp-stat-label{font-family:var(--mono);font-size:.54rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;}
+.exp-stat-val{font-family:var(--head);font-weight:800;font-size:1.1rem;color:#1a1a1a;}
+.exp-stat-sub{font-family:var(--mono);font-size:.56rem;color:var(--muted);margin-top:2px;}
+
+.close-expanded{
+  grid-column:1/-1;
+  padding:14px 20px;
+  display:flex;justify-content:center;
+  border-top:1px solid var(--border2);
+}
+.close-btn{
+  font-family:var(--mono);font-size:.65rem;color:var(--muted);
+  cursor:pointer;padding:6px 18px;
+  border:1px solid var(--border);border-radius:3px;
+  transition:all .15s;
+}
+.close-btn:hover{color:var(--red);border-color:rgba(225,6,0,0.2);}
+
+/* ── RESPONSIVE ─────────────────────────────────────────── */
+@media(max-width:767px){
+  .page-title{font-size:2rem;}
+  .circuit-grid{
+    grid-template-columns:1fr;
+    padding:12px;gap:10px;
+  }
+  .card-stats{grid-template-columns:repeat(2,1fr);}
+  .filter-bar{padding:10px 12px;}
+  .page-header{padding:20px 16px 16px;}
+  .tb-link{display:none;}
+  .lang-toggle{display:none;}
+}
+@media(min-width:768px) and (max-width:1023px){
+  .circuit-grid{grid-template-columns:repeat(2,1fr);}
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <a class="tb-logo" href="https://paddockintel.com" target="_blank">
+    <img src="https://storage.ghost.io/c/e9/56/e9564752-0448-4f02-87a0-7f1aadb43372/content/images/2026/02/paddockintel-logo-light-xl.png" alt="PaddockIntel">
+  </a>
+  <div class="tb-section">2026 Circuits</div>
+  <div class="tb-right">
+    <div class="lang-toggle">
+      <div class="lang-btn active" onclick="setLang('en')">EN</div>
+      <div class="lang-btn" onclick="setLang('es')">ES</div>
+      <div class="lang-btn" onclick="setLang('pt')">PT</div>
+    </div>
+    <a class="tb-link" href="/index.html">← F1 Hub</a>
+    <a class="tb-link" href="https://paddockintel.com" target="_blank">PaddockIntel</a>
+  </div>
+</div>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="page-eyebrow">Formula 1 · 2026 Season</div>
+    <div class="page-title">2026 Circuits</div>
+    <div class="page-sub">Explore all 22 circuits of the 2026 Formula 1 season. Track specifications, lap records, pit stop data, and winner history — all from 76 years of race data.</div>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="filter-bar-inner">
+    <input class="filter-search" id="circuit-search" placeholder="Search circuit or country..." oninput="filterCircuits()">
+    <div class="filter-chips">
+      <div class="chip active" onclick="setFilter('all',this)">All</div>
+      <div class="chip" onclick="setFilter('europe',this)">Europe</div>
+      <div class="chip" onclick="setFilter('americas',this)">Americas</div>
+      <div class="chip" onclick="setFilter('asia',this)">Asia</div>
+      <div class="chip" onclick="setFilter('middleeast',this)">Middle East</div>
+      <div class="chip" onclick="setFilter('street',this)">Street</div>
+    </div>
+    <div class="circuit-count" id="circuit-count">22 circuits</div>
+  </div>
+</div>
+
+<!-- CIRCUIT GRID -->
+<div class="circuit-grid" id="circuit-grid"></div>
+
+<script>
+const CIRCUITS = [{"circuitId":1,"round":1,"gpShort":"Australian","raceName":"Australian Grand Prix","circuitName":"Albert Park Grand Prix Circuit","location":"Melbourne","country":"Australia","lat":-37.8497,"lng":144.968,"date":"2026-03-08","totalRaces":29,"firstGP":1996,"lapRecord":{"time":"1:19.813","driver":"Charles Leclerc","year":2024,"speed":238.1},"mostWins":{"driver":"Michael Schumacher","wins":4},"mostConWins":{"name":"Ferrari","wins":10},"last5Winners":[{"year":2026,"driver":"George Russell"},{"year":2025,"driver":"Lando Norris"},{"year":2024,"driver":"Carlos Sainz"},{"year":2023,"driver":"Max Verstappen"},{"year":2022,"driver":"Charles Leclerc"}],"avgPitStop":24.26,"length":5.278,"corners":14,"overtaking":"Difficult","speed":"High Speed","isStreet":false,"region":"asia"},{"circuitId":17,"round":2,"gpShort":"Chinese","raceName":"Chinese Grand Prix","circuitName":"Shanghai International Circuit","location":"Shanghai","country":"China","lat":31.3389,"lng":121.22,"date":"2026-03-15","totalRaces":19,"firstGP":2004,"lapRecord":{"time":"1:32.238","driver":"Michael Schumacher","year":2004,"speed":212.7},"mostWins":{"driver":"Lewis Hamilton","wins":6},"mostConWins":{"name":"Mercedes","wins":7},"last5Winners":[{"year":2026,"driver":"Andrea Kimi Antonelli"},{"year":2025,"driver":"Oscar Piastri"},{"year":2024,"driver":"Max Verstappen"},{"year":2019,"driver":"Lewis Hamilton"},{"year":2018,"driver":"Daniel Ricciardo"}],"avgPitStop":24.39,"length":5.451,"corners":16,"overtaking":"Good","speed":"High Speed","isStreet":false,"region":"asia"},{"circuitId":22,"round":3,"gpShort":"Japanese","raceName":"Japanese Grand Prix","circuitName":"Suzuka Circuit","location":"Suzuka","country":"Japan","lat":34.8431,"lng":136.541,"date":"2026-03-29","totalRaces":36,"firstGP":1987,"lapRecord":{"time":"1:30.983","driver":"Lewis Hamilton","year":2019,"speed":229.8},"mostWins":{"driver":"Michael Schumacher","wins":6},"mostConWins":{"name":"Red Bull","wins":8},"last5Winners":[{"year":2026,"driver":"Andrea Kimi Antonelli"},{"year":2025,"driver":"Max Verstappen"},{"year":2024,"driver":"Max Verstappen"},{"year":2023,"driver":"Max Verstappen"},{"year":2022,"driver":"Max Verstappen"}],"avgPitStop":26.84,"length":5.807,"corners":18,"overtaking":"Difficult","speed":"Very High Speed","isStreet":false,"region":"asia"},{"circuitId":79,"round":4,"gpShort":"Miami","raceName":"Miami Grand Prix","circuitName":"Miami International Autodrome","location":"Miami","country":"USA","lat":25.9581,"lng":-80.2389,"date":"2026-05-03","totalRaces":5,"firstGP":2022,"lapRecord":{"time":"1:29.708","driver":"Max Verstappen","year":2023,"speed":217.2},"mostWins":{"driver":"Max Verstappen","wins":2},"mostConWins":{"name":"McLaren","wins":2},"last5Winners":[{"year":2026,"driver":"Andrea Kimi Antonelli"},{"year":2025,"driver":"Oscar Piastri"},{"year":2024,"driver":"Lando Norris"},{"year":2023,"driver":"Max Verstappen"},{"year":2022,"driver":"Max Verstappen"}],"avgPitStop":22.62,"length":5.41,"corners":19,"overtaking":"Good","speed":"High Speed","isStreet":false,"region":"americas"},{"circuitId":7,"round":5,"gpShort":"Canadian","raceName":"Canadian Grand Prix","circuitName":"Circuit Gilles Villeneuve","location":"Montreal","country":"Canada","lat":45.5,"lng":-73.5228,"date":"2026-05-24","totalRaces":45,"firstGP":1978,"lapRecord":{"time":"1:13.078","driver":"Valtteri Bottas","year":2019,"speed":214.8},"mostWins":{"driver":"Lewis Hamilton","wins":7},"mostConWins":{"name":"Ferrari","wins":11},"last5Winners":[{"year":2026,"driver":"Andrea Kimi Antonelli"},{"year":2025,"driver":"George Russell"},{"year":2024,"driver":"Max Verstappen"},{"year":2023,"driver":"Max Verstappen"},{"year":2022,"driver":"Max Verstappen"}],"avgPitStop":27.12,"length":4.361,"corners":14,"overtaking":"Excellent","speed":"High Speed","isStreet":false,"region":"americas"},{"circuitId":6,"round":6,"gpShort":"Monaco","raceName":"Monaco Grand Prix","circuitName":"Circuit de Monaco","location":"Monte-Carlo","country":"Monaco","lat":43.7347,"lng":7.42056,"date":"2026-06-07","totalRaces":72,"firstGP":1929,"lapRecord":{"time":"1:12.909","driver":"Lewis Hamilton","year":2021,"speed":164.8},"mostWins":{"driver":"Ayrton Senna","wins":6},"mostConWins":{"name":"McLaren","wins":16},"last5Winners":[{"year":2025,"driver":"Lando Norris"},{"year":2024,"driver":"Charles Leclerc"},{"year":2023,"driver":"Max Verstappen"},{"year":2022,"driver":"Sergio P\u00e9rez"},{"year":2021,"driver":"Max Verstappen"}],"avgPitStop":27.27,"length":3.337,"corners":19,"overtaking":"Nearly Impossible","speed":"Medium Speed","isStreet":true,"region":"europe"},{"circuitId":4,"round":7,"gpShort":"Barcelona","raceName":"Barcelona Grand Prix","circuitName":"Circuit de Barcelona-Catalunya","location":"Montmel\u00f3","country":"Spain","lat":41.57,"lng":2.26111,"date":"2026-06-14","totalRaces":36,"firstGP":1991,"lapRecord":{"time":"1:15.641","driver":"Giancarlo Fisichella","year":2005,"speed":220.2},"mostWins":{"driver":"Lewis Hamilton","wins":6},"mostConWins":{"name":"Ferrari","wins":8},"last5Winners":[{"year":2025,"driver":"Oscar Piastri"},{"year":2024,"driver":"Max Verstappen"},{"year":2023,"driver":"Max Verstappen"},{"year":2022,"driver":"Max Verstappen"},{"year":2021,"driver":"Lewis Hamilton"}],"avgPitStop":25.33,"length":4.675,"corners":16,"overtaking":"Difficult","speed":"Medium-High Speed","isStreet":false,"region":"europe"},{"circuitId":70,"round":8,"gpShort":"Austrian","raceName":"Austrian Grand Prix","circuitName":"Red Bull Ring","location":"Spielberg","country":"Austria","lat":47.2197,"lng":14.7647,"date":"2026-06-28","totalRaces":40,"firstGP":1970,"lapRecord":{"time":"1:05.619","driver":"Carlos Sainz","year":2020,"speed":236.9},"mostWins":{"driver":"Max Verstappen","wins":5},"mostConWins":{"name":"McLaren","wins":7},"last5Winners":[{"year":2025,"driver":"Lando Norris"},{"year":2024,"driver":"George Russell"},{"year":2023,"driver":"Max Verstappen"},{"year":2022,"driver":"Charles Leclerc"},{"year":2021,"driver":"Max Verstappen"}],"avgPitStop":24.29,"length":4.318,"corners":10,"overtaking":"Excellent","speed":"High Speed","isStreet":false,"region":"europe"},{"circuitId":9,"round":9,"gpShort":"British","raceName":"British Grand Prix","circuitName":"Silverstone Circuit","location":"Silverstone","country":"UK","lat":52.0786,"lng":-1.01694,"date":"2026-07-05","totalRaces":61,"firstGP":1950,"lapRecord":{"time":"1:27.097","driver":"Max Verstappen","year":2020,"speed":243.5},"mostWins":{"driver":"Lewis Hamilton","wins":9},"mostConWins":{"name":"Ferrari","wins":15},"last5Winners":[{"year":2025,"driver":"Lando Norris"},{"year":2024,"driver":"Lewis Hamilton"},{"year":2023,"driver":"Max Verstappen"},{"year":2022,"driver":"Carlos Sainz"},{"year":2021,"driver":"Lewis Hamilton"}],"avgPitStop":29.85,"length":5.891,"corners":18,"overtaking":"Good","speed":"Very High Speed","isStreet":false,"region":"europe"},{"circuitId":13,"round":10,"gpShort":"Belgian","raceName":"Belgian Grand Prix","circuitName":"Circuit de Spa-Francorchamps","location":"Spa","country":"Belgium","lat":50.4372,"lng":5.97139,"date":"2026-07-19","totalRaces":59,"firstGP":1925,"lapRecord":{"time":"1:44.701","driver":"Sergio P\u00e9rez","year":2024,"speed":240.8},"mostWins":{"driver":"Michael Schumacher","wins":6},"mostConWins":{"name":"Ferrari","wins":14},"last5Winners":[{"year":2025,"driver":"Oscar Piastri"},{"year":2024,"driver":"Lewis Hamilton"},{"year":2023,"driver":"Max Verstappen"},{"year":2022,"driver":"Max Verstappen"},{"year":2021,"driver":"Max Verstappen"}],"avgPitStop":28.16,"length":7.004,"corners":19,"overtaking":"Excellent","speed":"Very High Speed","isStreet":false,"region":"europe"},{"circuitId":11,"round":11,"gpShort":"Hungarian","raceName":"Hungarian Grand Prix","circuitName":"Hungaroring","location":"Budapest","country":"Hungary","lat":47.5789,"lng":19.2486,"date":"2026-07-26","totalRaces":41,"firstGP":1986,"lapRecord":{"time":"1:16.627","driver":"Lewis Hamilton","year":2020,"speed":205.8},"mostWins":{"driver":"Lewis Hamilton","wins":8},"mostConWins":{"name":"McLaren","wins":13},"last5Winners":[{"year":2025,"driver":"Lando Norris"},{"year":2024,"driver":"Oscar Piastri"},{"year":2023,"driver":"Max Verstappen"},{"year":2022,"driver":"Max Verstappen"},{"year":2021,"driver":"Esteban Ocon"}],"avgPitStop":25.41,"length":4.381,"corners":14,"overtaking":"Very Difficult","speed":"Medium Speed","isStreet":false,"region":"europe"},{"circuitId":39,"round":12,"gpShort":"Dutch","raceName":"Dutch Grand Prix","circuitName":"Circuit Park Zandvoort","location":"Zandvoort","country":"Netherlands","lat":52.3888,"lng":4.54092,"date":"2026-08-23","totalRaces":36,"firstGP":1952,"lapRecord":{"time":"1:11.097","driver":"Lewis Hamilton","year":2021,"speed":215.7},"mostWins":{"driver":"Jim Clark","wins":4},"mostConWins":{"name":"Ferrari","wins":8},"last5Winners":[{"year":2025,"driver":"Oscar Piastri"},{"year":2024,"driver":"Lando Norris"},{"year":2023,"driver":"Max Verstappen"},{"year":2022,"driver":"Max Verstappen"},{"year":2021,"driver":"Max Verstappen"}],"avgPitStop":21.58,"length":4.259,"corners":14,"overtaking":"Difficult","speed":"Medium-High Speed","isStreet":false,"region":"europe"},{"circuitId":14,"round":13,"gpShort":"Italian","raceName":"Italian Grand Prix","circuitName":"Autodromo Nazionale di Monza","location":"Monza","country":"Italy","lat":45.6156,"lng":9.28111,"date":"2026-09-06","totalRaces":76,"firstGP":1922,"lapRecord":{"time":"1:21.046","driver":"Rubens Barrichello","year":2004,"speed":257.3},"mostWins":{"driver":"Lewis Hamilton","wins":5},"mostConWins":{"name":"Ferrari","wins":20},"last5Winners":[{"year":2025,"driver":"Max Verstappen"},{"year":2024,"driver":"Charles Leclerc"},{"year":2023,"driver":"Max Verstappen"},{"year":2022,"driver":"Max Verstappen"},{"year":2021,"driver":"Daniel Ricciardo"}],"avgPitStop":26.43,"length":5.793,"corners":11,"overtaking":"Excellent","speed":"Very High Speed","isStreet":false,"region":"europe"},{"circuitId":81,"round":14,"gpShort":"Spanish","raceName":"Spanish Grand Prix","circuitName":"Madring","location":"Madrid","country":"Spain","lat":40.46528,"lng":-3.61528,"date":"2026-09-13","totalRaces":1,"firstGP":2026,"lapRecord":null,"mostWins":null,"mostConWins":null,"last5Winners":[],"avgPitStop":null,"length":5.47,"corners":22,"overtaking":"Difficult","speed":"Medium-High Speed","isStreet":true,"region":"europe"},{"circuitId":73,"round":15,"gpShort":"Azerbaijan","raceName":"Azerbaijan Grand Prix","circuitName":"Baku City Circuit","location":"Baku","country":"Azerbaijan","lat":40.3725,"lng":49.8533,"date":"2026-09-26","totalRaces":10,"firstGP":2016,"lapRecord":{"time":"1:43.009","driver":"Charles Leclerc","year":2019,"speed":209.8},"mostWins":{"driver":"Sergio P\u00e9rez","wins":2},"mostConWins":{"name":"Red Bull","wins":5},"last5Winners":[{"year":2025,"driver":"Max Verstappen"},{"year":2024,"driver":"Oscar Piastri"},{"year":2023,"driver":"Sergio P\u00e9rez"},{"year":2022,"driver":"Max Verstappen"},{"year":2021,"driver":"Sergio P\u00e9rez"}],"avgPitStop":21.49,"length":6.003,"corners":20,"overtaking":"Good","speed":"Very High Speed","isStreet":true,"region":"asia"},{"circuitId":15,"round":16,"gpShort":"Singapore","raceName":"Singapore Grand Prix","circuitName":"Marina Bay Street Circuit","location":"Marina Bay","country":"Singapore","lat":1.2914,"lng":103.864,"date":"2026-10-11","totalRaces":17,"firstGP":2008,"lapRecord":{"time":"1:34.486","driver":"Daniel Ricciardo","year":2024,"speed":188.2},"mostWins":{"driver":"Sebastian Vettel","wins":5},"mostConWins":{"name":"Mercedes","wins":5},"last5Winners":[{"year":2025,"driver":"George Russell"},{"year":2024,"driver":"Lando Norris"},{"year":2023,"driver":"Carlos Sainz"},{"year":2022,"driver":"Sergio P\u00e9rez"},{"year":2019,"driver":"Sebastian Vettel"}],"avgPitStop":29.99,"length":5.063,"corners":23,"overtaking":"Difficult","speed":"Medium Speed","isStreet":true,"region":"asia"},{"circuitId":69,"round":17,"gpShort":"United States","raceName":"United States Grand Prix","circuitName":"Circuit of the Americas","location":"Austin","country":"USA","lat":30.1328,"lng":-97.6411,"date":"2026-10-25","totalRaces":14,"firstGP":2012,"lapRecord":{"time":"1:36.169","driver":"Charles Leclerc","year":2019,"speed":206.4},"mostWins":{"driver":"Lewis Hamilton","wins":5},"mostConWins":{"name":"Red Bull","wins":5},"last5Winners":[{"year":2025,"driver":"Max Verstappen"},{"year":2024,"driver":"Charles Leclerc"},{"year":2023,"driver":"Max Verstappen"},{"year":2022,"driver":"Max Verstappen"},{"year":2021,"driver":"Max Verstappen"}],"avgPitStop":25.16,"length":5.513,"corners":20,"overtaking":"Good","speed":"High Speed","isStreet":false,"region":"americas"},{"circuitId":32,"round":18,"gpShort":"Mexico","raceName":"Mexico City Grand Prix","circuitName":"Aut\u00f3dromo Hermanos Rodr\u00edguez","location":"Mexico City","country":"Mexico","lat":19.4042,"lng":-99.0907,"date":"2026-11-01","totalRaces":26,"firstGP":1963,"lapRecord":{"time":"1:17.774","driver":"Valtteri Bottas","year":2021,"speed":199.2},"mostWins":{"driver":"Max Verstappen","wins":5},"mostConWins":{"name":"Red Bull","wins":5},"last5Winners":[{"year":2025,"driver":"Lando Norris"},{"year":2024,"driver":"Carlos Sainz"},{"year":2023,"driver":"Max Verstappen"},{"year":2022,"driver":"Max Verstappen"},{"year":2021,"driver":"Max Verstappen"}],"avgPitStop":23.63,"length":4.304,"corners":17,"overtaking":"Good","speed":"High Speed","isStreet":false,"region":"americas"},{"circuitId":18,"round":19,"gpShort":"Brazilian","raceName":"Brazilian Grand Prix","circuitName":"Aut\u00f3dromo Jos\u00e9 Carlos Pace","location":"S\u00e3o Paulo","country":"Brazil","lat":-23.7036,"lng":-46.6997,"date":"2026-11-08","totalRaces":43,"firstGP":1973,"lapRecord":{"time":"1:10.540","driver":"Valtteri Bottas","year":2018,"speed":219.9},"mostWins":{"driver":"Michael Schumacher","wins":4},"mostConWins":{"name":"McLaren","wins":9},"last5Winners":[{"year":2025,"driver":"Lando Norris"},{"year":2024,"driver":"Max Verstappen"},{"year":2023,"driver":"Max Verstappen"},{"year":2022,"driver":"George Russell"},{"year":2021,"driver":"Lewis Hamilton"}],"avgPitStop":26.89,"length":4.309,"corners":15,"overtaking":"Excellent","speed":"Medium-High Speed","isStreet":false,"region":"americas"},{"circuitId":80,"round":20,"gpShort":"Las Vegas","raceName":"Las Vegas Grand Prix","circuitName":"Las Vegas Strip Street Circuit","location":"Las Vegas","country":"United States","lat":36.1147,"lng":-115.173,"date":"2026-11-22","totalRaces":4,"firstGP":2023,"lapRecord":{"time":"1:34.876","driver":"Lando Norris","year":2024,"speed":235.3},"mostWins":{"driver":"Max Verstappen","wins":2},"mostConWins":{"name":"Red Bull","wins":2},"last5Winners":[{"year":2025,"driver":"Max Verstappen"},{"year":2024,"driver":"George Russell"},{"year":2023,"driver":"Max Verstappen"}],"avgPitStop":22.78,"length":6.201,"corners":17,"overtaking":"Excellent","speed":"Very High Speed","isStreet":true,"region":"americas"},{"circuitId":78,"round":21,"gpShort":"Qatar","raceName":"Qatar Grand Prix","circuitName":"Losail International Circuit","location":"Al Daayen","country":"Qatar","lat":25.49,"lng":51.4542,"date":"2026-11-29","totalRaces":5,"firstGP":2021,"lapRecord":{"time":"1:22.384","driver":"Lando Norris","year":2024,"speed":236.8},"mostWins":{"driver":"Max Verstappen","wins":3},"mostConWins":{"name":"Red Bull","wins":3},"last5Winners":[{"year":2025,"driver":"Max Verstappen"},{"year":2024,"driver":"Max Verstappen"},{"year":2023,"driver":"Max Verstappen"},{"year":2021,"driver":"Lewis Hamilton"}],"avgPitStop":29.02,"length":5.419,"corners":16,"overtaking":"Good","speed":"High Speed","isStreet":false,"region":"middleeast"},{"circuitId":24,"round":22,"gpShort":"Abu Dhabi","raceName":"Abu Dhabi Grand Prix","circuitName":"Yas Marina Circuit","location":"Abu Dhabi","country":"UAE","lat":24.4672,"lng":54.6031,"date":"2026-12-06","totalRaces":18,"firstGP":2009,"lapRecord":{"time":"1:25.637","driver":"Kevin Magnussen","year":2024,"speed":222.0},"mostWins":{"driver":"Lewis Hamilton","wins":5},"mostConWins":{"name":"Red Bull","wins":8},"last5Winners":[{"year":2025,"driver":"Max Verstappen"},{"year":2024,"driver":"Lando Norris"},{"year":2023,"driver":"Max Verstappen"},{"year":2022,"driver":"Max Verstappen"},{"year":2021,"driver":"Max Verstappen"}],"avgPitStop":22.6,"length":5.281,"corners":16,"overtaking":"Good","speed":"Medium-High Speed","isStreet":false,"region":"middleeast"}]
+
+const DESCRIPTIONS = {1:"Albert Park transforms Melbourne's parkland into one of F1's most photogenic venues. A semi-permanent street circuit around the lake, it rewards smooth driving over raw speed. The track surface \u2014 part public road, part racing tarmac \u2014 creates grip variations that catch drivers off guard every March.",17:"Shanghai's track features one of F1's longest back straights \u2014 over 1.2km \u2014 creating relentless slipstreaming battles. The distinctive Turn 1-2 complex demands precise setup compromise between straight-line speed and cornering ability. High tire degradation makes strategy critical throughout the race distance.",22:"Suzuka's figure-eight layout is a masterpiece of circuit design. The 130R corner \u2014 taken flat at nearly 300 km/h \u2014 separates the great from the good. The Esses complex in the opening sector is one of the most demanding sequences in racing, requiring commitment and precision in equal measure.",79:"Miami International Autodrome wraps around the Hard Rock Stadium in a layout that captures the city's energy. Multiple DRS zones and varying corner complexes create strategic opportunities throughout the race. The Florida heat makes tire management crucial across the 57-lap distance.",7:"The Circuit Gilles Villeneuve honors its namesake with pure racing character. Built on \u00cele Notre-Dame, the Montreal circuit features the infamous Wall of Champions at Turn 13, where world champions have ended their race in an instant. Low-downforce setups and heavy braking define the weekend.",6:"Monaco is not a circuit \u2014 it's a statement. At 3.337 km, the shortest lap on the calendar and the hardest to master. Barriers inches from the car, zero run-off, and 78 laps of pure concentration. Qualifying matters more here than anywhere else on earth. The first Monaco GP was in 1929.",4:"Barcelona's Circuit de Catalunya is F1's ultimate test bench. Teams know every millimeter from pre-season testing, yet the circuit's technical demands \u2014 particularly Turns 3 and 9 \u2014 still produce surprising results. High tire degradation makes strategy critical across the 66-lap race distance.",70:"The Red Bull Ring's compact layout in the Austrian Alps delivers some of the most intense racing on the calendar. Significant elevation changes, wide track surface, and the long run to Turn 1 create constant overtaking opportunities. The mountain weather can change race strategy in minutes.",9:"Silverstone is the home of British motorsport and the spiritual birthplace of the World Championship. The legendary Maggotts-Becketts-Chapel complex \u2014 taken flat in a modern F1 car \u2014 represents some of the highest sustained lateral G-forces in racing. The fastest average lap speed on the calendar.",13:"Spa-Francorchamps is cathedral and courtroom in one. At 7km, the longest lap on the calendar cuts through the Belgian Ardennes with Eau Rouge-Raidillon \u2014 the benchmark of driver commitment \u2014 at its heart. Weather can be completely different at Raidillon and the Bus Stop hairpin simultaneously.",11:"The Hungaroring outside Budapest is deceptively simple-looking and brutally difficult to overtake on. Teams call it a high-speed karting track. Tire strategy and qualifying position define race outcomes more than pace, making it one of the most strategically complex weekends of the season.",39:"Zandvoort returned to the calendar in 2021 with Max Verstappen's Dutch fanbase turning it into a sea of orange. The banked corners \u2014 18 degrees at Turn 3 \u2014 are unique in modern F1. The narrow circuit through the dunes makes overtaking nearly impossible without strategic excellence.",14:"Monza is the Temple of Speed. The lowest downforce circuit on the calendar produces the highest average speeds, with cars exceeding 340 km/h on the main straight. The slipstream battles into the Variante del Rettifilo create some of the most dramatic racing of the season.",81:"Madrid's Madring brings F1 back to the Spanish capital. The 5.47km layout weaves through the IFEMA Madrid complex with 22 corners that test setup compromise across low, medium, and high-speed sections. As a new venue, it immediately puts pressure on drivers and teams to adapt quickly.",73:"Baku's 6km street circuit features the narrowest section on any F1 calendar \u2014 the passage through the Old City UNESCO Heritage site \u2014 immediately followed by a 2.2km straight where cars reach 350 km/h. The combination of claustrophobic corners and extreme speed is found nowhere else in racing.",15:"Marina Bay at night is F1 at its most cinematic. The Singapore skyline illuminated by 1,600 floodlights, 23 corners through the financial district, and tropical humidity pushing drivers to their limits. The safety car appears here more than anywhere else on the calendar.",69:"Circuit of the Americas announced America's serious return to F1. The 40-meter elevation change to Turn 1 is the most dramatic launch in the sport. Inspired by the world's greatest corners \u2014 including a Maggotts-Becketts-style complex \u2014 COTA blends heritage with modern design.",32:"The Aut\u00f3dromo Hermanos Rodr\u00edguez sits at 2,285 meters altitude \u2014 the thinnest air in F1. Downforce levels drop dramatically, engines lose power, and brakes overheat faster. The stadium section through the old baseball venue creates an amphitheater atmosphere unlike anywhere else.",18:"Interlagos is raw and passionate. Built into S\u00e3o Paulo's undulating landscape with an anti-clockwise layout and 40 meters of elevation change, the circuit rewards mechanical balance over aerodynamic efficiency. Weather is famously unpredictable \u2014 a dry race can become a wet-weather classic in minutes.",80:"Las Vegas brings F1 to the neon. The circuit runs directly down the Strip with a 1.9km straight \u2014 the longest in F1 \u2014 past the Bellagio and Caesars Palace at over 320 km/h. The late-night desert air produces peak performance conditions that favor aggressive setups.",78:"Losail hosts F1 under desert floodlights north of Doha. The flowing 16-corner layout was originally built for MotoGP and rewards smooth, flowing driving. High tire degradation and crosswinds from the desert add strategic complexity throughout the race distance.",24:"Yas Marina closes the season in Abu Dhabi's twilight. The 2021 redesign opened up the circuit significantly, improving racing quality. The iconic Yas Viceroy Hotel, lit by LED panels, straddles the circuit creating one of F1's most recognizable visual moments."}
+
+const OVERTAKING_COLORS = {"Excellent": "#16a34a", "Good": "#65a30d", "Difficult": "#d97706", "Very Difficult": "#dc2626", "Nearly Impossible": "#991b1b"};
+const SPEED_COLORS = {"Very High Speed": "#7c3aed", "High Speed": "#2563eb", "Medium-High Speed": "#0891b2", "Medium Speed": "#0d9488"};
+
+// Region mapping
+const REGIONS = {
+  1:'europe', 17:'europe', 22:'europe', 79:'americas',
+  7:'europe', 6:'europe', 11:'europe', 70:'europe',
+  9:'asia', 13:'asia', 18:'middleeast', 39:'asia',
+  14:'middleeast', 81:'americas', 73:'europe', 15:'americas',
+  69:'europe', 32:'asia', 80:'americas', 78:'americas',
+  4:'americas', 24:'europe',
+};
+
+// Street circuits
+const STREET_CIRCUITS = new Set([22,79,9,32,80,78,24,18]);
+
+const CF={
+  'Australia':'🇦🇺','China':'🇨🇳','Japan':'🇯🇵','USA':'🇺🇸',
+  'Canada':'🇨🇦','Monaco':'🇲🇨','Spain':'🇪🇸','Austria':'🇦🇹','UK':'🇬🇧',
+  'Belgium':'🇧🇪','Hungary':'🇭🇺','Netherlands':'🇳🇱','Italy':'🇮🇹','Azerbaijan':'🇦🇿',
+  'Singapore':'🇸🇬','Mexico':'🇲🇽','Brazil':'🇧🇷','Qatar':'🇶🇦','UAE':'🇦🇪',
+  'Saudi Arabia':'🇸🇦','Bahrain':'🇧🇭',
+};
+const cf=c=>CF[c]||'🏁';
+
+function fmtDate(d){
+  return new Date(d+'T12:00:00Z').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+
+// ── I18N ──────────────────────────────────────────────────────
+const LANGS={
+  en:{circuits:'2026 Circuits',searchPlaceholder:'Search circuit or country...',
+    all:'All',europe:'Europe',americas:'Americas',asia:'Asia',middleeast:'Middle East',street:'Street',
+    lapRecord:'Lap Record',recentWinners:'Recent Winners',circuitDetails:'Circuit Details',
+    venueHistory:'Venue History',raceAnalysis:'Race Analysis',
+    totalGPs:'Total GPs',firstGP:'First GP',avgPit:'Avg Pit',length:'Length',
+    corners:'Corners',overtaking:'Overtaking',speed:'Speed',
+    mostWins:'Most Wins at Venue',mostConWins:'Most Successful Team',
+    close:'Close',latest:'2026',
+  },
+  es:{circuits:'Circuitos 2026',searchPlaceholder:'Buscar circuito o país...',
+    all:'Todos',europe:'Europa',americas:'Américas',asia:'Asia',middleeast:'Medio Oriente',street:'Urbano',
+    lapRecord:'Récord de Vuelta',recentWinners:'Ganadores Recientes',circuitDetails:'Detalles del Circuito',
+    venueHistory:'Historia del Circuito',raceAnalysis:'Análisis de Carrera',
+    totalGPs:'GPs Totales',firstGP:'Primer GP',avgPit:'Pit Promedio',length:'Longitud',
+    corners:'Curvas',overtaking:'Adelantamiento',speed:'Velocidad',
+    mostWins:'Más Victorias en el Circuito',mostConWins:'Equipo Más Exitoso',
+    close:'Cerrar',latest:'2026',
+  },
+  pt:{circuits:'Circuitos 2026',searchPlaceholder:'Buscar circuito ou país...',
+    all:'Todos',europe:'Europa',americas:'Américas',asia:'Ásia',middleeast:'Oriente Médio',street:'Urbano',
+    lapRecord:'Recorde de Volta',recentWinners:'Vencedores Recentes',circuitDetails:'Detalhes do Circuito',
+    venueHistory:'História do Circuito',raceAnalysis:'Análise de Corrida',
+    totalGPs:'GPs Totais',firstGP:'Primeiro GP',avgPit:'Pit Médio',length:'Comprimento',
+    corners:'Curvas',overtaking:'Ultrapassagem',speed:'Velocidade',
+    mostWins:'Mais Vitórias no Circuito',mostConWins:'Equipe Mais Vitoriosa',
+    close:'Fechar',latest:'2026',
+  }
+};
+let lang='en';
+function T(k){return LANGS[lang][k]||LANGS.en[k]||k;}
+function setLang(l){
+  lang=l;document.documentElement.lang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase()===l));
+  document.getElementById('circuit-search').placeholder=T('searchPlaceholder');
+  renderCircuits();
+  try{localStorage.setItem('pi_lang',l);}catch(e){}
+}
+
+// ── FILTERS ──────────────────────────────────────────────────
+let activeFilter='all', searchQ='', expandedId=null;
+
+function setFilter(f,el){
+  activeFilter=f;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderCircuits();
+}
+function filterCircuits(){
+  searchQ=document.getElementById('circuit-search').value.toLowerCase();
+  renderCircuits();
+}
+
+function matchesFilter(c){
+  if(activeFilter==='street') return c.isStreet===true;
+  if(activeFilter!=='all') return c.region===activeFilter;
+  return true;
+}
+
+// ── RENDER ────────────────────────────────────────────────────
+function renderCircuits(){
+  const filtered=CIRCUITS.filter(c=>{
+    const regionOk=matchesFilter(c);
+    const searchOk=!searchQ||
+      c.gpShort.toLowerCase().includes(searchQ)||
+      c.country.toLowerCase().includes(searchQ)||
+      c.location.toLowerCase().includes(searchQ)||
+      c.circuitName.toLowerCase().includes(searchQ);
+    return regionOk&&searchOk;
+  });
+
+  document.getElementById('circuit-count').textContent=filtered.length+' circuit'+(filtered.length!==1?'s':'');
+
+  document.getElementById('circuit-grid').innerHTML=filtered.map(c=>buildCard(c)).join('');
+}
+
+function buildCard(c){
+  const fl=c.lapRecord;
+  const mw=c.mostWins;
+  const mcw=c.mostConWins;
+  const desc=DESCRIPTIONS[c.circuitId]||'';
+  const ovColor=OVERTAKING_COLORS[c.overtaking]||'#6b7280';
+  const spColor=SPEED_COLORS[c.speed]||'#6b7280';
+  const isStreet=STREET_CIRCUITS.has(c.circuitId);
+  const isExpanded=expandedId===c.circuitId;
+
+  return `<div class="circuit-card ${isExpanded?'expanded':''}" id="card-${c.circuitId}" onclick="toggleCard(${c.circuitId},event)">
+    <div class="card-accent"></div>
+    <div class="card-header">
+      <div class="card-round">${c.round}</div>
+      <div class="card-info">
+        <div class="card-country">${cf(c.country)} ${c.country}</div>
+        <div class="card-gp-name">${c.gpShort}</div>
+        <div class="card-circuit-name">${c.circuitName}</div>
+      </div>
+      <div class="card-date">
+        ${fmtDate(c.date)}<br>
+        <span style="color:var(--red)">${c.location}</span>
+      </div>
+    </div>
+    <div class="card-badges">
+      <span class="badge badge-overtaking" style="background:${ovColor}">${c.overtaking}</span>
+      <span class="badge badge-speed" style="background:${spColor}">${c.speed}</span>
+      ${isStreet?'<span class="badge" style="background:#374151;color:#fff">Street Circuit</span>':''}
+    </div>
+    <div class="card-stats">
+      <div class="cs-item">
+        <div class="cs-label">${T('length')}</div>
+        <div class="cs-val">${c.length||'—'}<span style="font-size:.6rem;font-family:var(--mono);color:var(--muted)"> km</span></div>
+      </div>
+      <div class="cs-item">
+        <div class="cs-label">${T('corners')}</div>
+        <div class="cs-val gold">${c.corners||'—'}</div>
+      </div>
+      <div class="cs-item">
+        <div class="cs-label">${T('firstGP')}</div>
+        <div class="cs-val">${c.firstGP||'—'}</div>
+      </div>
+      <div class="cs-item">
+        <div class="cs-label">${T('totalGPs')}</div>
+        <div class="cs-val red">${c.totalRaces}</div>
+      </div>
+    </div>
+    ${fl?`<div class="card-laprecord">
+      <div class="lr-label">${T('lapRecord')}</div>
+      <div class="lr-time">${fl.time}</div>
+      <div class="lr-driver">— ${fl.driver.split(' ').pop()}</div>
+      <div class="lr-year">${fl.year}</div>
+    </div>`:''}
+    <div class="card-winners">
+      <div class="cw-title">${T('recentWinners')}</div>
+      <div class="cw-list">
+        ${(c.last5Winners||[]).map((w,i)=>`
+          <div class="cw-item ${i===0?'latest':''}">
+            ${i===0?'<span style="color:var(--muted);margin-right:3px;font-size:.54rem">'+w.year+'</span>':''}
+            ${w.driver.split(' ').pop()}
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- EXPANDED CONTENT -->
+    <div class="expanded-body" onclick="event.stopPropagation()">
+      <div class="exp-grid">
+        <div class="exp-section">
+          <div class="exp-section-title">${T('circuitDetails')}</div>
+          <p class="exp-description">${desc}</p>
+        </div>
+        <div class="exp-section">
+          <div class="exp-section-title">${T('venueHistory')}</div>
+          <div class="exp-stat-grid" style="margin-bottom:14px">
+            ${fl?`<div class="exp-stat">
+              <div class="exp-stat-label">${T('lapRecord')}</div>
+              <div class="exp-stat-val" style="color:var(--red)">${fl.time}</div>
+              <div class="exp-stat-sub">${fl.driver} · ${fl.year} · ${fl.speed.toFixed(1)} km/h</div>
+            </div>`:''}
+            ${c.avgPitStop?`<div class="exp-stat">
+              <div class="exp-stat-label">${T('avgPit')}</div>
+              <div class="exp-stat-val">${c.avgPitStop}s</div>
+              <div class="exp-stat-sub">historical average</div>
+            </div>`:''}
+            ${mw?`<div class="exp-stat">
+              <div class="exp-stat-label">${T('mostWins')}</div>
+              <div class="exp-stat-val" style="font-size:.95rem">${mw.driver}</div>
+              <div class="exp-stat-sub">${mw.wins} victories</div>
+            </div>`:''}
+            ${mcw?`<div class="exp-stat">
+              <div class="exp-stat-label">${T('mostConWins')}</div>
+              <div class="exp-stat-val" style="font-size:.95rem">${mcw.name}</div>
+              <div class="exp-stat-sub">${mcw.wins} victories</div>
+            </div>`:''}
+          </div>
+          <div style="font-family:var(--mono);font-size:.56rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">${T('recentWinners')}</div>
+          ${(c.last5Winners||[]).map((w,i)=>`
+            <div class="win-row">
+              <div class="win-year">${w.year}</div>
+              <div class="win-name">${w.driver}</div>
+              ${i===0?'<div class="win-badge">'+T('latest')+'</div>':''}
+            </div>`).join('')}
+        </div>
+        <div class="exp-section">
+          <div class="exp-section-title">${T('raceAnalysis')}</div>
+          <div style="font-family:var(--body);font-size:.88rem;color:var(--muted);line-height:1.6;margin-bottom:14px;">
+            Full race analysis, gap charts, and pit strategy available in the Race Hub.
+          </div>
+          <a href="/race-hub.html" style="
+            display:inline-flex;align-items:center;gap:6px;
+            font-family:var(--mono);font-size:.65rem;
+            padding:8px 16px;border-radius:4px;
+            border:1px solid rgba(225,6,0,0.25);
+            background:rgba(225,6,0,0.04);color:var(--red);
+            text-decoration:none;transition:all .15s;
+          " onmouseover="this.style.background='rgba(225,6,0,0.08)'"
+             onmouseout="this.style.background='rgba(225,6,0,0.04)'">
+            Race Hub →
+          </a>
+        </div>
+      </div>
+      <div class="close-expanded">
+        <div class="close-btn" onclick="collapseCard(${c.circuitId})">✕ ${T('close')}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleCard(id, event){
+  if(expandedId===id){
+    collapseCard(id);
+  } else {
+    expandedId=id;
+    renderCircuits();
+    // Scroll to expanded card
+    setTimeout(()=>{
+      const el=document.getElementById('card-'+id);
+      if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+    },100);
+  }
+}
+function collapseCard(id){
+  expandedId=null;
+  renderCircuits();
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+renderCircuits();
+try{
+  const saved=localStorage.getItem('pi_lang');
+  if(saved&&LANGS[saved]) setLang(saved);
+}catch(e){}
+</script>
+</body>
+</html>
