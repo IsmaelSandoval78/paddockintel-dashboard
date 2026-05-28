@@ -5,6 +5,8 @@
   "builds": [
     { "src": "index.html", "use": "@vercel/static" },
     { "src": "race-hub.html", "use": "@vercel/static" },
+    { "src": "circuits.html", "use": "@vercel/static" },
+    { "src": "story-hub.html", "use": "@vercel/static" },
     { "src": "public/**", "use": "@vercel/static" }
   ]
 }
