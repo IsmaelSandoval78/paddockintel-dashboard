@@ -1,6 +1,29 @@
 {
+  "version": 2,
   "cleanUrls": true,
   "trailingSlash": false,
+  "builds": [
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "race-hub.html", "use": "@vercel/static" },
+    { "src": "circuits.html", "use": "@vercel/static" },
+    { "src": "story-hub.html", "use": "@vercel/static" },
+    { "src": "f1_D.json", "use": "@vercel/static" },
+    { "src": "f1_dsd.json", "use": "@vercel/static" },
+    { "src": "f1_csd.json", "use": "@vercel/static" },
+    { "src": "public/**", "use": "@vercel/static" },
+    { "src": "api/**", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/race-hub", "dest": "/race-hub.html" },
+    { "src": "/circuits", "dest": "/circuits.html" },
+    { "src": "/story-hub", "dest": "/story-hub.html" },
+    { "src": "/f1_D.json", "dest": "/f1_D.json" },
+    { "src": "/f1_dsd.json", "dest": "/f1_dsd.json" },
+    { "src": "/f1_csd.json", "dest": "/f1_csd.json" },
+    { "src": "/public/(.*)", "dest": "/public/$1" },
+    { "src": "/", "dest": "/index.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
