@@ -1,0 +1,29 @@
+{
+  "navigation": {
+    "drivers": "Pilotos",
+    "circuits": "Circuitos",
+    "compare": "Comparar",
+    "live": "Telemetria ao Vivo"
+  },
+  "drivers": {
+    "title": "Grid de Pilotos",
+    "subtitle": "Dados de classificação em tempo real e perfis aerodinâmicos",
+    "points": "Pontos",
+    "position": "Posição",
+    "wins": "Vitórias",
+    "code": "Código",
+    "nationality": "Nacionalidade",
+    "biography": "Análise do Pit Wall"
+  },
+  "compare": {
+    "title": "Duelo de Telemetria",
+    "subtitle": "Comparação de dados dinâmicos frente a frente",
+    "select_driver": "Selecionar Piloto",
+    "vs": "VS",
+    "metrics": {
+      "speed": "Velocidade Média",
+      "qualifying": "Ritmo de Qualificação",
+      "pitstop": "Tempo Médio de Pit Stop"
+    }
+  }
+}
