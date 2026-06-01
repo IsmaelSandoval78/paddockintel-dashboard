@@ -150,6 +150,94 @@ export default function InlineCircuitPanel({
 
       </div>
 
+      {/* ── Historical records row — 4 cols ───────────────────── */}
+      <div className="grid grid-cols-4 divide-x divide-border border-t border-border">
+
+        {/* 04 · Top Constructor */}
+        <div className="px-6 py-4">
+          <div className="flex items-baseline gap-2 mb-2">
+            <span className="font-mono text-xs text-text-2 leading-none">04 ·</span>
+            <span className="text-[13px] font-medium text-text-2 leading-none">
+              {t('topConstructor')}
+            </span>
+          </div>
+          {info.top_constructor ? (
+            <div className="flex items-center gap-3">
+              <span className="text-[13px] font-medium text-text-1 flex-1 min-w-0 truncate">
+                {info.top_constructor.name}
+              </span>
+              <span className="font-mono text-xs text-text-3 tabular-nums shrink-0">
+                {info.top_constructor.wins}W
+              </span>
+            </div>
+          ) : (
+            <span className="font-mono text-[13px] text-text-3">—</span>
+          )}
+        </div>
+
+        {/* 05 · Most Wins Driver */}
+        <div className="px-6 py-4">
+          <div className="flex items-baseline gap-2 mb-2">
+            <span className="font-mono text-xs text-text-2 leading-none">05 ·</span>
+            <span className="text-[13px] font-medium text-text-2 leading-none">
+              {t('topWinDriver')}
+            </span>
+          </div>
+          {info.top_win_driver ? (
+            <div className="flex items-center gap-3">
+              <span className="text-[13px] font-medium text-text-1 flex-1 min-w-0 truncate">
+                {info.top_win_driver.forename[0]}. {info.top_win_driver.surname}
+              </span>
+              <span className="font-mono text-xs text-text-3 tabular-nums shrink-0">
+                {info.top_win_driver.wins}W
+              </span>
+            </div>
+          ) : (
+            <span className="font-mono text-[13px] text-text-3">—</span>
+          )}
+        </div>
+
+        {/* 06 · Most Poles Driver */}
+        <div className="px-6 py-4">
+          <div className="flex items-baseline gap-2 mb-2">
+            <span className="font-mono text-xs text-text-2 leading-none">06 ·</span>
+            <span className="text-[13px] font-medium text-text-2 leading-none">
+              {t('topPoleDriver')}
+            </span>
+          </div>
+          {info.top_pole_driver ? (
+            <div className="flex items-center gap-3">
+              <span className="text-[13px] font-medium text-text-1 flex-1 min-w-0 truncate">
+                {info.top_pole_driver.forename[0]}. {info.top_pole_driver.surname}
+              </span>
+              <span className="font-mono text-xs text-text-3 tabular-nums shrink-0">
+                {info.top_pole_driver.poles}P
+              </span>
+            </div>
+          ) : (
+            <span className="font-mono text-[13px] text-text-3">—</span>
+          )}
+        </div>
+
+        {/* 07 · Avg. Winner's Grid */}
+        <div className="px-6 py-4">
+          <div className="flex items-baseline gap-2 mb-2">
+            <span className="font-mono text-xs text-text-2 leading-none">07 ·</span>
+            <span className="text-[13px] font-medium text-text-2 leading-none">
+              {t('avgWinnerGrid')}
+            </span>
+          </div>
+          {info.avg_winner_grid !== null ? (
+            <span className="font-serif text-[32px] text-text-1 leading-none tabular-nums">
+              P{info.avg_winner_grid}
+            </span>
+          ) : (
+            <span className="font-mono text-[13px] text-text-3">—</span>
+          )}
+        </div>
+
+      </div>
+
       {/* ── CTA ────────────────────────────────────────────────── */}
       <div className="px-6 py-3 border-t border-border">
         <Link

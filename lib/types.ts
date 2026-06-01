@@ -53,4 +53,8 @@ export interface CircuitInfo {
     time: string;
     year: number;
   } | null;
+  top_constructor: { name: string; wins: number } | null;
+  top_win_driver: { forename: string; surname: string; wins: number } | null;
+  top_pole_driver: { forename: string; surname: string; poles: number } | null;
+  avg_winner_grid: number | null;
 }

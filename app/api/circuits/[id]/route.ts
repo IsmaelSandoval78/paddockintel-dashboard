@@ -51,18 +51,20 @@ export async function GET(
       champions: [],
       fastest_pit: null,
       fastest_lap: null,
+      top_constructor: null,
+      top_win_driver: null,
+      top_pole_driver: null,
+      avg_winner_grid: null,
     });
   }
 
-  // Batch 2: winners, fastest lap, fastest pit stop (parallel)
-  const [champRes, fastLapRes, pitRes] = await Promise.all([
+  // Batch 2: all winners + fastest lap + fastest pit + pole positions
+  const [allWinnersRes, fastLapRes, pitRes, poleRes] = await Promise.all([
     supabase
       .from('results')
-      .select('race_id, driver_id')
+      .select('race_id, driver_id, constructor_id, grid')
       .in('race_id', raceIds)
-      .eq('position', 1)
-      .order('race_id', { ascending: false })
-      .limit(5),
+      .eq('position', 1),
     supabase
       .from('results')
       .select('race_id, driver_id, fastest_lap_time')
@@ -79,21 +81,75 @@ export async function GET(
       .gt('milliseconds', 0)
       .order('milliseconds', { ascending: true })
       .limit(1),
+    supabase
+      .from('qualifying')
+      .select('race_id, driver_id')
+      .in('race_id', raceIds)
+      .eq('position', 1),
   ]);
 
-  const champDriverIds = (champRes.data ?? []).map((c) => c.driver_id as number);
+  const allWinners = allWinnersRes.data ?? [];
   const fastLapRow = fastLapRes.data?.[0];
-  const fastLapDriverId = fastLapRow ? (fastLapRow.driver_id as number) : null;
   const pitStop = pitRes.data?.[0];
+  const poles = poleRes.data ?? [];
+
+  // Last 5 champions (sorted by race_id desc)
+  const sortedWinners = [...allWinners].sort(
+    (a, b) => (b.race_id as number) - (a.race_id as number)
+  );
+  const last5 = sortedWinners.slice(0, 5);
+
+  // Top constructor by wins
+  const conWins = new Map<number, number>();
+  for (const w of allWinners) {
+    const cid = w.constructor_id as number;
+    conWins.set(cid, (conWins.get(cid) ?? 0) + 1);
+  }
+  const topConEntry = [...conWins.entries()].sort((a, b) => b[1] - a[1])[0];
+  const topConstructorId = topConEntry?.[0] ?? null;
+  const topConstructorWins = topConEntry?.[1] ?? 0;
+
+  // Top win driver
+  const drvWins = new Map<number, number>();
+  for (const w of allWinners) {
+    const did = w.driver_id as number;
+    drvWins.set(did, (drvWins.get(did) ?? 0) + 1);
+  }
+  const topWinEntry = [...drvWins.entries()].sort((a, b) => b[1] - a[1])[0];
+  const topWinDriverId = topWinEntry?.[0] ?? null;
+  const topWinCount = topWinEntry?.[1] ?? 0;
+
+  // Avg winner grid (grid=0 means no data)
+  const validGrids = allWinners
+    .map((w) => w.grid as number)
+    .filter((g) => g > 0);
+  const avgWinnerGrid =
+    validGrids.length
+      ? Math.round((validGrids.reduce((a, b) => a + b, 0) / validGrids.length) * 10) / 10
+      : null;
+
+  // Top pole driver
+  const poleCounts = new Map<number, number>();
+  for (const p of poles) {
+    const did = p.driver_id as number;
+    poleCounts.set(did, (poleCounts.get(did) ?? 0) + 1);
+  }
+  const topPoleEntry = [...poleCounts.entries()].sort((a, b) => b[1] - a[1])[0];
+  const topPoleDriverId = topPoleEntry?.[0] ?? null;
+  const topPoleCount = topPoleEntry?.[1] ?? 0;
+
+  const fastLapDriverId = fastLapRow ? (fastLapRow.driver_id as number) : null;
 
   const allDriverIds = [
     ...new Set([
-      ...champDriverIds,
+      ...last5.map((w) => w.driver_id as number),
+      ...(topWinDriverId ? [topWinDriverId] : []),
+      ...(topPoleDriverId ? [topPoleDriverId] : []),
       ...(fastLapDriverId ? [fastLapDriverId] : []),
     ]),
   ];
 
-  // Batch 3: driver names + pit stop constructor_id (parallel)
+  // Batch 3: driver names + pit stop constructor_id
   const [driversRes, pitConstructorRes] = await Promise.all([
     allDriverIds.length
       ? supabase
@@ -115,20 +171,26 @@ export async function GET(
     (driversRes.data ?? []).map((d) => [d.id as number, d])
   );
 
-  // Batch 4: constructor name for fastest pit stop
-  const constructorId = (pitConstructorRes.data ?? [])[0]?.constructor_id as number | undefined;
-  let constructorName: string | null = null;
-  if (constructorId) {
+  // Batch 4: constructor names for pit stop + top constructor (one query)
+  const pitConstructorId = (pitConstructorRes.data ?? [])[0]?.constructor_id as number | undefined;
+  const constructorIds = [
+    ...(pitConstructorId ? [pitConstructorId] : []),
+    ...(topConstructorId ? [topConstructorId] : []),
+  ];
+
+  const constructorNameMap = new Map<number, string>();
+  if (constructorIds.length) {
     const { data: conData } = await supabase
       .from('constructors')
-      .select('name')
-      .eq('id', constructorId)
-      .single();
-    constructorName = (conData?.name as string) ?? null;
+      .select('id, name')
+      .in('id', constructorIds);
+    for (const c of conData ?? []) {
+      constructorNameMap.set(c.id as number, c.name as string);
+    }
   }
 
   // Assemble response
-  const champions = (champRes.data ?? []).flatMap((c) => {
+  const champions = last5.flatMap((c) => {
     const d = driverMap.get(c.driver_id as number);
     const year = raceYearMap.get(c.race_id as number);
     if (!d || !year) return [];
@@ -151,12 +213,41 @@ export async function GET(
       : null;
 
   const fastestPit =
-    pitStop && constructorName
+    pitStop && pitConstructorId && constructorNameMap.has(pitConstructorId)
       ? {
-          constructor: constructorName,
+          constructor: constructorNameMap.get(pitConstructorId)!,
           duration: pitStop.duration as string,
           year: raceYearMap.get(pitStop.race_id as number) ?? 0,
         }
+      : null;
+
+  const topConstructor =
+    topConstructorId && constructorNameMap.has(topConstructorId)
+      ? { name: constructorNameMap.get(topConstructorId)!, wins: topConstructorWins }
+      : null;
+
+  const topWinDriver =
+    topWinDriverId && driverMap.has(topWinDriverId)
+      ? (() => {
+          const d = driverMap.get(topWinDriverId)!;
+          return {
+            forename: d.forename as string,
+            surname: d.surname as string,
+            wins: topWinCount,
+          };
+        })()
+      : null;
+
+  const topPoleDriver =
+    topPoleDriverId && driverMap.has(topPoleDriverId)
+      ? (() => {
+          const d = driverMap.get(topPoleDriverId)!;
+          return {
+            forename: d.forename as string,
+            surname: d.surname as string,
+            poles: topPoleCount,
+          };
+        })()
       : null;
 
   return NextResponse.json<CircuitInfo>({
@@ -171,5 +262,9 @@ export async function GET(
     champions,
     fastest_pit: fastestPit,
     fastest_lap: fastestLap,
+    top_constructor: topConstructor,
+    top_win_driver: topWinDriver,
+    top_pole_driver: topPoleDriver,
+    avg_winner_grid: avgWinnerGrid,
   });
 }

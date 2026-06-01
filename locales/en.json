@@ -27,6 +27,13 @@
     "legend": {
       "season": "2026 Season",
       "historical": "Historical"
+    },
+    "filter": {
+      "all": "All",
+      "europe": "Europe",
+      "americas": "Americas",
+      "asia": "Asia & Pacific",
+      "africaMiddleEast": "Africa & Middle East"
     }
   },
   "circuit": {
@@ -35,6 +42,10 @@
     "champions": "Last 5 Champions",
     "fastestPit": "Fastest Pit Stop",
     "fastestLap": "Fastest Lap",
+    "topConstructor": "Top Constructor",
+    "topWinDriver": "Most Wins",
+    "topPoleDriver": "Most Poles",
+    "avgWinnerGrid": "Avg. Start",
     "viewFull": "View full circuit →"
   }
 }
