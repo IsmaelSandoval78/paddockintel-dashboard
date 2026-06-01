@@ -1,0 +1,32 @@
+{
+  "nav": {
+    "hub": "Hub",
+    "circuits": "Circuitos",
+    "drivers": "Pilotos",
+    "constructors": "Construtores",
+    "compare": "Comparar"
+  },
+  "hub": {
+    "title": "PaddockIntel",
+    "tagline": "Hub de inteligência F1",
+    "status": {
+      "connected": "Supabase conectado",
+      "error": "Erro de conexão"
+    }
+  },
+  "panel": {
+    "championship": "Campeonato de Pilotos",
+    "constructors": "Batalha de Construtores",
+    "pts": "PTS",
+    "pod": "POD",
+    "winPct": "VIT%"
+  },
+  "circuit": {
+    "firstRace": "Primeira Corrida",
+    "totalRaces": "Total de Corridas",
+    "champions": "Últimos 5 Campeões",
+    "fastestPit": "Pit Stop Mais Rápido",
+    "fastestLap": "Volta Mais Rápida",
+    "viewFull": "Ver circuito completo →"
+  }
+}

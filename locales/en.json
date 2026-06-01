@@ -1,0 +1,32 @@
+{
+  "nav": {
+    "hub": "Hub",
+    "circuits": "Circuits",
+    "drivers": "Drivers",
+    "constructors": "Constructors",
+    "compare": "Compare"
+  },
+  "hub": {
+    "title": "PaddockIntel",
+    "tagline": "F1 intelligence hub",
+    "status": {
+      "connected": "Supabase connected",
+      "error": "Connection error"
+    }
+  },
+  "panel": {
+    "championship": "Championship Standings",
+    "constructors": "Constructor Battle",
+    "pts": "PTS",
+    "pod": "POD",
+    "winPct": "WIN%"
+  },
+  "circuit": {
+    "firstRace": "First Race",
+    "totalRaces": "Total Races",
+    "champions": "Last 5 Champions",
+    "fastestPit": "Fastest Pit Stop",
+    "fastestLap": "Fastest Lap",
+    "viewFull": "View full circuit →"
+  }
+}

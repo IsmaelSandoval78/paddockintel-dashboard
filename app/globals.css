@@ -1,0 +1,113 @@
+@import "leaflet/dist/leaflet.css";
+@import "tailwindcss";
+
+:root {
+  /* Backgrounds */
+  --bg:              #FFFFFF;
+  --surface:         #F8F8F8;
+  --surface-raised:  #F0F0F0;
+  --surface-overlay: #F0F0F0;
+
+  /* Borders */
+  --border:          #E5E5E5;
+  --border-subtle:   #EFEFEF;
+
+  /* Text */
+  --text-1:          #0A0A0A;
+  --text-2:          #6B6B6B;
+  --text-3:          #AAAAAA;
+
+  /* Accent */
+  --red:             #E10600;
+  --red-dim:         #FFF0F0;
+  --gold:            #C9A84C;
+  --gold-dim:        #1a1408;
+
+  /* Semantic */
+  --green:           #22C55E;
+  --green-dim:       #0a1f0f;
+
+  /* Constructor colors */
+  --team-mercedes:   #00D2BE;
+  --team-mclaren:    #FF8700;
+  --team-redbull:    #3671C6;
+  --team-ferrari:    #E8002D;
+  --team-alpine:     #FF87BC;
+  --team-aston:      #358C75;
+  --team-haas:       #B6BABD;
+  --team-williams:   #64C4FF;
+  --team-sauber:     #52E252;
+  --team-rb:         #6692FF;
+
+  /* Motion */
+  --ease:            cubic-bezier(0.16, 1, 0.3, 1);
+  --fast:            100ms;
+  --base:            150ms;
+}
+
+@theme inline {
+  /* Colors */
+  --color-bg:              var(--bg);
+  --color-surface:         var(--surface);
+  --color-surface-raised:  var(--surface-raised);
+  --color-surface-overlay: var(--surface-overlay);
+  --color-border:          var(--border);
+  --color-border-subtle:   var(--border-subtle);
+  --color-text-1:          var(--text-1);
+  --color-text-2:          var(--text-2);
+  --color-text-3:          var(--text-3);
+  --color-red:             var(--red);
+  --color-red-dim:         var(--red-dim);
+  --color-gold:            var(--gold);
+  --color-gold-dim:        var(--gold-dim);
+  --color-green:           var(--green);
+  --color-green-dim:       var(--green-dim);
+
+  /* Fonts — variables injected by next/font on <html> */
+  --font-serif: var(--pi-serif);
+  --font-sans:  var(--pi-sans);
+  --font-mono:  var(--pi-mono);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-1);
+  font-family: var(--pi-sans, Inter, -apple-system, BlinkMacSystemFont, sans-serif);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Leaflet dark theme */
+.leaflet-container { background: var(--bg); }
+
+.leaflet-control-attribution {
+  background: transparent !important;
+  color: var(--text-3) !important;
+  font-size: 10px !important;
+  opacity: 0.4;
+  box-shadow: none !important;
+}
+.leaflet-control-attribution a { color: var(--text-3) !important; }
+
+.leaflet-bar {
+  border: 1px solid var(--border) !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+}
+.leaflet-control-zoom a {
+  background: var(--surface) !important;
+  color: var(--text-2) !important;
+  border-bottom-color: var(--border) !important;
+  line-height: 28px !important;
+}
+.leaflet-control-zoom a:hover {
+  background: var(--surface-raised) !important;
+  color: var(--text-1) !important;
+}
