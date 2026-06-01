@@ -73,6 +73,48 @@
     },
     "noData": "No race data available for this circuit."
   },
+  "drivers": {
+    "title": "Drivers",
+    "count": "{count} drivers",
+    "view": {
+      "season": "2026 Season",
+      "allTime": "All Time"
+    },
+    "filter": {
+      "allNationalities": "All"
+    },
+    "search": {
+      "placeholder": "Search drivers"
+    },
+    "table": {
+      "pos": "Pos",
+      "driver": "Driver",
+      "team": "Team",
+      "pts": "PTS",
+      "wins": "Wins",
+      "pod": "Pod",
+      "races": "Races",
+      "span": "Era",
+      "winPct": "Win%"
+    },
+    "panel": {
+      "career": "Career",
+      "races": "Races",
+      "wins": "Wins",
+      "podiums": "Podiums",
+      "poles": "Poles",
+      "fastestLaps": "Fastest Laps",
+      "season2026": "2026 Season",
+      "era": "Era",
+      "lastResults": "Last 5 Results",
+      "viewFull": "View full profile →"
+    },
+    "pagination": {
+      "prev": "← Prev",
+      "next": "Next →",
+      "of": "of"
+    }
+  },
   "circuit": {
     "firstRace": "First Race",
     "totalRaces": "Total Races",

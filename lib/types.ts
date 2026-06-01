@@ -32,6 +32,64 @@ export interface ConstructorRow {
   wins: number;
 }
 
+export interface DriverSeasonRow {
+  driver_id: number;
+  driver_ref: string;
+  forename: string;
+  surname: string;
+  code: string | null;
+  nationality: string;
+  position: number;
+  points: number;
+  wins: number;
+  podiums: number;
+  races: number;
+  constructor_id: number;
+  constructor_name: string;
+  constructor_ref: string;
+}
+
+export interface DriverAllTimeRow {
+  driver_id: number;
+  driver_ref: string;
+  forename: string;
+  surname: string;
+  nationality: string;
+  first_year: number;
+  last_year: number;
+  wins: number;
+  races: number;
+}
+
+export interface DriverDetail {
+  driver_id: number;
+  driver_ref: string;
+  forename: string;
+  surname: string;
+  code: string | null;
+  nationality: string;
+  dob: string | null;
+  first_year: number;
+  last_year: number;
+  races: number;
+  wins: number;
+  podiums: number;
+  poles: number;
+  fastest_laps: number;
+  season_2026: {
+    position: number;
+    points: number;
+    wins: number;
+    constructor_name: string;
+  } | null;
+  last_5_results: Array<{
+    race_name: string;
+    year: number;
+    position: number | null;
+    points: number;
+  }>;
+}
+
 export interface CircuitInfo {
   name: string;
   location: string;

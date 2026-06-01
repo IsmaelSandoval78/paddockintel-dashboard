@@ -73,6 +73,48 @@
     },
     "noData": "No hay datos de carrera disponibles para este circuito."
   },
+  "drivers": {
+    "title": "Pilotos",
+    "count": "{count} pilotos",
+    "view": {
+      "season": "Temporada 2026",
+      "allTime": "Histórico"
+    },
+    "filter": {
+      "allNationalities": "Todos"
+    },
+    "search": {
+      "placeholder": "Buscar pilotos"
+    },
+    "table": {
+      "pos": "Pos",
+      "driver": "Piloto",
+      "team": "Equipo",
+      "pts": "PTS",
+      "wins": "Vic",
+      "pod": "Pod",
+      "races": "Carreras",
+      "span": "Era",
+      "winPct": "% Vic"
+    },
+    "panel": {
+      "career": "Carrera",
+      "races": "Carreras",
+      "wins": "Victorias",
+      "podiums": "Podios",
+      "poles": "Poles",
+      "fastestLaps": "Vueltas Rápidas",
+      "season2026": "Temporada 2026",
+      "era": "Era",
+      "lastResults": "Últimos 5 Resultados",
+      "viewFull": "Ver perfil completo →"
+    },
+    "pagination": {
+      "prev": "← Ant",
+      "next": "Sig →",
+      "of": "de"
+    }
+  },
   "circuit": {
     "firstRace": "Primera Carrera",
     "totalRaces": "Carreras Totales",
