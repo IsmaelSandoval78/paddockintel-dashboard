@@ -1,9 +1,11 @@
 # PaddockIntel Dashboard — Claude Code Guidelines
 
 ## Project Overview
+
 **hub.paddockintel.com** — F1 economic and performance intelligence hub.
 Interactive map-driven dashboard with historical data from 1950 to present.
-Stack: Next.js 15 + TypeScript + Supabase + Vercel. i18n: ES / EN / PT.
+Stack: Next.js 16 + TypeScript + Tailwind v4 + Supabase + Vercel + Leaflet + next-intl.
+i18n: EN / ES / PT. Default locale: `en`.
 
 ---
 
@@ -39,7 +41,7 @@ Stack: Next.js 15 + TypeScript + Supabase + Vercel. i18n: ES / EN / PT.
 ```
 paddockintel-dashboard/
 ├── app/
-│   ├── [locale]/           # ES / EN / PT routing
+│   ├── [locale]/           # EN / ES / PT routing
 │   │   ├── page.tsx        # Hub principal (map + panels)
 │   │   ├── circuits/       # Página de circuitos
 │   │   ├── drivers/        # Página de drivers
@@ -47,17 +49,17 @@ paddockintel-dashboard/
 │   │   └── compare/        # Comparador interactivo
 │   └── api/                # Supabase server-side queries
 ├── components/
-│   ├── map/                # Mapa interactivo (circuitos)
+│   ├── map/                # Mapa interactivo Leaflet (circuitos)
 │   ├── panels/             # Panel derecho dinámico
 │   ├── cards/              # Driver cards, constructor cards
 │   ├── scorecards/         # Shareable scorecards
 │   └── ui/                 # Primitivos (botones, badges, etc.)
 ├── lib/
 │   ├── supabase/           # Client + server + queries
-│   └── i18n/              # Translations ES/EN/PT
+│   └── i18n/               # next-intl config
 ├── locales/
-│   ├── es.json
 │   ├── en.json
+│   ├── es.json
 │   └── pt.json
 └── public/
     └── circuits/           # Circuit layout images
@@ -80,7 +82,7 @@ All data lives in Supabase. Never use mock data — always query real tables.
 **constructor_standings** — `id, race_id, constructor_id, points, position, wins`
 **pit_stops** — `race_id, driver_id, stop, lap, duration, milliseconds`
 **lap_times** — `race_id, driver_id, lap, position, time, milliseconds`
-**qualifying** — via qualifying table
+**qualifying** — qualifying results
 **sprint_results** — sprint race results
 **driver_stats** — pre-aggregated driver stats
 **constructor_stats** — pre-aggregated constructor stats
@@ -89,12 +91,12 @@ All data lives in Supabase. Never use mock data — always query real tables.
 
 ### Query Patterns
 
-Always use server-side Supabase client in `app/api/` routes.
-Use `driver_stats` and `constructor_stats` for aggregated data — avoid heavy joins on every request.
-For current season: filter `races.year = 2026`.
-For podiums: `results.position IN (1, 2, 3)`.
-For fastest pit stop: `MIN(pit_stops.milliseconds)` joined with constructors.
-For fastest lap history: `MIN(results.fastest_lap_time)` — note this is text, parse carefully.
+- Always use server-side Supabase client in `app/api/` routes
+- Use `driver_stats` and `constructor_stats` for aggregated data — avoid heavy joins on every request
+- For current season: filter `races.year = 2026`
+- For podiums: `results.position IN (1, 2, 3)`
+- For fastest pit stop: `MIN(pit_stops.milliseconds)` joined with constructors
+- For fastest lap history: `MIN(results.fastest_lap_time)` — note this is text, parse carefully
 
 ---
 
@@ -103,12 +105,12 @@ For fastest lap history: `MIN(results.fastest_lap_time)` — note this is text, 
 ```
 ┌─────────────────────────────┬──────────────────────┐
 │                             │  [default state]      │
-│     MAPA INTERACTIVO        │  Top 10 Drivers       │
-│     (60% width)             │  ─────────────────    │
-│                             │  Top 5 Constructors   │
-│     Click circuit →         │  (40% width)          │
-│     panel swap (inline)     │                       │
-│                             │  [circuit selected]   │
+│     MAPA INTERACTIVO        │  01 · Top 10 Drivers  │
+│     Leaflet + CartoDB Dark  │  ─────────────────    │
+│     (60% width)             │  02 · Top 5 Constructors
+│                             │  (40% width)          │
+│     Click circuit →         │                       │
+│     panel swap fade 150ms   │  [circuit selected]   │
 │                             │  Circuit Info Panel   │
 │                             │  + X to close         │
 └─────────────────────────────┴──────────────────────┘
@@ -116,12 +118,11 @@ For fastest lap history: `MIN(results.fastest_lap_time)` — note this is text, 
 
 **Panel default data:**
 - Top 10 drivers: name, points, podiums, win rate (wins/races)
-- Top 5 constructors: name, points, podiums, fastest lap of season (race name), fastest pit stop of season (race name)
+- Top 5 constructors: name, points, podiums, fastest lap of season, fastest pit stop of season
 
 **Panel circuit data (on map click):**
-- Circuit name, location, country
-- First race year
-- Total races since 1950
+- Circuit name, location, country, coordinates (JetBrains Mono)
+- First race year + total races since 1950
 - Last 5 champions (year + driver name)
 - Fastest pit stop ever (constructor + time + year)
 - Fastest lap ever (driver + time + year)
@@ -130,40 +131,79 @@ For fastest lap history: `MIN(results.fastest_lap_time)` — note this is text, 
 ---
 
 ## Design System
-See DESIGN.md for full visual spec.
-TailwindCSS only — no inline styles, no CSS modules unless absolutely necessary.
-Dark mode first. Use CSS variables defined in globals.css.
+
+See `DESIGN.md` for full visual spec.
+
+- Tailwind v4 utility classes only — no inline styles, no CSS modules unless absolutely necessary
+- Dark mode first — `#080808` base, never white backgrounds
+- Use CSS variables from `globals.css` — never hardcode hex values that exist as tokens
+- Never hardcode spacing in `px` where Tailwind tokens exist
+- Font classes: `font-serif` (DM Serif Display), `font-sans` (Inter), `font-mono` (JetBrains Mono)
+- Tabular numbers always: `font-variant-numeric: tabular-nums` on any stat column
 
 ---
 
 ## i18n Rules
-- All user-facing strings go through i18n — never hardcode text
-- Locale routing: `/es/`, `/en/`, `/pt/`
-- Default locale: `en`
+
+- All user-facing strings go through `next-intl` — never hardcode text in components
+- Locale routing: `/en/`, `/es/`, `/pt/`
 - Translation keys use dot notation: `hub.drivers.title`
+- Numbers and dates via `useFormatter` from next-intl
+- Locale switcher: text only, no dropdown library
 
 ---
 
 ## Performance Rules
-- All Supabase queries are server-side (React Server Components)
-- No client-side fetching unless interactive (map clicks, comparator)
+
+- All Supabase queries are server-side (React Server Components by default)
+- No client-side fetching unless interactive (map clicks, comparator, locale switcher)
 - Paginate any list over 20 items
-- Images: next/image always, WebP format
+- Images: `next/image` always, WebP format
+- Leaflet: dynamic import with `ssr: false` — never import server-side
 
 ---
 
 ## Scorecards (Shareable)
+
 - Generated client-side as canvas/PNG
-- Always include PaddockIntel.com watermark + logo
-- Aspect ratios: 1:1 (IG), 9:16 (Stories/TikTok), 16:9 (X/Twitter)
-- Driver comparison: side-by-side stats with brand colors
+- Always include paddockintel.com watermark + logo
+- Aspect ratios: 1:1 (Instagram), 9:16 (Stories/TikTok), 16:9 (X/Twitter)
+- Dark background `#080808` always — never light scorecards
+
+---
+
+## Critique Gate
+
+Before declaring any component, page, or feature done, score these five dimensions.
+Minimum to ship: **4 on all five**. If any score < 4, iterate before moving on.
+
+| # | Dimension | Question |
+|---|---|---|
+| 1 | **Philosophy** | Does it feel like PaddockIntel — editorial, not SaaS? |
+| 2 | **Hierarchy** | Can I read the primary info in 3 seconds? |
+| 3 | **Execution** | No layout shift, no jank, no hardcoded values? |
+| 4 | **Specificity** | Is it unmistakably F1 intel, not generic sports? |
+| 5 | **Restraint** | Does every element earn its place? Nothing decorative? |
+
+**SHIP IT** = all five ≥ 4 · **ITERATE** = 1–2 below 4 · **RETHINK** = 3+ below 4
 
 ---
 
 ## Do Not
+
+- Do not use Next.js 14/15 APIs or patterns — this is Next.js 16, breaking changes apply
+- Do not use Tailwind v3 config syntax — this is Tailwind v4
 - Do not use any F1 official API (no Ergast, no OpenF1 live)
 - Do not add dependencies without asking first
 - Do not hardcode any F1 data that exists in Supabase
+- Do not hardcode standings, points, results, or statistics — always query or verify
 - Do not use `any` type in TypeScript
-- Do not commit .env files
-- Do not generate placeholder/lorem ipsum content
+- Do not commit `.env` files
+- Do not generate placeholder or lorem ipsum content
+- Do not invent circuit records, lap times, or historical data — query Supabase
+- Do not use inline styles or hardcoded hex values — use CSS variables from globals.css
+- Do not import Leaflet at the top level — always dynamic import with `ssr: false`
+- Do not use `rounded-3xl`, gradients, glassmorphism, or shadows on data surfaces
+- Do not use pie charts — use ranked lists
+## Skills
+Before starting any task, read `skills/paddockintel/SKILL.md`.

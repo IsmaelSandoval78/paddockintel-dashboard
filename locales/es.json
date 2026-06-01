@@ -21,6 +21,14 @@
     "pod": "POD",
     "winPct": "VIC%"
   },
+  "circuits": {
+    "title": "Circuitos",
+    "count": "{count} circuitos",
+    "legend": {
+      "season": "Temporada 2026",
+      "historical": "Histórico"
+    }
+  },
   "circuit": {
     "firstRace": "Primera Carrera",
     "totalRaces": "Carreras Totales",

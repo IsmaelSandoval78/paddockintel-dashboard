@@ -21,6 +21,14 @@
     "pod": "POD",
     "winPct": "WIN%"
   },
+  "circuits": {
+    "title": "Circuits",
+    "count": "{count} circuits",
+    "legend": {
+      "season": "2026 Season",
+      "historical": "Historical"
+    }
+  },
   "circuit": {
     "firstRace": "First Race",
     "totalRaces": "Total Races",
