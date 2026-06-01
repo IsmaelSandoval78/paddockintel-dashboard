@@ -36,6 +36,43 @@
       "africaMiddleEast": "África y Oriente Medio"
     }
   },
+  "circuitDetail": {
+    "breadcrumb": {
+      "circuits": "Circuitos"
+    },
+    "hero": {
+      "label": "Circuito",
+      "firstRace": "Primera Carrera",
+      "totalRaces": "Total de Carreras"
+    },
+    "winners": {
+      "title": "Ganadores",
+      "year": "Año",
+      "driver": "Piloto",
+      "constructor": "Constructor",
+      "fastestLap": "Vuelta Rápida"
+    },
+    "dominance": {
+      "title": "Dominancia por Década"
+    },
+    "lapRecord": {
+      "title": "Evolución del Récord",
+      "allTime": "REC"
+    },
+    "constructors": {
+      "title": "Victorias por Constructor"
+    },
+    "nextRace": {
+      "title": "Carrera 2026",
+      "round": "Ronda",
+      "date": "Fecha",
+      "countdown": "Cuenta atrás",
+      "days": "días",
+      "today": "Día de carrera",
+      "past": "Carrera completada"
+    },
+    "noData": "No hay datos de carrera disponibles para este circuito."
+  },
   "circuit": {
     "firstRace": "Primera Carrera",
     "totalRaces": "Carreras Totales",

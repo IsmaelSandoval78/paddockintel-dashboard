@@ -36,6 +36,43 @@
       "africaMiddleEast": "Africa & Middle East"
     }
   },
+  "circuitDetail": {
+    "breadcrumb": {
+      "circuits": "Circuits"
+    },
+    "hero": {
+      "label": "Circuit",
+      "firstRace": "First Race",
+      "totalRaces": "Total Races"
+    },
+    "winners": {
+      "title": "Race Winners",
+      "year": "Year",
+      "driver": "Driver",
+      "constructor": "Constructor",
+      "fastestLap": "Fastest Lap"
+    },
+    "dominance": {
+      "title": "Decade Dominance"
+    },
+    "lapRecord": {
+      "title": "Lap Record Evolution",
+      "allTime": "REC"
+    },
+    "constructors": {
+      "title": "Constructor Wins"
+    },
+    "nextRace": {
+      "title": "2026 Race",
+      "round": "Round",
+      "date": "Date",
+      "countdown": "Countdown",
+      "days": "days",
+      "today": "Race day",
+      "past": "Race completed"
+    },
+    "noData": "No race data available for this circuit."
+  },
   "circuit": {
     "firstRace": "First Race",
     "totalRaces": "Total Races",
