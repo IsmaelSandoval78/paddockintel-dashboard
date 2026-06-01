@@ -115,6 +115,56 @@
       "of": "of"
     }
   },
+  "driverDetail": {
+    "breadcrumb": { "drivers": "Drivers" },
+    "hero": {
+      "label": "Driver",
+      "races": "Races",
+      "wins": "Wins",
+      "podiums": "Podiums"
+    },
+    "stats": {
+      "title": "Career Stats",
+      "championships": "Championships",
+      "poles": "Poles",
+      "fastestLaps": "Fastest Laps",
+      "dnfs": "DNFs",
+      "winPct": "Win%"
+    },
+    "seasons": {
+      "title": "Season by Season",
+      "year": "Year",
+      "constructor": "Constructor",
+      "pos": "Pos",
+      "pts": "PTS",
+      "wins": "Wins",
+      "pod": "Pod",
+      "races": "Races"
+    },
+    "winsSection": {
+      "title": "Win History",
+      "year": "Year",
+      "race": "Race",
+      "constructor": "Constructor",
+      "fastestLap": "Fastest Lap"
+    },
+    "qualifying": {
+      "title": "Qualifying Record",
+      "poles": "Poles",
+      "frontRow": "Front Row",
+      "avgPosition": "Avg Quali",
+      "year": "Year",
+      "race": "Race"
+    },
+    "constructors": {
+      "title": "Constructors",
+      "years": "Years",
+      "races": "Races",
+      "wins": "Wins",
+      "podiums": "Podiums"
+    },
+    "noData": "No race data available for this driver."
+  },
   "circuit": {
     "firstRace": "First Race",
     "totalRaces": "Total Races",

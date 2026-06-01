@@ -115,6 +115,56 @@
       "of": "de"
     }
   },
+  "driverDetail": {
+    "breadcrumb": { "drivers": "Pilotos" },
+    "hero": {
+      "label": "Piloto",
+      "races": "Corridas",
+      "wins": "Vitórias",
+      "podiums": "Pódios"
+    },
+    "stats": {
+      "title": "Estatísticas",
+      "championships": "Campeonatos",
+      "poles": "Poles",
+      "fastestLaps": "Voltas Rápidas",
+      "dnfs": "Abandonos",
+      "winPct": "% Vit"
+    },
+    "seasons": {
+      "title": "Por Temporada",
+      "year": "Ano",
+      "constructor": "Construtor",
+      "pos": "Pos",
+      "pts": "PTS",
+      "wins": "Vit",
+      "pod": "Pod",
+      "races": "Corridas"
+    },
+    "winsSection": {
+      "title": "Vitórias",
+      "year": "Ano",
+      "race": "Corrida",
+      "constructor": "Construtor",
+      "fastestLap": "Volta Rápida"
+    },
+    "qualifying": {
+      "title": "Qualificação",
+      "poles": "Poles",
+      "frontRow": "1ª Fila",
+      "avgPosition": "Pos. Média",
+      "year": "Ano",
+      "race": "Corrida"
+    },
+    "constructors": {
+      "title": "Construtores",
+      "years": "Anos",
+      "races": "Corridas",
+      "wins": "Vit",
+      "podiums": "Pódios"
+    },
+    "noData": "Não há dados disponíveis para este piloto."
+  },
   "circuit": {
     "firstRace": "Primeira Corrida",
     "totalRaces": "Total de Corridas",
