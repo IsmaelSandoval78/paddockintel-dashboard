@@ -90,6 +90,53 @@ export interface DriverDetail {
   }>;
 }
 
+export interface ConstructorSeasonRow {
+  constructor_id: number;
+  constructor_ref: string;
+  name: string;
+  nationality: string;
+  position: number;
+  points: number;
+  wins: number;
+  podiums: number;
+  races: number;
+}
+
+export interface ConstructorAllTimeRow {
+  constructor_id: number;
+  constructor_ref: string;
+  name: string;
+  nationality: string;
+  first_year: number;
+  last_year: number;
+  wins: number;
+  races: number;
+}
+
+export interface ConstructorDetail {
+  constructor_id: number;
+  constructor_ref: string;
+  name: string;
+  nationality: string;
+  first_year: number;
+  last_year: number;
+  races: number;
+  wins: number;
+  podiums: number;
+  fastest_laps: number;
+  season_2026: {
+    position: number;
+    points: number;
+    wins: number;
+  } | null;
+  last_5_results: Array<{
+    race_name: string;
+    year: number;
+    best_position: number | null;
+    points: number;
+  }>;
+}
+
 export interface CircuitInfo {
   name: string;
   location: string;

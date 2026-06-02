@@ -176,5 +176,45 @@
     "topPoleDriver": "Most Poles",
     "avgWinnerGrid": "Avg. Start",
     "viewFull": "View full circuit →"
+  },
+  "constructors": {
+    "title": "Constructors",
+    "count": "{count} constructors",
+    "view": {
+      "season": "2026 Season",
+      "allTime": "All Time"
+    },
+    "filter": {
+      "allNationalities": "All"
+    },
+    "search": {
+      "placeholder": "Search constructors"
+    },
+    "table": {
+      "pos": "Pos",
+      "constructor": "Constructor",
+      "nationality": "Nat",
+      "pts": "PTS",
+      "wins": "Wins",
+      "pod": "Pod",
+      "span": "Era",
+      "winPct": "Win%",
+      "races": "Races"
+    },
+    "panel": {
+      "races": "Races",
+      "wins": "Wins",
+      "podiums": "Podiums",
+      "fastestLaps": "Fastest Laps",
+      "season2026": "2026 Season",
+      "era": "Era",
+      "lastResults": "Last 5 Races",
+      "viewFull": "View full profile →"
+    },
+    "pagination": {
+      "prev": "← Prev",
+      "next": "Next →",
+      "of": "of"
+    }
   }
 }

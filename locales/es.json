@@ -176,5 +176,45 @@
     "topPoleDriver": "Más Poles",
     "avgWinnerGrid": "Salida Media",
     "viewFull": "Ver circuito completo →"
+  },
+  "constructors": {
+    "title": "Constructores",
+    "count": "{count} constructores",
+    "view": {
+      "season": "Temporada 2026",
+      "allTime": "Histórico"
+    },
+    "filter": {
+      "allNationalities": "Todos"
+    },
+    "search": {
+      "placeholder": "Buscar constructores"
+    },
+    "table": {
+      "pos": "Pos",
+      "constructor": "Constructor",
+      "nationality": "Nac",
+      "pts": "PTS",
+      "wins": "Vic",
+      "pod": "Pod",
+      "span": "Era",
+      "winPct": "% Vic",
+      "races": "Carreras"
+    },
+    "panel": {
+      "races": "Carreras",
+      "wins": "Victorias",
+      "podiums": "Podios",
+      "fastestLaps": "Vueltas Rápidas",
+      "season2026": "Temporada 2026",
+      "era": "Era",
+      "lastResults": "Últimas 5 Carreras",
+      "viewFull": "Ver perfil completo →"
+    },
+    "pagination": {
+      "prev": "← Ant",
+      "next": "Sig →",
+      "of": "de"
+    }
   }
 }
