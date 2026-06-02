@@ -292,5 +292,9 @@
       "pod": "Pod",
       "winner": "Winner"
     }
+  },
+  "scorecard": {
+    "share": "Share →",
+    "download": "Download PNG"
   }
 }

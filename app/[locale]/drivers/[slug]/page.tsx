@@ -4,6 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
 import { routing } from '@/lib/i18n/routing';
+import { DriverScorecardButton } from '@/components/scorecards/DriverScorecard';
 
 type PageParams = Promise<{ locale: string; slug: string }>;
 
@@ -841,6 +842,27 @@ export default async function DriverDetailPage({
           </div>
         </section>
       )}
+
+      {/* ── Share scorecard ───────────────────────────────────── */}
+      <div className="px-6 py-3 border-t border-border">
+        <DriverScorecardButton
+          data={{
+            forename: driver.forename,
+            surname: driver.surname,
+            code: driver.code,
+            nationality: driver.nationality,
+            firstYear: stats.first_year as number,
+            lastYear: stats.last_year as number,
+            races: stats.races as number,
+            wins: stats.wins as number,
+            podiums: stats.podiums as number,
+            poles: stats.poles as number,
+            fastestLaps: stats.fastest_laps as number,
+            championships: championshipYears.length,
+            constructorRef: seasonRows[0]?.constructorRef ?? '',
+          }}
+        />
+      </div>
 
     </main>
   );

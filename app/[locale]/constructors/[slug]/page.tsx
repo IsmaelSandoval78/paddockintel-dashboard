@@ -4,6 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
 import { routing } from '@/lib/i18n/routing';
+import { ConstructorScorecardButton } from '@/components/scorecards/ConstructorScorecard';
 
 type PageParams = Promise<{ locale: string; slug: string }>;
 
@@ -711,6 +712,24 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
           </div>
         </section>
 
+      </div>
+
+      {/* ── Share scorecard ───────────────────────────────────── */}
+      <div className="px-6 py-3 border-t border-border">
+        <ConstructorScorecardButton
+          data={{
+            name: constructor.name,
+            constructorRef: constructor.constructor_ref,
+            nationality: constructor.nationality,
+            firstYear: stats.first_year as number,
+            lastYear: stats.last_year as number,
+            races: stats.races as number,
+            wins: stats.wins as number,
+            podiums: totalPodiums,
+            fastestLaps: totalFastestLaps,
+            championships: championshipYears.length,
+          }}
+        />
       </div>
 
     </main>
