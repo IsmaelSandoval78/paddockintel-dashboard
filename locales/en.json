@@ -216,5 +216,45 @@
       "next": "Next →",
       "of": "of"
     }
+  },
+  "constructorDetail": {
+    "breadcrumb": { "constructors": "Constructors" },
+    "hero": {
+      "label": "Constructor",
+      "races": "Races",
+      "wins": "Wins",
+      "championships": "Championships"
+    },
+    "stats": {
+      "title": "Career Stats",
+      "championships": "Championships",
+      "podiums": "Podiums",
+      "fastestLaps": "Fastest Laps",
+      "poles": "Poles",
+      "winPct": "Win%"
+    },
+    "seasons": {
+      "title": "Season by Season",
+      "year": "Year",
+      "pos": "Pos",
+      "pts": "PTS",
+      "wins": "Wins",
+      "pod": "Pod",
+      "races": "Races"
+    },
+    "winsSection": {
+      "title": "Win History",
+      "year": "Year",
+      "race": "Race",
+      "driver": "Driver",
+      "fastestLap": "Fastest Lap"
+    },
+    "drivers": {
+      "title": "Drivers",
+      "races": "Races",
+      "wins": "Wins",
+      "podiums": "Podiums"
+    },
+    "noData": "No race data available for this constructor."
   }
 }

@@ -216,5 +216,45 @@
       "next": "Sig →",
       "of": "de"
     }
+  },
+  "constructorDetail": {
+    "breadcrumb": { "constructors": "Constructores" },
+    "hero": {
+      "label": "Constructor",
+      "races": "Carreras",
+      "wins": "Victorias",
+      "championships": "Campeonatos"
+    },
+    "stats": {
+      "title": "Estadísticas",
+      "championships": "Campeonatos",
+      "podiums": "Podios",
+      "fastestLaps": "Vueltas Rápidas",
+      "poles": "Poles",
+      "winPct": "% Vic"
+    },
+    "seasons": {
+      "title": "Por Temporada",
+      "year": "Año",
+      "pos": "Pos",
+      "pts": "PTS",
+      "wins": "Vic",
+      "pod": "Pod",
+      "races": "Carreras"
+    },
+    "winsSection": {
+      "title": "Victorias",
+      "year": "Año",
+      "race": "Carrera",
+      "driver": "Piloto",
+      "fastestLap": "Vuelta Rápida"
+    },
+    "drivers": {
+      "title": "Pilotos",
+      "races": "Carreras",
+      "wins": "Vic",
+      "podiums": "Podios"
+    },
+    "noData": "No hay datos de carrera disponibles para este constructor."
   }
 }
