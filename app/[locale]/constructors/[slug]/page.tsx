@@ -85,27 +85,61 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
 
   const color = teamColor(constructor.constructor_ref);
 
-  // Batch 2 — career stats + all results (parallel)
-  const [statsRes, resultsRes] = await Promise.all([
-    supabase
-      .from('constructor_stats')
-      .select('races, wins, first_year, last_year')
-      .eq('constructor_id', constructor.id)
-      .single(),
-    supabase
-      .from('results')
-      .select('race_id, driver_id, position, points, fastest_lap, fastest_lap_time')
-      .eq('constructor_id', constructor.id),
-  ]);
+  // Batch 2 — career stats + standings (two era splits) + podium results + fastest laps count
+  //
+  // The Supabase anon key enforces a server-side max-rows=1000 cap. Constructor standings
+  // and results for long-running teams (Ferrari: 1087 standings, 2497 results) exceed this.
+  // We avoid the cap by:
+  //   • Splitting constructor_standings at race_id 908 (the boundary between the 2009-back-to-1950
+  //     era and the 2014-onward era in this DB export). Each half stays under 1000 rows.
+  //   • Fetching only podium results (position ≤ 3) instead of all results — max 852 rows.
+  //   • Using a count-only query for fastest_laps (returns zero data rows).
+  const [statsRes, standingsLegacyRes, standingsModernRes, podiumResultsRes, fastestLapsCountRes] =
+    await Promise.all([
+      supabase
+        .from('constructor_stats')
+        .select('races, wins, first_year, last_year')
+        .eq('constructor_id', constructor.id)
+        .single(),
+      // race_id < 908: 2009 back to 1950 (≤ 838 rows for Ferrari, ≤ 709 for McLaren)
+      supabase
+        .from('constructor_standings')
+        .select('race_id, position, points')
+        .eq('constructor_id', constructor.id)
+        .lt('race_id', 908),
+      // race_id >= 908: 2014 onward (≤ 249 rows for any current team)
+      supabase
+        .from('constructor_standings')
+        .select('race_id, position, points')
+        .eq('constructor_id', constructor.id)
+        .gte('race_id', 908),
+      // Podium results only (≤ 852 rows for Ferrari, ≤ 545 for McLaren)
+      supabase
+        .from('results')
+        .select('race_id, driver_id, position, fastest_lap_time')
+        .eq('constructor_id', constructor.id)
+        .lte('position', 3)
+        .not('position', 'is', null),
+      // Count query — returns no rows, bypasses the row cap
+      supabase
+        .from('results')
+        .select('id', { count: 'exact', head: true })
+        .eq('constructor_id', constructor.id)
+        .not('fastest_lap', 'is', null),
+    ]);
 
   const stats = statsRes.data;
-  const allResults = resultsRes.data ?? [];
+  const allStandings = [
+    ...(standingsLegacyRes.data ?? []),
+    ...(standingsModernRes.data ?? []),
+  ];
+  const allPodiumResults = podiumResultsRes.data ?? [];
+  const totalFastestLaps = fastestLapsCountRes.count ?? 0;
 
-  const allRaceIds = [...new Set(allResults.map((r) => r.race_id as number))];
-  const allDriverIds = [...new Set(allResults.map((r) => r.driver_id as number))];
+  const allDriverIds = [...new Set(allPodiumResults.map((r) => r.driver_id as number))];
 
   // Early return — no race data
-  if (!allRaceIds.length || !stats) {
+  if (!allStandings.length || !stats) {
     return (
       <main className="flex flex-col">
         <div className="h-10 px-6 border-b border-border flex items-center gap-2 shrink-0">
@@ -138,13 +172,19 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
   }
 
   // Batch 3 — race metadata + driver names + qualifying (parallel)
-  const [racesRes, driversRes, qualiRes] = await Promise.all([
+  //
+  // Races: fetch ALL races in two era splits (no IN clause) to avoid the 1000-row cap.
+  // race_id < 908 covers 1-907 (≤ 907 rows); race_id >= 908 covers 2014-onward (≤ 270 rows).
+  // Qualifying: filter to position = 1 only — reduces ~10k rows to ~hundreds.
+  const [racesLegacyRes, racesModernRes, driversRes, qualiRes] = await Promise.all([
     supabase
       .from('races')
       .select('id, year, round, name')
-      .in('id', allRaceIds)
-      .order('year', { ascending: true })
-      .order('round', { ascending: true }),
+      .lt('id', 908),
+    supabase
+      .from('races')
+      .select('id, year, round, name')
+      .gte('id', 908),
     supabase
       .from('drivers')
       .select('id, forename, surname, driver_ref')
@@ -152,16 +192,17 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
     allDriverIds.length
       ? supabase
           .from('qualifying')
-          .select('race_id, driver_id, position')
+          .select('race_id, driver_id')
           .in('driver_id', allDriverIds)
+          .eq('position', 1)
       : Promise.resolve({
-          data: [] as { race_id: unknown; driver_id: unknown; position: unknown }[],
+          data: [] as { race_id: unknown; driver_id: unknown }[],
           error: null,
         }),
   ]);
 
   const raceById = new Map(
-    (racesRes.data ?? []).map((r) => [
+    [...(racesLegacyRes.data ?? []), ...(racesModernRes.data ?? [])].map((r) => [
       r.id as number,
       { year: r.year as number, round: r.round as number, name: r.name as string },
     ])
@@ -178,16 +219,18 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
     ])
   );
 
-  // Set of "race_id_driver_id" pairs — used to verify qualifying poles belonged to this constructor
+  // Poles: cross-reference qualifying P1s against races where the driver drove for this constructor.
+  // Source is podium results (not all results), so drivers who had poles but never a podium are
+  // missed — an accepted trade-off given the row-cap constraint.
   const constructorDriverRaceSet = new Set<string>();
-  for (const r of allResults) {
+  for (const r of allPodiumResults) {
     constructorDriverRaceSet.add(`${r.race_id as number}_${r.driver_id as number}`);
   }
 
-  // Find last race per year (highest round among this constructor's races)
+  // Find last race per year from constructor_standings (one row per race participated in)
   const lastRacePerYear = new Map<number, number>(); // year → race_id
-  for (const r of allResults) {
-    const raceId = r.race_id as number;
+  for (const s of allStandings) {
+    const raceId = s.race_id as number;
     const race = raceById.get(raceId);
     if (!race) continue;
     const cur = lastRacePerYear.get(race.year);
@@ -201,31 +244,13 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
     }
   }
 
-  const lastRaceIds = [...lastRacePerYear.values()];
-
-  // Batch 4 — championship standings at season-end races
-  const { data: standingsRaw } = lastRaceIds.length
-    ? await supabase
-        .from('constructor_standings')
-        .select('race_id, position, points, wins')
-        .eq('constructor_id', constructor.id)
-        .in('race_id', lastRaceIds)
-    : {
-        data: [] as {
-          race_id: unknown;
-          position: unknown;
-          points: unknown;
-          wins: unknown;
-        }[],
-      };
-
+  // Build standings lookup from the already-fetched allStandings — no Batch 4 needed
   const standingsByRaceId = new Map(
-    (standingsRaw ?? []).map((s) => [
+    allStandings.map((s) => [
       s.race_id as number,
       {
         position: s.position as number,
         points: s.points as number,
-        wins: s.wins as number,
       },
     ])
   );
@@ -239,18 +264,29 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
   }
   championshipYears.sort((a, b) => a - b);
 
-  // ─── Single-pass aggregation over allResults ──────────────────────────────
+  // ─── Aggregation ──────────────────────────────────────────────────────────
 
-  let totalPodiums = 0;
-  let totalFastestLaps = 0;
+  // Career fastest_laps comes from the count query (totalFastestLaps set above).
+  // Career podiums = all podium result rows.
+  const totalPodiums = allPodiumResults.length;
 
+  // Season races: one standings row = one race round
   type SeasonEntry = { races: number; wins: number; podiums: number };
   const seasonMap = new Map<number, SeasonEntry>();
 
-  type DriverEntry = { races: number; wins: number; podiums: number; years: Set<number> };
+  for (const s of allStandings) {
+    const race = raceById.get(s.race_id as number);
+    if (!race) continue;
+    const season = seasonMap.get(race.year) ?? { races: 0, wins: 0, podiums: 0 };
+    season.races += 1;
+    seasonMap.set(race.year, season);
+  }
+
+  // Season wins + podiums from podium results; driver roster from the same source
+  type DriverEntry = { wins: number; podiums: number; years: Set<number> };
   const driverStatsMap = new Map<number, DriverEntry>();
 
-  for (const r of allResults) {
+  for (const r of allPodiumResults) {
     const raceId = r.race_id as number;
     const driverId = r.driver_id as number;
     const race = raceById.get(raceId);
@@ -262,38 +298,27 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
         ? (() => { const n = Number(rawPos); return isNaN(n) ? null : n; })()
         : null;
 
-    // Season totals
+    // Add to season wins/podiums
     const season = seasonMap.get(race.year) ?? { races: 0, wins: 0, podiums: 0 };
-    season.races += 1;
     if (pos === 1) season.wins += 1;
     if (pos !== null && pos <= 3) season.podiums += 1;
     seasonMap.set(race.year, season);
 
-    // Driver totals
+    // Driver roster (podium-scoring drivers only)
     const dEntry = driverStatsMap.get(driverId) ?? {
-      races: 0,
       wins: 0,
       podiums: 0,
       years: new Set<number>(),
     };
-    dEntry.races += 1;
     if (pos === 1) dEntry.wins += 1;
     if (pos !== null && pos <= 3) dEntry.podiums += 1;
     dEntry.years.add(race.year);
     driverStatsMap.set(driverId, dEntry);
-
-    // Career totals
-    if (pos !== null && pos <= 3) totalPodiums += 1;
-    if (r.fastest_lap !== null && r.fastest_lap !== undefined) totalFastestLaps += 1;
   }
 
-  // Pole count — qualifying P1s cross-referenced with constructor race entries
+  // Pole count — qualifying P1s already filtered server-side; cross-reference with constructor races
   let poleCount = 0;
   for (const q of (qualiRes.data ?? [])) {
-    const rawPos = q.position;
-    const pos =
-      rawPos !== null && rawPos !== undefined ? Number(rawPos) : null;
-    if (pos !== 1) continue;
     if (constructorDriverRaceSet.has(`${q.race_id as number}_${q.driver_id as number}`)) {
       poleCount++;
     }
@@ -325,7 +350,7 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
         points: standing?.points ?? 0,
         wins: s.wins,
         podiums: s.podiums,
-        races: s.races,
+        races: s.races, // rounds contested (1 standings row = 1 round)
       };
     })
     .sort((a, b) => b.year - a.year);
@@ -339,7 +364,7 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
     fastestLap: string | null;
   };
 
-  const winRows: WinRow[] = allResults
+  const winRows: WinRow[] = allPodiumResults
     .flatMap((r) => {
       const rawPos = r.position;
       if (rawPos === null || rawPos === undefined || Number(rawPos) !== 1) return [];
@@ -357,16 +382,17 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
     })
     .sort((a, b) => b.year - a.year || a.raceName.localeCompare(b.raceName));
 
-  // ─── Driver rows (desc by races) ──────────────────────────────────────────
+  // ─── Driver rows (desc by podiums) ───────────────────────────────────────
+  // Shows drivers who scored podiums for this constructor.
+  // Bar is proportional to podiums (not total races) given the row-cap constraint.
 
   type DriverRow = {
     driverId: number;
     name: string;
     firstYear: number;
     lastYear: number;
-    races: number;
-    wins: number;
     podiums: number;
+    wins: number;
   };
 
   const driverRows: DriverRow[] = [...driverStatsMap.entries()]
@@ -380,15 +406,14 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
           name: `${d.forename} ${d.surname}`,
           firstYear: years[0],
           lastYear: years[years.length - 1],
-          races: s.races,
-          wins: s.wins,
           podiums: s.podiums,
+          wins: s.wins,
         },
       ];
     })
-    .sort((a, b) => b.races - a.races);
+    .sort((a, b) => b.podiums - a.podiums);
 
-  const maxDriverRaces = driverRows[0]?.races ?? 1;
+  const maxDriverPodiums = driverRows[0]?.podiums ?? 1;
 
   // ─── Render ───────────────────────────────────────────────────────────────
 
@@ -661,21 +686,17 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
                     </span>
                   </div>
 
-                  {/* Bar proportional to races */}
+                  {/* Bar proportional to podium appearances */}
                   <div className="flex-1 h-px bg-border overflow-hidden">
                     <div
                       className="h-full bg-text-2"
-                      style={{ width: `${(row.races / maxDriverRaces) * 100}%` }}
+                      style={{ width: `${(row.podiums / maxDriverPodiums) * 100}%` }}
                     />
                   </div>
 
                   {/* Stats */}
                   <div className="flex items-center gap-4 shrink-0">
                     <span className="font-mono text-[11px] text-text-1 tabular-nums w-12 text-right">
-                      {row.races}
-                      <span className="text-text-3 ml-1">{t('drivers.races')}</span>
-                    </span>
-                    <span className="font-mono text-[11px] text-text-2 tabular-nums w-10 text-right">
                       {row.wins}
                       <span className="text-text-3 ml-1">{t('drivers.wins')}</span>
                     </span>
