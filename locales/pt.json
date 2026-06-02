@@ -256,5 +256,41 @@
       "podiums": "Pódios"
     },
     "noData": "Não há dados de corrida disponíveis para este construtor."
+  },
+  "compare": {
+    "title": "Comparar",
+    "mode": {
+      "drivers": "Pilotos",
+      "constructors": "Construtores"
+    },
+    "selector": {
+      "searchDrivers": "Buscar pilotos",
+      "searchConstructors": "Buscar construtores",
+      "vs": "vs"
+    },
+    "prompt": "Selecione dois {type} para comparar",
+    "career": "Carreira",
+    "stats": {
+      "races": "Corridas",
+      "wins": "Vitórias",
+      "podiums": "Pódios",
+      "poles": "Poles",
+      "fastestLaps": "Voltas Rápidas",
+      "championships": "Campeonatos",
+      "winPct": "% Vit",
+      "era": "Era"
+    },
+    "hth": {
+      "teammates": "Como Companheiros",
+      "headToHead": "Frente a Frente",
+      "neverTeammates": "Nunca companheiros",
+      "year": "Ano",
+      "team": "Equipe",
+      "pos": "Pos",
+      "pts": "PTS",
+      "wins": "Vit",
+      "pod": "Pod",
+      "winner": "Vencedor"
+    }
   }
 }

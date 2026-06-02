@@ -256,5 +256,41 @@
       "podiums": "Podiums"
     },
     "noData": "No race data available for this constructor."
+  },
+  "compare": {
+    "title": "Compare",
+    "mode": {
+      "drivers": "Drivers",
+      "constructors": "Constructors"
+    },
+    "selector": {
+      "searchDrivers": "Search drivers",
+      "searchConstructors": "Search constructors",
+      "vs": "vs"
+    },
+    "prompt": "Select two {type} to compare",
+    "career": "Career",
+    "stats": {
+      "races": "Races",
+      "wins": "Wins",
+      "podiums": "Podiums",
+      "poles": "Poles",
+      "fastestLaps": "Fastest Laps",
+      "championships": "Championships",
+      "winPct": "Win%",
+      "era": "Era"
+    },
+    "hth": {
+      "teammates": "As Teammates",
+      "headToHead": "Head-to-Head",
+      "neverTeammates": "Never teammates",
+      "year": "Year",
+      "team": "Team",
+      "pos": "Pos",
+      "pts": "PTS",
+      "wins": "Wins",
+      "pod": "Pod",
+      "winner": "Winner"
+    }
   }
 }

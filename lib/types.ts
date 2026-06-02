@@ -1,3 +1,75 @@
+export interface DriverSelectorRow {
+  driver_id: number;
+  driver_ref: string;
+  forename: string;
+  surname: string;
+  nationality: string;
+  wins: number;
+}
+
+export interface ConstructorSelectorRow {
+  constructor_id: number;
+  constructor_ref: string;
+  name: string;
+  nationality: string;
+  wins: number;
+}
+
+export interface CompareDriverSeason {
+  year: number;
+  constructor_ref: string;
+  constructor_name: string;
+  wins: number;
+  podiums: number;
+  races: number;
+  position: number | null;
+  points: number;
+}
+
+export interface CompareDriverData {
+  driver_id: number;
+  driver_ref: string;
+  forename: string;
+  surname: string;
+  code: string | null;
+  nationality: string;
+  first_year: number;
+  last_year: number;
+  races: number;
+  wins: number;
+  podiums: number;
+  poles: number;
+  fastest_laps: number;
+  championships: number;
+  win_pct: number;
+  seasons: CompareDriverSeason[];
+}
+
+export interface CompareConstructorSeason {
+  year: number;
+  wins: number;
+  podiums: number;
+  races: number;
+  position: number | null;
+  points: number;
+}
+
+export interface CompareConstructorData {
+  constructor_id: number;
+  constructor_ref: string;
+  name: string;
+  nationality: string;
+  first_year: number;
+  last_year: number;
+  races: number;
+  wins: number;
+  podiums: number;
+  fastest_laps: number;
+  championships: number;
+  win_pct: number;
+  seasons: CompareConstructorSeason[];
+}
+
 export interface Circuit {
   id: number;
   circuit_ref: string;
