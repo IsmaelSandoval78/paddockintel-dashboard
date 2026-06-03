@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import type { Circuit, CircuitInfo } from '@/lib/types';
 import MapClientWrapper from '@/components/map/MapClientWrapper';
 import InlineCircuitPanel from './InlineCircuitPanel';
+import BottomSheet from '@/components/ui/BottomSheet';
 
 const COLLAPSE_MS = 200;
 
@@ -130,14 +131,14 @@ export default function CircuitsClient({
         </span>
       </div>
 
-      {/* ── Filter bar ───────────────────────────────────────── */}
-      <div className="h-9 px-5 border-b border-border flex items-center gap-5 shrink-0">
+      {/* ── Filter bar — overflow-x-auto on mobile ───────────── */}
+      <div className="h-9 px-5 border-b border-border flex items-center gap-5 shrink-0 overflow-x-auto">
         {REGIONS.map(({ key, labelKey }) => (
           <button
             key={key}
             onClick={() => handleRegionChange(key)}
             className={[
-              'font-mono text-[11px] uppercase tracking-[0.06em] transition-colors duration-150 cursor-pointer bg-transparent border-0 p-0',
+              'font-mono text-[11px] uppercase tracking-[0.06em] transition-colors duration-150 cursor-pointer bg-transparent border-0 p-0 shrink-0',
               activeRegion === key ? 'text-red' : 'text-text-2 hover:text-text-1',
             ].join(' ')}
           >
@@ -146,8 +147,8 @@ export default function CircuitsClient({
         ))}
       </div>
 
-      {/* ── Map — fills viewport minus navbar + header + filter + legend ── */}
-      <div className="h-[calc(100dvh-11.25rem)] bg-bg">
+      {/* ── Map — 50vh on mobile, full remaining height on desktop ── */}
+      <div className="h-[50vh] md:h-[calc(100dvh-11.25rem)] bg-bg">
         <MapClientWrapper circuits={filteredCircuits} onSelect={handleSelect} />
       </div>
 
@@ -163,11 +164,11 @@ export default function CircuitsClient({
         </div>
       </div>
 
-      {/* ── Inline panel — CSS grid-rows height animation ──── */}
+      {/* ── Inline panel — desktop only ──────────────────────── */}
       <div
         ref={panelRef}
         className={[
-          'grid transition-[grid-template-rows] duration-200 ease-out',
+          'hidden md:grid transition-[grid-template-rows] duration-200 ease-out',
           isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
         ].join(' ')}
       >
@@ -177,6 +178,13 @@ export default function CircuitsClient({
           )}
         </div>
       </div>
+
+      {/* ── Bottom sheet — mobile only ───────────────────────── */}
+      <BottomSheet open={isOpen} onClose={handleClose}>
+        {circuitInfo && (
+          <InlineCircuitPanel info={circuitInfo} onClose={handleClose} />
+        )}
+      </BottomSheet>
 
     </main>
   );

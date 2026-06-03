@@ -12,6 +12,26 @@
     "status": {
       "connected": "Supabase conectado",
       "error": "Erro de conexão"
+    },
+    "home": {
+      "inDays": "em {days} dias",
+      "raceDay": "dia de corrida",
+      "viewCircuit": "ver circuito",
+      "viewConstructor": "ver construtor",
+      "noRace": "Sem próxima corrida",
+      "from": "desde",
+      "to": "até",
+      "top10": "Top 10 Pilotos",
+      "top5": "Top 5 Construtores",
+      "races": "Corridas",
+      "wins": "Vitórias",
+      "compareTitle": "Comparar Pilotos",
+      "selectDriver": "Selecionar piloto",
+      "fullProfile": "Perfil completo",
+      "podiums": "Pódios",
+      "poles": "Poles",
+      "fastestLaps": "Voltas rápidas",
+      "dnfs": "Abandonos"
     }
   },
   "panel": {

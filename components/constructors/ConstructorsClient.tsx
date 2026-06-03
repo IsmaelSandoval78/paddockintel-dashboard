@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import type { ConstructorSeasonRow, ConstructorAllTimeRow, ConstructorDetail } from '@/lib/types';
 import InlineConstructorPanel from './InlineConstructorPanel';
+import BottomSheet from '@/components/ui/BottomSheet';
 
 type View = '2026' | 'all';
 
@@ -78,8 +79,8 @@ function SeasonRow({
         {c.name}
       </span>
 
-      {/* Nationality */}
-      <span className="text-[13px] text-text-2 w-28 shrink-0 mx-4 truncate">
+      {/* Nationality — hidden on mobile */}
+      <span className="hidden md:block text-[13px] text-text-2 w-28 shrink-0 mx-4 truncate">
         {c.nationality}
       </span>
 
@@ -87,13 +88,13 @@ function SeasonRow({
       <span className="font-mono text-[13px] text-text-1 tabular-nums w-14 text-right shrink-0">
         {c.points}
       </span>
-      <span className="font-mono text-[11px] text-text-2 tabular-nums w-10 text-right shrink-0">
+      <span className="hidden md:block font-mono text-[11px] text-text-2 tabular-nums w-10 text-right shrink-0">
         {c.wins}
       </span>
-      <span className="font-mono text-[11px] text-text-2 tabular-nums w-10 text-right shrink-0">
+      <span className="hidden md:block font-mono text-[11px] text-text-2 tabular-nums w-10 text-right shrink-0">
         {c.podiums}
       </span>
-      <span className="font-mono text-[11px] text-text-3 tabular-nums w-12 text-right shrink-0">
+      <span className="hidden md:block font-mono text-[11px] text-text-3 tabular-nums w-12 text-right shrink-0">
         {winRate}%
       </span>
     </div>
@@ -135,13 +136,13 @@ function AllTimeRow({
         {c.name}
       </span>
 
-      {/* Nationality */}
-      <span className="text-[13px] text-text-2 w-28 shrink-0 truncate">
+      {/* Nationality — hidden on mobile */}
+      <span className="hidden md:block text-[13px] text-text-2 w-28 shrink-0 truncate">
         {c.nationality}
       </span>
 
-      {/* Era */}
-      <span className="font-mono text-[11px] text-text-3 tabular-nums w-24 text-right shrink-0">
+      {/* Era — hidden on mobile */}
+      <span className="hidden md:block font-mono text-[11px] text-text-3 tabular-nums w-24 text-right shrink-0">
         {c.first_year}–{c.last_year}
       </span>
 
@@ -150,8 +151,8 @@ function AllTimeRow({
         {c.wins}
       </span>
 
-      {/* Races */}
-      <span className="font-mono text-[11px] text-text-3 tabular-nums w-14 text-right shrink-0">
+      {/* Races — hidden on mobile */}
+      <span className="hidden md:block font-mono text-[11px] text-text-3 tabular-nums w-14 text-right shrink-0">
         {c.races}
       </span>
     </div>
@@ -240,7 +241,7 @@ export default function ConstructorsClient({
       </div>
 
       {/* ── Filter bar ───────────────────────────────────────── */}
-      <div className="h-9 px-5 border-b border-border flex items-center gap-5 shrink-0">
+      <div className="h-9 px-5 border-b border-border flex items-center gap-5 shrink-0 overflow-x-auto">
         <button
           onClick={() => handleViewChange('2026')}
           className={[
@@ -305,19 +306,19 @@ export default function ConstructorsClient({
             <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] flex-1 ml-3">
               {t('table.constructor')}
             </span>
-            <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-28 shrink-0 mx-4">
+            <span className="hidden md:block font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-28 shrink-0 mx-4">
               {t('table.nationality')}
             </span>
             <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-14 text-right shrink-0">
               {t('table.pts')}
             </span>
-            <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-10 text-right shrink-0">
+            <span className="hidden md:block font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-10 text-right shrink-0">
               {t('table.wins')}
             </span>
-            <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-10 text-right shrink-0">
+            <span className="hidden md:block font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-10 text-right shrink-0">
               {t('table.pod')}
             </span>
-            <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-12 text-right shrink-0">
+            <span className="hidden md:block font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-12 text-right shrink-0">
               {t('table.winPct')}
             </span>
           </div>
@@ -343,16 +344,16 @@ export default function ConstructorsClient({
             <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] flex-1 ml-3">
               {t('table.constructor')}
             </span>
-            <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-28 shrink-0">
+            <span className="hidden md:block font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-28 shrink-0">
               {t('table.nationality')}
             </span>
-            <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-24 text-right shrink-0">
+            <span className="hidden md:block font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-24 text-right shrink-0">
               {t('table.span')}
             </span>
             <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-14 text-right shrink-0">
               {t('table.wins')}
             </span>
-            <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-14 text-right shrink-0">
+            <span className="hidden md:block font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-14 text-right shrink-0">
               {t('table.races')}
             </span>
           </div>
@@ -396,11 +397,11 @@ export default function ConstructorsClient({
         </div>
       )}
 
-      {/* ── Inline panel — CSS grid-rows collapse ─────────────── */}
+      {/* ── Inline panel — desktop only ───────────────────────── */}
       <div
         ref={panelRef}
         className={[
-          'grid transition-[grid-template-rows] duration-200 ease-out',
+          'hidden md:grid transition-[grid-template-rows] duration-200 ease-out',
           isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
         ].join(' ')}
       >
@@ -408,6 +409,11 @@ export default function ConstructorsClient({
           {detail && <InlineConstructorPanel detail={detail} onClose={handleClose} />}
         </div>
       </div>
+
+      {/* ── Bottom sheet — mobile only ───────────────────────── */}
+      <BottomSheet open={isOpen} onClose={handleClose}>
+        {detail && <InlineConstructorPanel detail={detail} onClose={handleClose} />}
+      </BottomSheet>
 
     </main>
   );

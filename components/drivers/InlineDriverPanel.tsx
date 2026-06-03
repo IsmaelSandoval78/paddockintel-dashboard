@@ -40,7 +40,10 @@ export default function InlineDriverPanel({
       {/* ── Header ─────────────────────────────────────────────── */}
       <div className="px-6 py-4 flex items-start justify-between border-b border-border">
         <div>
-          <h2 className="font-serif text-[28px] text-text-1 leading-tight">
+          <h2
+            className="text-[clamp(1.4rem,2vw,2rem)] uppercase leading-none tracking-[-0.02em] text-text-1"
+            style={{ fontFamily: 'var(--pi-display)' }}
+          >
             {detail.surname}
           </h2>
           <p className="text-[13px] text-text-2 mt-0.5">
@@ -57,7 +60,7 @@ export default function InlineDriverPanel({
         </div>
         <button
           onClick={onClose}
-          className="w-7 h-7 flex items-center justify-center rounded text-text-3 hover:text-text-1 hover:bg-surface-raised transition-colors duration-150 shrink-0 text-lg leading-none ml-4 mt-1"
+          className="w-7 h-7 flex items-center justify-center text-text-3 hover:text-text-1 hover:bg-surface-raised transition-colors duration-100 shrink-0 text-lg leading-none ml-4 mt-1"
           aria-label="Close"
         >
           ×
@@ -73,15 +76,21 @@ export default function InlineDriverPanel({
             <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
               {t('races')}
             </p>
-            <p className="font-serif text-[40px] text-text-1 leading-none tabular-nums">
+            <p
+              className="text-[40px] text-text-1 leading-none tabular-nums"
+              style={{ fontFamily: 'var(--pi-display)' }}
+            >
               {detail.races}
             </p>
           </div>
           <div>
-            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
+            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.1em] mb-1">
               {t('wins')}
             </p>
-            <p className="font-serif text-[40px] text-text-1 leading-none tabular-nums">
+            <p
+              className="text-[40px] text-text-1 leading-none tabular-nums"
+              style={{ fontFamily: 'var(--pi-display)' }}
+            >
               {detail.wins}
             </p>
           </div>
@@ -91,7 +100,10 @@ export default function InlineDriverPanel({
         <div className="px-6 py-4 flex flex-col gap-4">
           <div>
             <SectionLabel n="01" label={t('podiums')} />
-            <span className="font-serif text-[28px] text-text-1 leading-none tabular-nums">
+            <span
+              className="text-[28px] text-text-1 leading-none tabular-nums"
+              style={{ fontFamily: 'var(--pi-display)' }}
+            >
               {detail.podiums}
             </span>
           </div>
@@ -114,7 +126,10 @@ export default function InlineDriverPanel({
           {detail.season_2026 ? (
             <>
               <SectionLabel n="04" label={t('season2026')} />
-              <p className="font-serif text-[40px] text-text-1 leading-none tabular-nums mb-1">
+              <p
+                className="text-[40px] text-text-1 leading-none tabular-nums mb-1"
+                style={{ fontFamily: 'var(--pi-display)' }}
+              >
                 P{detail.season_2026.position}
               </p>
               <p className="text-[13px] text-text-2">{detail.season_2026.constructor_name}</p>

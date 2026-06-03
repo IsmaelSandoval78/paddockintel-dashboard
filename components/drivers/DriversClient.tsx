@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import type { DriverSeasonRow, DriverAllTimeRow, DriverDetail } from '@/lib/types';
 import InlineDriverPanel from './InlineDriverPanel';
+import BottomSheet from '@/components/ui/BottomSheet';
 
 type View = '2026' | 'all';
 
@@ -34,12 +35,10 @@ function SeasonRow({
   driver,
   selected,
   onClick,
-  t,
 }: {
   driver: DriverSeasonRow;
   selected: boolean;
   onClick: () => void;
-  t: ReturnType<typeof useTranslations<'drivers'>>;
 }) {
   const isP1 = driver.position === 1;
   const winRate =
@@ -52,56 +51,74 @@ function SeasonRow({
       tabIndex={0}
       onKeyDown={(e) => e.key === 'Enter' && onClick()}
       aria-label={`${driver.forename} ${driver.surname}`}
-      className={[
-        'flex items-center h-[52px] border-b border-border cursor-pointer transition-colors duration-100 select-none',
-        isP1 ? 'bg-red-dim' : selected ? 'bg-surface-raised' : 'hover:bg-surface',
-      ].join(' ')}
+      className="flex items-center h-[52px] pr-5 cursor-pointer select-none"
       style={{
-        borderLeft: isP1 ? '2px solid var(--red)' : '2px solid transparent',
-        paddingLeft: isP1 ? '18px' : '20px',
-        paddingRight: '20px',
+        background: isP1 ? 'var(--surface-raised)' : selected ? 'var(--surface-raised)' : 'var(--bg)',
+        borderLeft: isP1 ? '3px solid var(--red)' : '3px solid transparent',
+        paddingLeft: '17px',
+      }}
+      onMouseEnter={(e) => {
+        if (!isP1 && !selected) (e.currentTarget as HTMLDivElement).style.background = 'var(--surface-raised)';
+      }}
+      onMouseLeave={(e) => {
+        if (!isP1 && !selected) (e.currentTarget as HTMLDivElement).style.background = 'var(--bg)';
       }}
     >
-      {/* Pos */}
-      <span className="font-mono text-xs text-text-3 tabular-nums w-8 shrink-0">
+      {/* POS — Archivo Black 13px */}
+      <span
+        className="w-8 shrink-0 tabular-nums text-[13px]"
+        style={{ fontFamily: 'var(--pi-display)', color: 'var(--text-1)' }}
+      >
         {driver.position}
       </span>
 
-      {/* Code */}
-      <span className="font-mono text-[11px] text-text-3 w-10 shrink-0 ml-3 tracking-[0.06em]">
-        {driver.code ?? ''}
+      {/* CODE — hidden on mobile */}
+      <span className="hidden md:block font-mono text-[11px] text-text-2 w-10 shrink-0 ml-3 tracking-[0.1em] uppercase">
+        {driver.code ?? '—'}
       </span>
 
-      {/* Name */}
+      {/* DRIVER — forename + surname stack */}
       <div className="flex-1 min-w-0 overflow-hidden ml-3">
-        <span className="block text-[11px] text-text-2 leading-none mb-[3px] truncate">
+        <span className="block font-mono text-[11px] text-text-2 leading-none mb-[3px] truncate">
           {driver.forename}
         </span>
-        <span className="block text-[13px] font-semibold text-text-1 uppercase leading-none tracking-[0.02em] truncate">
+        <span
+          className="block text-[14px] uppercase leading-none truncate"
+          style={{ fontFamily: 'var(--pi-display)', color: 'var(--text-1)', letterSpacing: '-0.01em' }}
+        >
           {driver.surname}
         </span>
       </div>
 
-      {/* Constructor */}
-      <div className="flex items-center gap-2 w-36 shrink-0 mx-4">
+      {/* TEAM — hidden on mobile */}
+      <div className="hidden md:flex items-center gap-2 w-36 shrink-0 mx-4">
         <div
           className="w-2 h-2 rounded-full shrink-0"
           style={{ backgroundColor: teamColor(driver.constructor_ref) }}
         />
-        <span className="text-[13px] text-text-2 truncate">{driver.constructor_name}</span>
+        <span className="font-mono text-[11px] text-text-2 truncate">{driver.constructor_name}</span>
       </div>
 
-      {/* Stats */}
-      <span className="font-mono text-[13px] text-text-1 tabular-nums w-12 text-right shrink-0">
+      {/* PTS — Archivo Black 18px, dominant */}
+      <span
+        className="w-16 text-right shrink-0 tabular-nums text-[18px]"
+        style={{ fontFamily: 'var(--pi-display)', color: 'var(--text-1)' }}
+      >
         {driver.points}
       </span>
-      <span className="font-mono text-[11px] text-text-2 tabular-nums w-10 text-right shrink-0">
+
+      {/* WINS — hidden on mobile */}
+      <span className="hidden md:block font-mono text-[13px] text-text-1 tabular-nums w-10 text-right shrink-0">
         {driver.wins}
       </span>
-      <span className="font-mono text-[11px] text-text-2 tabular-nums w-8 text-right shrink-0">
+
+      {/* POD — hidden on mobile */}
+      <span className="hidden md:block font-mono text-[13px] text-text-1 tabular-nums w-10 text-right shrink-0">
         {driver.podiums}
       </span>
-      <span className="font-mono text-[11px] text-text-3 tabular-nums w-12 text-right shrink-0">
+
+      {/* WIN% — hidden on mobile */}
+      <span className="hidden md:block font-mono text-[11px] text-text-2 tabular-nums w-12 text-right shrink-0">
         {winRate}%
       </span>
     </div>
@@ -111,10 +128,12 @@ function SeasonRow({
 // ─── All-time row ─────────────────────────────────────────────────
 function AllTimeRow({
   driver,
+  index,
   selected,
   onClick,
 }: {
   driver: DriverAllTimeRow;
+  index: number;
   selected: boolean;
   onClick: () => void;
 }) {
@@ -125,36 +144,55 @@ function AllTimeRow({
       tabIndex={0}
       onKeyDown={(e) => e.key === 'Enter' && onClick()}
       aria-label={`${driver.forename} ${driver.surname}`}
-      className={[
-        'flex items-center h-11 border-b border-border cursor-pointer px-5 transition-colors duration-100 select-none',
-        selected ? 'bg-surface-raised' : 'hover:bg-surface',
-      ].join(' ')}
+      className="flex items-center h-[44px] pr-5 cursor-pointer select-none"
+      style={{
+        background: selected ? 'var(--surface-raised)' : 'var(--bg)',
+        paddingLeft: '20px',
+      }}
+      onMouseEnter={(e) => {
+        if (!selected) (e.currentTarget as HTMLDivElement).style.background = 'var(--surface-raised)';
+      }}
+      onMouseLeave={(e) => {
+        if (!selected) (e.currentTarget as HTMLDivElement).style.background = 'var(--bg)';
+      }}
     >
-      {/* Name */}
-      <div className="flex-1 min-w-0 overflow-hidden">
-        <span className="text-[11px] text-text-2">{driver.forename} </span>
-        <span className="text-[13px] font-semibold text-text-1 uppercase tracking-[0.02em]">
+      {/* Rank */}
+      <span
+        className="w-8 shrink-0 tabular-nums text-[13px] text-text-2"
+        style={{ fontFamily: 'var(--pi-display)' }}
+      >
+        {index + 1}
+      </span>
+
+      {/* DRIVER */}
+      <div className="flex-1 min-w-0 overflow-hidden ml-3">
+        <span className="font-mono text-[11px] text-text-2">{driver.forename} </span>
+        <span
+          className="text-[14px] uppercase"
+          style={{ fontFamily: 'var(--pi-display)', color: 'var(--text-1)', letterSpacing: '-0.01em' }}
+        >
           {driver.surname}
         </span>
       </div>
 
-      {/* Nationality */}
-      <span className="text-[13px] text-text-2 w-28 shrink-0 truncate">
-        {driver.nationality}
-      </span>
+      {/* NATIONALITY — hidden on mobile */}
+      <span className="hidden md:block font-mono text-[11px] text-text-2 w-28 shrink-0 truncate">{driver.nationality}</span>
 
-      {/* Era */}
-      <span className="font-mono text-[11px] text-text-3 tabular-nums w-24 text-right shrink-0">
+      {/* SPAN — hidden on mobile */}
+      <span className="hidden md:block font-mono text-[11px] text-text-3 tabular-nums w-24 text-right shrink-0">
         {driver.first_year}–{driver.last_year}
       </span>
 
-      {/* Wins */}
-      <span className="font-mono text-[11px] text-text-1 tabular-nums w-14 text-right shrink-0">
+      {/* WINS */}
+      <span
+        className="w-14 text-right shrink-0 tabular-nums text-[13px]"
+        style={{ fontFamily: 'var(--pi-display)', color: 'var(--text-1)' }}
+      >
         {driver.wins}
       </span>
 
-      {/* Races */}
-      <span className="font-mono text-[11px] text-text-3 tabular-nums w-14 text-right shrink-0">
+      {/* RACES — hidden on mobile */}
+      <span className="hidden md:block font-mono text-[11px] text-text-3 tabular-nums w-14 text-right shrink-0">
         {driver.races}
       </span>
     </div>
@@ -233,62 +271,55 @@ export default function DriversClient({
   return (
     <main className="flex flex-col">
 
-      {/* ── Header ───────────────────────────────────────────── */}
+      {/* ── Page header ──────────────────────────────────────── */}
       <div className="h-12 px-5 border-b border-border flex items-center gap-3 shrink-0">
-        <span className="font-mono text-xs text-text-3">03 ·</span>
-        <h1 className="font-serif text-2xl text-text-1">{t('title')}</h1>
-        <span className="font-mono text-xs text-text-3 ml-1">
+        <span className="font-mono text-[10px] text-text-2 uppercase tracking-[0.1em]">03 ·</span>
+        <h1
+          className="text-[clamp(1.4rem,2vw,1.8rem)] uppercase leading-none tracking-[-0.03em]"
+          style={{ fontFamily: 'var(--pi-display)' }}
+        >
+          {t('title')}
+        </h1>
+        <span className="font-mono text-[10px] text-text-3 tracking-[0.1em] uppercase ml-1">
           {t('count', { count: view === '2026' ? season2026.length : totalCount })}
         </span>
       </div>
 
-      {/* ── Filter bar ───────────────────────────────────────── */}
-      <div className="h-9 px-5 border-b border-border flex items-center gap-5 shrink-0">
+      {/* ── View / filter bar ────────────────────────────────── */}
+      <div className="h-9 px-5 border-b border-border flex items-center gap-5 shrink-0 overflow-x-auto">
         <button
           onClick={() => handleViewChange('2026')}
-          className={[
-            'font-mono text-[11px] uppercase tracking-[0.06em] transition-colors duration-150 cursor-pointer bg-transparent border-0 p-0',
-            view === '2026' ? 'text-red' : 'text-text-2 hover:text-text-1',
-          ].join(' ')}
+          className="font-mono text-[11px] uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0"
+          style={{ color: view === '2026' ? 'var(--red)' : 'var(--text-2)' }}
         >
           {t('view.season')}
         </button>
         <button
           onClick={() => handleViewChange('all')}
-          className={[
-            'font-mono text-[11px] uppercase tracking-[0.06em] transition-colors duration-150 cursor-pointer bg-transparent border-0 p-0',
-            view === 'all' ? 'text-red' : 'text-text-2 hover:text-text-1',
-          ].join(' ')}
+          className="font-mono text-[11px] uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0"
+          style={{ color: view === 'all' ? 'var(--red)' : 'var(--text-2)' }}
         >
           {t('view.allTime')}
         </button>
 
         {view === 'all' && (
           <>
-            <div className="w-px h-4 bg-border shrink-0" />
+            <div className="w-px h-4 shrink-0" style={{ background: 'var(--border-subtle)' }} />
             <select
               value={nationality}
-              onChange={(e) => {
-                setNationality(e.target.value);
-                setPage(1);
-              }}
-              className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-2 bg-transparent border-0 p-0 cursor-pointer focus:outline-none"
+              onChange={(e) => { setNationality(e.target.value); setPage(1); }}
+              className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 bg-transparent border-0 p-0 cursor-pointer focus:outline-none"
             >
               <option value="all">{t('filter.allNationalities')}</option>
               {nationalities.map((nat) => (
-                <option key={nat} value={nat}>
-                  {nat}
-                </option>
+                <option key={nat} value={nat}>{nat}</option>
               ))}
             </select>
-            <div className="w-px h-4 bg-border shrink-0" />
+            <div className="w-px h-4 shrink-0" style={{ background: 'var(--border-subtle)' }} />
             <input
               type="text"
               value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
+              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
               placeholder={t('search.placeholder')}
               className="font-mono text-[11px] text-text-2 bg-transparent border-0 p-0 focus:outline-none placeholder:text-text-3 min-w-[160px]"
             />
@@ -296,30 +327,37 @@ export default function DriversClient({
         )}
       </div>
 
-      {/* ── 2026 Season table ─────────────────────────────────── */}
+      {/* ── 2026 Season standings table ───────────────────────── */}
       {view === '2026' && (
-        <div>
-          <div className="h-8 px-5 border-b border-border flex items-center bg-surface shrink-0">
-            <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-8 shrink-0">
+        <div className="grid gap-px" style={{ background: 'var(--border)' }}>
+
+          {/* Header — ink background, substrate text */}
+          <div
+            className="flex items-center h-9 pr-5 shrink-0"
+            style={{ background: 'var(--border)', paddingLeft: '20px' }}
+          >
+            <span className="font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-8 shrink-0">
               {t('table.pos')}
             </span>
-            <span className="w-10 shrink-0 ml-3" />
-            <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] flex-1 ml-3">
+            <span className="hidden md:block font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-10 shrink-0 ml-3">
+              COD
+            </span>
+            <span className="font-mono text-[10px] text-bg uppercase tracking-[0.1em] flex-1 ml-3">
               {t('table.driver')}
             </span>
-            <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-36 shrink-0 mx-4">
+            <span className="hidden md:block font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-36 shrink-0 mx-4">
               {t('table.team')}
             </span>
-            <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-12 text-right shrink-0">
+            <span className="font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-16 text-right shrink-0">
               {t('table.pts')}
             </span>
-            <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-10 text-right shrink-0">
+            <span className="hidden md:block font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-10 text-right shrink-0">
               {t('table.wins')}
             </span>
-            <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-8 text-right shrink-0">
+            <span className="hidden md:block font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-10 text-right shrink-0">
               {t('table.pod')}
             </span>
-            <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-12 text-right shrink-0">
+            <span className="hidden md:block font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-12 text-right shrink-0">
               {t('table.winPct')}
             </span>
           </div>
@@ -330,7 +368,6 @@ export default function DriversClient({
               driver={driver}
               selected={driver.driver_id === selectedId}
               onClick={() => handleSelectDriver(driver.driver_id)}
-              t={t}
             />
           ))}
         </div>
@@ -338,76 +375,92 @@ export default function DriversClient({
 
       {/* ── All-time list ─────────────────────────────────────── */}
       {view === 'all' && (
-        <div>
-          <div className="h-8 px-5 border-b border-border flex items-center bg-surface shrink-0">
-            <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] flex-1">
+        <div className="grid gap-px" style={{ background: 'var(--border)' }}>
+
+          {/* Header */}
+          <div
+            className="flex items-center h-9 pr-5 shrink-0"
+            style={{ background: 'var(--border)', paddingLeft: '20px' }}
+          >
+            <span className="font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-8 shrink-0">
+              #
+            </span>
+            <span className="font-mono text-[10px] text-bg uppercase tracking-[0.1em] flex-1 ml-3">
               {t('table.driver')}
             </span>
-            <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-28 shrink-0">
-              {/* nationality label implied */}
+            <span className="hidden md:block font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-28 shrink-0">
+              NAT
             </span>
-            <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-24 text-right shrink-0">
+            <span className="hidden md:block font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-24 text-right shrink-0">
               {t('table.span')}
             </span>
-            <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-14 text-right shrink-0">
+            <span className="font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-14 text-right shrink-0">
               {t('table.wins')}
             </span>
-            <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-14 text-right shrink-0">
+            <span className="hidden md:block font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-14 text-right shrink-0">
               {t('table.races')}
             </span>
           </div>
 
           {pageDrivers.length > 0 ? (
-            pageDrivers.map((driver) => (
+            pageDrivers.map((driver, i) => (
               <AllTimeRow
                 key={driver.driver_id}
                 driver={driver}
+                index={(page - 1) * PAGE_SIZE + i}
                 selected={driver.driver_id === selectedId}
                 onClick={() => handleSelectDriver(driver.driver_id)}
               />
             ))
           ) : (
-            <div className="px-5 py-8 text-center font-mono text-[13px] text-text-3">
+            <div
+              className="px-5 py-8 text-center font-mono text-[13px] text-text-3"
+              style={{ background: 'var(--bg)' }}
+            >
               —
-            </div>
-          )}
-
-          {totalPages > 1 && (
-            <div className="h-10 px-5 flex items-center gap-4 border-t border-border">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="font-mono text-[11px] text-text-2 hover:text-text-1 disabled:text-text-3 disabled:cursor-not-allowed transition-colors duration-100 bg-transparent border-0 p-0 cursor-pointer"
-              >
-                {t('pagination.prev')}
-              </button>
-              <span className="font-mono text-[11px] text-text-3 tabular-nums">
-                {page} {t('pagination.of')} {totalPages}
-              </span>
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-                className="font-mono text-[11px] text-text-2 hover:text-text-1 disabled:text-text-3 disabled:cursor-not-allowed transition-colors duration-100 bg-transparent border-0 p-0 cursor-pointer"
-              >
-                {t('pagination.next')}
-              </button>
             </div>
           )}
         </div>
       )}
 
-      {/* ── Inline panel — CSS grid-rows collapse ─────────────── */}
+      {/* ── Pagination ────────────────────────────────────────── */}
+      {view === 'all' && totalPages > 1 && (
+        <div className="h-10 px-5 flex items-center gap-4 border-t border-border">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 disabled:text-text-3 disabled:cursor-not-allowed bg-transparent border-0 p-0 cursor-pointer"
+          >
+            {t('pagination.prev')}
+          </button>
+          <span className="font-mono text-[11px] text-text-3 tabular-nums">
+            {page} {t('pagination.of')} {totalPages}
+          </span>
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 disabled:text-text-3 disabled:cursor-not-allowed bg-transparent border-0 p-0 cursor-pointer"
+          >
+            {t('pagination.next')}
+          </button>
+        </div>
+      )}
+
+      {/* ── Inline driver panel — desktop only ───────────────── */}
       <div
         ref={panelRef}
-        className={[
-          'grid transition-[grid-template-rows] duration-200 ease-out',
-          isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
-        ].join(' ')}
+        className="hidden md:grid transition-[grid-template-rows] duration-200 ease-out"
+        style={{ gridTemplateRows: isOpen ? '1fr' : '0fr' }}
       >
         <div className="overflow-hidden">
           {detail && <InlineDriverPanel detail={detail} onClose={handleClose} />}
         </div>
       </div>
+
+      {/* ── Bottom sheet — mobile only ───────────────────────── */}
+      <BottomSheet open={isOpen} onClose={handleClose}>
+        {detail && <InlineDriverPanel detail={detail} onClose={handleClose} />}
+      </BottomSheet>
 
     </main>
   );

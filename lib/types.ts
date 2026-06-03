@@ -235,3 +235,64 @@ export interface CircuitInfo {
   top_pole_driver: { forename: string; surname: string; poles: number } | null;
   avg_winner_grid: number | null;
 }
+
+// ─── Home page types ──────────────────────────────────────────────
+
+export interface HomeNextRace {
+  round: number;
+  name: string;
+  date: string;
+  circuit_name: string;
+  location: string;
+  country: string;
+  circuit_ref: string;
+  days_remaining: number;
+}
+
+export interface HomeDriverRow {
+  driver_id: number;
+  position: number;
+  forename: string;
+  surname: string;
+  code: string | null;
+  points: number;
+  wins: number;
+  constructor_ref: string;
+  constructor_name: string;
+}
+
+export interface HomeConstructorOfDay {
+  constructor_id: number;
+  constructor_ref: string;
+  name: string;
+  nationality: string;
+  races: number;
+  wins: number;
+  first_year: number;
+  last_year: number;
+}
+
+export interface HomeConstructorRow {
+  constructor_id: number;
+  constructor_ref: string;
+  name: string;
+  position: number;
+  points: number;
+  wins: number;
+}
+
+export interface HomeScorecardData {
+  driver_id: number;
+  driver_ref: string;
+  forename: string;
+  surname: string;
+  nationality: string;
+  code: string | null;
+  number: number | null;
+  wins: number;
+  podiums: number;
+  poles: number;
+  fastest_laps: number;
+  races: number;
+  dnfs: number;
+}

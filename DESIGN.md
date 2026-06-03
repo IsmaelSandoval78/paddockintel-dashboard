@@ -1,440 +1,490 @@
-# PaddockIntel — Design System
-**Edition:** hub.paddockintel.com
-**Voice:** "Inside the Business of Speed"
-**Aesthetic:** Editorial de revista especializada meets data intelligence
-**Reference:** open-design.ai typography + Monocle Magazine structure + Bloomberg data density
-**Mode:** Dark-first, minimalista premium
+# PADDOCKINTEL · DESIGN.md
+# hub.paddockintel.com · Vol.01 · Dual-Mode Design System
+# Swiss Industrial Print (hub base) + Neumorphism (KPI cards)
+# Distilled from web-prototype-taste-brutalist · Apache-2.0
 
 ---
 
-## 1. Filosofía
+## 01 · COLOR
 
-El hub es la versión interactiva de paddockintel.com — misma voz editorial, misma seriedad intelectual, pero con datos vivos. Cada elemento visual debe sentirse como una decisión editorial, no como un componente de UI genérico.
+```
+Substrate (background)  #F4F4F0   /* unbleached newsprint — primary surface */
+Substrate alt           #EAE8E3   /* section alternates, hover states */
+Ink (foreground)        #050505   /* carbon black — body text, borders, grid lines */
+Ink muted               #6B6B6B   /* secondary — metadata, labels, captions */
+Ink faint               #B0AFA8   /* tertiary — disabled, placeholders */
+Accent                  #E61919   /* hazard red — ONE accent, hub pages */
+Accent dark             #B01010   /* red hover / active */
+Teal accent             #00C9A7   /* SOLO en scorecards dark — nunca en hub pages */
+Gold accent             #D4A017   /* SOLO en scorecards dark — nunca en hub pages */
+Grid ink                #050505   /* gap background para 1px grid dividers */
+```
 
-**Principios:**
-- Tipografía como protagonista — los números grandes SON el diseño
-- Color = información, nunca decoración
-- Detalles editoriales que elevan: numeración de secciones, coordenadas, volumen/ronda
-- Datos técnicos con tipografía técnica (mono)
-- Nunca parecer un dashboard de SaaS genérico
+### Reglas de color
+- Accent red solo en: hairlines, border-left P1, nav activo, alerts, strikes
+- NUNCA red como fill en superficies grandes
+- Team dots: único uso de colores extra (official team hex, max 8px, nunca en texto)
+- Blanco puro #ffffff: PROHIBIDO. Mínimo #F4F4F0
+- Dark mode: NO soportado en hub. Solo en scorecards exportables.
 
 ---
 
-## 2. Typography
+## 02 · TYPOGRAPHY
 
-### Font Stack
-```css
-/* Editorial — títulos, números grandes, posiciones */
-font-family: 'DM Serif Display', Georgia, serif;
-
-/* Interface — labels, navegación, body */
-font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-
-/* Technical — lap times, pit stops, coordenadas, datos exactos */
-font-family: 'JetBrains Mono', 'Fira Code', monospace;
-
-/* Numbers always tabular */
-font-variant-numeric: tabular-nums;
-font-feature-settings: "tnum";
+### Display — números hero, standings, títulos de sección
+```
+font-family: 'Archivo Black', 'Inter', sans-serif
+font-weight: 900
+font-size:   clamp(3rem, 8vw, 12rem)
+line-height: 0.88
+letter-spacing: -0.04em
+text-transform: uppercase
 ```
 
-### Google Fonts Import
-```css
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+### Section titles
+```
+font-family: 'Archivo Black', sans-serif
+font-weight: 900
+font-size:   clamp(1.8rem, 3vw, 2.8rem)
+line-height: 0.92
+letter-spacing: -0.03em
+text-transform: uppercase
 ```
 
-### Scale
+### Micro UI — nav, metadata, labels, coordenadas, captions
 ```
-/* Display — posiciones héroe, puntos grandes */
---text-display:   3.5rem  / 56px   font: DM Serif Display 700
-
-/* Hero — número de ronda, stat principal */
---text-hero:      2.25rem / 36px   font: DM Serif Display 700
-
-/* Title — nombre de sección, driver surname */
---text-xl:        1.5rem  / 24px   font: Inter 600
-
-/* Section — headers de panel */
---text-lg:        1.125rem/ 18px   font: Inter 500
-
-/* Body — labels, metadata */
---text-base:      1rem    / 16px   font: Inter 400
-
-/* Small — badges, secondary info */
---text-sm:        0.875rem/ 14px   font: Inter 400
-
-/* Micro — coordenadas, volume, issue number */
---text-xs:        0.75rem / 12px   font: JetBrains Mono 400
-
-/* Technical — lap times, pit stop durations */
---text-mono:      0.875rem/ 14px   font: JetBrains Mono 500
+font-family: 'JetBrains Mono', 'IBM Plex Mono', monospace
+font-weight: 400 / 700
+font-size:   10px–13px (fixed, nunca fluid)
+line-height: 1.4
+letter-spacing: 0.1em
+text-transform: uppercase
 ```
 
-### Reglas tipográficas
-- Driver SURNAME en mayúsculas con DM Serif Display: `ANTONELLI`
-- Forename en Inter regular más pequeño arriba: `Andrea`
-- Posiciones (P1, P2) en DM Serif Display bold
-- Tiempos (1:23.456) siempre en JetBrains Mono
-- Coordenadas geográficas siempre en JetBrains Mono xs: `45.50°N · 73.52°W`
-- Numeración editorial: `01 ·` en mono xs color muted, antes del título de sección
-- Never font-size below 11px
-
----
-
-## 3. Color
-
-### Base (Dark — Primary)
-```css
---background:        #080808   /* Negro editorial */
---surface:           #0f0f0f   /* Cards, panels */
---surface-raised:    #161616   /* Hover states */
---surface-overlay:   #1a1a1a   /* Panel sobre mapa */
---border:            #1e1e1e   /* Bordes principales */
---border-subtle:     #141414   /* Bordes muy sutiles */
+### Body / table data
+```
+font-family: 'JetBrains Mono', monospace
+font-variant-numeric: tabular-nums
+font-size: 13px–14px
+letter-spacing: 0.05em
 ```
 
-### Text
-```css
---text-primary:      #F5F5F0   /* Warm white — titulos, datos */
---text-secondary:    #888884   /* Labels, metadata */
---text-tertiary:     #3a3a38   /* Placeholders, issue numbers */
---text-accent:       #E10600   /* F1 Red — P1, wins, activo */
+### Driver / Constructor surnames en tablas
+```
+font-family: 'Archivo Black', sans-serif
+font-weight: 900
+font-size: 14px–16px
+letter-spacing: -0.01em
+text-transform: uppercase
 ```
 
-### Brand
-```css
---accent:            #E10600   /* F1 Red */
---accent-hover:      #FF1801   
---accent-dim:        #1a0302   /* Background hint */
---accent-gold:       #C9A84C   /* P2, podiums, especial */
---accent-gold-dim:   #1a1408
+### Scale tokens
 ```
-
-### Constructor Colors (para dots y badges)
-```css
---team-mercedes:     #00D2BE
---team-mclaren:      #FF8700
---team-redbull:      #3671C6
---team-ferrari:      #E8002D
---team-alpine:       #FF87BC
---team-aston:        #358C75
---team-haas:         #B6BABD
---team-williams:     #64C4FF
---team-sauber:       #52E252
---team-rb:           #6692FF
-```
-
-### Semantic
-```css
---positive:          #22C55E   /* Gains, fastest lap */
---negative:          #EF4444   /* DNF, loss */
---neutral:           #A0A0A0   /* Neutral data */
+--text-hero:    clamp(4rem, 10vw, 15rem)
+--text-display: clamp(1.8rem, 3vw, 2.8rem)
+--text-body:    14px
+--text-micro:   11px
+--text-label:   10px
 ```
 
 ---
 
-## 4. Editorial Details (lo que hace la diferencia)
+## 03 · GEOMETRÍA & BORDERS
 
-### Navbar
+### Regla global
 ```
-[PaddockIntel logo]   Hub · Circuits · Drivers · Constructors · Compare   [Vol.01 · Rd.09 · 2026]   [EN · ES · PT]
-```
-
-- Logo: imagen existente de paddockintel.com
-- Volume/Round info: `Vol.01 · Rd.09` en JetBrains Mono xs, color tertiary, right side
-- Locale switcher: texto simple, no dropdown complejo
-
-### Circuit Coordinate Detail
-Cuando hay un circuito seleccionado o como detalle del próximo GP:
-```
-45.50°N · 73.52°W — Circuit Gilles Villeneuve
-```
-En JetBrains Mono, color tertiary, tamaño xs. Se actualiza con el circuito activo en el mapa.
-
-### Section Numbering
-Cada sección del panel tiene numeración editorial:
-```
-01 · Championship Standings
-02 · Constructor Battle
-```
-`01 ·` en JetBrains Mono xs color tertiary
-Título en Inter 500
-
-### Status Ticker (opcional, nav inferior)
-```
-● LIVE  Round 9 · Canadian GP · Montreal · Race Day
-```
-O en off-season:
-```
-Next: Round 10 · British GP · Silverstone · 15 días
+border-radius: 0   /* everywhere — sin excepciones en hub base */
 ```
 
----
-
-## 5. Layout
-
-### Hub Principal
+### EXCEPCIÓN: Neumorphism cards
 ```
-┌─────────────────────────────────────┬─────────────────────┐
-│  navbar full width                                        │
-├─────────────────────────────────────┬─────────────────────┤
-│                                     │                     │
-│   MAPA INTERACTIVO                  │  PANEL EDITORIAL    │
-│   (62% width, full height)          │  (38% width)        │
-│                                     │                     │
-│   • Dark map tiles                  │  Estado default:    │
-│   • Circuit dots                    │  01 · Drivers       │
-│   • Coordenadas activas             │  02 · Constructors  │
-│                                     │                     │
-│                                     │  Circuit selected:  │
-│                                     │  Circuit Info Panel │
-│                                     │  + X close          │
-└─────────────────────────────────────┴─────────────────────┘
+border-radius: 12px   /* SOLO en cards flotantes del home */
+/* Nunca en: tablas, nav, inputs standalone, botones, inline panels */
 ```
 
-- Map: full bleed, zero padding, ocupa height del viewport
-- Panel: scroll interno si el contenido excede viewport
-- Breakpoint tablet (< 1024px): mapa top 50vh, panel bottom
-- Breakpoint mobile (< 768px): mapa 40vh, panel scroll
-
-### Panel Interior Spacing
+### Grid dividers (tablas)
 ```css
-padding: 24px 20px;
-gap between sections: 24px;
-gap between rows: 0; (usar border-bottom en rows)
-```
-
-### Driver Row — Panel
-```
-[rank]  [name block]              [pts]  [podiums]  [rate]
-  1     Andrea                    195      8        42%
-        ANTONELLI                                        
-```
-- Rank: JetBrains Mono, color tertiary, 20px fixed width
-- Forename: Inter 400, 11px, color secondary, display block
-- Surname: Inter 600, 13px, color primary, uppercase
-- Stats: JetBrains Mono, right-aligned, tabular
-- Row: 52px height, border-bottom border-subtle
-- P1 row: accent-dim background, left border 2px accent
-
-### Constructor Row — Panel
-```
-[color dot]  [name]          [pts]  [wins]
-   ●         Mercedes         323      5
-```
-- Dot: 8px circle, team color
-- Name: Inter 500, 13px
-- Stats: JetBrains Mono, right-aligned
-
----
-
-## 6. Map
-
-### Tiles
-Usar CartoDB Dark Matter tiles (free, no API key):
-```
-https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png
-```
-
-### Circuit Markers
-```css
-/* 2026 active circuit */
-.marker-2026 {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: #E10600;
-  border: 1.5px solid rgba(225,6,0,0.3);
+.grid-ink {
+  display: grid;
+  gap: 1px;
+  background: #050505;
 }
-
-/* Historical only */
-.marker-historical {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: #2a2a2a;
-  border: 1px solid #333;
-}
-
-/* Selected state */
-.marker-selected {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  background: #E10600;
-  border: 2px solid #F5F5F0;
-  box-shadow: 0 0 12px rgba(225,6,0,0.5);
+.grid-ink > * {
+  background: #F4F4F0;
 }
 ```
 
-### Map Attribution
-Mínimo, esquina inferior izquierda, opacity 0.4
-
----
-
-## 7. Components
-
-### Badge
+### Hairline rules
 ```css
-/* Base */
-font: JetBrains Mono 400 11px;
-text-transform: uppercase;
-letter-spacing: 0.06em;
-padding: 2px 6px;
-border-radius: 3px;
-
-/* Variants */
-.badge-default  { background: #1e1e1e; color: #888884; }
-.badge-p1       { background: #1a0302; color: #E10600; }
-.badge-podium   { background: #1a1408; color: #C9A84C; }
-.badge-positive { background: #0a1f0f; color: #22C55E; }
-.badge-team     { background: team-color-dim; color: team-color; }
+border-top: 1px solid #050505;   /* section dividers */
+border-top: 1px solid #B0AFA8;   /* row separators en tablas */
 ```
 
-### Button
+### P1 / leader accent
 ```css
-/* Primary */
-background: #E10600; color: #fff;
-padding: 8px 16px; border-radius: 4px;
-font: Inter 500 13px;
-hover: background #FF1801;
-
-/* Ghost */
-background: transparent; color: #888884;
-border: 0.5px solid #1e1e1e;
-hover: background #161616; color: #F5F5F0;
-
-/* Icon close (X) */
-width: 28px; height: 28px; border-radius: 4px;
-background: transparent;
-hover: background #161616;
-```
-
-### Panel Transition
-```css
-/* Content swap en panel derecho */
-transition: opacity 150ms ease;
-/* Out: opacity 0 → In: opacity 1 */
-/* No sliding, no movement — fade in place */
-```
-
-### Scorecard
-```css
-/* Aspect ratios */
---ratio-square:   1/1      /* Instagram */
---ratio-story:    9/16     /* Stories, TikTok */
---ratio-wide:     16/9     /* X/Twitter */
-
-/* Always include */
-- PaddockIntel logo top-left
-- paddockintel.com watermark bottom
-- Driver stats en DM Serif Display para números
-- Constructor color accent
-- Dark background #080808
-```
-
----
-
-## 8. Motion
-
-```css
---duration-fast:   100ms
---duration-base:   150ms  
---duration-slow:   200ms
---easing:          cubic-bezier(0.16, 1, 0.3, 1)
-```
-
-- Hover states: 150ms
-- Panel swap: fade 150ms
-- Map markers: 100ms scale
-- Zero decorative animations
-- Zero page transitions (instant)
-- Zero bounce/spring
-
----
-
-## 9. Anti-Patterns — Nunca hacer
-
-- No tablas con borders pesados — usar rows con border-bottom sutil
-- No cards con sombras — usar surface color + border sutil
-- No gradients en backgrounds
-- No glassmorphism
-- No rounded corners > 6px (excepto avatares circulares)
-- No más de 2 font families por pantalla (DM Serif + Inter, o Inter + Mono)
-- No skeleton loaders complejos — pulse simple en background
-- No tooltips como fuente primaria de datos — mostrar inline
-- No carousels
-- No pie charts — usar ranked lists
-- No accent red para decoración — solo P1, wins, estados activos, errores
-- No parecer Sofascore, ESPN, o cualquier app de deportes genérica
-- No parecer un SaaS dashboard (Linear, Vercel son referencia de calidad, no de temática)
-
----
-
-## 10. Voice & Data Format
-
-### Labels
-```
-Posiciones:    P1, P2, P3  (no "1st", "2nd")
-Puntos:        195 pts  (número + "pts" lowercase)
-Tiempos vuelta: 1:23.456  (M:SS.mmm — JetBrains Mono)
-Pit stops:     23.4s  (SS.ms + "s" — JetBrains Mono)
-Fechas:        15 Jun 2026  (DD Mon YYYY)
-Coordenadas:   45.50°N · 73.52°W  (JetBrains Mono)
-Ronda:         Rd. 09  (no "Round 9")
-Volumen:       Vol. 01
-```
-
-### Driver Names
-```
-Display hero:  Andrea / ANTONELLI  (forename small, surname DM Serif Display caps)
-Table row:     A. Antonelli  (inicial + apellido, Inter)
-Badge/short:   ANT  (código 3 letras, Mono)
-```
-
-### Constructor Names
-```
-Full:    Mercedes-AMG Petronas  (solo en páginas de detalle)
-Display: Mercedes  (en hub y listas)
-Short:   MER  (en scorecards)
-```
-
----
-
-## 11. CSS Variables — globals.css
-
-```css
-:root {
-  /* Backgrounds */
-  --bg:              #080808;
-  --surface:         #0f0f0f;
-  --surface-raised:  #161616;
-  --surface-overlay: #1a1a1a;
-
-  /* Borders */
-  --border:          #1e1e1e;
-  --border-subtle:   #141414;
-
-  /* Text */
-  --text-1:          #F5F5F0;
-  --text-2:          #888884;
-  --text-3:          #3a3a38;
-
-  /* Accent */
-  --red:             #E10600;
-  --red-dim:         #1a0302;
-  --gold:            #C9A84C;
-  --gold-dim:        #1a1408;
-
-  /* Semantic */
-  --green:           #22C55E;
-  --green-dim:       #0a1f0f;
-
-  /* Fonts */
-  --font-serif:      'DM Serif Display', Georgia, serif;
-  --font-sans:       'Inter', -apple-system, sans-serif;
-  --font-mono:       'JetBrains Mono', monospace;
-
-  /* Timing */
-  --ease:            cubic-bezier(0.16, 1, 0.3, 1);
-  --fast:            100ms;
-  --base:            150ms;
+.row-leader {
+  border-left: 3px solid #E61919;
+  background: #EAE8E3;
 }
 ```
+
+---
+
+## 04 · NEUMORPHISM SYSTEM
+# Aplicado SOLO a: KPI cards, Next Race card, Constructor del Día,
+# Top 5 Constructors, Compare Scorecards en el Home
+
+### Filosofía
+```
+Neumorphism sobre substrate #F4F4F0 — no sobre blanco ni oscuro.
+La sombra simula elevación física sobre el papel.
+Nunca glassmorphism (sin blur, sin transparencia).
+Nunca gradientes de color — solo sombras luz/sombra neutras.
+```
+
+### Tokens neumorphism
+```css
+/* Card elevada — nivel 1 (default) */
+.card-neu {
+  background: #F4F4F0;
+  border-radius: 12px;
+  box-shadow:
+    6px 6px 12px rgba(5, 5, 5, 0.12),
+   -4px -4px 8px  rgba(255, 255, 255, 0.7);
+  border: none;
+}
+
+/* Card elevada — nivel 2 (hover) */
+.card-neu:hover {
+  box-shadow:
+    8px 8px 16px rgba(5, 5, 5, 0.15),
+   -6px -6px 12px rgba(255, 255, 255, 0.8);
+  transition: box-shadow 120ms ease;
+}
+
+/* Card pressed / active */
+.card-neu:active {
+  box-shadow:
+    2px 2px 6px  rgba(5, 5, 5, 0.10),
+   -2px -2px 4px rgba(255, 255, 255, 0.6);
+}
+
+/* Input dentro de card */
+.input-neu {
+  background: #F4F4F0;
+  border-radius: 8px;
+  box-shadow:
+    inset 3px 3px 6px  rgba(5, 5, 5, 0.10),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.7);
+  border: none;
+  outline: none;
+}
+
+.input-neu:focus {
+  box-shadow:
+    inset 3px 3px 6px  rgba(5, 5, 5, 0.12),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.7),
+    0 0 0 1px #E61919;
+}
+```
+
+### Tipografía dentro de cards neumorphism
+```
+Sigue las mismas reglas tipográficas del hub:
+  Labels:   JetBrains Mono 10px, uppercase, ink muted
+  Valores:  Archivo Black, tabular-nums
+  Metadata: JetBrains Mono 11px
+  CTAs:     JetBrains Mono 11px, uppercase, "[ LABEL → ]"
+```
+
+### Prohibido en neumorphism
+```
+NUNCA gradientes de color
+NUNCA glassmorphism / backdrop-filter
+NUNCA sombras de color — solo rgba(#050505) y rgba(#ffffff)
+NUNCA border visible además del box-shadow
+NUNCA border-radius en elementos hijos dentro de la card
+NUNCA neumorphism en tablas, nav, inputs standalone, botones de texto
+```
+
+---
+
+## 05 · SPACING & LAYOUT
+
+```
+--space-xs:  4px
+--space-sm:  8px
+--space-md:  16px
+--space-lg:  32px
+--space-xl:  64px
+--space-2xl: 128px
+```
+
+### Top register strip (requerido en cada página)
+```
+height: 32px
+padding: 0 16px
+background: #F4F4F0
+border-bottom: 1px solid #050505
+font: JetBrains Mono 11px, 0.1em tracking, uppercase
+content: [ PADDOCKINTEL ] · VOL.01 · RD.09 · 2026 · 38.89°N 77.03°W
+```
+
+### Section numbering
+```
+Format: "01 · Championship Standings"
+Font: JetBrains Mono 10px, ink muted (#6B6B6B)
+```
+
+### Home grid (desktop)
+```css
+.home-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr 320px;
+  grid-template-rows: auto auto;
+  gap: 24px;
+  padding: 24px;
+  background: #F4F4F0;
+}
+```
+
+### Home grid (mobile)
+```css
+@media (max-width: 768px) {
+  .home-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 16px;
+  }
+}
+```
+
+---
+
+## 06 · COMPONENTS
+
+### Nav bar
+```
+Background: #F4F4F0
+Border-bottom: 1px solid #050505
+Logo: "PADDOCK·INTEL" — Archivo Black 14px, tracking -0.02em, uppercase
+Active link: color #E61919
+Inactive: color #6B6B6B
+Language switcher: JetBrains Mono 10px, separado por ·
+Vol/Rd indicator: JetBrains Mono 11px, right-aligned, ink muted
+Mobile: hamburger (líneas rectas, sin curves), menú full-width border-radius: 0
+```
+
+### Standings table
+```
+display: grid, gap: 1px, background: #050505
+Header: background #050505, color #F4F4F0, JetBrains Mono 10px
+POS: Archivo Black 13px
+Surname: Archivo Black 14px uppercase
+PTS: Archivo Black 18px, tabular-nums
+P1 row: border-left 3px #E61919, background #EAE8E3
+Team dot: 8px, official team hex
+Mobile: colapsar POD, WIN% — mantener POS, DRIVER, PTS
+```
+
+### KPI Card (neumorphism)
+```css
+.kpi-card {
+  /* Aplica .card-neu */
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.kpi-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6B6B6B;
+}
+.kpi-value {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  color: #050505;
+  line-height: 1;
+}
+.kpi-delta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #E61919;
+}
+```
+
+### Next Race Card (neumorphism)
+```
+Aplica .card-neu, padding: 24px
+- "[ NEXT RACE ]" — JetBrains Mono 10px, label
+- Circuit name: Archivo Black 22px
+- Location · Country: JetBrains Mono 11px muted
+- Date: Archivo Black 18px tabular-nums
+- Countdown: "IN 12 DAYS" — #E61919
+- Flag: 24px inline
+- CTA: "[ VIEW CIRCUIT → ]" — JetBrains Mono 11px
+```
+
+### Compare Scorecard (neumorphism)
+```
+Aplica .card-neu
+Número piloto: Archivo Black 120px+, bandera como clip-path fill
+Surname: Archivo Black 24px uppercase
+Stats grid 2x3: WINS · PODS · POLES / FL · DNF · RACES
+Cada stat: label 10px mono + valor 28px Archivo Black
+Search: .input-neu
+VS: Archivo Black 32px, centered
+```
+
+### Track Map SVG
+```
+Stroke: #050505, stroke-width: 3px, fill: none
+Background: #F4F4F0
+Curva hover: stroke #E61919
+Tooltip: background #050505, color #F4F4F0, border-radius: 0, instant
+Kerbs: stroke-dasharray, color #B0AFA8
+```
+
+### ASCII decoration (mínimo 3 por página)
+```
+[ HUB ] [ CIRCUITS ] [ DRIVERS ]
+>>> CHAMPIONSHIP STANDINGS
+///
+© PADDOCKINTEL · MMXXVI
+⬤ LIVE · RD.09 · 2026
+```
+
+---
+
+## 07 · MOTION
+
+```
+Permitido:
+  IntersectionObserver reveal: opacity 0→1, instant
+  Top register ticker: velocidad constante, sin easing
+  :active en links: invert ink/paper instant
+  card-neu hover: box-shadow 120ms ease
+  Mapa flyTo(): 800ms máximo
+  Track SVG hover: stroke instant, tooltip 120ms
+
+Prohibido:
+  Slide/translate/blur reveals
+  transform: scale en hover
+  Animaciones de layout
+  Cualquier transition > 120ms (excepto mapa flyTo)
+  Skeleton loaders animados — usar "[ LOADING... ]" estático
+```
+
+---
+
+## 08 · RESPONSIVE
+
+```
+--bp-sm:  375px
+--bp-md:  768px
+--bp-lg:  1024px
+--bp-xl:  1280px
+--bp-2xl: 1536px
+
+Mobile-first: base styles 375px, media queries hacia arriba
+Nav: hamburger mobile, horizontal desktop
+Cards: full-width mobile, grid desktop
+Tablas: colapsar columnas secundarias mobile
+Inline panels: bottom sheet 60vh mobile, side panel desktop
+Mapa: 50vh mobile, full-height desktop
+```
+
+---
+
+## 09 · VOICE & COPY
+
+```
+Register: clipped, declarativo, print-magazine
+Labels: uppercase, abreviados (PTS, POD, WIN%, RD, VOL)
+Coordenadas: decimal — 38.89°N 77.03°W
+Fechas: DD.MM.YYYY o YYYY únicamente
+Edition: Vol.01 · Rd.09 · 2026
+Copyright: © PADDOCKINTEL · MMXXVI
+```
+
+---
+
+## 10 · BRAND CONSTANTS
+
+```
+Name:     PADDOCK·INTEL
+Hub URL:  hub.paddockintel.com
+Logo:     https://paddockintel.com/content/images/2026/02/paddockintel-logo-light-xl.png
+Stack:    Next.js 16 · TypeScript · Tailwind v4 · Supabase · Vercel · next-intl
+i18n:     EN · ES · PT
+```
+
+---
+
+## 11 · ANTI-PATTERNS
+
+```
+NUNCA:
+  border-radius en tablas, nav, inputs, botones
+  Blanco puro #ffffff
+  Sombras con color — solo rgba(#050505) y rgba(#ffffff)
+  Glassmorphism / backdrop-filter / blur
+  Segundo accent en hub (teal/gold solo en scorecards dark)
+  Texto centrado en body
+  Gradientes
+  Emoji
+  Iconografía curva
+  Copy AI-cliché
+  Figuras proporcionales en datos — siempre tabular-nums
+  P1 como fill rojo — solo border-left + substrate-alt
+  Neumorphism en tablas o nav
+  Scorecard dark substrate mezclado con newsprint hub
+  Font < 10px
+  Transitions > 120ms (excepto mapa)
+```
+
+---
+
+## PRE-FLIGHT CHECKLIST
+
+```
+[ ] Substrate #F4F4F0 o #EAE8E3 — nunca blanco puro
+[ ] border-radius: 0 en tablas, nav, inputs, botones
+[ ] border-radius: 12px SOLO en cards neumorphism
+[ ] Neumorphism: solo rgba(#050505) y rgba(#ffffff) en shadows
+[ ] Display: Archivo Black, uppercase
+[ ] Micro UI: JetBrains Mono, 10–13px fixed, 0.1em tracking, uppercase
+[ ] Al menos un grid gap:1px ink-background por página de tabla
+[ ] ASCII decoration mínimo 3× por página
+[ ] Datos numéricos: tabular-nums + monospace
+[ ] Accent red máx 3× por view — nunca fill grande
+[ ] P1: border-left 3px #E61919, no red bg
+[ ] Top register strip en cada página
+[ ] Sin emoji, gradientes, sombras de color
+[ ] Scorecards: dark substrate separado
+[ ] Responsive probado 375px y 1280px
+[ ] Transitions ≤ 120ms (excepto mapa)
+```
+
+---
+
+## SCORECARD SYSTEM (dark substrate — separado)
+
+```
+Background:   #0a0a0a
+Foreground:   #F0EDE6
+Accent:       #00C9A7
+Gold:         #D4A017
+Font display: Archivo Black
+Font data:    JetBrains Mono
+Número hero:  bandera nacional clip-path fill
+border-radius: 0
+```
+
+---
+# PADDOCKINTEL · DESIGN.md · v0.2.0 · Apache-2.0 · MMXXVI

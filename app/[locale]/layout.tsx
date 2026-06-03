@@ -1,12 +1,19 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import { DM_Serif_Display, Inter, JetBrains_Mono } from 'next/font/google';
+import { Archivo_Black, DM_Serif_Display, Inter, JetBrains_Mono } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/lib/i18n/routing';
 import Navbar from '@/components/nav/Navbar';
 import '../globals.css';
+
+const display = Archivo_Black({
+  weight: ['400'],
+  subsets: ['latin'],
+  variable: '--pi-display',
+  display: 'swap',
+});
 
 const serif = DM_Serif_Display({
   weight: ['400'],
@@ -53,7 +60,7 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={`${serif.variable} ${sans.variable} ${mono.variable}`}
+      className={`${display.variable} ${serif.variable} ${sans.variable} ${mono.variable}`}
     >
       <body>
         <NextIntlClientProvider messages={messages}>

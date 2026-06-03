@@ -1,31 +1,39 @@
 @import "leaflet/dist/leaflet.css";
 @import "tailwindcss";
 
+@theme {
+  --breakpoint-sm:  375px;
+  --breakpoint-md:  768px;
+  --breakpoint-lg:  1024px;
+  --breakpoint-xl:  1280px;
+  --breakpoint-2xl: 1536px;
+}
+
 :root {
-  /* Backgrounds */
-  --bg:              #FFFFFF;
-  --surface:         #F8F8F8;
-  --surface-raised:  #F0F0F0;
-  --surface-overlay: #F0F0F0;
+  /* Backgrounds — newsprint substrate */
+  --bg:              #F4F4F0;   /* unbleached newsprint — primary surface */
+  --surface:         #F4F4F0;   /* same as substrate */
+  --surface-raised:  #EAE8E3;   /* substrate alt — hover, selected, P1 row */
+  --surface-overlay: #EAE8E3;
 
-  /* Borders */
-  --border:          #E5E5E5;
-  --border-subtle:   #EFEFEF;
+  /* Borders — ink weight */
+  --border:          #050505;   /* carbon ink — section dividers, grid lines */
+  --border-subtle:   #B0AFA8;   /* faint — row separators inside tables */
 
-  /* Text */
-  --text-1:          #0A0A0A;
-  --text-2:          #6B6B6B;
-  --text-3:          #AAAAAA;
+  /* Text — ink hierarchy */
+  --text-1:          #050505;   /* carbon black */
+  --text-2:          #6B6B6B;   /* ink muted */
+  --text-3:          #B0AFA8;   /* ink faint */
 
-  /* Accent */
-  --red:             #E10600;
-  --red-dim:         #FFF0F0;
+  /* Accent — hazard red only */
+  --red:             #E61919;   /* hazard red */
+  --red-dim:         #EAE8E3;   /* P1 row bg = substrate alt, not red fill */
   --gold:            #C9A84C;
-  --gold-dim:        #1a1408;
+  --gold-dim:        #F5E8CC;
 
   /* Semantic */
   --green:           #22C55E;
-  --green-dim:       #0a1f0f;
+  --green-dim:       #E8F5EE;
 
   /* Constructor colors */
   --team-mercedes:   #00D2BE;
@@ -64,6 +72,7 @@
   --color-green-dim:       var(--green-dim);
 
   /* Fonts — variables injected by next/font on <html> */
+  --font-display: var(--pi-display);  /* Archivo Black — headlines, surnames, dominant numbers */
   --font-serif: var(--pi-serif);
   --font-sans:  var(--pi-sans);
   --font-mono:  var(--pi-mono);

@@ -69,16 +69,16 @@ export default function HubClient({ circuits, children }: Props) {
   }
 
   return (
-    <main className="flex h-[calc(100vh-3rem)]">
-      {/* Map — 62% */}
-      <div className="w-[62%] bg-bg">
+    <main className="flex flex-col md:flex-row md:h-[calc(100vh-3rem)]">
+      {/* Map — 50vh on mobile, 62% on desktop */}
+      <div className="h-[50vh] md:h-full md:w-[62%] bg-bg shrink-0">
         <MapClientWrapper circuits={circuits} onSelect={handleSelect} />
       </div>
 
-      {/* Panel — 38% — fades on content swap */}
+      {/* Panel — full-width below on mobile, 38% side on desktop */}
       <div
         className={[
-          'w-[38%] shrink-0 bg-bg border-l border-border overflow-y-auto',
+          'w-full md:w-[38%] shrink-0 bg-bg border-t border-border md:border-t-0 md:border-l overflow-y-auto',
           'transition-opacity duration-150',
           visible ? 'opacity-100' : 'opacity-0',
         ].join(' ')}

@@ -12,6 +12,26 @@
     "status": {
       "connected": "Supabase connected",
       "error": "Connection error"
+    },
+    "home": {
+      "inDays": "in {days} days",
+      "raceDay": "race day",
+      "viewCircuit": "view circuit",
+      "viewConstructor": "view constructor",
+      "noRace": "No upcoming race",
+      "from": "from",
+      "to": "to",
+      "top10": "Top 10 Drivers",
+      "top5": "Top 5 Constructors",
+      "races": "Races",
+      "wins": "Wins",
+      "compareTitle": "Compare Drivers",
+      "selectDriver": "Select a driver",
+      "fullProfile": "Full profile",
+      "podiums": "Podiums",
+      "poles": "Poles",
+      "fastestLaps": "Fastest laps",
+      "dnfs": "DNFs"
     }
   },
   "panel": {
