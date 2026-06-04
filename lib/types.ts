@@ -78,7 +78,7 @@ export interface Circuit {
   country: string;
   lat: number;
   lng: number;
-  is_2026: boolean;
+  is_active: boolean;
 }
 
 export interface DriverRow {
@@ -131,6 +131,8 @@ export interface DriverAllTimeRow {
   last_year: number;
   wins: number;
   races: number;
+  championships: number;
+  number: number | null;
 }
 
 export interface DriverDetail {
@@ -183,6 +185,7 @@ export interface ConstructorAllTimeRow {
   last_year: number;
   wins: number;
   races: number;
+  championships: number;
 }
 
 export interface ConstructorDetail {
@@ -247,6 +250,10 @@ export interface HomeNextRace {
   country: string;
   circuit_ref: string;
   days_remaining: number;
+  last_winner: { year: number; forename: string; surname: string; constructor: string } | null;
+  circuit_length_km: number | null;
+  circuit_laps: number | null;
+  circuit_lap_record: { time: string; forename: string; surname: string; year: number } | null;
 }
 
 export interface HomeDriverRow {

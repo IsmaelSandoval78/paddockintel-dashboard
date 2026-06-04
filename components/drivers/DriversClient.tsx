@@ -5,8 +5,10 @@ import { useTranslations } from 'next-intl';
 import type { DriverSeasonRow, DriverAllTimeRow, DriverDetail } from '@/lib/types';
 import InlineDriverPanel from './InlineDriverPanel';
 import BottomSheet from '@/components/ui/BottomSheet';
+import EraGrid, { type EraKey } from './EraGrid';
 
 type View = '2026' | 'all';
+type EraFilter = 'all' | EraKey;
 
 const TEAM_COLORS: Record<string, string> = {
   mercedes:     'var(--team-mercedes)',
@@ -27,7 +29,6 @@ function teamColor(ref: string): string {
   return TEAM_COLORS[ref] ?? 'var(--text-3)';
 }
 
-const PAGE_SIZE = 20;
 const COLLAPSE_MS = 200;
 
 // ─── Season row ──────────────────────────────────────────────────
@@ -125,79 +126,6 @@ function SeasonRow({
   );
 }
 
-// ─── All-time row ─────────────────────────────────────────────────
-function AllTimeRow({
-  driver,
-  index,
-  selected,
-  onClick,
-}: {
-  driver: DriverAllTimeRow;
-  index: number;
-  selected: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <div
-      onClick={onClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && onClick()}
-      aria-label={`${driver.forename} ${driver.surname}`}
-      className="flex items-center h-[44px] pr-5 cursor-pointer select-none"
-      style={{
-        background: selected ? 'var(--surface-raised)' : 'var(--bg)',
-        paddingLeft: '20px',
-      }}
-      onMouseEnter={(e) => {
-        if (!selected) (e.currentTarget as HTMLDivElement).style.background = 'var(--surface-raised)';
-      }}
-      onMouseLeave={(e) => {
-        if (!selected) (e.currentTarget as HTMLDivElement).style.background = 'var(--bg)';
-      }}
-    >
-      {/* Rank */}
-      <span
-        className="w-8 shrink-0 tabular-nums text-[13px] text-text-2"
-        style={{ fontFamily: 'var(--pi-display)' }}
-      >
-        {index + 1}
-      </span>
-
-      {/* DRIVER */}
-      <div className="flex-1 min-w-0 overflow-hidden ml-3">
-        <span className="font-mono text-[11px] text-text-2">{driver.forename} </span>
-        <span
-          className="text-[14px] uppercase"
-          style={{ fontFamily: 'var(--pi-display)', color: 'var(--text-1)', letterSpacing: '-0.01em' }}
-        >
-          {driver.surname}
-        </span>
-      </div>
-
-      {/* NATIONALITY — hidden on mobile */}
-      <span className="hidden md:block font-mono text-[11px] text-text-2 w-28 shrink-0 truncate">{driver.nationality}</span>
-
-      {/* SPAN — hidden on mobile */}
-      <span className="hidden md:block font-mono text-[11px] text-text-3 tabular-nums w-24 text-right shrink-0">
-        {driver.first_year}–{driver.last_year}
-      </span>
-
-      {/* WINS */}
-      <span
-        className="w-14 text-right shrink-0 tabular-nums text-[13px]"
-        style={{ fontFamily: 'var(--pi-display)', color: 'var(--text-1)' }}
-      >
-        {driver.wins}
-      </span>
-
-      {/* RACES — hidden on mobile */}
-      <span className="hidden md:block font-mono text-[11px] text-text-3 tabular-nums w-14 text-right shrink-0">
-        {driver.races}
-      </span>
-    </div>
-  );
-}
 
 // ─── Main client component ────────────────────────────────────────
 export default function DriversClient({
@@ -212,9 +140,9 @@ export default function DriversClient({
   const t = useTranslations('drivers');
 
   const [view, setView] = useState<View>('2026');
+  const [activeEra, setActiveEra] = useState<EraFilter>('all');
   const [nationality, setNationality] = useState('all');
   const [search, setSearch] = useState('');
-  const [page, setPage] = useState(1);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [detail, setDetail] = useState<DriverDetail | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -230,9 +158,6 @@ export default function DriversClient({
     }
     return true;
   });
-
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
-  const pageDrivers = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   async function handleSelectDriver(driverId: number) {
     if (selectedId === driverId) {
@@ -263,9 +188,9 @@ export default function DriversClient({
       setTimeout(() => setDetail(null), COLLAPSE_MS);
     }
     setView(newView);
-    setPage(1);
     setSearch('');
     setNationality('all');
+    setActiveEra('all');
   }
 
   return (
@@ -285,30 +210,44 @@ export default function DriversClient({
         </span>
       </div>
 
-      {/* ── View / filter bar ────────────────────────────────── */}
+      {/* ── View toggle ──────────────────────────────────────── */}
       <div className="h-9 px-5 border-b border-border flex items-center gap-5 shrink-0 overflow-x-auto">
         <button
           onClick={() => handleViewChange('2026')}
-          className="font-mono text-[11px] uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0"
+          className="font-mono text-[11px] uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0 shrink-0"
           style={{ color: view === '2026' ? 'var(--red)' : 'var(--text-2)' }}
         >
           {t('view.season')}
         </button>
         <button
           onClick={() => handleViewChange('all')}
-          className="font-mono text-[11px] uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0"
+          className="font-mono text-[11px] uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0 shrink-0"
           style={{ color: view === 'all' ? 'var(--red)' : 'var(--text-2)' }}
         >
           {t('view.allTime')}
         </button>
+      </div>
 
-        {view === 'all' && (
-          <>
-            <div className="w-px h-4 shrink-0" style={{ background: 'var(--border-subtle)' }} />
+      {/* ── Era + search filters (all-time view only) ─────── */}
+      {view === 'all' && (
+        <div className="border-b border-border shrink-0">
+          {/* Era tabs */}
+          <div className="h-9 px-5 flex items-center gap-4 overflow-x-auto">
+            {(['all', 'modern', 'v10', 'turbo', 'v8', 'classic'] as EraFilter[]).map((era) => (
+              <button
+                key={era}
+                onClick={() => setActiveEra(era)}
+                className="font-mono text-[11px] uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0 shrink-0"
+                style={{ color: activeEra === era ? 'var(--red)' : 'var(--text-2)' }}
+              >
+                {era === 'all' ? 'ALL' : era.toUpperCase()}
+              </button>
+            ))}
+            <div className="w-px h-4 shrink-0 ml-1" style={{ background: 'var(--border-subtle)' }} />
             <select
               value={nationality}
-              onChange={(e) => { setNationality(e.target.value); setPage(1); }}
-              className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 bg-transparent border-0 p-0 cursor-pointer focus:outline-none"
+              onChange={(e) => { setNationality(e.target.value); }}
+              className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 bg-transparent border-0 p-0 cursor-pointer focus:outline-none shrink-0"
             >
               <option value="all">{t('filter.allNationalities')}</option>
               {nationalities.map((nat) => (
@@ -319,13 +258,13 @@ export default function DriversClient({
             <input
               type="text"
               value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+              onChange={(e) => { setSearch(e.target.value); }}
               placeholder={t('search.placeholder')}
-              className="font-mono text-[11px] text-text-2 bg-transparent border-0 p-0 focus:outline-none placeholder:text-text-3 min-w-[160px]"
+              className="font-mono text-[11px] text-text-2 bg-transparent border-0 p-0 focus:outline-none placeholder:text-text-3 min-w-[120px]"
             />
-          </>
-        )}
-      </div>
+          </div>
+        </div>
+      )}
 
       {/* ── 2026 Season standings table ───────────────────────── */}
       {view === '2026' && (
@@ -373,77 +312,9 @@ export default function DriversClient({
         </div>
       )}
 
-      {/* ── All-time list ─────────────────────────────────────── */}
+      {/* ── Era grid (all-time view) ──────────────────────────── */}
       {view === 'all' && (
-        <div className="grid gap-px" style={{ background: 'var(--border)' }}>
-
-          {/* Header */}
-          <div
-            className="flex items-center h-9 pr-5 shrink-0"
-            style={{ background: 'var(--border)', paddingLeft: '20px' }}
-          >
-            <span className="font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-8 shrink-0">
-              #
-            </span>
-            <span className="font-mono text-[10px] text-bg uppercase tracking-[0.1em] flex-1 ml-3">
-              {t('table.driver')}
-            </span>
-            <span className="hidden md:block font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-28 shrink-0">
-              NAT
-            </span>
-            <span className="hidden md:block font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-24 text-right shrink-0">
-              {t('table.span')}
-            </span>
-            <span className="font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-14 text-right shrink-0">
-              {t('table.wins')}
-            </span>
-            <span className="hidden md:block font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-14 text-right shrink-0">
-              {t('table.races')}
-            </span>
-          </div>
-
-          {pageDrivers.length > 0 ? (
-            pageDrivers.map((driver, i) => (
-              <AllTimeRow
-                key={driver.driver_id}
-                driver={driver}
-                index={(page - 1) * PAGE_SIZE + i}
-                selected={driver.driver_id === selectedId}
-                onClick={() => handleSelectDriver(driver.driver_id)}
-              />
-            ))
-          ) : (
-            <div
-              className="px-5 py-8 text-center font-mono text-[13px] text-text-3"
-              style={{ background: 'var(--bg)' }}
-            >
-              —
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* ── Pagination ────────────────────────────────────────── */}
-      {view === 'all' && totalPages > 1 && (
-        <div className="h-10 px-5 flex items-center gap-4 border-t border-border">
-          <button
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 disabled:text-text-3 disabled:cursor-not-allowed bg-transparent border-0 p-0 cursor-pointer"
-          >
-            {t('pagination.prev')}
-          </button>
-          <span className="font-mono text-[11px] text-text-3 tabular-nums">
-            {page} {t('pagination.of')} {totalPages}
-          </span>
-          <button
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 disabled:text-text-3 disabled:cursor-not-allowed bg-transparent border-0 p-0 cursor-pointer"
-          >
-            {t('pagination.next')}
-          </button>
-        </div>
+        <EraGrid drivers={filtered} activeEra={activeEra} />
       )}
 
       {/* ── Inline driver panel — desktop only ───────────────── */}

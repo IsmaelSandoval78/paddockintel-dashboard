@@ -93,6 +93,21 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Era grid — responsive auto-fill columns, proportional to era visual weight */
+.era-grid-modern  { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+.era-grid-v10     { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+.era-grid-turbo   { grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); }
+.era-grid-v8      { grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); }
+.era-grid-classic { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+
+@media (min-width: 768px) {
+  .era-grid-modern  { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .era-grid-v10     { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+  .era-grid-turbo   { grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); }
+  .era-grid-v8      { grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); }
+  .era-grid-classic { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+}
+
 /* Leaflet dark theme */
 .leaflet-container { background: var(--bg); }
 

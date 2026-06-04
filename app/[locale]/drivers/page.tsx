@@ -10,8 +10,8 @@ async function getDriversData(): Promise<{
   const supabase = createClient();
   const today = new Date().toISOString().slice(0, 10);
 
-  // Batch 1: latest 2026 race + all-time stats + drivers table (ref + names)
-  const [latestRaceRes, driverStatsRes, driversRes] = await Promise.all([
+  // Batch 1: latest 2026 race + all-time stats + drivers table + all races (for championship calc)
+  const [latestRaceRes, driverStatsRes, driversRes, allRacesRes] = await Promise.all([
     supabase
       .from('races')
       .select('id')
@@ -26,8 +26,39 @@ async function getDriversData(): Promise<{
       .order('wins', { ascending: false }),
     supabase
       .from('drivers')
-      .select('id, driver_ref, forename, surname'),
+      .select('id, driver_ref, forename, surname, number'),
+    // TODO: F1 has ~1200+ races since 1950 — keep limit above that count
+    supabase
+      .from('races')
+      .select('id, year, round')
+      .limit(2000),
   ]);
+
+  // Find season finale race IDs (highest round per year)
+  const yearMax = new Map<number, { id: number; round: number }>();
+  for (const r of allRacesRes.data ?? []) {
+    const raceId = r.id as number;
+    const year = r.year as number;
+    const round = r.round as number;
+    const cur = yearMax.get(year);
+    if (!cur || round > cur.round) yearMax.set(year, { id: raceId, round });
+  }
+  const finaleRaceIds = [...yearMax.values()].map((v) => v.id);
+
+  // Batch 1b: P1 standings at season finale races
+  const champStandingsRes = finaleRaceIds.length
+    ? await supabase
+        .from('driver_standings')
+        .select('driver_id')
+        .in('race_id', finaleRaceIds)
+        .eq('position', 1)
+    : { data: [] as { driver_id: unknown }[] };
+
+  const champMap = new Map<number, number>();
+  for (const r of champStandingsRes.data ?? []) {
+    const did = r.driver_id as number;
+    champMap.set(did, (champMap.get(did) ?? 0) + 1);
+  }
 
   const driverMap = new Map(
     (driversRes.data ?? []).map((d) => [
@@ -36,6 +67,7 @@ async function getDriversData(): Promise<{
         driver_ref: d.driver_ref as string,
         forename: d.forename as string,
         surname: d.surname as string,
+        number: (d.number as number | null) ?? null,
       },
     ])
   );
@@ -54,6 +86,8 @@ async function getDriversData(): Promise<{
         last_year: s.last_year as number,
         wins: s.wins as number,
         races: s.races as number,
+        championships: champMap.get(s.driver_id as number) ?? 0,
+        number: d.number,
       },
     ];
   });

@@ -10,8 +10,8 @@ async function getConstructorsData(): Promise<{
   const supabase = createClient();
   const today = new Date().toISOString().slice(0, 10);
 
-  // Batch 1: latest 2026 race + constructors (ref/name/nat) + constructor_stats (all-time)
-  const [latestRaceRes, constructorsRes, statsRes] = await Promise.all([
+  // Batch 1: latest 2026 race + constructors + constructor_stats + all races (for champ calc)
+  const [latestRaceRes, constructorsRes, statsRes, allRacesRes] = await Promise.all([
     supabase
       .from('races')
       .select('id')
@@ -27,7 +27,38 @@ async function getConstructorsData(): Promise<{
       .from('constructor_stats')
       .select('constructor_id, nationality, first_year, last_year, wins, races')
       .order('wins', { ascending: false }),
+    // TODO: F1 has ~1200+ races since 1950 — keep limit above that count
+    supabase
+      .from('races')
+      .select('id, year, round')
+      .limit(2000),
   ]);
+
+  // Find season finale race IDs (highest round per year)
+  const yearMax = new Map<number, { id: number; round: number }>();
+  for (const r of allRacesRes.data ?? []) {
+    const raceId = r.id as number;
+    const year = r.year as number;
+    const round = r.round as number;
+    const cur = yearMax.get(year);
+    if (!cur || round > cur.round) yearMax.set(year, { id: raceId, round });
+  }
+  const finaleRaceIds = [...yearMax.values()].map((v) => v.id);
+
+  // Batch 1b: P1 constructor standings at season finale races
+  const champStandingsRes = finaleRaceIds.length
+    ? await supabase
+        .from('constructor_standings')
+        .select('constructor_id')
+        .in('race_id', finaleRaceIds)
+        .eq('position', 1)
+    : { data: [] as { constructor_id: unknown }[] };
+
+  const champMap = new Map<number, number>();
+  for (const r of champStandingsRes.data ?? []) {
+    const cid = r.constructor_id as number;
+    champMap.set(cid, (champMap.get(cid) ?? 0) + 1);
+  }
 
   const constructorMap = new Map(
     (constructorsRes.data ?? []).map((c) => [
@@ -53,6 +84,7 @@ async function getConstructorsData(): Promise<{
         last_year: s.last_year as number,
         wins: s.wins as number,
         races: s.races as number,
+        championships: champMap.get(s.constructor_id as number) ?? 0,
       },
     ];
   });

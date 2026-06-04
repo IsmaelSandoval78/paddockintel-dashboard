@@ -4,6 +4,10 @@ import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
 import { routing } from '@/lib/i18n/routing';
+import { fetchTrackPathData } from '@/lib/trackSvg';
+import TrackSvg, { TrackSvgFallback } from '@/components/circuits/TrackSvg';
+
+export const revalidate = 3600;
 
 type PageParams = Promise<{ locale: string; slug: string }>;
 
@@ -77,12 +81,15 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
     circuit_ref: circuitRaw.circuit_ref as string,
   };
 
-  // Batch 2 — all races at this circuit
-  const { data: racesRaw } = await supabase
-    .from('races')
-    .select('id, year, round, name, date')
-    .eq('circuit_id', circuit.id)
-    .order('year', { ascending: true });
+  // Batch 2 — all races at this circuit + track SVG (parallel)
+  const [{ data: racesRaw }, trackPathData] = await Promise.all([
+    supabase
+      .from('races')
+      .select('id, year, round, name, date')
+      .eq('circuit_id', circuit.id)
+      .order('year', { ascending: true }),
+    fetchTrackPathData(circuit.circuit_ref),
+  ]);
 
   const races = racesRaw ?? [];
   const raceIds = races.map((r) => r.id as number);
@@ -131,8 +138,8 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
     );
   }
 
-  // Batch 3 — race winners + all fastest laps (parallel)
-  const [winnersRaw, fastLapsRaw] = await Promise.all([
+  // Batch 3 — race winners + all fastest laps + rank-1 lap record + winner laps (parallel)
+  const [winnersRaw, fastLapsRaw, rankLapRes, winnerLapsRes] = await Promise.all([
     supabase
       .from('results')
       .select('race_id, driver_id, constructor_id')
@@ -145,6 +152,25 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
       .not('fastest_lap_time', 'is', null)
       .neq('fastest_lap_time', '\\N')
       .gt('fastest_lap_time', ''),
+    // Official fastest lap (rank=1) ordered by time ASC — gives all-time record holder
+    supabase
+      .from('results')
+      .select('fastest_lap_time, driver_id, race_id')
+      .in('race_id', raceIds)
+      .eq('rank', 1)
+      .not('fastest_lap_time', 'is', null)
+      .neq('fastest_lap_time', '\\N')
+      .gt('fastest_lap_time', '')
+      .order('fastest_lap_time', { ascending: true })
+      .limit(1),
+    // Winner laps — used to compute the most-common race distance
+    supabase
+      .from('results')
+      .select('laps')
+      .in('race_id', raceIds)
+      .eq('position', 1)
+      .not('laps', 'is', null)
+      .gt('laps', 0),
   ]);
 
   const winners = winnersRaw.data ?? [];
@@ -166,12 +192,22 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
     }
   }
 
-  // Collect all driver + constructor IDs
+  // Collect all driver + constructor IDs (include rank-1 lap holder)
   const winnerDriverIds = winners.map((w) => w.driver_id as number);
   const winnerConstructorIds = winners.map((w) => w.constructor_id as number);
   const lapDriverIds = [...bestLapByRace.values()].map((v) => v.driverId);
+  const rankLapRow = (rankLapRes.data ?? [])[0] as
+    | { fastest_lap_time: string; driver_id: number; race_id: number }
+    | undefined;
+  const rankLapDriverId = rankLapRow?.driver_id ?? null;
 
-  const allDriverIds = [...new Set([...winnerDriverIds, ...lapDriverIds])];
+  const allDriverIds = [
+    ...new Set([
+      ...winnerDriverIds,
+      ...lapDriverIds,
+      ...(rankLapDriverId ? [rankLapDriverId] : []),
+    ]),
+  ];
   const allConstructorIds = [...new Set(winnerConstructorIds)];
 
   // Batch 4 — driver + constructor names (parallel)
@@ -193,6 +229,25 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
   const constructorMap = new Map(
     (constructorsRaw.data ?? []).map((c) => [c.id as number, c.name as string])
   );
+
+  // ─── Assemble: rank-1 lap record for meta strip ──────────────────────────
+  const rankLapRecord: { time: string; forename: string; surname: string; year: number } | null =
+    (() => {
+      if (!rankLapRow) return null;
+      const d = driverMap.get(rankLapRow.driver_id);
+      const year = raceYearMap.get(rankLapRow.race_id);
+      if (!d || !year) return null;
+      return { time: rankLapRow.fastest_lap_time, forename: d.forename, surname: d.surname, year };
+    })();
+
+  // ─── Assemble: standard laps (mode of position-1 laps) ──────────────────
+  const lapsFreq = new Map<number, number>();
+  for (const r of winnerLapsRes.data ?? []) {
+    const l = r.laps as number;
+    if (l > 0) lapsFreq.set(l, (lapsFreq.get(l) ?? 0) + 1);
+  }
+  const standardLaps: number | null =
+    lapsFreq.size > 0 ? [...lapsFreq.entries()].sort((a, b) => b[1] - a[1])[0][0] : null;
 
   // ─── Assemble: winners table (most recent first) ─────────────────────────
 
@@ -288,36 +343,144 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
       </div>
 
       {/* ── Hero ──────────────────────────────────────────────────────── */}
-      <div className="px-6 pt-8 pb-7 border-b border-border">
-        <p className="font-mono text-[11px] text-text-3 uppercase tracking-[0.06em] mb-3">
-          {t('hero.label')}
-        </p>
-        <h1 className="font-serif text-5xl text-text-1 leading-[1.1] mb-2">
-          {circuit.name}
-        </h1>
-        <p className="text-[14px] text-text-2 mb-1">
-          {circuit.location} · {circuit.country}
-        </p>
-        <p className="font-mono text-[12px] text-text-3 mb-7">
-          {formatCoord(circuit.lat, circuit.lng)}
-        </p>
-        <div className="flex items-end gap-12">
+      <div className="border-b border-border">
+
+        {/* Name / location strip */}
+        <div className="px-6 pt-8 pb-5">
+          <p className="font-mono text-[11px] text-text-3 uppercase tracking-[0.06em] mb-3">
+            {t('hero.label')}
+          </p>
+          <h1
+            className="text-[clamp(2rem,5vw,4rem)] uppercase leading-none tracking-[-0.03em] mb-2 text-text-1"
+            style={{ fontFamily: 'var(--pi-display)' }}
+          >
+            {circuit.name}
+          </h1>
+          <p className="font-mono text-[12px] text-text-2 mb-1">
+            {circuit.location} · {circuit.country}
+          </p>
+          <p className="font-mono text-[11px] text-text-3">
+            {formatCoord(circuit.lat, circuit.lng)}
+          </p>
+        </div>
+
+        {/* Circuit meta stats — length (—), laps, lap record, DRS (—) */}
+        <div className="border-t border-border px-6 py-4 flex flex-wrap gap-x-10 gap-y-3">
           <div>
-            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
-              {t('hero.firstRace')}
+            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-0.5">
+              {t('hero.length')}
             </p>
-            <p className="font-serif text-[56px] text-text-1 leading-none tabular-nums">
-              {firstYear ?? '—'}
+            <p className="font-mono text-[13px] text-text-3 tabular-nums">—</p>
+          </div>
+          <div>
+            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-0.5">
+              {t('hero.laps')}
+            </p>
+            <p className="font-mono text-[13px] text-text-1 tabular-nums">
+              {standardLaps ?? '—'}
             </p>
           </div>
           <div>
-            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
-              {t('hero.totalRaces')}
+            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-0.5">
+              {t('hero.lapRecord')}
             </p>
-            <p className="font-serif text-[56px] text-text-1 leading-none tabular-nums">
-              {totalRaces}
+            <p className="font-mono text-[13px] tabular-nums">
+              {rankLapRecord ? (
+                <>
+                  <span style={{ color: '#E10600' }}>{rankLapRecord.time}</span>
+                  <span className="text-text-3 ml-1.5">
+                    {rankLapRecord.forename[0]}. {rankLapRecord.surname}
+                  </span>
+                  <span className="text-text-3 ml-1.5">{rankLapRecord.year}</span>
+                </>
+              ) : '—'}
             </p>
           </div>
+          <div>
+            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-0.5">
+              {t('hero.drsZones')}
+            </p>
+            <p className="font-mono text-[13px] text-text-3 tabular-nums">—</p>
+          </div>
+        </div>
+
+        {/* Stats + Track SVG — side-by-side on desktop */}
+        <div className="flex flex-col md:flex-row border-t border-border">
+
+          {/* Quick stats */}
+          <div className="px-6 py-6 flex flex-col md:w-auto md:shrink-0">
+
+            {/* Last 3 winners */}
+            <div className="mb-6">
+              <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-3">
+                {t('hero.lastWinners')}
+              </p>
+              {[0, 1, 2].map((i) => {
+                const w = winnerRows[i] ?? null;
+                return (
+                  <div key={i} className="flex items-baseline gap-1.5 mb-2.5 last:mb-0">
+                    {w ? (
+                      <>
+                        <span className="font-mono text-[11px] text-text-2 tabular-nums shrink-0 w-9">
+                          {w.year}
+                        </span>
+                        <span className="font-mono text-[10px] text-text-3 shrink-0">·</span>
+                        <span
+                          className="text-[13px] text-text-1 uppercase tracking-[0.02em] shrink-0"
+                          style={{ fontFamily: 'var(--pi-display)', fontWeight: 900 }}
+                        >
+                          {w.forename[0]}. {w.surname}
+                        </span>
+                        <span className="font-mono text-[10px] text-text-3 shrink-0">·</span>
+                        <span className="text-[12px] text-text-2 truncate min-w-0">
+                          {w.constructor}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="font-mono text-[13px] text-text-3">—</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* FIRST RACE + TOTAL RACES — pushed to bottom on desktop */}
+            <div className="flex items-end gap-12 mt-auto">
+              <div>
+                <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
+                  {t('hero.firstRace')}
+                </p>
+                <p
+                  className="text-[56px] text-text-1 leading-none tabular-nums"
+                  style={{ fontFamily: 'var(--pi-display)' }}
+                >
+                  {firstYear ?? '—'}
+                </p>
+              </div>
+              <div>
+                <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
+                  {t('hero.totalRaces')}
+                </p>
+                <p
+                  className="text-[56px] text-text-1 leading-none tabular-nums"
+                  style={{ fontFamily: 'var(--pi-display)' }}
+                >
+                  {totalRaces}
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Track SVG */}
+          <div className="md:ml-auto md:border-l border-border px-6 py-6 w-full md:w-[280px] lg:w-[340px] shrink-0">
+            {trackPathData ? (
+              <TrackSvg pathData={trackPathData.path} viewBox={trackPathData.viewBox} circuitName={circuit.name} />
+            ) : (
+              <TrackSvgFallback circuitName={circuit.name} />
+            )}
+          </div>
+
         </div>
       </div>
 
@@ -331,8 +494,8 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
               {winnerRows.length}
             </span>
           </div>
-          <div className="max-h-[400px] overflow-y-auto">
-            <table className="w-full">
+          <div className="max-h-[400px] overflow-y-auto overflow-x-auto">
+            <table className="w-full min-w-[480px]">
               <thead>
                 <tr className="sticky top-0 bg-surface border-b border-border z-10">
                   <th className="px-6 py-2 text-left font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-16">
@@ -383,7 +546,7 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
       )}
 
       {/* ── 02 · Decade Dominance  |  03 · Lap Record Evolution ──────── */}
-      <div className="grid grid-cols-2 divide-x divide-border border-b border-border">
+      <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border border-b border-border">
 
         {/* 02 · Decade Dominance */}
         <section>
@@ -479,7 +642,7 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
             <span className="font-mono text-xs text-text-2 leading-none">04 ·</span>
             <h2 className="text-[13px] font-medium text-text-2">{t('constructors.title')}</h2>
           </div>
-          <div className="px-6 py-5 grid grid-cols-3 gap-x-8 gap-y-3">
+          <div className="px-6 py-5 grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-3">
             {constructorWins.map(({ constructor, wins }, idx) => (
               <div key={constructor} className="flex items-center gap-3">
                 <span className="font-mono text-[11px] text-text-3 tabular-nums w-5 shrink-0">

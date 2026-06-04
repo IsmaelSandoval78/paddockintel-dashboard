@@ -84,7 +84,8 @@ export default function InlineConstructorPanel({
       </div>
 
       {/* ── Stats grid — 3 columns ─────────────────────────────── */}
-      <div className="grid grid-cols-3 divide-x divide-border">
+      <div className="overflow-x-auto">
+      <div className="grid grid-cols-3 divide-x divide-border min-w-[480px]">
 
         {/* Col 1 — Career numbers */}
         <div className="px-6 py-4 flex gap-8">
@@ -149,6 +150,7 @@ export default function InlineConstructorPanel({
           )}
         </div>
 
+      </div>
       </div>
 
       {/* ── Last 5 races ───────────────────────────────────────── */}

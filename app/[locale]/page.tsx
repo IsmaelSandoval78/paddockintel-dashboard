@@ -1,3 +1,5 @@
+export const revalidate = 3600;
+
 import { createClient } from '@/lib/supabase/server';
 import { getTranslations } from 'next-intl/server';
 import NextRaceCard from '@/components/home/NextRaceCard';
@@ -77,8 +79,8 @@ async function getHomeData(): Promise<{
   const latestRaceId = (latestRaceRes.data?.id ?? null) as number | null;
   const nextRaceRaw = nextRaceRes.data;
 
-  // Batch 2: circuit for next race + standings at latest race
-  const [circuitRes, driverStandRes, constStandRes] = await Promise.all([
+  // Batch 2: circuit for next race + standings + all past races at next circuit
+  const [circuitRes, driverStandRes, constStandRes, pastCircuitRacesRes] = await Promise.all([
     nextRaceRaw
       ? supabase
           .from('circuits')
@@ -101,6 +103,15 @@ async function getHomeData(): Promise<{
           .eq('race_id', latestRaceId)
           .order('position', { ascending: true })
       : Promise.resolve({ data: [], error: null }),
+    nextRaceRaw
+      ? supabase
+          .from('races')
+          .select('id, year')
+          .eq('circuit_id', nextRaceRaw.circuit_id as number)
+          .lte('date', today)
+          .order('date', { ascending: false })
+          .limit(100)
+      : Promise.resolve({ data: [] as Array<{ id: number; year: number }>, error: null }),
   ]);
 
   const driverIds = (driverStandRes.data ?? []).map((s) => s.driver_id as number);
@@ -111,8 +122,12 @@ async function getHomeData(): Promise<{
     wins: number;
   }>;
 
-  // Batch 3: driver details + results at latest race (to map driver → constructor)
-  const [driversRes, resultsRes] = await Promise.all([
+  const pastCircuitRaces = (pastCircuitRacesRes.data ?? []) as Array<{ id: number; year: number }>;
+  const pastCircuitRaceIds = pastCircuitRaces.map((r) => r.id);
+  const lastPastRace = pastCircuitRaces[0] ?? null;
+
+  // Batch 3: driver details + standings results + last winner + rank-1 lap + winner laps (parallel)
+  const [driversRes, resultsRes, lastWinnerResultRes, rankLapHomeRes, winnerLapsHomeRes] = await Promise.all([
     driverIds.length
       ? supabase
           .from('drivers')
@@ -126,7 +141,101 @@ async function getHomeData(): Promise<{
           .eq('race_id', latestRaceId)
           .in('driver_id', driverIds)
       : Promise.resolve({ data: [], error: null }),
+    lastPastRace
+      ? supabase
+          .from('results')
+          .select('driver_id, constructor_id')
+          .eq('race_id', lastPastRace.id)
+          .eq('position', 1)
+          .single()
+      : Promise.resolve({ data: null, error: null }),
+    // Official fastest lap (rank=1), best time across all past races at this circuit
+    pastCircuitRaceIds.length > 0
+      ? supabase
+          .from('results')
+          .select('fastest_lap_time, driver_id, race_id')
+          .in('race_id', pastCircuitRaceIds)
+          .eq('rank', 1)
+          .not('fastest_lap_time', 'is', null)
+          .neq('fastest_lap_time', '\\N')
+          .gt('fastest_lap_time', '')
+          .order('fastest_lap_time', { ascending: true })
+          .limit(1)
+      : Promise.resolve({ data: [] as Array<{ fastest_lap_time: string; driver_id: number; race_id: number }>, error: null }),
+    // Winner laps — to compute most-common race distance (mode)
+    pastCircuitRaceIds.length > 0
+      ? supabase
+          .from('results')
+          .select('laps')
+          .in('race_id', pastCircuitRaceIds)
+          .eq('position', 1)
+          .not('laps', 'is', null)
+          .gt('laps', 0)
+      : Promise.resolve({ data: [] as Array<{ laps: number }>, error: null }),
   ]);
+
+  // Batch 4: driver names for last winner + rank-1 lap holder (one query)
+  const lastWinnerResult = lastWinnerResultRes.data as {
+    driver_id: number;
+    constructor_id: number;
+  } | null;
+
+  const rankLapHomeRow = ((rankLapHomeRes.data ?? []) as Array<{
+    fastest_lap_time: string;
+    driver_id: number;
+    race_id: number;
+  }>)[0] ?? null;
+
+  const driverIdsToFetch = new Set<number>();
+  if (lastWinnerResult) driverIdsToFetch.add(lastWinnerResult.driver_id);
+  if (rankLapHomeRow) driverIdsToFetch.add(rankLapHomeRow.driver_id);
+
+  const homeDriverNameMap = new Map<number, { forename: string; surname: string }>();
+  if (driverIdsToFetch.size > 0) {
+    const { data: homeDrivers } = await supabase
+      .from('drivers')
+      .select('id, forename, surname')
+      .in('id', [...driverIdsToFetch]);
+    for (const d of homeDrivers ?? []) {
+      homeDriverNameMap.set(d.id as number, {
+        forename: d.forename as string,
+        surname: d.surname as string,
+      });
+    }
+  }
+
+  const winnerForename = lastWinnerResult
+    ? (homeDriverNameMap.get(lastWinnerResult.driver_id)?.forename ?? null)
+    : null;
+  const winnerSurname = lastWinnerResult
+    ? (homeDriverNameMap.get(lastWinnerResult.driver_id)?.surname ?? null)
+    : null;
+
+  // Standard laps — mode of winner laps at this circuit
+  const lapsFreqHome = new Map<number, number>();
+  for (const r of (winnerLapsHomeRes.data ?? []) as Array<{ laps: number }>) {
+    if (r.laps > 0) lapsFreqHome.set(r.laps, (lapsFreqHome.get(r.laps) ?? 0) + 1);
+  }
+  const homeStandardLaps: number | null =
+    lapsFreqHome.size > 0 ? [...lapsFreqHome.entries()].sort((a, b) => b[1] - a[1])[0][0] : null;
+
+  // Rank-1 lap record for this circuit
+  const rankLapHomeDriver = rankLapHomeRow
+    ? (homeDriverNameMap.get(rankLapHomeRow.driver_id) ?? null)
+    : null;
+  const pastCircuitRacesById = new Map(pastCircuitRaces.map((r) => [r.id, r.year]));
+  const rankLapHomeYear = rankLapHomeRow
+    ? (pastCircuitRacesById.get(rankLapHomeRow.race_id) ?? null)
+    : null;
+  const homeCircuitLapRecord: HomeNextRace['circuit_lap_record'] =
+    rankLapHomeRow && rankLapHomeDriver && rankLapHomeYear
+      ? {
+          time: rankLapHomeRow.fastest_lap_time,
+          forename: rankLapHomeDriver.forename,
+          surname: rankLapHomeDriver.surname,
+          year: rankLapHomeYear,
+        }
+      : null;
 
   // ── Build lookup maps ──────────────────────────────────────────
 
@@ -234,6 +343,17 @@ async function getHomeData(): Promise<{
     : null;
 
   // ── Next race ──────────────────────────────────────────────────
+  const lastWinnerConstructorId = lastWinnerResult?.constructor_id ?? null;
+  const lastWinner: HomeNextRace['last_winner'] =
+    lastPastRace && lastWinnerResult && winnerForename && winnerSurname
+      ? {
+          year: lastPastRace.year,
+          forename: winnerForename,
+          surname: winnerSurname,
+          constructor: constructorMap.get(lastWinnerConstructorId!)?.name ?? '—',
+        }
+      : null;
+
   let nextRace: HomeNextRace | null = null;
   if (nextRaceRaw && circuitRes.data) {
     nextRace = {
@@ -245,6 +365,10 @@ async function getHomeData(): Promise<{
       country: circuitRes.data.country as string,
       circuit_ref: circuitRes.data.circuit_ref as string,
       days_remaining: daysUntil(nextRaceRaw.date as string),
+      last_winner: lastWinner,
+      circuit_length_km: null,
+      circuit_laps: homeStandardLaps,
+      circuit_lap_record: homeCircuitLapRecord,
     };
   }
 

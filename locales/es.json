@@ -31,7 +31,14 @@
       "podiums": "Podios",
       "poles": "Poles",
       "fastestLaps": "Vueltas rápidas",
-      "dnfs": "Abandonos"
+      "dnfs": "Abandonos",
+      "countdownDays": "Días",
+      "countdownHours": "Horas",
+      "countdownMinutes": "Min",
+      "lastWinner": "Último Ganador",
+      "statLength": "Long.",
+      "statLaps": "Vueltas",
+      "statLapRecord": "Récord"
     }
   },
   "panel": {
@@ -53,7 +60,8 @@
       "europe": "Europa",
       "americas": "Américas",
       "asia": "Asia y Pacífico",
-      "africaMiddleEast": "África y Oriente Medio"
+      "africaMiddleEast": "África y Oriente Medio",
+      "oceania": "Oceanía"
     }
   },
   "circuitDetail": {
@@ -63,7 +71,12 @@
     "hero": {
       "label": "Circuito",
       "firstRace": "Primera Carrera",
-      "totalRaces": "Total de Carreras"
+      "totalRaces": "Total de Carreras",
+      "length": "Longitud",
+      "laps": "Vueltas",
+      "lapRecord": "Récord de vuelta",
+      "drsZones": "Zonas DRS",
+      "lastWinners": "Últimos Ganadores"
     },
     "winners": {
       "title": "Ganadores",

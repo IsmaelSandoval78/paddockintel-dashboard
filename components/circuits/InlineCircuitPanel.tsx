@@ -45,7 +45,7 @@ export default function InlineCircuitPanel({
       </div>
 
       {/* ── Stats grid — 3 columns ─────────────────────────────── */}
-      <div className="grid grid-cols-3 divide-x divide-border">
+      <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border">
 
         {/* Col 1 — Quick stats */}
         <div className="px-6 py-4 flex gap-8">
@@ -151,7 +151,8 @@ export default function InlineCircuitPanel({
       </div>
 
       {/* ── Historical records row — 4 cols ───────────────────── */}
-      <div className="grid grid-cols-4 divide-x divide-border border-t border-border">
+      <div className="overflow-x-auto border-t border-border">
+      <div className="grid grid-cols-4 divide-x divide-border min-w-[480px]">
 
         {/* 04 · Top Constructor */}
         <div className="px-6 py-4">
@@ -236,6 +237,7 @@ export default function InlineCircuitPanel({
           )}
         </div>
 
+      </div>
       </div>
 
       {/* ── CTA ────────────────────────────────────────────────── */}

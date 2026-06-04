@@ -31,7 +31,14 @@
       "podiums": "Podiums",
       "poles": "Poles",
       "fastestLaps": "Fastest laps",
-      "dnfs": "DNFs"
+      "dnfs": "DNFs",
+      "countdownDays": "Days",
+      "countdownHours": "Hours",
+      "countdownMinutes": "Min",
+      "lastWinner": "Last Winner",
+      "statLength": "Length",
+      "statLaps": "Laps",
+      "statLapRecord": "Lap Record"
     }
   },
   "panel": {
@@ -53,7 +60,8 @@
       "europe": "Europe",
       "americas": "Americas",
       "asia": "Asia & Pacific",
-      "africaMiddleEast": "Africa & Middle East"
+      "africaMiddleEast": "Africa & Middle East",
+      "oceania": "Oceania"
     }
   },
   "circuitDetail": {
@@ -63,7 +71,12 @@
     "hero": {
       "label": "Circuit",
       "firstRace": "First Race",
-      "totalRaces": "Total Races"
+      "totalRaces": "Total Races",
+      "length": "Circuit Length",
+      "laps": "Laps",
+      "lapRecord": "Lap Record",
+      "drsZones": "DRS Zones",
+      "lastWinners": "Last Winners"
     },
     "winners": {
       "title": "Race Winners",

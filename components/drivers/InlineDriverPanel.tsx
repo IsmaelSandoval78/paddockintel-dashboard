@@ -68,7 +68,8 @@ export default function InlineDriverPanel({
       </div>
 
       {/* ── Stats grid — 3 columns ─────────────────────────────── */}
-      <div className="grid grid-cols-3 divide-x divide-border">
+      <div className="overflow-x-auto">
+      <div className="grid grid-cols-3 divide-x divide-border min-w-[480px]">
 
         {/* Col 1 — Big career numbers */}
         <div className="px-6 py-4 flex gap-8">
@@ -132,7 +133,7 @@ export default function InlineDriverPanel({
               >
                 P{detail.season_2026.position}
               </p>
-              <p className="text-[13px] text-text-2">{detail.season_2026.constructor_name}</p>
+              <p className="text-[13px] text-text-2">{detail.season_2026?.constructor_name}</p>
               <p className="font-mono text-[13px] text-text-1 tabular-nums mt-1">
                 {detail.season_2026.points}{' '}
                 <span className="text-text-3">pts</span>
@@ -152,6 +153,7 @@ export default function InlineDriverPanel({
           )}
         </div>
 
+      </div>
       </div>
 
       {/* ── Last 5 results ─────────────────────────────────────── */}

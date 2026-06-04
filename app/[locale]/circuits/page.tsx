@@ -5,7 +5,7 @@ import CircuitsClient from '@/components/circuits/CircuitsClient';
 async function getAllCircuits(): Promise<Circuit[]> {
   const supabase = createClient();
 
-  const [circuitsRes, races2026Res] = await Promise.all([
+  const [circuitsRes, racesActiveRes] = await Promise.all([
     supabase
       .from('circuits')
       .select('id, circuit_ref, name, location, country, lat, lng')
@@ -14,7 +14,7 @@ async function getAllCircuits(): Promise<Circuit[]> {
     supabase
       .from('races')
       .select('circuit_id')
-      .eq('year', 2026),
+      .gte('year', 2020),
   ]);
 
   if (circuitsRes.error) {
@@ -22,8 +22,8 @@ async function getAllCircuits(): Promise<Circuit[]> {
     return [];
   }
 
-  const ids2026 = new Set(
-    (races2026Res.data ?? []).map((r) => (r as { circuit_id: number }).circuit_id)
+  const idsActive = new Set(
+    (racesActiveRes.data ?? []).map((r) => (r as { circuit_id: number }).circuit_id)
   );
 
   return (circuitsRes.data ?? []).map((c) => ({
@@ -34,7 +34,7 @@ async function getAllCircuits(): Promise<Circuit[]> {
     country: c.country as string,
     lat: c.lat as number,
     lng: c.lng as number,
-    is_2026: ids2026.has(c.id as number),
+    is_active: idsActive.has(c.id as number),
   }));
 }
 
