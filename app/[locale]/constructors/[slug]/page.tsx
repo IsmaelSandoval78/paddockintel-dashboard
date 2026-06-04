@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
 import { routing } from '@/lib/i18n/routing';
 import { ConstructorScorecardButton } from '@/components/scorecards/ConstructorScorecard';
+import { flagGradient } from '@/lib/flagGradient';
 
 type PageParams = Promise<{ locale: string; slug: string }>;
 
@@ -27,6 +28,33 @@ const TEAM_COLORS: Record<string, string> = {
 
 function teamColor(ref: string): string {
   return TEAM_COLORS[ref] ?? 'var(--text-3)';
+}
+
+// ─── Flag gradient (nationality → 3-stripe) ───────────────────────
+
+// ─── Team hex values for color pills ──────────────────────────────
+const TEAM_HEX: Record<string, string> = {
+  mercedes:     '#00D2BE',
+  mclaren:      '#FF8700',
+  red_bull:     '#3671C6',
+  ferrari:      '#E8002D',
+  alpine:       '#FF87BC',
+  aston_martin: '#358C75',
+  haas:         '#B6BABD',
+  williams:     '#64C4FF',
+  sauber:       '#52E252',
+  kick_sauber:  '#52E252',
+  rb:           '#6692FF',
+  alphatauri:   '#6692FF',
+  toro_rosso:   '#469BFF',
+  renault:      '#FFD700',
+  benetton:     '#00964B',
+  jordan:       '#FFB800',
+  brawn:        '#B0FF00',
+};
+
+function teamHex(ref: string): string {
+  return TEAM_HEX[ref] ?? '#B0AFA8';
 }
 
 function cleanLapTime(t: string | null | undefined): string | null {
@@ -423,230 +451,193 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
 
       {/* Breadcrumb */}
       <div className="h-10 px-6 border-b border-border flex items-center gap-2 shrink-0">
-        <Link
-          href="/constructors"
-          className="font-mono text-[11px] text-text-3 hover:text-text-2 transition-colors duration-150"
-        >
+        <Link href="/constructors" className="font-mono text-[11px] text-text-3 hover:text-text-2 transition-colors duration-150">
           {t('breadcrumb.constructors')}
         </Link>
         <span className="font-mono text-[11px] text-text-3">·</span>
-        <span className="font-mono text-[11px] text-text-2 truncate">
-          {constructor.name}
-        </span>
+        <span className="font-mono text-[11px] text-text-2 truncate">{constructor.name}</span>
       </div>
 
-      {/* ── Hero ──────────────────────────────────────────────────────── */}
-      <div
-        className="pt-8 pb-7 border-b border-border"
-        style={{ borderLeft: `3px solid ${color}`, paddingLeft: '21px', paddingRight: '24px' }}
-      >
-        <p className="font-mono text-[11px] text-text-3 uppercase tracking-[0.06em] mb-3">
-          {t('hero.label')}
-        </p>
-        <h1 className="font-serif text-5xl text-text-1 leading-[1.1] mb-2">
-          {constructor.name}
-        </h1>
-        <p className="font-mono text-[12px] text-text-3 mb-7">
-          {constructor.nationality}
-          <span className="mx-2">·</span>
-          {stats.first_year as number}–{stats.last_year as number}
-        </p>
-        <div className="flex items-end gap-12">
-          <div>
-            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
-              {t('hero.races')}
-            </p>
-            <p className="font-serif text-[56px] text-text-1 leading-none tabular-nums">
-              {stats.races as number}
-            </p>
-          </div>
-          <div>
-            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
-              {t('hero.wins')}
-            </p>
-            <p className="font-serif text-[56px] text-text-1 leading-none tabular-nums">
-              {stats.wins as number}
-            </p>
-          </div>
-          <div>
-            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
-              {t('hero.championships')}
-            </p>
-            <p className="font-serif text-[56px] text-text-1 leading-none tabular-nums">
-              {championshipYears.length}
-            </p>
+      {/* ── Hero: two-column ──────────────────────────────────────── */}
+      <div className="flex flex-col md:flex-row border-b border-border">
+
+        {/* Left 60%: flag + name + meta */}
+        <div className="md:w-[60%] px-8 py-10 flex flex-col justify-center gap-5">
+          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.1em]">
+            {t('hero.label')}
+          </p>
+          <div
+            aria-hidden="true"
+            style={{ width: 48, height: 32, background: flagGradient(constructor.nationality) }}
+          />
+          <h1
+            className="font-serif leading-[0.92] tracking-[-0.02em]"
+            style={{ fontSize: 'clamp(2.5rem,6vw,4.5rem)', color: '#050505' }}
+          >
+            <span style={{ fontWeight: 700 }}>{constructor.name.toUpperCase()}</span>
+          </h1>
+          <p className="font-mono text-[11px] text-text-3 uppercase tracking-[0.06em]">
+            {[
+              constructor.nationality,
+              `${stats.first_year as number}–${stats.last_year as number}`,
+            ].join(' · ')}
+          </p>
+        </div>
+
+        {/* Right 40%: dark stat band */}
+        <div
+          className="md:w-[40%] flex items-center justify-center py-10"
+          style={{ background: '#0A0A0A' }}
+        >
+          <div className="grid grid-cols-3 w-full text-center">
+            {[
+              { label: t('hero.races'),         value: stats.races as number },
+              { label: t('hero.wins'),          value: stats.wins  as number },
+              { label: t('hero.championships'), value: championshipYears.length },
+            ].map(({ label, value }, i) => (
+              <div
+                key={label}
+                className="flex flex-col items-center px-4 py-6"
+                style={{ borderLeft: i > 0 ? '1px solid #2A2A2A' : undefined }}
+              >
+                <p
+                  className="font-serif tabular-nums leading-none mb-2"
+                  style={{ fontSize: 'clamp(2.5rem,4vw,4rem)', color: '#F4F4F0' }}
+                >
+                  {value}
+                </p>
+                <p className="font-mono text-[10px] uppercase tracking-[0.1em]" style={{ color: '#6B6B6B' }}>
+                  {label}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
+
       </div>
 
-      {/* ── 01 · Career Stats ─────────────────────────────────────────── */}
-      <section className="border-b border-border">
-        <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
-          <span className="font-mono text-xs text-text-2 leading-none">01 ·</span>
-          <h2 className="text-[13px] font-medium text-text-2">{t('stats.title')}</h2>
-        </div>
-        <div className="grid grid-cols-5 divide-x divide-border">
+      {/* ── 01 · Stat band ───────────────────────────────────────── */}
+      <div className="border-b border-border" style={{ background: '#1A1A1A' }}>
+        <div className="grid grid-cols-3 md:grid-cols-5">
           {[
             {
               label: t('stats.championships'),
               value: String(championshipYears.length),
-              sub: championshipYears.length ? championshipYears.join(' · ') : null,
+              sub:   championshipYears.length ? championshipYears.join(' · ') : null,
+              red:   false,
             },
-            { label: t('stats.podiums'), value: String(totalPodiums) },
-            { label: t('stats.fastestLaps'), value: String(totalFastestLaps) },
-            { label: t('stats.poles'), value: String(poleCount) },
-            { label: t('stats.winPct'), value: `${winPct}%` },
-          ].map(({ label, value, sub }) => (
-            <div key={label} className="px-6 py-5">
-              <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
+            { label: t('stats.podiums'),     value: String(totalPodiums),        sub: null, red: false },
+            { label: t('stats.fastestLaps'), value: String(totalFastestLaps),    sub: null, red: false },
+            { label: t('stats.poles'),       value: String(poleCount),           sub: null, red: false },
+            { label: t('stats.winPct'),      value: `${winPct}%`,                sub: null, red: parseFloat(winPct) > 20 },
+          ].map(({ label, value, sub, red }, i) => (
+            <div
+              key={label}
+              className="flex flex-col items-center justify-center py-6 px-3 text-center"
+              style={{ borderLeft: i > 0 ? '1px solid #2A2A2A' : undefined }}
+            >
+              <p className="font-mono text-[10px] uppercase tracking-[0.1em] mb-2" style={{ color: '#6B6B6B' }}>
                 {label}
               </p>
-              <p className="font-serif text-[40px] text-text-1 leading-none tabular-nums">
+              <p
+                className="font-sans font-black tabular-nums leading-none"
+                style={{ fontSize: '2rem', color: red ? '#E10600' : '#F4F4F0' }}
+              >
                 {value}
               </p>
               {sub && (
-                <p className="font-mono text-[10px] text-text-3 mt-1 leading-relaxed">
+                <p className="font-mono text-[10px] mt-1.5 leading-relaxed" style={{ color: '#6B6B6B' }}>
                   {sub}
                 </p>
               )}
             </div>
           ))}
         </div>
-      </section>
+      </div>
 
-      {/* ── 02 · Season by Season ─────────────────────────────────────── */}
-      {seasonRows.length > 0 && (
-        <section className="border-b border-border">
-          <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
-            <span className="font-mono text-xs text-text-2 leading-none">02 ·</span>
-            <h2 className="text-[13px] font-medium text-text-2">{t('seasons.title')}</h2>
-            <span className="font-mono text-[11px] text-text-3 ml-1 tabular-nums">
-              {seasonRows.length}
-            </span>
-          </div>
-          <div className="max-h-[480px] overflow-y-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="sticky top-0 bg-surface border-b border-border z-10">
-                  <th className="px-6 py-2 text-left font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-20">
-                    {t('seasons.year')}
-                  </th>
-                  <th className="px-4 py-2 text-right font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-14">
-                    {t('seasons.pos')}
-                  </th>
-                  <th className="px-4 py-2 text-right font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-16">
-                    {t('seasons.pts')}
-                  </th>
-                  <th className="px-4 py-2 text-right font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-12">
-                    {t('seasons.wins')}
-                  </th>
-                  <th className="px-4 py-2 text-right font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-12">
-                    {t('seasons.pod')}
-                  </th>
-                  <th className="px-6 py-2 text-right font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-14">
-                    {t('seasons.races')}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {seasonRows.map((row) => {
-                  const isChamp = championshipYears.includes(row.year);
-                  return (
-                    <tr
-                      key={row.year}
-                      className={[
-                        'border-b border-border last:border-b-0 transition-colors duration-100',
-                        isChamp ? 'bg-gold-dim' : 'hover:bg-surface',
-                      ].join(' ')}
-                    >
-                      <td className="px-6 py-2.5 font-mono text-xs tabular-nums">
-                        <span className={isChamp ? 'text-gold' : 'text-text-3'}>
-                          {row.year}
-                        </span>
-                        {isChamp && (
-                          <span className="font-mono text-[9px] text-gold uppercase tracking-[0.08em] ml-2">
-                            ★
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-4 py-2.5 text-right font-mono text-[13px] text-text-1 tabular-nums">
-                        {row.position !== null ? `P${row.position}` : '—'}
-                      </td>
-                      <td className="px-4 py-2.5 text-right font-mono text-[13px] text-text-1 tabular-nums">
-                        {row.points}
-                      </td>
-                      <td className="px-4 py-2.5 text-right font-mono text-[13px] text-text-2 tabular-nums">
-                        {row.wins}
-                      </td>
-                      <td className="px-4 py-2.5 text-right font-mono text-[13px] text-text-2 tabular-nums">
-                        {row.podiums}
-                      </td>
-                      <td className="px-6 py-2.5 text-right font-mono text-[13px] text-text-3 tabular-nums">
-                        {row.races}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      )}
+      {/* ── Two-column grid: Seasons | Win History ────────────── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 border-b border-border" style={{ borderTop: '1px solid #D4D0C8' }}>
 
-      {/* ── 03 · Win History  |  04 · Drivers ────────────────────────── */}
-      <div className="grid grid-cols-2 divide-x divide-border border-b border-border">
-
-        {/* 03 · Win History */}
-        <section>
-          <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
-            <span className="font-mono text-xs text-text-2 leading-none">03 ·</span>
-            <h2 className="text-[13px] font-medium text-text-2">
-              {t('winsSection.title')}
-            </h2>
-            <span className="font-mono text-[11px] text-text-3 ml-1 tabular-nums">
-              {winRows.length}
-            </span>
-          </div>
-          {winRows.length > 0 ? (
-            <div className="max-h-[400px] overflow-y-auto">
+        {/* LEFT: 02 · Season by Season */}
+        {seasonRows.length > 0 && (
+          <section style={{ borderRight: '1px solid #D4D0C8' }}>
+            <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
+              <span className="font-mono text-xs text-text-2 leading-none">02 ·</span>
+              <h2 className="text-[13px] font-medium text-text-2">{t('seasons.title')}</h2>
+              <span className="font-mono text-[11px] text-text-3 ml-1 tabular-nums">{seasonRows.length}</span>
+            </div>
+            <div className="max-h-[600px] overflow-y-auto">
               <table className="w-full">
                 <thead>
                   <tr className="sticky top-0 bg-surface border-b border-border z-10">
-                    <th className="px-6 py-2 text-left font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-14">
-                      {t('winsSection.year')}
-                    </th>
-                    <th className="px-3 py-2 text-left font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">
-                      {t('winsSection.race')}
-                    </th>
-                    <th className="px-3 py-2 text-left font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">
-                      {t('winsSection.driver')}
-                    </th>
-                    <th className="px-6 py-2 text-right font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">
-                      {t('winsSection.fastestLap')}
-                    </th>
+                    <th className="px-4 py-2 text-left font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-16">{t('seasons.year')}</th>
+                    <th className="px-3 py-2 text-right font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-12">{t('seasons.pos')}</th>
+                    <th className="px-3 py-2 text-right font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-16">{t('seasons.pts')}</th>
+                    <th className="px-3 py-2 text-right font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-10">{t('seasons.wins')}</th>
+                    <th className="px-3 py-2 text-right font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-10">{t('seasons.pod')}</th>
+                    <th className="px-4 py-2 text-right font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-12">{t('seasons.races')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {seasonRows.map((row) => {
+                    const isChamp = championshipYears.includes(row.year);
+                    return (
+                      <tr
+                        key={row.year}
+                        style={{
+                          borderBottom: '1px solid #D4D0C8',
+                          height: 40,
+                          background: isChamp ? '#F0EDE6' : undefined,
+                        }}
+                        className="hover:bg-surface transition-colors duration-100"
+                      >
+                        <td className="px-4 font-mono text-xs tabular-nums">
+                          <span className={isChamp ? 'text-gold' : 'text-text-3'}>{row.year}</span>
+                          {isChamp && <span className="font-mono text-[9px] text-gold ml-2">★</span>}
+                        </td>
+                        <td className="px-3 text-right font-mono text-[12px] text-text-1 tabular-nums">{row.position !== null ? `P${row.position}` : '—'}</td>
+                        <td className="px-3 text-right font-mono text-[12px] text-text-1 tabular-nums">{row.points}</td>
+                        <td className="px-3 text-right font-mono text-[12px] text-text-2 tabular-nums">{row.wins}</td>
+                        <td className="px-3 text-right font-mono text-[12px] text-text-2 tabular-nums">{row.podiums}</td>
+                        <td className="px-4 text-right font-mono text-[12px] text-text-3 tabular-nums">{row.races}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {/* RIGHT: 03 · Win History */}
+        <section>
+          <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
+            <span className="font-mono text-xs text-text-2 leading-none">03 ·</span>
+            <h2 className="text-[13px] font-medium text-text-2">{t('winsSection.title')}</h2>
+            <span className="font-mono text-[11px] text-text-3 ml-1 tabular-nums">{winRows.length}</span>
+          </div>
+          {winRows.length > 0 ? (
+            <div className="max-h-[600px] overflow-y-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="sticky top-0 bg-surface border-b border-border z-10">
+                    <th className="px-4 py-2 text-left font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-14">{t('winsSection.year')}</th>
+                    <th className="px-3 py-2 text-left font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">{t('winsSection.race')}</th>
+                    <th className="px-3 py-2 text-left font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">{t('winsSection.driver')}</th>
+                    <th className="px-4 py-2 text-right font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">{t('winsSection.fastestLap')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {winRows.map((row, i) => (
-                    <tr
-                      key={i}
-                      className="border-b border-border last:border-b-0 hover:bg-surface transition-colors duration-100"
-                    >
-                      <td className="px-6 py-2.5 font-mono text-xs text-text-3 tabular-nums">
-                        {row.year}
-                      </td>
-                      <td className="px-3 py-2.5 text-[13px] text-text-1 max-w-[120px] truncate">
-                        {row.raceName}
-                      </td>
-                      <td className="px-3 py-2.5 text-[13px] text-text-2 max-w-[120px] truncate">
-                        {row.driverName}
-                      </td>
-                      <td className="px-6 py-2.5 text-right font-mono text-[13px] tabular-nums">
-                        {row.fastestLap ? (
-                          <span className="text-text-1">{row.fastestLap}</span>
-                        ) : (
-                          <span className="text-text-3">—</span>
-                        )}
+                    <tr key={i} style={{ borderBottom: '1px solid #D4D0C8' }} className="hover:bg-surface transition-colors duration-100">
+                      <td className="px-4 py-2 font-mono text-xs text-text-3 tabular-nums">{row.year}</td>
+                      <td className="px-3 py-2 text-[12px] text-text-1 max-w-[120px] truncate">{row.raceName}</td>
+                      <td className="px-3 py-2 text-[12px] text-text-2 max-w-[120px] truncate">{row.driverName}</td>
+                      <td className="px-4 py-2 text-right font-mono text-[12px] tabular-nums">
+                        {row.fastestLap
+                          ? <span style={{ color: '#E10600' }}>{row.fastestLap}</span>
+                          : <span className="text-text-3">—</span>
+                        }
                       </td>
                     </tr>
                   ))}
@@ -654,80 +645,60 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
               </table>
             </div>
           ) : (
-            <div className="px-6 py-8">
-              <span className="font-mono text-[13px] text-text-3">—</span>
-            </div>
+            <div className="px-6 py-8"><span className="font-mono text-[13px] text-text-3">—</span></div>
           )}
         </section>
 
-        {/* 04 · Drivers */}
-        <section>
+      </div>
+
+      {/* ── 04 · Drivers ─────────────────────────────────────────── */}
+      {driverRows.length > 0 && (
+        <section className="border-b border-border">
           <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
             <span className="font-mono text-xs text-text-2 leading-none">04 ·</span>
-            <h2 className="text-[13px] font-medium text-text-2">
-              {t('drivers.title')}
-            </h2>
-            <span className="font-mono text-[11px] text-text-3 ml-1 tabular-nums">
-              {driverRows.length}
-            </span>
+            <h2 className="text-[13px] font-medium text-text-2">{t('drivers.title')}</h2>
+            <span className="font-mono text-[11px] text-text-3 ml-1 tabular-nums">{driverRows.length}</span>
           </div>
-          <div className="max-h-[400px] overflow-y-auto">
-            <div className="px-6 py-5 flex flex-col gap-4">
-              {driverRows.map((row) => (
-                <div key={row.driverId} className="flex items-center gap-4">
-                  {/* Name + year range */}
-                  <div className="w-40 shrink-0">
-                    <span className="text-[13px] font-medium text-text-1 block truncate">
-                      {row.name}
-                    </span>
-                    <span className="font-mono text-[10px] text-text-3">
-                      {row.firstYear === row.lastYear
-                        ? String(row.firstYear)
-                        : `${row.firstYear}–${row.lastYear}`}
-                    </span>
-                  </div>
-
-                  {/* Bar proportional to podium appearances */}
-                  <div className="flex-1 h-px bg-border overflow-hidden">
-                    <div
-                      className="h-full bg-text-2"
-                      style={{ width: `${(row.podiums / maxDriverPodiums) * 100}%` }}
-                    />
-                  </div>
-
-                  {/* Stats */}
-                  <div className="flex items-center gap-4 shrink-0">
-                    <span className="font-mono text-[11px] text-text-1 tabular-nums w-12 text-right">
-                      {row.wins}
-                      <span className="text-text-3 ml-1">{t('drivers.wins')}</span>
-                    </span>
-                    <span className="font-mono text-[11px] text-text-2 tabular-nums w-12 text-right">
-                      {row.podiums}
-                      <span className="text-text-3 ml-1">{t('drivers.podiums')}</span>
-                    </span>
-                  </div>
+          <div className="px-6 py-5 flex flex-col gap-4">
+            {driverRows.map((row) => (
+              <div key={row.driverId} className="flex items-center gap-4">
+                <div className="w-40 shrink-0">
+                  <span className="text-[13px] font-medium text-text-1 block truncate">{row.name}</span>
+                  <span className="font-mono text-[10px] text-text-3">
+                    {row.firstYear === row.lastYear ? String(row.firstYear) : `${row.firstYear}–${row.lastYear}`}
+                  </span>
                 </div>
-              ))}
-            </div>
+                <div className="flex-1 h-px overflow-hidden" style={{ background: '#D4D0C8' }}>
+                  <div className="h-full bg-text-2" style={{ width: `${(row.podiums / maxDriverPodiums) * 100}%` }} />
+                </div>
+                <div className="flex items-center gap-4 shrink-0">
+                  <span className="font-mono text-[11px] text-text-1 tabular-nums w-12 text-right">
+                    {row.wins}<span className="text-text-3 ml-1">{t('drivers.wins')}</span>
+                  </span>
+                  <span className="font-mono text-[11px] text-text-2 tabular-nums w-12 text-right">
+                    {row.podiums}<span className="text-text-3 ml-1">{t('drivers.podiums')}</span>
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
-
-      </div>
+      )}
 
       {/* ── Share scorecard ───────────────────────────────────── */}
       <div className="px-6 py-3 border-t border-border">
         <ConstructorScorecardButton
           data={{
-            name: constructor.name,
+            name:           constructor.name,
             constructorRef: constructor.constructor_ref,
-            nationality: constructor.nationality,
-            firstYear: stats.first_year as number,
-            lastYear: stats.last_year as number,
-            races: stats.races as number,
-            wins: stats.wins as number,
-            podiums: totalPodiums,
-            fastestLaps: totalFastestLaps,
-            championships: championshipYears.length,
+            nationality:    constructor.nationality,
+            firstYear:      stats.first_year as number,
+            lastYear:       stats.last_year  as number,
+            races:          stats.races       as number,
+            wins:           stats.wins        as number,
+            podiums:        totalPodiums,
+            fastestLaps:    totalFastestLaps,
+            championships:  championshipYears.length,
           }}
         />
       </div>

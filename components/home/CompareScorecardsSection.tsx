@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { Link } from '@/lib/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import type { DriverSelectorRow, HomeScorecardData } from '@/lib/types';
+import { flagGradient } from '@/lib/flagGradient';
 
 // ─── Constants ────────────────────────────────────────────────────
 
@@ -11,43 +12,6 @@ const CARD_SHADOW = '8px 8px 20px rgba(5,5,5,0.14), -6px -6px 14px rgba(255,255,
 const INPUT_SHADOW = 'inset 3px 3px 6px rgba(5,5,5,0.10), inset -2px -2px 4px rgba(255,255,255,0.7)';
 const INPUT_SHADOW_FOCUS = 'inset 3px 3px 6px rgba(5,5,5,0.12), inset -2px -2px 4px rgba(255,255,255,0.7), 0 0 0 1px #E61919';
 
-// ─── Nationality flag — 3 vertical color strips ───────────────────
-
-const FLAG: Record<string, readonly [string, string, string]> = {
-  'Italian':        ['#009246', '#E8E6E0', '#CE2B37'],
-  'British':        ['#012169', '#E8E6E0', '#C8102E'],
-  'Dutch':          ['#AE1C28', '#E8E6E0', '#21468B'],
-  'French':         ['#002395', '#E8E6E0', '#ED2939'],
-  'Australian':     ['#00008B', '#E8E6E0', '#FF0000'],
-  'Spanish':        ['#AA151B', '#F1BF00', '#AA151B'],
-  'Finnish':        ['#E8E6E0', '#003580', '#E8E6E0'],
-  'Canadian':       ['#FF0000', '#E8E6E0', '#FF0000'],
-  'German':         ['#000000', '#DD0000', '#FFCE00'],
-  'Mexican':        ['#006847', '#E8E6E0', '#CE1126'],
-  'American':       ['#B22234', '#E8E6E0', '#3C3B6E'],
-  'Monégasque':     ['#CE1126', '#E8E6E0', '#CE1126'],
-  'New Zealander':  ['#00247D', '#E8E6E0', '#CC142B'],
-  'Argentine':      ['#74ACDF', '#E8E6E0', '#74ACDF'],
-  'Brazilian':      ['#009C3B', '#FEDF00', '#002776'],
-  'Thai':           ['#A51931', '#F4F5F8', '#2D2A4A'],
-  'Japanese':       ['#E8E6E0', '#BC002D', '#E8E6E0'],
-  'Austrian':       ['#EE0000', '#E8E6E0', '#EE0000'],
-  'Belgian':        ['#000000', '#FAE042', '#EF3340'],
-  'Danish':         ['#C60C30', '#E8E6E0', '#C60C30'],
-  'Swedish':        ['#006AA7', '#FECC00', '#006AA7'],
-  'Swiss':          ['#FF0000', '#E8E6E0', '#FF0000'],
-  'Colombian':      ['#FCD116', '#003087', '#CE1126'],
-  'Russian':        ['#E8E6E0', '#0039A6', '#D52B1E'],
-  'South African':  ['#007A4D', '#FFB81C', '#001489'],
-  'Venezuelan':     ['#CF142B', '#E8E6E0', '#003893'],
-  'Polish':         ['#E8E6E0', '#DC143C', '#E8E6E0'],
-};
-
-function flagGradient(nationality: string): string {
-  const c = FLAG[nationality];
-  if (!c) return 'linear-gradient(to right, var(--border-subtle) 0%, var(--text-3) 100%)';
-  return `linear-gradient(to right,${c[0]} 0%,${c[0]} 33.33%,${c[1]} 33.33%,${c[1]} 66.66%,${c[2]} 66.66%,${c[2]} 100%)`;
-}
 
 // ─── Filled scorecard display ─────────────────────────────────────
 
