@@ -670,7 +670,7 @@ export default async function DriverDetailPage({
       </div>
 
       {/* ── Two-column grid: Seasons | Win History + Qualifying ─── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 items-start border-b border-border" style={{ borderTop: '1px solid #D4D0C8' }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 border-b border-border" style={{ borderTop: '1px solid #D4D0C8' }}>
 
         {/* LEFT: 02 · Season by Season */}
         {seasonRows.length > 0 && (
@@ -741,40 +741,38 @@ export default async function DriverDetailPage({
               <span className="font-mono text-[11px] text-text-3 ml-1 tabular-nums">{winRows.length}</span>
             </div>
             {winRows.length > 0 ? (
-              <div className="max-h-[320px] overflow-y-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="sticky top-0 bg-surface border-b border-border z-10">
-                      <th className="px-4 py-2 text-left font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-14">{t('winsSection.year')}</th>
-                      <th className="px-3 py-2 text-left font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">{t('winsSection.race')}</th>
-                      <th className="px-3 py-2 text-left font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">{t('winsSection.constructor')}</th>
-                      <th className="px-4 py-2 text-right font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">{t('winsSection.fastestLap')}</th>
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-surface border-b border-border">
+                    <th className="px-4 py-2 text-left font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-14">{t('winsSection.year')}</th>
+                    <th className="px-3 py-2 text-left font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">{t('winsSection.race')}</th>
+                    <th className="px-3 py-2 text-left font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">{t('winsSection.constructor')}</th>
+                    <th className="px-4 py-2 text-right font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">{t('winsSection.fastestLap')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {winRows.map((row, i) => (
+                    <tr
+                      key={i}
+                      style={{
+                        borderBottom: '1px solid #D4D0C8',
+                        borderLeft: `3px solid ${teamHex(row.constructorRef)}`,
+                      }}
+                      className="hover:bg-surface transition-colors duration-100"
+                    >
+                      <td className="px-4 py-2 font-mono text-xs text-text-3 tabular-nums">{row.year}</td>
+                      <td className="px-3 py-2 text-[12px] text-text-1 max-w-[140px] truncate">{row.raceName}</td>
+                      <td className="px-3 py-2 text-[12px] text-text-2 truncate">{row.constructorName}</td>
+                      <td className="px-4 py-2 text-right font-mono text-[12px] tabular-nums">
+                        {row.fastestLap
+                          ? <span style={{ color: '#E10600' }}>{row.fastestLap}</span>
+                          : <span className="text-text-3">—</span>
+                        }
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {winRows.map((row, i) => (
-                      <tr
-                        key={i}
-                        style={{
-                          borderBottom: '1px solid #D4D0C8',
-                          borderLeft: `3px solid ${teamHex(row.constructorRef)}`,
-                        }}
-                        className="hover:bg-surface transition-colors duration-100"
-                      >
-                        <td className="px-4 py-2 font-mono text-xs text-text-3 tabular-nums">{row.year}</td>
-                        <td className="px-3 py-2 text-[12px] text-text-1 max-w-[140px] truncate">{row.raceName}</td>
-                        <td className="px-3 py-2 text-[12px] text-text-2 truncate">{row.constructorName}</td>
-                        <td className="px-4 py-2 text-right font-mono text-[12px] tabular-nums">
-                          {row.fastestLap
-                            ? <span style={{ color: '#E10600' }}>{row.fastestLap}</span>
-                            : <span className="text-text-3">—</span>
-                          }
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
             ) : (
               <div className="px-6 py-6"><span className="font-mono text-[13px] text-text-3">—</span></div>
             )}
