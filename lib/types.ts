@@ -251,9 +251,37 @@ export interface HomeNextRace {
   circuit_ref: string;
   days_remaining: number;
   last_winner: { year: number; forename: string; surname: string; constructor: string } | null;
-  circuit_length_km: number | null;
   circuit_laps: number | null;
   circuit_lap_record: { time: string; forename: string; surname: string; year: number } | null;
+  circuit_svg: { path: string; viewBox: string } | null;
+}
+
+export interface HomeLastRaceData {
+  race_id: number;
+  round: number;
+  year: number;
+  name: string;
+  date: string;
+  circuit_name: string;
+  circuit_ref: string;
+  circuit_svg: { path: string; viewBox: string } | null;
+  podium: Array<{
+    position: number;
+    forename: string;
+    surname: string;
+    constructor_name: string;
+    constructor_ref: string;
+    time: string | null;
+  }>;
+  fastest_lap: { forename: string; surname: string; time: string } | null;
+  fastest_pit: { forename: string; surname: string; constructor_name: string; duration: string } | null;
+  retirements: Array<{
+    forename: string;
+    surname: string;
+    constructor_name: string;
+    lap: number;
+    status: string;
+  }>;
 }
 
 export interface HomeDriverRow {
@@ -266,6 +294,8 @@ export interface HomeDriverRow {
   wins: number;
   constructor_ref: string;
   constructor_name: string;
+  podiums: number;
+  win_rate: number; // career wins / career races (0–1)
 }
 
 export interface HomeConstructorOfDay {
@@ -286,6 +316,26 @@ export interface HomeConstructorRow {
   position: number;
   points: number;
   wins: number;
+  podiums: number;
+}
+
+export interface HomeStreaksData {
+  totalRounds2026: number;
+  driverActive: {
+    driver_id: number;
+    forename: string;
+    surname: string;
+    constructor_ref: string;
+    streak: number;
+  } | null;
+  constructorActive: {
+    constructor_id: number;
+    name: string;
+    constructor_ref: string;
+    streak: number;
+  } | null;
+  driverAllTime: { forename: string; surname: string; streak: number; year: number } | null;
+  constructorAllTime: { name: string; streak: number; year: number } | null;
 }
 
 export interface HomeScorecardData {

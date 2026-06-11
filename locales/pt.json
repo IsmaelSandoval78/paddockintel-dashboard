@@ -36,9 +36,25 @@
       "countdownHours": "Horas",
       "countdownMinutes": "Min",
       "lastWinner": "Último Vencedor",
-      "statLength": "Comp.",
       "statLaps": "Voltas",
-      "statLapRecord": "Recorde"
+      "statLapRecord": "Recorde",
+      "lastRace": "Última Corrida",
+      "nextRaceCard": "Próxima Corrida",
+      "podium": "Pódio",
+      "fastestLap": "Volta Rápida",
+      "fastestPit": "Pit Mais Rápido",
+      "retirements": "Abandonos",
+      "lap": "V",
+      "more": "mais",
+      "awaitingData": "SEM DADOS",
+      "driverCode": "COD",
+      "streaks": "Sequências",
+      "streakDrivers": "Pilotos",
+      "streakConstructors": "Construtores",
+      "streakConsecutive": "vitórias consecutivas",
+      "streakAllTime": "Recorde histórico",
+      "streakActive": "ativa",
+      "streakCurrent": "Sequência atual"
     }
   },
   "panel": {

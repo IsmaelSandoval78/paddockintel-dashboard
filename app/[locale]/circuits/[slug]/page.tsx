@@ -103,7 +103,7 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
   const race2026 = races.find((r) => (r.year as number) === 2026);
   let nextRace: { name: string; round: number; date: string; daysAway: number } | null = null;
   if (race2026?.date) {
-    const today = new Date('2026-06-01');
+    const today = new Date();
     const raceDate = new Date(race2026.date as string);
     const daysAway = Math.round((raceDate.getTime() - today.getTime()) / 86400000);
     nextRace = {

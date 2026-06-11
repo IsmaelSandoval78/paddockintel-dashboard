@@ -36,9 +36,25 @@
       "countdownHours": "Hours",
       "countdownMinutes": "Min",
       "lastWinner": "Last Winner",
-      "statLength": "Length",
       "statLaps": "Laps",
-      "statLapRecord": "Lap Record"
+      "statLapRecord": "Lap Record",
+      "lastRace": "Last Race",
+      "nextRaceCard": "Next Race",
+      "podium": "Podium",
+      "fastestLap": "Fastest Lap",
+      "fastestPit": "Fastest Pit",
+      "retirements": "Retirements",
+      "lap": "L",
+      "more": "more",
+      "awaitingData": "AWAITING DATA",
+      "driverCode": "COD",
+      "streaks": "Win Streaks",
+      "streakDrivers": "Drivers",
+      "streakConstructors": "Constructors",
+      "streakConsecutive": "consecutive wins",
+      "streakAllTime": "All-time record",
+      "streakActive": "active",
+      "streakCurrent": "Current streak"
     }
   },
   "panel": {

@@ -64,6 +64,16 @@ function DriverRow({ driver }: { driver: HomeDriverRow }) {
         style={{ backgroundColor: teamColor(driver.constructor_ref) }}
       />
 
+      {/* PDM — career podiums, hidden on mobile */}
+      <span className="hidden md:block font-mono text-[11px] text-text-3 w-10 text-right shrink-0 ml-3 tabular-nums">
+        {driver.podiums}
+      </span>
+
+      {/* W% — career win rate, hidden on mobile */}
+      <span className="hidden md:block font-mono text-[11px] text-text-3 w-12 text-right shrink-0 ml-2 tabular-nums">
+        {driver.win_rate > 0 ? `${(driver.win_rate * 100).toFixed(1)}%` : '—'}
+      </span>
+
       {/* PTS — dominant number */}
       <span
         className="w-14 text-right shrink-0 tabular-nums text-[20px] ml-3"
@@ -81,7 +91,7 @@ export default function Top10Drivers({ drivers }: { drivers: HomeDriverRow[] }) 
   if (drivers.length === 0) {
     return (
       <div className="font-mono text-[13px] text-text-3 py-8 text-center">
-        [ AWAITING DATA ]
+        [ {t('hub.home.awaitingData')} ]
       </div>
     );
   }
@@ -97,13 +107,19 @@ export default function Top10Drivers({ drivers }: { drivers: HomeDriverRow[] }) 
           {t('drivers.table.pos')}
         </span>
         <span className="hidden md:block font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-10 shrink-0 ml-1">
-          COD
+          {t('hub.home.driverCode')}
         </span>
         <span className="font-mono text-[10px] text-bg uppercase tracking-[0.1em] flex-1 ml-3">
           {t('drivers.table.driver')}
         </span>
         <span className="hidden md:block font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-6 shrink-0 ml-3">
           ●
+        </span>
+        <span className="hidden md:block font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-10 text-right shrink-0 ml-3">
+          {t('drivers.table.pod')}
+        </span>
+        <span className="hidden md:block font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-12 text-right shrink-0 ml-2">
+          {t('drivers.table.winPct')}
         </span>
         <span className="font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-14 text-right shrink-0 ml-3">
           {t('drivers.table.pts')}

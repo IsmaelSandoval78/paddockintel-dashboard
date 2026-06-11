@@ -3,9 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/lib/i18n/navigation';
+import TrackSvg, { TrackSvgFallback } from '@/components/circuits/TrackSvg';
 import type { HomeNextRace } from '@/lib/types';
-
-const NEU_SHADOW = '6px 6px 12px rgba(5,5,5,0.12), -4px -4px 8px rgba(255,255,255,0.7)';
 
 function formatDate(dateStr: string): string {
   const [y, m, d] = dateStr.split('-');
@@ -29,7 +28,7 @@ function pad(n: number): string {
 }
 
 function Divider() {
-  return <div className="my-4" style={{ height: '1px', background: '#D4D0C8' }} />;
+  return <div className="my-4 border-t border-border" />;
 }
 
 export default function NextRaceCard({ race }: { race: HomeNextRace | null }) {
@@ -46,12 +45,9 @@ export default function NextRaceCard({ race }: { race: HomeNextRace | null }) {
 
   if (!race) {
     return (
-      <div
-        className="rounded-xl p-6"
-        style={{ background: 'var(--bg)', boxShadow: NEU_SHADOW }}
-      >
+      <div className="border border-border p-5">
         <p className="font-mono text-[10px] text-text-2 uppercase tracking-[0.1em] mb-4">
-          [ NEXT RACE ]
+          [ {t('nextRaceCard').toUpperCase()} ]
         </p>
         <p className="font-mono text-[13px] text-text-3">{t('noRace')}</p>
       </div>
@@ -59,15 +55,11 @@ export default function NextRaceCard({ race }: { race: HomeNextRace | null }) {
   }
 
   return (
-    <div
-      className="rounded-xl p-6 flex flex-col gap-0"
-      style={{ background: 'var(--bg)', boxShadow: NEU_SHADOW }}
-    >
-      {/* ── Existing content — do not modify ── */}
+    <div className="border border-border p-5 flex flex-col gap-0">
 
       {/* ASCII label */}
-      <p className="font-mono text-[10px] text-text-2 uppercase tracking-[0.1em] mb-4">
-        [ NEXT RACE ]
+      <p className="font-mono text-[10px] text-text-2 uppercase tracking-[0.1em] mb-1">
+        [ {t('nextRaceCard').toUpperCase()} ]
       </p>
 
       {/* Round */}
@@ -88,22 +80,27 @@ export default function NextRaceCard({ race }: { race: HomeNextRace | null }) {
         {race.location} · {race.country}
       </p>
 
-      {/* Divider */}
-      <div className="my-4" style={{ height: '1px', background: 'var(--border-subtle)' }} />
+      {/* Circuit SVG */}
+      <div className="mt-4 max-w-[160px] mx-auto w-full">
+        {race.circuit_svg ? (
+          <TrackSvg
+            pathData={race.circuit_svg.path}
+            viewBox={race.circuit_svg.viewBox}
+            circuitName={race.circuit_name}
+          />
+        ) : (
+          <TrackSvgFallback circuitName={race.circuit_name} />
+        )}
+      </div>
 
-      {/* Date */}
+      {/* Date + countdown text */}
       <p
-        className="text-[20px] tabular-nums leading-none text-text-1"
+        className="text-[20px] tabular-nums leading-none text-text-1 mt-4"
         style={{ fontFamily: 'var(--pi-display)' }}
       >
         {formatDate(race.date)}
       </p>
-
-      {/* Existing countdown text */}
-      <p
-        className="font-mono text-[11px] uppercase tracking-[0.06em] mt-1"
-        style={{ color: 'var(--red)' }}
-      >
+      <p className="font-mono text-[11px] text-red uppercase tracking-[0.06em] mt-1">
         {race.days_remaining === 0
           ? t('raceDay').toUpperCase()
           : t('inDays', { days: race.days_remaining }).toUpperCase()}
@@ -112,14 +109,12 @@ export default function NextRaceCard({ race }: { race: HomeNextRace | null }) {
       {/* CTA */}
       <Link
         href={`/circuits/${race.circuit_ref}`}
-        className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-100 mt-5 block"
+        className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-100 mt-4 block"
       >
         [ {t('viewCircuit').toUpperCase()} → ]
       </Link>
 
-      {/* ── NEW: whitespace fill ── */}
-
-      {/* 1 · D / H / M countdown */}
+      {/* D / H / M countdown */}
       <div className="mt-5 grid grid-cols-3 text-center">
         {[
           { label: t('countdownDays'),    val: cd?.days    ?? null },
@@ -141,10 +136,9 @@ export default function NextRaceCard({ race }: { race: HomeNextRace | null }) {
         ))}
       </div>
 
-      {/* 2 · Divider */}
       <Divider />
 
-      {/* 3 · Last winner */}
+      {/* Last winner */}
       <p className="font-mono text-[10px] text-text-2 uppercase tracking-[0.1em] mb-2.5">
         {t('lastWinner')}
       </p>
@@ -169,19 +163,10 @@ export default function NextRaceCard({ race }: { race: HomeNextRace | null }) {
         <span className="font-mono text-[13px] text-text-3">—</span>
       )}
 
-      {/* 4 · Divider */}
       <Divider />
 
-      {/* 5 · Circuit quick stats */}
-      <div className="grid grid-cols-3 gap-2">
-        <div>
-          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-0.5">
-            {t('statLength')}
-          </p>
-          <p className="font-mono text-[12px] text-text-1 tabular-nums">
-            {race.circuit_length_km != null ? `${race.circuit_length_km}km` : '—'}
-          </p>
-        </div>
+      {/* Circuit quick stats — Laps + Lap Record (2 cols) */}
+      <div className="grid grid-cols-2 gap-3">
         <div>
           <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-0.5">
             {t('statLaps')}
@@ -196,7 +181,7 @@ export default function NextRaceCard({ race }: { race: HomeNextRace | null }) {
           </p>
           {race.circuit_lap_record ? (
             <p className="font-mono text-[12px] tabular-nums leading-snug">
-              <span style={{ color: '#E10600' }}>{race.circuit_lap_record.time}</span>
+              <span className="text-red">{race.circuit_lap_record.time}</span>
               <span className="text-text-3">
                 {' '}· {race.circuit_lap_record.forename[0]}. {race.circuit_lap_record.surname}
               </span>
@@ -206,6 +191,7 @@ export default function NextRaceCard({ race }: { race: HomeNextRace | null }) {
           )}
         </div>
       </div>
+
     </div>
   );
 }

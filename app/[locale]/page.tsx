@@ -2,28 +2,21 @@ export const revalidate = 3600;
 
 import { createClient } from '@/lib/supabase/server';
 import { getTranslations } from 'next-intl/server';
+import { fetchTrackPathData } from '@/lib/trackSvg';
 import NextRaceCard from '@/components/home/NextRaceCard';
 import Top10Drivers from '@/components/home/Top10Drivers';
-import ConstructorOfTheDay from '@/components/home/ConstructorOfTheDay';
-import Top5Constructors from '@/components/home/Top5Constructors';
+import LastRaceCard from '@/components/home/LastRaceCard';
+import StreaksCard from '@/components/home/StreaksCard';
 import CompareScorecardsSection from '@/components/home/CompareScorecardsSection';
 import type {
   HomeNextRace,
   HomeDriverRow,
-  HomeConstructorOfDay,
-  HomeConstructorRow,
+  HomeLastRaceData,
+  HomeStreaksData,
   DriverSelectorRow,
 } from '@/lib/types';
 
 // ─── Helpers ──────────────────────────────────────────────────────
-
-function hashCode(str: string): number {
-  let h = 0;
-  for (let i = 0; i < str.length; i++) {
-    h = (Math.imul(31, h) + str.charCodeAt(i)) | 0;
-  }
-  return Math.abs(h);
-}
 
 function daysUntil(dateStr: string): number {
   const race = new Date(dateStr + 'T00:00:00');
@@ -37,50 +30,86 @@ function daysUntil(dateStr: string): number {
 async function getHomeData(): Promise<{
   nextRace: HomeNextRace | null;
   topDrivers: HomeDriverRow[];
-  constructorOfDay: HomeConstructorOfDay | null;
-  top5Constructors: HomeConstructorRow[];
+  lastRaceData: HomeLastRaceData | null;
   allDrivers: DriverSelectorRow[];
+  currentRound: number | null;
+  currentYear: number | null;
+  streaksData: HomeStreaksData | null;
 }> {
   const supabase = createClient();
   const today = new Date().toISOString().slice(0, 10);
 
-  // Batch 1: race data + constructors + driver selector list (all parallel)
-  const [latestRaceRes, nextRaceRes, constructorsRes, constructorStatsRes, driverStatsRes, driversListRes] = await Promise.all([
-    supabase
-      .from('races')
-      .select('id')
-      .eq('year', 2026)
-      .lte('date', today)
-      .order('date', { ascending: false })
-      .limit(1)
-      .single(),
-    supabase
-      .from('races')
-      .select('id, round, name, date, circuit_id')
-      .gt('date', today)
-      .order('date', { ascending: true })
-      .limit(1)
-      .single(),
-    supabase
-      .from('constructors')
-      .select('id, name, constructor_ref, nationality'),
-    supabase
-      .from('constructor_stats')
-      .select('constructor_id, first_year, last_year, wins, races'),
-    supabase
-      .from('driver_stats')
-      .select('driver_id, wins, nationality')
-      .order('wins', { ascending: false }),
-    supabase
-      .from('drivers')
-      .select('id, driver_ref, forename, surname'),
-  ]);
+  // ── Batch 1 ─────────────────────────────────────────────────────
+  // NOTE: driver_standings max race_id — not races by date — because
+  // a race can exist in `races` before its results are imported.
+  const [latestStandingsRaceRes, nextRaceRes, constructorsRes, driverStatsRes, driversListRes, races2026CompletedRes] =
+    await Promise.all([
+      supabase
+        .from('driver_standings')
+        .select('race_id')
+        .order('race_id', { ascending: false })
+        .limit(1)
+        .single(),
+      supabase
+        .from('races')
+        .select('id, round, name, date, circuit_id')
+        .gt('date', today)
+        .order('date', { ascending: true })
+        .limit(1)
+        .single(),
+      supabase.from('constructors').select('id, name, constructor_ref, nationality'),
+      supabase
+        .from('driver_stats')
+        .select('driver_id, wins, nationality, podiums, races')
+        .order('wins', { ascending: false }),
+      supabase.from('drivers').select('id, driver_ref, forename, surname'),
+      supabase
+        .from('races')
+        .select('id, round')
+        .eq('year', 2026)
+        .lte('date', today)
+        .order('round', { ascending: true }),
+    ]);
 
-  const latestRaceId = (latestRaceRes.data?.id ?? null) as number | null;
+  const latestRaceId = (latestStandingsRaceRes.data?.race_id ?? null) as number | null;
   const nextRaceRaw = nextRaceRes.data;
+  const races2026Completed = (races2026CompletedRes.data ?? []) as Array<{ id: number; round: number }>;
+  const races2026Ids = races2026Completed.map((r) => r.id);
+  const totalRounds2026 = races2026Ids.length;
 
-  // Batch 2: circuit for next race + standings + all past races at next circuit
-  const [circuitRes, driverStandRes, constStandRes, pastCircuitRacesRes] = await Promise.all([
+  // ── Latest race info (lightweight single-row lookup) ─────────────
+  let latestRaceRound: number | null = null;
+  let latestRaceYear: number | null = null;
+  let latestRaceName: string | null = null;
+  let latestRaceDate: string | null = null;
+  let latestCircuitId: number | null = null;
+
+  if (latestRaceId !== null) {
+    const { data: raceInfo } = await supabase
+      .from('races')
+      .select('round, year, name, date, circuit_id')
+      .eq('id', latestRaceId)
+      .single();
+    latestRaceRound  = (raceInfo?.round      ?? null) as number | null;
+    latestRaceYear   = (raceInfo?.year       ?? null) as number | null;
+    latestRaceName   = (raceInfo?.name       ?? null) as string | null;
+    latestRaceDate   = (raceInfo?.date       ?? null) as string | null;
+    latestCircuitId  = (raceInfo?.circuit_id ?? null) as number | null;
+  }
+
+  // ── Batch 2 ─────────────────────────────────────────────────────
+  const [
+    circuitRes,
+    driverStandRes,
+    pastCircuitRacesRes,
+    lastRaceCircuitRes,
+    lastRaceResultsRes,
+    lastRacePitRes,
+    statusRes,
+    winners2026Res,
+    allTimeDriverRes,
+    allTimeConstructorRes,
+  ] = await Promise.all([
     nextRaceRaw
       ? supabase
           .from('circuits')
@@ -96,13 +125,6 @@ async function getHomeData(): Promise<{
           .order('position', { ascending: true })
           .limit(10)
       : Promise.resolve({ data: [], error: null }),
-    latestRaceId !== null
-      ? supabase
-          .from('constructor_standings')
-          .select('constructor_id, position, points, wins')
-          .eq('race_id', latestRaceId)
-          .order('position', { ascending: true })
-      : Promise.resolve({ data: [], error: null }),
     nextRaceRaw
       ? supabase
           .from('races')
@@ -112,34 +134,105 @@ async function getHomeData(): Promise<{
           .order('date', { ascending: false })
           .limit(100)
       : Promise.resolve({ data: [] as Array<{ id: number; year: number }>, error: null }),
+    latestCircuitId !== null
+      ? supabase
+          .from('circuits')
+          .select('name, circuit_ref')
+          .eq('id', latestCircuitId)
+          .single()
+      : Promise.resolve({ data: null, error: null }),
+    latestRaceId !== null
+      ? supabase
+          .from('results')
+          .select(
+            'position, position_text, position_order, driver_id, constructor_id, laps, time, fastest_lap_time, rank, status_id'
+          )
+          .eq('race_id', latestRaceId)
+          .order('position_order', { ascending: true })
+      : Promise.resolve({ data: [], error: null }),
+    latestRaceId !== null
+      ? supabase
+          .from('pit_stops')
+          .select('driver_id, duration, milliseconds')
+          .eq('race_id', latestRaceId)
+          .not('milliseconds', 'is', null)
+          .gt('milliseconds', 0)
+          .order('milliseconds', { ascending: true })
+          .limit(1)
+      : Promise.resolve({ data: [], error: null }),
+    supabase.from('status').select('id, status'),
+    races2026Ids.length > 0
+      ? supabase
+          .from('results')
+          .select('driver_id, constructor_id, race_id')
+          .eq('position', 1)
+          .in('race_id', races2026Ids)
+      : Promise.resolve({ data: [] as Array<{ driver_id: number; constructor_id: number; race_id: number }>, error: null }),
+    supabase
+      .from('driver_win_streaks')
+      .select('driver_id, forename, surname, streak_len, end_year')
+      .order('streak_len', { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+    supabase
+      .from('constructor_win_streaks')
+      .select('constructor_id, name, constructor_ref, streak_len, end_year')
+      .order('streak_len', { ascending: false })
+      .limit(1)
+      .maybeSingle(),
   ]);
 
-  const driverIds = (driverStandRes.data ?? []).map((s) => s.driver_id as number);
-  const constStandData = (constStandRes.data ?? []) as Array<{
+  // ── Build base lookup maps ───────────────────────────────────────
+  const constructorMap = new Map(
+    (constructorsRes.data ?? []).map((c) => [
+      c.id as number,
+      { name: c.name as string, constructor_ref: c.constructor_ref as string },
+    ])
+  );
+
+  type LastRaceResult = {
+    position: number | null;
+    position_text: string;
+    position_order: number;
+    driver_id: number;
     constructor_id: number;
-    position: number;
-    points: number;
-    wins: number;
-  }>;
+    laps: number;
+    time: string | null;
+    fastest_lap_time: string | null;
+    rank: number | null;
+    status_id: number;
+  };
+  const lastRaceResults = (lastRaceResultsRes.data ?? []) as LastRaceResult[];
+
+  const resultConstructorMap = new Map(
+    lastRaceResults.map((r) => [r.driver_id, r.constructor_id])
+  );
+  const statusMap = new Map(
+    (statusRes.data ?? []).map((s) => [s.id as number, s.status as string])
+  );
+
+  const driverIds = (driverStandRes.data ?? []).map((s) => s.driver_id as number);
+  const lastRaceDriverIds = [...new Set(lastRaceResults.map((r) => r.driver_id))];
+  const allNeededDriverIds = [...new Set([...driverIds, ...lastRaceDriverIds])];
 
   const pastCircuitRaces = (pastCircuitRacesRes.data ?? []) as Array<{ id: number; year: number }>;
   const pastCircuitRaceIds = pastCircuitRaces.map((r) => r.id);
   const lastPastRace = pastCircuitRaces[0] ?? null;
 
-  // Batch 3: driver details + standings results + last winner + rank-1 lap + winner laps (parallel)
-  const [driversRes, resultsRes, lastWinnerResultRes, rankLapHomeRes, winnerLapsHomeRes] = await Promise.all([
-    driverIds.length
-      ? supabase
-          .from('drivers')
-          .select('id, forename, surname, code')
-          .in('id', driverIds)
-      : Promise.resolve({ data: [], error: null }),
-    driverIds.length && latestRaceId !== null
-      ? supabase
-          .from('results')
-          .select('driver_id, constructor_id')
-          .eq('race_id', latestRaceId)
-          .in('driver_id', driverIds)
+  // ── Batch 3: drivers + historical circuit stats + SVG fetches ────
+  const nextCircuitRef = (circuitRes.data?.circuit_ref as string | undefined) ?? null;
+  const lastCircuitRef = (lastRaceCircuitRes.data?.circuit_ref as string | undefined) ?? null;
+
+  const [
+    driversRes,
+    lastWinnerResultRes,
+    rankLapHomeRes,
+    winnerLapsHomeRes,
+    nextCircuitSvg,
+    lastCircuitSvg,
+  ] = await Promise.all([
+    allNeededDriverIds.length
+      ? supabase.from('drivers').select('id, forename, surname, code').in('id', allNeededDriverIds)
       : Promise.resolve({ data: [], error: null }),
     lastPastRace
       ? supabase
@@ -149,7 +242,6 @@ async function getHomeData(): Promise<{
           .eq('position', 1)
           .single()
       : Promise.resolve({ data: null, error: null }),
-    // Official fastest lap (rank=1), best time across all past races at this circuit
     pastCircuitRaceIds.length > 0
       ? supabase
           .from('results')
@@ -161,8 +253,10 @@ async function getHomeData(): Promise<{
           .gt('fastest_lap_time', '')
           .order('fastest_lap_time', { ascending: true })
           .limit(1)
-      : Promise.resolve({ data: [] as Array<{ fastest_lap_time: string; driver_id: number; race_id: number }>, error: null }),
-    // Winner laps — to compute most-common race distance (mode)
+      : Promise.resolve({
+          data: [] as Array<{ fastest_lap_time: string; driver_id: number; race_id: number }>,
+          error: null,
+        }),
     pastCircuitRaceIds.length > 0
       ? supabase
           .from('results')
@@ -172,31 +266,45 @@ async function getHomeData(): Promise<{
           .not('laps', 'is', null)
           .gt('laps', 0)
       : Promise.resolve({ data: [] as Array<{ laps: number }>, error: null }),
+    nextCircuitRef ? fetchTrackPathData(nextCircuitRef) : Promise.resolve(null),
+    lastCircuitRef ? fetchTrackPathData(lastCircuitRef) : Promise.resolve(null),
   ]);
 
-  // Batch 4: driver names for last winner + rank-1 lap holder (one query)
+  // ── Batch 4: historical circuit driver name lookups ──────────────
   const lastWinnerResult = lastWinnerResultRes.data as {
     driver_id: number;
     constructor_id: number;
   } | null;
+  const rankLapHomeRow = (
+    (rankLapHomeRes.data ?? []) as Array<{
+      fastest_lap_time: string;
+      driver_id: number;
+      race_id: number;
+    }>
+  )[0] ?? null;
 
-  const rankLapHomeRow = ((rankLapHomeRes.data ?? []) as Array<{
-    fastest_lap_time: string;
-    driver_id: number;
-    race_id: number;
-  }>)[0] ?? null;
-
-  const driverIdsToFetch = new Set<number>();
-  if (lastWinnerResult) driverIdsToFetch.add(lastWinnerResult.driver_id);
-  if (rankLapHomeRow) driverIdsToFetch.add(rankLapHomeRow.driver_id);
-
+  // Seed homeDriverNameMap from already-fetched drivers
   const homeDriverNameMap = new Map<number, { forename: string; surname: string }>();
-  if (driverIdsToFetch.size > 0) {
-    const { data: homeDrivers } = await supabase
+  for (const d of driversRes.data ?? []) {
+    homeDriverNameMap.set(d.id as number, {
+      forename: d.forename as string,
+      surname: d.surname as string,
+    });
+  }
+
+  // Extra lookup for historical circuit winners not in current grid
+  const extraIds = new Set<number>();
+  if (lastWinnerResult && !homeDriverNameMap.has(lastWinnerResult.driver_id))
+    extraIds.add(lastWinnerResult.driver_id);
+  if (rankLapHomeRow && !homeDriverNameMap.has(rankLapHomeRow.driver_id))
+    extraIds.add(rankLapHomeRow.driver_id);
+
+  if (extraIds.size > 0) {
+    const { data: extraDrivers } = await supabase
       .from('drivers')
       .select('id, forename, surname')
-      .in('id', [...driverIdsToFetch]);
-    for (const d of homeDrivers ?? []) {
+      .in('id', [...extraIds]);
+    for (const d of extraDrivers ?? []) {
       homeDriverNameMap.set(d.id as number, {
         forename: d.forename as string,
         surname: d.surname as string,
@@ -211,15 +319,17 @@ async function getHomeData(): Promise<{
     ? (homeDriverNameMap.get(lastWinnerResult.driver_id)?.surname ?? null)
     : null;
 
-  // Standard laps — mode of winner laps at this circuit
+  // Standard laps — mode of winner laps at next circuit
   const lapsFreqHome = new Map<number, number>();
   for (const r of (winnerLapsHomeRes.data ?? []) as Array<{ laps: number }>) {
     if (r.laps > 0) lapsFreqHome.set(r.laps, (lapsFreqHome.get(r.laps) ?? 0) + 1);
   }
   const homeStandardLaps: number | null =
-    lapsFreqHome.size > 0 ? [...lapsFreqHome.entries()].sort((a, b) => b[1] - a[1])[0][0] : null;
+    lapsFreqHome.size > 0
+      ? [...lapsFreqHome.entries()].sort((a, b) => b[1] - a[1])[0][0]
+      : null;
 
-  // Rank-1 lap record for this circuit
+  // Rank-1 lap record for next circuit
   const rankLapHomeDriver = rankLapHomeRow
     ? (homeDriverNameMap.get(rankLapHomeRow.driver_id) ?? null)
     : null;
@@ -237,31 +347,7 @@ async function getHomeData(): Promise<{
         }
       : null;
 
-  // ── Build lookup maps ──────────────────────────────────────────
-
-  const constructorMap = new Map(
-    (constructorsRes.data ?? []).map((c) => [
-      c.id as number,
-      {
-        name: c.name as string,
-        constructor_ref: c.constructor_ref as string,
-        nationality: c.nationality as string,
-      },
-    ])
-  );
-
-  const statsMap = new Map(
-    (constructorStatsRes.data ?? []).map((s) => [
-      s.constructor_id as number,
-      {
-        first_year: s.first_year as number,
-        last_year: s.last_year as number,
-        wins: s.wins as number,
-        races: s.races as number,
-      },
-    ])
-  );
-
+  // ── Assemble top 10 drivers ──────────────────────────────────────
   const driverMap = new Map(
     (driversRes.data ?? []).map((d) => [
       d.id as number,
@@ -273,17 +359,23 @@ async function getHomeData(): Promise<{
     ])
   );
 
-  // driver_id → constructor_id from results at latest race
-  const resultConstructorMap = new Map(
-    (resultsRes.data ?? []).map((r) => [r.driver_id as number, r.constructor_id as number])
+  const driverCareerMap = new Map(
+    (driverStatsRes.data ?? []).map((s) => [
+      s.driver_id as number,
+      {
+        podiums: (s.podiums as number) ?? 0,
+        wins: s.wins as number,
+        races: s.races as number,
+      },
+    ])
   );
 
-  // ── Assemble top 10 drivers ────────────────────────────────────
   const topDrivers: HomeDriverRow[] = (driverStandRes.data ?? []).flatMap((s) => {
     const d = driverMap.get(s.driver_id as number);
     if (!d) return [];
     const cid = resultConstructorMap.get(s.driver_id as number);
     const c = cid !== undefined ? constructorMap.get(cid) : undefined;
+    const career = driverCareerMap.get(s.driver_id as number);
     return [
       {
         driver_id: s.driver_id as number,
@@ -295,54 +387,13 @@ async function getHomeData(): Promise<{
         wins: s.wins as number,
         constructor_ref: c?.constructor_ref ?? '',
         constructor_name: c?.name ?? '',
+        podiums: career?.podiums ?? 0,
+        win_rate: career && career.races > 0 ? career.wins / career.races : 0,
       },
     ];
   });
 
-  // ── Assemble top 5 constructors ────────────────────────────────
-  const top5Constructors: HomeConstructorRow[] = constStandData.slice(0, 5).flatMap((s) => {
-    const c = constructorMap.get(s.constructor_id);
-    if (!c) return [];
-    return [
-      {
-        constructor_id: s.constructor_id,
-        constructor_ref: c.constructor_ref,
-        name: c.name,
-        position: s.position,
-        points: s.points,
-        wins: s.wins,
-      },
-    ];
-  });
-
-  // ── Constructor of the Day (seeded by date, 2026-active only) ──
-  const active2026Ids = new Set(constStandData.map((s) => s.constructor_id));
-  const activeSorted: HomeConstructorOfDay[] = Array.from(active2026Ids)
-    .flatMap((id) => {
-      const c = constructorMap.get(id);
-      const s = statsMap.get(id);
-      if (!c || !s) return [];
-      return [
-        {
-          constructor_id: id,
-          constructor_ref: c.constructor_ref,
-          name: c.name,
-          nationality: c.nationality,
-          races: s.races,
-          wins: s.wins,
-          first_year: s.first_year,
-          last_year: s.last_year,
-        },
-      ];
-    })
-    .sort((a, b) => a.name.localeCompare(b.name)); // deterministic ordering
-
-  const seed = new Date().toDateString();
-  const constructorOfDay = activeSorted.length > 0
-    ? activeSorted[hashCode(seed) % activeSorted.length]
-    : null;
-
-  // ── Next race ──────────────────────────────────────────────────
+  // ── Assemble next race ───────────────────────────────────────────
   const lastWinnerConstructorId = lastWinnerResult?.constructor_id ?? null;
   const lastWinner: HomeNextRace['last_winner'] =
     lastPastRace && lastWinnerResult && winnerForename && winnerSurname
@@ -366,17 +417,87 @@ async function getHomeData(): Promise<{
       circuit_ref: circuitRes.data.circuit_ref as string,
       days_remaining: daysUntil(nextRaceRaw.date as string),
       last_winner: lastWinner,
-      circuit_length_km: null,
       circuit_laps: homeStandardLaps,
       circuit_lap_record: homeCircuitLapRecord,
+      circuit_svg: nextCircuitSvg,
     };
   }
 
-  // ── Assemble driver selector list ─────────────────────────────
+  // ── Assemble last race data ──────────────────────────────────────
+  let lastRaceData: HomeLastRaceData | null = null;
+  if (latestRaceId !== null && latestRaceName && latestRaceDate && lastRaceCircuitRes.data) {
+    const circuitName = lastRaceCircuitRes.data.name as string;
+    const circuitRef = lastRaceCircuitRes.data.circuit_ref as string;
+
+    const podium = lastRaceResults
+      .filter((r) => r.position !== null && (r.position as number) <= 3)
+      .slice(0, 3)
+      .map((r) => ({
+        position: r.position as number,
+        forename: driverMap.get(r.driver_id)?.forename ?? '?',
+        surname: driverMap.get(r.driver_id)?.surname ?? '?',
+        constructor_name: constructorMap.get(r.constructor_id)?.name ?? '?',
+        constructor_ref: constructorMap.get(r.constructor_id)?.constructor_ref ?? '',
+        time: r.time ?? null,
+      }));
+
+    const fastestLapResult = lastRaceResults.find((r) => r.rank === 1);
+    const fastestLap = fastestLapResult
+      ? {
+          forename: driverMap.get(fastestLapResult.driver_id)?.forename ?? '?',
+          surname: driverMap.get(fastestLapResult.driver_id)?.surname ?? '?',
+          time: fastestLapResult.fastest_lap_time ?? '—',
+        }
+      : null;
+
+    const fastestPitRow = (lastRacePitRes.data ?? [])[0] ?? null;
+    const fastestPit = fastestPitRow
+      ? {
+          forename: driverMap.get(fastestPitRow.driver_id as number)?.forename ?? '?',
+          surname: driverMap.get(fastestPitRow.driver_id as number)?.surname ?? '?',
+          constructor_name:
+            constructorMap.get(
+              resultConstructorMap.get(fastestPitRow.driver_id as number) ?? -1
+            )?.name ?? '?',
+          duration: fastestPitRow.duration as string,
+        }
+      : null;
+
+    const retirements = lastRaceResults
+      .filter((r) => r.position_text === 'R')
+      .map((r) => ({
+        forename: driverMap.get(r.driver_id)?.forename ?? '?',
+        surname: driverMap.get(r.driver_id)?.surname ?? '?',
+        constructor_name: constructorMap.get(r.constructor_id)?.name ?? '?',
+        lap: r.laps ?? 0,
+        status: statusMap.get(r.status_id) ?? 'Retired',
+      }));
+
+    lastRaceData = {
+      race_id: latestRaceId,
+      round: latestRaceRound ?? 0,
+      year: latestRaceYear ?? 0,
+      name: latestRaceName,
+      date: latestRaceDate,
+      circuit_name: circuitName,
+      circuit_ref: circuitRef,
+      circuit_svg: lastCircuitSvg,
+      podium,
+      fastest_lap: fastestLap,
+      fastest_pit: fastestPit,
+      retirements,
+    };
+  }
+
+  // ── Assemble driver selector list ────────────────────────────────
   const driversNameMap = new Map(
     (driversListRes.data ?? []).map((d) => [
       d.id as number,
-      { driver_ref: d.driver_ref as string, forename: d.forename as string, surname: d.surname as string },
+      {
+        driver_ref: d.driver_ref as string,
+        forename: d.forename as string,
+        surname: d.surname as string,
+      },
     ])
   );
 
@@ -395,16 +516,97 @@ async function getHomeData(): Promise<{
     ];
   });
 
-  return { nextRace, topDrivers, constructorOfDay, top5Constructors, allDrivers };
+  // ── Assemble streaks ─────────────────────────────────────────────
+  type Winner2026 = { driver_id: number; constructor_id: number; race_id: number };
+  const raceRoundMap2026 = new Map(races2026Completed.map((r) => [r.id, r.round]));
+  const winners2026Sorted = ((winners2026Res.data ?? []) as Winner2026[])
+    .slice()
+    .sort((a, b) => (raceRoundMap2026.get(a.race_id) ?? 0) - (raceRoundMap2026.get(b.race_id) ?? 0));
+  const winners2026Rev = [...winners2026Sorted].reverse();
+
+  let activeDriverStreak = 0;
+  const lastDriverWinnerId = winners2026Rev[0]?.driver_id ?? null;
+  if (lastDriverWinnerId !== null) {
+    for (const w of winners2026Rev) {
+      if (w.driver_id === lastDriverWinnerId) activeDriverStreak++;
+      else break;
+    }
+  }
+
+  let activeConstructorStreak = 0;
+  const lastConstrWinnerId = winners2026Rev[0]?.constructor_id ?? null;
+  if (lastConstrWinnerId !== null) {
+    for (const w of winners2026Rev) {
+      if (w.constructor_id === lastConstrWinnerId) activeConstructorStreak++;
+      else break;
+    }
+  }
+
+  const streaksData: HomeStreaksData | null =
+    winners2026Sorted.length > 0
+      ? {
+          totalRounds2026,
+          driverActive: lastDriverWinnerId !== null
+            ? {
+                driver_id: lastDriverWinnerId,
+                forename:
+                  driverMap.get(lastDriverWinnerId)?.forename ??
+                  homeDriverNameMap.get(lastDriverWinnerId)?.forename ?? '?',
+                surname:
+                  driverMap.get(lastDriverWinnerId)?.surname ??
+                  homeDriverNameMap.get(lastDriverWinnerId)?.surname ?? '?',
+                constructor_ref:
+                  constructorMap.get(winners2026Rev[0].constructor_id)?.constructor_ref ?? '',
+                streak: activeDriverStreak,
+              }
+            : null,
+          constructorActive: lastConstrWinnerId !== null
+            ? {
+                constructor_id: lastConstrWinnerId,
+                name: constructorMap.get(lastConstrWinnerId)?.name ?? '?',
+                constructor_ref: constructorMap.get(lastConstrWinnerId)?.constructor_ref ?? '',
+                streak: activeConstructorStreak,
+              }
+            : null,
+          driverAllTime: allTimeDriverRes.data
+            ? {
+                forename: allTimeDriverRes.data.forename as string,
+                surname:  allTimeDriverRes.data.surname as string,
+                streak:   allTimeDriverRes.data.streak_len as number,
+                year:     allTimeDriverRes.data.end_year as number,
+              }
+            : null,
+          constructorAllTime: allTimeConstructorRes.data
+            ? {
+                name:   allTimeConstructorRes.data.name as string,
+                streak: allTimeConstructorRes.data.streak_len as number,
+                year:   allTimeConstructorRes.data.end_year as number,
+              }
+            : null,
+        }
+      : null;
+
+  return {
+    nextRace,
+    topDrivers,
+    lastRaceData,
+    allDrivers,
+    currentRound: latestRaceRound,
+    currentYear: latestRaceYear,
+    streaksData,
+  };
 }
 
 // ─── Page ─────────────────────────────────────────────────────────
 
 export default async function HomePage() {
-  const [{ nextRace, topDrivers, constructorOfDay, top5Constructors, allDrivers }, t] = await Promise.all([
-    getHomeData(),
-    getTranslations('hub.home'),
-  ]);
+  const [
+    { nextRace, topDrivers, lastRaceData, allDrivers, currentRound, currentYear, streaksData },
+    t,
+  ] = await Promise.all([getHomeData(), getTranslations('hub.home')]);
+
+  const rdLabel  = currentRound !== null ? `RD.${String(currentRound).padStart(2, '0')}` : '';
+  const volLabel = currentYear  !== null ? `VOL.01 · ${rdLabel} · ${currentYear}` : 'VOL.01';
 
   return (
     <main className="bg-bg min-h-[calc(100vh-3rem)]">
@@ -412,7 +614,7 @@ export default async function HomePage() {
       {/* ── Page header strip ──────────────────────────────── */}
       <div className="h-8 px-4 md:px-6 border-b border-border flex items-center justify-between shrink-0">
         <span className="font-mono text-[10px] text-text-2 uppercase tracking-[0.1em]">
-          [ HUB ] · VOL.01 · RD.09 · 2026
+          [ HUB ] · {volLabel}
         </span>
         <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.1em] hidden sm:block">
           ⬤ LIVE
@@ -422,29 +624,30 @@ export default async function HomePage() {
       {/* ── 3-column grid ──────────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-[320px_1fr_320px] gap-4 md:gap-6 p-4 md:p-6">
 
-        {/* Left — Next Race Card */}
-        <div>
-          <NextRaceCard race={nextRace} />
-        </div>
+        {/* Left — Last Race */}
+        <LastRaceCard race={lastRaceData} />
 
         {/* Center — Top 10 Drivers */}
         <div>
-          {/* Section header ASCII */}
           <p className="font-mono text-[10px] text-text-2 uppercase tracking-[0.1em] mb-3">
             01 · {t('top10').toUpperCase()}
           </p>
           <Top10Drivers drivers={topDrivers} />
         </div>
 
-        {/* Right — Constructor of the Day + Top 5 Constructors */}
-        <div className="flex flex-col gap-4">
-          <ConstructorOfTheDay constructor={constructorOfDay} />
-          <Top5Constructors constructors={top5Constructors} />
-        </div>
+        {/* Right — Next Race */}
+        <NextRaceCard race={nextRace} />
 
       </div>
 
-      {/* ── 03 · Compare Scorecards ────────────────────────── */}
+      {/* ── Streaks ────────────────────────────────────────── */}
+      {streaksData && (
+        <div className="border-t border-border px-4 md:px-6 py-6">
+          <StreaksCard data={streaksData} />
+        </div>
+      )}
+
+      {/* ── Compare Scorecards ─────────────────────────────── */}
       <div className="border-t border-border mt-2 pt-6">
         <CompareScorecardsSection allDrivers={allDrivers} />
       </div>
