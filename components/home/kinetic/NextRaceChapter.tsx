@@ -7,6 +7,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import { Link } from '@/lib/i18n/navigation';
 import TrackDraw from './TrackDraw';
+import { fitToWidth, observeFit } from './fitText';
 import type { HomeNextRace } from '@/lib/types';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
@@ -49,6 +50,18 @@ export default function NextRaceChapter({ race, motionOk }: NextRaceChapterProps
     return () => clearInterval(id);
   }, [race?.date]);
 
+  // Fit circuit name to one line — runs regardless of motion
+  useEffect(() => {
+    if (!race) return;
+    let cleanup: (() => void) | undefined;
+    document.fonts.ready.then(() => {
+      if (!titleRef.current) return;
+      fitToWidth(titleRef.current);
+      cleanup = observeFit(titleRef.current);
+    });
+    return () => cleanup?.();
+  }, [race]);
+
   useEffect(() => {
     if (!motionOk || !race) return;
     const ctx = gsap.context(() => {
@@ -69,8 +82,8 @@ export default function NextRaceChapter({ race, motionOk }: NextRaceChapterProps
       gsap.from('.nr-cd-cell', {
         y: 36,
         autoAlpha: 0,
-        duration: 0.8,
-        stagger: 0.1,
+        duration: 0.7,
+        stagger: 0.08,
         ease: 'power4.out',
         scrollTrigger: { trigger: '.nr-cd', start: 'top 85%', once: true },
       });
@@ -109,7 +122,7 @@ export default function NextRaceChapter({ race, motionOk }: NextRaceChapterProps
       <div className="kinetic-mask -my-[0.06em] py-[0.06em] mb-2">
         <h2
           ref={titleRef}
-          className="uppercase leading-[0.9]"
+          className="uppercase leading-[0.9] whitespace-nowrap"
           style={{
             fontFamily:    'var(--pi-display)',
             fontSize:      'clamp(34px, 6.5vw, 92px)',

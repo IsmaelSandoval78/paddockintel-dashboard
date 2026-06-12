@@ -8,6 +8,7 @@ import { SplitText } from 'gsap/SplitText';
 import { Link } from '@/lib/i18n/navigation';
 import TrackDraw from './TrackDraw';
 import { teamColor } from './teamColors';
+import { fitToWidth, observeFit } from './fitText';
 import type { HomeLastRaceData } from '@/lib/types';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
@@ -26,6 +27,18 @@ export default function LastRaceChapter({ race, motionOk }: LastRaceChapterProps
   const t = useTranslations('hub.home');
   const rootRef  = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
+
+  // Fit circuit name to one line — runs regardless of motion
+  useEffect(() => {
+    if (!race) return;
+    let cleanup: (() => void) | undefined;
+    document.fonts.ready.then(() => {
+      if (!titleRef.current) return;
+      fitToWidth(titleRef.current);
+      cleanup = observeFit(titleRef.current);
+    });
+    return () => cleanup?.();
+  }, [race]);
 
   useEffect(() => {
     if (!motionOk || !race) return;
@@ -47,8 +60,8 @@ export default function LastRaceChapter({ race, motionOk }: LastRaceChapterProps
       gsap.from('.lr-podium-row', {
         x: -32,
         autoAlpha: 0,
-        duration: 0.7,
-        stagger: 0.12,
+        duration: 0.65,
+        stagger: 0.1,
         ease: 'power3.out',
         scrollTrigger: { trigger: '.lr-podium', start: 'top 82%', once: true },
       });
@@ -79,7 +92,7 @@ export default function LastRaceChapter({ race, motionOk }: LastRaceChapterProps
       <div className="kinetic-mask -my-[0.06em] py-[0.06em] mb-8 md:mb-12">
         <h2
           ref={titleRef}
-          className="uppercase leading-[0.9]"
+          className="uppercase leading-[0.9] whitespace-nowrap"
           style={{
             fontFamily:    'var(--pi-display)',
             fontSize:      'clamp(34px, 6.5vw, 92px)',

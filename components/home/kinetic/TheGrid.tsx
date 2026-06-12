@@ -30,8 +30,8 @@ export default function TheGrid({ drivers, motionOk }: TheGridProps) {
       gsap.from('.grid-row', {
         x: -48,
         autoAlpha: 0,
-        duration: 0.8,
-        stagger: 0.07,
+        duration: 0.7,
+        stagger: 0.055,
         ease: 'power4.out',
         scrollTrigger: { trigger: listRef.current, start: 'top 82%', once: true },
       });

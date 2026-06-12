@@ -4,12 +4,24 @@ import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
+import { fitToWidth, observeFit } from './fitText';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
 export default function KineticFooter({ motionOk }: { motionOk: boolean }) {
   const rootRef = useRef<HTMLElement>(null);
   const markRef = useRef<HTMLParagraphElement>(null);
+
+  // Wordmark always spans exactly one line
+  useEffect(() => {
+    let cleanup: (() => void) | undefined;
+    document.fonts.ready.then(() => {
+      if (!markRef.current) return;
+      fitToWidth(markRef.current);
+      cleanup = observeFit(markRef.current);
+    });
+    return () => cleanup?.();
+  }, []);
 
   useEffect(() => {
     if (!motionOk) return;

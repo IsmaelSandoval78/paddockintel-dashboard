@@ -6,6 +6,7 @@ import { gsap } from 'gsap';
 import { SplitText } from 'gsap/SplitText';
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 import { teamColor } from './teamColors';
+import { fitToWidth, observeFit } from './fitText';
 import type { HomeDriverRow } from '@/lib/types';
 
 gsap.registerPlugin(SplitText, ScrambleTextPlugin);
@@ -33,17 +34,26 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
   const color = teamColor(leader.constructor_ref);
   const metaText = `F1 INTELLIGENCE · ${year} CHAMPIONSHIP · RD.${String(round).padStart(2, '0')}`;
 
+  // Fit surname to one line — layout concern, runs regardless of motion
+  useEffect(() => {
+    let cleanup: (() => void) | undefined;
+    document.fonts.ready.then(() => {
+      if (!surnameRef.current) return;
+      fitToWidth(surnameRef.current);
+      cleanup = observeFit(surnameRef.current);
+    });
+    return () => cleanup?.();
+  }, [leader.surname]);
+
   useEffect(() => {
     if (!motionOk) return;
     const ctx = gsap.context(() => {
-      let split: SplitText | null = null;
-
       document.fonts.ready.then(() => {
         if (!surnameRef.current) return;
 
         // Meta line — timing-monitor scramble
         gsap.to(metaRef.current, {
-          duration: 1.4,
+          duration: 1.1,
           scrambleText: { text: metaText, chars: '0123456789·/|', speed: 0.4 },
           ease: 'none',
         });
@@ -51,32 +61,33 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
         // Forename rises
         gsap.fromTo(forenameRef.current,
           { y: 24, autoAlpha: 0 },
-          { y: 0, autoAlpha: 1, duration: 0.7, ease: 'power3.out', delay: 0.15 },
+          { y: 0, autoAlpha: 1, duration: 0.6, ease: 'power3.out', delay: 0.1 },
         );
 
-        // Surname — lights out, one char at a time
-        split = new SplitText(surnameRef.current, { type: 'chars' });
+        // Surname — lights out, one char at a time.
+        // Total lead-in capped so long names don't drag.
+        const split = new SplitText(surnameRef.current, { type: 'chars' });
         gsap.set(surnameRef.current, { visibility: 'visible' });
         gsap.from(split.chars, {
           yPercent: 110,
-          duration: 1.1,
-          stagger: 0.035,
+          duration: 1.0,
+          stagger: { each: Math.min(0.035, 0.26 / split.chars.length) },
           ease: 'power4.out',
-          delay: 0.25,
+          delay: 0.18,
         });
 
         // Stats rise + counters close the gap
         gsap.fromTo(statsRef.current,
           { y: 28, autoAlpha: 0 },
-          { y: 0, autoAlpha: 1, duration: 0.8, ease: 'power3.out', delay: 0.8 },
+          { y: 0, autoAlpha: 1, duration: 0.7, ease: 'power3.out', delay: 0.55 },
         );
         const nums = { pts: 0, wins: 0 };
         gsap.to(nums, {
           pts: leader.points,
           wins: leader.wins,
-          duration: 2,
+          duration: 1.8,
           ease: 'expo.out',
-          delay: 0.85,
+          delay: 0.6,
           onUpdate() {
             if (ptsRef.current)  ptsRef.current.textContent  = String(Math.round(nums.pts));
             if (winsRef.current) winsRef.current.textContent = String(Math.round(nums.wins));
@@ -84,7 +95,7 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
         });
 
         // Scroll cue — looping descent
-        gsap.fromTo(cueRef.current, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6, delay: 1.6 });
+        gsap.fromTo(cueRef.current, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5, delay: 1.25 });
         gsap.to('.hero-cue-line', {
           scaleY: 1,
           transformOrigin: 'top',
@@ -94,25 +105,26 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
           yoyo: true,
         });
       });
-
-      // Multi-layer mouse parallax — deepest layer moves most (desktop only)
-      if (!isMobile) {
-        const xTitle = gsap.quickTo(surnameRef.current, 'x', { duration: 0.9, ease: 'power2.out' });
-        const yTitle = gsap.quickTo(surnameRef.current, 'y', { duration: 0.9, ease: 'power2.out' });
-        const xStats = gsap.quickTo(statsRef.current,   'x', { duration: 0.9, ease: 'power2.out' });
-        const onMove = (e: MouseEvent) => {
-          const nx = (e.clientX / window.innerWidth  - 0.5) * 2;
-          const ny = (e.clientY / window.innerHeight - 0.5) * 2;
-          xTitle(nx * -18);
-          yTitle(ny * -8);
-          xStats(nx * -7);
-        };
-        window.addEventListener('mousemove', onMove, { passive: true });
-        return () => window.removeEventListener('mousemove', onMove);
-      }
     }, rootRef);
     return () => ctx.revert();
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [motionOk]);
+
+  // Multi-layer mouse parallax — deepest layer moves most (desktop only)
+  useEffect(() => {
+    if (!motionOk || isMobile) return;
+    const xTitle = gsap.quickTo(surnameRef.current, 'x', { duration: 0.9, ease: 'power2.out' });
+    const yTitle = gsap.quickTo(surnameRef.current, 'y', { duration: 0.9, ease: 'power2.out' });
+    const xStats = gsap.quickTo(statsRef.current,   'x', { duration: 0.9, ease: 'power2.out' });
+    const onMove = (e: MouseEvent) => {
+      const nx = (e.clientX / window.innerWidth  - 0.5) * 2;
+      const ny = (e.clientY / window.innerHeight - 0.5) * 2;
+      xTitle(nx * -18);
+      yTitle(ny * -8);
+      xStats(nx * -7);
+    };
+    window.addEventListener('mousemove', onMove, { passive: true });
+    return () => window.removeEventListener('mousemove', onMove);
   }, [motionOk, isMobile]);
 
   return (
@@ -154,7 +166,7 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
           <div className="kinetic-mask -my-[0.06em] py-[0.06em]">
             <h1
               ref={surnameRef}
-              className="uppercase leading-[0.85] will-change-transform"
+              className="uppercase leading-[0.85] whitespace-nowrap will-change-transform"
               style={{
                 fontFamily:    'var(--pi-display)',
                 fontSize:      'clamp(64px, 17vw, 250px)',
