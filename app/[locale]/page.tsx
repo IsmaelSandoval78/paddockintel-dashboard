@@ -1,13 +1,8 @@
 export const revalidate = 3600;
 
 import { createClient } from '@/lib/supabase/server';
-import { getTranslations } from 'next-intl/server';
 import { fetchTrackPathData } from '@/lib/trackSvg';
-import NextRaceCard from '@/components/home/NextRaceCard';
-import Top10Drivers from '@/components/home/Top10Drivers';
-import LastRaceCard from '@/components/home/LastRaceCard';
-import StreaksCard from '@/components/home/StreaksCard';
-import CompareScorecardsSection from '@/components/home/CompareScorecardsSection';
+import HomeExperience from '@/components/home/kinetic/HomeExperience';
 import type {
   HomeNextRace,
   HomeDriverRow,
@@ -359,6 +354,10 @@ async function getHomeData(): Promise<{
     ])
   );
 
+  const driverRefMap = new Map(
+    (driversListRes.data ?? []).map((d) => [d.id as number, d.driver_ref as string])
+  );
+
   const driverCareerMap = new Map(
     (driverStatsRes.data ?? []).map((s) => [
       s.driver_id as number,
@@ -379,6 +378,7 @@ async function getHomeData(): Promise<{
     return [
       {
         driver_id: s.driver_id as number,
+        driver_ref: driverRefMap.get(s.driver_id as number) ?? '',
         position: s.position as number,
         forename: d.forename,
         surname: d.surname,
@@ -600,65 +600,17 @@ async function getHomeData(): Promise<{
 // ─── Page ─────────────────────────────────────────────────────────
 
 export default async function HomePage() {
-  const [
-    { nextRace, topDrivers, lastRaceData, allDrivers, currentRound, currentYear, streaksData },
-    t,
-  ] = await Promise.all([getHomeData(), getTranslations('hub.home')]);
-
-  const rdLabel  = currentRound !== null ? `RD.${String(currentRound).padStart(2, '0')}` : '';
-  const volLabel = currentYear  !== null ? `VOL.01 · ${rdLabel} · ${currentYear}` : 'VOL.01';
+  const { nextRace, topDrivers, lastRaceData, currentRound, currentYear, streaksData } =
+    await getHomeData();
 
   return (
-    <main className="bg-bg min-h-[calc(100vh-3rem)]">
-
-      {/* ── Page header strip ──────────────────────────────── */}
-      <div className="h-8 px-4 md:px-6 border-b border-border flex items-center justify-between shrink-0">
-        <span className="font-mono text-[10px] text-text-2 uppercase tracking-[0.1em]">
-          [ HUB ] · {volLabel}
-        </span>
-        <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.1em] hidden sm:block">
-          ⬤ LIVE
-        </span>
-      </div>
-
-      {/* ── 3-column grid ──────────────────────────────────── */}
-      <div className="grid grid-cols-1 md:grid-cols-[320px_1fr_320px] gap-4 md:gap-6 p-4 md:p-6">
-
-        {/* Left — Last Race */}
-        <LastRaceCard race={lastRaceData} />
-
-        {/* Center — Top 10 Drivers */}
-        <div>
-          <p className="font-mono text-[10px] text-text-2 uppercase tracking-[0.1em] mb-3">
-            01 · {t('top10').toUpperCase()}
-          </p>
-          <Top10Drivers drivers={topDrivers} />
-        </div>
-
-        {/* Right — Next Race */}
-        <NextRaceCard race={nextRace} />
-
-      </div>
-
-      {/* ── Streaks ────────────────────────────────────────── */}
-      {streaksData && (
-        <div className="border-t border-border px-4 md:px-6 py-6">
-          <StreaksCard data={streaksData} />
-        </div>
-      )}
-
-      {/* ── Compare Scorecards ─────────────────────────────── */}
-      <div className="border-t border-border mt-2 pt-6">
-        <CompareScorecardsSection allDrivers={allDrivers} />
-      </div>
-
-      {/* ── Footer ASCII ───────────────────────────────────── */}
-      <div className="px-4 md:px-6 pb-6 pt-2">
-        <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.1em] text-center">
-          © PADDOCKINTEL · MMXXVI · ⬤ LIVE
-        </p>
-      </div>
-
-    </main>
+    <HomeExperience
+      nextRace={nextRace}
+      lastRace={lastRaceData}
+      topDrivers={topDrivers}
+      streaksData={streaksData}
+      round={currentRound ?? 0}
+      year={currentYear ?? 2026}
+    />
   );
 }

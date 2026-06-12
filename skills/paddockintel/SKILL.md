@@ -1,23 +1,23 @@
 ---
 name: paddockintel
 description: >
-  Design and critique system for PaddockIntel — an F1 editorial intelligence
-  dashboard and publication. Use when building or reviewing any surface of the
-  PaddockIntel ecosystem: the app.paddockintel.com dashboard (Next.js 16 +
-  Tailwind v4), Ghost CMS articles, or social content (X, Instagram, LinkedIn).
-  Consolidates patterns from five Open Design skills: dashboard · blog-post ·
-  magazine-poster · social-carousel · critique.
-version: 1.0.0
+  Design and critique system for PaddockIntel — an F1 kinetic intelligence
+  hub and publication. Use when building or reviewing any surface of the
+  PaddockIntel ecosystem: the hub.paddockintel.com dashboard (Next.js 16 +
+  Tailwind v4 + GSAP + Three.js), Ghost CMS articles, or social content.
+  Design language: VELOCITY — motion-first kinetic editorial on a light
+  substrate. See DESIGN.md for the full system.
+version: 2.0.0
 author: ismael-sandoval / paddockintel
 surfaces:
-  - dashboard       # app.paddockintel.com — Next.js 16 + Tailwind v4
+  - dashboard       # hub.paddockintel.com — Next.js 16 + Tailwind v4 + GSAP + Three.js
   - editorial       # paddockintel.com — Ghost CMS (Tripoli theme)
   - social          # X · Instagram · LinkedIn social content
 scenarios:
-  - championship standings panel
-  - constructor battle panel
-  - circuit info panel
-  - race countdown widget
+  - kinetic home experience
+  - championship standings (THE GRID)
+  - race chapters (last race / next race)
+  - circuit detail page
   - driver profile page
   - article / quick take
   - magazine poster
@@ -25,112 +25,94 @@ scenarios:
   - component critique
 ---
 
-# PaddockIntel Design & Critique Skill
+# PaddockIntel Design & Critique Skill — VELOCITY
 
 ## 0 · Identity & Design System
 
-**Publication:** PaddockIntel — F1 economic intelligence.  
-**Tagline:** Data. Context. Edge.  
+**Publication:** PaddockIntel — F1 economic & performance intelligence.
+**Tagline:** Data. Context. Edge.
+**Design language:** VELOCITY — kinetic editorial. The only light F1 property
+on the internet; the spectacle is choreography, not darkness.
 **Logo URL:** `https://paddockintel.com/content/images/2026/02/paddockintel-logo-light-xl.png`
 
 ### Type Stack
 | Role | Font | Notes |
 |---|---|---|
-| Display / headlines | DM Serif Display | Italic for pull-quotes |
-| Body / UI | Inter | 400 / 500 / 600 only |
-| Data / code / coordinates | JetBrains Mono | Tabular nums, tracking tight |
+| Kinetic display / headlines | Archivo Black | Massive, cropped, bleeding off-canvas |
+| Body / UI (rare) | Inter | 400 / 500 — the hub speaks in labels |
+| Data / timing / labels | JetBrains Mono | Tabular nums, tracking 0.12–0.18em |
+| Editorial pull-quotes | DM Serif Display | Ghost CMS articles only |
 
-### Color Tokens (Light Mode — active)
+### Color Tokens (hub — light substrate, never dark)
 ```css
---pi-bg:        #FAFAF8;   /* warm off-white page */
---pi-surface:   #FFFFFF;   /* card / panel */
---pi-border:    #E5E5E0;   /* subtle separator */
---pi-text-1:    #0A0A0A;   /* primary text */
---pi-text-2:    #6B6B6B;   /* secondary / meta */
---pi-text-3:    #A3A3A0;   /* placeholder / muted */
---pi-accent:    #DC143C;   /* Crimson — race red, CTAs, live dots */
---pi-accent-2:  #1A1A2E;   /* Midnight navy — constructor headers */
---pi-mono:      #1A1A1A;   /* JetBrains Mono text */
+--bg:             #FAFAF7;   /* paper white */
+--surface-raised: #F1F0EC;   /* cells, alternates */
+--text-1:         #0A0A0A;   /* ink */
+--text-2:         #6B6B6B;   /* meta */
+--text-3:         #B5B4AE;   /* ghosts */
+--red:            #E10600;   /* official F1 red — THE accent */
+--red-dim:        #FBE9E8;   /* red wash */
 ```
+Team colors: darkened-for-light variants only (see DESIGN.md §05).
 
-### Grid & Spacing
-- **Dashboard:** 12-col grid, 24px gutter, max-width 1440px
-- **Article:** Single col, max-width 720px, line-height 1.75
-- **Social:** 1080×1080px (carousel), 1080×1350px (portrait)
-- **Spacing scale:** 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 96px
+### Motion Stack (the differentiator)
+- **GSAP 3.13+** — SplitText, ScrollTrigger, DrawSVGPlugin, ScrambleTextPlugin
+- **Three.js** — WebGL particle fields, dynamic import `ssr:false`, DPR ≤ 2
+- Every animation maps to an F1 concept (lights out, flying lap, gap closing,
+  g-force, timing feed). Motion without meaning does not ship.
+- `prefers-reduced-motion` → static editorial fallback, always flawless.
 
 ### Visual Posture
-Editorial Monocle × Tech Utility. Numbers are the hero. White space is earned.
-Never: gradients on gradients, purple, rounded-3xl on data tables, emoji in UI.
+Kinetic editorial. Numbers make their entrance through motion, then stand
+still and let you read them. White space is earned. Scale discomfort
+(16vw surnames) is brand confidence.
+Never: dark page backgrounds, scroll-jacking, purple, gradients on data,
+rounded-3xl, motion loops outside ticker/particles.
 
 ---
 
-## 1 · Dashboard Skill (app.paddockintel.com)
+## 1 · Dashboard Skill (hub.paddockintel.com)
 
-**Stack:** Next.js 16 · TypeScript · Tailwind v4 · Supabase · Leaflet · next-intl (EN/ES/PT)
+**Stack:** Next.js 16 · TypeScript · Tailwind v4 · Supabase · GSAP · Three.js · next-intl (EN/ES/PT)
 
-### Layout Architecture
+### Home — one continuous scroll story
 ```
-┌─ Navbar ──────────────────────────────────────────────────┐
-│  PADDOCK·INTEL    [links]   Vol.01 · Rd.09 · 2026  [locale]│
-└───────────────────────────────────────────────────────────┘
-┌─ Map (Leaflet, 60%) ──────┬─ Panel (40%) ─────────────────┐
-│  CartoDB Positron light   │  DEFAULT: Championship Panel  │
-│  2026 dots: #DC143C       │  ON CLICK: Circuit Panel      │
-│  historic dots: #6B6B6B   │                               │
-│  selected: ring #DC143C   │                               │
-└───────────────────────────┴───────────────────────────────┘
-```
-
-### Panel Anatomy — Championship (default)
-```
-01 · Championship Standings
-────────────────────────────
-[pos]  [driver]      [team dot]  [pts]   [gap]
-  1    Antonelli     ●           187     —
-  2    Norris        ●           164     -23
-  ...  (top 10)
-────────────────────────────
-02 · Constructor Battle
-[team dot]  [team]       [prize $M]
-●  Mercedes              [bar ████░░]  $142M
-   ...  (top 5)
+01 WARP HERO     100svh · Three.js warp field · leader surname 16vw
+                 SplitText stagger entrance · GSAP counters · parallax
+02 TICKER        race-red strip · infinite marquee standings feed
+03 LAST RACE     circuit SVG draws itself (DrawSVG scrubbed) · podium
+04 NEXT RACE     giant countdown digits · track draw · lap record red
+05 THE GRID      top 10 · scroll-velocity skew · ghost numerals ·
+                 scrubbed point bars · team-color hover floods
+06 STREAKS       counters fire on viewport enter
+07 FOOTER        wordmark at viewport width
 ```
 
-### Panel Anatomy — Circuit (on map click)
-```
-[Circuit name — DM Serif Display, 28px]
-[Country · GP Round — Inter 500, 14px, --pi-text-2]
-
-[lat, lng — JetBrains Mono, 12px, --pi-text-3]
-
-Last 5 Champions:
-YYYY  Driver Name
-YYYY  Driver Name  ← last 5 years
-
-Fastest Pit: 0:00.000  [team]
-Fastest Lap: 0:00.000  [driver, year]
-
-[View full circuit →]  ← --pi-accent underline
-```
+### Architecture pattern
+- Server Component fetches Supabase data (batched `Promise.all`)
+- One client orchestrator (`HomeExperience`) receives serializable props,
+  registers GSAP plugins once, owns ScrollTrigger context + custom cursor
+- WebGL components: separate dynamic imports inside client wrappers
 
 ### Interaction Rules
-- Map → Panel transition: `fade 150ms ease-out`
-- Hover on circuit dot: scale 1.2, cursor pointer
-- Selected state: ring-2 ring-[--pi-accent] ring-offset-1
-- Live data indicator: pulsing dot `animate-pulse` in --pi-accent
+- Entrances 0.6–1.2s, power4/expo out · staggers 0.03–0.08s
+- Scrub effects tied to native scroll — never hijack scroll position
+- Custom cursor desktop-only: red dot + trailing ring, grows on targets
+- Touch: no cursor, no mouse-parallax, particles ≤ 1/3, reveals intact
+- Live indicator: pulsing red dot
 
 ### i18n Keys (next-intl)
-All panel labels must have EN/ES/PT entries. Numbers: `Intl.NumberFormat`.
-Dates: locale-aware via `next-intl` `useFormatter`.
+All labels EN/ES/PT via `hub.*` keys. Numbers `Intl.NumberFormat`.
+Locale-neutral mono strings (RD.08, PTS, timing) may be hardcoded.
 
 ### Dashboard Quality Checklist
-- [ ] Numbers legible at 80% zoom (16px minimum for data)
-- [ ] Team color dots: 10px circle, no border, correct hex per team
-- [ ] Panel swap is instant (no layout shift)
-- [ ] Locale switcher changes ALL strings including numbers
-- [ ] Leaflet tiles load before data (no empty map flash)
-- [ ] Mobile: map collapses to 100% width, panel below
+- [ ] 60fps scroll on mid-range hardware (transform/opacity only in DOM)
+- [ ] Zero layout shift from animations (reserve space, tabular-nums)
+- [ ] Reduced-motion renders a flawless static editorial page
+- [ ] WebGL failure → clean static fallback
+- [ ] Mobile 375px: type clamps down, all data readable, reveals work
+- [ ] Hero text paints before canvas (WebGL off critical path)
+- [ ] Locale switcher changes ALL strings
 
 ---
 
@@ -142,15 +124,12 @@ Dates: locale-aware via `next-intl` `useFormatter`.
 ```
 [headline — DM Serif Display, competitive keyword]
 [deck — 1 sentence, max 145 chars → doubles as meta description]
-
 [hero image — Grok generated, no real people, no RGB codes in prompt]
-
 [body — Inter 400, 720px max, 1.75 line-height]
-[pull quote — DM Serif Display Italic, border-left 3px --pi-accent]
+[pull quote — DM Serif Display Italic, border-left 3px race red]
 
 Sources:
 1. [Outlet Name](URL?ref=paddockintel.com) — description
-2. ...
 ```
 
 ### SEO Protocol (mandatory before publish)
@@ -165,13 +144,8 @@ Sources:
 ### Ghost RSS Feed
 `/latest/rss/` — NOT `/rss/`
 
-### Content Categories
-- **Quick Takes** — economic data, short-form, ≤500 words
-- **Paddock Life** — lifestyle, hospitality, culture analysis
-- **Dashboard** — links to app.paddockintel.com features
-
 ### Anti-Patterns (never)
-- Inventing data, URLs, quotes, or statistics — always verify via search
+- Inventing data, URLs, quotes, or statistics — always verify
 - Publishing without JSON-LD validation
 - Hero images with identifiable real people
 
@@ -179,173 +153,72 @@ Sources:
 
 ## 3 · Magazine Poster Skill
 
-**Use for:** Announcement graphics, race weekend covers, championship milestone posts.
-
-### Canvas
-```
-1080 × 1350px (Instagram portrait) or 1080 × 1080px (square)
-Background: --pi-bg or --pi-accent-2 (dark variant)
-```
-
-### Layout Grid
-```
-[Vol · Issue · Round — JetBrains Mono, 11px, --pi-text-3, top-left]
-[PADDOCK·INTEL — logo or wordmark, top-right]
-
-[Large number or stat — DM Serif Display, 96–144px, dominant]
-[Context line — Inter 500, 18px]
-[Supporting data — JetBrains Mono, 14px, tabular]
-
-[Bottom bar — --pi-accent strip, 4px]
-[paddockintel.com — JetBrains Mono, 11px]
-```
-
-### Color Variants
-- **Light:** --pi-bg background, --pi-accent-2 type
-- **Dark:** --pi-accent-2 background, --pi-bg type, --pi-accent accents
-- **Race Red:** --pi-accent background, white type (milestone only)
-
-### Image Generation (Grok)
-- Format prompt: `[Subject] [Action] CAMERA [angle] [Style] [Mood]`
-- No identifiable real people
-- No RGB codes in prompt — use descriptive color language
-- Output: 9:16 for Stories, 1:1 for feed
+**Canvas:** 1080×1350 (IG portrait) or 1080×1080 (square).
+Light variant: paper white bg, ink type, red accents.
+Dark variant allowed here ONLY (exportable asset, not the hub).
+Layout: Vol/Rd mono top-left · wordmark top-right · dominant stat in
+Archivo Black 96–144px · red 4px bottom strip · paddockintel.com mono.
 
 ---
 
 ## 4 · Social Carousel Skill
 
-**Use for:** 3-card series for X (thread visual), Instagram carousel, LinkedIn document.
-
-### Card Dimensions
-- 1080 × 1080px per card
-- 3 cards minimum, 5 maximum per carousel
-
-### Card Structure
-```
-Card 1 — Hook
-  [Large statement — DM Serif Display, 52px]
-  [Subhead — Inter 500, 20px]
-  [1 of 3 →]
-
-Card 2 — Data
-  [Section label — JetBrains Mono, 12px, --pi-text-3]
-  [Key number — DM Serif Display, 80px, --pi-accent]
-  [Context — Inter 400, 18px]
-
-Card 3 — CTA
-  [Insight summary — Inter 400, 20px, max 2 lines]
-  [paddockintel.com]
-  [PADDOCK·INTEL logo]
-```
-
-### Publishing Rules
-- **X/Twitter:** Primary tweet = no link. Link goes in self-reply to avoid suppression.
-- **LinkedIn:** Post text no link. Link in first comment.
-- **Instagram:** Link in bio only. Carousel caption ≤ 2200 chars.
+1080×1080 per card, 3–5 cards.
+Card 1 hook (Archivo Black statement) · Card 2 data (number in red) ·
+Card N CTA (paddockintel.com + wordmark).
+X: no link in primary post — self-reply. LinkedIn: link in first comment.
 
 ---
 
-## 5 · Critique Skill — Five-Dimensional Scoresheet
+## 5 · Critique Gate — Six-Dimensional Scoresheet
 
-Apply this before declaring any component, page, or post "done".  
-Score each dimension 1–5. Minimum passing: 4 on all five.
+Score 1–5 each. Minimum to ship: **4 on all six**.
 
-### Dimensions
+| # | Dimension | Question |
+|---|---|---|
+| 1 | **Philosophy** | Does it feel like PaddockIntel — kinetic editorial, not SaaS, not generic dark-F1? |
+| 2 | **Hierarchy** | Primary info readable in 3 seconds, even mid-animation? |
+| 3 | **Execution** | 60fps, zero layout shift, no jank, clean fallbacks? |
+| 4 | **Specificity** | Unmistakably F1 intel — timing mono, team colors, circuit shapes? |
+| 5 | **Restraint** | Every element AND every motion earns its place? |
+| 6 | **Motion** | Does each animation encode an F1 concept? Does reduced-motion still ship a flawless page? |
 
-#### 1 · Philosophy (Does it feel like PaddockIntel?)
-- 5: Numbers are the hero. Type is precise. Tension between editorial warmth and data coldness.
-- 3: Correct fonts and colors but generic layout; could be any sports dashboard.
-- 1: Looks like a Bootstrap template with F1 data dropped in.
-
-#### 2 · Hierarchy (Can I read it in 3 seconds?)
-- 5: Primary → secondary → tertiary reads in one pass. JetBrains Mono for data, DM Serif for headlines, Inter for body.
-- 3: Hierarchy exists but requires effort. Competing weights or sizes.
-- 1: Everything is the same size. No clear entry point.
-
-#### 3 · Execution (Is the code / layout tight?)
-- 5: No layout shift, no orphaned text, pixel-perfect alignment, transitions are smooth.
-- 3: Works but has rough edges — inconsistent spacing, slight jank, hardcoded values.
-- 1: Broken on mobile, hardcoded px everywhere, layout shift on data load.
-
-#### 4 · Specificity (Is it F1 / PaddockIntel, or could it be anything?)
-- 5: Circuit coordinates in mono, team color dots, Vol/Rd/Year in navbar. Unmistakably F1 intel.
-- 3: F1 data present but could be any sports leaderboard.
-- 1: Generic chart with "Driver" and "Points" columns.
-
-#### 5 · Restraint (Did we resist the urge to add more?)
-- 5: Every element earns its place. Removing anything would hurt. Nothing is decorative noise.
-- 3: One or two unnecessary elements — an icon that adds no info, a color that doesn't encode data.
-- 1: Icon soup, badge overload, 4 chart types on one screen.
-
-### Critique Output Format
 ```
-COMPONENT: [name]
-DATE: [YYYY-MM-DD]
-
-1 Philosophy:    [1–5] — [one line reason]
-2 Hierarchy:     [1–5] — [one line reason]
-3 Execution:     [1–5] — [one line reason]
-4 Specificity:   [1–5] — [one line reason]
-5 Restraint:     [1–5] — [one line reason]
-
-TOTAL: [x/25]
-STATUS: [SHIP IT / ITERATE / RETHINK]
-
-BLOCKERS (score < 4):
-→ [dimension]: [specific fix]
-
-QUICK WINS:
-→ [small improvement that costs < 30 min]
+COMPONENT: [name] · DATE: [YYYY-MM-DD]
+1 Philosophy: [1–5] — [reason]
+2 Hierarchy:  [1–5] — [reason]
+3 Execution:  [1–5] — [reason]
+4 Specificity:[1–5] — [reason]
+5 Restraint:  [1–5] — [reason]
+6 Motion:     [1–5] — [reason]
+TOTAL: [x/30] · STATUS: [SHIP IT / ITERATE / RETHINK]
 ```
 
-**SHIP IT** = all 5 scores ≥ 4 (total ≥ 20)  
-**ITERATE** = 1–2 scores < 4  
-**RETHINK** = 3+ scores < 4  
+**SHIP IT** = all six ≥ 4 · **ITERATE** = 1–2 below 4 · **RETHINK** = 3+ below 4
 
 ---
 
 ## 6 · Anti-AI-Slop Checklist (run on every output)
 
-Before shipping any surface:
-
-- [ ] No purple gradients, no glassmorphism for its own sake
-- [ ] No rounded-3xl on data tables or metric cards
+- [ ] No dark page backgrounds on the hub
+- [ ] No motion without F1 meaning — no floating blobs
+- [ ] No scroll hijacking
+- [ ] No purple, no glassmorphism, no rounded-3xl on data
 - [ ] No emoji in dashboard UI
-- [ ] No Inter as display font (it's body only)
-- [ ] No invented data — all numbers verified via search
-- [ ] No JSON-LD skipped on articles
-- [ ] No links in primary X post (self-reply only)
-- [ ] Team colors are the actual 2026 hex values, not approximations
-- [ ] All text is legible at 80% zoom
-- [ ] Mobile breakpoint tested (375px minimum)
+- [ ] No Inter as display font
+- [ ] No invented data — Supabase or verified sources only
+- [ ] Team colors are darkened-for-light variants, not raw broadcast hex
+- [ ] Reduced-motion fallback tested
+- [ ] Mobile 375px tested
 
 ---
 
 ## 7 · Reference Data (2026 Season)
 
-### Current Round
-Vol.01 · Rd.09 · 2026 — Monaco GP (as of May 31, 2026)
-
-### Team Color Reference (2026)
-| Team | Primary Hex |
-|---|---|
-| Mercedes | #00D2BE |
-| Red Bull | #3671C6 |
-| Ferrari | #E8002D |
-| McLaren | #FF8000 |
-| Aston Martin | #358C75 |
-| Alpine | #FF87BC |
-| Williams | #64C4FF |
-| Haas | #B6BABD |
-| Kick Sauber | #52E252 |
-| Racing Bulls | #6692FF |
-
-### Key Storyline (2026)
-Antonelli — youngest F1 championship leader. Anchor economic + performance analysis here.
+Query Supabase for all standings/results — never hardcode.
+Team on-light hex variants: see DESIGN.md §05.
 
 ---
 
-*PADDOCKINTEL.md · v1.0.0 · 2026-05-31 · Apache-2.0*  
-*Synthesized from Open Design skills: dashboard · blog-post · magazine-poster · social-carousel · critique*  
-*Adapted for PaddockIntel stack: Next.js 16 · Tailwind v4 · Ghost CMS · Supabase · Vercel*
+*SKILL.md · v2.0.0 · 2026-06-12 · Apache-2.0*
+*VELOCITY kinetic editorial system · Next.js 16 · Tailwind v4 · GSAP · Three.js · Supabase*

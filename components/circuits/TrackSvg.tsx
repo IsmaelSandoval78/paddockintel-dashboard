@@ -19,14 +19,13 @@ export default function TrackSvg({ pathData, viewBox, circuitName }: TrackSvgPro
         role="img"
         aria-label={`Track map — ${circuitName}`}
       >
-        {/* Hover rule via embedded style — inline :hover on SVG path */}
         <style>{`
           .track-line {
-            stroke: #050505;
+            stroke: var(--text-2);
             transition: stroke 120ms ease;
           }
           .track-line:hover {
-            stroke: #E61919;
+            stroke: var(--red);
           }
         `}</style>
         <path

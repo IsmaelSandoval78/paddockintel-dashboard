@@ -10,24 +10,24 @@
 }
 
 :root {
-  /* Backgrounds — newsprint substrate */
-  --bg:              #F4F4F0;   /* unbleached newsprint — primary surface */
-  --surface:         #F4F4F0;   /* same as substrate */
-  --surface-raised:  #EAE8E3;   /* substrate alt — hover, selected, P1 row */
-  --surface-overlay: #EAE8E3;
+  /* Backgrounds — paper substrate (VELOCITY) */
+  --bg:              #FAFAF7;
+  --surface:         #FAFAF7;
+  --surface-raised:  #F1F0EC;
+  --surface-overlay: #F1F0EC;
 
   /* Borders — ink weight */
-  --border:          #050505;   /* carbon ink — section dividers, grid lines */
-  --border-subtle:   #B0AFA8;   /* faint — row separators inside tables */
+  --border:          #0A0A0A;
+  --border-subtle:   #B5B4AE;
 
   /* Text — ink hierarchy */
-  --text-1:          #050505;   /* carbon black */
-  --text-2:          #6B6B6B;   /* ink muted */
-  --text-3:          #B0AFA8;   /* ink faint */
+  --text-1:          #0A0A0A;
+  --text-2:          #6B6B6B;
+  --text-3:          #B5B4AE;
 
-  /* Accent — hazard red only */
-  --red:             #E61919;   /* hazard red */
-  --red-dim:         #EAE8E3;   /* P1 row bg = substrate alt, not red fill */
+  /* Accent — official F1 race red */
+  --red:             #E10600;
+  --red-dim:         #FBE9E8;
   --gold:            #C9A84C;
   --gold-dim:        #F5E8CC;
 
@@ -35,17 +35,17 @@
   --green:           #22C55E;
   --green-dim:       #E8F5EE;
 
-  /* Constructor colors */
-  --team-mercedes:   #00D2BE;
-  --team-mclaren:    #FF8700;
-  --team-redbull:    #3671C6;
-  --team-ferrari:    #E8002D;
-  --team-alpine:     #FF87BC;
-  --team-aston:      #358C75;
-  --team-haas:       #B6BABD;
-  --team-williams:   #64C4FF;
-  --team-sauber:     #52E252;
-  --team-rb:         #6692FF;
+  /* Constructor colors — darkened for light substrate */
+  --team-mercedes:   #00A99D;
+  --team-mclaren:    #E57700;
+  --team-redbull:    #2A5DB0;
+  --team-ferrari:    #D40000;
+  --team-alpine:     #C04080;
+  --team-aston:      #2D7A65;
+  --team-haas:       #6A6E70;
+  --team-williams:   #2A7CB0;
+  --team-sauber:     #259825;
+  --team-rb:         #3A5EC4;
 
   /* Motion */
   --ease:            cubic-bezier(0.16, 1, 0.3, 1);
@@ -72,7 +72,7 @@
   --color-green-dim:       var(--green-dim);
 
   /* Fonts — variables injected by next/font on <html> */
-  --font-display: var(--pi-display);  /* Archivo Black — headlines, surnames, dominant numbers */
+  --font-display: var(--pi-display);  /* Archivo Black — kinetic display */
   --font-serif: var(--pi-serif);
   --font-sans:  var(--pi-sans);
   --font-mono:  var(--pi-mono);
@@ -93,7 +93,36 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Era grid — responsive auto-fill columns, proportional to era visual weight */
+/* ── VELOCITY motion utilities ──────────────────────────────────── */
+
+/* Custom cursor: applied to <body> while kinetic home is mounted (desktop) */
+@media (pointer: fine) {
+  .velocity-cursor,
+  .velocity-cursor a,
+  .velocity-cursor button {
+    cursor: none;
+  }
+}
+
+/* SplitText line masks — children animate within overflow-hidden parents */
+.kinetic-mask {
+  overflow: hidden;
+  display: block;
+}
+
+/* Live data indicator */
+@keyframes pulse-red {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(1.4); }
+}
+.pulse-red { animation: pulse-red 1.5s ease-in-out infinite; }
+
+/* Reduced motion: kill loops; GSAP handles its own teardown via matchMedia */
+@media (prefers-reduced-motion: reduce) {
+  .pulse-red { animation: none; }
+}
+
+/* ── Era grid — responsive auto-fill columns ────────────────────── */
 .era-grid-modern  { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
 .era-grid-v10     { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
 .era-grid-turbo   { grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); }
@@ -108,7 +137,7 @@ body {
   .era-grid-classic { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
 }
 
-/* Leaflet dark theme */
+/* ── Leaflet theme ──────────────────────────────────────────────── */
 .leaflet-container { background: var(--bg); }
 
 .leaflet-control-attribution {
