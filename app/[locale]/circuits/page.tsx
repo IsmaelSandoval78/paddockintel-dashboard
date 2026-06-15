@@ -40,5 +40,10 @@ async function getAllCircuits(): Promise<Circuit[]> {
 
 export default async function CircuitsPage() {
   const circuits = await getAllCircuits();
-  return <CircuitsClient circuits={circuits} totalCount={circuits.length} />;
+  return (
+    <CircuitsClient
+      circuits={circuits}
+      totalCount={circuits.length}
+    />
+  );
 }

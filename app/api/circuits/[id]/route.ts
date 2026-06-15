@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { fetchTrackPathData } from '@/lib/trackSvg';
 import type { CircuitInfo } from '@/lib/types';
 
 export async function GET(
@@ -55,11 +56,12 @@ export async function GET(
       top_win_driver: null,
       top_pole_driver: null,
       avg_winner_grid: null,
+      track_path: null,
     });
   }
 
-  // Batch 2: all winners + fastest lap + fastest pit + pole positions
-  const [allWinnersRes, fastLapRes, pitRes, poleRes] = await Promise.all([
+  // Batch 2: all winners + fastest lap + fastest pit + pole positions + track SVG
+  const [allWinnersRes, fastLapRes, pitRes, poleRes, trackPath] = await Promise.all([
     supabase
       .from('results')
       .select('race_id, driver_id, constructor_id, grid')
@@ -86,6 +88,7 @@ export async function GET(
       .select('race_id, driver_id')
       .in('race_id', raceIds)
       .eq('position', 1),
+    fetchTrackPathData(circuit.circuit_ref as string),
   ]);
 
   const allWinners = allWinnersRes.data ?? [];
@@ -266,5 +269,6 @@ export async function GET(
     top_win_driver: topWinDriver,
     top_pole_driver: topPoleDriver,
     avg_winner_grid: avgWinnerGrid,
+    track_path: trackPath,
   });
 }

@@ -1,94 +1,38 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
+import { gsap } from 'gsap';
+import { SplitText } from 'gsap/SplitText';
 import type { Circuit, CircuitInfo } from '@/lib/types';
-import MapClientWrapper from '@/components/map/MapClientWrapper';
-import InlineCircuitPanel from './InlineCircuitPanel';
+import CircuitLeftPanel from './CircuitLeftPanel';
 import BottomSheet from '@/components/ui/BottomSheet';
 
-const COLLAPSE_MS = 200;
+gsap.registerPlugin(SplitText);
+
+// Globe loads only on client (Three.js)
+const GlobeClient = dynamic(() => import('@/components/map/GlobeClient'), {
+  ssr: false,
+  loading: () => <div className="w-full h-full bg-bg" />,
+});
+
+// ─── Region config ────────────────────────────────────────────────
 
 type Region = 'all' | 'europe' | 'americas' | 'asia' | 'africaMiddleEast' | 'oceania';
 
-const REGIONS: Array<{ key: Region; labelKey: string }> = [
-  { key: 'all',              labelKey: 'filter.all' },
-  { key: 'europe',           labelKey: 'filter.europe' },
-  { key: 'americas',         labelKey: 'filter.americas' },
-  { key: 'asia',             labelKey: 'filter.asia' },
-  { key: 'africaMiddleEast', labelKey: 'filter.africaMiddleEast' },
-  { key: 'oceania',          labelKey: 'filter.oceania' },
+const REGIONS: Array<{ key: Region; label: string }> = [
+  { key: 'all',              label: 'All' },
+  { key: 'europe',           label: 'Europe' },
+  { key: 'americas',         label: 'Americas' },
+  { key: 'asia',             label: 'Asia & Pacific' },
+  { key: 'africaMiddleEast', label: 'Africa & Middle East' },
+  { key: 'oceania',          label: 'Oceania' },
 ];
 
-const COUNTRY_REGION: Record<string, Region> = {
-  // Europe
-  'UK': 'europe',
-  'United Kingdom': 'europe',
-  'Germany': 'europe',
-  'France': 'europe',
-  'Italy': 'europe',
-  'Spain': 'europe',
-  'Belgium': 'europe',
-  'Netherlands': 'europe',
-  'Austria': 'europe',
-  'Hungary': 'europe',
-  'Switzerland': 'europe',
-  'Portugal': 'europe',
-  'Monaco': 'europe',
-  'Sweden': 'europe',
-  'Luxembourg': 'europe',
-  'San Marino': 'europe',
-  'Yugoslavia': 'europe',
-  // Americas
-  'USA': 'americas',
-  'United States': 'americas',
-  'Canada': 'americas',
-  'Brazil': 'americas',
-  'Mexico': 'americas',
-  'Argentina': 'americas',
-  'Venezuela': 'americas',
-  // Asia & Pacific (incl. Middle East per spec)
-  'Japan': 'asia',
-  'China': 'asia',
-  'South Korea': 'asia',
-  'Korea': 'asia',
-  'Malaysia': 'asia',
-  'Singapore': 'asia',
-  'India': 'asia',
-  'Kazakhstan': 'asia',
-  'Vietnam': 'asia',
-  'Bahrain': 'asia',
-  'UAE': 'asia',
-  'United Arab Emirates': 'asia',
-  'Saudi Arabia': 'asia',
-  'Qatar': 'asia',
-  'Azerbaijan': 'asia',
-  'Turkey': 'asia',
-  'Russia': 'asia',
-  // Africa & Middle East
-  'South Africa': 'africaMiddleEast',
-  'Morocco': 'africaMiddleEast',
-  // Oceania
-  'Australia': 'oceania',
-  'New Zealand': 'oceania',
-};
+// ─── Fetch circuit inline data ────────────────────────────────────
 
-interface FlyTarget {
-  center: [number, number];
-  zoom: number;
-  seq: number;
-}
-
-const FLY_COORDS: Record<Region, { center: [number, number]; zoom: number }> = {
-  all:              { center: [20,   0],   zoom: 2 },
-  europe:           { center: [50,  10],   zoom: 4 },
-  americas:         { center: [10, -80],   zoom: 3 },
-  asia:             { center: [25, 100],   zoom: 3 },
-  africaMiddleEast: { center: [20,  35],   zoom: 3 },
-  oceania:          { center: [-25, 135],  zoom: 4 },
-};
-
-async function fetchCircuitData(id: number): Promise<CircuitInfo | null> {
+async function fetchCircuitInfo(id: number): Promise<CircuitInfo | null> {
   try {
     const res = await fetch(`/api/circuits/${id}`);
     return await res.json();
@@ -96,6 +40,8 @@ async function fetchCircuitData(id: number): Promise<CircuitInfo | null> {
     return null;
   }
 }
+
+// ─── Component ───────────────────────────────────────────────────
 
 export default function CircuitsClient({
   circuits,
@@ -105,114 +51,134 @@ export default function CircuitsClient({
   totalCount: number;
 }) {
   const t = useTranslations('circuits');
-  const [circuitInfo, setCircuitInfo] = useState<CircuitInfo | null>(null);
-  const [isOpen, setIsOpen] = useState(false);
-  const [activeRegion, setActiveRegion] = useState<Region>('all');
-  const [flyTarget, setFlyTarget] = useState<FlyTarget | null>(null);
-  const flySeqRef = useRef(0);
-  const panelRef = useRef<HTMLDivElement>(null);
 
-  const filteredCircuits =
-    activeRegion === 'all'
-      ? circuits
-      : circuits.filter((c) => COUNTRY_REGION[c.country] === activeRegion);
+  const [circuitInfo,  setCircuitInfo]  = useState<CircuitInfo | null>(null);
+  const [selectedId,   setSelectedId]   = useState<number | null>(null);
+  const [isOpen,       setIsOpen]       = useState(false);
+  const [activeRegion, setActiveRegion] = useState<Region>('all');
+  const [loading,      setLoading]      = useState(false);
+
+  const headerRef = useRef<HTMLDivElement>(null);
+  const titleRef  = useRef<HTMLHeadingElement>(null);
+
+  // Header entrance animation
+  useEffect(() => {
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const ctx = gsap.context(() => {
+        document.fonts.ready.then(() => {
+          if (!titleRef.current) return;
+          const split = new SplitText(titleRef.current, { type: 'chars' });
+          gsap.set(titleRef.current, { visibility: 'visible' });
+          gsap.from(split.chars, { yPercent: 110, duration: 0.7, stagger: 0.04, ease: 'power4.out' });
+          gsap.from('.circuits-filter-btn', { opacity: 0, y: 6, duration: 0.4, stagger: 0.05, ease: 'power3.out', delay: 0.35 });
+        });
+      }, headerRef);
+      return () => ctx.revert();
+    }
+  }, []);
 
   async function handleSelect(circuit: Circuit) {
-    const data = await fetchCircuitData(circuit.id);
+    setLoading(true);
+    setSelectedId(circuit.id);
+    const data = await fetchCircuitInfo(circuit.id);
     setCircuitInfo(data);
     setIsOpen(true);
-    setTimeout(() => {
-      panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 50);
+    setLoading(false);
   }
 
   function handleClose() {
     setIsOpen(false);
-    setTimeout(() => setCircuitInfo(null), COLLAPSE_MS);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setSelectedId(null);
+    setTimeout(() => setCircuitInfo(null), 250);
   }
 
-  function handleRegionChange(region: Region) {
+  function handleRegion(region: Region) {
     setActiveRegion(region);
-    flySeqRef.current += 1;
-    setFlyTarget({ ...FLY_COORDS[region], seq: flySeqRef.current });
-    if (isOpen) {
-      setIsOpen(false);
-      setTimeout(() => setCircuitInfo(null), COLLAPSE_MS);
-    }
   }
 
   return (
-    <main className="flex flex-col">
+    <main className="flex flex-col" style={{ height: '100dvh' }}>
 
       {/* ── Page header ──────────────────────────────────────── */}
-      <div className="h-12 px-5 border-b border-border flex items-center gap-3 shrink-0">
-        <span className="font-mono text-[10px] text-text-2 uppercase tracking-[0.1em]">02 ·</span>
-        <h1
-          className="text-[clamp(1.4rem,2vw,1.8rem)] uppercase leading-none tracking-[-0.03em]"
-          style={{ fontFamily: 'var(--pi-display)' }}
-        >
-          {t('title')}
-        </h1>
+      <div
+        ref={headerRef}
+        className="h-12 px-5 border-b border-border flex items-center gap-3 shrink-0 overflow-hidden bg-bg"
+      >
+        <span className="font-mono text-[10px] text-text-2 uppercase tracking-[0.1em] shrink-0">02 ·</span>
+        <div className="kinetic-mask shrink-0">
+          <h1
+            ref={titleRef}
+            className="text-[clamp(1.4rem,2vw,1.8rem)] uppercase leading-none tracking-[-0.03em]"
+            style={{ fontFamily: 'var(--pi-display)', visibility: 'hidden' }}
+          >
+            {t('title')}
+          </h1>
+        </div>
         <span className="font-mono text-[10px] text-text-3 tracking-[0.1em] uppercase ml-1">
           {t('count', { count: totalCount })}
         </span>
+        {loading && (
+          <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] ml-auto animate-pulse">
+            loading…
+          </span>
+        )}
       </div>
 
-      {/* ── Continent filter bar ─────────────────────────────── */}
-      <div className="h-9 px-5 border-b border-border flex items-center gap-5 shrink-0 overflow-x-auto">
-        {REGIONS.map(({ key, labelKey }) => (
+      {/* ── Filter bar ───────────────────────────────────────── */}
+      <div className="h-9 px-5 border-b border-border flex items-center gap-5 shrink-0 overflow-x-auto bg-bg">
+        {REGIONS.map(({ key, label }) => (
           <button
             key={key}
-            onClick={() => handleRegionChange(key)}
-            className="font-mono text-[11px] uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0 shrink-0"
-            style={{ color: activeRegion === key ? 'var(--red)' : 'var(--text-2)' }}
+            onClick={() => handleRegion(key)}
+            className="circuits-filter-btn font-mono text-[11px] text-text-1 uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0 shrink-0 transition-colors duration-150"
+            style={{ color: activeRegion === key ? 'var(--red)' : undefined }}
           >
-            {t(labelKey)}
+            {label}
           </button>
         ))}
       </div>
 
-      {/* ── Map — 50vh on mobile, full remaining height on desktop ── */}
-      <div className="h-[50vh] md:h-[calc(100dvh-11.25rem)] bg-bg">
-        <MapClientWrapper
-          circuits={filteredCircuits}
-          onSelect={handleSelect}
-          flyTarget={flyTarget}
-        />
+      {/* ── Main: left panel + globe ─────────────────────────── */}
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
+
+        {/* Left panel — desktop slide-in */}
+        <div
+          className="hidden md:flex flex-col border-r border-border overflow-hidden transition-[width] duration-300 ease-out shrink-0"
+          style={{ width: isOpen ? '42%' : '0%' }}
+        >
+          {circuitInfo && (
+            <CircuitLeftPanel info={circuitInfo} onClose={handleClose} />
+          )}
+        </div>
+
+        {/* Globe */}
+        <div className="flex-1 min-w-0 h-[55vw] md:h-full bg-bg">
+          <GlobeClient
+            circuits={circuits}
+            onSelect={handleSelect}
+            targetRegion={activeRegion}
+            selectedId={selectedId}
+          />
+        </div>
+
       </div>
 
       {/* ── Legend ───────────────────────────────────────────── */}
-      <div className="h-10 px-5 border-t border-border flex items-center gap-6 shrink-0">
+      <div className="h-9 px-5 border-t border-border flex items-center gap-6 shrink-0 bg-bg">
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#E61919' }} />
+          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#E10600' }} />
           <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">{t('legend.season')}</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#B0AFA8' }} />
+          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#B5B4AE' }} />
           <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">{t('legend.historical')}</span>
-        </div>
-      </div>
-
-      {/* ── Inline panel — desktop only ──────────────────────── */}
-      <div
-        ref={panelRef}
-        className={[
-          'hidden md:grid transition-[grid-template-rows] duration-200 ease-out',
-          isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
-        ].join(' ')}
-      >
-        <div className="overflow-hidden">
-          {circuitInfo && (
-            <InlineCircuitPanel info={circuitInfo} onClose={handleClose} />
-          )}
         </div>
       </div>
 
       {/* ── Bottom sheet — mobile only ───────────────────────── */}
       <BottomSheet open={isOpen} onClose={handleClose}>
         {circuitInfo && (
-          <InlineCircuitPanel info={circuitInfo} onClose={handleClose} />
+          <CircuitLeftPanel info={circuitInfo} onClose={handleClose} />
         )}
       </BottomSheet>
 

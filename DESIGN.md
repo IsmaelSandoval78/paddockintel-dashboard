@@ -160,3 +160,72 @@ ring expands over interactive elements. `cursor: none` on body via class.
 - No pie charts, no glassmorphism, no rounded-3xl, no gradients on data.
 - No animation library beyond GSAP + Three.js without asking.
 - No WebGL on the critical render path — hero text paints before canvas.
+
+---
+
+## 07 · INTELLIGENCE SURFACES — INNER PAGES
+
+Circuits, Drivers, Constructors, Compare all share one structural grammar.
+
+### Page Header bar — 48px / `h-12`
+```
+┌─────────────────────────────────────────────────────────────┐
+│  02 ·  CIRCUITS  · 77 circuits            [loading…]        │
+└─────────────────────────────────────────────────────────────┘
+```
+- Section ID: `font-mono text-[10px] text-text-2 uppercase tracking-[0.1em]`
+- Title: Archivo Black, `clamp(1.4rem, 2vw, 1.8rem)`, uppercase, ls -0.03em
+  - Wrapped in `.kinetic-mask` + SplitText chars entrance (0.7s, stagger 0.04, power4.out)
+  - `visibility: hidden` until GSAP fires (no flash)
+- Count: `font-mono text-[10px] text-text-3 uppercase tracking-[0.1em]`
+- Loading state: mono `text-text-3 animate-pulse` pushed to `ml-auto`
+- Bottom edge: `border-b border-border`
+- Background: `bg-bg`
+
+### Filter Bar — 36px / `h-9`
+- Mono 11px uppercase tracking-[0.1em] buttons, no border, no bg
+- Active = `var(--red)`, inactive = `var(--text-1)`, transition 150ms
+- Filter buttons stagger-fade in (autoAlpha 0→1, y 6→0, 0.4s, stagger 0.05, delay 0.35s)
+- Overflow-x scrollable on mobile
+- Bottom edge: `border-b border-border`
+
+### Split Layout (desktop)
+```
+┌────────────────────┬────────────────────────────────────────┐
+│  Intelligence      │                                        │
+│  Panel             │   WebGL / Map surface                  │
+│  (0% → 42%)        │   (flex-1, takes remaining space)      │
+│  slide-in 300ms    │                                        │
+└────────────────────┴────────────────────────────────────────┘
+```
+- Panel opens on selection, `transition-[width] duration-300 ease-out`
+- Panel closed = `width: 0%`, open = `width: 42%`
+- Panel: `bg-bg border-r border-border overflow-y-auto`
+- Mobile: panel replaces map (BottomSheet) — never side-by-side
+
+### Intelligence Panel anatomy
+- **Header cell:** circuit/driver name in Archivo Black (clamp 1.1–1.4rem), mono meta line below
+  - Close button: `×` mono, `w-7 h-7`, text-text-3 → text-text-1 on hover
+- **Section headers:** `"NN ·" label` — mono 10px text-text-2, py-2.5, border-b
+- **Data rows:** `h-9 px-5`, 1px borders, value in text-text-1, label mono text-text-3 ml-auto
+- **Hero numbers:** Archivo Black `text-[2rem]` tabular-nums — first/total races, key stats
+- **Timing values:** font-mono text-[13px], ALWAYS in `var(--red)` for records and fastest laps
+- **CTA:** mt-auto, red link, font-mono 11px uppercase tracking-[0.08em]
+
+### Globe (Three.js) — paper map aesthetic
+```
+Ocean   #C0CDD4   muted editorial water — not blue-tech
+Land    #E5E3DC   warm paper, substrate match
+Border  #B5B4AE   text-3 hairline
+Active  #E10600   race red dot (R = 1.6% globe radius)
+History #B5B4AE   text-3 ghost dot (R = 1.1% globe radius)
+```
+- No atmosphere halo — decorative without F1 meaning
+- Canvas background: transparent — globe floats on `bg-bg` paper
+- Auto-rotation: 0.001 rad/frame; pauses on drag, resumes after 2s
+- Drag right = globe spins so eastern content comes to front (natural Earth rotation)
+- Fly-to on region filter: GSAP power3.inOut 1.5s
+
+### Bottom status strip — 36px / `h-9`
+- Legend dots + mono labels, separated by 1px border-border
+- `bg-bg shrink-0`
