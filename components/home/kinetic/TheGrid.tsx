@@ -99,7 +99,7 @@ export default function TheGrid({ drivers, motionOk }: TheGridProps) {
     <section ref={rootRef} className="border-t border-border px-5 md:px-10 py-10 md:py-16 overflow-hidden">
 
       <p className="font-mono text-[9px] md:text-[10px] text-text-2 uppercase tracking-[0.18em] mb-2">
-        05 · {t('top10').toUpperCase()}
+        {t('top10').toUpperCase()}
       </p>
       <h2
         className="uppercase leading-[0.9] mb-8 md:mb-12"
@@ -122,7 +122,7 @@ export default function TheGrid({ drivers, motionOk }: TheGridProps) {
               key={d.driver_id}
               href={`/drivers/${d.driver_ref}`}
               data-cursor
-              className="grid-row group relative flex items-center gap-4 md:gap-8 py-3 md:py-4 border-b border-border-subtle overflow-hidden"
+              className="grid-row group relative flex items-center gap-4 md:gap-8 py-3 md:py-4 min-h-[44px] border-b border-border-subtle overflow-hidden"
             >
               {/* Hover flood — team color washes in from the left */}
               <span

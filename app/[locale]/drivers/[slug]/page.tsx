@@ -754,10 +754,7 @@ export default async function DriverDetailPage({
                   {winRows.map((row, i) => (
                     <tr
                       key={i}
-                      style={{
-                        borderBottom: '1px solid #D4D0C8',
-                        borderLeft: `3px solid ${teamHex(row.constructorRef)}`,
-                      }}
+                      style={{ borderBottom: '1px solid var(--border-subtle)' }}
                       className="hover:bg-surface transition-colors duration-100"
                     >
                       <td className="px-4 py-2 font-mono text-xs text-text-3 tabular-nums">{row.year}</td>
@@ -765,7 +762,7 @@ export default async function DriverDetailPage({
                       <td className="px-3 py-2 text-[12px] text-text-2 truncate">{row.constructorName}</td>
                       <td className="px-4 py-2 text-right font-mono text-[12px] tabular-nums">
                         {row.fastestLap
-                          ? <span style={{ color: '#E10600' }}>{row.fastestLap}</span>
+                          ? <span style={{ color: 'var(--red)' }}>{row.fastestLap}</span>
                           : <span className="text-text-3">—</span>
                         }
                       </td>
@@ -809,7 +806,7 @@ export default async function DriverDetailPage({
                   </thead>
                   <tbody>
                     {poleRows.map((row, i) => (
-                      <tr key={i} style={{ borderBottom: '1px solid #D4D0C8' }} className="hover:bg-surface transition-colors duration-100">
+                      <tr key={i} style={{ borderBottom: '1px solid var(--border-subtle)' }} className="hover:bg-surface transition-colors duration-100">
                         <td className="px-4 py-2 font-mono text-xs text-text-3 tabular-nums">{row.year}</td>
                         <td className="px-3 py-2 text-[12px] text-text-1 truncate">{row.raceName}</td>
                       </tr>
@@ -838,14 +835,14 @@ export default async function DriverDetailPage({
                 <div key={row.constructorId} className="flex items-center gap-4">
                   <div
                     className="flex items-center gap-2 px-3 py-1 shrink-0"
-                    style={{ background: `${hex}1A`, borderLeft: `3px solid ${hex}`, minWidth: 144 }}
+                    style={{ background: `${hex}1A`, minWidth: 144 }}
                   >
                     <span className="text-[13px] font-medium text-text-1 truncate">{row.name}</span>
                   </div>
                   <span className="font-mono text-[11px] text-text-3 tabular-nums shrink-0">
                     {row.firstYear === row.lastYear ? String(row.firstYear) : `${row.firstYear}–${row.lastYear}`}
                   </span>
-                  <div className="flex-1 h-px overflow-hidden" style={{ background: '#D4D0C8' }}>
+                  <div className="flex-1 h-px overflow-hidden" style={{ background: 'var(--border-subtle)' }}>
                     <div className="h-full" style={{ width: `${(row.races / maxConRaces) * 100}%`, background: hex }} />
                   </div>
                   <div className="flex items-center gap-3 shrink-0">

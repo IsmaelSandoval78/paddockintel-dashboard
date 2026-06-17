@@ -227,7 +227,7 @@ async function getHomeData(): Promise<{
     lastCircuitSvg,
   ] = await Promise.all([
     allNeededDriverIds.length
-      ? supabase.from('drivers').select('id, forename, surname, code').in('id', allNeededDriverIds)
+      ? supabase.from('drivers').select('id, forename, surname, code, number').in('id', allNeededDriverIds)
       : Promise.resolve({ data: [], error: null }),
     lastPastRace
       ? supabase
@@ -348,8 +348,9 @@ async function getHomeData(): Promise<{
       d.id as number,
       {
         forename: d.forename as string,
-        surname: d.surname as string,
-        code: (d.code as string | null) ?? null,
+        surname:  d.surname as string,
+        code:     (d.code   as string | null) ?? null,
+        number:   (d.number as number | null) ?? null,
       },
     ])
   );
@@ -381,9 +382,10 @@ async function getHomeData(): Promise<{
         driver_ref: driverRefMap.get(s.driver_id as number) ?? '',
         position: s.position as number,
         forename: d.forename,
-        surname: d.surname,
-        code: d.code,
-        points: s.points as number,
+        surname:  d.surname,
+        code:     d.code,
+        number:   d.number,
+        points:   s.points as number,
         wins: s.wins as number,
         constructor_ref: c?.constructor_ref ?? '',
         constructor_name: c?.name ?? '',

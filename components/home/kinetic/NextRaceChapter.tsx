@@ -68,9 +68,10 @@ export default function NextRaceChapter({ race, motionOk }: NextRaceChapterProps
       document.fonts.ready.then(() => {
         if (!titleRef.current) return;
         const split = new SplitText(titleRef.current, { type: 'chars' });
-        gsap.set(titleRef.current, { visibility: 'visible' });
-        gsap.from(split.chars, {
-          yPercent: 110,
+        gsap.set(split.chars, { yPercent: 110 });
+        gsap.set(titleRef.current, { opacity: 1 });
+        gsap.to(split.chars, {
+          yPercent: 0,
           duration: 0.9,
           stagger: 0.025,
           ease: 'power4.out',
@@ -110,7 +111,7 @@ export default function NextRaceChapter({ race, motionOk }: NextRaceChapterProps
     >
       {/* Chapter label */}
       <p className="font-mono text-[9px] md:text-[10px] text-text-2 uppercase tracking-[0.18em] mb-4">
-        04 · [ {t('nextRaceCard').toUpperCase()} ] · RD.{String(race.round).padStart(2, '0')} · {formatDate(race.date)}
+        [ {t('nextRaceCard').toUpperCase()} ] · RD.{String(race.round).padStart(2, '0')} · {formatDate(race.date)}
         <span className="ml-3" style={{ color: 'var(--red)' }}>
           {race.days_remaining === 0
             ? t('raceDay').toUpperCase()
@@ -127,7 +128,7 @@ export default function NextRaceChapter({ race, motionOk }: NextRaceChapterProps
             fontFamily:    'var(--pi-display)',
             fontSize:      'clamp(34px, 6.5vw, 92px)',
             letterSpacing: '-0.03em',
-            visibility:    motionOk ? 'hidden' : 'visible',
+            opacity:       motionOk ? 0 : 1,
           }}
         >
           {race.circuit_name}

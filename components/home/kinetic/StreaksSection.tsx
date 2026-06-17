@@ -89,7 +89,7 @@ export default function StreaksSection({ data, motionOk }: StreaksSectionProps) 
   return (
     <section ref={rootRef} className="border-t border-border px-5 md:px-10 py-10 md:py-16">
       <p className="font-mono text-[9px] md:text-[10px] text-text-2 uppercase tracking-[0.18em] mb-8 md:mb-10">
-        06 · {t('streaks').toUpperCase()}
+        {t('streaks').toUpperCase()}
       </p>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-px" style={{ background: 'var(--border)' }}>

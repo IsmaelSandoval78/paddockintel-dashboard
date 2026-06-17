@@ -292,6 +292,7 @@ export interface HomeDriverRow {
   forename: string;
   surname: string;
   code: string | null;
+  number: number | null;
   points: number;
   wins: number;
   constructor_ref: string;

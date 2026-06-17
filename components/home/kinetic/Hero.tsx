@@ -24,6 +24,7 @@ interface HeroProps {
 export default function Hero({ leader, round, year, motionOk, isMobile }: HeroProps) {
   const rootRef     = useRef<HTMLElement>(null);
   const metaRef     = useRef<HTMLParagraphElement>(null);
+  const numberRef   = useRef<HTMLSpanElement>(null);
   const forenameRef = useRef<HTMLParagraphElement>(null);
   const surnameRef  = useRef<HTMLHeadingElement>(null);
   const ptsRef      = useRef<HTMLSpanElement>(null);
@@ -33,6 +34,7 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
 
   const color = teamColor(leader.constructor_ref);
   const metaText = `F1 INTELLIGENCE · ${year} CHAMPIONSHIP · RD.${String(round).padStart(2, '0')}`;
+  const leaderNumber = leader.number ?? leader.position;
 
   // Fit surname to one line — layout concern, runs regardless of motion
   useEffect(() => {
@@ -58,6 +60,12 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
           ease: 'none',
         });
 
+        // Championship number — swells in at low opacity
+        gsap.fromTo(numberRef.current,
+          { opacity: 0, scale: 0.95 },
+          { opacity: 0.22, scale: 1, duration: 1.4, ease: 'power3.out', delay: 0.3 },
+        );
+
         // Forename rises
         gsap.fromTo(forenameRef.current,
           { y: 24, autoAlpha: 0 },
@@ -67,9 +75,10 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
         // Surname — lights out, one char at a time.
         // Total lead-in capped so long names don't drag.
         const split = new SplitText(surnameRef.current, { type: 'chars' });
-        gsap.set(surnameRef.current, { visibility: 'visible' });
-        gsap.from(split.chars, {
-          yPercent: 110,
+        gsap.set(split.chars, { yPercent: 110 });
+        gsap.set(surnameRef.current, { opacity: 1 });
+        gsap.to(split.chars, {
+          yPercent: 0,
           duration: 1.0,
           stagger: { each: Math.min(0.035, 0.26 / split.chars.length) },
           ease: 'power4.out',
@@ -131,7 +140,7 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
     <section
       ref={rootRef}
       className="relative overflow-hidden flex flex-col"
-      style={{ minHeight: 'calc(100svh - 3rem)' }}
+      style={{ minHeight: '72svh' }}
     >
       {motionOk && <WarpField teamColor={color} density={isMobile ? 100 : 320} />}
 
@@ -154,8 +163,28 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
           </span>
         </div>
 
-        {/* Name block — bottom anchored */}
-        <div className="mt-auto">
+        {/* Car number — occupies centre space, team colour at low opacity */}
+        <div
+          className="flex-1 flex items-center justify-center pointer-events-none select-none"
+          aria-hidden="true"
+        >
+          <span
+            ref={numberRef}
+            className="tabular-nums leading-none"
+            style={{
+              fontFamily:    'var(--pi-display)',
+              fontSize:      'clamp(96px, 24vw, 340px)',
+              letterSpacing: '-0.06em',
+              color:         color,
+              opacity:       motionOk ? 0 : 0.22,
+            }}
+          >
+            {leaderNumber}
+          </span>
+        </div>
+
+        {/* Name block */}
+        <div>
           <p
             ref={forenameRef}
             className="font-mono uppercase tracking-[0.3em] mb-2 text-text-2"
@@ -172,7 +201,7 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
                 fontSize:      'clamp(64px, 17vw, 250px)',
                 letterSpacing: '-0.04em',
                 color:         'var(--text-1)',
-                visibility:    motionOk ? 'hidden' : 'visible',
+                opacity:       motionOk ? 0 : 1,
               }}
             >
               {leader.surname}
@@ -223,7 +252,7 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
           <div className="ml-auto hidden md:flex flex-col items-end gap-1 pb-1">
             <span
               className="font-mono text-[9px] uppercase tracking-[0.16em] px-2 py-1 leading-none"
-              style={{ background: color, color: '#FAFAF7' }}
+              style={{ background: color, color: 'var(--bg)' }}
             >
               P1 · CHAMPIONSHIP LEADER
             </span>
@@ -237,7 +266,6 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
         className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex-col items-center gap-2 hidden md:flex"
         style={{ opacity: motionOk ? 0 : 1 }}
       >
-        <span className="font-mono text-[8px] text-text-3 uppercase tracking-[0.3em]">SCROLL</span>
         <div className="w-px h-8 overflow-hidden">
           <div className="hero-cue-line w-px h-full bg-red" style={{ transform: 'scaleY(0.2)' }} />
         </div>

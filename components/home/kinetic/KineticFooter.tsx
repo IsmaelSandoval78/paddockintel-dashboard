@@ -29,9 +29,10 @@ export default function KineticFooter({ motionOk }: { motionOk: boolean }) {
       document.fonts.ready.then(() => {
         if (!markRef.current) return;
         const split = new SplitText(markRef.current, { type: 'chars' });
-        gsap.set(markRef.current, { visibility: 'visible' });
-        gsap.from(split.chars, {
-          yPercent: 110,
+        gsap.set(split.chars, { yPercent: 110 });
+        gsap.set(markRef.current, { opacity: 1 });
+        gsap.to(split.chars, {
+          yPercent: 0,
           duration: 0.8,
           stagger: 0.02,
           ease: 'power4.out',
@@ -53,7 +54,7 @@ export default function KineticFooter({ motionOk }: { motionOk: boolean }) {
             fontFamily:    'var(--pi-display)',
             fontSize:      'clamp(38px, 9.2vw, 150px)',
             letterSpacing: '-0.04em',
-            visibility:    motionOk ? 'hidden' : 'visible',
+            opacity:       motionOk ? 0 : 1,
           }}
         >
           PADDOCKINTEL

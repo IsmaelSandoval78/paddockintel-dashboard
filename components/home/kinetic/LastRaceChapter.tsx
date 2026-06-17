@@ -46,9 +46,10 @@ export default function LastRaceChapter({ race, motionOk }: LastRaceChapterProps
       document.fonts.ready.then(() => {
         if (!titleRef.current) return;
         const split = new SplitText(titleRef.current, { type: 'chars' });
-        gsap.set(titleRef.current, { visibility: 'visible' });
-        gsap.from(split.chars, {
-          yPercent: 110,
+        gsap.set(split.chars, { yPercent: 110 });
+        gsap.set(titleRef.current, { opacity: 1 });
+        gsap.to(split.chars, {
+          yPercent: 0,
           duration: 0.9,
           stagger: 0.025,
           ease: 'power4.out',
@@ -85,7 +86,7 @@ export default function LastRaceChapter({ race, motionOk }: LastRaceChapterProps
 
       {/* Chapter label */}
       <p className="font-mono text-[9px] md:text-[10px] text-text-2 uppercase tracking-[0.18em] mb-4">
-        03 · [ {t('lastRace').toUpperCase()} ] · RD.{String(race.round).padStart(2, '0')} · {formatDate(race.date)}
+        [ {t('lastRace').toUpperCase()} ] · RD.{String(race.round).padStart(2, '0')} · {formatDate(race.date)}
       </p>
 
       {/* Circuit name — kinetic */}
@@ -97,7 +98,7 @@ export default function LastRaceChapter({ race, motionOk }: LastRaceChapterProps
             fontFamily:    'var(--pi-display)',
             fontSize:      'clamp(34px, 6.5vw, 92px)',
             letterSpacing: '-0.03em',
-            visibility:    motionOk ? 'hidden' : 'visible',
+            opacity:       motionOk ? 0 : 1,
           }}
         >
           {race.circuit_name}
@@ -140,8 +141,8 @@ export default function LastRaceChapter({ race, motionOk }: LastRaceChapterProps
             {race.podium.map((p) => (
               <div
                 key={p.position}
-                className="lr-podium-row flex items-baseline gap-4 pl-4 py-1"
-                style={{ borderLeft: `3px solid ${teamColor(p.constructor_ref)}` }}
+                className="lr-podium-row relative flex items-baseline gap-4 pl-4 py-1"
+                style={{ background: `color-mix(in srgb, ${teamColor(p.constructor_ref)} 10%, transparent)` }}
               >
                 <span
                   className="tabular-nums text-text-3 shrink-0 w-6"
