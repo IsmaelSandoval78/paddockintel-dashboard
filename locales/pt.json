@@ -78,6 +78,25 @@
       "asia": "Ásia e Pacífico",
       "africaMiddleEast": "África e Médio Oriente",
       "oceania": "Oceania"
+    },
+    "search": {
+      "placeholder": "Buscar circuitos",
+      "noResults": "Nenhum circuito encontrado"
+    },
+    "calendar": {
+      "toggle": "Calendário 2026"
+    },
+    "panel": {
+      "firstRace": "Primeira Corrida",
+      "totalRaces": "Total de Corridas",
+      "champions": "Últimos 5 Campeões",
+      "fastestPit": "Pit Stop Mais Rápido",
+      "fastestLap": "Volta Mais Rápida",
+      "topConstructor": "Construtor Dominante",
+      "mostWins": "Mais Vitórias",
+      "mostPoles": "Mais Poles",
+      "avgStart": "Largada Média",
+      "viewFull": "Circuito Completo →"
     }
   },
   "circuitDetail": {
@@ -110,6 +129,17 @@
     },
     "constructors": {
       "title": "Vitórias por Construtor"
+    },
+    "headToHead": {
+      "title": "Cara a Cara",
+      "driverA": "Piloto A",
+      "driverB": "Piloto B",
+      "vs": "vs",
+      "loading": "carregando…",
+      "racesTogether": "{count} corridas juntos aqui",
+      "ties": "{count} empates (ambos DNF)",
+      "noOverlap": "Sem corridas compartilhadas neste circuito.",
+      "prompt": "Selecione dois pilotos para comparar o histórico cara a cara neste circuito."
     },
     "nextRace": {
       "title": "Corrida 2026",
@@ -155,8 +185,10 @@
       "fastestLaps": "Voltas Rápidas",
       "season2026": "Temporada 2026",
       "era": "Era",
+      "careerArc": "Trajetória",
       "lastResults": "Últimos 5 Resultados",
-      "viewFull": "Ver perfil completo →"
+      "viewFull": "Ver perfil completo →",
+      "compare": "Comparar →"
     },
     "pagination": {
       "prev": "← Ant",
@@ -166,6 +198,7 @@
   },
   "driverDetail": {
     "breadcrumb": { "drivers": "Pilotos" },
+    "careerArc": { "title": "Trajetória" },
     "hero": {
       "label": "Piloto",
       "races": "Corridas",

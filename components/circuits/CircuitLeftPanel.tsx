@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { gsap } from 'gsap';
 import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
 import { Link } from '@/lib/i18n/navigation';
@@ -70,6 +71,7 @@ export default function CircuitLeftPanel({
   info: CircuitInfo;
   onClose: () => void;
 }) {
+  const t = useTranslations('circuits.panel');
   return (
     <div className="flex flex-col h-full bg-bg border-r border-border overflow-y-auto">
 
@@ -108,7 +110,7 @@ export default function CircuitLeftPanel({
       {/* ── First race + Total ────────────────────────────────────── */}
       <div className="flex divide-x divide-border border-b border-border shrink-0">
         <div className="flex-1 px-5 py-4">
-          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">First Race</p>
+          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">{t('firstRace')}</p>
           <p
             className="text-[2rem] text-text-1 leading-none tabular-nums"
             style={{ fontFamily: 'var(--pi-display)' }}
@@ -117,7 +119,7 @@ export default function CircuitLeftPanel({
           </p>
         </div>
         <div className="flex-1 px-5 py-4">
-          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">Total Races</p>
+          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">{t('totalRaces')}</p>
           <p
             className="text-[2rem] text-text-1 leading-none tabular-nums"
             style={{ fontFamily: 'var(--pi-display)' }}
@@ -132,7 +134,7 @@ export default function CircuitLeftPanel({
         <div className="border-b border-border shrink-0">
           <div className="px-5 py-2.5 flex items-baseline gap-2 border-b border-border">
             <span className="font-mono text-[10px] text-text-2">01 ·</span>
-            <span className="font-mono text-[11px] text-text-2 uppercase tracking-[0.06em]">Last 5 Champions</span>
+            <span className="font-mono text-[11px] text-text-2 uppercase tracking-[0.06em]">{t('champions')}</span>
           </div>
           {info.champions.map((c) => (
             <div key={c.year} className="flex items-center gap-3 px-5 h-9 border-b border-border last:border-0">
@@ -149,7 +151,7 @@ export default function CircuitLeftPanel({
         <div className="border-b border-border shrink-0">
           <div className="px-5 py-2.5 flex items-baseline gap-2 border-b border-border">
             <span className="font-mono text-[10px] text-text-2">02 ·</span>
-            <span className="font-mono text-[11px] text-text-2 uppercase tracking-[0.06em]">Fastest Pit Stop</span>
+            <span className="font-mono text-[11px] text-text-2 uppercase tracking-[0.06em]">{t('fastestPit')}</span>
           </div>
           <div className="px-5 py-3 flex items-center gap-3">
             <span className="text-[13px] text-text-1 flex-1 min-w-0 truncate">{info.fastest_pit.constructor}</span>
@@ -164,7 +166,7 @@ export default function CircuitLeftPanel({
         <div className="border-b border-border shrink-0">
           <div className="px-5 py-2.5 flex items-baseline gap-2 border-b border-border">
             <span className="font-mono text-[10px] text-text-2">03 ·</span>
-            <span className="font-mono text-[11px] text-text-2 uppercase tracking-[0.06em]">Fastest Lap</span>
+            <span className="font-mono text-[11px] text-text-2 uppercase tracking-[0.06em]">{t('fastestLap')}</span>
           </div>
           <div className="px-5 py-3 flex items-center gap-3">
             <span className="text-[13px] text-text-1 flex-1 min-w-0 truncate">
@@ -181,7 +183,7 @@ export default function CircuitLeftPanel({
         <div className="border-b border-border shrink-0">
           <div className="px-5 py-2.5 flex items-baseline gap-2 border-b border-border">
             <span className="font-mono text-[10px] text-text-2">04 ·</span>
-            <span className="font-mono text-[11px] text-text-2 uppercase tracking-[0.06em]">Top Constructor</span>
+            <span className="font-mono text-[11px] text-text-2 uppercase tracking-[0.06em]">{t('topConstructor')}</span>
           </div>
           <div className="px-5 py-3 flex items-center gap-3">
             <span className="text-[13px] text-text-1 flex-1 min-w-0 truncate">{info.top_constructor.name}</span>
@@ -195,7 +197,7 @@ export default function CircuitLeftPanel({
         <div className="border-b border-border shrink-0">
           <div className="px-5 py-2.5 flex items-baseline gap-2 border-b border-border">
             <span className="font-mono text-[10px] text-text-2">05 ·</span>
-            <span className="font-mono text-[11px] text-text-2 uppercase tracking-[0.06em]">Most Wins</span>
+            <span className="font-mono text-[11px] text-text-2 uppercase tracking-[0.06em]">{t('mostWins')}</span>
           </div>
           <div className="px-5 py-3 flex items-center gap-3">
             <span className="text-[13px] text-text-1 flex-1 min-w-0 truncate">
@@ -211,7 +213,7 @@ export default function CircuitLeftPanel({
         <div className="border-b border-border shrink-0">
           <div className="px-5 py-2.5 flex items-baseline gap-2 border-b border-border">
             <span className="font-mono text-[10px] text-text-2">06 ·</span>
-            <span className="font-mono text-[11px] text-text-2 uppercase tracking-[0.06em]">Most Poles</span>
+            <span className="font-mono text-[11px] text-text-2 uppercase tracking-[0.06em]">{t('mostPoles')}</span>
           </div>
           <div className="px-5 py-3 flex items-center gap-3">
             <span className="text-[13px] text-text-1 flex-1 min-w-0 truncate">
@@ -227,7 +229,7 @@ export default function CircuitLeftPanel({
         <div className="border-b border-border shrink-0">
           <div className="px-5 py-2.5 flex items-baseline gap-2 border-b border-border">
             <span className="font-mono text-[10px] text-text-2">07 ·</span>
-            <span className="font-mono text-[11px] text-text-2 uppercase tracking-[0.06em]">Avg. Start</span>
+            <span className="font-mono text-[11px] text-text-2 uppercase tracking-[0.06em]">{t('avgStart')}</span>
           </div>
           <div className="px-5 py-3">
             <span
@@ -247,7 +249,7 @@ export default function CircuitLeftPanel({
           className="font-mono text-[11px] uppercase tracking-[0.08em] transition-colors duration-150"
           style={{ color: 'var(--red)' }}
         >
-          Full Circuit →
+          {t('viewFull')}
         </Link>
       </div>
 

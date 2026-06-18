@@ -1,8 +1,13 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Link } from '@/lib/i18n/navigation';
 import type { DriverAllTimeRow } from '@/lib/types';
 import { flagGradient } from '@/lib/flagGradient';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export type EraKey = 'modern' | 'v8' | 'v10' | 'turbo' | 'classic';
 
@@ -129,9 +134,29 @@ function DriverCard({ driver, eraKey }: { driver: DriverAllTimeRow; eraKey: EraK
 interface EraGridProps {
   drivers: DriverAllTimeRow[];
   activeEra: 'all' | EraKey;
+  motionOk?: boolean;
 }
 
-export default function EraGrid({ drivers, activeEra }: EraGridProps) {
+export default function EraGrid({ drivers, activeEra, motionOk = false }: EraGridProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Each era section fades up as it enters — too many driver cards to stagger individually.
+  useEffect(() => {
+    if (!motionOk || !containerRef.current) return;
+    const ctx = gsap.context(() => {
+      gsap.utils.toArray<HTMLElement>('.era-section').forEach((section) => {
+        gsap.from(section, {
+          opacity: 0,
+          y: 16,
+          duration: 0.5,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: section, start: 'top 92%', once: true },
+        });
+      });
+    }, containerRef);
+    return () => ctx.revert();
+  }, [motionOk, activeEra]);
+
   // Group drivers by era (already sorted by wins desc from server)
   const byEra = new Map<EraKey, DriverAllTimeRow[]>();
   for (const era of ERA_ORDER) byEra.set(era, []);
@@ -154,14 +179,14 @@ export default function EraGrid({ drivers, activeEra }: EraGridProps) {
   }
 
   return (
-    <div className="flex flex-col">
+    <div ref={containerRef} className="flex flex-col">
       {erasToShow.map((eraKey) => {
         const eraDrivers = byEra.get(eraKey) ?? [];
         if (eraDrivers.length === 0) return null;
         const meta = ERA_META[eraKey];
 
         return (
-          <section key={eraKey} className="border-t border-border">
+          <section key={eraKey} className="era-section border-t border-border">
             {/* Era header */}
             <div className="flex items-baseline gap-3 px-5 py-3 flex-wrap">
               <h2

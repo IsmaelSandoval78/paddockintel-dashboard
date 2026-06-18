@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import type { DriverSelectorRow } from '@/lib/types';
 
 interface H2HResult {
@@ -16,6 +17,7 @@ export default function TrackDominancePanel({
   circuitId: number;
   drivers: DriverSelectorRow[];
 }) {
+  const t = useTranslations('circuitDetail.headToHead');
   const [driverA, setDriverA] = useState('');
   const [driverB, setDriverB] = useState('');
   const [result, setResult] = useState<H2HResult | null>(null);
@@ -51,6 +53,7 @@ export default function TrackDominancePanel({
 
   const pctA = result ? result.winsA / result.total : 0;
   const pctB = result ? result.winsB / result.total : 0;
+  const ties = result ? result.total - result.winsA - result.winsB : 0;
 
   return (
     <div className="px-6 py-5 flex flex-col gap-5">
@@ -61,9 +64,9 @@ export default function TrackDominancePanel({
           value={driverA}
           onChange={(e) => setDriverA(e.target.value)}
           className="font-mono text-[11px] uppercase tracking-[0.08em] bg-surface border border-border px-3 py-1.5 outline-none cursor-pointer appearance-none"
-          style={{ color: driverA ? '#E10600' : 'var(--text-3)', minWidth: '14ch' }}
+          style={{ color: driverA ? 'var(--red)' : 'var(--text-3)', minWidth: '14ch' }}
         >
-          <option value="">DRIVER A</option>
+          <option value="">{t('driverA').toUpperCase()}</option>
           {drivers.map((d) => (
             <option key={d.driver_ref} value={d.driver_ref}>
               {d.surname.toUpperCase()}{d.wins > 0 ? ` (${d.wins}W)` : ''}
@@ -71,15 +74,15 @@ export default function TrackDominancePanel({
           ))}
         </select>
 
-        <span className="font-mono text-[11px] text-text-3">vs</span>
+        <span className="font-mono text-[11px] text-text-3">{t('vs')}</span>
 
         <select
           value={driverB}
           onChange={(e) => setDriverB(e.target.value)}
           className="font-mono text-[11px] uppercase tracking-[0.08em] bg-surface border border-border px-3 py-1.5 outline-none cursor-pointer appearance-none"
-          style={{ color: driverB ? '#2A5DB0' : 'var(--text-3)', minWidth: '14ch' }}
+          style={{ color: driverB ? 'var(--team-redbull)' : 'var(--text-3)', minWidth: '14ch' }}
         >
-          <option value="">DRIVER B</option>
+          <option value="">{t('driverB').toUpperCase()}</option>
           {drivers.map((d) => (
             <option key={d.driver_ref} value={d.driver_ref}>
               {d.surname.toUpperCase()}{d.wins > 0 ? ` (${d.wins}W)` : ''}
@@ -88,7 +91,7 @@ export default function TrackDominancePanel({
         </select>
 
         {loading && (
-          <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">loading…</span>
+          <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">{t('loading')}</span>
         )}
       </div>
 
@@ -99,12 +102,12 @@ export default function TrackDominancePanel({
           {/* Score */}
           <div className="flex items-end gap-4">
             <div className="flex flex-col items-start">
-              <span className="font-mono text-[10px] uppercase tracking-[0.06em] mb-1" style={{ color: '#E10600' }}>
+              <span className="font-mono text-[10px] uppercase tracking-[0.06em] mb-1" style={{ color: 'var(--red)' }}>
                 {driverAObj?.surname.toUpperCase() ?? 'A'}
               </span>
               <span
                 className="tabular-nums leading-none"
-                style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2.5rem,5vw,4rem)', color: '#E10600' }}
+                style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2.5rem,5vw,4rem)', color: 'var(--red)' }}
               >
                 {result.winsA}
               </span>
@@ -118,19 +121,19 @@ export default function TrackDominancePanel({
             </span>
 
             <div className="flex flex-col items-start">
-              <span className="font-mono text-[10px] uppercase tracking-[0.06em] mb-1" style={{ color: '#2A5DB0' }}>
+              <span className="font-mono text-[10px] uppercase tracking-[0.06em] mb-1" style={{ color: 'var(--team-redbull)' }}>
                 {driverBObj?.surname.toUpperCase() ?? 'B'}
               </span>
               <span
                 className="tabular-nums leading-none"
-                style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2.5rem,5vw,4rem)', color: '#2A5DB0' }}
+                style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2.5rem,5vw,4rem)', color: 'var(--team-redbull)' }}
               >
                 {result.winsB}
               </span>
             </div>
 
             <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-2 ml-2">
-              {result.total} race{result.total !== 1 ? 's' : ''} together here
+              {t('racesTogether', { count: result.total })}
             </span>
           </div>
 
@@ -138,18 +141,18 @@ export default function TrackDominancePanel({
           <div className="flex h-1.5 w-full overflow-hidden bg-border" style={{ maxWidth: '320px' }}>
             <div
               className="h-full transition-all duration-500 ease-out"
-              style={{ width: `${pctA * 100}%`, backgroundColor: '#E10600' }}
+              style={{ width: `${pctA * 100}%`, backgroundColor: 'var(--red)' }}
             />
             <div
               className="h-full transition-all duration-500 ease-out"
-              style={{ width: `${pctB * 100}%`, backgroundColor: '#2A5DB0' }}
+              style={{ width: `${pctB * 100}%`, backgroundColor: 'var(--team-redbull)' }}
             />
           </div>
 
           {/* Ties */}
-          {result.total - result.winsA - result.winsB > 0 && (
+          {ties > 0 && (
             <span className="font-mono text-[10px] text-text-3">
-              {result.total - result.winsA - result.winsB} tie{result.total - result.winsA - result.winsB !== 1 ? 's' : ''} (both DNF)
+              {t('ties', { count: ties })}
             </span>
           )}
 
@@ -157,11 +160,11 @@ export default function TrackDominancePanel({
       )}
 
       {noOverlap && !loading && driverA && driverB && (
-        <p className="font-mono text-[12px] text-text-3">No shared races at this circuit.</p>
+        <p className="font-mono text-[12px] text-text-3">{t('noOverlap')}</p>
       )}
 
       {!driverA && !driverB && (
-        <p className="font-mono text-[11px] text-text-3">Select two drivers to compare their head-to-head record at this circuit.</p>
+        <p className="font-mono text-[11px] text-text-3">{t('prompt')}</p>
       )}
 
     </div>

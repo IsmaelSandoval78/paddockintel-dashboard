@@ -6,6 +6,7 @@ import { Link } from '@/lib/i18n/navigation';
 import { routing } from '@/lib/i18n/routing';
 import { DriverScorecardButton } from '@/components/scorecards/DriverScorecard';
 import CircuitRecordSection, { type CircuitRecord } from '@/components/drivers/CircuitRecordSection';
+import CareerArc from '@/components/drivers/CareerArc';
 import { flagGradient } from '@/lib/flagGradient';
 
 type PageParams = Promise<{ locale: string; slug: string }>;
@@ -629,6 +630,24 @@ export default async function DriverDetailPage({
 
       </div>
 
+      {/* ── Career arc — the shape of a career, before the chapters ── */}
+      {seasonRows.length > 1 && (
+        <div className="border-b border-border px-6 py-6">
+          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.1em] mb-3">
+            {t('careerArc.title')}
+          </p>
+          <CareerArc
+            data={[...seasonRows].reverse().map((r) => ({
+              year: r.year,
+              points: r.points,
+              position: r.position,
+            }))}
+            variant="full"
+            championshipYears={championshipYears}
+          />
+        </div>
+      )}
+
       {/* ── 01 · Stat band ───────────────────────────────────────── */}
       <div className="border-b border-border" style={{ background: '#1A1A1A' }}>
         <div className="grid grid-cols-3 md:grid-cols-6">
@@ -670,11 +689,11 @@ export default async function DriverDetailPage({
       </div>
 
       {/* ── Two-column grid: Seasons | Win History + Qualifying ─── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 border-b border-border" style={{ borderTop: '1px solid #D4D0C8' }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 border-b border-border" style={{ borderTop: '1px solid var(--border-subtle)' }}>
 
         {/* LEFT: 02 · Season by Season */}
         {seasonRows.length > 0 && (
-          <section style={{ borderRight: '1px solid #D4D0C8' }}>
+          <section style={{ borderRight: '1px solid var(--border-subtle)' }}>
             <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
               <span className="font-mono text-xs text-text-2 leading-none">02 ·</span>
               <h2 className="text-[13px] font-medium text-text-2">{t('seasons.title')}</h2>
@@ -700,7 +719,7 @@ export default async function DriverDetailPage({
                       <tr
                         key={row.year}
                         style={{
-                          borderBottom: '1px solid #D4D0C8',
+                          borderBottom: '1px solid var(--border-subtle)',
                           height: 40,
                           background: isChamp ? '#F0EDE6' : undefined,
                         }}

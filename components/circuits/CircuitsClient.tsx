@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 import { gsap } from 'gsap';
 import { SplitText } from 'gsap/SplitText';
-import type { Circuit, CircuitInfo } from '@/lib/types';
+import type { Circuit, CircuitInfo, CalendarStop } from '@/lib/types';
 import CircuitLeftPanel from './CircuitLeftPanel';
 import BottomSheet from '@/components/ui/BottomSheet';
 
@@ -46,9 +46,11 @@ async function fetchCircuitInfo(id: number): Promise<CircuitInfo | null> {
 export default function CircuitsClient({
   circuits,
   totalCount,
+  calendar2026,
 }: {
   circuits: Circuit[];
   totalCount: number;
+  calendar2026: CalendarStop[];
 }) {
   const t = useTranslations('circuits');
 
@@ -57,6 +59,20 @@ export default function CircuitsClient({
   const [isOpen,       setIsOpen]       = useState(false);
   const [activeRegion, setActiveRegion] = useState<Region>('all');
   const [loading,      setLoading]      = useState(false);
+  const [search,       setSearch]       = useState('');
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [flyTo, setFlyTo] = useState<{ lat: number; lng: number; nonce: number } | null>(null);
+
+  const searchMatches = search.trim()
+    ? circuits.filter((c) => {
+        const q = search.trim().toLowerCase();
+        return (
+          c.name.toLowerCase().includes(q) ||
+          c.location.toLowerCase().includes(q) ||
+          c.country.toLowerCase().includes(q)
+        );
+      }).slice(0, 8)
+    : [];
 
   const headerRef = useRef<HTMLDivElement>(null);
   const titleRef  = useRef<HTMLHeadingElement>(null);
@@ -94,6 +110,12 @@ export default function CircuitsClient({
 
   function handleRegion(region: Region) {
     setActiveRegion(region);
+  }
+
+  function handleSearchSelect(circuit: Circuit) {
+    setFlyTo((prev) => ({ lat: circuit.lat, lng: circuit.lng, nonce: (prev?.nonce ?? 0) + 1 }));
+    handleSelect(circuit);
+    setSearch('');
   }
 
   return (
@@ -136,6 +158,51 @@ export default function CircuitsClient({
             {label}
           </button>
         ))}
+        {calendar2026.length > 1 && (
+          <>
+            <div className="w-px h-4 shrink-0" style={{ background: 'var(--border-subtle)' }} />
+            <button
+              onClick={() => setShowCalendar((v) => !v)}
+              className="font-mono text-[11px] uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0 shrink-0 transition-colors duration-150"
+              style={{ color: showCalendar ? 'var(--red)' : 'var(--text-2)' }}
+            >
+              {t('calendar.toggle')}
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* ── Search row — own row, no clipping ancestors for the dropdown ── */}
+      <div className="h-9 px-5 border-b border-border flex items-center shrink-0 relative bg-bg">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder={t('search.placeholder')}
+          className="font-mono text-[11px] text-text-2 bg-transparent border-0 p-0 focus:outline-none placeholder:text-text-3 w-full max-w-[280px]"
+        />
+        {search.trim() && (
+          <div className="absolute left-5 top-full w-[300px] max-h-[260px] overflow-y-auto bg-bg border border-border">
+            {searchMatches.length > 0 ? (
+              searchMatches.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => handleSearchSelect(c)}
+                  className="w-full text-left px-3 py-2 hover:bg-surface-raised transition-colors duration-100 flex flex-col gap-0.5 border-b border-border last:border-0"
+                >
+                  <span className="text-[13px] text-text-1">{c.name}</span>
+                  <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">
+                    {c.location} · {c.country}
+                  </span>
+                </button>
+              ))
+            ) : (
+              <div className="px-3 py-3 font-mono text-[11px] text-text-3 uppercase tracking-[0.06em]">
+                {t('search.noResults')}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* ── Main: left panel + globe ─────────────────────────── */}
@@ -158,6 +225,9 @@ export default function CircuitsClient({
             onSelect={handleSelect}
             targetRegion={activeRegion}
             selectedId={selectedId}
+            flyTo={flyTo}
+            calendarRoute={calendar2026}
+            showCalendarRoute={showCalendar}
           />
         </div>
 
@@ -166,11 +236,11 @@ export default function CircuitsClient({
       {/* ── Legend ───────────────────────────────────────────── */}
       <div className="h-9 px-5 border-t border-border flex items-center gap-6 shrink-0 bg-bg">
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#E10600' }} />
+          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--red)' }} />
           <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">{t('legend.season')}</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#B5B4AE' }} />
+          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: 'var(--border-subtle)' }} />
           <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">{t('legend.historical')}</span>
         </div>
       </div>

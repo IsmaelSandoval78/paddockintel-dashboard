@@ -7,7 +7,7 @@ import { gsap } from 'gsap';
 import { feature } from 'topojson-client';
 import type { Topology, GeometryCollection } from 'topojson-specification';
 import type { FeatureCollection, Geometry, Feature } from 'geojson';
-import type { Circuit } from '@/lib/types';
+import type { Circuit, CalendarStop } from '@/lib/types';
 
 // ─── Constants ────────────────────────────────────────────────────
 
@@ -47,6 +47,31 @@ function toRot(lat: number, lng: number) {
     y: -Math.PI / 2 - lng * DEG,
     x: -lat * DEG * 0.45,
   };
+}
+
+// Spherical lerp between two surface points — interpolate unit directions, not raw
+// positions, so the path follows the globe surface (a great circle) instead of
+// cutting a straight chord through the interior.
+function slerpOnSphere(a: THREE.Vector3, b: THREE.Vector3, t: number, r: number): THREE.Vector3 {
+  return a.clone().multiplyScalar(1 - t).add(b.clone().multiplyScalar(t)).normalize().multiplyScalar(r);
+}
+
+const ROUTE_R = R * 1.03;
+const ROUTE_SEGMENTS_PER_LEG = 24;
+
+// The 2026 calendar as a flying lap across the world — same "draw a path" vocabulary
+// as TrackDraw, applied to the whole season instead of one circuit.
+function buildCalendarRoutePoints(stops: Array<{ lat: number; lng: number }>): THREE.Vector3[] {
+  const pts: THREE.Vector3[] = [];
+  for (let i = 0; i < stops.length - 1; i++) {
+    const a = toV3(stops[i].lat, stops[i].lng, 1);
+    const b = toV3(stops[i + 1].lat, stops[i + 1].lng, 1);
+    const startSeg = i === 0 ? 0 : 1; // skip duplicate junction point
+    for (let s = startSeg; s <= ROUTE_SEGMENTS_PER_LEG; s++) {
+      pts.push(slerpOnSphere(a, b, s / ROUTE_SEGMENTS_PER_LEG, ROUTE_R));
+    }
+  }
+  return pts;
 }
 
 // ─── Build globe geometry from TopoJSON (3D polygons, no UV/texture) ──
@@ -125,9 +150,14 @@ interface Props {
   onSelect: (circuit: Circuit) => void;
   targetRegion: string;
   selectedId: number | null;
+  flyTo?: { lat: number; lng: number; nonce: number } | null;
+  calendarRoute?: CalendarStop[];
+  showCalendarRoute?: boolean;
 }
 
-export default function GlobeClient({ circuits, onSelect, targetRegion, selectedId }: Props) {
+export default function GlobeClient({
+  circuits, onSelect, targetRegion, selectedId, flyTo, calendarRoute, showCalendarRoute,
+}: Props) {
   const containerRef  = useRef<HTMLDivElement>(null);
   const globeRef      = useRef<THREE.Group | null>(null);
   const rendererRef   = useRef<THREE.WebGLRenderer | null>(null);
@@ -138,6 +168,7 @@ export default function GlobeClient({ circuits, onSelect, targetRegion, selected
   const selIdRef      = useRef<number | null>(null);
   const dragRef       = useRef({ active: false, x: 0, y: 0, dist: 0 });
   const onSelectRef   = useRef(onSelect);
+  const routeLineRef  = useRef<THREE.Line | null>(null);
   useEffect(() => { onSelectRef.current = onSelect; }, [onSelect]);
 
   // ── Init scene (once) ──────────────────────────────────────────
@@ -195,6 +226,18 @@ export default function GlobeClient({ circuits, onSelect, targetRegion, selected
       meshMapRef.current.set(c.id, dot);
       dotCircuitRef.current.set(dot, c);
     });
+
+    // ── 2026 calendar route — the season as one continuous flying lap ──
+    if (calendarRoute && calendarRoute.length > 1) {
+      const sorted = [...calendarRoute].sort((a, b) => a.round - b.round);
+      const pts = buildCalendarRoutePoints(sorted);
+      const geo = new THREE.BufferGeometry().setFromPoints(pts);
+      const mat = new THREE.LineBasicMaterial({ color: 0x0a0a0a, transparent: true, opacity: 0.55 });
+      const line = new THREE.Line(geo, mat);
+      line.visible = !!showCalendarRoute;
+      globe.add(line);
+      routeLineRef.current = line;
+    }
 
     // ── Raycaster ──────────────────────────────────────────────────
     const rc    = new THREE.Raycaster();
@@ -302,6 +345,11 @@ export default function GlobeClient({ circuits, onSelect, targetRegion, selected
       globeRef.current    = null;
       meshMapRef.current.clear();
       dotCircuitRef.current.clear();
+      if (routeLineRef.current) {
+        routeLineRef.current.geometry.dispose();
+        (routeLineRef.current.material as THREE.Material).dispose();
+        routeLineRef.current = null;
+      }
     };
   }, [circuits]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -319,6 +367,25 @@ export default function GlobeClient({ circuits, onSelect, targetRegion, selected
       onComplete: () => { autoRotRef.current = true; },
     });
   }, [targetRegion]);
+
+  // ── Calendar route visibility toggle ───────────────────────────
+  useEffect(() => {
+    if (routeLineRef.current) routeLineRef.current.visible = !!showCalendarRoute;
+  }, [showCalendarRoute]);
+
+  // ── Search fly-to — same tween as region fly-to, targeted at one circuit ──
+  useEffect(() => {
+    if (!globeRef.current || !flyTo) return;
+    const { y, x } = toRot(flyTo.lat, flyTo.lng);
+    autoRotRef.current = false;
+    gsap.killTweensOf(globeRef.current.rotation);
+    gsap.to(globeRef.current.rotation, {
+      y, x,
+      duration: 1.5,
+      ease: 'power3.inOut',
+      onComplete: () => { autoRotRef.current = true; },
+    });
+  }, [flyTo]);
 
   // ── Selected circuit highlight ─────────────────────────────────
   useEffect(() => {

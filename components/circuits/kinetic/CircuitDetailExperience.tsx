@@ -7,6 +7,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Link } from '@/lib/i18n/navigation';
 import CircuitHero from './CircuitHero';
 import TrackDominancePanel from './TrackDominancePanel';
+import LapRecordArc from './LapRecordArc';
 import type { DriverSelectorRow } from '@/lib/types';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -312,6 +313,11 @@ export default function CircuitDetailExperience({
               </span>
             )}
           </div>
+          {lapEntries.length > 1 && (
+            <div className="px-6 py-5 border-b border-border">
+              <LapRecordArc data={lapEntries} />
+            </div>
+          )}
           <div className="lap-evo-list max-h-[480px] overflow-y-auto">
             {lapEntries.length > 0 ? (
               lapEntries.map((row) => (
@@ -385,7 +391,7 @@ export default function CircuitDetailExperience({
       <section className="circuit-section border-b border-border">
         <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
           <span className="font-mono text-xs text-text-2 leading-none">05 ·</span>
-          <h2 className="text-[13px] font-medium text-text-2">Track Dominance</h2>
+          <h2 className="text-[13px] font-medium text-text-2">{t('headToHead.title')}</h2>
         </div>
         <TrackDominancePanel circuitId={circuit.id} drivers={drivers} />
       </section>

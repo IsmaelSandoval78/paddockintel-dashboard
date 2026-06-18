@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { Link } from '@/lib/i18n/navigation';
 import type { DriverDetail } from '@/lib/types';
+import CareerArc from './CareerArc';
 
 function posLabel(pos: number | null): string {
   return pos !== null ? `P${pos}` : '—';
@@ -156,11 +157,24 @@ export default function InlineDriverPanel({
       </div>
       </div>
 
+      {/* ── Career arc ──────────────────────────────────────────── */}
+      {detail.career_arc.length > 0 && (
+        <div className="border-t border-border px-6 py-4">
+          <div className="flex items-baseline gap-2 mb-3">
+            <span className="font-mono text-xs text-text-2 leading-none">05 ·</span>
+            <span className="text-[13px] font-medium text-text-2 leading-none">
+              {t('careerArc')}
+            </span>
+          </div>
+          <CareerArc data={detail.career_arc} variant="compact" />
+        </div>
+      )}
+
       {/* ── Last 5 results ─────────────────────────────────────── */}
       {detail.last_5_results.length > 0 && (
         <div className="border-t border-border px-6 py-4">
           <div className="flex items-baseline gap-2 mb-3">
-            <span className="font-mono text-xs text-text-2 leading-none">05 ·</span>
+            <span className="font-mono text-xs text-text-2 leading-none">06 ·</span>
             <span className="text-[13px] font-medium text-text-2 leading-none">
               {t('lastResults')}
             </span>
@@ -195,12 +209,18 @@ export default function InlineDriverPanel({
       )}
 
       {/* ── CTA ────────────────────────────────────────────────── */}
-      <div className="px-6 py-3 border-t border-border">
+      <div className="px-6 py-3 border-t border-border flex items-center gap-5">
         <Link
           href={`/drivers/${detail.driver_ref}`}
           className="text-[13px] text-text-2 hover:text-red transition-colors duration-150"
         >
           {t('viewFull')}
+        </Link>
+        <Link
+          href={`/compare?type=drivers&a=${detail.driver_ref}`}
+          className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-3 hover:text-red transition-colors duration-150"
+        >
+          {t('compare')}
         </Link>
       </div>
 

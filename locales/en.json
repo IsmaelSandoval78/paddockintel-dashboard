@@ -78,6 +78,25 @@
       "asia": "Asia & Pacific",
       "africaMiddleEast": "Africa & Middle East",
       "oceania": "Oceania"
+    },
+    "search": {
+      "placeholder": "Search circuits",
+      "noResults": "No circuits found"
+    },
+    "calendar": {
+      "toggle": "2026 Calendar"
+    },
+    "panel": {
+      "firstRace": "First Race",
+      "totalRaces": "Total Races",
+      "champions": "Last 5 Champions",
+      "fastestPit": "Fastest Pit Stop",
+      "fastestLap": "Fastest Lap",
+      "topConstructor": "Top Constructor",
+      "mostWins": "Most Wins",
+      "mostPoles": "Most Poles",
+      "avgStart": "Avg. Start",
+      "viewFull": "Full Circuit →"
     }
   },
   "circuitDetail": {
@@ -110,6 +129,17 @@
     },
     "constructors": {
       "title": "Constructor Wins"
+    },
+    "headToHead": {
+      "title": "Head-to-Head",
+      "driverA": "Driver A",
+      "driverB": "Driver B",
+      "vs": "vs",
+      "loading": "loading…",
+      "racesTogether": "{count} races together here",
+      "ties": "{count} ties (both DNF)",
+      "noOverlap": "No shared races at this circuit.",
+      "prompt": "Select two drivers to compare their head-to-head record at this circuit."
     },
     "nextRace": {
       "title": "2026 Race",
@@ -155,8 +185,10 @@
       "fastestLaps": "Fastest Laps",
       "season2026": "2026 Season",
       "era": "Era",
+      "careerArc": "Career Arc",
       "lastResults": "Last 5 Results",
-      "viewFull": "View full profile →"
+      "viewFull": "View full profile →",
+      "compare": "Compare →"
     },
     "pagination": {
       "prev": "← Prev",
@@ -166,6 +198,7 @@
   },
   "driverDetail": {
     "breadcrumb": { "drivers": "Drivers" },
+    "careerArc": { "title": "Career Arc" },
     "hero": {
       "label": "Driver",
       "races": "Races",

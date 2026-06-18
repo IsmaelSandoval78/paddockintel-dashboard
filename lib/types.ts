@@ -81,6 +81,14 @@ export interface Circuit {
   is_active: boolean;
 }
 
+export interface CalendarStop {
+  round: number;
+  circuitId: number;
+  lat: number;
+  lng: number;
+  name: string;
+}
+
 export interface DriverRow {
   driver_id: number;
   forename: string;
@@ -161,6 +169,11 @@ export interface DriverDetail {
     year: number;
     position: number | null;
     points: number;
+  }>;
+  career_arc: Array<{
+    year: number;
+    points: number;
+    position: number | null;
   }>;
 }
 

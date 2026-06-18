@@ -45,8 +45,8 @@ export async function GET(
   const driver = driverRes.data;
   const latestRaceId = latestRaceRes.data ? (latestRaceRes.data.id as number) : null;
 
-  // Batch 2: last 5 results + 2026 standings (parallel)
-  const [last5Res, standings2026Res] = await Promise.all([
+  // Batch 2: last 5 results + 2026 standings + full standings history (parallel)
+  const [last5Res, standings2026Res, allStandingsRes] = await Promise.all([
     supabase
       .from('results')
       .select('race_id, position, points')
@@ -61,20 +61,27 @@ export async function GET(
           .eq('race_id', latestRaceId)
           .single()
       : Promise.resolve({ data: null, error: null }),
+    supabase
+      .from('driver_standings')
+      .select('race_id, position, points')
+      .eq('driver_id', driverId),
   ]);
 
   const last5 = last5Res.data ?? [];
   const last5RaceIds = last5.map((r) => r.race_id as number);
+  const allStandings = allStandingsRes.data ?? [];
+  const standingRaceIds = allStandings.map((s) => s.race_id as number);
+  const raceIdsForLookup = [...new Set([...last5RaceIds, ...standingRaceIds])];
 
-  // Batch 3: race names + constructor at latest race (parallel)
+  // Batch 3: race names/rounds + constructor at latest race (parallel)
   const [racesRes, latestConstructorRes] = await Promise.all([
-    last5RaceIds.length
+    raceIdsForLookup.length
       ? supabase
           .from('races')
-          .select('id, name, year')
-          .in('id', last5RaceIds)
+          .select('id, name, year, round')
+          .in('id', raceIdsForLookup)
       : Promise.resolve({
-          data: [] as { id: unknown; name: unknown; year: unknown }[],
+          data: [] as { id: unknown; name: unknown; year: unknown; round: unknown }[],
           error: null,
         }),
     latestRaceId
@@ -93,9 +100,36 @@ export async function GET(
   const raceMap = new Map(
     (racesRes.data ?? []).map((r) => [
       r.id as number,
-      { name: r.name as string, year: r.year as number },
+      { name: r.name as string, year: r.year as number, round: r.round as number },
     ])
   );
+
+  // Career arc: points/position at the season-finale race (highest round) per year
+  const seasonFinaleByYear = new Map<number, { raceId: number; round: number }>();
+  for (const s of allStandings) {
+    const race = raceMap.get(s.race_id as number);
+    if (!race) continue;
+    const cur = seasonFinaleByYear.get(race.year);
+    if (!cur || race.round > cur.round) {
+      seasonFinaleByYear.set(race.year, { raceId: s.race_id as number, round: race.round });
+    }
+  }
+  const standingByRaceId = new Map(
+    allStandings.map((s) => [
+      s.race_id as number,
+      { position: s.position as number, points: s.points as number },
+    ])
+  );
+  const careerArc = [...seasonFinaleByYear.entries()]
+    .map(([year, { raceId }]) => {
+      const standing = standingByRaceId.get(raceId);
+      return {
+        year,
+        points: standing?.points ?? 0,
+        position: standing?.position ?? null,
+      };
+    })
+    .sort((a, b) => a.year - b.year);
 
   const constructorId = (latestConstructorRes.data ?? [])[0]
     ?.constructor_id as number | undefined;
@@ -156,5 +190,6 @@ export async function GET(
     fastest_laps: stats.fastest_laps as number,
     season_2026,
     last_5_results: last5Results,
+    career_arc: careerArc,
   });
 }

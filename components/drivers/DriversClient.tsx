@@ -1,11 +1,15 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { gsap } from 'gsap';
+import { SplitText } from 'gsap/SplitText';
 import type { DriverSeasonRow, DriverAllTimeRow, DriverDetail } from '@/lib/types';
 import InlineDriverPanel from './InlineDriverPanel';
 import BottomSheet from '@/components/ui/BottomSheet';
 import EraGrid, { type EraKey } from './EraGrid';
+
+gsap.registerPlugin(SplitText);
 
 type View = '2026' | 'all';
 type EraFilter = 'all' | EraKey;
@@ -52,7 +56,7 @@ function SeasonRow({
       tabIndex={0}
       onKeyDown={(e) => e.key === 'Enter' && onClick()}
       aria-label={`${driver.forename} ${driver.surname}`}
-      className="flex items-center h-[52px] pr-5 cursor-pointer select-none"
+      className="drivers-season-row flex items-center h-[52px] pr-5 cursor-pointer select-none"
       style={{
         background: isP1 ? 'var(--surface-raised)' : selected ? 'var(--surface-raised)' : 'var(--bg)',
         borderLeft: isP1 ? '3px solid var(--red)' : '3px solid transparent',
@@ -146,7 +150,30 @@ export default function DriversClient({
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [detail, setDetail] = useState<DriverDetail | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [motionOk, setMotionOk] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+
+  // Header entrance animation — mirrors CircuitsClient
+  useEffect(() => {
+    const ok = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setMotionOk(ok);
+    if (!ok) return;
+    const ctx = gsap.context(() => {
+      document.fonts.ready.then(() => {
+        if (!titleRef.current) return;
+        const split = new SplitText(titleRef.current, { type: 'chars' });
+        gsap.set(titleRef.current, { visibility: 'visible' });
+        gsap.from(split.chars, { yPercent: 110, duration: 0.7, stagger: 0.04, ease: 'power4.out' });
+        gsap.from('.drivers-filter-btn', { opacity: 0, y: 6, duration: 0.4, stagger: 0.05, ease: 'power3.out', delay: 0.35 });
+        // y-only (no opacity): rows sit on a 1px-grid-line dark container — fading opacity
+        // would expose that background through still-hidden rows. Slide-up keeps it opaque throughout.
+        gsap.from('.drivers-season-row', { y: 10, duration: 0.4, stagger: 0.025, ease: 'power3.out', delay: 0.4 });
+      });
+    }, headerRef);
+    return () => ctx.revert();
+  }, []);
 
   const nationalities = [...new Set(allTime.map((d) => d.nationality))].sort();
 
@@ -197,14 +224,17 @@ export default function DriversClient({
     <main className="flex flex-col">
 
       {/* ── Page header ──────────────────────────────────────── */}
-      <div className="h-12 px-5 border-b border-border flex items-center gap-3 shrink-0">
+      <div ref={headerRef} className="h-12 px-5 border-b border-border flex items-center gap-3 shrink-0 overflow-hidden bg-bg">
         <span className="font-mono text-[10px] text-text-2 uppercase tracking-[0.1em]">03 ·</span>
-        <h1
-          className="text-[clamp(1.4rem,2vw,1.8rem)] uppercase leading-none tracking-[-0.03em]"
-          style={{ fontFamily: 'var(--pi-display)' }}
-        >
-          {t('title')}
-        </h1>
+        <div className="kinetic-mask shrink-0">
+          <h1
+            ref={titleRef}
+            className="text-[clamp(1.4rem,2vw,1.8rem)] uppercase leading-none tracking-[-0.03em]"
+            style={{ fontFamily: 'var(--pi-display)', visibility: 'hidden' }}
+          >
+            {t('title')}
+          </h1>
+        </div>
         <span className="font-mono text-[10px] text-text-3 tracking-[0.1em] uppercase ml-1">
           {t('count', { count: view === '2026' ? season2026.length : totalCount })}
         </span>
@@ -214,14 +244,14 @@ export default function DriversClient({
       <div className="h-9 px-5 border-b border-border flex items-center gap-5 shrink-0 overflow-x-auto">
         <button
           onClick={() => handleViewChange('2026')}
-          className="font-mono text-[11px] uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0 shrink-0"
+          className="drivers-filter-btn font-mono text-[11px] uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0 shrink-0"
           style={{ color: view === '2026' ? 'var(--red)' : 'var(--text-2)' }}
         >
           {t('view.season')}
         </button>
         <button
           onClick={() => handleViewChange('all')}
-          className="font-mono text-[11px] uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0 shrink-0"
+          className="drivers-filter-btn font-mono text-[11px] uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0 shrink-0"
           style={{ color: view === 'all' ? 'var(--red)' : 'var(--text-2)' }}
         >
           {t('view.allTime')}
@@ -314,7 +344,7 @@ export default function DriversClient({
 
       {/* ── Era grid (all-time view) ──────────────────────────── */}
       {view === 'all' && (
-        <EraGrid drivers={filtered} activeEra={activeEra} />
+        <EraGrid drivers={filtered} activeEra={activeEra} motionOk={motionOk} />
       )}
 
       {/* ── Inline driver panel — desktop only ───────────────── */}
