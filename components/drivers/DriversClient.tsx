@@ -158,6 +158,8 @@ export default function DriversClient({
   // Header entrance animation — mirrors CircuitsClient
   useEffect(() => {
     const ok = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Must run post-mount: matching SSR's default here would mismatch the client's real preference.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMotionOk(ok);
     if (!ok) return;
     const ctx = gsap.context(() => {

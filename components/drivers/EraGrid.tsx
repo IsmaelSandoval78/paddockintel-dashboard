@@ -197,7 +197,7 @@ export default function EraGrid({ drivers, activeEra, motionOk = false }: EraGri
                   letterSpacing: '-0.02em',
                 }}
               >
-                // {meta.label}
+                {'// '}{meta.label}
               </h2>
               <span className="font-mono text-[10px] text-text-2 uppercase tracking-[0.08em]">
                 {meta.subtitle}

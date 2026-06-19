@@ -39,12 +39,11 @@ export default function HubClient({ circuits, children }: Props) {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const id = params.get(CIRCUIT_PARAM);
-    if (id) {
-      const num = parseInt(id, 10);
-      if (!isNaN(num)) openPanel(num);
-    }
+    if (!id) return;
+    const num = parseInt(id, 10);
+    if (isNaN(num)) return;
+    fetchCircuitData(num).then(setCircuitInfo);
     // intentionally runs once on mount only
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleSelect(circuit: Circuit) {

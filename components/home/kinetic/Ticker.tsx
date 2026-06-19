@@ -27,10 +27,10 @@ export default function Ticker({ drivers, motionOk }: TickerProps) {
     `P${d.position} ${d.surname.toUpperCase()} ${d.points}`
   );
 
-  const Half = () => (
+  const renderHalf = (half: 0 | 1) => (
     <div className="flex items-center shrink-0">
       {feed.map((item, i) => (
-        <span key={i} className="flex items-center shrink-0">
+        <span key={`${half}-${i}`} className="flex items-center shrink-0">
           <span
             className="uppercase whitespace-nowrap px-5 md:px-7"
             style={{
@@ -55,8 +55,8 @@ export default function Ticker({ drivers, motionOk }: TickerProps) {
       aria-hidden="true"
     >
       <div ref={trackRef} className="flex w-max will-change-transform">
-        <Half />
-        <Half />
+        {renderHalf(0)}
+        {renderHalf(1)}
       </div>
     </div>
   );

@@ -41,6 +41,8 @@ export default function HomeExperience({
   useEffect(() => {
     const motionOk = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const isMobile = window.matchMedia('(pointer: coarse)').matches;
+    // Must run post-mount: matching SSR's default here would mismatch the client's real preference.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setEnv({ motionOk, isMobile });
   }, []);
 

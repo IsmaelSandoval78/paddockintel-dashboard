@@ -14,6 +14,10 @@ import type {
 
 type Mode = 'drivers' | 'constructors';
 
+const Loader = () => (
+  <span className="font-mono text-[11px] text-text-3 animate-pulse">···</span>
+);
+
 // ─── Team color map (for constructor dots) ────────────────────────
 const TEAM_COLORS: Record<string, string> = {
   mercedes:     'var(--team-mercedes)',
@@ -285,6 +289,7 @@ export default function CompareClient({
     const aRef = searchParams.get('a');
     const bRef = searchParams.get('b');
     if (type === 'constructors') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMode('constructors');
       if (aRef) setConstructorA(constructors.find((c) => c.constructor_ref === aRef) ?? null);
       if (bRef) setConstructorB(constructors.find((c) => c.constructor_ref === bRef) ?? null);
@@ -318,21 +323,26 @@ export default function CompareClient({
   }, []);
 
   useEffect(() => {
+    // fetchDriver sets loading state before its first await — the standard fetch-on-change pattern.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (mode === 'drivers' && driverA) fetchDriver(driverA.driver_ref, 'a');
     else setDataA(null);
   }, [driverA, mode, fetchDriver]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (mode === 'drivers' && driverB) fetchDriver(driverB.driver_ref, 'b');
     else setDataB(null);
   }, [driverB, mode, fetchDriver]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (mode === 'constructors' && constructorA) fetchConstructor(constructorA.constructor_ref, 'a');
     else setDataA(null);
   }, [constructorA, mode, fetchConstructor]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (mode === 'constructors' && constructorB) fetchConstructor(constructorB.constructor_ref, 'b');
     else setDataB(null);
   }, [constructorB, mode, fetchConstructor]);
@@ -379,8 +389,8 @@ export default function CompareClient({
     bSeason: CompareConstructorSeason;
   };
 
-  let teammateRows: TeammateRow[] = [];
-  let sharedSeasonRows: SharedSeasonRow[] = [];
+  const teammateRows: TeammateRow[] = [];
+  const sharedSeasonRows: SharedSeasonRow[] = [];
 
   if (bothSelected && dataA && dataB) {
     if (isDriverData(dataA) && isDriverData(dataB)) {
@@ -405,10 +415,6 @@ export default function CompareClient({
   }
 
   // ─── Rendering ───────────────────────────────────────────────────
-
-  const Loader = () => (
-    <span className="font-mono text-[11px] text-text-3 animate-pulse">···</span>
-  );
 
   return (
     <main className="flex flex-col">

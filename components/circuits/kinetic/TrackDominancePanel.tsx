@@ -25,7 +25,10 @@ export default function TrackDominancePanel({
   const [noOverlap, setNoOverlap] = useState(false);
 
   useEffect(() => {
+    // Resetting/loading state synchronously here is the standard fetch-on-dependency-change
+    // pattern (React docs "Fetching data" example) — there's no way to derive it during render.
     if (!driverA || !driverB || driverA === driverB) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setResult(null);
       setNoOverlap(false);
       return;

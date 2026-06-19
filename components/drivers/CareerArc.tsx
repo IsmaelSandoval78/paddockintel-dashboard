@@ -32,6 +32,8 @@ export default function CareerArc({
   const [motionOk, setMotionOk] = useState(false);
 
   useEffect(() => {
+    // Must run post-mount: matching SSR's default here would mismatch the client's real preference.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMotionOk(!window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   }, []);
 
