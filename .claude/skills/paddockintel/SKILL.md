@@ -12,6 +12,9 @@ Stack: Next.js 16 · TypeScript · Tailwind v4 · Supabase · GSAP 3.13+ · Thre
 
 **Brand position:** The only light F1 property. Darkness is everyone else's crutch.
 
+**Locale routing — `localePrefix: 'as-needed'` (decided 2026-06-23, Phase 1):**
+Default locale (`en`) carries no path prefix anywhere on the site — Hub is `/`, `/circuits`, etc. (not `/en/...`). `es`/`pt` keep their prefix (`/es/...`, `/pt/...`). This is **site-wide**, not a blog-only quirk: it exists so the 106 historical Ghost blog slugs (root-level, no locale prefix) land at the exact same path with zero redirect mapping. Route groups `(hub)` `(blog)` `(digest)` `(book)` all sit under `app/[locale]/` and inherit this. Configured once in `lib/i18n/routing.ts` — `Link`/`useRouter`/`usePathname` from `lib/i18n/navigation.ts` already handle it transparently, no per-component changes needed.
+
 ---
 
 ## 01 · CSS TOKENS (globals.css — never hardcode these values)
