@@ -14,7 +14,7 @@ Swiss Industrial Print. Confident, data-forward, zero ornamentation. Reads like 
 ## Typography
 - **Display/headlines** — Archivo Black. Section titles, hero numbers, KPI labels.
 - **Data/numbers** — JetBrains Mono. Stats, timestamps, lap times, anything tabular.
-- **Body/prose (NEW)** — Inter, regular weight, line-height 1.6+. Neither Archivo Black nor JetBrains Mono is built for paragraphs — don't force them into article bodies. This is the one true addition this version makes, because Blog and Book are the first surfaces with real long-form text.
+- **Body/prose (NEW)** — Lora, regular weight, line-height 1.6+. Neither Archivo Black nor JetBrains Mono is built for paragraphs — don't force them into article bodies. This is the one true addition this version makes, because Blog and Book are the first surfaces with real long-form text. Editorial serif over Inter — decided to give Blog/Book a distinct "reading" register from the Hub's data-forward UI.
 
 ## Neumorphism
 Reserved exclusively for Hub home KPI cards. Does not appear in Blog, Digest, or Book. If a future surface wants a "lifted" card, propose it explicitly — never default to it.
@@ -24,19 +24,19 @@ Reserved exclusively for Hub home KPI cards. Does not appear in Blog, Digest, or
 **Blog**
 - Max content width ~680-720px for readability
 - Header stats block in JetBrains Mono
-- Body in Inter
+- Body in Lora
 - Pull-quotes / Verdict section may use Archivo Black, but only for short callout lines — never full paragraphs
 
 **Digest**
 - Card-list layout
 - Headline: Inter, bold
 - Source chip: JetBrains Mono, small, uppercase
-- `our_summary`: Inter, regular
+- `our_summary`: Inter, regular (short-form, stays Inter — Lora is reserved for long-form reading surfaces only)
 
 **Book**
 - Page-like rhythm — wider margins than Blog
 - Chapter numbers in Archivo Black
-- Body in Inter
+- Body in Lora
 - Background may shift to pure white per "page" to differentiate from web chrome; accent red reserved for chapter dividers only
 
 ## Responsive breakpoints

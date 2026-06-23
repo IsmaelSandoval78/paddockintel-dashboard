@@ -24,7 +24,7 @@ Austrian GP: Fri June 26 – Sun June 28 (race 15:00 CEST / ~9:00 AM ET). Two-bl
 - [ ] That week's Digest issue assembled (Austria angle included) and sent
 
 ## Pending decisions — resolve before Phase 2 locks
-- [ ] Body/prose font: Inter vs. neo-serif editorial pairing (DESIGN.md currently defaults to Inter, not finalized)
+- [x] Body/prose font: **Lora** (neo-serif editorial), resolved 2026-06-22 — Blog/Book body text only; Digest `our_summary` stays Inter (short-form)
 
 ## Phase 0 — Recovery (in progress)
 - [x] Diagnosed Ghost(Pro) suspension cause (failed payment, missed notifications)
@@ -44,7 +44,7 @@ Austrian GP: Fri June 26 – Sun June 28 (race 15:00 CEST / ~9:00 AM ET). Two-bl
 - [ ] Uptime monitoring (e.g. UptimeRobot, free tier) on the live domain
 
 ## Phase 2 — Identity extension
-- [ ] DESIGN.md v0.3.0 finalized (body font decision locked)
+- [x] DESIGN.md v0.3.0 finalized (body font decision locked — Lora)
 - [ ] Bento grid applied to Digest card layout
 - [ ] Responsive behavior (375/768/1280) built into each component from the start, not patched on after
 - [ ] Share button component built once, reused on Digest + Blog cards
