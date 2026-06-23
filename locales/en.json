@@ -378,5 +378,13 @@
   "scorecard": {
     "share": "Share →",
     "download": "Download PNG"
+  },
+  "digest": {
+    "kicker": "Weekly Digest",
+    "sources": "Sources"
+  },
+  "book": {
+    "kicker": "Season",
+    "chapter": "Chapter"
   }
 }

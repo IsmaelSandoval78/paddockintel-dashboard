@@ -378,5 +378,13 @@
   "scorecard": {
     "share": "Compartir →",
     "download": "Descargar PNG"
+  },
+  "digest": {
+    "kicker": "Resumen Semanal",
+    "sources": "Fuentes"
+  },
+  "book": {
+    "kicker": "Temporada",
+    "chapter": "Capítulo"
   }
 }

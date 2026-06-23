@@ -35,17 +35,17 @@ Austrian GP: Fri June 26 – Sun June 28 (race 15:00 CEST / ~9:00 AM ET). Two-bl
 - [ ] Download feature images for at least the two critical articles while the site is live, before touching anything else
 
 ## Phase 1 — Repo & schema foundation
-- [ ] Restructure `paddockintel-dashboard` into route groups: `(hub)` `(blog)` `(digest)` `(book)`
-- [ ] Create `articles`, `digest_items`, `digest_issues` tables in the existing Supabase project
-- [ ] Build ingestion script: markdown + frontmatter → Supabase (`scripts/ingest-article.ts`)
-- [ ] Scaffold empty `redirects.json` — confirmed not needed for the 106 historical slugs (root-level structure matches exactly), kept only for future one-off slug changes
-- [ ] Set `trailingSlash: true` in `next.config` — Ghost served every URL with a trailing slash, Next.js must match exactly
-- [ ] Billing alerts on every paid service (Vercel, Supabase, Resend, Namecheap) routed to an inbox checked daily — not the same blind spot that missed the Ghost notice
-- [ ] Uptime monitoring (e.g. UptimeRobot, free tier) on the live domain
+- [x] Restructure `paddockintel-dashboard` into route groups: `(hub)` `(blog)` `(digest)` `(book)` — `(digest)/weekly/[issue-slug]` and `(book)/season/[year]` scaffolded 2026-06-22; `(book)` reads from `articles` (no own table, per SKILL.md), `(digest)` pages will 404 until `digest_items`/`digest_issues` exist (next item)
+- [x] Create `articles`, `digest_items`, `digest_issues` tables in the existing Supabase project — `articles` confirmed live (used by `(blog)`); `digest_items`/`digest_issues` recreated 2026-06-23 (`supabase/migrations/20260623000000_recreate_digest_tables.sql`) to match the columns `(digest)/weekly/[issue-slug]/page.tsx` actually queries — an earlier pass had created them with mismatched columns (`issue_number`/`synthesis`/`outlet` instead of `slug`/`intro_synthesis`/`source_name`), caught with 0 rows so no data was lost
+- [x] Build ingestion script: markdown + frontmatter → Supabase (`scripts/ingest-article.ts`)
+- [x] Scaffold empty `redirects.json` — confirmed not needed for the 106 historical slugs (root-level structure matches exactly), kept only for future one-off slug changes
+- [x] Set `trailingSlash: true` in `next.config` — Ghost served every URL with a trailing slash, Next.js must match exactly
+- [ ] Billing alerts on every paid service (Vercel, Supabase, Resend, Namecheap) routed to an inbox checked daily — not the same blind spot that missed the Ghost notice — **manual, needs Ismael in each dashboard** (no CLI/API key for any of these four in the repo); checklist handed off 2026-06-23
+- [ ] Uptime monitoring (e.g. UptimeRobot, free tier) on the live domain — **manual, needs Ismael** (new account signup); checklist handed off 2026-06-23
 
 ## Phase 2 — Identity extension
 - [x] DESIGN.md v0.3.0 finalized (body font decision locked — Lora)
-- [ ] Bento grid applied to Digest card layout
+- [x] Bento grid applied to Digest card layout — `(digest)/weekly/[issue-slug]/page.tsx` items now render as a card grid (1 col mobile, 2 col tablet, 3 col desktop), hard 1px borders, no shadow/radius; not yet visually verified in browser — `digest_issues`/`digest_items` have 0 rows, so every slug 404s until a real issue is seeded
 - [ ] Responsive behavior (375/768/1280) built into each component from the start, not patched on after
 - [ ] Share button component built once, reused on Digest + Blog cards
 - [ ] `/about` author page — real background, linked from every article and digest issue
@@ -111,5 +111,6 @@ Each circuit gets its own page (`/circuits/[circuit_id]`) combining historical E
 - Constructors detail page redesign
 - GSAP — only adopt on a specific page once a specific effect justifies it; never a global dependency
 - Motion.so Pro/Max for branded video — shelved after the Barcelona test (felt flat, no licensed F1 footage); revisit only if that footage/licensing problem gets solved
+- **Hyperframes** (hyperframes.heygen.com) evaluated 2026-06-23 as a possible alternative to the Remotion "Blueprint" standard for Phase 6 FastF1 motion pieces — HTML→video via headless Chrome/FFmpeg, native GSAP support (matches Hub's existing motion stack better than Remotion's React components), deterministic rendering, CLI-first/agent-friendly, Lambda/Cloud Run render adapters for batch automation. Not adopted — Remotion stays the locked standard; revisit only when Phase 6 actually starts, not before
 - Book: full-season assembly + PDF export
 - Digest: coverage-cluster mechanism (post-volume feature, not now)

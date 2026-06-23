@@ -76,6 +76,7 @@
   --font-serif: var(--pi-serif);
   --font-sans:  var(--pi-sans);
   --font-mono:  var(--pi-mono);
+  --font-prose: var(--pi-prose);      /* Lora — Blog/Book long-form body text */
 }
 
 *,

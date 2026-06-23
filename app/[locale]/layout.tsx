@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import { Archivo_Black, DM_Serif_Display, Inter, JetBrains_Mono } from 'next/font/google';
+import { Archivo_Black, DM_Serif_Display, Inter, JetBrains_Mono, Lora } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -37,6 +37,14 @@ const mono = JetBrains_Mono({
   display: 'swap',
 });
 
+const prose = Lora({
+  weight: ['400', '500'],
+  style: ['normal', 'italic'],
+  subsets: ['latin'],
+  variable: '--pi-prose',
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
   title: 'PaddockIntel',
   description: 'F1 economic and performance intelligence hub',
@@ -60,7 +68,7 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={`${display.variable} ${serif.variable} ${sans.variable} ${mono.variable}`}
+      className={`${display.variable} ${serif.variable} ${sans.variable} ${mono.variable} ${prose.variable}`}
     >
       <body>
         <NextIntlClientProvider messages={messages}>
