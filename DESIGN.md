@@ -1,231 +1,72 @@
-# PADDOCKINTEL · DESIGN.md
-# hub.paddockintel.com · Vol.02 · VELOCITY — Kinetic Editorial System
-# Motion-first. Light substrate. The WOW is choreography, not decoration.
+# PaddockIntel DESIGN.md v0.3.0
 
----
+Extends v0.2.0 (Hub-only) to govern all four surfaces: Hub, Blog, Digest, Book. One visual language everywhere — no separate "editorial skin," no separate "blog look."
 
-## 00 · PHILOSOPHY
+## Identity
+Swiss Industrial Print. Confident, data-forward, zero ornamentation. Reads like a technical print magazine, not a sports blog.
 
-VELOCITY is what happens when a Swiss editorial spread learns to move at 300 km/h.
+## Color
+- Background: `#F4F4F0` — off-white, warm paper tone
+- Accent: `#E61919` — racing red, used sparingly: links, active states, key callouts. Never as a large fill.
+- Text: near-black, not pure `#000` — softened for long-form reading in Blog/Book
+- Border-radius: `0` everywhere. No exceptions, on any surface.
 
-- The substrate stays **light** — we are the only F1 property that isn't black.
-  That is the brand. Darkness is everyone else's crutch.
-- The spectacle is **motion**: scroll-driven storytelling, kinetic type,
-  circuits that draw themselves, numbers that count, particles that react.
-- Every animation must encode meaning: speed, position, time, momentum.
-  If a motion doesn't map to an F1 concept, it doesn't ship.
-- Data is still the hero. Motion is how the data makes its entrance.
+## Typography
+- **Display/headlines** — Archivo Black. Section titles, hero numbers, KPI labels.
+- **Data/numbers** — JetBrains Mono. Stats, timestamps, lap times, anything tabular.
+- **Body/prose (NEW)** — Inter, regular weight, line-height 1.6+. Neither Archivo Black nor JetBrains Mono is built for paragraphs — don't force them into article bodies. This is the one true addition this version makes, because Blog and Book are the first surfaces with real long-form text.
 
-**The test:** mute the motion (prefers-reduced-motion) and the page must still
-be a flawless editorial layout. Motion is a layer, never a dependency.
+## Neumorphism
+Reserved exclusively for Hub home KPI cards. Does not appear in Blog, Digest, or Book. If a future surface wants a "lifted" card, propose it explicitly — never default to it.
 
----
+## Surface-specific layout notes
 
-## 01 · COLOR
+**Blog**
+- Max content width ~680-720px for readability
+- Header stats block in JetBrains Mono
+- Body in Inter
+- Pull-quotes / Verdict section may use Archivo Black, but only for short callout lines — never full paragraphs
 
-```
-Substrate            #FAFAF7   /* paper white — page base */
-Substrate raised     #F1F0EC   /* section alternates, cells */
-Ink                  #0A0A0A   /* near-black — text, borders */
-Ink muted            #6B6B6B   /* secondary — metadata, labels */
-Ink faint            #B5B4AE   /* tertiary — ghosts, placeholders */
-Race red             #E10600   /* official F1 red — THE accent */
-Race red dim         #FBE9E8   /* red wash for hover states */
-Grid ink             #0A0A0A   /* 1px divider gap background */
-```
+**Digest**
+- Card-list layout
+- Headline: Inter, bold
+- Source chip: JetBrains Mono, small, uppercase
+- `our_summary`: Inter, regular
 
-### Reglas
-- Race red earns: ticker strip, live dots, lap-record times, P1 markers,
-  cursor, scroll indicator. Never as large surface fill except the ticker.
-- Team colors: the only other chroma. Hairlines, border-lefts, particle
-  tints. Use darkened variants on light substrate (see TEAM_COLORS map).
-- Pure white #FFFFFF prohibited as page background. #FAFAF7 minimum warmth.
-- Dark surfaces: ONLY exportable scorecards. The hub never goes dark.
+**Book**
+- Page-like rhythm — wider margins than Blog
+- Chapter numbers in Archivo Black
+- Body in Inter
+- Background may shift to pure white per "page" to differentiate from web chrome; accent red reserved for chapter dividers only
 
----
+## Responsive breakpoints
+Mobile/tablet-first across every surface — Hub, Blog, Digest, Book all get checked at 375px, 768px, and 1280px minimum.
 
-## 02 · TYPOGRAPHY
+- **Phone (<768px)**: Bento grids → single column. Headlines use `clamp()`, never fixed `rem`. Blog/Book content → full-width with padding, no fixed max-width. Data tables → horizontal scroll or stacked card fallback. Nav → collapsed menu.
+- **Tablet (768-1024px)**: Bento grids → 2-column. Blog/Book max-width still relaxed, not yet the full 680-720px desktop column.
+- **Desktop (>1024px)**: Full layout as specified per surface above.
 
-| Role | Font | Spec |
-|---|---|---|
-| Kinetic display | Archivo Black | clamp(64px, 16vw, 240px) · lh 0.85 · ls -0.04em · uppercase |
-| Section titles | Archivo Black | clamp(28px, 5vw, 64px) · lh 0.9 · ls -0.03em · uppercase |
-| Data numbers | Archivo Black | tabular contexts · ls -0.03em |
-| Micro UI / labels | JetBrains Mono | 8–11px fixed · tracking 0.12–0.18em · uppercase |
-| Timing data | JetBrains Mono | tabular-nums always · lap times in race red |
-| Body (rare) | Inter | 400/500 · the hub speaks in labels, not paragraphs |
+## Share button component
+Appears on every Digest item card and Blog article preview card — same component, same position, everywhere.
 
-Kinetic display type is *meant* to be cropped, to bleed off-canvas, to
-overlap section borders. Scale discomfort = editorial confidence.
+- Shape: square, `0` border-radius, matches every other interactive element
+- Icon-only (share glyph), no label text
+- Mobile/tablet: triggers native OS share sheet via Web Share API — WhatsApp, Facebook, etc. appear automatically based on what's installed, no extra code needed
+- Desktop fallback (no Web Share API support): small flyout menu — copy link, X, Facebook, WhatsApp (via `wa.me/?text=` link, no SDK needed) — WhatsApp gets priority placement given the ES/PT audience in LatAm and Brazil — square corners, accent-red border on hover, no shadow
+- Color: text/icon in near-black by default, accent red `#E61919` only on hover/active state — same restraint rule as every other accent usage
 
----
+## Motion pieces (Remotion) — "Blueprint" standard
+Applies to any data-driven video composition (track dominance, season trends, etc.) — not a separate brand, the same Swiss Industrial Print discipline applied to motion.
 
-## 03 · MOTION SYSTEM (the core of VELOCITY)
+- **Background**: `#F4F4F0` with a subtle technical grid (graph-paper lines, barely darker than the base) — functional, not decorative. Communicates precision instead of decoration.
+- **Line drawing**: the track/path draws progressively (`stroke-dashoffset` animation), never appears all at once
+- **Dominance highlight**: the leading driver's segment renders in accent red `#E61919`, solid, hard edge — no blur, no glow, no gradient
+- **Secondary driver**: stays neutral black/gray — never a second saturated color. One real accent, same rule as everywhere else in the system
+- **Depth without darkness**: hard-offset shadows (no blur) on floating elements — same "sticker on paper" language as Hub cards, just applied to a moving element
+- **Measurement call-outs**: tick marks at segment start/end with a JetBrains Mono delta label (e.g. `|— Δ0.32s —|`) — styled like architectural dimension lines, grows naturally out of the grid background
+- **One stat at a time**: the largest element on screen is always a single number/label — never multiple competing call-outs
+- **Camera**: fixed top-down technical-drawing angle — no forced 3D perspective
+- **Easing**: organic acceleration/deceleration on every motion, never linear or hard-cut
 
-### Library stack
-- **GSAP 3.13+** (all plugins free): SplitText, ScrollTrigger, DrawSVGPlugin,
-  ScrambleTextPlugin. Register once per client tree.
-- **Three.js**: WebGL particle fields only. Dynamic import, `ssr: false`,
-  devicePixelRatio capped at 2, dispose everything on unmount.
-
-### Choreography vocabulary — every move maps to an F1 concept
-
-| Effect | F1 meaning | Implementation |
-|---|---|---|
-| Chars rise with stagger | grid lights out, one by one | SplitText chars, y:110%, stagger 0.035, power4.out |
-| Track draws itself | a flying lap | DrawSVGPlugin 0→100% scrubbed to scroll |
-| Numbers count up | the gap closing | gsap.to(obj) + expo.out, trigger on enter |
-| Scroll-velocity skew | g-force under braking | container skewY from ScrollTrigger velocity |
-| Infinite ticker | timing screen / pit wall feed | xPercent -50 loop, duplicated content |
-| Scramble text | timing monitor refresh | ScrambleTextPlugin on mono labels |
-| Warp particles | speed itself | Three.js points streaming past camera, scroll-reactive |
-| Parallax layers | depth of field at speed | data-depth transforms, deepest = fastest |
-
-### Timing rules
-- Entrances: 0.6–1.2s, power4.out / expo.out. Never linear, never bounce.
-- Scrubbed effects: tied to scroll position (scrub: true or scrub: 1).
-- Stagger range: 0.03–0.08s. More feels sluggish.
-- Nothing animates on loop except the ticker and particle fields.
-
-### Performance & accessibility gates (ship blockers)
-- 60fps on mid-range hardware. Animate only transform/opacity in DOM.
-- `prefers-reduced-motion: reduce` → kill ScrollTriggers, show final states,
-  render static fallback instead of WebGL.
-- Touch devices: no custom cursor, no mouse parallax, reduced particle count
-  (≤ 1/3 of desktop), all scroll reveals still work.
-- WebGL unavailable → static substrate. The page never breaks.
-- Zero layout shift: SplitText containers reserve height; counters use
-  tabular-nums; canvas is absolutely positioned.
-
----
-
-## 04 · HOME PAGE — THE EXPERIENCE
-
-One continuous scroll story. Each chapter = one data domain.
-
-```
-┌──────────────────────────────────────────────────┐
-│ 01 WARP HERO (100svh)                            │
-│    Three.js warp field · leader surname at 16vw  │
-│    SplitText entrance · counters · mouse parallax│
-│    scramble meta line · scroll cue               │
-├──────────────────────────────────────────────────┤
-│ 02 TICKER — race red strip, infinite marquee     │
-│    standings feed in Archivo Black               │
-├──────────────────────────────────────────────────┤
-│ 03 LAST RACE — track SVG draws on scroll (scrub) │
-│    podium rows stagger in, team-color borders    │
-├──────────────────────────────────────────────────┤
-│ 04 NEXT RACE — countdown in giant digits,        │
-│    track draws itself, lap record in red         │
-├──────────────────────────────────────────────────┤
-│ 05 THE GRID — top 10, velocity skew on scroll,   │
-│    ghost rank numerals, bars fill scrubbed,      │
-│    row hover: surname slides, color floods left  │
-├──────────────────────────────────────────────────┤
-│ 06 STREAKS — counters fire on enter              │
-├──────────────────────────────────────────────────┤
-│ 07 FOOTER — wordmark at viewport width           │
-└──────────────────────────────────────────────────┘
-```
-
-Custom cursor (desktop only): 6px race-red dot + 28px trailing ring,
-ring expands over interactive elements. `cursor: none` on body via class.
-
----
-
-## 05 · TEAM COLORS (darkened for light substrate)
-
-| Team | On-light hex |
-|---|---|
-| Mercedes | #00A99D |
-| Red Bull | #2A5DB0 |
-| Ferrari | #D40000 |
-| McLaren | #E57700 |
-| Aston Martin | #2D7A65 |
-| Alpine | #C04080 |
-| Williams | #2A7CB0 |
-| Haas | #6A6E70 |
-| Kick Sauber | #259825 |
-| Racing Bulls | #3A5EC4 |
-
----
-
-## 06 · DO NOT
-
-- No dark page backgrounds. The hub is light. Non-negotiable.
-- No motion without F1 meaning (no floating blobs, no aimless drift).
-- No scroll-jacking: native scroll position is sacred; we scrub, never hijack.
-- No layout shift from animation. Reserve space first.
-- No pie charts, no glassmorphism, no rounded-3xl, no gradients on data.
-- No animation library beyond GSAP + Three.js without asking.
-- No WebGL on the critical render path — hero text paints before canvas.
-
----
-
-## 07 · INTELLIGENCE SURFACES — INNER PAGES
-
-Circuits, Drivers, Constructors, Compare all share one structural grammar.
-
-### Page Header bar — 48px / `h-12`
-```
-┌─────────────────────────────────────────────────────────────┐
-│  02 ·  CIRCUITS  · 77 circuits            [loading…]        │
-└─────────────────────────────────────────────────────────────┘
-```
-- Section ID: `font-mono text-[10px] text-text-2 uppercase tracking-[0.1em]`
-- Title: Archivo Black, `clamp(1.4rem, 2vw, 1.8rem)`, uppercase, ls -0.03em
-  - Wrapped in `.kinetic-mask` + SplitText chars entrance (0.7s, stagger 0.04, power4.out)
-  - `visibility: hidden` until GSAP fires (no flash)
-- Count: `font-mono text-[10px] text-text-3 uppercase tracking-[0.1em]`
-- Loading state: mono `text-text-3 animate-pulse` pushed to `ml-auto`
-- Bottom edge: `border-b border-border`
-- Background: `bg-bg`
-
-### Filter Bar — 36px / `h-9`
-- Mono 11px uppercase tracking-[0.1em] buttons, no border, no bg
-- Active = `var(--red)`, inactive = `var(--text-1)`, transition 150ms
-- Filter buttons stagger-fade in (autoAlpha 0→1, y 6→0, 0.4s, stagger 0.05, delay 0.35s)
-- Overflow-x scrollable on mobile
-- Bottom edge: `border-b border-border`
-
-### Split Layout (desktop)
-```
-┌────────────────────┬────────────────────────────────────────┐
-│  Intelligence      │                                        │
-│  Panel             │   WebGL / Map surface                  │
-│  (0% → 42%)        │   (flex-1, takes remaining space)      │
-│  slide-in 300ms    │                                        │
-└────────────────────┴────────────────────────────────────────┘
-```
-- Panel opens on selection, `transition-[width] duration-300 ease-out`
-- Panel closed = `width: 0%`, open = `width: 42%`
-- Panel: `bg-bg border-r border-border overflow-y-auto`
-- Mobile: panel replaces map (BottomSheet) — never side-by-side
-
-### Intelligence Panel anatomy
-- **Header cell:** circuit/driver name in Archivo Black (clamp 1.1–1.4rem), mono meta line below
-  - Close button: `×` mono, `w-7 h-7`, text-text-3 → text-text-1 on hover
-- **Section headers:** `"NN ·" label` — mono 10px text-text-2, py-2.5, border-b
-- **Data rows:** `h-9 px-5`, 1px borders, value in text-text-1, label mono text-text-3 ml-auto
-- **Hero numbers:** Archivo Black `text-[2rem]` tabular-nums — first/total races, key stats
-- **Timing values:** font-mono text-[13px], ALWAYS in `var(--red)` for records and fastest laps
-- **CTA:** mt-auto, red link, font-mono 11px uppercase tracking-[0.08em]
-
-### Globe (Three.js) — paper map aesthetic
-```
-Ocean   #C0CDD4   muted editorial water — not blue-tech
-Land    #E5E3DC   warm paper, substrate match
-Border  #B5B4AE   text-3 hairline
-Active  #E10600   race red dot (R = 1.6% globe radius)
-History #B5B4AE   text-3 ghost dot (R = 1.1% globe radius)
-```
-- No atmosphere halo — decorative without F1 meaning
-- Canvas background: transparent — globe floats on `bg-bg` paper
-- Auto-rotation: 0.001 rad/frame; pauses on drag, resumes after 2s
-- Drag right = globe spins so eastern content comes to front (natural Earth rotation)
-- Fly-to on region filter: GSAP power3.inOut 1.5s
-
-### Bottom status strip — 36px / `h-9`
-- Legend dots + mono labels, separated by 1px border-border
-- `bg-bg shrink-0`
+## What does NOT change between surfaces
+Color palette, zero border-radius, accent-color discipline, Archivo Black reserved for headline-weight text only. These are the load-bearing walls — no surface drifts from them, even under deadline pressure.
