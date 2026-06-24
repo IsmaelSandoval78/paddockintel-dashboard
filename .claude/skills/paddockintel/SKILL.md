@@ -178,21 +178,23 @@ Never default to it on a new surface — propose explicitly if one wants a "lift
 | Role | CSS var | Tailwind class | Usage |
 |---|---|---|---|
 | Display/headlines | `var(--pi-display)` | `font-display` | Archivo Black — section titles, hero numbers, KPI labels, short callout lines only |
-| Body/prose | `var(--pi-sans)` | `font-sans` | Inter, regular weight, line-height 1.6+ — Blog/Book/Digest body copy, Hub UI labels |
+| UI / short-form | `var(--pi-sans)` | `font-sans` | Inter, regular weight — Hub UI labels, Digest `our_summary` (short-form only) |
+| Long-form prose | `var(--pi-prose)` | `font-prose` | Lora, regular/medium, line-height 1.6+ — Blog/Book body copy only |
 | Data/numbers | `var(--pi-mono)` | `font-mono` | JetBrains Mono — stats, timestamps, lap times, anything tabular |
 
 **Always** `tabular-nums` on any numeric column — body has `font-variant-numeric: tabular-nums` globally.
 **Never** DM Serif Display. Archivo Black for display weight only — never forced into paragraphs.
 
-Body font choice (Inter) is the current default per DESIGN.md but is flagged **pending/not finalized** in
-PHASES.md — revisit before Phase 2 locks if a neo-serif editorial pairing is proposed instead.
+Body font decision **locked 2026-06-22**: Lora for Blog/Book long-form reading surfaces (gives them a
+distinct "reading" register from the Hub's data-forward UI); Digest `our_summary` stays Inter since it's
+short-form. Wired via `next/font/google` in `app/[locale]/layout.tsx` (`--pi-prose` → `--font-prose`).
 
 **Surface-specific (DESIGN.md):**
-- **Blog** — max content width ~680-720px desktop; header stats in JetBrains Mono; body in Inter;
+- **Blog** — max content width ~680-720px desktop; header stats in JetBrains Mono; body in Lora;
   pull-quotes/Verdict may use Archivo Black for short lines only.
 - **Digest** — card-list layout; headline Inter bold; source chip JetBrains Mono small uppercase;
-  `our_summary` Inter regular.
-- **Book** — page-like rhythm, wider margins than Blog; chapter numbers Archivo Black; body Inter;
+  `our_summary` Inter regular (short-form, not Lora).
+- **Book** — page-like rhythm, wider margins than Blog; chapter numbers Archivo Black; body Lora;
   background may shift to pure white per "page"; accent red reserved for chapter dividers only.
 
 ---
