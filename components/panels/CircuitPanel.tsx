@@ -38,7 +38,7 @@ export default function CircuitPanel({ info, onClose }: Props) {
         {/* X close button */}
         <button
           onClick={onClose}
-          className="w-7 h-7 flex items-center justify-center rounded text-text-3 hover:text-text-1 hover:bg-surface-raised transition-colors duration-150 shrink-0 text-lg leading-none"
+          className="w-7 h-7 flex items-center justify-center rounded-none text-text-3 hover:text-text-1 hover:bg-surface-raised transition-colors duration-150 shrink-0 text-lg leading-none"
           aria-label="Close circuit panel"
         >
           ×

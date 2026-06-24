@@ -206,4 +206,5 @@ Minimum to ship: **4 on all five**. If any score < 4, iterate before moving on.
 - Do not use `rounded-3xl`, gradients, glassmorphism, or shadows on data surfaces
 - Do not use pie charts — use ranked lists
 ## Skills
-Before starting any task, read `skills/paddockintel/SKILL.md`.
+Before starting any task, read `.claude/skills/paddockintel/SKILL.md` (loaded automatically as the
+`paddockintel` skill). DESIGN.md is the source of truth for visual tokens.

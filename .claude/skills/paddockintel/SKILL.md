@@ -1,41 +1,149 @@
-# PaddockIntel · Project Skill v1.0
-# Read this before every task. It is the source of truth for patterns, tokens, and conventions.
+# PaddockIntel · Project Skill (canonical)
+# Read this before every task. Source of truth for route structure, data model, and implementation patterns.
+# DESIGN.md (repo root, v0.3.0) is the source of truth for visual tokens — Swiss Industrial Print —
+# and governs all four surfaces, including Hub. This file does not restate it; it implements it.
 
 ---
 
-## 00 · IDENTITY
+## 00 · IDENTITY & SURFACES
 
-**hub.paddockintel.com** — F1 economic and performance intelligence hub.
-Design language: **VELOCITY — Kinetic Editorial System** (DESIGN.md Vol.02, adopted 2026-06-12).
-Style category: Swiss Motion Editorial — International Typographic Style + interactive motion journalism.
-Stack: Next.js 16 · TypeScript · Tailwind v4 · Supabase · GSAP 3.13+ · Three.js · next-intl (EN/ES/PT).
+**paddockintel.com** — single Next.js application unifying four surfaces:
 
-**Brand position:** The only light F1 property. Darkness is everyone else's crutch.
+- **Hub** — F1 statistics: drivers/constructors/compare/circuits/scorecards (existing, live)
+- **Blog** — economic-angle editorial articles (replacing the suspended Ghost site)
+- **Digest** — curated weekly aggregator of external F1/F1-economics news with original synthesis on top
+- **Book** — collectible, chapter-based presentation of published articles + live data, no content of its own
+
+All four read from one Supabase project. Design language: **Swiss Industrial Print** (DESIGN.md v0.3.0) —
+confident, data-forward, zero ornamentation, zero border-radius, one visual language across every surface.
+Stack: Next.js 16 · TypeScript · Tailwind v4 · Supabase · next-intl (EN/ES/PT). GSAP/Three.js exist as
+established Hub patterns (§06–07) but are **not** a global dependency for new surfaces — see §06 note.
 
 **Locale routing — `localePrefix: 'as-needed'` (decided 2026-06-23, Phase 1):**
-Default locale (`en`) carries no path prefix anywhere on the site — Hub is `/`, `/circuits`, etc. (not `/en/...`). `es`/`pt` keep their prefix (`/es/...`, `/pt/...`). This is **site-wide**, not a blog-only quirk: it exists so the 106 historical Ghost blog slugs (root-level, no locale prefix) land at the exact same path with zero redirect mapping. Route groups `(hub)` `(blog)` `(digest)` `(book)` all sit under `app/[locale]/` and inherit this. Configured once in `lib/i18n/routing.ts` — `Link`/`useRouter`/`usePathname` from `lib/i18n/navigation.ts` already handle it transparently, no per-component changes needed.
+Default locale (`en`) carries no path prefix anywhere on the site — Hub is `/`, `/circuits`, etc. (not
+`/en/...`). `es`/`pt` keep their prefix (`/es/...`, `/pt/...`). This is site-wide, not a blog-only quirk —
+it exists so the 106 historical Ghost blog slugs (root-level, no locale prefix) land at the exact same
+path with zero redirect mapping. Route groups `(hub)` `(blog)` `(digest)` `(book)` all sit under
+`app/[locale]/` and inherit this. Configured once in `lib/i18n/routing.ts` — `Link`/`useRouter`/
+`usePathname` from `lib/i18n/navigation.ts` handle it transparently, no per-component changes needed.
 
 ---
 
-## 01 · CSS TOKENS (globals.css — never hardcode these values)
+## 01 · ROUTE STRUCTURE & DATA MODEL
+
+```
+app/[locale]/
+  (hub)/      drivers, constructors, compare, circuits, scorecards...   [existing]
+  (blog)/[slug]                                                         [new]
+  (digest)/weekly/[issue-slug]                                          [new]
+  (book)/season/[year]                                                  [new]
+```
+
+Shared across all groups: Supabase client, next-intl config, root layout, design tokens (DESIGN.md).
+Each group gets its own nested layout for surface-specific chrome (article width, digest card list,
+book pagination).
+
+**New Supabase tables (already created, Phase 1):**
+
+`articles` — `id, slug, title, meta_description, body (markdown), published_at, locale` + optional FKs
+(`race_id`, `driver_id`, `constructor_id`, `season_id` — lets an article reference live stats instead of
+hardcoded numbers) + `faq_items` (jsonb, for NewsArticle + FAQPage structured data)
+
+`digest_items` — `id, issue_id, source_name, source_url, headline, our_summary (1-2 sentences, original
+wording), entity_tags (text[]), published_at`
+
+`digest_issues` — `id, slug, published_at, intro_synthesis` (the original-analysis paragraph tying the
+week's items together)
+
+**Content ingestion:** write content locally with frontmatter → `scripts/ingest-article.ts` upserts into
+Supabase. No heavyweight CMS UI.
+```
+articles/2026-austria-gp-economic-impact.md  →  scripts/ingest-article.ts  →  Supabase
+```
+
+**FastF1 / telemetry rule:** FastF1 is Python — it never runs inside the Next.js/Vercel runtime. All
+telemetry computation (track dominance, tire degradation, upgrade ROI, teammate deltas, the proprietary
+pace index) happens in an offline batch script, run after each race weekend, that writes pre-calculated
+results into Supabase. Next.js pages only ever read from Supabase — same pattern as Ergast data, never a
+live call to FastF1 from the web app.
+
+---
+
+## 02 · EDITORIAL & OPERATING PRINCIPLES
+
+**Sourcing rule (absolute):** never invent data, URLs, IDs, or quotes. Always verify with search before
+including external information. Digest items use the numbered-source format:
+`1. [Outlet Name — description](url?ref=paddockintel.com)`. One quote max per source; default to
+paraphrase.
+
+**EEAT signals (required, not optional):**
+- `/about` or `/author/ismael-sandoval` — real, verifiable background. Every article and digest issue
+  links to it.
+- First-party data (proprietary FastF1-derived metrics — Driver Pace Index, circuit insights) is the
+  strongest EEAT asset in the project — surface it as the thing that makes the site citable, never bury
+  it as "just a Hub feature."
+
+**i18n for editorial content:** every article ships in EN/ES/PT simultaneously — not staggered. English
+is the source of truth (existing SEO equity lives there), but all three locales are written/reviewed with
+care, never machine-translated and left unchecked. `articles.locale` supports this without schema
+changes — each locale is its own row, its own review pass. hreflang tags across all three versions of
+each article, same pattern the Hub already uses for other pages.
+
+**Newsletter & distribution:** the Digest is one piece of content, two delivery formats — not two
+projects. Web: the `(digest)` route group page. Email: same `digest_items` data via Resend + React Email
+(React components double as templates). Needs an email capture component (input + button) feeding a
+subscriber table in Supabase — appears on Blog, Digest, and Hub pages.
+
+**Low-touch by design, selectively:**
+- Automated, no manual trigger: FastF1 batch pipeline (post-race-weekend cron), sitemap.xml + RSS
+  (build-time from Supabase), Digest email send (fires on `published` flag in Supabase, never manual
+  export/send)
+- Stays deliberately manual: article writing/economic analysis, digest item selection + synthesis
+  paragraph — full automation of curation is exactly how EEAT and trust erode into thin content
+
+**SEO continuity (non-negotiable — this is the recovery point):** Ghost served every article at the
+domain root with a trailing slash (e.g. `paddockintel.com/suzuka-2026-.../`, no `/blog/` prefix). The
+`(blog)/[slug]` route group lands at the same root path — **no redirect map needed** for the 106
+historical slugs. The one real requirement: `trailingSlash: true` in `next.config` (already set) so every
+article URL ends in `/` exactly like the old Ghost URLs. Every article ships with NewsArticle +
+BreadcrumbList + FAQPage schema, validated in Google Rich Results Test before publish. Title ≤ 60 chars,
+meta description ≤ 145 chars. `redirects.json` stays scaffolded for future one-off slug changes only.
+
+**Austria GP scope ladder — target Sun, June 28:** all three new surfaces live, scoped to MVP:
+1. Blog — one article on the Austria GP's economic angle, full schema, live at a real slug.
+2. Digest — one issue, 6-10 items, real verified sources, one synthesis paragraph. No coverage-cluster
+   mechanism yet — not earned at this content volume.
+3. Book — one chapter view rendering that article in book-style layout, typography only.
+Anything beyond this ladder before Austria is scope creep. Defer it.
+
+**Known tech debt — carry forward, don't block on:** Supabase PostgREST max-rows cap truncating
+Ferrari/McLaren at 1,000 rows · `middleware.ts` deprecation warning · Driver page polish (Season by
+Season align-items, Qualifying Record scroll, Russell nationality mapping) · Constructors detail page
+redesign.
+
+---
+
+## 03 · CSS TOKENS (globals.css — never hardcode these values)
+
+Aligned to DESIGN.md v0.3.0 — Swiss Industrial Print, governs Hub + Blog + Digest + Book.
 
 ```css
 /* Substrate */
---bg              #FAFAF7   /* page base — paper white */
---surface         #FAFAF7
---surface-raised  #F1F0EC   /* section alternates, cells */
+--bg              #F4F4F0   /* page base — warm off-white paper */
+--surface         #F4F4F0
+--surface-raised  #ECEBE6   /* section alternates, cells */
 
 /* Borders */
 --border          #0A0A0A   /* 1px divider — full weight */
 --border-subtle   #B5B4AE   /* ghost hairlines */
 
 /* Text hierarchy */
---text-1          #0A0A0A   /* primary — near black */
+--text-1          #0A0A0A   /* primary — near black, never pure #000 */
 --text-2          #6B6B6B   /* secondary — metadata, section labels */
 --text-3          #B5B4AE   /* tertiary — ghosts, placeholders */
 
 /* Accent */
---red             #E10600   /* official F1 race red */
+--red             #E61919   /* racing red — links, active states, key callouts. Never a large fill. */
 --red-dim         #FBE9E8   /* red wash for hover states */
 --gold            #C9A84C
 --gold-dim        #F5E8CC
@@ -46,27 +154,50 @@ Default locale (`en`) carries no path prefix anywhere on the site — Hub is `/`
 --ease            cubic-bezier(0.16, 1, 0.3, 1)
 --fast            100ms
 --base            150ms
+
+/* Shape */
+--radius          0          /* zero everywhere, no exceptions, on any surface */
 ```
 
-**Tailwind usage:** `bg-bg`, `text-text-1`, `text-text-2`, `text-text-3`, `text-red`, `border-border`, `border-border-subtle`, `bg-surface-raised`.
+**Tailwind usage:** `bg-bg`, `text-text-1`, `text-text-2`, `text-text-3`, `text-red`, `border-border`,
+`border-border-subtle`, `bg-surface-raised`. `rounded-none` (or no radius utility at all) everywhere.
+
+**Migration note:** Hub components currently reference `--bg: #FAFAF7` in `globals.css`. DESIGN.md v0.3.0
+intentionally extends to Hub (confirmed decision, 2026-06-24) — updating the single CSS variable in
+`globals.css` is the actual code change required to apply this; it has **not** been made yet. Audit any
+component with a hardcoded `rounded-*` (other than `rounded-none`) at the same time — zero-radius is a
+DESIGN.md hard rule the existing Hub may not yet satisfy everywhere.
+
+**Neumorphism:** reserved exclusively for Hub home KPI cards. Does not appear in Blog, Digest, or Book.
+Never default to it on a new surface — propose explicitly if one wants a "lifted" card.
 
 ---
 
-## 02 · FONTS
+## 04 · FONTS
 
 | Role | CSS var | Tailwind class | Usage |
 |---|---|---|---|
-| Kinetic display | `var(--pi-display)` | `font-display` | Archivo Black — all display type, numbers |
-| Body | `var(--pi-sans)` | `font-sans` | Inter — rare, labels only |
-| Mono / data | `var(--pi-mono)` | `font-mono` | JetBrains Mono — meta, timing, labels |
+| Display/headlines | `var(--pi-display)` | `font-display` | Archivo Black — section titles, hero numbers, KPI labels, short callout lines only |
+| Body/prose | `var(--pi-sans)` | `font-sans` | Inter, regular weight, line-height 1.6+ — Blog/Book/Digest body copy, Hub UI labels |
+| Data/numbers | `var(--pi-mono)` | `font-mono` | JetBrains Mono — stats, timestamps, lap times, anything tabular |
 
-**Always** use `style={{ fontFamily: 'var(--pi-display)' }}` for display type — Tailwind's `font-display` alias works too.
 **Always** `tabular-nums` on any numeric column — body has `font-variant-numeric: tabular-nums` globally.
-**Never** DM Serif Display (old system). Archivo Black only.
+**Never** DM Serif Display. Archivo Black for display weight only — never forced into paragraphs.
+
+Body font choice (Inter) is the current default per DESIGN.md but is flagged **pending/not finalized** in
+PHASES.md — revisit before Phase 2 locks if a neo-serif editorial pairing is proposed instead.
+
+**Surface-specific (DESIGN.md):**
+- **Blog** — max content width ~680-720px desktop; header stats in JetBrains Mono; body in Inter;
+  pull-quotes/Verdict may use Archivo Black for short lines only.
+- **Digest** — card-list layout; headline Inter bold; source chip JetBrains Mono small uppercase;
+  `our_summary` Inter regular.
+- **Book** — page-like rhythm, wider margins than Blog; chapter numbers Archivo Black; body Inter;
+  background may shift to pure white per "page"; accent red reserved for chapter dividers only.
 
 ---
 
-## 03 · GLOBAL CSS UTILITIES (globals.css)
+## 05 · GLOBAL CSS UTILITIES (globals.css)
 
 ```css
 .kinetic-mask       /* overflow:hidden display:block — wraps SplitText containers */
@@ -83,7 +214,14 @@ Default locale (`en`) carries no path prefix anywhere on the site — Hub is `/`
 
 ---
 
-## 04 · GSAP PATTERNS (the vocabulary — every pattern has an F1 meaning)
+## 06 · GSAP PATTERNS — Hub legacy cookbook
+
+**Scope note:** these patterns are already shipped across Hub (`components/home/kinetic/*`,
+`components/circuits/kinetic/*`). They remain valid documentation for maintaining that code. They are
+**not** the default for Blog/Digest/Book: per PHASES.md, "GSAP — only adopt on a specific page once a
+specific effect justifies it; never a global dependency." New surfaces should reach for CSS-native motion
+(scroll-driven animations, transitions, `prefers-reduced-motion` respected) first, and only dynamic-import
+GSAP on a specific page when a specific effect earns it.
 
 ### Register once per client tree
 ```tsx
@@ -192,7 +330,7 @@ return () => ctx.revert();
 
 ---
 
-## 05 · THREE.JS WARPFIELD (Hero background)
+## 07 · THREE.JS WARPFIELD (Hub Hero background only)
 
 `components/home/kinetic/WarpField.tsx` — dynamically imported `{ ssr: false }`.
 
@@ -205,11 +343,12 @@ Pattern: N line-segments (head + tail) travel toward camera along z-axis.
 - `devicePixelRatio` capped at 2
 - Always dispose: geometry, material, renderer on unmount
 
-Desktop density: 320. Mobile: 100.
+Desktop density: 320. Mobile: 100. Three.js is Hub-Hero-specific — do not introduce it on Blog/Digest/Book
+without the same justification bar as §06.
 
 ---
 
-## 06 · fitToWidth (kinetic display type — never wraps)
+## 08 · fitToWidth (kinetic display type — never wraps)
 
 `components/home/kinetic/fitText.ts`
 
@@ -225,7 +364,7 @@ Always set `whitespace-nowrap` and initial `fontSize: clamp(...)` as CSS fallbac
 
 ---
 
-## 07 · TEAM COLORS
+## 09 · TEAM COLORS
 
 `components/home/kinetic/teamColors.ts` — darkened for light substrate.
 
@@ -234,9 +373,11 @@ import { teamColor } from '@/components/home/kinetic/teamColors';
 const color = teamColor(driver.constructor_ref); // returns hex or #B5B4AE fallback
 ```
 
-Keys: `mercedes`, `mclaren`, `red_bull`, `ferrari`, `alpine`, `aston_martin`, `haas`, `williams`, `sauber` / `kick_sauber`, `rb` / `alphatauri`, `cadillac`, `audi`.
+Keys: `mercedes`, `mclaren`, `red_bull`, `ferrari`, `alpine`, `aston_martin`, `haas`, `williams`, `sauber`
+/ `kick_sauber`, `rb` / `alphatauri`, `cadillac`, `audi`.
 
-CSS vars also available: `--team-mercedes`, `--team-mclaren`, `--team-redbull`, `--team-ferrari`, `--team-alpine`, `--team-aston`, `--team-haas`, `--team-williams`, `--team-sauber`, `--team-rb`.
+CSS vars also available: `--team-mercedes`, `--team-mclaren`, `--team-redbull`, `--team-ferrari`,
+`--team-alpine`, `--team-aston`, `--team-haas`, `--team-williams`, `--team-sauber`, `--team-rb`.
 
 Team color usage:
 - `border-left` or `border-top` hairlines on cards/rows
@@ -247,7 +388,7 @@ Team color usage:
 
 ---
 
-## 08 · HOME PAGE ARCHITECTURE
+## 10 · HOME PAGE ARCHITECTURE (Hub)
 
 ```
 app/[locale]/page.tsx          — RSC, fetches all Supabase data, passes to HomeExperience
@@ -292,7 +433,7 @@ const isMobile = env?.isMobile ?? true;
 
 ---
 
-## 09 · INNER PAGES GRAMMAR (Circuits, Drivers, Constructors, Compare)
+## 11 · INNER PAGES GRAMMAR (Circuits, Drivers, Constructors, Compare)
 
 **Page Header — `h-12` (48px):**
 ```
@@ -319,9 +460,12 @@ Title: Archivo Black `clamp(1.4rem, 2vw, 1.8rem)` uppercase ls -0.03em, wrapped 
 - Timing / fastest lap values: `font-mono text-[13px]` **always** `color: var(--red)`
 - CTA: mt-auto, red link, font-mono 11px uppercase tracking-[0.08em]
 
+All panel/card edges: zero border-radius (DESIGN.md hard rule) — flag and fix any `rounded-*` other than
+`rounded-none` found in these components.
+
 ---
 
-## 10 · TYPOGRAPHY SCALE (display type)
+## 12 · TYPOGRAPHY SCALE (display type)
 
 | Context | Size | Letter-spacing | Line-height |
 |---|---|---|---|
@@ -338,7 +482,7 @@ Mono labels: always `uppercase`, `tracking-[0.1em]–[0.2em]`, `text-[8px]–[11
 
 ---
 
-## 11 · MOTION TIMING RULES
+## 13 · MOTION TIMING RULES
 
 | Type | Duration | Ease |
 |---|---|---|
@@ -355,7 +499,7 @@ Stagger range: 0.02–0.08s. ScrollTrigger start: `'top 82%'–'top 92%'`. Alway
 
 ---
 
-## 12 · SUPABASE QUERY CONVENTIONS
+## 14 · SUPABASE QUERY CONVENTIONS
 
 - Server-side only: `createClient()` from `@/lib/supabase/server` in `app/api/` routes and RSC pages
 - Aggregated stats: always prefer `driver_stats` / `constructor_stats` over joins
@@ -366,7 +510,27 @@ Stagger range: 0.02–0.08s. ScrollTrigger start: `'top 82%'–'top 92%'`. Alway
 
 ---
 
-## 13 · CRITIQUE GATE (before shipping any component)
+## 15 · RESPONSIVE & SHARING RULES (every surface)
+
+**Responsive — mobile/tablet-first, non-negotiable.** Every new surface gets checked at minimum 375px
+(phone), 768px (tablet), 1280px (desktop) before it's considered done:
+- Bento grid (Hub home, Digest cards) collapses to single column on phone, 2-col on tablet
+- Headline sizes use `clamp()` for fluid scaling — fixed `rem` breaks Archivo Black hero size at 375px
+- Blog/Book max-width (680-720px) only applies above tablet breakpoint; full-width with side padding on phone
+- Data tables (JetBrains Mono) get horizontal scroll or a stacked/card fallback on phone — never
+  shrink-to-fit a 10-column table
+- Nav collapses to a menu below tablet breakpoint
+
+**Sharing — every card needs a share action.** Digest item cards and Blog article preview cards both get
+a share button: square, zero border-radius, icon-only, consistent position across all card types.
+- Mobile/tablet: native Web Share API (`navigator.share`) — opens the OS share sheet directly
+- Desktop fallback (no Web Share API support): small flyout menu — copy link, X, Facebook, WhatsApp
+  (`wa.me/?text=` link, no SDK) — WhatsApp gets priority placement given the ES/PT LatAm/Brazil audience
+- Color: near-black by default, accent red only on hover/active — same restraint rule as everywhere else
+
+---
+
+## 16 · CRITIQUE GATE (before shipping any component)
 
 Score 1–5. Minimum 4 on all six to ship.
 
@@ -381,18 +545,20 @@ Score 1–5. Minimum 4 on all six to ship.
 
 ---
 
-## 14 · DO NOT LIST (project-wide)
+## 17 · DO NOT LIST (project-wide)
 
-- No dark page backgrounds — ever. `#FAFAF7` minimum.
+- No dark page backgrounds — ever. `#F4F4F0` minimum.
+- No border-radius anywhere, on any surface. No exceptions.
 - No motion without F1 meaning (no floating blobs, aimless drift, decorative pulse).
 - No scroll-jacking — scrub ScrollTrigger, never override `window.scrollY`.
 - No layout shift from animation — SplitText containers must reserve height.
-- No pie charts, no glassmorphism, no `rounded-3xl`, no gradients on data surfaces.
+- No pie charts, no glassmorphism, no gradients on data surfaces.
 - No `any` TypeScript type.
 - No hardcoded F1 data that exists in Supabase.
 - No Leaflet imported at top level — always `dynamic(() => import(...), { ssr: false })`.
-- No `inline styles` with raw hex — use CSS vars.
-- No GSAP plugins beyond the registered set without asking.
+- No inline styles with raw hex — use CSS vars.
+- No GSAP/Three.js adopted on Blog/Digest/Book without a specific effect justifying it — never a global
+  dependency on new surfaces (existing Hub usage is documented in §06–07, not a precedent to extend by default).
 - No WebGL on the critical render path — hero text paints before canvas.
-- No pie charts. Ranked lists only.
 - No new npm dependencies without asking.
+- No invented data, URLs, IDs, or quotes — verify with search before including external information.

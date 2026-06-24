@@ -10,11 +10,11 @@
 }
 
 :root {
-  /* Backgrounds — paper substrate (VELOCITY) */
-  --bg:              #FAFAF7;
-  --surface:         #FAFAF7;
-  --surface-raised:  #F1F0EC;
-  --surface-overlay: #F1F0EC;
+  /* Backgrounds — Swiss Industrial Print paper substrate (DESIGN.md v0.3.0) */
+  --bg:              #F4F4F0;
+  --surface:         #F4F4F0;
+  --surface-raised:  #ECEBE6;
+  --surface-overlay: #ECEBE6;
 
   /* Borders — ink weight */
   --border:          #0A0A0A;
@@ -25,8 +25,8 @@
   --text-2:          #6B6B6B;
   --text-3:          #706E6D;
 
-  /* Accent — official F1 race red */
-  --red:             #E10600;
+  /* Accent — racing red (DESIGN.md v0.3.0) */
+  --red:             #E61919;
   --red-dim:         #FBE9E8;
   --gold:            #C9A84C;
   --gold-dim:        #F5E8CC;
@@ -152,7 +152,7 @@ body {
 
 .leaflet-bar {
   border: 1px solid var(--border) !important;
-  border-radius: 4px !important;
+  border-radius: 0 !important;
   box-shadow: none !important;
 }
 .leaflet-control-zoom a {
