@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
+import { Link } from '@/lib/i18n/navigation';
+import ShareButton from '@/components/ui/ShareButton';
 
 export const revalidate = 3600;
 
@@ -35,15 +37,24 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
 
   return (
     <main className="bg-bg min-h-screen px-5 py-12 max-w-2xl mx-auto">
-      <h1
-        className="text-[2rem] uppercase text-text-1"
-        style={{ fontFamily: 'var(--pi-display)' }}
-      >
-        {article.title as string}
-      </h1>
+      <div className="flex items-start justify-between gap-4">
+        <h1
+          className="text-[2rem] uppercase text-text-1"
+          style={{ fontFamily: 'var(--pi-display)' }}
+        >
+          {article.title as string}
+        </h1>
+        <ShareButton url={`/${locale === 'en' ? '' : locale + '/'}${slug}`} title={article.title as string} className="shrink-0 mt-1" />
+      </div>
       <article className="mt-8 whitespace-pre-wrap font-sans text-text-1">
         {article.body_markdown as string}
       </article>
+      <p className="mt-12 pt-6 border-t border-border-subtle font-mono text-[11px] uppercase tracking-[0.06em] text-text-3">
+        Written by{' '}
+        <Link href="/about" className="text-text-1 hover:text-red transition-colors duration-150">
+          Ismael Sandoval
+        </Link>
+      </p>
     </main>
   );
 }
