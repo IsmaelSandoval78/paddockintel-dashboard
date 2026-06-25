@@ -30,8 +30,8 @@ export default async function Navbar() {
 
   return (
     <nav className="bg-bg border-b border-border sticky top-0 z-50 shrink-0">
-      {/* Desktop — hidden below md breakpoint */}
-      <div className="h-12 px-5 gap-8 hidden md:flex items-center">
+      {/* Desktop — hidden below lg breakpoint (md/768 doesn't have room for brand + links + Vol/Rd + locale switcher) */}
+      <div className="h-12 px-5 gap-8 hidden lg:flex items-center">
         <Link href="/" className="shrink-0 flex items-center">
           <span className="font-sans font-bold text-sm tracking-wider text-text-1">PADDOCK</span>
           <span className="font-sans font-bold text-sm text-red">·</span>

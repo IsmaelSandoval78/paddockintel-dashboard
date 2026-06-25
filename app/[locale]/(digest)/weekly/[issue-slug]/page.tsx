@@ -61,9 +61,9 @@ export default async function DigestIssuePage({ params }: { params: PageParams }
         {t('sources')}
       </h2>
 
-      <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-border-subtle border border-border-subtle">
+      <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border-t border-l border-border-subtle">
         {items.map((item) => (
-          <li key={item.id as string} className="bg-bg p-5 flex flex-col gap-2">
+          <li key={item.id as string} className="bg-bg border-r border-b border-border-subtle p-5 flex flex-col gap-2">
             <span className="font-mono text-[11px] uppercase tracking-wide text-text-2">
               {item.source_name as string}
             </span>
