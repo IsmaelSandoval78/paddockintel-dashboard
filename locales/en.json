@@ -381,7 +381,22 @@
   },
   "digest": {
     "kicker": "Weekly Digest",
-    "sources": "Sources"
+    "sources": "Sources",
+    "index": {
+      "description": "Verified sources. Original synthesis. No wire-service summaries — every issue has a first-person economic angle on what happened in and around F1.",
+      "issues": "issues",
+      "issue": "issue",
+      "noIssues": "No issues published yet.",
+      "read": "Read →"
+    }
+  },
+  "newsletter": {
+    "button": "Subscribe",
+    "placeholder": "your@email.com",
+    "loading": "…",
+    "success": "✓ Subscribed",
+    "error": "Try again",
+    "legal": "By subscribing you agree to the privacy policy."
   },
   "book": {
     "kicker": "Season",

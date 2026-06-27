@@ -381,7 +381,22 @@
   },
   "digest": {
     "kicker": "Resumo Semanal",
-    "sources": "Fontes"
+    "sources": "Fontes",
+    "index": {
+      "description": "Fontes verificadas. Síntese original. Sem resumos de agência — cada edição traz uma análise econômica em primeira pessoa sobre o que acontece na e ao redor da Fórmula 1.",
+      "issues": "edições",
+      "issue": "edição",
+      "noIssues": "Nenhuma edição publicada ainda.",
+      "read": "Ler →"
+    }
+  },
+  "newsletter": {
+    "button": "Assinar",
+    "placeholder": "seu@email.com",
+    "loading": "…",
+    "success": "✓ Assinado",
+    "error": "Tente novamente",
+    "legal": "Ao assinar você concorda com a política de privacidade."
   },
   "book": {
     "kicker": "Temporada",

@@ -9,3 +9,4 @@ grant select, insert, update, delete on digest_items to service_role;
 
 grant select on digest_issues to anon, authenticated;
 grant select on digest_items to anon, authenticated;
+
