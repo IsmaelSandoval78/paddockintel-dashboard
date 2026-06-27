@@ -320,6 +320,8 @@ export interface HomeDriverRow {
   constructor_name: string;
   podiums: number;
   win_rate: number; // career wins / career races (0–1)
+  nationality: string;
+  poles_2026: number;
 }
 
 export interface HomeConstructorOfDay {

@@ -105,6 +105,7 @@ async function getHomeData(): Promise<{
     allTimeDriverRes,
     allTimeConstructorRes,
     nextRaceQualiRes,
+    poles2026Res,
   ] = await Promise.all([
     nextRaceRaw
       ? supabase
@@ -195,6 +196,13 @@ async function getHomeData(): Promise<{
           }>,
           error: null,
         }),
+    races2026Ids.length > 0
+      ? supabase
+          .from('qualifying')
+          .select('driver_id')
+          .in('race_id', races2026Ids)
+          .eq('position', 1)
+      : Promise.resolve({ data: [] as Array<{ driver_id: number }>, error: null }),
   ]);
 
   // ── Build base lookup maps ───────────────────────────────────────
@@ -393,9 +401,15 @@ async function getHomeData(): Promise<{
         podiums: (s.podiums as number) ?? 0,
         wins: s.wins as number,
         races: s.races as number,
+        nationality: (s.nationality as string | null) ?? '',
       },
     ])
   );
+
+  const poles2026Map = new Map<number, number>();
+  for (const q of (poles2026Res.data ?? []) as Array<{ driver_id: number }>) {
+    poles2026Map.set(q.driver_id, (poles2026Map.get(q.driver_id) ?? 0) + 1);
+  }
 
   const topDrivers: HomeDriverRow[] = (driverStandRes.data ?? []).flatMap((s) => {
     const d = driverMap.get(s.driver_id as number);
@@ -418,6 +432,8 @@ async function getHomeData(): Promise<{
         constructor_name: c?.name ?? '',
         podiums: career?.podiums ?? 0,
         win_rate: career && career.races > 0 ? career.wins / career.races : 0,
+        nationality: career?.nationality ?? '',
+        poles_2026: poles2026Map.get(s.driver_id as number) ?? 0,
       },
     ];
   });

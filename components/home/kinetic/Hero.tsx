@@ -6,7 +6,6 @@ import { gsap } from 'gsap';
 import { SplitText } from 'gsap/SplitText';
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 import { teamColor } from './teamColors';
-import { fitToWidth, observeFit } from './fitText';
 import type { HomeDriverRow } from '@/lib/types';
 
 gsap.registerPlugin(SplitText, ScrambleTextPlugin);
@@ -22,30 +21,20 @@ interface HeroProps {
 }
 
 export default function Hero({ leader, round, year, motionOk, isMobile }: HeroProps) {
-  const rootRef     = useRef<HTMLElement>(null);
-  const metaRef     = useRef<HTMLParagraphElement>(null);
-  const numberRef   = useRef<HTMLSpanElement>(null);
-  const forenameRef = useRef<HTMLParagraphElement>(null);
-  const surnameRef  = useRef<HTMLHeadingElement>(null);
-  const ptsRef      = useRef<HTMLSpanElement>(null);
-  const winsRef     = useRef<HTMLSpanElement>(null);
-  const statsRef    = useRef<HTMLDivElement>(null);
-  const cueRef      = useRef<HTMLDivElement>(null);
+  const rootRef      = useRef<HTMLElement>(null);
+  const metaRef      = useRef<HTMLParagraphElement>(null);
+  const numberRef    = useRef<HTMLSpanElement>(null);
+  const surnameRef   = useRef<HTMLHeadingElement>(null);
+  const constructorRef = useRef<HTMLParagraphElement>(null);
+  const statsRef     = useRef<HTMLDivElement>(null);
+  const ptsRef       = useRef<HTMLSpanElement>(null);
+  const winsRef      = useRef<HTMLSpanElement>(null);
+  const polesRef     = useRef<HTMLSpanElement>(null);
+  const cueRef       = useRef<HTMLDivElement>(null);
 
   const color = teamColor(leader.constructor_ref);
   const metaText = `F1 INTELLIGENCE · ${year} CHAMPIONSHIP · RD.${String(round).padStart(2, '0')}`;
   const leaderNumber = leader.number ?? leader.position;
-
-  // Fit surname to one line — layout concern, runs regardless of motion
-  useEffect(() => {
-    let cleanup: (() => void) | undefined;
-    document.fonts.ready.then(() => {
-      if (!surnameRef.current) return;
-      fitToWidth(surnameRef.current);
-      cleanup = observeFit(surnameRef.current);
-    });
-    return () => cleanup?.();
-  }, [leader.surname]);
 
   useEffect(() => {
     if (!motionOk) return;
@@ -60,20 +49,19 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
           ease: 'none',
         });
 
-        // Championship number — swells in at low opacity
+        // Car number — swells in at ghost opacity
         gsap.fromTo(numberRef.current,
           { opacity: 0, scale: 0.95 },
           { opacity: 0.22, scale: 1, duration: 1.4, ease: 'power3.out', delay: 0.3 },
         );
 
-        // Forename rises
-        gsap.fromTo(forenameRef.current,
-          { y: 24, autoAlpha: 0 },
+        // Constructor name rises
+        gsap.fromTo(constructorRef.current,
+          { y: 16, autoAlpha: 0 },
           { y: 0, autoAlpha: 1, duration: 0.6, ease: 'power3.out', delay: 0.1 },
         );
 
-        // Surname — lights out, one char at a time.
-        // Total lead-in capped so long names don't drag.
+        // Surname — chars rise from below kinetic-mask
         const split = new SplitText(surnameRef.current, { type: 'chars' });
         gsap.set(split.chars, { yPercent: 110 });
         gsap.set(surnameRef.current, { opacity: 1 });
@@ -90,16 +78,18 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
           { y: 28, autoAlpha: 0 },
           { y: 0, autoAlpha: 1, duration: 0.7, ease: 'power3.out', delay: 0.55 },
         );
-        const nums = { pts: 0, wins: 0 };
+        const nums = { pts: 0, wins: 0, poles: 0 };
         gsap.to(nums, {
-          pts: leader.points,
-          wins: leader.wins,
+          pts:   leader.points,
+          wins:  leader.wins,
+          poles: leader.poles_2026,
           duration: 1.8,
           ease: 'expo.out',
           delay: 0.6,
           onUpdate() {
-            if (ptsRef.current)  ptsRef.current.textContent  = String(Math.round(nums.pts));
-            if (winsRef.current) winsRef.current.textContent = String(Math.round(nums.wins));
+            if (ptsRef.current)   ptsRef.current.textContent   = String(Math.round(nums.pts));
+            if (winsRef.current)  winsRef.current.textContent  = String(Math.round(nums.wins));
+            if (polesRef.current) polesRef.current.textContent = String(Math.round(nums.poles));
           },
         });
 
@@ -119,7 +109,7 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [motionOk]);
 
-  // Multi-layer mouse parallax — deepest layer moves most (desktop only)
+  // Mouse parallax — surname layer and stats layer (desktop only)
   useEffect(() => {
     if (!motionOk || isMobile) return;
     const xTitle = gsap.quickTo(surnameRef.current, 'x', { duration: 0.9, ease: 'power2.out' });
@@ -150,7 +140,7 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
       <div className="relative z-10 flex flex-col flex-1 px-5 md:px-10 pt-6 pb-8">
 
         {/* Meta — scrambles in like a timing monitor */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between shrink-0">
           <p
             ref={metaRef}
             className="font-mono text-[9px] md:text-[10px] text-text-2 uppercase tracking-[0.18em]"
@@ -163,99 +153,141 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
           </span>
         </div>
 
-        {/* Car number — occupies centre space, team colour at low opacity */}
-        <div
-          className="flex-1 flex items-center justify-center pointer-events-none select-none"
-          aria-hidden="true"
-        >
-          <span
-            ref={numberRef}
-            className="tabular-nums leading-none"
-            style={{
-              fontFamily:    'var(--pi-display)',
-              fontSize:      'clamp(96px, 24vw, 340px)',
-              letterSpacing: '-0.06em',
-              color:         color,
-              opacity:       motionOk ? 0 : 0.22,
-            }}
+        {/* Two-column layout: number left, name + stats right */}
+        <div className="flex-1 flex items-center gap-0 mt-4">
+
+          {/* Left column — car number (ghost, team colour) */}
+          <div
+            className="flex items-center justify-center shrink-0 pointer-events-none select-none"
+            style={{ width: 'clamp(72px, 20vw, 220px)' }}
+            aria-hidden="true"
           >
-            {leaderNumber}
-          </span>
-        </div>
-
-        {/* Name block */}
-        <div>
-          <p
-            ref={forenameRef}
-            className="font-mono uppercase tracking-[0.3em] mb-2 text-text-2"
-            style={{ fontSize: 'clamp(10px, 1.4vw, 15px)' }}
-          >
-            {leader.forename} · {leader.constructor_name}
-          </p>
-          <div className="kinetic-mask -my-[0.06em] py-[0.06em]">
-            <h1
-              ref={surnameRef}
-              className="uppercase leading-[0.85] whitespace-nowrap will-change-transform"
-              style={{
-                fontFamily:    'var(--pi-display)',
-                fontSize:      'clamp(64px, 17vw, 250px)',
-                letterSpacing: '-0.04em',
-                color:         'var(--text-1)',
-                opacity:       motionOk ? 0 : 1,
-              }}
-            >
-              {leader.surname}
-            </h1>
-          </div>
-        </div>
-
-        {/* Stats band */}
-        <div
-          ref={statsRef}
-          className="flex items-end gap-8 md:gap-14 mt-6 md:mt-8 pt-5 will-change-transform"
-          style={{ borderTop: '1px solid var(--border)' }}
-        >
-          <div>
             <span
-              ref={ptsRef}
-              className="tabular-nums leading-none block"
+              ref={numberRef}
+              className="tabular-nums leading-none"
               style={{
                 fontFamily:    'var(--pi-display)',
-                fontSize:      'clamp(40px, 7vw, 88px)',
-                letterSpacing: '-0.03em',
+                fontSize:      'clamp(80px, 18vw, 260px)',
+                letterSpacing: '-0.06em',
+                color:         color,
+                opacity:       motionOk ? 0 : 0.22,
               }}
             >
-              {leader.points}
-            </span>
-            <span className="font-mono text-[8px] md:text-[9px] text-text-3 uppercase tracking-[0.2em] mt-1.5 block">
-              POINTS
+              {leaderNumber}
             </span>
           </div>
 
-          <div>
-            <span
-              ref={winsRef}
-              className="tabular-nums leading-none block"
-              style={{
-                fontFamily:    'var(--pi-display)',
-                fontSize:      'clamp(40px, 7vw, 88px)',
-                letterSpacing: '-0.03em',
-              }}
-            >
-              {leader.wins}
-            </span>
-            <span className="font-mono text-[8px] md:text-[9px] text-text-3 uppercase tracking-[0.2em] mt-1.5 block">
-              WINS
-            </span>
-          </div>
+          {/* Vertical divider */}
+          <div
+            className="self-stretch shrink-0"
+            style={{ width: '1px', background: 'var(--border)' }}
+          />
 
-          <div className="ml-auto hidden md:flex flex-col items-end gap-1 pb-1">
-            <span
-              className="font-mono text-[9px] uppercase tracking-[0.16em] px-2 py-1 leading-none"
-              style={{ background: color, color: 'var(--bg)' }}
+          {/* Right column — name block + stats */}
+          <div className="flex-1 min-w-0 flex flex-col justify-center pl-6 md:pl-10">
+
+            {/* Surname + Constructor — same line */}
+            <div className="flex items-baseline justify-between gap-3 min-w-0">
+              <div className="kinetic-mask -my-[0.06em] py-[0.06em] min-w-0">
+                <h1
+                  ref={surnameRef}
+                  className="uppercase leading-[0.85] whitespace-nowrap will-change-transform"
+                  style={{
+                    fontFamily:    'var(--pi-display)',
+                    fontSize:      'clamp(40px, 8vw, 130px)',
+                    letterSpacing: '-0.04em',
+                    color:         'var(--text-1)',
+                    opacity:       motionOk ? 0 : 1,
+                  }}
+                >
+                  {leader.surname}
+                </h1>
+              </div>
+              <p
+                ref={constructorRef}
+                className="font-mono uppercase tracking-[0.16em] text-text-2 shrink-0 hidden sm:block"
+                style={{
+                  fontSize: 'clamp(9px, 1vw, 12px)',
+                  opacity: motionOk ? 0 : 1,
+                }}
+              >
+                {leader.constructor_name}
+              </p>
+            </div>
+
+            {/* Nationality */}
+            <p
+              className="font-mono text-[9px] text-text-3 uppercase tracking-[0.18em] mt-2"
             >
-              P1 · CHAMPIONSHIP LEADER
-            </span>
+              {leader.nationality}
+            </p>
+
+            {/* Stats band */}
+            <div
+              ref={statsRef}
+              className="flex items-end gap-6 md:gap-10 mt-5 md:mt-6 pt-4 md:pt-5 will-change-transform"
+              style={{ borderTop: '1px solid var(--border)' }}
+            >
+              <div>
+                <span
+                  ref={ptsRef}
+                  className="tabular-nums leading-none block"
+                  style={{
+                    fontFamily:    'var(--pi-display)',
+                    fontSize:      'clamp(32px, 5vw, 72px)',
+                    letterSpacing: '-0.03em',
+                  }}
+                >
+                  {leader.points}
+                </span>
+                <span className="font-mono text-[8px] md:text-[9px] text-text-3 uppercase tracking-[0.2em] mt-1.5 block">
+                  PTS
+                </span>
+              </div>
+
+              <div>
+                <span
+                  ref={winsRef}
+                  className="tabular-nums leading-none block"
+                  style={{
+                    fontFamily:    'var(--pi-display)',
+                    fontSize:      'clamp(32px, 5vw, 72px)',
+                    letterSpacing: '-0.03em',
+                  }}
+                >
+                  {leader.wins}
+                </span>
+                <span className="font-mono text-[8px] md:text-[9px] text-text-3 uppercase tracking-[0.2em] mt-1.5 block">
+                  WINS
+                </span>
+              </div>
+
+              <div>
+                <span
+                  ref={polesRef}
+                  className="tabular-nums leading-none block"
+                  style={{
+                    fontFamily:    'var(--pi-display)',
+                    fontSize:      'clamp(32px, 5vw, 72px)',
+                    letterSpacing: '-0.03em',
+                  }}
+                >
+                  {leader.poles_2026}
+                </span>
+                <span className="font-mono text-[8px] md:text-[9px] text-text-3 uppercase tracking-[0.2em] mt-1.5 block">
+                  POLES
+                </span>
+              </div>
+
+              <div className="ml-auto hidden md:flex flex-col items-end gap-1 pb-1">
+                <span
+                  className="font-mono text-[9px] uppercase tracking-[0.16em] px-2 py-1 leading-none"
+                  style={{ background: color, color: 'var(--bg)' }}
+                >
+                  P1 · CHAMPIONSHIP LEADER
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
