@@ -54,7 +54,8 @@
       "streakConsecutive": "vitórias consecutivas",
       "streakAllTime": "Recorde histórico",
       "streakActive": "ativa",
-      "streakCurrent": "Sequência atual"
+      "streakCurrent": "Sequência atual",
+      "startingGrid": "Grid de Largada"
     }
   },
   "panel": {

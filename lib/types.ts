@@ -268,6 +268,14 @@ export interface HomeNextRace {
   circuit_laps: number | null;
   circuit_lap_record: { time: string; forename: string; surname: string; year: number } | null;
   circuit_svg: { path: string; viewBox: string } | null;
+  qualifying_grid: Array<{
+    position: number;
+    forename: string;
+    surname: string;
+    constructor_ref: string;
+    constructor_name: string;
+    q_time: string | null;
+  }> | null;
 }
 
 export interface HomeLastRaceData {

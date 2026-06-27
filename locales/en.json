@@ -54,7 +54,8 @@
       "streakConsecutive": "consecutive wins",
       "streakAllTime": "All-time record",
       "streakActive": "active",
-      "streakCurrent": "Current streak"
+      "streakCurrent": "Current streak",
+      "startingGrid": "Starting Grid"
     }
   },
   "panel": {

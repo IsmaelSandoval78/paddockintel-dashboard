@@ -104,6 +104,7 @@ async function getHomeData(): Promise<{
     winners2026Res,
     allTimeDriverRes,
     allTimeConstructorRes,
+    nextRaceQualiRes,
   ] = await Promise.all([
     nextRaceRaw
       ? supabase
@@ -175,6 +176,25 @@ async function getHomeData(): Promise<{
       .order('streak_len', { ascending: false })
       .limit(1)
       .maybeSingle(),
+    nextRaceRaw
+      ? supabase
+          .from('qualifying')
+          .select('position, driver_id, constructor_id, q1, q2, q3')
+          .eq('race_id', nextRaceRaw.id as number)
+          .not('position', 'is', null)
+          .order('position', { ascending: true })
+          .limit(10)
+      : Promise.resolve({
+          data: [] as Array<{
+            position: number;
+            driver_id: number;
+            constructor_id: number;
+            q1: string | null;
+            q2: string | null;
+            q3: string | null;
+          }>,
+          error: null,
+        }),
   ]);
 
   // ── Build base lookup maps ───────────────────────────────────────
@@ -206,9 +226,13 @@ async function getHomeData(): Promise<{
     (statusRes.data ?? []).map((s) => [s.id as number, s.status as string])
   );
 
+  type QualiRow = { position: number; driver_id: number; constructor_id: number; q1: string | null; q2: string | null; q3: string | null };
+  const qualifyingRows = (nextRaceQualiRes.data ?? []) as QualiRow[];
+
   const driverIds = (driverStandRes.data ?? []).map((s) => s.driver_id as number);
   const lastRaceDriverIds = [...new Set(lastRaceResults.map((r) => r.driver_id))];
-  const allNeededDriverIds = [...new Set([...driverIds, ...lastRaceDriverIds])];
+  const qualiDriverIds = qualifyingRows.map((q) => q.driver_id);
+  const allNeededDriverIds = [...new Set([...driverIds, ...lastRaceDriverIds, ...qualiDriverIds])];
 
   const pastCircuitRaces = (pastCircuitRacesRes.data ?? []) as Array<{ id: number; year: number }>;
   const pastCircuitRaceIds = pastCircuitRaces.map((r) => r.id);
@@ -287,12 +311,15 @@ async function getHomeData(): Promise<{
     });
   }
 
-  // Extra lookup for historical circuit winners not in current grid
+  // Extra lookup for historical circuit winners + qualifying drivers not in current grid
   const extraIds = new Set<number>();
   if (lastWinnerResult && !homeDriverNameMap.has(lastWinnerResult.driver_id))
     extraIds.add(lastWinnerResult.driver_id);
   if (rankLapHomeRow && !homeDriverNameMap.has(rankLapHomeRow.driver_id))
     extraIds.add(rankLapHomeRow.driver_id);
+  for (const q of qualifyingRows) {
+    if (!homeDriverNameMap.has(q.driver_id)) extraIds.add(q.driver_id);
+  }
 
   if (extraIds.size > 0) {
     const { data: extraDrivers } = await supabase
@@ -407,6 +434,26 @@ async function getHomeData(): Promise<{
         }
       : null;
 
+  // ── Assemble qualifying grid ─────────────────────────────────────
+  const qualifyingGrid: HomeNextRace['qualifying_grid'] =
+    qualifyingRows.length > 0
+      ? qualifyingRows.map((q) => {
+          const d = homeDriverNameMap.get(q.driver_id);
+          const c = constructorMap.get(q.constructor_id);
+          const rawTime = q.q3 || q.q2 || q.q1 || null;
+          const qTime =
+            rawTime && rawTime !== '\\N' && rawTime.trim() !== '' ? rawTime : null;
+          return {
+            position: q.position,
+            forename: d?.forename ?? '?',
+            surname: d?.surname ?? '?',
+            constructor_ref: c?.constructor_ref ?? '',
+            constructor_name: c?.name ?? '?',
+            q_time: qTime,
+          };
+        })
+      : null;
+
   let nextRace: HomeNextRace | null = null;
   if (nextRaceRaw && circuitRes.data) {
     nextRace = {
@@ -422,6 +469,7 @@ async function getHomeData(): Promise<{
       circuit_laps: homeStandardLaps,
       circuit_lap_record: homeCircuitLapRecord,
       circuit_svg: nextCircuitSvg,
+      qualifying_grid: qualifyingGrid,
     };
   }
 

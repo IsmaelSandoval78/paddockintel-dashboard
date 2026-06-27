@@ -8,6 +8,7 @@ import { SplitText } from 'gsap/SplitText';
 import { Link } from '@/lib/i18n/navigation';
 import TrackDraw from './TrackDraw';
 import { fitToWidth, observeFit } from './fitText';
+import { teamColor } from './teamColors';
 import type { HomeNextRace } from '@/lib/types';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
@@ -243,6 +244,49 @@ export default function NextRaceChapter({ race, motionOk }: NextRaceChapterProps
               </div>
             )}
           </div>
+
+          {/* Starting grid — shown when qualifying has run */}
+          {race.qualifying_grid && race.qualifying_grid.length > 0 && (
+            <div className="mt-8 pt-5" style={{ borderTop: '1px solid var(--border)' }}>
+              <p className="font-mono text-[9px] text-text-2 uppercase tracking-[0.18em] mb-3">
+                {t('startingGrid').toUpperCase()}
+              </p>
+              <div style={{ borderTop: '1px solid var(--border-subtle)' }}>
+                {race.qualifying_grid.map((row, i) => (
+                  <div
+                    key={row.position}
+                    className="flex items-center gap-3 h-9"
+                    style={{
+                      borderBottom: '1px solid var(--border-subtle)',
+                      borderLeft: `2px solid ${teamColor(row.constructor_ref)}`,
+                      paddingLeft: '10px',
+                    }}
+                  >
+                    <span className="font-mono text-[9px] text-text-3 w-5 tabular-nums shrink-0">
+                      {String(row.position).padStart(2, '0')}
+                    </span>
+                    <span
+                      className="uppercase flex-1 truncate leading-none"
+                      style={{
+                        fontFamily: 'var(--pi-display)',
+                        fontSize: i === 0 ? 'clamp(13px, 1.4vw, 16px)' : 'clamp(11px, 1.2vw, 13px)',
+                      }}
+                    >
+                      {row.surname}
+                    </span>
+                    {row.q_time && (
+                      <span
+                        className="font-mono text-[10px] tabular-nums shrink-0"
+                        style={{ color: 'var(--red)' }}
+                      >
+                        {row.q_time}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <Link
             href={`/circuits/${race.circuit_ref}`}
