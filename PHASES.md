@@ -14,7 +14,7 @@ Austrian GP: Fri June 26 – Sun June 28 (race 15:00 CEST / ~9:00 AM ET). Two-bl
 - [ ] Phase 2 complete: DESIGN.md locked, bento grid, responsive baked into every component, share buttons, `/about` author page
 
 **Thu 25 – Sat 27 — Build & dry-run, no real Austria content yet**
-- [ ] Full Blog template built (auto-TOC, sticky data viz, schema, hreflang) and proven using the existing Barcelona article as the dry run — not throwaway placeholder content, a real second article goes live as a side effect of testing
+- [x] Full Blog template built (auto-TOC, sticky stat sidebar, NewsArticle+FAQPage schema, hreflang) — format: Market Report with stat callout boxes, TOC, FAQ, sources
 - [ ] Digest plumbing + email capture + Resend wired up and test-sent
 - [ ] Book MVP chapter view built
 
@@ -49,8 +49,8 @@ Austrian GP: Fri June 26 – Sun June 28 (race 15:00 CEST / ~9:00 AM ET). Two-bl
 - [x] Responsive behavior (375/768/1280) audited across the whole site 2026-06-25 — Hub home, Drivers (list+detail), Constructors (list+detail), Circuits (list+panel+detail), Compare, Blog, Book, About all confirmed overflow-free at 768px and 1280px. True 375px couldn't be screenshotted (the browser session used for verification floors at ~768px, one page got to 500px with no overflow); Tailwind's unprefixed (mobile-first) classes were code-reviewed as the fallback check. Found and fixed two real bugs:
   - Navbar/MobileNav switched at the `md` (768px) breakpoint, but the desktop nav's content (brand + 5 links + Vol/Rd text + locale switcher) doesn't fit in 768px — caused a 62px horizontal page overflow exactly at iPad-portrait width. Moved both to `lg` (1024px) in `components/nav/Navbar.tsx` and `components/nav/MobileNav.tsx`.
   - `articles` table was missing the `race_id` column that `(book)/season/[year]/page.tsx` queries (per SKILL.md's data model, `articles` should carry optional `race_id`/`driver_id`/`constructor_id`/`season_id` FKs) — every Book page request silently failed with "permission denied"-style column-not-found and fell through to `notFound()`, so the Book could never render a chapter. Added `race_id` via `supabase/migrations/20260625000000_add_articles_race_id.sql` (the other three FKs aren't queried by any code yet, so left for whenever they're actually needed).
-- [ ] Share button component built once, reused on Digest + Blog cards
-- [ ] `/about` author page — real background, linked from every article and digest issue
+- [x] Share button component built once, reused on Digest + Blog cards
+- [x] `/about` author page — real background, linked from every article and digest issue
 
 ## Phase 3 — Blog MVP
 - [ ] One article: Austria GP economic angle, written per the existing framework (WHAT HAPPENED / WHY IT HAPPENED / ECONOMIC IMPACT / THE FRAMEWORK / Verdict)

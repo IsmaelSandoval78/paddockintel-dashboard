@@ -17,6 +17,10 @@ loadEnvLocal();
 
 import { createClient } from '../lib/supabase/server';
 
+type Stat = { value: string; label: string; unit?: string };
+type FAQ  = { q: string; a: string };
+type Source = { name: string; url: string };
+
 type Frontmatter = {
   slug: string;
   title: string;
@@ -26,6 +30,9 @@ type Frontmatter = {
   tags?: string[];
   translation_group_id?: string;
   status?: 'draft' | 'published';
+  stats?: Stat[];
+  faq?: FAQ[];
+  sources?: Source[];
 };
 
 function readArticle(filePath: string): { frontmatter: Frontmatter; body: string } {
@@ -64,6 +71,9 @@ async function main() {
         body_markdown: body,
         tags: frontmatter.tags ?? [],
         status: frontmatter.status ?? 'draft',
+        ...(frontmatter.stats    !== undefined ? { stats:     frontmatter.stats }     : {}),
+        ...(frontmatter.faq      !== undefined ? { faq_items: frontmatter.faq }       : {}),
+        ...(frontmatter.sources  !== undefined ? { sources:   frontmatter.sources }   : {}),
         updated_at: new Date().toISOString(),
       },
       { onConflict: 'locale,slug' }

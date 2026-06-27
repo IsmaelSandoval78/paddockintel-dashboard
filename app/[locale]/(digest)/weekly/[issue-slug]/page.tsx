@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { getTranslations, getFormatter } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
+import ShareButton from '@/components/ui/ShareButton';
+import { Link } from '@/lib/i18n/navigation';
 
 export const revalidate = 3600;
 
@@ -64,9 +66,12 @@ export default async function DigestIssuePage({ params }: { params: PageParams }
       <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border-t border-l border-border-subtle">
         {items.map((item) => (
           <li key={item.id as string} className="bg-bg border-r border-b border-border-subtle p-5 flex flex-col gap-2">
-            <span className="font-mono text-[11px] uppercase tracking-wide text-text-2">
-              {item.source_name as string}
-            </span>
+            <div className="flex items-center justify-between gap-2">
+              <span className="font-mono text-[11px] uppercase tracking-wide text-text-2">
+                {item.source_name as string}
+              </span>
+              <ShareButton url={item.source_url as string} title={item.headline as string} />
+            </div>
             <h3 className="font-sans font-bold text-text-1 leading-snug">
               <a
                 href={item.source_url as string}
@@ -83,6 +88,13 @@ export default async function DigestIssuePage({ params }: { params: PageParams }
           </li>
         ))}
       </ul>
+
+      <p className="mt-12 pt-6 border-t border-border-subtle font-mono text-[11px] uppercase tracking-[0.06em] text-text-3">
+        Curated by{' '}
+        <Link href="/about" className="text-text-1 hover:text-red transition-colors duration-150">
+          Ismael Sandoval
+        </Link>
+      </p>
     </main>
   );
 }
