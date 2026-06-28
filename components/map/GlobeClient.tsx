@@ -83,11 +83,11 @@ async function buildCountryMeshes(scene: THREE.Group) {
   const topo     = raw.default as unknown as Topology<{ countries: GeometryCollection }>;
   const geojson  = feature(topo, topo.objects.countries) as FeatureCollection;
 
-  const LAND_R   = R * 1.004;
-  const LINE_R   = R * 1.008;
+  const LAND_R   = R * 1.012;
+  const LINE_R   = R * 1.016;
 
-  const landMat   = new THREE.MeshBasicMaterial({ color: 0xe5e3dc, side: THREE.DoubleSide });
-  const borderMat = new THREE.LineBasicMaterial({ color: 0xb5b4ae });
+  const landMat   = new THREE.MeshBasicMaterial({ color: 0xecebe6, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+  const borderMat = new THREE.LineBasicMaterial({ color: 0x3a3a3a });
 
   function buildPolygon(ring: number[][]): { mesh: THREE.Mesh | null; line: THREE.Line } {
     const pts3d = ring.map(([lng, lat]) => toV3(lat, lng, LAND_R));
@@ -199,10 +199,10 @@ export default function GlobeClient({
     globe.rotation.y = init.y;
     globe.rotation.x = init.x;
 
-    // ── Ocean sphere — editorial water, not blue-tech ─────────────
+    // ── Ocean sphere — ink on paper ───────────────────────────────
     globe.add(new THREE.Mesh(
       new THREE.SphereGeometry(R, 72, 72),
-      new THREE.MeshBasicMaterial({ color: 0xc0cdd4 }),
+      new THREE.MeshBasicMaterial({ color: 0x0a0a0a, depthWrite: false }),
     ));
 
     // ── Country land + borders (async) ─────────────────────────────
