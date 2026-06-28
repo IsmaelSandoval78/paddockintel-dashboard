@@ -171,6 +171,16 @@ def main() -> None:
     race_name: str = race_res.data["name"]
     print(f"Race: {race_name} (id={race_id})\n")
 
+    # ── Fetch next available IDs (tables use serial PKs, not auto-increment) ──
+    max_result_id_res  = sb.table("results").select("id").order("id", desc=True).limit(1).execute()
+    max_quali_id_res   = sb.table("qualifying").select("id").order("id", desc=True).limit(1).execute()
+    max_dstand_id_res  = sb.table("driver_standings").select("id").order("id", desc=True).limit(1).execute()
+    max_cstand_id_res  = sb.table("constructor_standings").select("id").order("id", desc=True).limit(1).execute()
+    next_result_id = (max_result_id_res.data[0]["id"]  if max_result_id_res.data  else 0) + 1
+    next_quali_id  = (max_quali_id_res.data[0]["id"]   if max_quali_id_res.data   else 0) + 1
+    next_dstand_id = (max_dstand_id_res.data[0]["id"]  if max_dstand_id_res.data  else 0) + 1
+    next_cstand_id = (max_cstand_id_res.data[0]["id"]  if max_cstand_id_res.data  else 0) + 1
+
     # ── FastF1 cache ─────────────────────────────────────────────────
     cache_dir = Path(__file__).parent.parent / ".fastf1_cache"
     cache_dir.mkdir(exist_ok=True)
@@ -192,6 +202,7 @@ def main() -> None:
 
                 position = safe_int(row.get("Position"), 0) or None
                 quali_rows.append({
+                    "id": next_quali_id + len(quali_rows),
                     "race_id": race_id,
                     "driver_id": driver["id"],
                     "constructor_id": constructor["id"],
@@ -247,6 +258,7 @@ def main() -> None:
                 is_fastest = (row.get("Abbreviation") == fastest_lap_code)
 
                 result_rows.append({
+                    "id": next_result_id + len(result_rows),
                     "race_id": race_id,
                     "driver_id": driver["id"],
                     "constructor_id": constructor["id"],
@@ -331,6 +343,14 @@ def main() -> None:
             .execute()
         )
 
+        # Sprint results — included in championship standings
+        all_sprint = (
+            sb.table("sprint_results")
+            .select("driver_id, constructor_id, points, position")
+            .in_("race_id", season_race_ids)
+            .execute()
+        )
+
         # Aggregate
         driver_pts: dict[int, float] = defaultdict(float)
         driver_wins: dict[int, int] = defaultdict(int)
@@ -348,15 +368,22 @@ def main() -> None:
                 constr_wins[cid] += 1
             driver_constr[did] = cid
 
+        # Add sprint points (sprint wins don't count toward wins tally)
+        for r in (all_sprint.data or []):
+            did, cid = r["driver_id"], r["constructor_id"]
+            pts = r["points"] or 0
+            driver_pts[did] += pts
+            constr_pts[cid] += pts
+
         sorted_drivers = sorted(driver_pts.items(), key=lambda x: x[1], reverse=True)
         sorted_constrs = sorted(constr_pts.items(), key=lambda x: x[1], reverse=True)
 
         driver_standing_rows = [
-            {"race_id": race_id, "driver_id": did, "points": pts, "position": i + 1, "wins": driver_wins[did]}
+            {"id": next_dstand_id + i, "race_id": race_id, "driver_id": did, "points": pts, "position": i + 1, "wins": driver_wins[did]}
             for i, (did, pts) in enumerate(sorted_drivers)
         ]
         constructor_standing_rows = [
-            {"race_id": race_id, "constructor_id": cid, "points": pts, "position": i + 1, "wins": constr_wins[cid]}
+            {"id": next_cstand_id + i, "race_id": race_id, "constructor_id": cid, "points": pts, "position": i + 1, "wins": constr_wins[cid]}
             for i, (cid, pts) in enumerate(sorted_constrs)
         ]
 
