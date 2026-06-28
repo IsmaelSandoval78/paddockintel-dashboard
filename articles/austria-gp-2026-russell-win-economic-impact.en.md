@@ -5,8 +5,9 @@ locale: en
 meta_description: "Russell won Austria from pole. Why it matters more in the contract room than the standings — and what it means for Mercedes' £140M+ sponsor machine."
 tags:
   - 2026 Season
-translation_group_id: "austria-gp-2026"
-status: draft
+translation_group_id: "46274ffe-e0a3-4a93-98ea-e45eec93c389"
+status: published
+published_at: "2026-06-28"
 
 stats:
   - value: "40"

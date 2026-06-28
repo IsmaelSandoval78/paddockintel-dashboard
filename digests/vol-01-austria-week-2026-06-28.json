@@ -1,0 +1,72 @@
+{
+  "slug": "vol-01-austria-week-2026",
+  "published_at": "2026-06-28",
+  "status": "published",
+  "intro_synthesis": "The economics of Formula 1 in 2026 have been restructured from the ground up — all in the same season. Apple pays $140 million per year to stream the sport exclusively in the United States, nearly double what ESPN paid. Cadillac committed $450 million just to join the grid. Total sponsorship across the championship crossed $3 billion for the first time, with AI companies accounting for four of the fifteen largest new deals. The regulatory architecture was redrawn by manufacturers, the commercial rights were repriced by a streaming giant, and the entry cost was reset by a Detroit brand that treated F1 like a capital allocation decision. The Austrian weekend landed in the middle of all of it.",
+  "items": [
+    {
+      "source_name": "CNBC / Apple Newsroom",
+      "source_url": "https://www.cnbc.com/2025/10/17/apple-f1-media-deal-streaming.html",
+      "headline": "Apple TV pays $140M/year for exclusive U.S. F1 rights through 2030",
+      "our_summary": "Apple replaced ESPN as the exclusive U.S. broadcaster starting 2026, paying $140 million per year — a 65% premium over ESPN's previous rate. The deal covers all sessions through 2030 and makes F1 the first major motorsport to move entirely behind a streaming paywall in the United States.",
+      "entity_tags": ["Apple TV", "media rights", "United States", "broadcast"],
+      "published_at": "2025-10-17"
+    },
+    {
+      "source_name": "Autosport",
+      "source_url": "https://www.autosport.com/f1/news/the-cadillac-calculus-f1-has-made-that-weighs-up-450m-today-vs-billions-tomorrow/10795676/",
+      "headline": "Cadillac paid $450M — the highest entry fee in F1 history — split across 10 existing teams",
+      "our_summary": "General Motors' $450 million anti-dilution payment to the existing ten teams is the highest entry fee the sport has ever recorded. The 2021 Concorde Agreement set the floor at $200 million; the final figure came in 125% higher, reflecting how much the commercial rights had appreciated since that baseline was written.",
+      "entity_tags": ["Cadillac", "GM", "entry fee", "Concorde Agreement"],
+      "published_at": "2026-01-15"
+    },
+    {
+      "source_name": "RTS Sports / Yahoo Sports",
+      "source_url": "https://sports.yahoo.com/articles/top-formula-1-team-sponsors-110000025.html",
+      "headline": "Oracle $110M, HP $100M, Mastercard $90M: The 2026 title-sponsor hierarchy",
+      "our_summary": "The three largest title sponsorships in 2026 total $300 million per year. Oracle's Red Bull extension is the highest at $110M, followed by HP's debut at Ferrari at $100M, and Mastercard's first-ever F1 deal at McLaren at $90M — the largest financial-services sponsorship in the sport's history.",
+      "entity_tags": ["Oracle", "Red Bull", "HP", "Ferrari", "Mastercard", "McLaren", "title sponsorship"],
+      "published_at": "2026-02-28"
+    },
+    {
+      "source_name": "Variety / Williams F1",
+      "source_url": "https://variety.com/2026/tv/news/anthropics-claude-ai-f1-partnership-atlassian-williams-1236647185/",
+      "headline": "Anthropic names Claude 'Official Thinking Partner' of Atlassian Williams F1",
+      "our_summary": "Anthropic placed Claude inside Williams' race-strategy and engineering operations in a multi-year deal, with branding on the FW48 from the opening race in Melbourne. F1 is functioning as a technology demonstration platform: enterprise AI vendors use the pit wall to make their products legible to business buyers who watch the same broadcast.",
+      "entity_tags": ["Anthropic", "Claude", "Williams", "AI", "technology sponsorship"],
+      "published_at": "2026-02-03"
+    },
+    {
+      "source_name": "The Next Web",
+      "source_url": "https://thenextweb.com/news/formula-one-ai-sponsorship-strategy-2026",
+      "headline": "Eight new AI partnerships signed across F1 in six months — technology now the fastest-growing sponsor category",
+      "our_summary": "The AI category overtook almost every other vertical in new F1 sponsorship investment in the first half of 2026. Anthropic runs on Williams, Google Gemini is integrated into McLaren's analytical platform, and Oracle has moved Red Bull's data operations from query-based tools into agentic decisioning. The pit wall is becoming a product-market-fit test for enterprise software.",
+      "entity_tags": ["AI", "technology", "Google", "McLaren", "sponsorship", "Oracle"],
+      "published_at": "2026-06-10"
+    },
+    {
+      "source_name": "BlackBook Motorsport",
+      "source_url": "https://www.blackbookmotorsport.com/features/f1-business-sponsorship-financial-broadcast-attendance/",
+      "headline": "F1 sponsorship crosses $3 billion for the first time — 15% year-on-year growth",
+      "our_summary": "Total sponsorship spend across Formula One and its eleven teams exceeded $3 billion in 2026, the first time the threshold has been crossed. The growth is broad-based rather than concentrated: the number of active F1 partnerships has increased from 440 to over 530 since the US expansion accelerated in 2022.",
+      "entity_tags": ["sponsorship", "commercial rights", "revenue"],
+      "published_at": "2026-03-05"
+    },
+    {
+      "source_name": "Formula1.com",
+      "source_url": "https://www.formula1.com/en/latest/article/agreement-reached-on-proposed-f1-regulatory-changes-for-2027-and-2028.dlv3dZcWoXsXGbhw2WWyb",
+      "headline": "2027 and 2028 technical and financial regulation changes agreed by all parties",
+      "our_summary": "The FIA, Formula One Management, teams and power unit manufacturers reached consensus on a package of regulatory changes for 2027 and 2028 — removing a significant governance uncertainty that had been hanging over manufacturer investment decisions since the 2026 rules were locked in 2022.",
+      "entity_tags": ["FIA", "regulations", "2027", "2028", "Concorde Agreement"],
+      "published_at": "2026-06-15"
+    },
+    {
+      "source_name": "GPFans",
+      "source_url": "https://www.gpfans.com/us/f1-news/1086700/george-russell-mercedes-f1-contract-2027-max-verstappen/",
+      "headline": "Russell confirms Austria win puts 2027 contract clause within arithmetic reach",
+      "our_summary": "Russell said publicly before Austria that he would be driving for Mercedes in 2027 '100%'. After converting pole to victory and moving to second in the championship, the performance threshold embedded in his 2026 contract has become a data question rather than a projection. The financial gap between a clause-activated renewal and an open-market negotiation is material.",
+      "entity_tags": ["George Russell", "Mercedes", "contract", "2027"],
+      "published_at": "2026-06-28"
+    }
+  ]
+}

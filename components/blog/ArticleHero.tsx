@@ -13,7 +13,9 @@ interface ArticleHeroProps {
 }
 
 function formatDate(iso: string, locale: string): string {
-  return new Date(iso).toLocaleDateString(locale === 'pt' ? 'pt-BR' : locale, {
+  // Always use the YYYY-MM-DD portion at local noon to prevent UTC→local day-shift
+  const date = new Date(`${iso.slice(0, 10)}T12:00:00`);
+  return date.toLocaleDateString(locale === 'pt' ? 'pt-BR' : locale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',

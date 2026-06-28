@@ -158,6 +158,17 @@
       "noOverlap": "Sem corridas compartilhadas neste circuito.",
       "prompt": "Selecione dois pilotos para comparar o histórico cara a cara neste circuito."
     },
+    "qualifying": {
+      "title": "Qualificação",
+      "allTimePole": "Pole histórica",
+      "recentPoles": "Poles recentes"
+    },
+    "raceResult": {
+      "title": "Corrida 2026",
+      "podium": "Pódio",
+      "result": "Resultado",
+      "pts": "pts"
+    },
     "nextRace": {
       "title": "Corrida 2026",
       "round": "Volta",

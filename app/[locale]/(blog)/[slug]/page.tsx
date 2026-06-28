@@ -152,8 +152,8 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
             {/* Main column — body + newsletter + FAQ + sources + author */}
             <div className="flex-1 min-w-0 max-w-2xl">
 
-              {/* TOC — mobile collapsible (desktop version lives in sidebar) */}
-              <ArticleTOC toc={toc} locale={locale} />
+              {/* TOC — mobile collapsible only (desktop version lives in sidebar) */}
+              <ArticleTOC toc={toc} locale={locale} mobileOnly />
 
               {/* Body */}
               <article
@@ -234,7 +234,7 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
                 {/* TOC — desktop sticky scrollspy */}
                 {toc.length > 0 && (
                   <div>
-                    <ArticleTOC toc={toc} locale={locale} />
+                    <ArticleTOC toc={toc} locale={locale} desktopOnly />
                   </div>
                 )}
 

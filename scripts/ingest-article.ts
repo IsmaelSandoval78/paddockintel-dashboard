@@ -30,6 +30,7 @@ type Frontmatter = {
   tags?: string[];
   translation_group_id?: string;
   status?: 'draft' | 'published';
+  published_at?: string;
   stats?: Stat[];
   faq?: FAQ[];
   sources?: Source[];
@@ -71,6 +72,7 @@ async function main() {
         body_markdown: body,
         tags: frontmatter.tags ?? [],
         status: frontmatter.status ?? 'draft',
+        ...(frontmatter.published_at !== undefined ? { published_at: frontmatter.published_at } : {}),
         ...(frontmatter.stats    !== undefined ? { stats:     frontmatter.stats }     : {}),
         ...(frontmatter.faq      !== undefined ? { faq_items: frontmatter.faq }       : {}),
         ...(frontmatter.sources  !== undefined ? { sources:   frontmatter.sources }   : {}),

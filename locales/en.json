@@ -158,6 +158,17 @@
       "noOverlap": "No shared races at this circuit.",
       "prompt": "Select two drivers to compare their head-to-head record at this circuit."
     },
+    "qualifying": {
+      "title": "Qualifying",
+      "allTimePole": "All-time pole",
+      "recentPoles": "Recent poles"
+    },
+    "raceResult": {
+      "title": "2026 Race",
+      "podium": "Podium",
+      "result": "Result",
+      "pts": "pts"
+    },
     "nextRace": {
       "title": "2026 Race",
       "round": "Round",

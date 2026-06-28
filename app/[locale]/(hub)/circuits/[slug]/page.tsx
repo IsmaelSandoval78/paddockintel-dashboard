@@ -331,6 +331,71 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
     return [{ driver_id: s.driver_id as number, driver_ref: d.driver_ref as string, forename: d.forename as string, surname: d.surname as string, nationality: s.nationality as string, wins: s.wins as number }];
   });
 
+  // ─── Batch 5: Race 2026 result + qualifying poles (parallel) ─────────────────
+
+  const [race2026Res, qualiPolesRes] = await Promise.all([
+    race2026
+      ? supabase
+          .from('results')
+          .select('position, driver_id, constructor_id, points')
+          .eq('race_id', race2026.id as number)
+          .not('position', 'is', null)
+          .lte('position', 10)
+          .order('position', { ascending: true })
+      : Promise.resolve({ data: [] as Array<{ position: unknown; driver_id: unknown; constructor_id: unknown; points: unknown }> }),
+    raceIds.length > 0
+      ? supabase
+          .from('qualifying')
+          .select('driver_id, constructor_id, q1, q2, q3, race_id')
+          .eq('position', 1)
+          .in('race_id', raceIds)
+      : Promise.resolve({ data: [] as Array<{ driver_id: unknown; constructor_id: unknown; q1: unknown; q2: unknown; q3: unknown; race_id: unknown }> }),
+  ]);
+
+  // Extend constructorMap with any constructor IDs not already resolved
+  const newConstructorIds = [
+    ...new Set([
+      ...(race2026Res.data ?? []).map((r) => r.constructor_id as number),
+      ...(qualiPolesRes.data ?? []).map((q) => q.constructor_id as number),
+    ].filter((id): id is number => id != null && !constructorMap.has(id))),
+  ];
+  if (newConstructorIds.length > 0) {
+    const { data: newCons } = await supabase
+      .from('constructors').select('id, name').in('id', newConstructorIds);
+    for (const c of newCons ?? []) constructorMap.set(c.id as number, c.name as string);
+  }
+
+  // ─── Assemble: race 2026 top-10 result ───────────────────────────────────────
+
+  type Race2026Row = { position: number; forename: string; surname: string; constructor: string; points: number };
+  const race2026Result: Race2026Row[] = (race2026Res.data ?? []).flatMap((r) => {
+    const d = driverIdMap.get(r.driver_id as number);
+    const con = constructorMap.get(r.constructor_id as number);
+    if (!d || !con) return [];
+    return [{ position: r.position as number, forename: d.forename as string, surname: d.surname as string, constructor: con, points: r.points as number }];
+  });
+
+  // ─── Assemble: qualifying pole records ───────────────────────────────────────
+
+  type PoleRow = { time: string; ms: number; forename: string; surname: string; constructor: string; year: number };
+
+  const qualiPoles: PoleRow[] = (qualiPolesRes.data ?? []).flatMap((q) => {
+    const raw = [q.q3, q.q2, q.q1].find((t) => t && typeof t === 'string' && (t as string).includes(':'));
+    if (!raw || typeof raw !== 'string') return [];
+    const ms = parseTime(raw);
+    if (!isFinite(ms)) return [];
+    const d = driverIdMap.get(q.driver_id as number);
+    const con = constructorMap.get(q.constructor_id as number);
+    const year = raceYearMap.get(q.race_id as number);
+    if (!d || !con || !year) return [];
+    return [{ time: raw, ms, forename: d.forename as string, surname: d.surname as string, constructor: con, year }];
+  });
+
+  const allTimePole: PoleRow | null = qualiPoles.reduce<PoleRow | null>(
+    (best, p) => (!best || p.ms < best.ms ? p : best), null
+  );
+  const recentPoles: PoleRow[] = [...qualiPoles].sort((a, b) => b.year - a.year).slice(0, 5);
+
   // ─── Render ──────────────────────────────────────────────────────────────
 
   return (
@@ -349,6 +414,9 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
       constructorWins={constructorWins}
       maxConWins={maxConWins}
       nextRace={nextRace}
+      race2026Result={race2026Result}
+      allTimePole={allTimePole}
+      recentPoles={recentPoles}
     />
   );
 }

@@ -6,6 +6,8 @@ import type { Heading } from '@/lib/markdown';
 interface ArticleTOCProps {
   toc: Heading[];
   locale: string;
+  mobileOnly?: boolean;
+  desktopOnly?: boolean;
 }
 
 const LABEL: Record<string, string> = {
@@ -14,7 +16,7 @@ const LABEL: Record<string, string> = {
   pt: 'Neste Artigo',
 };
 
-export default function ArticleTOC({ toc, locale }: ArticleTOCProps) {
+export default function ArticleTOC({ toc, locale, mobileOnly, desktopOnly }: ArticleTOCProps) {
   const [activeId, setActiveId] = useState<string>('');
 
   useEffect(() => {
@@ -75,14 +77,17 @@ export default function ArticleTOC({ toc, locale }: ArticleTOCProps) {
   return (
     <>
       {/* Desktop: static panel in sticky sidebar */}
+      {!mobileOnly && (
       <div className="hidden lg:block">
         <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 mb-3">
           {label}
         </p>
         {list}
       </div>
+      )}
 
       {/* Mobile: collapsible details */}
+      {!desktopOnly && (
       <details className="lg:hidden mb-8 border border-border-subtle group">
         <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
           <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2">
@@ -97,6 +102,7 @@ export default function ArticleTOC({ toc, locale }: ArticleTOCProps) {
         </summary>
         <div className="px-4 pb-4 pt-2 border-t border-border-subtle">{list}</div>
       </details>
+      )}
     </>
   );
 }

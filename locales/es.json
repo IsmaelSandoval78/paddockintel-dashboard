@@ -158,6 +158,17 @@
       "noOverlap": "Sin carreras compartidas en este circuito.",
       "prompt": "Selecciona dos pilotos para comparar su historial cara a cara en este circuito."
     },
+    "qualifying": {
+      "title": "Clasificación",
+      "allTimePole": "Pole histórica",
+      "recentPoles": "Poles recientes"
+    },
+    "raceResult": {
+      "title": "Carrera 2026",
+      "podium": "Podio",
+      "result": "Resultado",
+      "pts": "pts"
+    },
     "nextRace": {
       "title": "Carrera 2026",
       "round": "Ronda",

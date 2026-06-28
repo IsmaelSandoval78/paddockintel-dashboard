@@ -49,6 +49,23 @@ interface NextRaceInfo {
   daysAway: number;
 }
 
+interface PoleRow {
+  time: string;
+  ms: number;
+  forename: string;
+  surname: string;
+  constructor: string;
+  year: number;
+}
+
+interface Race2026Row {
+  position: number;
+  forename: string;
+  surname: string;
+  constructor: string;
+  points: number;
+}
+
 export interface CircuitDetailProps {
   circuit: {
     id: number;
@@ -72,6 +89,9 @@ export interface CircuitDetailProps {
   constructorWins: ConstructorWin[];
   maxConWins: number;
   nextRace: NextRaceInfo | null;
+  race2026Result: Race2026Row[];
+  allTimePole: PoleRow | null;
+  recentPoles: PoleRow[];
 }
 
 // ─── Orchestrator ──────────────────────────────────────────────────
@@ -91,6 +111,9 @@ export default function CircuitDetailExperience({
   constructorWins,
   maxConWins,
   nextRace,
+  race2026Result,
+  allTimePole,
+  recentPoles,
 }: CircuitDetailProps) {
   const t = useTranslations('circuitDetail');
   const format = useFormatter();
@@ -398,64 +421,171 @@ export default function CircuitDetailExperience({
         <TrackDominancePanel circuitId={circuit.id} drivers={drivers} />
       </section>
 
-      {/* ── 06 · Next Race (2026) ──────────────────────────────── */}
+      {/* ── 06 · Qualifying record ─────────────────────────────── */}
+      {(allTimePole || recentPoles.length > 0) && (
+        <section className="circuit-section border-b border-border">
+          <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
+            <span className="font-mono text-xs text-text-2 leading-none">06 ·</span>
+            <h2 className="text-[13px] font-medium text-text-2">{t('qualifying.title')}</h2>
+          </div>
+
+          {/* All-time pole callout */}
+          {allTimePole && (
+            <div className="px-6 py-6 border-b border-border">
+              <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-3 mb-3">
+                {t('qualifying.allTimePole')}
+              </p>
+              <p
+                className="tabular-nums leading-none tracking-[-0.03em]"
+                style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2rem, 5vw, 3.2rem)', color: 'var(--red)' }}
+              >
+                {allTimePole.time}
+              </p>
+              <p className="font-mono text-[11px] text-text-2 mt-3">
+                {allTimePole.forename[0]}. {allTimePole.surname}
+                <span className="text-text-3"> · </span>
+                {allTimePole.constructor}
+                <span className="text-text-3"> · </span>
+                {allTimePole.year}
+              </p>
+            </div>
+          )}
+
+          {/* Recent poles strip */}
+          {recentPoles.length > 0 && (
+            <div>
+              <p className="px-6 py-2 font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 border-b border-border-subtle">
+                {t('qualifying.recentPoles')}
+              </p>
+              {recentPoles.map((pole) => (
+                <div
+                  key={pole.year}
+                  className="flex items-center gap-3 px-6 h-9 border-b border-border last:border-b-0"
+                >
+                  <span className="font-mono text-[11px] text-text-3 tabular-nums w-10 shrink-0">{pole.year}</span>
+                  <span
+                    className="font-mono text-[13px] tabular-nums w-20 shrink-0"
+                    style={{ color: pole.ms === allTimePole?.ms ? 'var(--red)' : 'var(--text-1)' }}
+                  >
+                    {pole.time}
+                  </span>
+                  <span className="text-[12px] text-text-2 flex-1 min-w-0 truncate">
+                    {pole.forename[0]}. {pole.surname}
+                  </span>
+                  <span className="font-mono text-[11px] text-text-3 shrink-0 hidden sm:block">{pole.constructor}</span>
+                  {pole.ms === allTimePole?.ms && (
+                    <span className="font-mono text-[9px] uppercase tracking-[0.08em] shrink-0" style={{ color: 'var(--red)' }}>
+                      {t('lapRecord.allTime')}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* ── 07 · Race 2026 result ──────────────────────────────── */}
       {nextRace && (
         <section className="circuit-section">
           <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
-            <span className="font-mono text-xs text-text-2 leading-none">06 ·</span>
+            <span className="font-mono text-xs text-text-2 leading-none">07 ·</span>
             <h2 className="text-[13px] font-medium text-text-2">{t('nextRace.title')}</h2>
+            <span className="font-mono text-[11px] text-text-3 ml-auto tabular-nums">
+              Rd.{nextRace.round}
+            </span>
           </div>
-          <div className="px-6 py-7 flex flex-wrap items-end gap-12">
-            <div>
-              <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
-                {t('nextRace.round')}
-              </p>
-              <p
-                className="text-[48px] text-text-1 leading-none tabular-nums"
-                style={{ fontFamily: 'var(--pi-display)' }}
-              >
-                Rd.{nextRace.round}
-              </p>
-            </div>
-            <div>
-              <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
-                {t('nextRace.date')}
-              </p>
-              <p className="font-mono text-[18px] text-text-1 leading-none tabular-nums">
-                {format.dateTime(new Date(nextRace.date), {
-                  day: '2-digit',
-                  month: 'short',
-                  year: 'numeric',
-                })}
-              </p>
-            </div>
-            {nextRace.daysAway > 0 && (
+
+          {/* Countdown — upcoming race */}
+          {nextRace.daysAway > 0 && (
+            <div className="px-6 py-7 flex flex-wrap items-end gap-12">
+              <div>
+                <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
+                  {t('nextRace.date')}
+                </p>
+                <p className="font-mono text-[18px] text-text-1 leading-none tabular-nums">
+                  {format.dateTime(new Date(nextRace.date), { day: '2-digit', month: 'short', year: 'numeric' })}
+                </p>
+              </div>
               <div>
                 <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
                   {t('nextRace.countdown')}
                 </p>
-                <p
-                  className="text-[48px] leading-none tabular-nums"
-                  style={{ fontFamily: 'var(--pi-display)', color: 'var(--red)' }}
-                >
+                <p className="text-[48px] leading-none tabular-nums" style={{ fontFamily: 'var(--pi-display)', color: 'var(--red)' }}>
                   {nextRace.daysAway}
-                  <span className="font-mono text-[13px] text-text-3 ml-2">
-                    {t('nextRace.days')}
-                  </span>
+                  <span className="font-mono text-[13px] text-text-3 ml-2">{t('nextRace.days')}</span>
                 </p>
               </div>
-            )}
-            {nextRace.daysAway === 0 && (
+            </div>
+          )}
+
+          {nextRace.daysAway === 0 && (
+            <div className="px-6 py-6">
               <p className="font-mono text-[13px] uppercase tracking-[0.06em]" style={{ color: 'var(--red)' }}>
                 {t('nextRace.today')}
               </p>
-            )}
-            {nextRace.daysAway < 0 && (
-              <p className="font-mono text-[12px] text-text-3">
-                {t('nextRace.past')}
-              </p>
-            )}
-          </div>
+            </div>
+          )}
+
+          {/* Race result — past race with data */}
+          {nextRace.daysAway < 0 && race2026Result.length > 0 && (
+            <>
+              {/* Podium — P1 / P2 / P3 */}
+              <div className="grid grid-cols-3 divide-x divide-border border-b border-border">
+                {race2026Result.slice(0, 3).map((r) => (
+                  <div
+                    key={r.position}
+                    className="px-5 py-5"
+                    style={r.position === 1 ? { background: 'var(--surface-raised)' } : {}}
+                  >
+                    <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 mb-2">
+                      P{r.position}
+                    </p>
+                    <p
+                      className="uppercase text-text-1 leading-none tracking-[-0.02em] mb-2"
+                      style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1rem, 2.2vw, 1.6rem)' }}
+                    >
+                      {r.surname}
+                    </p>
+                    <p className="font-mono text-[10px] text-text-2">{r.constructor}</p>
+                    <p className="font-mono text-[13px] text-text-1 tabular-nums mt-1.5">
+                      {r.points} <span className="text-text-3 text-[10px]">{t('raceResult.pts')}</span>
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              {/* P4–P10 compact strip */}
+              <div>
+                {race2026Result.slice(3).map((r) => (
+                  <div
+                    key={r.position}
+                    className="flex items-center gap-4 px-6 h-8 border-b border-border last:border-b-0"
+                  >
+                    <span className="font-mono text-[11px] text-text-3 tabular-nums w-6 shrink-0">
+                      P{r.position}
+                    </span>
+                    <span className="text-[13px] text-text-2 flex-1 min-w-0 truncate">
+                      {r.forename[0]}. <strong className="text-text-1 font-semibold">{r.surname}</strong>
+                    </span>
+                    <span className="font-mono text-[11px] text-text-2 shrink-0 hidden sm:block w-24 truncate">
+                      {r.constructor}
+                    </span>
+                    <span className="font-mono text-[12px] text-text-1 tabular-nums shrink-0 w-8 text-right">
+                      {r.points}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* Past race with no result data yet */}
+          {nextRace.daysAway < 0 && race2026Result.length === 0 && (
+            <div className="px-6 py-6">
+              <p className="font-mono text-[12px] text-text-3">{t('nextRace.past')}</p>
+            </div>
+          )}
         </section>
       )}
 
