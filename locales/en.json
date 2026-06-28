@@ -55,7 +55,23 @@
       "streakAllTime": "All-time record",
       "streakActive": "active",
       "streakCurrent": "Current streak",
-      "startingGrid": "Starting Grid"
+      "startingGrid": "Starting Grid",
+      "fgTitle": "Form Guide",
+      "fgPodiums": "Podiums",
+      "fgFastestLaps": "Fastest Laps",
+      "fgConsecutive": "consecutive races",
+      "ssTitle": "Season Shape",
+      "ssWinners": "Different Winners",
+      "ssWinnersSub": "of",
+      "ssRaces": "races",
+      "ssPoleWin": "Pole → Win",
+      "ssPoleWinSub": "conversion rate 2026",
+      "ssLeaderRounds": "Rounds Led",
+      "csTitle": "The Gap",
+      "csDrivers": "Drivers' Championship",
+      "csConstructors": "Constructors' Championship",
+      "csGap": "Gap",
+      "csPts": "pts"
     }
   },
   "panel": {

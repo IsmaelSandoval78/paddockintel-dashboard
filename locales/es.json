@@ -55,7 +55,23 @@
       "streakAllTime": "Récord histórico",
       "streakActive": "activa",
       "streakCurrent": "Racha actual",
-      "startingGrid": "Parrilla de Salida"
+      "startingGrid": "Parrilla de Salida",
+      "fgTitle": "Racha de Forma",
+      "fgPodiums": "Podios",
+      "fgFastestLaps": "Vueltas Rápidas",
+      "fgConsecutive": "carreras consecutivas",
+      "ssTitle": "Forma de la Temporada",
+      "ssWinners": "Ganadores Distintos",
+      "ssWinnersSub": "de",
+      "ssRaces": "carreras",
+      "ssPoleWin": "Pole → Victoria",
+      "ssPoleWinSub": "tasa de conversión 2026",
+      "ssLeaderRounds": "Rondas Lideradas",
+      "csTitle": "La Diferencia",
+      "csDrivers": "Campeonato de Pilotos",
+      "csConstructors": "Campeonato de Constructores",
+      "csGap": "Diferencia",
+      "csPts": "pts"
     }
   },
   "panel": {

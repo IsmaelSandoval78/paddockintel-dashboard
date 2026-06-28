@@ -1,0 +1,5 @@
+{
+    "terminal.integrated.cursorBlinking": true,
+    "terminal.integrated.gpuAcceleration": "off",
+    "terminal.integrated.customGlyphs": false
+}

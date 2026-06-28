@@ -364,6 +364,44 @@ export interface HomeStreaksData {
   constructorAllTime: { name: string; streak: number; year: number } | null;
 }
 
+export interface HomeFormGuideData {
+  podiumStreak: {
+    driver_id: number;
+    forename: string;
+    surname: string;
+    constructor_ref: string;
+    streak: number;
+  } | null;
+  fastestLapStreak: {
+    driver_id: number;
+    forename: string;
+    surname: string;
+    constructor_ref: string;
+    streak: number;
+  } | null;
+}
+
+export interface HomeSeasonShapeData {
+  totalRaces: number;
+  uniqueWinners: number;
+  poleToWinPct: number;
+  roundsLedByLeader: number;
+  leaderSurname: string;
+}
+
+export interface HomeChampionshipGapData {
+  driver: {
+    p1: { surname: string; constructor_ref: string; points: number };
+    p2: { surname: string; constructor_ref: string; points: number };
+    gap: number;
+  } | null;
+  constructor: {
+    p1: { name: string; constructor_ref: string; points: number };
+    p2: { name: string; constructor_ref: string; points: number };
+    gap: number;
+  } | null;
+}
+
 export interface HomeScorecardData {
   driver_id: number;
   driver_ref: string;

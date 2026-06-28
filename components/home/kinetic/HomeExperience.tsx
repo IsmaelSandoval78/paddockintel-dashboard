@@ -9,12 +9,18 @@ import LastRaceChapter from './LastRaceChapter';
 import NextRaceChapter from './NextRaceChapter';
 import TheGrid from './TheGrid';
 import StreaksSection from './StreaksSection';
+import FormGuideSection from './FormGuideSection';
+import SeasonShapeSection from './SeasonShapeSection';
+import ChampionshipGapSection from './ChampionshipGapSection';
 import KineticFooter from './KineticFooter';
 import type {
   HomeNextRace,
   HomeDriverRow,
   HomeLastRaceData,
   HomeStreaksData,
+  HomeFormGuideData,
+  HomeSeasonShapeData,
+  HomeChampionshipGapData,
 } from '@/lib/types';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -24,12 +30,17 @@ interface HomeExperienceProps {
   lastRace: HomeLastRaceData | null;
   topDrivers: HomeDriverRow[];
   streaksData: HomeStreaksData | null;
+  formGuideData: HomeFormGuideData;
+  seasonShapeData: HomeSeasonShapeData;
+  championshipGapData: HomeChampionshipGapData;
   round: number;
   year: number;
 }
 
 export default function HomeExperience({
-  nextRace, lastRace, topDrivers, streaksData, round, year,
+  nextRace, lastRace, topDrivers, streaksData,
+  formGuideData, seasonShapeData, championshipGapData,
+  round, year,
 }: HomeExperienceProps) {
   // motionOk = no reduced-motion preference. isMobile = coarse pointer.
   // Resolved on mount; SSR renders the static editorial fallback.
@@ -111,6 +122,12 @@ export default function HomeExperience({
       <TheGrid drivers={topDrivers} motionOk={motionOk} />
 
       <StreaksSection data={streaksData} motionOk={motionOk} />
+
+      <FormGuideSection data={formGuideData} motionOk={motionOk} />
+
+      <SeasonShapeSection data={seasonShapeData} motionOk={motionOk} />
+
+      <ChampionshipGapSection data={championshipGapData} motionOk={motionOk} />
 
       <KineticFooter motionOk={motionOk} />
 

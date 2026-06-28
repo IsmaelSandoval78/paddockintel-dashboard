@@ -30,6 +30,9 @@ async function getHomeData(): Promise<{
   currentRound: number | null;
   currentYear: number | null;
   streaksData: HomeStreaksData | null;
+  formGuideData: import('@/lib/types').HomeFormGuideData;
+  seasonShapeData: import('@/lib/types').HomeSeasonShapeData;
+  championshipGapData: import('@/lib/types').HomeChampionshipGapData;
 }> {
   const supabase = createClient();
   const today = new Date().toISOString().slice(0, 10);
@@ -106,6 +109,10 @@ async function getHomeData(): Promise<{
     allTimeConstructorRes,
     nextRaceQualiRes,
     poles2026Res,
+    podiums2026Res,
+    fastestLaps2026Res,
+    constructorStandRes,
+    leaderPerRound2026Res,
   ] = await Promise.all([
     nextRaceRaw
       ? supabase
@@ -199,10 +206,40 @@ async function getHomeData(): Promise<{
     races2026Ids.length > 0
       ? supabase
           .from('qualifying')
-          .select('driver_id')
+          .select('driver_id, race_id')
           .in('race_id', races2026Ids)
           .eq('position', 1)
-      : Promise.resolve({ data: [] as Array<{ driver_id: number }>, error: null }),
+      : Promise.resolve({ data: [] as Array<{ driver_id: number; race_id: number }>, error: null }),
+    races2026Ids.length > 0
+      ? supabase
+          .from('results')
+          .select('driver_id, constructor_id, race_id')
+          .in('race_id', races2026Ids)
+          .lte('position', 3)
+          .not('position', 'is', null)
+      : Promise.resolve({ data: [] as Array<{ driver_id: number; constructor_id: number; race_id: number }>, error: null }),
+    races2026Ids.length > 0
+      ? supabase
+          .from('results')
+          .select('driver_id, constructor_id, race_id')
+          .in('race_id', races2026Ids)
+          .eq('rank', 1)
+      : Promise.resolve({ data: [] as Array<{ driver_id: number; constructor_id: number; race_id: number }>, error: null }),
+    latestRaceId !== null
+      ? supabase
+          .from('constructor_standings')
+          .select('constructor_id, points, position')
+          .eq('race_id', latestRaceId)
+          .order('position', { ascending: true })
+          .limit(5)
+      : Promise.resolve({ data: [] as Array<{ constructor_id: number; points: number; position: number }>, error: null }),
+    races2026Ids.length > 0
+      ? supabase
+          .from('driver_standings')
+          .select('race_id, driver_id, points')
+          .in('race_id', races2026Ids)
+          .eq('position', 1)
+      : Promise.resolve({ data: [] as Array<{ race_id: number; driver_id: number; points: number }>, error: null }),
   ]);
 
   // ── Build base lookup maps ───────────────────────────────────────
@@ -240,7 +277,9 @@ async function getHomeData(): Promise<{
   const driverIds = (driverStandRes.data ?? []).map((s) => s.driver_id as number);
   const lastRaceDriverIds = [...new Set(lastRaceResults.map((r) => r.driver_id))];
   const qualiDriverIds = qualifyingRows.map((q) => q.driver_id);
-  const allNeededDriverIds = [...new Set([...driverIds, ...lastRaceDriverIds, ...qualiDriverIds])];
+  const podium2026DriverIds = (podiums2026Res.data ?? []).map((r) => r.driver_id as number);
+  const fl2026DriverIds = (fastestLaps2026Res.data ?? []).map((r) => r.driver_id as number);
+  const allNeededDriverIds = [...new Set([...driverIds, ...lastRaceDriverIds, ...qualiDriverIds, ...podium2026DriverIds, ...fl2026DriverIds])];
 
   const pastCircuitRaces = (pastCircuitRacesRes.data ?? []) as Array<{ id: number; year: number }>;
   const pastCircuitRaceIds = pastCircuitRaces.map((r) => r.id);
@@ -652,6 +691,138 @@ async function getHomeData(): Promise<{
         }
       : null;
 
+  // ── Assemble form guide (podium streak + fastest lap streak) ────
+  type Podium2026Row = { driver_id: number; constructor_id: number; race_id: number };
+  const podiums2026 = (podiums2026Res.data ?? []) as Podium2026Row[];
+  const fl2026 = (fastestLaps2026Res.data ?? []) as Podium2026Row[];
+
+  function computeActiveStreak(
+    rows: Podium2026Row[],
+    roundMap: Map<number, number>,
+    racesDesc: Array<{ id: number; round: number }>
+  ): { driver_id: number; constructor_id: number; streak: number } | null {
+    if (racesDesc.length === 0 || rows.length === 0) return null;
+    const byRound = new Map<number, { driver_id: number; constructor_id: number }[]>();
+    for (const r of rows) {
+      const rnd = roundMap.get(r.race_id) ?? 0;
+      if (!byRound.has(rnd)) byRound.set(rnd, []);
+      byRound.get(rnd)!.push({ driver_id: r.driver_id, constructor_id: r.constructor_id });
+    }
+    // Find the driver with the longest current streak counting back from last race
+    const allDriverIds = [...new Set(rows.map((r) => r.driver_id))];
+    let best: { driver_id: number; constructor_id: number; streak: number } | null = null;
+    for (const did of allDriverIds) {
+      let streak = 0;
+      for (const race of racesDesc) {
+        const inRace = byRound.get(race.round)?.some((r) => r.driver_id === did);
+        if (inRace) streak++;
+        else break;
+      }
+      if (streak > 0 && (!best || streak > best.streak)) {
+        const lastCid = [...rows].reverse().find((r) => r.driver_id === did)?.constructor_id ?? 0;
+        best = { driver_id: did, constructor_id: lastCid, streak };
+      }
+    }
+    return best;
+  }
+
+  const races2026Desc = [...races2026Completed].sort((a, b) => b.round - a.round);
+  const podiumStreakRaw = computeActiveStreak(podiums2026, raceRoundMap2026, races2026Desc);
+  const flStreakRaw = computeActiveStreak(fl2026, raceRoundMap2026, races2026Desc);
+
+  const formGuideData: import('@/lib/types').HomeFormGuideData = {
+    podiumStreak: podiumStreakRaw
+      ? {
+          driver_id: podiumStreakRaw.driver_id,
+          forename: homeDriverNameMap.get(podiumStreakRaw.driver_id)?.forename ?? '?',
+          surname: homeDriverNameMap.get(podiumStreakRaw.driver_id)?.surname ?? '?',
+          constructor_ref: constructorMap.get(podiumStreakRaw.constructor_id)?.constructor_ref ?? '',
+          streak: podiumStreakRaw.streak,
+        }
+      : null,
+    fastestLapStreak: flStreakRaw
+      ? {
+          driver_id: flStreakRaw.driver_id,
+          forename: homeDriverNameMap.get(flStreakRaw.driver_id)?.forename ?? '?',
+          surname: homeDriverNameMap.get(flStreakRaw.driver_id)?.surname ?? '?',
+          constructor_ref: constructorMap.get(flStreakRaw.constructor_id)?.constructor_ref ?? '',
+          streak: flStreakRaw.streak,
+        }
+      : null,
+  };
+
+  // ── Assemble season shape ────────────────────────────────────────
+  const uniqueWinners = new Set(winners2026Sorted.map((w) => w.driver_id)).size;
+
+  type Pole2026Row = { driver_id: number; race_id: number };
+  const poles2026WithRace = (poles2026Res.data ?? []) as Pole2026Row[];
+  const polesMap2026 = new Map(poles2026WithRace.map((p) => [p.race_id, p.driver_id]));
+  const winners2026Map = new Map(winners2026Sorted.map((w) => [w.race_id, w.driver_id]));
+  let poleWins = 0;
+  for (const [raceId, poleDid] of polesMap2026) {
+    if (winners2026Map.get(raceId) === poleDid) poleWins++;
+  }
+  const poleToWinPct = polesMap2026.size > 0 ? Math.round((poleWins / polesMap2026.size) * 100) : 0;
+
+  type LeaderRow = { race_id: number; driver_id: number; points: number };
+  const leaderPerRound2026 = (leaderPerRound2026Res.data ?? []) as LeaderRow[];
+  const leaderPerRoundSorted = leaderPerRound2026
+    .map((l) => ({ ...l, round: raceRoundMap2026.get(l.race_id) ?? 0 }))
+    .sort((a, b) => a.round - b.round);
+  const currentLeaderId = topDrivers[0]?.driver_id ?? null;
+  let roundsLedByLeader = 0;
+  if (currentLeaderId !== null) {
+    for (const l of [...leaderPerRoundSorted].reverse()) {
+      if (l.driver_id === currentLeaderId) roundsLedByLeader++;
+      else break;
+    }
+  }
+  const leaderSurname = topDrivers[0]?.surname ?? '';
+
+  const seasonShapeData: import('@/lib/types').HomeSeasonShapeData = {
+    totalRaces: totalRounds2026,
+    uniqueWinners,
+    poleToWinPct,
+    roundsLedByLeader,
+    leaderSurname,
+  };
+
+  // ── Assemble championship gap ────────────────────────────────────
+  const p1Driver = topDrivers[0] ?? null;
+  const p2Driver = topDrivers[1] ?? null;
+
+  type ConstrStandRow = { constructor_id: number; points: number; position: number };
+  const constrStands = (constructorStandRes.data ?? []) as ConstrStandRow[];
+  const p1Constr = constrStands.find((c) => c.position === 1) ?? null;
+  const p2Constr = constrStands.find((c) => c.position === 2) ?? null;
+
+  const championshipGapData: import('@/lib/types').HomeChampionshipGapData = {
+    driver:
+      p1Driver && p2Driver
+        ? {
+            p1: { surname: p1Driver.surname, constructor_ref: p1Driver.constructor_ref, points: p1Driver.points },
+            p2: { surname: p2Driver.surname, constructor_ref: p2Driver.constructor_ref, points: p2Driver.points },
+            gap: p1Driver.points - p2Driver.points,
+          }
+        : null,
+    constructor:
+      p1Constr && p2Constr
+        ? {
+            p1: {
+              name: constructorMap.get(p1Constr.constructor_id)?.name ?? '?',
+              constructor_ref: constructorMap.get(p1Constr.constructor_id)?.constructor_ref ?? '',
+              points: p1Constr.points,
+            },
+            p2: {
+              name: constructorMap.get(p2Constr.constructor_id)?.name ?? '?',
+              constructor_ref: constructorMap.get(p2Constr.constructor_id)?.constructor_ref ?? '',
+              points: p2Constr.points,
+            },
+            gap: p1Constr.points - p2Constr.points,
+          }
+        : null,
+  };
+
   return {
     nextRace,
     topDrivers,
@@ -660,14 +831,19 @@ async function getHomeData(): Promise<{
     currentRound: latestRaceRound,
     currentYear: latestRaceYear,
     streaksData,
+    formGuideData,
+    seasonShapeData,
+    championshipGapData,
   };
 }
 
 // ─── Page ─────────────────────────────────────────────────────────
 
 export default async function HomePage() {
-  const { nextRace, topDrivers, lastRaceData, currentRound, currentYear, streaksData } =
-    await getHomeData();
+  const {
+    nextRace, topDrivers, lastRaceData, currentRound, currentYear,
+    streaksData, formGuideData, seasonShapeData, championshipGapData,
+  } = await getHomeData();
 
   return (
     <HomeExperience
@@ -675,6 +851,9 @@ export default async function HomePage() {
       lastRace={lastRaceData}
       topDrivers={topDrivers}
       streaksData={streaksData}
+      formGuideData={formGuideData}
+      seasonShapeData={seasonShapeData}
+      championshipGapData={championshipGapData}
       round={currentRound ?? 0}
       year={currentYear ?? 2026}
     />
