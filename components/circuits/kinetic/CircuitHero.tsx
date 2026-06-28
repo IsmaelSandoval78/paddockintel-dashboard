@@ -310,50 +310,54 @@ export default function CircuitHero({
           </div>
         </div>
 
-        {/* Right: TrackDraw SVG */}
-        <div className="md:ml-auto md:border-l border-border px-6 py-6 w-full md:w-[280px] lg:w-[340px] shrink-0">
+        {/* Right: TrackDraw SVG — dark blueprint panel */}
+        <div
+          className="md:ml-auto md:border-l border-border w-full md:w-[320px] lg:w-[420px] shrink-0 flex flex-col"
+          style={{ background: 'var(--text-1)' }}
+        >
           {trackPathData ? (
-            <div
-              className="w-full aspect-square border border-border"
-              style={{ background: 'var(--bg)' }}
-            >
+            <div className="flex-1 flex flex-col min-h-[260px] md:min-h-0 relative p-8">
               <svg
                 viewBox={trackPathData.viewBox}
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-full h-full block"
+                className="w-full h-full block flex-1"
                 role="img"
                 aria-label={`Track map — ${name}`}
-                style={{ padding: '8px' }}
               >
-                {/* Ghost outline: always visible */}
+                {/* Ghost: barely-there skeleton */}
                 <path
                   d={trackPathData.path}
-                  stroke="var(--border-subtle)"
-                  strokeWidth="1.5"
+                  stroke="rgba(255,255,255,0.06)"
+                  strokeWidth="4"
                   fill="none"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
-                {/* Animated draw path — DrawSVG starts at 0% and animates to 100% */}
+                {/* Animated draw path — red on black */}
                 <path
                   ref={drawPathRef}
                   d={trackPathData.path}
-                  stroke="var(--text-1)"
-                  strokeWidth="3.5"
+                  stroke="var(--red)"
+                  strokeWidth="4"
                   fill="none"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
               </svg>
+              {/* Blueprint label */}
+              <p className="font-mono text-[9px] uppercase tracking-[0.14em] mt-4 shrink-0"
+                style={{ color: 'rgba(255,255,255,0.2)' }}>
+                TRACK MAP · {name.toUpperCase()}
+              </p>
             </div>
           ) : (
             <div
-              className="w-full aspect-square border border-border flex items-center justify-center"
-              style={{ background: 'var(--bg)' }}
+              className="flex-1 flex items-center justify-center min-h-[200px]"
               aria-label={`Track map unavailable — ${name}`}
             >
-              <span className="font-mono text-[11px] text-text-3 uppercase tracking-[0.1em]">
-                [ TRACK MAP NOT YET AVAILABLE ]
+              <span className="font-mono text-[11px] uppercase tracking-[0.1em]"
+                style={{ color: 'rgba(255,255,255,0.2)' }}>
+                [ NO TRACK DATA ]
               </span>
             </div>
           )}
