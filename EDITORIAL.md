@@ -25,6 +25,36 @@ Their income is high enough that these categories make sense as ads.
 
 ---
 
+## Sourcing Rule — Non-Negotiable
+
+**Verify before you write. Every time. No exceptions.**
+
+Before stating any fact, number, or claim in an article or digest:
+
+1. **Search for it.** Use WebSearch to find the primary source. Do not rely on training data
+   for F1 statistics — race results change, standings change, contracts change.
+2. **Cite the primary source.** Not a blog that cited the original — the original itself.
+3. **If you can't find a source, you don't print the claim.** Write around it or flag it
+   explicitly: *"[VERIFY: X — source needed before publishing]"*
+
+**Primary sources by category:**
+
+| Category | Source |
+|---|---|
+| Race results, standings, fastest laps | formula1.com official results |
+| Qualifying, grid positions | formula1.com or FIA timing sheets |
+| Regulations, cost cap rules | fia.com (technical/financial regulations PDF) |
+| Team financials, valuations | FT, Bloomberg, Forbes (with date) |
+| Contract news | Team press releases — never rumor sites |
+| Historical data (pre-2026) | Supabase Hub (already verified Ergast data) |
+| Live 2026 standings | Supabase Hub — query the DB, don't assume |
+
+**This rule applies to Claude writing drafts too.** If a writing session produces a number
+without a cited source in the `sources` frontmatter array, that number is not verified and
+should not be published. The draft gets a `[VERIFY]` flag instead.
+
+---
+
 ## The Line
 
 Drama is the entry point. Economics and data are the payoff. Never let drama be the story itself.
