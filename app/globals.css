@@ -190,7 +190,7 @@ body {
   margin-bottom: 0.5rem;
 }
 .prose-article p {
-  font-family: var(--pi-sans);
+  font-family: var(--pi-prose);
   color: var(--text-1);
   line-height: 1.75;
   margin-bottom: 1rem;

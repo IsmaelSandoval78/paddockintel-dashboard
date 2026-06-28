@@ -48,6 +48,11 @@ const prose = Lora({
 export const metadata: Metadata = {
   title: 'PaddockIntel',
   description: 'F1 economic and performance intelligence hub',
+  alternates: {
+    types: {
+      'application/rss+xml': 'https://hub.paddockintel.com/feed.xml',
+    },
+  },
 };
 
 export default async function LocaleLayout({

@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
 import ShareButton from '@/components/ui/ShareButton';
+import ArticleTOC from '@/components/blog/ArticleTOC';
+import NewsletterCard from '@/components/blog/NewsletterCard';
 import { extractTOC, markdownToHtml, estimateReadTime } from '@/lib/markdown';
 
 export const revalidate = 3600;
@@ -16,7 +18,6 @@ type PageParams = Promise<{ locale: string; slug: string }>;
 async function getArticle(locale: string, slug: string) {
   const supabase = createClient();
 
-  // Core fields — always exist
   const { data: core } = await supabase
     .from('articles')
     .select('title, meta_description, body_markdown, published_at, tags, translation_group_id')
@@ -27,7 +28,6 @@ async function getArticle(locale: string, slug: string) {
 
   if (!core) return null;
 
-  // Extended fields added in migration 20260626 — null-safe if migration not yet applied
   const { data: ext } = await supabase
     .from('articles')
     .select('stats, faq_items, sources')
@@ -38,7 +38,7 @@ async function getArticle(locale: string, slug: string) {
   return { ...core, ...(ext ?? {}) };
 }
 
-async function getHreflangUrls(translationGroupId: string, currentSlug: string) {
+async function getHreflangUrls(translationGroupId: string) {
   const supabase = createClient();
   const { data } = await supabase
     .from('articles')
@@ -49,7 +49,9 @@ async function getHreflangUrls(translationGroupId: string, currentSlug: string) 
 }
 
 function localeUrl(locale: string, slug: string): string {
-  return locale === 'en' ? `https://hub.paddockintel.com/${slug}/` : `https://hub.paddockintel.com/${locale}/${slug}/`;
+  return locale === 'en'
+    ? `https://hub.paddockintel.com/${slug}/`
+    : `https://hub.paddockintel.com/${locale}/${slug}/`;
 }
 
 export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
@@ -59,7 +61,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
 
   const alternates: Record<string, string> = {};
   if (article.translation_group_id) {
-    const versions = await getHreflangUrls(article.translation_group_id as string, slug);
+    const versions = await getHreflangUrls(article.translation_group_id as string);
     for (const v of versions) {
       alternates[v.locale as string] = localeUrl(v.locale as string, v.slug as string);
     }
@@ -85,13 +87,13 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
   const article = await getArticle(locale, slug);
   if (!article) notFound();
 
-  const body      = article.body_markdown as string;
-  const title     = article.title as string;
+  const body        = article.body_markdown as string;
+  const title       = article.title as string;
   const publishedAt = article.published_at as string;
-  const tags      = (article.tags as string[]) ?? [];
-  const stats     = (article.stats as Stat[]) ?? [];
-  const faqItems  = (article.faq_items as FAQ[]) ?? [];
-  const sources   = (article.sources as Source[]) ?? [];
+  const tags        = (article.tags as string[]) ?? [];
+  const stats       = (article.stats as Stat[]) ?? [];
+  const faqItems    = (article.faq_items as FAQ[]) ?? [];
+  const sources     = (article.sources as Source[]) ?? [];
 
   const toc      = extractTOC(body);
   const html     = markdownToHtml(body);
@@ -109,21 +111,31 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
     ...(article.meta_description ? { description: article.meta_description as string } : {}),
   };
 
-  const faqJsonLd = faqItems.length > 0 ? {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqItems.map((f) => ({
-      '@type': 'Question',
-      name: f.q,
-      acceptedAnswer: { '@type': 'Answer', text: f.a },
-    })),
-  } : null;
+  const faqJsonLd = faqItems.length > 0
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqItems.map((f) => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a },
+        })),
+      }
+    : null;
+
+  const hasSidebar = toc.length > 0 || stats.length > 0;
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {faqJsonLd && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
       )}
 
       <main className="bg-bg min-h-screen">
@@ -148,41 +160,22 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
           </header>
 
           {/* Two-column layout */}
-          <div className="flex gap-12 items-start">
+          <div className={`flex gap-12 items-start ${hasSidebar ? '' : 'max-w-2xl'}`}>
 
-            {/* Left column — TOC + body + FAQ + sources */}
+            {/* Main column — body + newsletter + FAQ + sources + author */}
             <div className="flex-1 min-w-0 max-w-2xl">
 
-              {/* TOC */}
-              {toc.length > 0 && (
-                <div className="border border-border-subtle p-4 mb-10">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 mb-3">
-                    In This Article
-                  </p>
-                  <ol className="space-y-1.5">
-                    {toc.map((item) => (
-                      <li
-                        key={item.id}
-                        style={{ paddingLeft: item.level === 3 ? '1rem' : '0' }}
-                      >
-                        <a
-                          href={`#${item.id}`}
-                          className="font-mono text-[11px] text-text-1 hover:text-red transition-colors duration-150 flex items-baseline gap-2"
-                        >
-                          <span className="text-red shrink-0">→</span>
-                          <span>{item.text}</span>
-                        </a>
-                      </li>
-                    ))}
-                  </ol>
-                </div>
-              )}
+              {/* TOC — mobile collapsible (desktop version lives in sidebar) */}
+              <ArticleTOC toc={toc} locale={locale} />
 
               {/* Body */}
               <article
                 className="prose-article"
                 dangerouslySetInnerHTML={{ __html: html }}
               />
+
+              {/* Newsletter card — after article body */}
+              <NewsletterCard />
 
               {/* FAQ */}
               {faqItems.length > 0 && (
@@ -199,7 +192,7 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
                         <dt className="font-sans font-semibold text-text-1 mb-1.5 text-sm">
                           {faq.q}
                         </dt>
-                        <dd className="font-sans text-sm text-text-2 leading-relaxed">
+                        <dd className="font-prose text-sm text-text-2 leading-relaxed">
                           {faq.a}
                         </dd>
                       </div>
@@ -231,47 +224,61 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
                 </section>
               )}
 
-              {/* Author footer */}
-              <p className="mt-12 pt-6 border-t border-border-subtle font-mono text-[11px] uppercase tracking-[0.06em] text-text-3">
-                Written by{' '}
-                <Link
-                  href="/about"
-                  className="text-text-1 hover:text-red transition-colors duration-150"
-                >
-                  Ismael Sandoval
-                </Link>
-                {' '}· PaddockIntel
-              </p>
+              {/* Author + share footer */}
+              <div className="mt-12 pt-6 border-t border-border-subtle flex items-center justify-between">
+                <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-3">
+                  Written by{' '}
+                  <Link
+                    href="/about"
+                    className="text-text-1 hover:text-red transition-colors duration-150"
+                  >
+                    Ismael Sandoval
+                  </Link>
+                  {' '}· PaddockIntel
+                </p>
+                <ShareButton url={pageUrl} title={title} />
+              </div>
             </div>
 
-            {/* Right column — stat callouts, sticky */}
-            {stats.length > 0 && (
-              <aside className="hidden lg:block w-52 shrink-0 sticky top-8">
-                <div className="border border-border">
-                  {stats.map((stat, i) => (
-                    <div
-                      key={i}
-                      className={`p-4 ${i > 0 ? 'border-t border-border-subtle' : ''}`}
-                    >
-                      <p className="font-display text-[2rem] text-text-1 tabular-nums leading-none">
-                        {stat.value}
-                      </p>
-                      <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 mt-2">
-                        {stat.label}
-                      </p>
-                      {stat.unit && (
-                        <p className="font-mono text-[10px] text-text-3 mt-0.5">{stat.unit}</p>
-                      )}
-                    </div>
-                  ))}
-                </div>
+            {/* Right sidebar — sticky TOC (desktop) + stat callouts */}
+            {hasSidebar && (
+              <aside className="hidden lg:flex flex-col gap-8 w-52 shrink-0 sticky top-8">
+
+                {/* TOC — desktop sticky scrollspy */}
+                {toc.length > 0 && (
+                  <div>
+                    <ArticleTOC toc={toc} locale={locale} />
+                  </div>
+                )}
+
+                {/* Stat callouts */}
+                {stats.length > 0 && (
+                  <div className="border border-border">
+                    {stats.map((stat, i) => (
+                      <div
+                        key={i}
+                        className={`p-4 ${i > 0 ? 'border-t border-border-subtle' : ''}`}
+                      >
+                        <p className="font-display text-[2rem] text-text-1 tabular-nums leading-none">
+                          {stat.value}
+                        </p>
+                        <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 mt-2">
+                          {stat.label}
+                        </p>
+                        {stat.unit && (
+                          <p className="font-mono text-[10px] text-text-3 mt-0.5">{stat.unit}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </aside>
             )}
           </div>
 
           {/* Stats horizontal strip — mobile only */}
           {stats.length > 0 && (
-            <div className="lg:hidden mt-8 pt-6 border-t border-border-subtle flex gap-0 overflow-x-auto border border-border">
+            <div className="lg:hidden mt-8 pt-6 border-t border-border-subtle overflow-x-auto border border-border flex gap-0">
               {stats.map((stat, i) => (
                 <div
                   key={i}
