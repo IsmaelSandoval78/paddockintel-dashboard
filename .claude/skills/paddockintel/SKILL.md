@@ -2,6 +2,8 @@
 # Read this before every task. Source of truth for route structure, data model, and implementation patterns.
 # DESIGN.md (repo root, v0.3.0) is the source of truth for visual tokens — Swiss Industrial Print —
 # and governs all four surfaces, including Hub. This file does not restate it; it implements it.
+# EDITORIAL.md (repo root) is the source of truth for voice, article structure, and writing process —
+# read it before drafting any article, digest issue, or newsletter copy.
 
 ---
 
