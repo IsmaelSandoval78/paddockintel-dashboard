@@ -83,20 +83,19 @@ async function buildCountryMeshes(scene: THREE.Group) {
   const topo     = raw.default as unknown as Topology<{ countries: GeometryCollection }>;
   const geojson  = feature(topo, topo.objects.countries) as FeatureCollection;
 
-  const LAND_R   = R * 1.012;
-  const LINE_R   = R * 1.016;
+  const LAND_R   = R * 1.004;
 
-  const landMat   = new THREE.MeshBasicMaterial({ color: 0xecebe6, side: THREE.FrontSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
-  const borderMat = new THREE.LineBasicMaterial({ color: 0x3a3a3a });
+  const landMat = new THREE.MeshBasicMaterial({
+    color: 0xecebe6,
+    side: THREE.FrontSide,
+    polygonOffset: true,
+    polygonOffsetFactor: -4,
+    polygonOffsetUnits: -4,
+  });
 
-  function buildPolygon(ring: number[][]): { mesh: THREE.Mesh | null; line: THREE.Line } {
+  function buildPolygon(ring: number[][]): THREE.Mesh | null {
     const pts3d = ring.map(([lng, lat]) => toV3(lat, lng, LAND_R));
-
-    // Earcut triangulation via ShapeUtils — triangles span adjacent boundary
-    // vertices (~1-3° apart) so they never dip below the ocean sphere.
-    // Centroid-fan was causing dipping because centroid→boundary edges span 20-40°.
     const pts2d = ring.map(([lng, lat]) => new Vector2(lng, lat));
-    let mesh: THREE.Mesh | null = null;
     try {
       const tris = ShapeUtils.triangulateShape(pts2d, []);
       if (tris.length) {
@@ -107,19 +106,12 @@ async function buildCountryMeshes(scene: THREE.Group) {
         }
         const geo = new THREE.BufferGeometry();
         geo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
-        mesh = new THREE.Mesh(geo, landMat);
+        return new THREE.Mesh(geo, landMat);
       }
     } catch {
       // skip degenerate polygons
     }
-
-    // Border line
-    const linePts = ring.map(([lng, lat]) => toV3(lat, lng, LINE_R));
-    linePts.push(linePts[0]);
-    const lineGeo = new THREE.BufferGeometry().setFromPoints(linePts);
-    const line = new THREE.Line(lineGeo, borderMat);
-
-    return { mesh, line };
+    return null;
   }
 
   function processFeature(f: Feature<Geometry>) {
@@ -134,9 +126,8 @@ async function buildCountryMeshes(scene: THREE.Group) {
     }
 
     rings.forEach((ring) => {
-      const { mesh, line } = buildPolygon(ring);
+      const mesh = buildPolygon(ring);
       if (mesh) scene.add(mesh);
-      scene.add(line);
     });
   }
 
@@ -199,10 +190,10 @@ export default function GlobeClient({
     globe.rotation.y = init.y;
     globe.rotation.x = init.x;
 
-    // ── Ocean sphere — ink on paper ───────────────────────────────
+    // ── Ocean sphere ───────────────────────────────────────────────
     globe.add(new THREE.Mesh(
       new THREE.SphereGeometry(R, 72, 72),
-      new THREE.MeshBasicMaterial({ color: 0x0a0a0a, depthWrite: false }),
+      new THREE.MeshBasicMaterial({ color: 0x0a0a0a }),
     ));
 
     // ── Country land + borders (async) ─────────────────────────────

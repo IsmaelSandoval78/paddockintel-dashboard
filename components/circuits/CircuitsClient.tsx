@@ -11,8 +11,7 @@ import BottomSheet from '@/components/ui/BottomSheet';
 
 gsap.registerPlugin(SplitText);
 
-// Globe loads only on client (Three.js)
-const GlobeClient = dynamic(() => import('@/components/map/GlobeClient'), {
+const CircuitMapSVG = dynamic(() => import('@/components/map/CircuitMapSVG'), {
   ssr: false,
   loading: () => <div className="w-full h-full bg-bg" />,
 });
@@ -218,16 +217,13 @@ export default function CircuitsClient({
           )}
         </div>
 
-        {/* Globe */}
+        {/* Map */}
         <div className="flex-1 min-w-0 h-[55vw] md:h-full bg-bg">
-          <GlobeClient
+          <CircuitMapSVG
             circuits={circuits}
             onSelect={handleSelect}
             targetRegion={activeRegion}
             selectedId={selectedId}
-            flyTo={flyTo}
-            calendarRoute={calendar2026}
-            showCalendarRoute={showCalendar}
           />
         </div>
 
