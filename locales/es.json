@@ -178,7 +178,67 @@
       "today": "Día de carrera",
       "past": "Carrera completada"
     },
-    "noData": "No hay datos de carrera disponibles para este circuito."
+    "noData": "No hay datos de carrera disponibles para este circuito.",
+    "intel": {
+      "title": "Inteligencia del Circuito",
+      "dnf": {
+        "title": "Tasa DNF",
+        "info": "Con qué frecuencia los pilotos no logran terminar en este circuito. Tasas altas revelan estrés mecánico, riesgos de seguridad o diseños de pista técnicamente agresivos.",
+        "label": "no terminó",
+        "cause": "Principales causas"
+      },
+      "poleWin": {
+        "title": "Pole → Victoria",
+        "info": "Con qué frecuencia el poleman convierte la pole en victoria. Alta conversión señala dificultad de adelantar y dominio desde la primera fila.",
+        "conversion": "tasa de conversión",
+        "poles": "poles con datos de clasificación"
+      },
+      "gridDelta": {
+        "title": "Δ Posición Promedio",
+        "info": "Posiciones ganadas en promedio desde la largada hasta la clasificación final, para todos los clasificados. Positivo = el campo avanza; negativo = el orden de largada se mantiene.",
+        "label": "pos. ganadas en promedio"
+      },
+      "streaks": {
+        "title": "Rachas de Victorias",
+        "info": "Rachas de victorias consecutivas más largas en este circuito, por piloto y por constructor. Victorias consecutivas entre temporadas señalan un dominio profundo del trazado.",
+        "driver": "Piloto",
+        "constructor": "Constructor",
+        "wins": "victorias"
+      },
+      "age": {
+        "title": "Ganador Más Joven · Más Veterano",
+        "info": "Extremos de edad entre los ganadores de este circuito. El más joven marca un debut explosivo; el más veterano, un rendimiento de élite sostenido.",
+        "youngest": "Ganador más joven",
+        "oldest": "Ganador más veterano",
+        "yearsOld": "años"
+      },
+      "natWins": {
+        "title": "Victorias por Nacionalidad",
+        "info": "Victorias agrupadas por nacionalidad del piloto. Revela patrones de dominio geográfico histórico en la F1 en este circuito.",
+        "wins": "victorias"
+      },
+      "pitStrategy": {
+        "title": "Estrategia de Pit",
+        "info": "Tiempo promedio de parada en boxes en todas las visitas registradas. El desglose por décadas muestra cómo han evolucionado los compuestos de neumáticos, los procedimientos de safety car y la eficiencia de los equipos.",
+        "overall": "Promedio histórico",
+        "byDecade": "Por década"
+      },
+      "fastPit": {
+        "title": "Pit Más Rápido · Constructor",
+        "info": "Pit stop más rápido promedio por carrera, por constructor. Mide la consistencia del muro de boxes y la preparación mecánica a lo largo de toda la historia del circuito.",
+        "avgStop": "promedio pit más rápido por carrera"
+      },
+      "podNoWin": {
+        "title": "Podios Sin Victoria",
+        "info": "Pilotos que han estado en el podio de este circuito varias veces pero nunca han convertido en victoria. Revela especialistas del trazado y el techo competitivo del circuito.",
+        "podiums": "podios"
+      },
+      "lapEvo": {
+        "title": "Evolución de Tiempos de Vuelta",
+        "info": "Tiempo de vuelta más rápido registrado cada año. Las caídas reflejan saltos de rendimiento; las mesetas o aumentos señalan grandes cambios de reglamento.",
+        "fastest": "Más rápido"
+      }
+    }
   },
   "drivers": {
     "title": "Pilotos",

@@ -396,6 +396,217 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
   );
   const recentPoles: PoleRow[] = [...qualiPoles].sort((a, b) => b.year - a.year).slice(0, 5);
 
+  // ─── Batch 6: Intel data (parallel) ──────────────────────────────────────────
+
+  const [allResultsRaw, statusRaw, pitStopsRaw, winnerDobRaw] = await Promise.all([
+    raceIds.length > 0
+      ? supabase
+          .from('results')
+          .select('race_id, driver_id, constructor_id, grid, position, status_id')
+          .in('race_id', raceIds)
+          .limit(3000)
+      : Promise.resolve({ data: [] as Array<{ race_id: unknown; driver_id: unknown; constructor_id: unknown; grid: unknown; position: unknown; status_id: unknown }> }),
+    supabase.from('status').select('id, status'),
+    raceIds.length > 0
+      ? supabase
+          .from('pit_stops')
+          .select('race_id, driver_id, stop, milliseconds')
+          .in('race_id', raceIds)
+          .limit(5000)
+      : Promise.resolve({ data: [] as Array<{ race_id: unknown; driver_id: unknown; stop: unknown; milliseconds: unknown }> }),
+    winnerDriverIds.length > 0
+      ? supabase
+          .from('drivers')
+          .select('id, dob, nationality')
+          .in('id', [...new Set(winnerDriverIds)])
+      : Promise.resolve({ data: [] as Array<{ id: unknown; dob: unknown; nationality: unknown }> }),
+  ]);
+
+  // ─── Compute: intel metrics ───────────────────────────────────────────────────
+
+  type AllResultRow = { race_id: number; driver_id: number; constructor_id: number; grid: number | null; position: number | null; status_id: number };
+  const allResults = (allResultsRaw.data ?? []) as AllResultRow[];
+
+  const statusTable = new Map<number, string>(
+    (statusRaw.data ?? []).map((s) => [s.id as number, s.status as string])
+  );
+
+  const winnerDobMap = new Map<number, { dob: string | null; nationality: string | null }>(
+    (winnerDobRaw.data ?? []).map((d) => [
+      d.id as number,
+      { dob: d.dob as string | null, nationality: d.nationality as string | null },
+    ])
+  );
+
+  // 1 · DNF rate + causes
+  const totalEntries = allResults.length;
+  const dnfResults = allResults.filter((r) => r.position === null);
+  const dnfTotal = dnfResults.length;
+  const dnfRate = totalEntries > 0 ? dnfTotal / totalEntries : 0;
+  const statusCount = new Map<string, number>();
+  for (const r of dnfResults) {
+    const st = statusTable.get(r.status_id) ?? 'Unknown';
+    if (st === 'Finished' || /^\+\d/.test(st)) continue;
+    statusCount.set(st, (statusCount.get(st) ?? 0) + 1);
+  }
+  const dnfCauses = [...statusCount.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5)
+    .map(([cause, count]) => ({ cause, count }));
+
+  // 3 · Pole → Win conversion
+  const poleDriverByRaceId = new Map<number, number>(
+    (qualiPolesRes.data ?? []).map((q) => [q.race_id as number, q.driver_id as number])
+  );
+  const winnerByRaceId = new Map<number, number>(
+    winners.map((w) => [w.race_id as number, w.driver_id as number])
+  );
+  let poleWins = 0;
+  let poleTotal = 0;
+  for (const [raceId, poleDriverId] of poleDriverByRaceId) {
+    poleTotal++;
+    if (winnerByRaceId.get(raceId) === poleDriverId) poleWins++;
+  }
+
+  // 4 · Avg grid delta (positions gained start→finish)
+  let gridDeltaSum = 0, gridDeltaCount = 0;
+  for (const r of allResults) {
+    if (r.grid && r.position && r.grid > 0 && r.position > 0) {
+      gridDeltaSum += r.grid - r.position;
+      gridDeltaCount++;
+    }
+  }
+  const avgGridDelta = gridDeltaCount > 0 ? gridDeltaSum / gridDeltaCount : null;
+
+  // 5 · Win streaks
+  type StreakResult = { name: string; count: number; startYear: number; endYear: number };
+  function computeStreaks(seq: Array<{ name: string; year: number }>): StreakResult[] {
+    const runs: StreakResult[] = [];
+    let i = 0;
+    while (i < seq.length) {
+      let j = i;
+      while (j < seq.length && seq[j].name === seq[i].name) j++;
+      runs.push({ name: seq[i].name, count: j - i, startYear: seq[i].year, endYear: seq[j - 1].year });
+      i = j;
+    }
+    return runs.sort((a, b) => b.count - a.count).slice(0, 3);
+  }
+  const sortedWinsByYear = [...winnerRows].sort((a, b) => a.year - b.year);
+  const topDriverStreaks = computeStreaks(sortedWinsByYear.map((w) => ({ name: `${w.forename[0]}. ${w.surname}`, year: w.year })));
+  const topConStreaks = computeStreaks(sortedWinsByYear.map((w) => ({ name: w.constructor, year: w.year })));
+
+  // 6 · Youngest / oldest winner
+  type AgeWin = { forename: string; surname: string; year: number; ageYears: number };
+  const raceIdDateMap = new Map<number, string>(
+    races.flatMap((r) => r.date ? [[r.id as number, r.date as string]] : [])
+  );
+  const ageWinners: AgeWin[] = winners.flatMap((w) => {
+    const driverId = w.driver_id as number;
+    const raceId = w.race_id as number;
+    const year = raceYearMap.get(raceId);
+    const raceDate = raceIdDateMap.get(raceId);
+    const dobInfo = winnerDobMap.get(driverId);
+    const driver = driverMap.get(driverId);
+    if (!year || !raceDate || !dobInfo?.dob || !driver) return [];
+    const ageDays = (new Date(raceDate).getTime() - new Date(dobInfo.dob).getTime()) / 86400000;
+    if (ageDays <= 0) return [];
+    return [{ forename: driver.forename, surname: driver.surname, year, ageYears: ageDays / 365.25 }];
+  });
+  const youngestWinner = ageWinners.reduce<AgeWin | null>((b, a) => !b || a.ageYears < b.ageYears ? a : b, null);
+  const oldestWinner = ageWinners.reduce<AgeWin | null>((b, a) => !b || a.ageYears > b.ageYears ? a : b, null);
+
+  // 7 · Pit strategy (avg stop + by decade)
+  type PitRow = { race_id: number; driver_id: number; stop: number; milliseconds: number | null };
+  const validPits = ((pitStopsRaw.data ?? []) as PitRow[]).filter((p) => {
+    const ms = p.milliseconds;
+    return ms !== null && ms > 1500 && ms < 120000;
+  });
+  const overallAvgPitSec = validPits.length > 0
+    ? validPits.reduce((sum, p) => sum + (p.milliseconds as number), 0) / validPits.length / 1000
+    : null;
+  const pitDecadeAccum = new Map<number, { sum: number; count: number }>();
+  for (const p of validPits) {
+    const year = raceYearMap.get(p.race_id);
+    if (!year) continue;
+    const decade = Math.floor(year / 10) * 10;
+    const cur = pitDecadeAccum.get(decade) ?? { sum: 0, count: 0 };
+    cur.sum += p.milliseconds as number;
+    cur.count++;
+    pitDecadeAccum.set(decade, cur);
+  }
+  const pitByDecade = [...pitDecadeAccum.entries()]
+    .sort((a, b) => a[0] - b[0])
+    .map(([decade, { sum, count }]) => ({ decade, avgSec: sum / count / 1000 }));
+
+  // 8 · Wins by driver nationality
+  const natWinsMap = new Map<string, number>();
+  for (const w of winners) {
+    const nat = winnerDobMap.get(w.driver_id as number)?.nationality;
+    if (!nat) continue;
+    natWinsMap.set(nat, (natWinsMap.get(nat) ?? 0) + 1);
+  }
+  const natWins = [...natWinsMap.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8)
+    .map(([nationality, wins]) => ({ nationality, wins }));
+
+  // 9 · Fastest avg pit by constructor (via driver→constructor from allResults)
+  const drRaceConMap = new Map<string, number>();
+  for (const r of allResults) {
+    if (r.constructor_id) drRaceConMap.set(`${r.race_id}_${r.driver_id}`, r.constructor_id);
+  }
+  const raceConPitMins = new Map<string, number>();
+  for (const p of validPits) {
+    const conId = drRaceConMap.get(`${p.race_id}_${p.driver_id}`);
+    if (conId === undefined) continue;
+    const key = `${p.race_id}_${conId}`;
+    const cur = raceConPitMins.get(key) ?? Infinity;
+    if ((p.milliseconds as number) < cur) raceConPitMins.set(key, p.milliseconds as number);
+  }
+  const conBestPitAccum = new Map<number, { sum: number; count: number }>();
+  for (const [key, minMs] of raceConPitMins) {
+    const conId = parseInt(key.split('_')[1], 10);
+    const cur = conBestPitAccum.get(conId) ?? { sum: 0, count: 0 };
+    cur.sum += minMs;
+    cur.count++;
+    conBestPitAccum.set(conId, cur);
+  }
+  const fastestPitByConstructor = [...conBestPitAccum.entries()]
+    .map(([conId, { sum, count }]) => ({
+      constructor: constructorMap.get(conId) ?? null,
+      avgBestSec: sum / count / 1000,
+      raceCount: count,
+    }))
+    .filter((c): c is { constructor: string; avgBestSec: number; raceCount: number } => c.constructor !== null)
+    .sort((a, b) => a.avgBestSec - b.avgBestSec)
+    .slice(0, 5);
+
+  // 12 · Most podiums without a win
+  const podiumCounts = new Map<number, number>();
+  for (const r of allResults) {
+    if (r.position === 2 || r.position === 3) {
+      podiumCounts.set(r.driver_id, (podiumCounts.get(r.driver_id) ?? 0) + 1);
+    }
+  }
+  const winDriverSet = new Set(winners.map((w) => w.driver_id as number));
+  const podNoWin = [...podiumCounts.entries()]
+    .filter(([driverId]) => !winDriverSet.has(driverId))
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .flatMap(([driverId, podiums]) => {
+      const d = driverIdMap.get(driverId);
+      if (!d) return [];
+      return [{ forename: d.forename as string, surname: d.surname as string, podiums }];
+    });
+
+  const intelData = {
+    dnfRate, dnfTotal, totalEntries, dnfCauses,
+    poleWins, poleTotal,
+    topDriverStreaks, topConStreaks,
+    youngestWinner, oldestWinner,
+    avgGridDelta,
+    overallAvgPitSec, pitByDecade,
+    natWins,
+    fastestPitByConstructor,
+    podNoWin,
+  };
+
   // ─── Render ──────────────────────────────────────────────────────────────
 
   return (
@@ -417,6 +628,7 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
       race2026Result={race2026Result}
       allTimePole={allTimePole}
       recentPoles={recentPoles}
+      intelData={intelData}
     />
   );
 }

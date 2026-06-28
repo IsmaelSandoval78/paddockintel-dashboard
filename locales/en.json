@@ -178,7 +178,67 @@
       "today": "Race day",
       "past": "Race completed"
     },
-    "noData": "No race data available for this circuit."
+    "noData": "No race data available for this circuit.",
+    "intel": {
+      "title": "Circuit Intelligence",
+      "dnf": {
+        "title": "DNF Rate",
+        "info": "How often drivers fail to finish at this circuit. High rates reveal mechanical stress, safety risks, or technically aggressive track design.",
+        "label": "did not finish",
+        "cause": "Top causes"
+      },
+      "poleWin": {
+        "title": "Pole → Win",
+        "info": "How often the pole-sitter converts to a race win. High conversion signals overtaking difficulty and front-row dominance.",
+        "conversion": "conversion rate",
+        "poles": "poles with qualifying data"
+      },
+      "gridDelta": {
+        "title": "Grid Δ Average",
+        "info": "Average positions gained from starting grid to final classification, across all finishers. Positive = field typically moves forward; negative = grid order holds.",
+        "label": "avg positions gained"
+      },
+      "streaks": {
+        "title": "Win Streaks",
+        "info": "Longest consecutive winning runs at this circuit, by driver and by constructor. Consecutive wins across seasons signal deep track mastery.",
+        "driver": "Driver",
+        "constructor": "Constructor",
+        "wins": "wins"
+      },
+      "age": {
+        "title": "Youngest · Oldest Winner",
+        "info": "Age extremes among race winners at this circuit. The youngest signals a career breakthrough; the oldest, sustained elite-level performance.",
+        "youngest": "Youngest winner",
+        "oldest": "Oldest winner",
+        "yearsOld": "yrs"
+      },
+      "natWins": {
+        "title": "Wins by Nationality",
+        "info": "Race victories grouped by driver nationality. Reveals historical geographic dominance patterns across F1 history at this circuit.",
+        "wins": "wins"
+      },
+      "pitStrategy": {
+        "title": "Pit Strategy",
+        "info": "Average pit stop time across all recorded visits. The decade breakdown shows how tyre compounds, safety-car procedures, and team efficiency have evolved.",
+        "overall": "All-time average",
+        "byDecade": "By decade"
+      },
+      "fastPit": {
+        "title": "Fastest Pit · Constructor",
+        "info": "Average fastest pit stop per race by constructor. Measures pit-wall execution consistency and mechanical preparation across the full race history.",
+        "avgStop": "avg fastest stop per race"
+      },
+      "podNoWin": {
+        "title": "Podiums Without a Win",
+        "info": "Drivers who have stood on this podium multiple times but never converted to a win. Reveals near-miss specialists and the circuit's competitive ceiling.",
+        "podiums": "podiums"
+      },
+      "lapEvo": {
+        "title": "Lap Time Evolution",
+        "info": "Fastest lap time recorded each year. Drops reflect car performance leaps; plateaus or increases signal major regulation changes.",
+        "fastest": "Fastest"
+      }
+    }
   },
   "drivers": {
     "title": "Drivers",

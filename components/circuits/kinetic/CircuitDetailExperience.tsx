@@ -8,6 +8,8 @@ import { Link } from '@/lib/i18n/navigation';
 import CircuitHero from './CircuitHero';
 import TrackDominancePanel from './TrackDominancePanel';
 import LapRecordArc from './LapRecordArc';
+import CircuitIntelGrid from './CircuitIntelGrid';
+import type { IntelData } from './CircuitIntelGrid';
 import type { DriverSelectorRow } from '@/lib/types';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -92,6 +94,7 @@ export interface CircuitDetailProps {
   race2026Result: Race2026Row[];
   allTimePole: PoleRow | null;
   recentPoles: PoleRow[];
+  intelData: IntelData;
 }
 
 // ─── Orchestrator ──────────────────────────────────────────────────
@@ -114,6 +117,7 @@ export default function CircuitDetailExperience({
   race2026Result,
   allTimePole,
   recentPoles,
+  intelData,
 }: CircuitDetailProps) {
   const t = useTranslations('circuitDetail');
   const format = useFormatter();
@@ -588,6 +592,19 @@ export default function CircuitDetailExperience({
           )}
         </section>
       )}
+
+      {/* ── 08 · Circuit Intelligence ──────────────────────────── */}
+      <section className="circuit-section">
+        <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
+          <span className="font-mono text-xs text-text-2 leading-none">08 ·</span>
+          <h2 className="text-[13px] font-medium text-text-2">{t('intel.title')}</h2>
+        </div>
+        <CircuitIntelGrid
+          intelData={intelData}
+          lapEntries={lapEntries}
+          motionOk={motionOk}
+        />
+      </section>
 
     </main>
   );
