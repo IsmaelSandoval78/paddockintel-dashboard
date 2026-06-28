@@ -45,6 +45,16 @@ export function markdownToHtml(markdown: string): string {
       i++; continue;
     }
 
+    if (line.match(/^> /)) {
+      const lines2: string[] = [];
+      while (i < lines.length && lines[i].match(/^> /)) {
+        lines2.push(applyInline(lines[i].slice(2)));
+        i++;
+      }
+      out.push(`<blockquote><p>${lines2.join(' ')}</p></blockquote>`);
+      continue;
+    }
+
     if (line.match(/^[•\-] /)) {
       const items: string[] = [];
       while (i < lines.length && lines[i].match(/^[•\-] /)) {
@@ -62,7 +72,8 @@ export function markdownToHtml(markdown: string): string {
       i < lines.length &&
       lines[i].trim() !== '' &&
       !lines[i].match(/^#{2,3} /) &&
-      !lines[i].match(/^[•\-] /)
+      !lines[i].match(/^[•\-] /) &&
+      !lines[i].match(/^> /)
     ) {
       para.push(lines[i]);
       i++;

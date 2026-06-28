@@ -167,19 +167,37 @@ body {
 }
 
 /* ── Blog article prose ─────────────────────────────────── */
+.prose-article {
+  counter-reset: h2-counter;
+}
 .prose-article h2 {
   font-family: var(--pi-display);
   text-transform: uppercase;
-  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  font-size: clamp(1.05rem, 2.2vw, 1.4rem);
   color: var(--text-1);
   letter-spacing: -0.02em;
   line-height: 1.1;
-  margin-top: 2.5rem;
+  margin-top: 3.5rem;
   margin-bottom: 0.75rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border-subtle);
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--border);
+  counter-increment: h2-counter;
 }
-.prose-article h2:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+.prose-article h2::before {
+  content: "0" counter(h2-counter) " ·";
+  display: block;
+  font-family: var(--pi-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  color: var(--text-3);
+  margin-bottom: 0.35rem;
+  font-weight: 400;
+}
+.prose-article h2:first-of-type {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
 .prose-article h3 {
   font-family: var(--pi-mono);
   text-transform: uppercase;
@@ -193,7 +211,7 @@ body {
   font-family: var(--pi-prose);
   color: var(--text-1);
   line-height: 1.75;
-  margin-bottom: 1rem;
+  margin-bottom: 1.1rem;
   font-size: 0.9375rem;
 }
 .prose-article strong { color: var(--text-1); font-weight: 600; }
@@ -224,4 +242,31 @@ body {
   color: var(--red);
   font-family: var(--pi-mono);
   font-size: 0.75rem;
+}
+
+/* Pull quote — use > text in markdown */
+.prose-article blockquote {
+  border-left: 3px solid var(--red);
+  margin: 2.5rem 0;
+  padding: 0.25rem 0 0.25rem 1.5rem;
+}
+.prose-article blockquote p {
+  font-family: var(--pi-display);
+  font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+  text-transform: uppercase;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  color: var(--text-1);
+  margin-bottom: 0;
+}
+
+/* Technical grid texture — article page background */
+.article-bg-grid {
+  background-image:
+    linear-gradient(rgba(10, 10, 10, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(10, 10, 10, 0.028) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+@media (pointer: fine) {
+  .article-bg-grid { background-attachment: fixed; }
 }

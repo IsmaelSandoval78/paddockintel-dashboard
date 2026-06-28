@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
 import ShareButton from '@/components/ui/ShareButton';
+import ArticleHero from '@/components/blog/ArticleHero';
 import ArticleTOC from '@/components/blog/ArticleTOC';
 import NewsletterCard from '@/components/blog/NewsletterCard';
 import { extractTOC, markdownToHtml, estimateReadTime } from '@/lib/markdown';
@@ -74,14 +75,6 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
   };
 }
 
-function formatDate(iso: string, locale: string): string {
-  return new Date(iso).toLocaleDateString(locale === 'pt' ? 'pt-BR' : locale, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-}
-
 export default async function ArticlePage({ params }: { params: PageParams }) {
   const { locale, slug } = await params;
   const article = await getArticle(locale, slug);
@@ -138,26 +131,20 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
         />
       )}
 
-      <main className="bg-bg min-h-screen">
-        <div className="px-5 py-12 max-w-5xl mx-auto">
+      <main className="bg-bg min-h-screen article-bg-grid">
 
-          {/* Article header */}
-          <header className="max-w-2xl border-b border-border pb-8 mb-10">
-            {tags.length > 0 && (
-              <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-2 mb-4">
-                {tags[0]}
-                {publishedAt && (
-                  <> · {formatDate(publishedAt, locale)} · {readTime} min read</>
-                )}
-              </p>
-            )}
-            <h1 className="font-display text-[clamp(1.7rem,4vw,2.8rem)] uppercase text-text-1 leading-[0.93] tracking-[-0.03em]">
-              {title}
-            </h1>
-            <div className="mt-5">
-              <ShareButton url={pageUrl} title={title} />
-            </div>
-          </header>
+        {/* Editorial hero — full-width, breaks out of content container */}
+        <ArticleHero
+          title={title}
+          tags={tags}
+          publishedAt={publishedAt}
+          readTime={readTime}
+          pageUrl={pageUrl}
+          locale={locale}
+          featuredStat={stats[0]}
+        />
+
+        <div className="px-5 py-12 max-w-5xl mx-auto">
 
           {/* Two-column layout */}
           <div className={`flex gap-12 items-start ${hasSidebar ? '' : 'max-w-2xl'}`}>
