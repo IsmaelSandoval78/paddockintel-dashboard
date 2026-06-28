@@ -547,6 +547,63 @@ Score 1–5. Minimum 4 on all six to ship.
 
 ---
 
+## 18 · POST-RACE DATA PIPELINE
+
+Run `scripts/load_race.py` after every race weekend to push FastF1 data into Supabase.
+This is the **only** way race results enter the DB — the web app never calls FastF1 directly.
+
+### Tables updated
+`results` · `qualifying` · `pit_stops` · `driver_standings` · `constructor_standings`
+
+After running, manually refresh aggregated stats in the Supabase SQL Editor:
+```sql
+REFRESH MATERIALIZED VIEW driver_stats;
+REFRESH MATERIALIZED VIEW constructor_stats;
+```
+(If they are plain tables, a separate `scripts/refresh_stats.sql` is needed — check first.)
+
+### Setup (one-time)
+```bash
+pip install -r scripts/requirements-data.txt
+```
+Reads credentials from `.env.local` — no extra config needed.
+FastF1 caches session data in `.fastf1_cache/` (gitignored).
+
+### Running
+```bash
+# Full weekend (qualifying + race + standings) — most common
+python scripts/load_race.py --year 2026 --round 11
+
+# Dry-run first to verify mappings without writing anything
+python scripts/load_race.py --year 2026 --round 11 --dry-run
+
+# Race only (if qualifying already loaded)
+python scripts/load_race.py --year 2026 --round 11 --skip-quali
+
+# Qualifying only
+python scripts/load_race.py --year 2026 --round 11 --skip-race
+```
+
+### Finding the round number
+The `races` table has `year`, `round`, `name`. Query it or check the calendar:
+```bash
+# Quick lookup via Supabase MCP or SQL Editor:
+SELECT round, name FROM races WHERE year = 2026 ORDER BY round;
+```
+
+### If a constructor is unknown
+Add it to `TEAM_TO_CONSTRUCTOR_REF` at the top of `scripts/load_race.py`.
+FastF1 sometimes changes team name strings mid-season.
+
+### Dashboard update
+The home page uses `revalidate = 3600`. After a successful load, the new results
+appear within 1 hour automatically — or force a redeploy to show them immediately:
+```bash
+git commit --allow-empty -m "chore: trigger redeploy post-race" && git push
+```
+
+---
+
 ## 17 · DO NOT LIST (project-wide)
 
 - No dark page backgrounds — ever. `#F4F4F0` minimum.
