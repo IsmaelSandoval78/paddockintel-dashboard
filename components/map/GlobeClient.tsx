@@ -86,7 +86,7 @@ async function buildCountryMeshes(scene: THREE.Group) {
   const LAND_R   = R * 1.012;
   const LINE_R   = R * 1.016;
 
-  const landMat   = new THREE.MeshBasicMaterial({ color: 0xecebe6, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+  const landMat   = new THREE.MeshBasicMaterial({ color: 0xecebe6, side: THREE.FrontSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
   const borderMat = new THREE.LineBasicMaterial({ color: 0x3a3a3a });
 
   function buildPolygon(ring: number[][]): { mesh: THREE.Mesh | null; line: THREE.Line } {
