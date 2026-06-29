@@ -9,7 +9,7 @@ import CircuitHero from './CircuitHero';
 import CircuitTimeline from './CircuitTimeline';
 import CircuitIntelGrid from './CircuitIntelGrid';
 import type { IntelData } from './CircuitIntelGrid';
-import type { DriverSelectorRow } from '@/lib/types';
+import type { DriverSelectorRow, CircuitCorner } from '@/lib/types';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -83,6 +83,7 @@ export interface CircuitDetailProps {
   standardLaps: number | null;
   rankLapRecord: { time: string; forename: string; surname: string; year: number } | null;
   trackPathData: { path: string; viewBox: string } | null;
+  corners: CircuitCorner[];
   winnerRows: WinnerRow[];
   decadeDominance: DecadeRow[];
   lapEntries: LapEntry[];
@@ -106,6 +107,7 @@ export default function CircuitDetailExperience({
   standardLaps,
   rankLapRecord,
   trackPathData,
+  corners,
   winnerRows,
   decadeDominance,
   lapEntries,
@@ -224,6 +226,7 @@ export default function CircuitDetailExperience({
         totalRaces={totalRaces}
         lastWinners={lastWinners}
         trackPathData={trackPathData}
+        corners={corners}
         motionOk={motionOk}
       />
 

@@ -58,11 +58,12 @@ export async function GET(
       top_pole_driver: null,
       avg_winner_grid: null,
       track_path: null,
+      corners: [],
     });
   }
 
-  // Batch 2: all winners + fastest lap + fastest pit + pole positions + track SVG
-  const [allWinnersRes, fastLapRes, pitRes, poleRes, trackPath] = await Promise.all([
+  // Batch 2: all winners + fastest lap + fastest pit + pole positions + track SVG + corners
+  const [allWinnersRes, fastLapRes, pitRes, poleRes, trackPath, cornersRes] = await Promise.all([
     supabase
       .from('results')
       .select('race_id, driver_id, constructor_id, grid, laps')
@@ -90,6 +91,11 @@ export async function GET(
       .in('race_id', raceIds)
       .eq('position', 1),
     fetchTrackPathData(circuit.circuit_ref as string),
+    supabase
+      .from('circuit_corners')
+      .select('corner_number, name, type, sector, is_drs_zone, description, path_percent')
+      .eq('circuit_ref', circuit.circuit_ref as string)
+      .order('corner_number', { ascending: true }),
   ]);
 
   const allWinners = allWinnersRes.data ?? [];
@@ -264,6 +270,16 @@ export async function GET(
         })()
       : null;
 
+  const corners = (cornersRes.data ?? []).map((c) => ({
+    corner_number: c.corner_number as number,
+    name: c.name as string | null,
+    type: c.type as string,
+    sector: c.sector as number,
+    is_drs_zone: c.is_drs_zone as boolean,
+    description: c.description as string | null,
+    path_percent: c.path_percent as number | null,
+  }));
+
   return NextResponse.json<CircuitInfo>({
     name: circuit.name as string,
     location: circuit.location as string,
@@ -282,5 +298,6 @@ export async function GET(
     top_pole_driver: topPoleDriver,
     avg_winner_grid: avgWinnerGrid,
     track_path: trackPath,
+    corners,
   });
 }

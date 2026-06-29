@@ -6,7 +6,7 @@ import { Link } from '@/lib/i18n/navigation';
 import { routing } from '@/lib/i18n/routing';
 import { fetchTrackPathData } from '@/lib/trackSvg';
 import CircuitDetailExperience from '@/components/circuits/kinetic/CircuitDetailExperience';
-import type { DriverSelectorRow } from '@/lib/types';
+import type { DriverSelectorRow, CircuitCorner } from '@/lib/types';
 
 export const revalidate = 3600;
 
@@ -82,15 +82,30 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
     circuit_ref: circuitRaw.circuit_ref as string,
   };
 
-  // Batch 2 — all races at this circuit + track SVG (parallel)
-  const [{ data: racesRaw }, trackPathData] = await Promise.all([
+  // Batch 2 — all races at this circuit + track SVG + corners (parallel)
+  const [{ data: racesRaw }, trackPathData, { data: cornersRaw }] = await Promise.all([
     supabase
       .from('races')
       .select('id, year, round, name, date')
       .eq('circuit_id', circuit.id)
       .order('year', { ascending: true }),
     fetchTrackPathData(circuit.circuit_ref),
+    supabase
+      .from('circuit_corners')
+      .select('corner_number, name, type, sector, is_drs_zone, description, path_percent')
+      .eq('circuit_ref', circuit.circuit_ref)
+      .order('corner_number', { ascending: true }),
   ]);
+
+  const corners: CircuitCorner[] = (cornersRaw ?? []).map((c) => ({
+    corner_number: c.corner_number as number,
+    name: c.name as string | null,
+    type: c.type as string,
+    sector: c.sector as number,
+    is_drs_zone: c.is_drs_zone as boolean,
+    description: c.description as string | null,
+    path_percent: c.path_percent as number | null,
+  }));
 
   const races = racesRaw ?? [];
   const raceIds = races.map((r) => r.id as number);
@@ -618,6 +633,7 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
       standardLaps={standardLaps}
       rankLapRecord={rankLapRecord}
       trackPathData={trackPathData}
+      corners={corners}
       winnerRows={winnerRows}
       decadeDominance={decadeDominance}
       lapEntries={lapEntries}

@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { gsap } from 'gsap';
 import { SplitText } from 'gsap/SplitText';
 import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 import { fitToWidth, observeFit } from '@/components/home/kinetic/fitText';
+import type { CircuitCorner } from '@/lib/types';
 
 gsap.registerPlugin(SplitText, DrawSVGPlugin, ScrambleTextPlugin);
 
@@ -82,6 +83,7 @@ interface CircuitHeroProps {
   totalRaces: number;
   lastWinners: LastWinner[];
   trackPathData: { path: string; viewBox: string } | null;
+  corners: CircuitCorner[];
   motionOk: boolean;
 }
 
@@ -89,7 +91,7 @@ export default function CircuitHero({
   name, location, country, lat, lng,
   standardLaps, rankLapRecord,
   firstYear, totalRaces, lastWinners,
-  trackPathData, motionOk,
+  trackPathData, corners, motionOk,
 }: CircuitHeroProps) {
   const t = useTranslations('circuitDetail');
 
@@ -100,6 +102,13 @@ export default function CircuitHero({
   const firstYearRef = useRef<HTMLParagraphElement>(null);
   const totalRef     = useRef<HTMLParagraphElement>(null);
   const drawPathRef  = useRef<SVGPathElement>(null);
+
+  const [markerPoints, setMarkerPoints] = useState<{ x: number; y: number }[]>([]);
+  const [hoveredCorner, setHoveredCorner] = useState<number | null>(null);
+
+  const cornersWithPercent = corners.filter(c => c.path_percent !== null);
+  const activeCorner = hoveredCorner !== null ? cornersWithPercent[hoveredCorner] : null;
+  const drsCount = corners.length > 0 ? corners.filter(c => c.is_drs_zone).length : null;
 
   useEffect(() => {
     let cleanup: (() => void) | undefined;
@@ -192,6 +201,43 @@ export default function CircuitHero({
     }, rootRef);
     return () => ctx.revert();
   }, [motionOk, name, country, firstYear, totalRaces, rankLapRecord, t]);
+
+  // Compute SVG corner marker positions using path.getPointAtLength().
+  // Cannot use drawPathRef because GSAP DrawSVGPlugin adds vector-effect:non-scaling-stroke
+  // to that element, which causes getTotalLength() to return 0 when the SVG is CSS-scaled.
+  // Instead, measure a temporary off-screen path with only the d attribute.
+  useEffect(() => {
+    if (!trackPathData || cornersWithPercent.length === 0) return;
+    const ns = 'http://www.w3.org/2000/svg';
+    const svgEl = document.createElementNS(ns, 'svg');
+    svgEl.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden;visibility:hidden';
+    const pathEl = document.createElementNS(ns, 'path');
+    pathEl.setAttribute('d', trackPathData.path);
+    svgEl.appendChild(pathEl);
+    document.body.appendChild(svgEl);
+    const totalLen = pathEl.getTotalLength();
+    if (totalLen > 0) {
+      const points = cornersWithPercent.map(c => {
+        const pt = pathEl.getPointAtLength((c.path_percent! / 100) * totalLen);
+        return { x: pt.x, y: pt.y };
+      });
+      setMarkerPoints(points);
+    }
+    document.body.removeChild(svgEl);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [corners, trackPathData]);
+
+  // Staggered marker appearance after DrawSVG finishes (2.55s total)
+  useEffect(() => {
+    if (!motionOk || markerPoints.length === 0) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo('.corner-marker',
+        { scale: 0, autoAlpha: 0, transformOrigin: 'center center' },
+        { scale: 1, autoAlpha: 1, duration: 0.2, stagger: 0.04, ease: 'power2.out', delay: 2.6 },
+      );
+    }, rootRef);
+    return () => ctx.revert();
+  }, [motionOk, markerPoints]);
 
   return (
     <div ref={rootRef} className="border-b border-border">
@@ -297,6 +343,8 @@ export default function CircuitHero({
             const flagColors = getFlagColors(country);
             const vbNums = trackPathData.viewBox.split(' ').map(Number);
             const [vx, , vw] = vbNums;
+            const markerHalf = vw * 0.009;
+            const hitHalf = vw * 0.026;
             return (
             <div className="flex-1 flex flex-col p-8">
               <svg
@@ -343,13 +391,83 @@ export default function CircuitHero({
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
+                {/* Corner markers — appear after DrawSVG completes */}
+                {cornersWithPercent.map((corner, i) => {
+                  const pt = markerPoints[i];
+                  if (!pt) return null;
+                  const isActive = hoveredCorner === i;
+                  return (
+                    <g
+                      key={corner.corner_number}
+                      className="corner-marker"
+                      style={{ cursor: 'crosshair' }}
+                      onMouseEnter={() => setHoveredCorner(i)}
+                      onMouseLeave={() => setHoveredCorner(null)}
+                    >
+                      {/* Enlarged hit area */}
+                      <rect
+                        x={pt.x - hitHalf}
+                        y={pt.y - hitHalf}
+                        width={hitHalf * 2}
+                        height={hitHalf * 2}
+                        fill="transparent"
+                      />
+                      {/* Visible square marker */}
+                      <rect
+                        x={pt.x - markerHalf}
+                        y={pt.y - markerHalf}
+                        width={markerHalf * 2}
+                        height={markerHalf * 2}
+                        style={{
+                          fill: corner.is_drs_zone ? 'var(--red)' : 'white',
+                          opacity: isActive ? 1 : (corner.is_drs_zone ? 0.85 : 0.65),
+                        }}
+                      />
+                    </g>
+                  );
+                })}
               </svg>
-              <p
-                className="font-mono text-[9px] uppercase tracking-[0.14em] mt-4 shrink-0"
-                style={{ color: 'rgba(255,255,255,0.2)' }}
-              >
-                TRACK MAP · {name.toUpperCase()}
-              </p>
+
+              {/* Corner description / default label */}
+              <div className="shrink-0 mt-4" style={{ minHeight: '3.5rem' }}>
+                {activeCorner ? (
+                  <>
+                    <p
+                      className="font-mono text-[9px] uppercase tracking-[0.1em] mb-1.5"
+                      style={{ color: 'rgba(255,255,255,0.8)' }}
+                    >
+                      T{activeCorner.corner_number}
+                      {activeCorner.name ? ` · ${activeCorner.name}` : ''}
+                      <span style={{ color: 'rgba(255,255,255,0.45)' }}>
+                        {' · '}{activeCorner.type.replace(/_/g, ' ')}
+                      </span>
+                      {activeCorner.is_drs_zone && (
+                        <span style={{ color: 'var(--red)' }}>{' · DRS'}</span>
+                      )}
+                    </p>
+                    {activeCorner.description && (
+                      <p
+                        className="font-mono text-[10px] leading-relaxed line-clamp-3"
+                        style={{ color: 'rgba(255,255,255,0.62)' }}
+                      >
+                        {activeCorner.description}
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <p
+                    className="font-mono text-[9px] uppercase tracking-[0.14em]"
+                    style={{ color: 'rgba(255,255,255,0.4)' }}
+                  >
+                    TRACK MAP · {name.toUpperCase()}
+                    {cornersWithPercent.length > 0 && (
+                      <span style={{ color: 'rgba(255,255,255,0.25)' }}>
+                        {' · '}{cornersWithPercent.length} TURNS
+                      </span>
+                    )}
+                  </p>
+                )}
+              </div>
             </div>
             );
           })() : (
@@ -409,10 +527,10 @@ export default function CircuitHero({
             {t('hero.drsZones')}
           </p>
           <p
-            className="leading-none tabular-nums text-text-3"
+            className="leading-none tabular-nums text-text-1"
             style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)' }}
           >
-            —
+            {drsCount !== null ? drsCount : '—'}
           </p>
         </div>
       </div>

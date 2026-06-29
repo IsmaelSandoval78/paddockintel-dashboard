@@ -225,6 +225,16 @@ export interface ConstructorDetail {
   }>;
 }
 
+export interface CircuitCorner {
+  corner_number: number;
+  name: string | null;
+  type: string;
+  sector: number;
+  is_drs_zone: boolean;
+  description: string | null;
+  path_percent: number | null;
+}
+
 export interface CircuitInfo {
   name: string;
   location: string;
@@ -252,6 +262,7 @@ export interface CircuitInfo {
   top_pole_driver: { forename: string; surname: string; poles: number } | null;
   avg_winner_grid: number | null;
   track_path: { path: string; viewBox: string } | null;
+  corners: CircuitCorner[];
 }
 
 // ─── Home page types ──────────────────────────────────────────────
