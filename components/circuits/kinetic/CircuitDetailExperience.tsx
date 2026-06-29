@@ -6,7 +6,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Link } from '@/lib/i18n/navigation';
 import CircuitHero from './CircuitHero';
-import CircuitWinnersSection from './CircuitWinnersSection';
+import CircuitTimeline from './CircuitTimeline';
 import CircuitIntelGrid from './CircuitIntelGrid';
 import type { IntelData } from './CircuitIntelGrid';
 import type { DriverSelectorRow } from '@/lib/types';
@@ -227,25 +227,10 @@ export default function CircuitDetailExperience({
         motionOk={motionOk}
       />
 
-      {/* ── 01 · Champions Wall + Heatmap ─────────────────────── */}
-      {winnerRows.length > 0 && (
-        <section className="circuit-section border-b border-border">
-          <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
-            <span className="font-mono text-xs text-text-2 leading-none">01 ·</span>
-            <h2 className="text-[13px] font-medium text-text-2">{t('winners.title')}</h2>
-          </div>
-          <CircuitWinnersSection
-            winnerRows={winnerRows}
-            firstYear={firstYear}
-            motionOk={motionOk}
-          />
-        </section>
-      )}
-
-      {/* ── 02 · Decade Dominance ──────────────────────────────── */}
+      {/* ── 01 · Decade Dominance ──────────────────────────────── */}
       <section className="circuit-section border-b border-border">
         <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
-          <span className="font-mono text-xs text-text-2 leading-none">02 ·</span>
+          <span className="font-mono text-xs text-text-2 leading-none">01 ·</span>
           <h2 className="text-[13px] font-medium text-text-2">{t('dominance.title')}</h2>
         </div>
         <div className="px-6 py-5 flex flex-col gap-4">
@@ -279,11 +264,11 @@ export default function CircuitDetailExperience({
         </div>
       </section>
 
-      {/* ── 03 · Constructor Wins ──────────────────────────────── */}
+      {/* ── 02 · Constructor Wins ──────────────────────────────── */}
       {constructorWins.length > 0 && (
         <section className="circuit-section border-b border-border">
           <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
-            <span className="font-mono text-xs text-text-2 leading-none">03 ·</span>
+            <span className="font-mono text-xs text-text-2 leading-none">02 ·</span>
             <h2 className="text-[13px] font-medium text-text-2">{t('constructors.title')}</h2>
           </div>
           <div className="px-6 py-5 grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-3">
@@ -310,11 +295,11 @@ export default function CircuitDetailExperience({
         </section>
       )}
 
-      {/* ── 04 · Qualifying record ─────────────────────────────── */}
+      {/* ── 03 · Qualifying record ─────────────────────────────── */}
       {(allTimePole || recentPoles.length > 0) && (
         <section className="circuit-section border-b border-border">
           <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
-            <span className="font-mono text-xs text-text-2 leading-none">04 ·</span>
+            <span className="font-mono text-xs text-text-2 leading-none">03 ·</span>
             <h2 className="text-[13px] font-medium text-text-2">{t('qualifying.title')}</h2>
           </div>
 
@@ -374,11 +359,11 @@ export default function CircuitDetailExperience({
         </section>
       )}
 
-      {/* ── 05 · Race 2026 result ──────────────────────────────── */}
+      {/* ── 04 · Race 2026 result ──────────────────────────────── */}
       {nextRace && (
         <section className="circuit-section">
           <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
-            <span className="font-mono text-xs text-text-2 leading-none">05 ·</span>
+            <span className="font-mono text-xs text-text-2 leading-none">04 ·</span>
             <h2 className="text-[13px] font-medium text-text-2">{t('nextRace.title')}</h2>
             <span className="font-mono text-[11px] text-text-3 ml-auto tabular-nums">
               Rd.{nextRace.round}
@@ -478,10 +463,10 @@ export default function CircuitDetailExperience({
         </section>
       )}
 
-      {/* ── 06 · Circuit Intelligence ──────────────────────────── */}
-      <section className="circuit-section">
+      {/* ── 05 · Circuit Intelligence ──────────────────────────── */}
+      <section className="circuit-section border-b border-border">
         <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
-          <span className="font-mono text-xs text-text-2 leading-none">06 ·</span>
+          <span className="font-mono text-xs text-text-2 leading-none">05 ·</span>
           <h2 className="text-[13px] font-medium text-text-2">{t('intel.title')}</h2>
         </div>
         <CircuitIntelGrid
@@ -490,6 +475,18 @@ export default function CircuitDetailExperience({
           motionOk={motionOk}
         />
       </section>
+
+      {/* ── 06 · Champions Timeline ────────────────────────────── */}
+      {winnerRows.length > 0 && (
+        <section className="circuit-section">
+          <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
+            <span className="font-mono text-xs text-text-2 leading-none">06 ·</span>
+            <h2 className="text-[13px] font-medium text-text-2">{t('winners.title')}</h2>
+            <span className="font-mono text-[11px] text-text-3 tabular-nums ml-auto">{winnerRows.length}</span>
+          </div>
+          <CircuitTimeline winnerRows={winnerRows} motionOk={motionOk} />
+        </section>
+      )}
 
     </main>
   );
