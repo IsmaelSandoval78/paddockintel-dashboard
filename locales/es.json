@@ -132,11 +132,11 @@
       "lastWinners": "Últimos Ganadores"
     },
     "winners": {
-      "title": "Ganadores",
-      "year": "Año",
-      "driver": "Piloto",
-      "constructor": "Constructor",
-      "fastestLap": "Vuelta Rápida"
+      "title": "Campeones",
+      "all": "Todos los ganadores",
+      "hover": "Pasa el cursor por una celda",
+      "victories": "victorias en este circuito",
+      "clear": "Limpiar"
     },
     "dominance": {
       "title": "Dominancia por Década"

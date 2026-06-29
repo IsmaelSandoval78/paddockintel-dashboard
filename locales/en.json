@@ -132,11 +132,11 @@
       "lastWinners": "Last Winners"
     },
     "winners": {
-      "title": "Race Winners",
-      "year": "Year",
-      "driver": "Driver",
-      "constructor": "Constructor",
-      "fastestLap": "Fastest Lap"
+      "title": "Champions",
+      "all": "All winners",
+      "hover": "Hover a cell to reveal",
+      "victories": "victories at this circuit",
+      "clear": "Clear"
     },
     "dominance": {
       "title": "Decade Dominance"
