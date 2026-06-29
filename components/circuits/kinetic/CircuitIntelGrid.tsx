@@ -105,7 +105,7 @@ export default function CircuitIntelGrid({ intelData, lapEntries, motionOk }: Pr
 
       {/* ── 1 · DNF Rate ─── md:col-span-5 ─────────────────────────── */}
       <div className="md:col-span-5 border-b md:border-b-0 md:border-r border-border">
-        <CellHeader num="A" title={t('dnf.title')} tooltip={t('dnf.info')} />
+        <CellHeader num="1" title={t('dnf.title')} tooltip={t('dnf.info')} />
         <div className="px-5 py-5">
           <div className="intel-stat flex items-end gap-4 mb-5">
             <p
@@ -144,7 +144,7 @@ export default function CircuitIntelGrid({ intelData, lapEntries, motionOk }: Pr
 
       {/* ── 2 · Pole → Win ─── md:col-span-4 ───────────────────────── */}
       <div className="md:col-span-4 border-b md:border-b-0 md:border-r border-border">
-        <CellHeader num="B" title={t('poleWin.title')} tooltip={t('poleWin.info')} />
+        <CellHeader num="2" title={t('poleWin.title')} tooltip={t('poleWin.info')} />
         <div className="px-5 py-5">
           {poleTotal > 0 ? (
             <>
@@ -175,7 +175,7 @@ export default function CircuitIntelGrid({ intelData, lapEntries, motionOk }: Pr
 
       {/* ── 3 · Grid Δ ─── md:col-span-3 ───────────────────────────── */}
       <div className="md:col-span-3 border-b md:border-b-0 border-border">
-        <CellHeader num="C" title={t('gridDelta.title')} tooltip={t('gridDelta.info')} />
+        <CellHeader num="3" title={t('gridDelta.title')} tooltip={t('gridDelta.info')} />
         <div className="px-5 py-5">
           {avgGridDelta !== null ? (
             <div className="intel-stat">
@@ -201,7 +201,7 @@ export default function CircuitIntelGrid({ intelData, lapEntries, motionOk }: Pr
 
       {/* ── 4 · Win Streaks ─── md:col-span-4 ──────────────────────── */}
       <div className="md:col-span-4 border-b md:border-r border-border">
-        <CellHeader num="D" title={t('streaks.title')} tooltip={t('streaks.info')} />
+        <CellHeader num="4" title={t('streaks.title')} tooltip={t('streaks.info')} />
         <div className="px-5 py-4">
           <p className="font-mono text-[9px] uppercase tracking-[0.1em] text-text-3 mb-2">{t('streaks.driver')}</p>
           <div className="flex flex-col gap-2 mb-5">
@@ -246,7 +246,7 @@ export default function CircuitIntelGrid({ intelData, lapEntries, motionOk }: Pr
 
       {/* ── 5 · Youngest / Oldest Winner ─── md:col-span-4 ─────────── */}
       <div className="md:col-span-4 border-b md:border-r border-border">
-        <CellHeader num="E" title={t('age.title')} tooltip={t('age.info')} />
+        <CellHeader num="5" title={t('age.title')} tooltip={t('age.info')} />
         <div className="px-5 py-4 flex flex-col gap-5">
           {youngestWinner ? (
             <div className="intel-stat">
@@ -290,7 +290,7 @@ export default function CircuitIntelGrid({ intelData, lapEntries, motionOk }: Pr
 
       {/* ── 6 · Wins by Nationality ─── md:col-span-4 ──────────────── */}
       <div className="md:col-span-4 border-b border-border">
-        <CellHeader num="F" title={t('natWins.title')} tooltip={t('natWins.info')} />
+        <CellHeader num="6" title={t('natWins.title')} tooltip={t('natWins.info')} />
         <div className="px-5 py-4 flex flex-col gap-2">
           {natWins.length > 0 ? natWins.map(({ nationality, wins }) => (
             <div key={nationality} className="intel-stat">
@@ -313,7 +313,7 @@ export default function CircuitIntelGrid({ intelData, lapEntries, motionOk }: Pr
 
       {/* ── 7 · Pit Strategy ─── md:col-span-5 ─────────────────────── */}
       <div className="md:col-span-5 border-b md:border-r border-border">
-        <CellHeader num="G" title={t('pitStrategy.title')} tooltip={t('pitStrategy.info')} />
+        <CellHeader num="7" title={t('pitStrategy.title')} tooltip={t('pitStrategy.info')} />
         <div className="px-5 py-5">
           {overallAvgPitSec !== null ? (
             <>
@@ -357,7 +357,7 @@ export default function CircuitIntelGrid({ intelData, lapEntries, motionOk }: Pr
 
       {/* ── 8 · Fastest Pit · Constructor ─── md:col-span-7 ────────── */}
       <div className="md:col-span-7 border-b border-border">
-        <CellHeader num="H" title={t('fastPit.title')} tooltip={t('fastPit.info')} />
+        <CellHeader num="8" title={t('fastPit.title')} tooltip={t('fastPit.info')} />
         <div className="px-5 py-5">
           {fastestPitByConstructor.length > 0 ? (
             <div className="flex flex-col gap-3">
@@ -399,7 +399,7 @@ export default function CircuitIntelGrid({ intelData, lapEntries, motionOk }: Pr
 
       {/* ── 9 · Most Podiums Without Win ─── full width ─────────────── */}
       <div className="md:col-span-12 border-b border-border">
-        <CellHeader num="I" title={t('podNoWin.title')} tooltip={t('podNoWin.info')} />
+        <CellHeader num="9" title={t('podNoWin.title')} tooltip={t('podNoWin.info')} />
         <div className="px-5 py-4 flex flex-wrap gap-x-10 gap-y-3">
           {podNoWin.length > 0 ? podNoWin.map(({ forename, surname, podiums }, idx) => (
             <div key={`${forename}-${surname}`} className="intel-stat flex items-baseline gap-2">
@@ -423,7 +423,7 @@ export default function CircuitIntelGrid({ intelData, lapEntries, motionOk }: Pr
 
       {/* ── 10 · Lap Time Evolution (animated) ─── full width ──────── */}
       <div className="md:col-span-12">
-        <CellHeader num="J" title={t('lapEvo.title')} tooltip={t('lapEvo.info')} />
+        <CellHeader num="10" title={t('lapEvo.title')} tooltip={t('lapEvo.info')} />
         {lapEntries.length > 1 ? (
           <div className="px-5 py-5">
             <LapRecordArc data={lapEntries} />
