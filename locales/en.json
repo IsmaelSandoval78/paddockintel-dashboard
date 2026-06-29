@@ -106,9 +106,10 @@
     "panel": {
       "firstRace": "First Race",
       "totalRaces": "Total Races",
-      "champions": "Last 5 Champions",
+      "laps": "Laps",
+      "champions": "Last 5 Winners",
       "fastestPit": "Fastest Pit Stop",
-      "fastestLap": "Fastest Lap",
+      "fastestLap": "Lap Record",
       "topConstructor": "Top Constructor",
       "mostWins": "Most Wins",
       "mostPoles": "Most Poles",

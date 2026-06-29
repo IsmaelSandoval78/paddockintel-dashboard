@@ -49,6 +49,7 @@ export async function GET(
       circuit_ref: circuit.circuit_ref as string,
       first_year: firstYear,
       total_races: totalRaces,
+      laps: null,
       champions: [],
       fastest_pit: null,
       fastest_lap: null,
@@ -64,7 +65,7 @@ export async function GET(
   const [allWinnersRes, fastLapRes, pitRes, poleRes, trackPath] = await Promise.all([
     supabase
       .from('results')
-      .select('race_id, driver_id, constructor_id, grid')
+      .select('race_id, driver_id, constructor_id, grid, laps')
       .in('race_id', raceIds)
       .eq('position', 1),
     supabase
@@ -121,6 +122,16 @@ export async function GET(
   const topWinEntry = [...drvWins.entries()].sort((a, b) => b[1] - a[1])[0];
   const topWinDriverId = topWinEntry?.[0] ?? null;
   const topWinCount = topWinEntry?.[1] ?? 0;
+
+  // Standard laps (mode of winner laps)
+  const lapsFreq = new Map<number, number>();
+  for (const w of allWinners) {
+    const l = w.laps as number;
+    if (l > 0) lapsFreq.set(l, (lapsFreq.get(l) ?? 0) + 1);
+  }
+  const standardLaps: number | null = lapsFreq.size > 0
+    ? [...lapsFreq.entries()].sort((a, b) => b[1] - a[1])[0][0]
+    : null;
 
   // Avg winner grid (grid=0 means no data)
   const validGrids = allWinners
@@ -262,6 +273,7 @@ export async function GET(
     circuit_ref: circuit.circuit_ref as string,
     first_year: firstYear,
     total_races: totalRaces,
+    laps: standardLaps,
     champions,
     fastest_pit: fastestPit,
     fastest_lap: fastestLap,

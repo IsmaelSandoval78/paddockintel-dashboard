@@ -106,9 +106,10 @@
     "panel": {
       "firstRace": "Primeira Corrida",
       "totalRaces": "Total de Corridas",
-      "champions": "Últimos 5 Campeões",
+      "laps": "Voltas",
+      "champions": "Últimos 5 Vencedores",
       "fastestPit": "Pit Stop Mais Rápido",
-      "fastestLap": "Volta Mais Rápida",
+      "fastestLap": "Recorde de Volta",
       "topConstructor": "Construtor Dominante",
       "mostWins": "Mais Vitórias",
       "mostPoles": "Mais Poles",

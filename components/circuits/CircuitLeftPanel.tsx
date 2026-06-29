@@ -15,10 +15,8 @@ function formatCoord(lat: number, lng: number): string {
   return `${Math.abs(lat).toFixed(2)}°${ns} · ${Math.abs(lng).toFixed(2)}°${ew}`;
 }
 
-// ─── Track SVG with DrawSVG animation ────────────────────────────
 function TrackDrawing({ path, viewBox }: { path: string; viewBox: string }) {
-  const ghostRef = useRef<SVGPathElement>(null);
-  const drawRef  = useRef<SVGPathElement>(null);
+  const drawRef = useRef<SVGPathElement>(null);
 
   useEffect(() => {
     if (!drawRef.current) return;
@@ -29,32 +27,29 @@ function TrackDrawing({ path, viewBox }: { path: string; viewBox: string }) {
       ease: 'expo.inOut',
       delay: 0.1,
     });
-  }, [path]);   // re-animate on circuit change
+  }, [path]);
 
   return (
     <svg
       viewBox={viewBox}
-      className="w-full"
-      style={{ maxHeight: '140px' }}
+      className="w-full h-full block"
       fill="none"
       overflow="visible"
+      style={{ maxHeight: '180px' }}
     >
-      {/* Ghost */}
       <path
-        ref={ghostRef}
         d={path}
-        stroke="var(--border)"
-        strokeWidth="3"
+        stroke="rgba(255,255,255,0.06)"
+        strokeWidth="4"
         strokeLinecap="round"
         strokeLinejoin="round"
         fill="none"
       />
-      {/* Animated */}
       <path
         ref={drawRef}
         d={path}
-        stroke="var(--text-1)"
-        strokeWidth="3"
+        stroke="var(--red)"
+        strokeWidth="4"
         strokeLinecap="round"
         strokeLinejoin="round"
         fill="none"
@@ -63,7 +58,6 @@ function TrackDrawing({ path, viewBox }: { path: string; viewBox: string }) {
   );
 }
 
-// ─── Panel ───────────────────────────────────────────────────────
 export default function CircuitLeftPanel({
   info,
   onClose,
@@ -72,184 +66,144 @@ export default function CircuitLeftPanel({
   onClose: () => void;
 }) {
   const t = useTranslations('circuits.panel');
+
   return (
     <div className="flex flex-col h-full bg-bg border-r border-border overflow-y-auto">
 
-      {/* ── Header ──────────────────────────────────────────────── */}
-      <div className="px-5 py-4 border-b border-border flex items-start justify-between gap-3 shrink-0">
+      {/* ── Header: name + coords + close ──────────────────── */}
+      <div className="px-5 pt-5 pb-4 border-b border-border shrink-0 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h2
-            className="text-[clamp(1.1rem,2vw,1.4rem)] leading-tight text-text-1 uppercase tracking-[-0.02em]"
-            style={{ fontFamily: 'var(--pi-display)' }}
+            className="leading-tight text-text-1 uppercase tracking-[-0.02em]"
+            style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.15rem, 2vw, 1.5rem)' }}
           >
             {info.name}
           </h2>
-          <p className="font-mono text-[11px] text-text-2 mt-1 uppercase tracking-[0.06em]">
+          <p className="font-mono text-[11px] text-text-2 mt-1.5 uppercase tracking-[0.05em]">
             {info.location} · {info.country}
           </p>
-          <p className="font-mono text-[10px] text-text-3 mt-0.5">
+          <p className="font-mono text-[10px] text-text-3 mt-0.5 tabular-nums">
             {formatCoord(info.lat, info.lng)}
           </p>
         </div>
         <button
           onClick={onClose}
           aria-label="Close"
-          className="shrink-0 w-7 h-7 flex items-center justify-center text-text-3 hover:text-text-1 transition-colors duration-100 text-lg leading-none mt-0.5"
+          className="shrink-0 w-7 h-7 flex items-center justify-center text-text-3 hover:text-text-1 transition-colors duration-100 text-xl leading-none mt-0.5"
         >
           ×
         </button>
       </div>
 
-      {/* ── Track SVG ─────────────────────────────────────────────── */}
+      {/* ── Track SVG — dark panel ──────────────────────────── */}
       {info.track_path && (
-        <div className="px-8 py-5 border-b border-border shrink-0 flex items-center justify-center bg-surface">
+        <div
+          className="px-8 py-6 shrink-0 flex items-center justify-center"
+          style={{ background: 'var(--text-1)' }}
+        >
           <TrackDrawing key={info.circuit_ref} path={info.track_path.path} viewBox={info.track_path.viewBox} />
         </div>
       )}
 
-      {/* ── First race + Total ────────────────────────────────────── */}
+      {/* ── First Race | Total Races ────────────────────────── */}
       <div className="flex divide-x divide-border border-b border-border shrink-0">
         <div className="flex-1 px-5 py-4">
-          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">{t('firstRace')}</p>
+          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
+            {t('firstRace')}
+          </p>
           <p
-            className="text-[2rem] text-text-1 leading-none tabular-nums"
-            style={{ fontFamily: 'var(--pi-display)' }}
+            className="leading-none tabular-nums text-text-1"
+            style={{ fontFamily: 'var(--pi-display)', fontSize: '2rem' }}
           >
             {info.first_year ?? '—'}
           </p>
         </div>
         <div className="flex-1 px-5 py-4">
-          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">{t('totalRaces')}</p>
+          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
+            {t('totalRaces')}
+          </p>
           <p
-            className="text-[2rem] text-text-1 leading-none tabular-nums"
-            style={{ fontFamily: 'var(--pi-display)' }}
+            className="leading-none tabular-nums text-text-1"
+            style={{ fontFamily: 'var(--pi-display)', fontSize: '2rem' }}
           >
             {info.total_races}
           </p>
         </div>
       </div>
 
-      {/* ── 01 · Last 5 Champions ─────────────────────────────────── */}
+      {/* ── Last 5 Winners ──────────────────────────────────── */}
       {info.champions.length > 0 && (
         <div className="border-b border-border shrink-0">
-          <div className="px-5 py-2.5 flex items-baseline gap-2 border-b border-border">
-            <span className="font-mono text-[10px] text-text-2">01 ·</span>
-            <span className="font-mono text-[11px] text-text-2 uppercase tracking-[0.06em]">{t('champions')}</span>
-          </div>
-          {info.champions.map((c) => (
-            <div key={c.year} className="flex items-center gap-3 px-5 h-9 border-b border-border last:border-0">
-              <span className="font-mono text-[11px] text-text-3 tabular-nums w-9 shrink-0">{c.year}</span>
-              <span className="text-[12px] text-text-2 shrink-0">{c.forename}</span>
-              <span className="text-[13px] font-semibold text-text-1 uppercase tracking-[0.02em] truncate">{c.surname}</span>
+          <p className="px-5 py-2.5 font-mono text-[10px] text-text-3 uppercase tracking-[0.07em] border-b border-border">
+            {t('champions')}
+          </p>
+          {info.champions.map((c, i) => (
+            <div
+              key={c.year}
+              className="flex items-center gap-3 px-5 h-10 border-b border-border last:border-b-0"
+              style={{ opacity: 1 - i * 0.12 }}
+            >
+              <span className="font-mono text-[11px] text-text-3 tabular-nums w-9 shrink-0 leading-none">
+                {c.year}
+              </span>
+              <p
+                className="uppercase leading-none tracking-[-0.02em] text-text-1 truncate"
+                style={{ fontFamily: 'var(--pi-display)', fontSize: '1.05rem' }}
+              >
+                {c.forename[0]}. {c.surname}
+              </p>
             </div>
           ))}
         </div>
       )}
 
-      {/* ── 02 · Fastest Pit ──────────────────────────────────────── */}
-      {info.fastest_pit && (
-        <div className="border-b border-border shrink-0">
-          <div className="px-5 py-2.5 flex items-baseline gap-2 border-b border-border">
-            <span className="font-mono text-[10px] text-text-2">02 ·</span>
-            <span className="font-mono text-[11px] text-text-2 uppercase tracking-[0.06em]">{t('fastestPit')}</span>
+      {/* ── Laps | Lap Record ───────────────────────────────── */}
+      <div className="border-b border-border shrink-0">
+        {/* Laps count */}
+        {info.laps !== null && (
+          <div className="flex items-center gap-4 px-5 py-4 border-b border-border">
+            <div>
+              <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
+                {t('laps')}
+              </p>
+              <p
+                className="leading-none tabular-nums text-text-1"
+                style={{ fontFamily: 'var(--pi-display)', fontSize: '2rem' }}
+              >
+                {info.laps}
+              </p>
+            </div>
           </div>
-          <div className="px-5 py-3 flex items-center gap-3">
-            <span className="text-[13px] text-text-1 flex-1 min-w-0 truncate">{info.fastest_pit.constructor}</span>
-            <span className="font-mono text-[13px] tabular-nums shrink-0" style={{ color: 'var(--red)' }}>{info.fastest_pit.duration}s</span>
-            <span className="font-mono text-[11px] text-text-3 tabular-nums shrink-0">{info.fastest_pit.year}</span>
-          </div>
-        </div>
-      )}
+        )}
 
-      {/* ── 03 · Fastest Lap ──────────────────────────────────────── */}
-      {info.fastest_lap && (
-        <div className="border-b border-border shrink-0">
-          <div className="px-5 py-2.5 flex items-baseline gap-2 border-b border-border">
-            <span className="font-mono text-[10px] text-text-2">03 ·</span>
-            <span className="font-mono text-[11px] text-text-2 uppercase tracking-[0.06em]">{t('fastestLap')}</span>
-          </div>
-          <div className="px-5 py-3 flex items-center gap-3">
-            <span className="text-[13px] text-text-1 flex-1 min-w-0 truncate">
-              {info.fastest_lap.forename[0]}. {info.fastest_lap.surname}
-            </span>
-            <span className="font-mono text-[13px] tabular-nums shrink-0" style={{ color: 'var(--red)' }}>{info.fastest_lap.time}</span>
-            <span className="font-mono text-[11px] text-text-3 tabular-nums shrink-0">{info.fastest_lap.year}</span>
-          </div>
-        </div>
-      )}
-
-      {/* ── 04 · Top Constructor ──────────────────────────────────── */}
-      {info.top_constructor && (
-        <div className="border-b border-border shrink-0">
-          <div className="px-5 py-2.5 flex items-baseline gap-2 border-b border-border">
-            <span className="font-mono text-[10px] text-text-2">04 ·</span>
-            <span className="font-mono text-[11px] text-text-2 uppercase tracking-[0.06em]">{t('topConstructor')}</span>
-          </div>
-          <div className="px-5 py-3 flex items-center gap-3">
-            <span className="text-[13px] text-text-1 flex-1 min-w-0 truncate">{info.top_constructor.name}</span>
-            <span className="font-mono text-[11px] text-text-3 tabular-nums shrink-0">{info.top_constructor.wins}W</span>
-          </div>
-        </div>
-      )}
-
-      {/* ── 05 · Most Wins ────────────────────────────────────────── */}
-      {info.top_win_driver && (
-        <div className="border-b border-border shrink-0">
-          <div className="px-5 py-2.5 flex items-baseline gap-2 border-b border-border">
-            <span className="font-mono text-[10px] text-text-2">05 ·</span>
-            <span className="font-mono text-[11px] text-text-2 uppercase tracking-[0.06em]">{t('mostWins')}</span>
-          </div>
-          <div className="px-5 py-3 flex items-center gap-3">
-            <span className="text-[13px] text-text-1 flex-1 min-w-0 truncate">
-              {info.top_win_driver.forename[0]}. {info.top_win_driver.surname}
-            </span>
-            <span className="font-mono text-[11px] text-text-3 tabular-nums shrink-0">{info.top_win_driver.wins}W</span>
-          </div>
-        </div>
-      )}
-
-      {/* ── 06 · Most Poles ───────────────────────────────────────── */}
-      {info.top_pole_driver && (
-        <div className="border-b border-border shrink-0">
-          <div className="px-5 py-2.5 flex items-baseline gap-2 border-b border-border">
-            <span className="font-mono text-[10px] text-text-2">06 ·</span>
-            <span className="font-mono text-[11px] text-text-2 uppercase tracking-[0.06em]">{t('mostPoles')}</span>
-          </div>
-          <div className="px-5 py-3 flex items-center gap-3">
-            <span className="text-[13px] text-text-1 flex-1 min-w-0 truncate">
-              {info.top_pole_driver.forename[0]}. {info.top_pole_driver.surname}
-            </span>
-            <span className="font-mono text-[11px] text-text-3 tabular-nums shrink-0">{info.top_pole_driver.poles}P</span>
-          </div>
-        </div>
-      )}
-
-      {/* ── 07 · Avg. Start ───────────────────────────────────────── */}
-      {info.avg_winner_grid !== null && (
-        <div className="border-b border-border shrink-0">
-          <div className="px-5 py-2.5 flex items-baseline gap-2 border-b border-border">
-            <span className="font-mono text-[10px] text-text-2">07 ·</span>
-            <span className="font-mono text-[11px] text-text-2 uppercase tracking-[0.06em]">{t('avgStart')}</span>
-          </div>
-          <div className="px-5 py-3">
-            <span
-              className="text-[2rem] text-text-1 leading-none tabular-nums"
-              style={{ fontFamily: 'var(--pi-display)' }}
+        {/* Lap Record */}
+        {info.fastest_lap && (
+          <div className="px-5 py-4">
+            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-2">
+              {t('fastestLap')}
+            </p>
+            <p
+              className="font-mono tabular-nums leading-none mb-1.5"
+              style={{ fontSize: '1.5rem', color: 'var(--red)' }}
             >
-              P{info.avg_winner_grid}
-            </span>
+              {info.fastest_lap.time}
+            </p>
+            <p className="font-mono text-[11px] text-text-2">
+              {info.fastest_lap.forename[0]}. {info.fastest_lap.surname}
+              <span className="text-text-3 ml-1.5 tabular-nums">{info.fastest_lap.year}</span>
+            </p>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
-      {/* ── CTA ───────────────────────────────────────────────────── */}
-      <div className="mt-auto px-5 py-4 border-t border-border shrink-0">
+      {/* ── CTA ─────────────────────────────────────────────── */}
+      <div className="mt-auto px-5 py-4 shrink-0">
         <Link
           href={`/circuits/${info.circuit_ref}`}
-          className="font-mono text-[11px] uppercase tracking-[0.08em] transition-colors duration-150"
+          className="font-mono text-[11px] uppercase tracking-[0.08em] transition-colors duration-150 hover:opacity-70"
           style={{ color: 'var(--red)' }}
         >
-          {t('viewFull')}
+          {t('viewFull')} →
         </Link>
       </div>
 

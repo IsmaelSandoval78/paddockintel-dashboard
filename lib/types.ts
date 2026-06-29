@@ -234,6 +234,7 @@ export interface CircuitInfo {
   circuit_ref: string;
   first_year: number | null;
   total_races: number;
+  laps: number | null;
   champions: Array<{ year: number; forename: string; surname: string }>;
   fastest_pit: {
     constructor: string;
