@@ -10,6 +10,53 @@ import { fitToWidth, observeFit } from '@/components/home/kinetic/fitText';
 
 gsap.registerPlugin(SplitText, DrawSVGPlugin, ScrambleTextPlugin);
 
+// ─── Flag colors by country ──────────────────────────────────────
+const FLAG_COLORS: Record<string, string[]> = {
+  'Austria':          ['#ED2939', '#FFFFFF', '#ED2939'],
+  'Italy':            ['#009246', '#FFFFFF', '#CE2B37'],
+  'UK':               ['#012169', '#C8102E', '#FFFFFF'],
+  'United Kingdom':   ['#012169', '#C8102E', '#FFFFFF'],
+  'Great Britain':    ['#012169', '#C8102E', '#FFFFFF'],
+  'Monaco':           ['#CE1126', '#FFFFFF', '#CE1126'],
+  'Spain':            ['#AA151B', '#F1BF00', '#AA151B'],
+  'Brazil':           ['#009C3B', '#FFDF00', '#009C3B'],
+  'USA':              ['#BF0A30', '#FFFFFF', '#002868'],
+  'United States':    ['#BF0A30', '#FFFFFF', '#002868'],
+  'Japan':            ['#FFFFFF', '#BC002D', '#FFFFFF'],
+  'Singapore':        ['#EF3340', '#FFFFFF', '#EF3340'],
+  'Australia':        ['#012169', '#CC0000', '#FFFFFF'],
+  'Canada':           ['#FF0000', '#FFFFFF', '#FF0000'],
+  'Mexico':           ['#006847', '#FFFFFF', '#CE1126'],
+  'France':           ['#002395', '#FFFFFF', '#ED2939'],
+  'Germany':          ['#555555', '#DD0000', '#FFCE00'],
+  'Hungary':          ['#CE2939', '#FFFFFF', '#477050'],
+  'Belgium':          ['#444444', '#FAE042', '#EF3340'],
+  'Netherlands':      ['#AE1C28', '#FFFFFF', '#21468B'],
+  'Saudi Arabia':     ['#006C35', '#FFFFFF', '#006C35'],
+  'UAE':              ['#009A44', '#FFFFFF', '#EF3340'],
+  'United Arab Emirates': ['#009A44', '#FFFFFF', '#EF3340'],
+  'China':            ['#DE2910', '#FFDE00', '#DE2910'],
+  'Bahrain':          ['#CE1126', '#FFFFFF', '#CE1126'],
+  'Azerbaijan':       ['#0092BC', '#EF3340', '#00B050'],
+  'Argentina':        ['#74ACDF', '#FFFFFF', '#74ACDF'],
+  'South Africa':     ['#007A4D', '#FFB81C', '#DE3831'],
+  'Portugal':         ['#006600', '#FFFFFF', '#FF0000'],
+  'Sweden':           ['#006AA7', '#FECC02', '#006AA7'],
+  'Switzerland':      ['#FF0000', '#FFFFFF', '#FF0000'],
+  'Morocco':          ['#C1272D', '#006233', '#C1272D'],
+  'Turkey':           ['#E30A17', '#FFFFFF', '#E30A17'],
+  'Korea':            ['#FFFFFF', '#003478', '#FFFFFF'],
+  'India':            ['#FF9933', '#FFFFFF', '#138808'],
+  'Russia':           ['#FFFFFF', '#0039A6', '#D52B1E'],
+  'Qatar':            ['#8D1B3D', '#FFFFFF', '#8D1B3D'],
+};
+
+function getFlagColors(country: string): string[] {
+  return FLAG_COLORS[country] ?? ['#E61919', '#FFFFFF', '#E61919'];
+}
+
+// ─────────────────────────────────────────────────────────────────
+
 function formatCoord(lat: number, lng: number): string {
   const ns = lat >= 0 ? 'N' : 'S';
   const ew = lng >= 0 ? 'E' : 'W';
@@ -246,7 +293,11 @@ export default function CircuitHero({
           className="md:w-[360px] lg:w-[460px] xl:w-[520px] shrink-0 flex flex-col min-h-[280px] md:min-h-0"
           style={{ background: 'var(--text-1)' }}
         >
-          {trackPathData ? (
+          {trackPathData ? (() => {
+            const flagColors = getFlagColors(country);
+            const vbNums = trackPathData.viewBox.split(' ').map(Number);
+            const [vx, , vw] = vbNums;
+            return (
             <div className="flex-1 flex flex-col p-8">
               <svg
                 viewBox={trackPathData.viewBox}
@@ -255,19 +306,39 @@ export default function CircuitHero({
                 role="img"
                 aria-label={`Track map — ${name}`}
               >
+                <defs>
+                  <linearGradient
+                    id="track-flag-grad"
+                    gradientUnits="userSpaceOnUse"
+                    x1={vx}
+                    y1={0}
+                    x2={vx + vw}
+                    y2={0}
+                  >
+                    {flagColors.map((color, i) => (
+                      <stop
+                        key={i}
+                        offset={`${(i / (flagColors.length - 1)) * 100}%`}
+                        stopColor={color}
+                      />
+                    ))}
+                  </linearGradient>
+                </defs>
+                {/* Ghost — shape reference */}
                 <path
                   d={trackPathData.path}
-                  stroke="rgba(255,255,255,0.06)"
-                  strokeWidth="4"
+                  stroke="rgba(255,255,255,0.07)"
+                  strokeWidth="8"
                   fill="none"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
+                {/* Animated — flag gradient */}
                 <path
                   ref={drawPathRef}
                   d={trackPathData.path}
-                  stroke="var(--red)"
-                  strokeWidth="4"
+                  stroke="url(#track-flag-grad)"
+                  strokeWidth="8"
                   fill="none"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -280,7 +351,8 @@ export default function CircuitHero({
                 TRACK MAP · {name.toUpperCase()}
               </p>
             </div>
-          ) : (
+            );
+          })() : (
             <div className="flex-1 flex items-center justify-center">
               <span
                 className="font-mono text-[11px] uppercase tracking-[0.1em]"

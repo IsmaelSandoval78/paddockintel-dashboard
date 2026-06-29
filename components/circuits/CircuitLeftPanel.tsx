@@ -9,13 +9,56 @@ import type { CircuitInfo } from '@/lib/types';
 
 gsap.registerPlugin(DrawSVGPlugin);
 
+const FLAG_COLORS: Record<string, string[]> = {
+  'Austria':          ['#ED2939', '#FFFFFF', '#ED2939'],
+  'Italy':            ['#009246', '#FFFFFF', '#CE2B37'],
+  'UK':               ['#012169', '#C8102E', '#FFFFFF'],
+  'United Kingdom':   ['#012169', '#C8102E', '#FFFFFF'],
+  'Great Britain':    ['#012169', '#C8102E', '#FFFFFF'],
+  'Monaco':           ['#CE1126', '#FFFFFF', '#CE1126'],
+  'Spain':            ['#AA151B', '#F1BF00', '#AA151B'],
+  'Brazil':           ['#009C3B', '#FFDF00', '#009C3B'],
+  'USA':              ['#BF0A30', '#FFFFFF', '#002868'],
+  'United States':    ['#BF0A30', '#FFFFFF', '#002868'],
+  'Japan':            ['#FFFFFF', '#BC002D', '#FFFFFF'],
+  'Singapore':        ['#EF3340', '#FFFFFF', '#EF3340'],
+  'Australia':        ['#012169', '#CC0000', '#FFFFFF'],
+  'Canada':           ['#FF0000', '#FFFFFF', '#FF0000'],
+  'Mexico':           ['#006847', '#FFFFFF', '#CE1126'],
+  'France':           ['#002395', '#FFFFFF', '#ED2939'],
+  'Germany':          ['#555555', '#DD0000', '#FFCE00'],
+  'Hungary':          ['#CE2939', '#FFFFFF', '#477050'],
+  'Belgium':          ['#444444', '#FAE042', '#EF3340'],
+  'Netherlands':      ['#AE1C28', '#FFFFFF', '#21468B'],
+  'Saudi Arabia':     ['#006C35', '#FFFFFF', '#006C35'],
+  'UAE':              ['#009A44', '#FFFFFF', '#EF3340'],
+  'China':            ['#DE2910', '#FFDE00', '#DE2910'],
+  'Bahrain':          ['#CE1126', '#FFFFFF', '#CE1126'],
+  'Azerbaijan':       ['#0092BC', '#EF3340', '#00B050'],
+  'Argentina':        ['#74ACDF', '#FFFFFF', '#74ACDF'],
+  'South Africa':     ['#007A4D', '#FFB81C', '#DE3831'],
+  'Portugal':         ['#006600', '#FFFFFF', '#FF0000'],
+  'Sweden':           ['#006AA7', '#FECC02', '#006AA7'],
+  'Switzerland':      ['#FF0000', '#FFFFFF', '#FF0000'],
+  'Morocco':          ['#C1272D', '#006233', '#C1272D'],
+  'Turkey':           ['#E30A17', '#FFFFFF', '#E30A17'],
+  'Korea':            ['#FFFFFF', '#003478', '#FFFFFF'],
+  'India':            ['#FF9933', '#FFFFFF', '#138808'],
+  'Russia':           ['#FFFFFF', '#0039A6', '#D52B1E'],
+  'Qatar':            ['#8D1B3D', '#FFFFFF', '#8D1B3D'],
+};
+
+function getFlagColors(country: string): string[] {
+  return FLAG_COLORS[country] ?? ['#E61919', '#FFFFFF', '#E61919'];
+}
+
 function formatCoord(lat: number, lng: number): string {
   const ns = lat >= 0 ? 'N' : 'S';
   const ew = lng >= 0 ? 'E' : 'W';
   return `${Math.abs(lat).toFixed(2)}°${ns} · ${Math.abs(lng).toFixed(2)}°${ew}`;
 }
 
-function TrackDrawing({ path, viewBox }: { path: string; viewBox: string }) {
+function TrackDrawing({ path, viewBox, country }: { path: string; viewBox: string; country: string }) {
   const drawRef = useRef<SVGPathElement>(null);
 
   useEffect(() => {
@@ -29,6 +72,10 @@ function TrackDrawing({ path, viewBox }: { path: string; viewBox: string }) {
     });
   }, [path]);
 
+  const flagColors = getFlagColors(country);
+  const [vx, , vw] = viewBox.split(' ').map(Number);
+  const gradId = `panel-flag-grad-${country.replace(/\s+/g, '')}`;
+
   return (
     <svg
       viewBox={viewBox}
@@ -37,10 +84,28 @@ function TrackDrawing({ path, viewBox }: { path: string; viewBox: string }) {
       overflow="visible"
       style={{ maxHeight: '180px' }}
     >
+      <defs>
+        <linearGradient
+          id={gradId}
+          gradientUnits="userSpaceOnUse"
+          x1={vx}
+          y1={0}
+          x2={vx + vw}
+          y2={0}
+        >
+          {flagColors.map((color, i) => (
+            <stop
+              key={i}
+              offset={`${(i / (flagColors.length - 1)) * 100}%`}
+              stopColor={color}
+            />
+          ))}
+        </linearGradient>
+      </defs>
       <path
         d={path}
-        stroke="rgba(255,255,255,0.06)"
-        strokeWidth="4"
+        stroke="rgba(255,255,255,0.07)"
+        strokeWidth="8"
         strokeLinecap="round"
         strokeLinejoin="round"
         fill="none"
@@ -48,8 +113,8 @@ function TrackDrawing({ path, viewBox }: { path: string; viewBox: string }) {
       <path
         ref={drawRef}
         d={path}
-        stroke="var(--red)"
-        strokeWidth="4"
+        stroke={`url(#${gradId})`}
+        strokeWidth="8"
         strokeLinecap="round"
         strokeLinejoin="round"
         fill="none"
@@ -101,7 +166,7 @@ export default function CircuitLeftPanel({
           className="px-8 py-6 shrink-0 flex items-center justify-center"
           style={{ background: 'var(--text-1)' }}
         >
-          <TrackDrawing key={info.circuit_ref} path={info.track_path.path} viewBox={info.track_path.viewBox} />
+          <TrackDrawing key={info.circuit_ref} path={info.track_path.path} viewBox={info.track_path.viewBox} country={info.country} />
         </div>
       )}
 
