@@ -49,14 +49,11 @@ export default function CircuitHero({
   const rootRef      = useRef<HTMLDivElement>(null);
   const metaRef      = useRef<HTMLParagraphElement>(null);
   const nameRef      = useRef<HTMLHeadingElement>(null);
-  const locationRef  = useRef<HTMLParagraphElement>(null);
-  const statsRef     = useRef<HTMLDivElement>(null);
   const lapTimeRef   = useRef<HTMLSpanElement>(null);
   const firstYearRef = useRef<HTMLParagraphElement>(null);
   const totalRef     = useRef<HTMLParagraphElement>(null);
   const drawPathRef  = useRef<SVGPathElement>(null);
 
-  // Fit circuit name to one line — layout concern regardless of motion
   useEffect(() => {
     let cleanup: (() => void) | undefined;
     document.fonts.ready.then(() => {
@@ -73,7 +70,6 @@ export default function CircuitHero({
       document.fonts.ready.then(() => {
         if (!nameRef.current) return;
 
-        // Meta tag: timing-screen scramble — scanning for circuit data
         gsap.to(metaRef.current, {
           duration: 1.0,
           scrambleText: {
@@ -84,7 +80,6 @@ export default function CircuitHero({
           ease: 'none',
         });
 
-        // Name: chars rise from below — lights going green
         const split = new SplitText(nameRef.current, { type: 'chars' });
         gsap.set(nameRef.current, { visibility: 'visible' });
         gsap.from(split.chars, {
@@ -95,17 +90,6 @@ export default function CircuitHero({
           delay: 0.15,
         });
 
-        // Location + stats strip
-        gsap.fromTo(locationRef.current,
-          { y: 16, autoAlpha: 0 },
-          { y: 0, autoAlpha: 1, duration: 0.55, ease: 'power3.out', delay: 0.5 },
-        );
-        gsap.fromTo(statsRef.current,
-          { y: 16, autoAlpha: 0 },
-          { y: 0, autoAlpha: 1, duration: 0.55, ease: 'power3.out', delay: 0.65 },
-        );
-
-        // Lap record time: timing-display scramble
         if (lapTimeRef.current && rankLapRecord) {
           gsap.to(lapTimeRef.current, {
             duration: 0.9,
@@ -115,7 +99,6 @@ export default function CircuitHero({
           });
         }
 
-        // firstYear and totalRaces count up — like a race lap counter
         if (firstYearRef.current && firstYear !== null) {
           const start = Math.max(firstYear - 20, 1950);
           const obj = { v: start };
@@ -129,6 +112,7 @@ export default function CircuitHero({
             },
           });
         }
+
         if (totalRef.current) {
           const obj = { v: 0 };
           gsap.to(obj, {
@@ -142,7 +126,6 @@ export default function CircuitHero({
           });
         }
 
-        // Track draw: the flying lap — circuit outline draws itself on load
         if (drawPathRef.current) {
           gsap.fromTo(drawPathRef.current,
             { drawSVG: '0%' },
@@ -150,7 +133,6 @@ export default function CircuitHero({
           );
         }
 
-        // Last winners slide in from left, staggered
         gsap.from('.circuit-winner-row', {
           x: -24,
           autoAlpha: 0,
@@ -167,130 +149,79 @@ export default function CircuitHero({
   return (
     <div ref={rootRef} className="border-b border-border">
 
-      {/* Name + location */}
-      <div className="px-6 pt-8 pb-5">
+      {/* ── Meta + Circuit name ──────────────────────────── */}
+      <div className="px-6 pt-8 pb-6 border-b border-border">
         <p
           ref={metaRef}
           className="font-mono text-[11px] text-text-3 uppercase tracking-[0.06em] mb-3"
         >
           {`${t('hero.label').toUpperCase()} · ${country.toUpperCase()}`}
         </p>
-
-        {/* kinetic-mask: overflow-hidden so chars animate up from inside */}
         <div className="kinetic-mask">
           <h1
             ref={nameRef}
-            className="text-[clamp(3rem,12vw,7rem)] uppercase leading-none tracking-[-0.03em] text-text-1 whitespace-nowrap"
+            className="uppercase leading-none tracking-[-0.03em] text-text-1 whitespace-nowrap"
             style={{
               fontFamily: 'var(--pi-display)',
+              fontSize: 'clamp(3rem, 12vw, 7rem)',
               visibility: motionOk ? 'hidden' : 'visible',
             }}
           >
             {name}
           </h1>
         </div>
-
-        <p ref={locationRef} className="font-mono text-[12px] text-text-2 mt-3 mb-0.5">
+        <p className="font-mono text-[12px] text-text-2 mt-3">
           {location} · {country}
-        </p>
-        <p className="font-mono text-[11px] text-text-3">
-          {formatCoord(lat, lng)}
+          <span className="text-text-3 ml-3 hidden sm:inline">{formatCoord(lat, lng)}</span>
         </p>
       </div>
 
-      {/* Meta strip: length / laps / lap record / DRS */}
-      <div ref={statsRef} className="border-t border-border px-6 py-4 flex flex-wrap gap-x-10 gap-y-3">
-        <div>
-          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-0.5">
-            {t('hero.length')}
-          </p>
-          <p className="font-mono text-[13px] text-text-3 tabular-nums">—</p>
-        </div>
-        <div>
-          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-0.5">
-            {t('hero.laps')}
-          </p>
-          <p className="font-mono text-[13px] text-text-1 tabular-nums">
-            {standardLaps ?? '—'}
-          </p>
-        </div>
-        {rankLapRecord && (
-          <div>
-            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-0.5">
-              {t('hero.lapRecord')}
-            </p>
-            <p className="font-mono text-[13px] tabular-nums">
-              <span ref={lapTimeRef} style={{ color: 'var(--red)' }}>
-                {rankLapRecord.time}
-              </span>
-              <span className="text-text-3 ml-1.5">
-                {rankLapRecord.forename[0]}. {rankLapRecord.surname}
-              </span>
-              <span className="text-text-3 ml-1.5">{rankLapRecord.year}</span>
-            </p>
-          </div>
-        )}
-        {!rankLapRecord && (
-          <div>
-            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-0.5">
-              {t('hero.lapRecord')}
-            </p>
-            <p className="font-mono text-[13px] text-text-3 tabular-nums">—</p>
-          </div>
-        )}
-        <div>
-          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-0.5">
-            {t('hero.drsZones')}
-          </p>
-          <p className="font-mono text-[13px] text-text-3 tabular-nums">—</p>
-        </div>
-      </div>
+      {/* ── Middle: winners left | track map right ───────── */}
+      <div className="flex flex-col md:flex-row border-b border-border">
 
-      {/* Stats column + Track SVG */}
-      <div className="flex flex-col md:flex-row border-t border-border">
+        {/* Left column — last winners + counters */}
+        <div className="flex-1 flex flex-col px-6 py-6 md:border-r border-border">
 
-        {/* Left: last winners + firstYear/totalRaces */}
-        <div className="px-6 py-6 flex flex-col md:w-auto md:shrink-0">
-          <div className="mb-6">
-            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-3">
-              {t('hero.lastWinners')}
-            </p>
-            {lastWinners.length > 0 ? (
-              <div>
-                {lastWinners.map((w) => (
-                  <div key={w.year} className="circuit-winner-row flex items-baseline gap-1.5 mb-2.5 last:mb-0">
-                    <span className="font-mono text-[11px] text-text-2 tabular-nums shrink-0 w-9">
-                      {w.year}
-                    </span>
-                    <span className="font-mono text-[10px] text-text-3 shrink-0">·</span>
-                    <span
-                      className="text-[13px] text-text-1 uppercase tracking-[0.02em] shrink-0"
-                      style={{ fontFamily: 'var(--pi-display)' }}
-                    >
-                      {w.forename[0]}. {w.surname}
-                    </span>
-                    <span className="font-mono text-[10px] text-text-3 shrink-0">·</span>
-                    <span className="text-[12px] text-text-2 truncate min-w-0">
-                      {w.constructor}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <span className="font-mono text-[13px] text-text-3">—</span>
-            )}
-          </div>
+          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-5">
+            {t('hero.lastWinners')}
+          </p>
 
-          {/* firstYear + totalRaces — large kinetic numbers */}
-          <div className="flex items-end gap-12 mt-auto">
+          {lastWinners.length > 0 ? (
+            <div className="flex flex-col gap-4 mb-auto">
+              {lastWinners.map((w) => (
+                <div key={w.year} className="circuit-winner-row flex items-center gap-4">
+                  <span className="font-mono text-[11px] text-text-3 tabular-nums shrink-0 w-9 leading-none">
+                    {w.year}
+                  </span>
+                  <p
+                    className="uppercase leading-none tracking-[-0.02em] text-text-1 shrink-0"
+                    style={{
+                      fontFamily: 'var(--pi-display)',
+                      fontSize: 'clamp(1.4rem, 2.8vw, 2rem)',
+                    }}
+                  >
+                    {w.forename[0]}. {w.surname}
+                  </p>
+                  <span className="font-mono text-[11px] text-text-3 min-w-0 truncate">
+                    {w.constructor}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <span className="font-mono text-[13px] text-text-3 mb-auto">—</span>
+          )}
+
+          {/* First Race + Total Races */}
+          <div className="flex items-end gap-12 pt-6 mt-6 border-t border-border">
             <div>
               <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
                 {t('hero.firstRace')}
               </p>
               <p
                 ref={firstYearRef}
-                className="text-[56px] text-text-1 leading-none tabular-nums"
-                style={{ fontFamily: 'var(--pi-display)' }}
+                className="leading-none tabular-nums text-text-1"
+                style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2.8rem, 6vw, 4rem)' }}
               >
                 {firstYear ?? '—'}
               </p>
@@ -301,8 +232,8 @@ export default function CircuitHero({
               </p>
               <p
                 ref={totalRef}
-                className="text-[56px] text-text-1 leading-none tabular-nums"
-                style={{ fontFamily: 'var(--pi-display)' }}
+                className="leading-none tabular-nums text-text-1"
+                style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2.8rem, 6vw, 4rem)' }}
               >
                 {totalRaces}
               </p>
@@ -310,13 +241,13 @@ export default function CircuitHero({
           </div>
         </div>
 
-        {/* Right: TrackDraw SVG — dark blueprint panel */}
+        {/* Right column — dark track SVG panel, full height */}
         <div
-          className="md:ml-auto md:border-l border-border w-full md:w-[320px] lg:w-[420px] shrink-0 flex flex-col"
+          className="md:w-[360px] lg:w-[460px] xl:w-[520px] shrink-0 flex flex-col min-h-[280px] md:min-h-0"
           style={{ background: 'var(--text-1)' }}
         >
           {trackPathData ? (
-            <div className="flex-1 flex flex-col min-h-[260px] md:min-h-0 relative p-8">
+            <div className="flex-1 flex flex-col p-8">
               <svg
                 viewBox={trackPathData.viewBox}
                 xmlns="http://www.w3.org/2000/svg"
@@ -324,7 +255,6 @@ export default function CircuitHero({
                 role="img"
                 aria-label={`Track map — ${name}`}
               >
-                {/* Ghost: barely-there skeleton */}
                 <path
                   d={trackPathData.path}
                   stroke="rgba(255,255,255,0.06)"
@@ -333,7 +263,6 @@ export default function CircuitHero({
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
-                {/* Animated draw path — red on black */}
                 <path
                   ref={drawPathRef}
                   d={trackPathData.path}
@@ -344,19 +273,19 @@ export default function CircuitHero({
                   strokeLinejoin="round"
                 />
               </svg>
-              {/* Blueprint label */}
-              <p className="font-mono text-[9px] uppercase tracking-[0.14em] mt-4 shrink-0"
-                style={{ color: 'rgba(255,255,255,0.2)' }}>
+              <p
+                className="font-mono text-[9px] uppercase tracking-[0.14em] mt-4 shrink-0"
+                style={{ color: 'rgba(255,255,255,0.2)' }}
+              >
                 TRACK MAP · {name.toUpperCase()}
               </p>
             </div>
           ) : (
-            <div
-              className="flex-1 flex items-center justify-center min-h-[200px]"
-              aria-label={`Track map unavailable — ${name}`}
-            >
-              <span className="font-mono text-[11px] uppercase tracking-[0.1em]"
-                style={{ color: 'rgba(255,255,255,0.2)' }}>
+            <div className="flex-1 flex items-center justify-center">
+              <span
+                className="font-mono text-[11px] uppercase tracking-[0.1em]"
+                style={{ color: 'rgba(255,255,255,0.2)' }}
+              >
                 [ NO TRACK DATA ]
               </span>
             </div>
@@ -364,6 +293,58 @@ export default function CircuitHero({
         </div>
 
       </div>
+
+      {/* ── Bottom strip: laps · lap record · DRS ────────── */}
+      <div className="flex flex-wrap items-end gap-x-10 gap-y-3 px-6 py-5">
+        <div>
+          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
+            {t('hero.laps')}
+          </p>
+          <p
+            className="leading-none tabular-nums text-text-1"
+            style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)' }}
+          >
+            {standardLaps ?? '—'}
+          </p>
+        </div>
+
+        {rankLapRecord ? (
+          <div>
+            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
+              {t('hero.lapRecord')}
+            </p>
+            <p className="font-mono leading-none tabular-nums" style={{ fontSize: 'clamp(1.6rem, 3vw, 2.2rem)' }}>
+              <span ref={lapTimeRef} style={{ color: 'var(--red)' }}>
+                {rankLapRecord.time}
+              </span>
+              <span className="font-mono text-[12px] text-text-3 ml-2">
+                {rankLapRecord.forename[0]}. {rankLapRecord.surname}
+              </span>
+              <span className="font-mono text-[12px] text-text-3 ml-1.5">{rankLapRecord.year}</span>
+            </p>
+          </div>
+        ) : (
+          <div>
+            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
+              {t('hero.lapRecord')}
+            </p>
+            <p className="font-mono text-text-3 tabular-nums" style={{ fontSize: 'clamp(1.6rem, 3vw, 2.2rem)' }}>—</p>
+          </div>
+        )}
+
+        <div>
+          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
+            {t('hero.drsZones')}
+          </p>
+          <p
+            className="leading-none tabular-nums text-text-3"
+            style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)' }}
+          >
+            —
+          </p>
+        </div>
+      </div>
+
     </div>
   );
 }
