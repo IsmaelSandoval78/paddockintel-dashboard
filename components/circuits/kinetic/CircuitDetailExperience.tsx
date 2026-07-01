@@ -151,16 +151,19 @@ export default function CircuitDetailExperience({
         });
       });
 
-      // Decade bars scaleX 0→1 on enter — the gap, visualized
-      gsap.utils.toArray<HTMLElement>('.decade-bar').forEach((bar) => {
-        gsap.fromTo(bar,
-          { scaleX: 0 },
+      // Era wall — year cells scale in per row, left to right, like a season unfolding
+      gsap.utils.toArray<HTMLElement>('.era-row').forEach((row) => {
+        const cells = row.querySelectorAll('.era-cell');
+        if (!cells.length) return;
+        gsap.fromTo(cells,
+          { scale: 0, autoAlpha: 0 },
           {
-            scaleX: 1,
-            transformOrigin: 'left center',
-            duration: 0.7,
-            ease: 'power3.out',
-            scrollTrigger: { trigger: bar, start: 'top 92%', once: true },
+            scale: 1,
+            autoAlpha: 1,
+            duration: 0.3,
+            stagger: 0.02,
+            ease: 'power2.out',
+            scrollTrigger: { trigger: row, start: 'top 88%', once: true },
           },
         );
       });
@@ -198,6 +201,15 @@ export default function CircuitDetailExperience({
   }, [motionOk]);
 
   const lastWinners = winnerRows.slice(0, 5);
+
+  // Group winners by decade for the era wall's year-cell strip — same source data
+  // as decadeDominance, just kept at year granularity for the visual texture.
+  const winnersByDecade = new Map<number, WinnerRow[]>();
+  for (const w of winnerRows) {
+    const d = Math.floor(w.year / 10) * 10;
+    if (!winnersByDecade.has(d)) winnersByDecade.set(d, []);
+    winnersByDecade.get(d)!.push(w);
+  }
 
   return (
     <main ref={mainRef} className="flex flex-col bg-bg">
@@ -237,34 +249,60 @@ export default function CircuitDetailExperience({
           <span className="font-mono text-xs text-text-2 leading-none">01 ·</span>
           <h2 className="text-[13px] font-medium text-text-2">{t('dominance.title')}</h2>
         </div>
-        <div className="px-6 py-5 flex flex-col gap-4">
-          {decadeDominance.map(({ decade, topConstructor, wins, total }) => (
-            <div key={decade}>
-              <div className="flex items-baseline gap-3 mb-1.5">
-                <span className="font-mono text-[11px] text-text-3 tabular-nums w-10 shrink-0">
-                  {decade}s
-                </span>
+        <div className="px-6">
+          {decadeDominance.map(({ decade, topConstructor, wins, total }) => {
+            const winShare = total > 0 ? wins / total : 0;
+            const isDominant = winShare >= 0.7 && total >= 3;
+            const decadeWinners = (winnersByDecade.get(decade) ?? []).slice().sort((a, b) => a.year - b.year);
+            const vwSize = (2 + winShare * 7).toFixed(1);
+            const remCap = (2.4 + winShare * 4.4).toFixed(2);
+            return (
+              <div key={decade} className="era-row py-5 border-b border-border-subtle last:border-b-0">
+                <div className="flex items-baseline justify-between gap-3 mb-2">
+                  <span className="font-mono text-[11px] text-text-3 uppercase tracking-[0.06em] tabular-nums">
+                    {decade}s
+                  </span>
+                  {topConstructor && (
+                    <span className="font-mono text-[11px] text-text-3 tabular-nums shrink-0">
+                      {wins}/{total} · {(winShare * 100).toFixed(0)}%
+                    </span>
+                  )}
+                </div>
                 {topConstructor ? (
                   <>
-                    <span className="text-[13px] text-text-1 flex-1 min-w-0 truncate">
+                    <p
+                      className="era-name uppercase leading-[0.92] tracking-[-0.02em] mb-3"
+                      style={{
+                        fontFamily: 'var(--pi-display)',
+                        fontSize: `clamp(1.6rem, ${vwSize}vw, ${remCap}rem)`,
+                        color: isDominant ? 'var(--red)' : 'var(--text-1)',
+                      }}
+                    >
                       {topConstructor}
-                    </span>
-                    <span className="font-mono text-[11px] text-text-3 tabular-nums shrink-0">
-                      {wins}/{total}
-                    </span>
+                    </p>
+                    <div className="flex gap-[3px] flex-wrap">
+                      {decadeWinners.map((w) => (
+                        <span
+                          key={w.year}
+                          className="era-cell shrink-0"
+                          title={`${w.year} · ${w.constructor}`}
+                          style={{
+                            width: '13px',
+                            height: '13px',
+                            background: w.constructor === topConstructor
+                              ? (isDominant ? 'var(--red)' : 'var(--text-1)')
+                              : 'var(--border-subtle)',
+                          }}
+                        />
+                      ))}
+                    </div>
                   </>
                 ) : (
-                  <span className="font-mono text-[11px] text-text-3">—</span>
+                  <span className="font-mono text-[13px] text-text-3">—</span>
                 )}
               </div>
-              <div className="ml-[52px] h-px bg-border overflow-hidden">
-                <div
-                  className="decade-bar h-full bg-text-2"
-                  style={{ width: topConstructor ? `${(wins / total) * 100}%` : '0%' }}
-                />
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 

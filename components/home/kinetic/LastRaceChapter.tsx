@@ -93,10 +93,9 @@ export default function LastRaceChapter({ race, motionOk }: LastRaceChapterProps
       <div className="kinetic-mask -my-[0.06em] py-[0.06em] mb-8 md:mb-12">
         <h2
           ref={titleRef}
-          className="uppercase leading-[0.9] whitespace-nowrap"
+          className="uppercase leading-[0.9] whitespace-nowrap text-[clamp(34px,6.5vw,92px)]"
           style={{
             fontFamily:    'var(--pi-display)',
-            fontSize:      'clamp(34px, 6.5vw, 92px)',
             letterSpacing: '-0.03em',
             opacity:       motionOk ? 0 : 1,
           }}

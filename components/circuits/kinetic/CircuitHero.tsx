@@ -95,13 +95,17 @@ export default function CircuitHero({
 }: CircuitHeroProps) {
   const t = useTranslations('circuitDetail');
 
-  const rootRef      = useRef<HTMLDivElement>(null);
-  const metaRef      = useRef<HTMLParagraphElement>(null);
-  const nameRef      = useRef<HTMLHeadingElement>(null);
-  const lapTimeRef   = useRef<HTMLParagraphElement>(null);
-  const firstYearRef = useRef<HTMLParagraphElement>(null);
-  const totalRef     = useRef<HTMLParagraphElement>(null);
-  const drawPathRef  = useRef<SVGPathElement>(null);
+  const rootRef       = useRef<HTMLDivElement>(null);
+  const metaRef        = useRef<HTMLParagraphElement>(null);
+  const nameRef         = useRef<HTMLHeadingElement>(null);
+  const lapTimeRef      = useRef<HTMLParagraphElement>(null);
+  const firstYearRef    = useRef<HTMLParagraphElement>(null);
+  const totalRef        = useRef<HTMLParagraphElement>(null);
+  const titleDrawRef    = useRef<SVGPathElement>(null);
+  const drawPathRef     = useRef<SVGPathElement>(null);
+  const s1PathRef       = useRef<SVGPathElement>(null);
+  const s2PathRef       = useRef<SVGPathElement>(null);
+  const s3PathRef       = useRef<SVGPathElement>(null);
 
   const [markerPoints, setMarkerPoints] = useState<{ x: number; y: number }[]>([]);
   const [hoveredCorner, setHoveredCorner] = useState<number | null>(null);
@@ -109,6 +113,15 @@ export default function CircuitHero({
   const cornersWithPercent = corners.filter(c => c.path_percent !== null);
   const activeCorner = hoveredCorner !== null ? cornersWithPercent[hoveredCorner] : null;
   const drsCount = corners.length > 0 ? corners.filter(c => c.is_drs_zone).length : null;
+
+  // Sector boundaries — first corner marking the start of S2/S3, in path_percent terms.
+  // Used to split the track draw into three colored segments (real sector telemetry, not decoration).
+  const sortedByPercent = [...cornersWithPercent].sort((a, b) => a.path_percent! - b.path_percent!);
+  const s2Corner = sortedByPercent.find(c => c.sector === 2);
+  const s3Corner = sortedByPercent.find(c => c.sector === 3);
+  const hasSectors = !!s2Corner && !!s3Corner && s2Corner.path_percent! < s3Corner.path_percent!;
+  const s1End = hasSectors ? s2Corner!.path_percent! : 0;
+  const s2End = hasSectors ? s3Corner!.path_percent! : 0;
 
   useEffect(() => {
     let cleanup: (() => void) | undefined;
@@ -125,6 +138,16 @@ export default function CircuitHero({
     const ctx = gsap.context(() => {
       document.fonts.ready.then(() => {
         if (!nameRef.current) return;
+
+        // Title-card backdrop — the track draws large and faint first, establishing place
+        // before the name locks in. Purely atmospheric: opacity stays low so it never
+        // competes with the name for the 3-second read.
+        if (titleDrawRef.current) {
+          gsap.fromTo(titleDrawRef.current,
+            { drawSVG: '0%', opacity: 0 },
+            { drawSVG: '100%', opacity: 0.12, duration: 1.8, ease: 'power2.inOut', delay: 0.05 },
+          );
+        }
 
         gsap.to(metaRef.current, {
           duration: 1.0,
@@ -182,7 +205,22 @@ export default function CircuitHero({
           });
         }
 
-        if (drawPathRef.current) {
+        // Track map draw — sector-split (S1/S2/S3 drawn in sequence, like splits falling
+        // during a lap) when sector data exists, else a single flag-gradient trace.
+        if (hasSectors && s1PathRef.current && s2PathRef.current && s3PathRef.current) {
+          const totalDur = 2.0;
+          const tl = gsap.timeline({ delay: 0.55 });
+          tl.fromTo(s1PathRef.current,
+            { drawSVG: '0% 0%' },
+            { drawSVG: `0% ${s1End}%`, duration: totalDur * (s1End / 100), ease: 'power1.inOut' },
+          ).fromTo(s2PathRef.current,
+            { drawSVG: `${s1End}% ${s1End}%` },
+            { drawSVG: `${s1End}% ${s2End}%`, duration: totalDur * ((s2End - s1End) / 100), ease: 'power1.inOut' },
+          ).fromTo(s3PathRef.current,
+            { drawSVG: `${s2End}% ${s2End}%` },
+            { drawSVG: `${s2End}% 100%`, duration: totalDur * ((100 - s2End) / 100), ease: 'power1.inOut' },
+          );
+        } else if (drawPathRef.current) {
           gsap.fromTo(drawPathRef.current,
             { drawSVG: '0%' },
             { drawSVG: '100%', duration: 2.0, ease: 'expo.inOut', delay: 0.55 },
@@ -200,7 +238,7 @@ export default function CircuitHero({
       });
     }, rootRef);
     return () => ctx.revert();
-  }, [motionOk, name, country, firstYear, totalRaces, rankLapRecord, t]);
+  }, [motionOk, name, country, firstYear, totalRaces, rankLapRecord, t, hasSectors, s1End, s2End]);
 
   // Compute SVG corner marker positions using path.getPointAtLength().
   // Cannot use drawPathRef because GSAP DrawSVGPlugin adds vector-effect:non-scaling-stroke
@@ -239,185 +277,77 @@ export default function CircuitHero({
     return () => ctx.revert();
   }, [motionOk, markerPoints]);
 
+  const flagColors = getFlagColors(country);
+
   return (
     <div ref={rootRef} className="border-b border-border">
 
-      {/* ── Meta + Circuit name ──────────────────────────── */}
-      <div className="px-6 pt-8 pb-6 border-b border-border">
-        <p
-          ref={metaRef}
-          className="font-mono text-[11px] text-text-3 uppercase tracking-[0.06em] mb-3"
-        >
-          {`${t('hero.label').toUpperCase()} · ${country.toUpperCase()}`}
-        </p>
-        <div className="kinetic-mask">
-          <h1
-            ref={nameRef}
-            className="uppercase leading-none tracking-[-0.03em] text-text-1 whitespace-nowrap"
-            style={{
-              fontFamily: 'var(--pi-display)',
-              fontSize: 'clamp(3rem, 12vw, 7rem)',
-              visibility: motionOk ? 'hidden' : 'visible',
-            }}
+      {/* ── Title card — full-bleed opening ─────────────────────
+          Track outline draws large and faint directly on the paper substrate
+          (never a dark page bg — DESIGN.md), the name locks in on top. */}
+      <div className="relative overflow-hidden border-b border-border min-h-[42vh] md:min-h-[56vh] flex items-end">
+        {trackPathData && (
+          <svg
+            viewBox={trackPathData.viewBox}
+            preserveAspectRatio="xMidYMid meet"
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            aria-hidden="true"
           >
-            {name}
-          </h1>
+            <path
+              ref={titleDrawRef}
+              d={trackPathData.path}
+              stroke="var(--text-1)"
+              strokeWidth="2.5"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{ opacity: motionOk ? 0 : 0.12 }}
+            />
+          </svg>
+        )}
+        <div className="relative z-10 px-6 pt-10 pb-6 md:pt-14 md:pb-8 w-full min-w-0">
+          <p
+            ref={metaRef}
+            className="font-mono text-[11px] text-text-3 uppercase tracking-[0.06em] mb-3"
+          >
+            {`${t('hero.label').toUpperCase()} · ${country.toUpperCase()}`}
+          </p>
+          <div className="kinetic-mask">
+            <h1
+              ref={nameRef}
+              className="uppercase leading-none tracking-[-0.03em] text-text-1 whitespace-nowrap text-[clamp(3rem,12vw,7rem)]"
+              style={{
+                fontFamily: 'var(--pi-display)',
+                visibility: motionOk ? 'hidden' : 'visible',
+              }}
+            >
+              {name}
+            </h1>
+          </div>
+          <p className="font-mono text-[12px] text-text-2 mt-3">
+            {location} · {country}
+            <span className="text-text-3 ml-3 hidden sm:inline">{formatCoord(lat, lng)}</span>
+          </p>
         </div>
-        <p className="font-mono text-[12px] text-text-2 mt-3">
-          {location} · {country}
-          <span className="text-text-3 ml-3 hidden sm:inline">{formatCoord(lat, lng)}</span>
-        </p>
       </div>
 
-      {/* ── Middle: winners left | track map right ───────── */}
-      <div className="flex flex-col md:flex-row">
-
-        {/* Left section — 3 sub-columns: winners | primera+total | vueltas+record+drs */}
-        <div className="flex-1 flex flex-col md:flex-row md:border-r border-border divide-y md:divide-y-0 md:divide-x divide-border">
-
-          {/* Sub-col 1 — últimos ganadores */}
-          <div className="md:w-[38%] flex flex-col px-6 py-6">
-            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-5">
-              {t('hero.lastWinners')}
-            </p>
-            {lastWinners.length > 0 ? (
-              <div className="flex flex-col gap-4">
-                {lastWinners.map((w) => (
-                  <div key={w.year} className="circuit-winner-row flex items-center gap-4">
-                    <span className="font-mono text-[11px] text-text-3 tabular-nums shrink-0 w-9 leading-none">
-                      {w.year}
-                    </span>
-                    <p
-                      className="uppercase leading-none tracking-[-0.02em] text-text-1 shrink-0"
-                      style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.2rem, 2.2vw, 1.8rem)' }}
-                    >
-                      {w.forename[0]}. {w.surname}
-                    </p>
-                    <span className="font-mono text-[11px] text-text-3 min-w-0 truncate">
-                      {w.constructor}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <span className="font-mono text-[13px] text-text-3">—</span>
-            )}
-          </div>
-
-          {/* Sub-col 2 — primera carrera + total de carreras */}
-          <div className="md:w-[24%] flex flex-col px-6 py-6 gap-6">
-            <div>
-              <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
-                {t('hero.firstRace')}
-              </p>
-              <p
-                ref={firstYearRef}
-                className="leading-none tabular-nums text-text-1"
-                style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2rem, 3.5vw, 3rem)' }}
-              >
-                {firstYear ?? '—'}
-              </p>
-            </div>
-            <div>
-              <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
-                {t('hero.totalRaces')}
-              </p>
-              <p
-                ref={totalRef}
-                className="leading-none tabular-nums text-text-1"
-                style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2rem, 3.5vw, 3rem)' }}
-              >
-                {totalRaces}
-              </p>
-            </div>
-          </div>
-
-          {/* Sub-col 3 — vueltas + récord + drs */}
-          <div className="md:w-[38%] flex flex-col px-6 py-6 gap-5">
-            <div>
-              <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
-                {t('hero.laps')}
-              </p>
-              <p
-                className="leading-none tabular-nums text-text-1"
-                style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2rem, 3.5vw, 3rem)' }}
-              >
-                {standardLaps ?? '—'}
-              </p>
-            </div>
-            <div>
-              <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
-                {t('hero.lapRecord')}
-              </p>
-              {rankLapRecord ? (
-                <>
-                  <p
-                    ref={lapTimeRef}
-                    className="font-mono leading-none tabular-nums"
-                    style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2rem)', color: 'var(--red)' }}
-                  >
-                    {rankLapRecord.time}
-                  </p>
-                  <p className="font-mono text-[11px] text-text-3 mt-1">
-                    {rankLapRecord.forename[0]}. {rankLapRecord.surname} · {rankLapRecord.year}
-                  </p>
-                </>
-              ) : (
-                <p className="font-mono text-text-3 tabular-nums" style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2rem)' }}>—</p>
-              )}
-            </div>
-            <div>
-              <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
-                {t('hero.drsZones')}
-              </p>
-              <p
-                className="leading-none tabular-nums text-text-1"
-                style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2rem, 3.5vw, 3rem)' }}
-              >
-                {drsCount !== null ? drsCount : '—'}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Right column — dark track SVG panel, full height */}
-        <div
-          className="md:w-[360px] lg:w-[460px] xl:w-[520px] shrink-0 flex flex-col min-h-[280px] md:min-h-0"
-          style={{ background: '#555555' }}
-        >
-          {trackPathData ? (() => {
-            const flagColors = getFlagColors(country);
-            const vbNums = trackPathData.viewBox.split(' ').map(Number);
-            const [vx, , vw] = vbNums;
-            const markerHalf = vw * 0.009;
-            const hitHalf = vw * 0.026;
-            return (
-            <div className="flex-1 flex flex-col p-8">
+      {/* ── Track map — full width, dark object (not a page bg) ── */}
+      <div className="border-b border-border" style={{ background: '#555555' }}>
+        {trackPathData ? (() => {
+          const vbNums = trackPathData.viewBox.split(' ').map(Number);
+          const [vx, , vw] = vbNums;
+          const markerHalf = vw * 0.006;
+          const hitHalf = vw * 0.018;
+          return (
+            <div className="max-w-5xl mx-auto flex flex-col p-8 md:p-10">
               <svg
                 viewBox={trackPathData.viewBox}
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-full h-full block flex-1"
+                className="w-full block"
+                style={{ height: 'clamp(220px, 34vw, 420px)' }}
                 role="img"
                 aria-label={`Track map — ${name}`}
               >
-                <defs>
-                  <linearGradient
-                    id="track-flag-grad"
-                    gradientUnits="userSpaceOnUse"
-                    x1={vx}
-                    y1={0}
-                    x2={vx + vw}
-                    y2={0}
-                  >
-                    {flagColors.map((color, i) => (
-                      <stop
-                        key={i}
-                        offset={`${(i / (flagColors.length - 1)) * 100}%`}
-                        stopColor={color}
-                      />
-                    ))}
-                  </linearGradient>
-                </defs>
                 {/* Ghost — shape reference */}
                 <path
                   d={trackPathData.path}
@@ -427,16 +357,70 @@ export default function CircuitHero({
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
-                {/* Animated — flag gradient */}
-                <path
-                  ref={drawPathRef}
-                  d={trackPathData.path}
-                  stroke="url(#track-flag-grad)"
-                  strokeWidth="8"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+                {hasSectors ? (
+                  <>
+                    {/* S1 */}
+                    <path
+                      ref={s1PathRef}
+                      d={trackPathData.path}
+                      stroke={flagColors[0]}
+                      strokeWidth="8"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    {/* S2 */}
+                    <path
+                      ref={s2PathRef}
+                      d={trackPathData.path}
+                      stroke="rgba(255,255,255,0.7)"
+                      strokeWidth="8"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    {/* S3 — final sector, push for the line */}
+                    <path
+                      ref={s3PathRef}
+                      d={trackPathData.path}
+                      stroke="var(--red)"
+                      strokeWidth="8"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <defs>
+                      <linearGradient
+                        id="track-flag-grad"
+                        gradientUnits="userSpaceOnUse"
+                        x1={vx}
+                        y1={0}
+                        x2={vx + vw}
+                        y2={0}
+                      >
+                        {flagColors.map((color, i) => (
+                          <stop
+                            key={i}
+                            offset={`${(i / (flagColors.length - 1)) * 100}%`}
+                            stopColor={color}
+                          />
+                        ))}
+                      </linearGradient>
+                    </defs>
+                    <path
+                      ref={drawPathRef}
+                      d={trackPathData.path}
+                      stroke="url(#track-flag-grad)"
+                      strokeWidth="8"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </>
+                )}
                 {/* Corner markers — appear after DrawSVG completes */}
                 {cornersWithPercent.map((corner, i) => {
                   const pt = markerPoints[i];
@@ -501,27 +485,42 @@ export default function CircuitHero({
                     )}
                   </>
                 ) : (
-                  <p
-                    className="font-mono text-[10px] font-bold uppercase tracking-[0.12em]"
-                    style={{ color: 'rgba(255,255,255,0.9)' }}
-                  >
-                    TRACK MAP · {name.toUpperCase()}
-                    {cornersWithPercent.length > 0 && (
-                      <span style={{ color: 'rgba(255,255,255,0.55)' }}>
-                        {' · '}{cornersWithPercent.length} TURNS
-                      </span>
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <p
+                      className="font-mono text-[10px] font-bold uppercase tracking-[0.12em]"
+                      style={{ color: 'rgba(255,255,255,0.9)' }}
+                    >
+                      TRACK MAP · {name.toUpperCase()}
+                      {cornersWithPercent.length > 0 && (
+                        <span style={{ color: 'rgba(255,255,255,0.55)' }}>
+                          {' · '}{cornersWithPercent.length} TURNS
+                        </span>
+                      )}
+                    </p>
+                    {hasSectors && (
+                      <div className="flex items-center gap-3">
+                        <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.08em]" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                          <span style={{ display: 'inline-block', width: 6, height: 6, background: flagColors[0] }} />S1
+                        </span>
+                        <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.08em]" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                          <span style={{ display: 'inline-block', width: 6, height: 6, background: 'rgba(255,255,255,0.7)' }} />S2
+                        </span>
+                        <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.08em]" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                          <span style={{ display: 'inline-block', width: 6, height: 6, background: 'var(--red)' }} />S3
+                        </span>
+                      </div>
                     )}
-                  </p>
+                  </div>
                 )}
               </div>
 
-              {/* Corner legend — 2-col data grid */}
+              {/* Corner legend — data grid */}
               {cornersWithPercent.length > 0 && (
                 <div
                   className="shrink-0 mt-3 pt-3"
                   style={{ borderTop: '1px solid rgba(255,255,255,0.15)' }}
                 >
-                  <div className="grid grid-cols-2 gap-x-6">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6">
                     {cornersWithPercent.map((corner, i) => (
                       <div
                         key={corner.corner_number}
@@ -560,21 +559,126 @@ export default function CircuitHero({
                 </div>
               )}
             </div>
-            );
-          })() : (
-            <div className="flex-1 flex items-center justify-center">
-              <span
-                className="font-mono text-[11px] uppercase tracking-[0.1em]"
-                style={{ color: 'rgba(255,255,255,0.2)' }}
-              >
-                [ NO TRACK DATA ]
-              </span>
+          );
+        })() : (
+          <div className="flex items-center justify-center py-16">
+            <span
+              className="font-mono text-[11px] uppercase tracking-[0.1em]"
+              style={{ color: 'rgba(255,255,255,0.2)' }}
+            >
+              [ NO TRACK DATA ]
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* ── Data row — winners | first/total | laps/record/drs ── */}
+      <div className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-border">
+
+        {/* Sub-col 1 — últimos ganadores */}
+        <div className="md:w-[38%] flex flex-col px-6 py-6">
+          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-5">
+            {t('hero.lastWinners')}
+          </p>
+          {lastWinners.length > 0 ? (
+            <div className="flex flex-col gap-4">
+              {lastWinners.map((w) => (
+                <div key={w.year} className="circuit-winner-row flex items-center gap-4">
+                  <span className="font-mono text-[11px] text-text-3 tabular-nums shrink-0 w-9 leading-none">
+                    {w.year}
+                  </span>
+                  <p
+                    className="uppercase leading-none tracking-[-0.02em] text-text-1 shrink-0"
+                    style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.2rem, 2.2vw, 1.8rem)' }}
+                  >
+                    {w.forename[0]}. {w.surname}
+                  </p>
+                  <span className="font-mono text-[11px] text-text-3 min-w-0 truncate">
+                    {w.constructor}
+                  </span>
+                </div>
+              ))}
             </div>
+          ) : (
+            <span className="font-mono text-[13px] text-text-3">—</span>
           )}
         </div>
 
-      </div>
+        {/* Sub-col 2 — primera carrera + total de carreras */}
+        <div className="md:w-[24%] flex flex-col px-6 py-6 gap-6">
+          <div>
+            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
+              {t('hero.firstRace')}
+            </p>
+            <p
+              ref={firstYearRef}
+              className="leading-none tabular-nums text-text-1"
+              style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2rem, 3.5vw, 3rem)' }}
+            >
+              {firstYear ?? '—'}
+            </p>
+          </div>
+          <div>
+            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
+              {t('hero.totalRaces')}
+            </p>
+            <p
+              ref={totalRef}
+              className="leading-none tabular-nums text-text-1"
+              style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2rem, 3.5vw, 3rem)' }}
+            >
+              {totalRaces}
+            </p>
+          </div>
+        </div>
 
+        {/* Sub-col 3 — vueltas + récord + drs */}
+        <div className="md:w-[38%] flex flex-col px-6 py-6 gap-5">
+          <div>
+            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
+              {t('hero.laps')}
+            </p>
+            <p
+              className="leading-none tabular-nums text-text-1"
+              style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2rem, 3.5vw, 3rem)' }}
+            >
+              {standardLaps ?? '—'}
+            </p>
+          </div>
+          <div>
+            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
+              {t('hero.lapRecord')}
+            </p>
+            {rankLapRecord ? (
+              <>
+                <p
+                  ref={lapTimeRef}
+                  className="font-mono leading-none tabular-nums"
+                  style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2rem)', color: 'var(--red)' }}
+                >
+                  {rankLapRecord.time}
+                </p>
+                <p className="font-mono text-[11px] text-text-3 mt-1">
+                  {rankLapRecord.forename[0]}. {rankLapRecord.surname} · {rankLapRecord.year}
+                </p>
+              </>
+            ) : (
+              <p className="font-mono text-text-3 tabular-nums" style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2rem)' }}>—</p>
+            )}
+          </div>
+          <div>
+            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
+              {t('hero.drsZones')}
+            </p>
+            <p
+              className="leading-none tabular-nums text-text-1"
+              style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2rem, 3.5vw, 3rem)' }}
+            >
+              {drsCount !== null ? drsCount : '—'}
+            </p>
+          </div>
+        </div>
+      </div>
 
     </div>
   );

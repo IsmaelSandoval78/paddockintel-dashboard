@@ -49,10 +49,9 @@ export default function KineticFooter({ motionOk }: { motionOk: boolean }) {
       <div className="kinetic-mask -my-[0.06em] py-[0.06em]">
         <p
           ref={markRef}
-          className="uppercase leading-[0.85] whitespace-nowrap select-none"
+          className="uppercase leading-[0.85] whitespace-nowrap select-none text-[clamp(38px,9.2vw,150px)]"
           style={{
             fontFamily:    'var(--pi-display)',
-            fontSize:      'clamp(38px, 9.2vw, 150px)',
             letterSpacing: '-0.04em',
             opacity:       motionOk ? 0 : 1,
           }}
