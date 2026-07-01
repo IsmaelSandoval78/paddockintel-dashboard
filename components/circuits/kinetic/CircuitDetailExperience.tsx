@@ -8,6 +8,7 @@ import { Link } from '@/lib/i18n/navigation';
 import CircuitHero from './CircuitHero';
 import CircuitTimeline from './CircuitTimeline';
 import CircuitIntelGrid from './CircuitIntelGrid';
+import TrackDominancePanel from './TrackDominancePanel';
 import type { IntelData } from './CircuitIntelGrid';
 import type { DriverSelectorRow, CircuitCorner } from '@/lib/types';
 
@@ -481,13 +482,24 @@ export default function CircuitDetailExperience({
 
       {/* ── 06 · Champions Timeline ────────────────────────────── */}
       {winnerRows.length > 0 && (
-        <section className="circuit-section">
+        <section className="circuit-section border-b border-border">
           <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
             <span className="font-mono text-xs text-text-2 leading-none">06 ·</span>
             <h2 className="text-[13px] font-medium text-text-2">{t('winners.title')}</h2>
             <span className="font-mono text-[11px] text-text-3 tabular-nums ml-auto">{winnerRows.length}</span>
           </div>
           <CircuitTimeline winnerRows={winnerRows} motionOk={motionOk} />
+        </section>
+      )}
+
+      {/* ── 07 · Head to Head ──────────────────────────────────── */}
+      {drivers.length > 0 && (
+        <section className="circuit-section">
+          <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
+            <span className="font-mono text-xs text-text-2 leading-none">07 ·</span>
+            <h2 className="text-[13px] font-medium text-text-2">{t('headToHead.title')}</h2>
+          </div>
+          <TrackDominancePanel circuitId={circuit.id} drivers={drivers} />
         </section>
       )}
 

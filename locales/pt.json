@@ -143,7 +143,8 @@
     },
     "lapRecord": {
       "title": "Evolução do Recorde",
-      "allTime": "REC"
+      "allTime": "REC",
+      "newRecord": "REC↑"
     },
     "constructors": {
       "title": "Vitórias por Construtor"
@@ -286,8 +287,12 @@
     }
   },
   "driverDetail": {
-    "breadcrumb": { "drivers": "Pilotos" },
-    "careerArc": { "title": "Trajetória" },
+    "breadcrumb": {
+      "drivers": "Pilotos"
+    },
+    "careerArc": {
+      "title": "Trajetória"
+    },
     "hero": {
       "label": "Piloto",
       "races": "Corridas",
@@ -389,7 +394,9 @@
     }
   },
   "constructorDetail": {
-    "breadcrumb": { "constructors": "Construtores" },
+    "breadcrumb": {
+      "constructors": "Construtores"
+    },
     "hero": {
       "label": "Construtor",
       "races": "Corridas",

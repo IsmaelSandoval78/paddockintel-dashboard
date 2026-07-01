@@ -98,7 +98,7 @@ export default function CircuitHero({
   const rootRef      = useRef<HTMLDivElement>(null);
   const metaRef      = useRef<HTMLParagraphElement>(null);
   const nameRef      = useRef<HTMLHeadingElement>(null);
-  const lapTimeRef   = useRef<HTMLSpanElement>(null);
+  const lapTimeRef   = useRef<HTMLParagraphElement>(null);
   const firstYearRef = useRef<HTMLParagraphElement>(null);
   const totalRef     = useRef<HTMLParagraphElement>(null);
   const drawPathRef  = useRef<SVGPathElement>(null);
@@ -270,43 +270,42 @@ export default function CircuitHero({
       </div>
 
       {/* ── Middle: winners left | track map right ───────── */}
-      <div className="flex flex-col md:flex-row border-b border-border">
+      <div className="flex flex-col md:flex-row">
 
-        {/* Left column — last winners + counters */}
-        <div className="flex-1 flex flex-col px-6 py-6 md:border-r border-border">
+        {/* Left section — 3 sub-columns: winners | primera+total | vueltas+record+drs */}
+        <div className="flex-1 flex flex-col md:flex-row md:border-r border-border divide-y md:divide-y-0 md:divide-x divide-border">
 
-          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-5">
-            {t('hero.lastWinners')}
-          </p>
+          {/* Sub-col 1 — últimos ganadores */}
+          <div className="md:w-[38%] flex flex-col px-6 py-6">
+            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-5">
+              {t('hero.lastWinners')}
+            </p>
+            {lastWinners.length > 0 ? (
+              <div className="flex flex-col gap-4">
+                {lastWinners.map((w) => (
+                  <div key={w.year} className="circuit-winner-row flex items-center gap-4">
+                    <span className="font-mono text-[11px] text-text-3 tabular-nums shrink-0 w-9 leading-none">
+                      {w.year}
+                    </span>
+                    <p
+                      className="uppercase leading-none tracking-[-0.02em] text-text-1 shrink-0"
+                      style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.2rem, 2.2vw, 1.8rem)' }}
+                    >
+                      {w.forename[0]}. {w.surname}
+                    </p>
+                    <span className="font-mono text-[11px] text-text-3 min-w-0 truncate">
+                      {w.constructor}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <span className="font-mono text-[13px] text-text-3">—</span>
+            )}
+          </div>
 
-          {lastWinners.length > 0 ? (
-            <div className="flex flex-col gap-4 mb-auto">
-              {lastWinners.map((w) => (
-                <div key={w.year} className="circuit-winner-row flex items-center gap-4">
-                  <span className="font-mono text-[11px] text-text-3 tabular-nums shrink-0 w-9 leading-none">
-                    {w.year}
-                  </span>
-                  <p
-                    className="uppercase leading-none tracking-[-0.02em] text-text-1 shrink-0"
-                    style={{
-                      fontFamily: 'var(--pi-display)',
-                      fontSize: 'clamp(1.4rem, 2.8vw, 2rem)',
-                    }}
-                  >
-                    {w.forename[0]}. {w.surname}
-                  </p>
-                  <span className="font-mono text-[11px] text-text-3 min-w-0 truncate">
-                    {w.constructor}
-                  </span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <span className="font-mono text-[13px] text-text-3 mb-auto">—</span>
-          )}
-
-          {/* First Race + Total Races */}
-          <div className="flex items-end gap-12 pt-6 mt-6 border-t border-border">
+          {/* Sub-col 2 — primera carrera + total de carreras */}
+          <div className="md:w-[24%] flex flex-col px-6 py-6 gap-6">
             <div>
               <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
                 {t('hero.firstRace')}
@@ -314,7 +313,7 @@ export default function CircuitHero({
               <p
                 ref={firstYearRef}
                 className="leading-none tabular-nums text-text-1"
-                style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2.8rem, 6vw, 4rem)' }}
+                style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2rem, 3.5vw, 3rem)' }}
               >
                 {firstYear ?? '—'}
               </p>
@@ -326,9 +325,56 @@ export default function CircuitHero({
               <p
                 ref={totalRef}
                 className="leading-none tabular-nums text-text-1"
-                style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2.8rem, 6vw, 4rem)' }}
+                style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2rem, 3.5vw, 3rem)' }}
               >
                 {totalRaces}
+              </p>
+            </div>
+          </div>
+
+          {/* Sub-col 3 — vueltas + récord + drs */}
+          <div className="md:w-[38%] flex flex-col px-6 py-6 gap-5">
+            <div>
+              <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
+                {t('hero.laps')}
+              </p>
+              <p
+                className="leading-none tabular-nums text-text-1"
+                style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2rem, 3.5vw, 3rem)' }}
+              >
+                {standardLaps ?? '—'}
+              </p>
+            </div>
+            <div>
+              <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
+                {t('hero.lapRecord')}
+              </p>
+              {rankLapRecord ? (
+                <>
+                  <p
+                    ref={lapTimeRef}
+                    className="font-mono leading-none tabular-nums"
+                    style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2rem)', color: 'var(--red)' }}
+                  >
+                    {rankLapRecord.time}
+                  </p>
+                  <p className="font-mono text-[11px] text-text-3 mt-1">
+                    {rankLapRecord.forename[0]}. {rankLapRecord.surname} · {rankLapRecord.year}
+                  </p>
+                </>
+              ) : (
+                <p className="font-mono text-text-3 tabular-nums" style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2rem)' }}>—</p>
+              )}
+            </div>
+            <div>
+              <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
+                {t('hero.drsZones')}
+              </p>
+              <p
+                className="leading-none tabular-nums text-text-1"
+                style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2rem, 3.5vw, 3rem)' }}
+              >
+                {drsCount !== null ? drsCount : '—'}
               </p>
             </div>
           </div>
@@ -337,7 +383,7 @@ export default function CircuitHero({
         {/* Right column — dark track SVG panel, full height */}
         <div
           className="md:w-[360px] lg:w-[460px] xl:w-[520px] shrink-0 flex flex-col min-h-[280px] md:min-h-0"
-          style={{ background: 'var(--text-1)' }}
+          style={{ background: '#555555' }}
         >
           {trackPathData ? (() => {
             const flagColors = getFlagColors(country);
@@ -375,7 +421,7 @@ export default function CircuitHero({
                 {/* Ghost — shape reference */}
                 <path
                   d={trackPathData.path}
-                  stroke="rgba(255,255,255,0.07)"
+                  stroke="rgba(255,255,255,0.15)"
                   strokeWidth="8"
                   fill="none"
                   strokeLinecap="round"
@@ -428,17 +474,17 @@ export default function CircuitHero({
                 })}
               </svg>
 
-              {/* Corner description / default label */}
-              <div className="shrink-0 mt-4" style={{ minHeight: '3.5rem' }}>
+              {/* Hover detail — 1-line label + optional description */}
+              <div className="shrink-0 mt-4" style={{ minHeight: '2.5rem' }}>
                 {activeCorner ? (
                   <>
                     <p
-                      className="font-mono text-[9px] uppercase tracking-[0.1em] mb-1.5"
-                      style={{ color: 'rgba(255,255,255,0.8)' }}
+                      className="font-mono text-[9px] uppercase tracking-[0.1em] mb-1"
+                      style={{ color: 'rgba(255,255,255,0.85)' }}
                     >
                       T{activeCorner.corner_number}
                       {activeCorner.name ? ` · ${activeCorner.name}` : ''}
-                      <span style={{ color: 'rgba(255,255,255,0.45)' }}>
+                      <span style={{ color: 'rgba(255,255,255,0.5)' }}>
                         {' · '}{activeCorner.type.replace(/_/g, ' ')}
                       </span>
                       {activeCorner.is_drs_zone && (
@@ -447,8 +493,8 @@ export default function CircuitHero({
                     </p>
                     {activeCorner.description && (
                       <p
-                        className="font-mono text-[10px] leading-relaxed line-clamp-3"
-                        style={{ color: 'rgba(255,255,255,0.62)' }}
+                        className="font-mono text-[10px] leading-relaxed line-clamp-2"
+                        style={{ color: 'rgba(255,255,255,0.65)' }}
                       >
                         {activeCorner.description}
                       </p>
@@ -456,18 +502,63 @@ export default function CircuitHero({
                   </>
                 ) : (
                   <p
-                    className="font-mono text-[9px] uppercase tracking-[0.14em]"
-                    style={{ color: 'rgba(255,255,255,0.4)' }}
+                    className="font-mono text-[10px] font-bold uppercase tracking-[0.12em]"
+                    style={{ color: 'rgba(255,255,255,0.9)' }}
                   >
                     TRACK MAP · {name.toUpperCase()}
                     {cornersWithPercent.length > 0 && (
-                      <span style={{ color: 'rgba(255,255,255,0.25)' }}>
+                      <span style={{ color: 'rgba(255,255,255,0.55)' }}>
                         {' · '}{cornersWithPercent.length} TURNS
                       </span>
                     )}
                   </p>
                 )}
               </div>
+
+              {/* Corner legend — 2-col data grid */}
+              {cornersWithPercent.length > 0 && (
+                <div
+                  className="shrink-0 mt-3 pt-3"
+                  style={{ borderTop: '1px solid rgba(255,255,255,0.15)' }}
+                >
+                  <div className="grid grid-cols-2 gap-x-6">
+                    {cornersWithPercent.map((corner, i) => (
+                      <div
+                        key={corner.corner_number}
+                        className="flex items-center gap-2 h-5 cursor-crosshair"
+                        style={{
+                          opacity: hoveredCorner === null ? 0.9 : (hoveredCorner === i ? 1 : 0.35),
+                          transition: 'opacity 100ms ease',
+                        }}
+                        onMouseEnter={() => setHoveredCorner(i)}
+                        onMouseLeave={() => setHoveredCorner(null)}
+                      >
+                        <span
+                          className="shrink-0"
+                          style={{
+                            display: 'inline-block',
+                            width: '5px',
+                            height: '5px',
+                            background: corner.is_drs_zone ? 'var(--red)' : 'rgba(255,255,255,0.3)',
+                          }}
+                        />
+                        <span
+                          className="font-mono text-[11px] tabular-nums shrink-0"
+                          style={{ color: 'rgba(255,255,255,0.55)' }}
+                        >
+                          {String(corner.corner_number).padStart(2, '0')}
+                        </span>
+                        <span
+                          className="font-mono text-[11px] font-bold truncate"
+                          style={{ color: corner.name ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.3)' }}
+                        >
+                          {corner.name ?? '—'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             );
           })() : (
@@ -484,56 +575,6 @@ export default function CircuitHero({
 
       </div>
 
-      {/* ── Bottom strip: laps · lap record · DRS ────────── */}
-      <div className="flex flex-wrap items-end gap-x-10 gap-y-3 px-6 py-5">
-        <div>
-          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
-            {t('hero.laps')}
-          </p>
-          <p
-            className="leading-none tabular-nums text-text-1"
-            style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)' }}
-          >
-            {standardLaps ?? '—'}
-          </p>
-        </div>
-
-        {rankLapRecord ? (
-          <div>
-            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
-              {t('hero.lapRecord')}
-            </p>
-            <p className="font-mono leading-none tabular-nums" style={{ fontSize: 'clamp(1.6rem, 3vw, 2.2rem)' }}>
-              <span ref={lapTimeRef} style={{ color: 'var(--red)' }}>
-                {rankLapRecord.time}
-              </span>
-              <span className="font-mono text-[12px] text-text-3 ml-2">
-                {rankLapRecord.forename[0]}. {rankLapRecord.surname}
-              </span>
-              <span className="font-mono text-[12px] text-text-3 ml-1.5">{rankLapRecord.year}</span>
-            </p>
-          </div>
-        ) : (
-          <div>
-            <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
-              {t('hero.lapRecord')}
-            </p>
-            <p className="font-mono text-text-3 tabular-nums" style={{ fontSize: 'clamp(1.6rem, 3vw, 2.2rem)' }}>—</p>
-          </div>
-        )}
-
-        <div>
-          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
-            {t('hero.drsZones')}
-          </p>
-          <p
-            className="leading-none tabular-nums text-text-1"
-            style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)' }}
-          >
-            {drsCount !== null ? drsCount : '—'}
-          </p>
-        </div>
-      </div>
 
     </div>
   );
