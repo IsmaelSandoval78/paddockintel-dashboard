@@ -101,7 +101,6 @@ export default function CircuitHero({
   const lapTimeRef      = useRef<HTMLParagraphElement>(null);
   const firstYearRef    = useRef<HTMLParagraphElement>(null);
   const totalRef        = useRef<HTMLParagraphElement>(null);
-  const titleDrawRef    = useRef<SVGPathElement>(null);
   const drawPathRef     = useRef<SVGPathElement>(null);
   const s1PathRef       = useRef<SVGPathElement>(null);
   const s2PathRef       = useRef<SVGPathElement>(null);
@@ -138,16 +137,6 @@ export default function CircuitHero({
     const ctx = gsap.context(() => {
       document.fonts.ready.then(() => {
         if (!nameRef.current) return;
-
-        // Title-card backdrop — the track draws large and faint first, establishing place
-        // before the name locks in. Purely atmospheric: opacity stays low so it never
-        // competes with the name for the 3-second read.
-        if (titleDrawRef.current) {
-          gsap.fromTo(titleDrawRef.current,
-            { drawSVG: '0%', opacity: 0 },
-            { drawSVG: '100%', opacity: 0.12, duration: 1.8, ease: 'power2.inOut', delay: 0.05 },
-          );
-        }
 
         gsap.to(metaRef.current, {
           duration: 1.0,
@@ -282,53 +271,30 @@ export default function CircuitHero({
   return (
     <div ref={rootRef} className="border-b border-border">
 
-      {/* ── Title card — full-bleed opening ─────────────────────
-          Track outline draws large and faint directly on the paper substrate
-          (never a dark page bg — DESIGN.md), the name locks in on top. */}
-      <div className="relative overflow-hidden border-b border-border min-h-[42vh] md:min-h-[56vh] flex items-end">
-        {trackPathData && (
-          <svg
-            viewBox={trackPathData.viewBox}
-            preserveAspectRatio="xMidYMid meet"
-            className="absolute inset-0 w-full h-full pointer-events-none"
-            aria-hidden="true"
+      {/* ── Title card ────────────────────────────────────────── */}
+      <div className="px-6 pt-8 pb-6 border-b border-border">
+        <p
+          ref={metaRef}
+          className="font-mono text-[11px] text-text-3 uppercase tracking-[0.06em] mb-3"
+        >
+          {`${t('hero.label').toUpperCase()} · ${country.toUpperCase()}`}
+        </p>
+        <div className="kinetic-mask">
+          <h1
+            ref={nameRef}
+            className="uppercase leading-none tracking-[-0.03em] text-text-1 whitespace-nowrap text-[clamp(3rem,12vw,7rem)]"
+            style={{
+              fontFamily: 'var(--pi-display)',
+              visibility: motionOk ? 'hidden' : 'visible',
+            }}
           >
-            <path
-              ref={titleDrawRef}
-              d={trackPathData.path}
-              stroke="var(--text-1)"
-              strokeWidth="2.5"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              style={{ opacity: motionOk ? 0 : 0.12 }}
-            />
-          </svg>
-        )}
-        <div className="relative z-10 px-6 pt-10 pb-6 md:pt-14 md:pb-8 w-full min-w-0">
-          <p
-            ref={metaRef}
-            className="font-mono text-[11px] text-text-3 uppercase tracking-[0.06em] mb-3"
-          >
-            {`${t('hero.label').toUpperCase()} · ${country.toUpperCase()}`}
-          </p>
-          <div className="kinetic-mask">
-            <h1
-              ref={nameRef}
-              className="uppercase leading-none tracking-[-0.03em] text-text-1 whitespace-nowrap text-[clamp(3rem,12vw,7rem)]"
-              style={{
-                fontFamily: 'var(--pi-display)',
-                visibility: motionOk ? 'hidden' : 'visible',
-              }}
-            >
-              {name}
-            </h1>
-          </div>
-          <p className="font-mono text-[12px] text-text-2 mt-3">
-            {location} · {country}
-            <span className="text-text-3 ml-3 hidden sm:inline">{formatCoord(lat, lng)}</span>
-          </p>
+            {name}
+          </h1>
         </div>
+        <p className="font-mono text-[12px] text-text-2 mt-3">
+          {location} · {country}
+          <span className="text-text-3 ml-3 hidden sm:inline">{formatCoord(lat, lng)}</span>
+        </p>
       </div>
 
       {/* ── Track map — full width, dark object (not a page bg) ── */}
@@ -499,13 +465,13 @@ export default function CircuitHero({
                     </p>
                     {hasSectors && (
                       <div className="flex items-center gap-3">
-                        <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.08em]" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                        <span className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.08em]" style={{ color: 'rgba(255,255,255,0.6)' }}>
                           <span style={{ display: 'inline-block', width: 6, height: 6, background: flagColors[0] }} />S1
                         </span>
-                        <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.08em]" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                        <span className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.08em]" style={{ color: 'rgba(255,255,255,0.6)' }}>
                           <span style={{ display: 'inline-block', width: 6, height: 6, background: 'rgba(255,255,255,0.7)' }} />S2
                         </span>
-                        <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.08em]" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                        <span className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.08em]" style={{ color: 'rgba(255,255,255,0.6)' }}>
                           <span style={{ display: 'inline-block', width: 6, height: 6, background: 'var(--red)' }} />S3
                         </span>
                       </div>
@@ -524,7 +490,7 @@ export default function CircuitHero({
                     {cornersWithPercent.map((corner, i) => (
                       <div
                         key={corner.corner_number}
-                        className="flex items-center gap-2 h-5 cursor-crosshair"
+                        className="flex items-center gap-2 h-6 cursor-crosshair"
                         style={{
                           opacity: hoveredCorner === null ? 0.9 : (hoveredCorner === i ? 1 : 0.35),
                           transition: 'opacity 100ms ease',
@@ -542,13 +508,13 @@ export default function CircuitHero({
                           }}
                         />
                         <span
-                          className="font-mono text-[11px] tabular-nums shrink-0"
+                          className="font-mono text-[13px] tabular-nums shrink-0"
                           style={{ color: 'rgba(255,255,255,0.55)' }}
                         >
                           {String(corner.corner_number).padStart(2, '0')}
                         </span>
                         <span
-                          className="font-mono text-[11px] font-bold truncate"
+                          className="font-mono text-[13px] font-bold truncate"
                           style={{ color: corner.name ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.3)' }}
                         >
                           {corner.name ?? '—'}
