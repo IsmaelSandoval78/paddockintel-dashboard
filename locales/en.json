@@ -291,7 +291,8 @@
       "drivers": "Drivers"
     },
     "careerArc": {
-      "title": "Career Arc"
+      "title": "Career Arc",
+      "champion": "Champion"
     },
     "hero": {
       "label": "Driver",
@@ -322,7 +323,9 @@
       "year": "Year",
       "race": "Race",
       "constructor": "Constructor",
-      "fastestLap": "Fastest Lap"
+      "fastestLap": "Fastest Lap",
+      "showAll": "Show all {count} wins",
+      "showRecent": "Show recent only"
     },
     "qualifying": {
       "title": "Qualifying Record",

@@ -4,77 +4,16 @@ import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
 import { routing } from '@/lib/i18n/routing';
-import { DriverScorecardButton } from '@/components/scorecards/DriverScorecard';
-import CircuitRecordSection, { type CircuitRecord } from '@/components/drivers/CircuitRecordSection';
-import CareerArc from '@/components/drivers/CareerArc';
-import { flagGradient } from '@/lib/flagGradient';
+import { type CircuitRecord } from '@/components/drivers/CircuitRecordSection';
+import DriverDetailExperience from '@/components/drivers/kinetic/DriverDetailExperience';
 
 type PageParams = Promise<{ locale: string; slug: string }>;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const TEAM_COLORS: Record<string, string> = {
-  mercedes:     'var(--team-mercedes)',
-  mclaren:      'var(--team-mclaren)',
-  red_bull:     'var(--team-redbull)',
-  ferrari:      'var(--team-ferrari)',
-  alpine:       'var(--team-alpine)',
-  aston_martin: 'var(--team-aston)',
-  haas:         'var(--team-haas)',
-  williams:     'var(--team-williams)',
-  sauber:       'var(--team-sauber)',
-  kick_sauber:  'var(--team-sauber)',
-  rb:           'var(--team-rb)',
-  alphatauri:   'var(--team-rb)',
-};
-
-function teamColor(ref: string): string {
-  return TEAM_COLORS[ref] ?? 'var(--text-3)';
-}
-
-// ─── Flag gradient (nationality → 3-stripe) ───────────────────────
-
-// ─── Team hex values for color pills ──────────────────────────────
-const TEAM_HEX: Record<string, string> = {
-  mercedes:     '#00D2BE',
-  mclaren:      '#FF8700',
-  red_bull:     '#3671C6',
-  ferrari:      '#E8002D',
-  alpine:       '#FF87BC',
-  aston_martin: '#358C75',
-  haas:         '#B6BABD',
-  williams:     '#64C4FF',
-  sauber:       '#52E252',
-  kick_sauber:  '#52E252',
-  rb:           '#6692FF',
-  alphatauri:   '#6692FF',
-  toro_rosso:   '#469BFF',
-  renault:      '#FFD700',
-  benetton:     '#00964B',
-  jordan:       '#FFB800',
-  brawn:        '#B0FF00',
-};
-
-function teamHex(ref: string): string {
-  return TEAM_HEX[ref] ?? '#B0AFA8';
-}
-
 function cleanLapTime(t: string | null | undefined): string | null {
   if (!t || t === '\\N' || t.trim() === '') return null;
   return t;
-}
-
-function formatDob(dob: string | null, locale: string): string {
-  if (!dob) return '—';
-  try {
-    return new Intl.DateTimeFormat(locale, {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    }).format(new Date(dob + 'T12:00:00'));
-  } catch {
-    return dob;
-  }
 }
 
 // ─── Static generation ────────────────────────────────────────────────────────
@@ -115,7 +54,7 @@ export default async function DriverDetailPage({
 }: {
   params: PageParams;
 }) {
-  const { locale, slug } = await params;
+  const { slug } = await params;
   const t = await getTranslations('driverDetail');
   const supabase = createClient();
 
@@ -186,7 +125,10 @@ export default async function DriverDetailPage({
           <p className="font-mono text-[11px] text-text-3 uppercase tracking-[0.06em] mb-3">
             {t('hero.label')}
           </p>
-          <h1 className="font-serif text-5xl text-text-1 leading-[1.1] mb-2">
+          <h1
+            className="uppercase text-text-1 leading-none tracking-[-0.03em] mb-2 text-[clamp(2.5rem,8vw,5rem)]"
+            style={{ fontFamily: 'var(--pi-display)' }}
+          >
             {driver.surname}
           </h1>
           <p className="text-[14px] text-text-2">{driver.forename} · {driver.nationality}</p>
@@ -558,364 +500,36 @@ export default async function DriverDetailPage({
   // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
-    <main className="flex flex-col">
-
-      {/* Breadcrumb */}
-      <div className="h-10 px-6 border-b border-border flex items-center gap-2 shrink-0">
-        <Link href="/drivers" className="font-mono text-[11px] text-text-3 hover:text-text-2 transition-colors duration-150">
-          {t('breadcrumb.drivers')}
-        </Link>
-        <span className="font-mono text-[11px] text-text-3">·</span>
-        <span className="font-mono text-[11px] text-text-2 truncate">{driver.surname}</span>
-      </div>
-
-      {/* ── Hero: two-column ──────────────────────────────────────── */}
-      <div className="flex flex-col md:flex-row border-b border-border">
-
-        {/* Left 60%: flag + name + meta */}
-        <div className="md:w-[60%] px-8 py-10 flex flex-col justify-center gap-5">
-          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.1em]">
-            {t('hero.label')}
-          </p>
-          <div
-            aria-hidden="true"
-            style={{ width: 48, height: 32, background: flagGradient(driver.nationality) }}
-          />
-          <h1
-            className="font-serif leading-[0.92] tracking-[-0.02em]"
-            style={{ fontSize: 'clamp(2.5rem,6vw,4.5rem)', color: '#050505' }}
-          >
-            <span style={{ fontWeight: 400 }}>{driver.forename} </span>
-            <span style={{ fontWeight: 700 }}>{driver.surname.toUpperCase()}</span>
-          </h1>
-          <p className="font-mono text-[11px] text-text-3 uppercase tracking-[0.06em]">
-            {[
-              driver.code,
-              driver.number ? `#${driver.number}` : null,
-              driver.nationality,
-              driver.dob ? formatDob(driver.dob, locale) : null,
-            ].filter(Boolean).join(' · ')}
-          </p>
-        </div>
-
-        {/* Right 40%: dark stat band */}
-        <div
-          className="md:w-[40%] flex items-center justify-center py-10"
-          style={{ background: '#0A0A0A' }}
-        >
-          <div className="grid grid-cols-3 w-full text-center">
-            {[
-              { label: t('hero.races'),   value: stats.races   as number },
-              { label: t('hero.wins'),    value: stats.wins    as number },
-              { label: t('hero.podiums'), value: stats.podiums as number },
-            ].map(({ label, value }, i) => (
-              <div
-                key={label}
-                className="flex flex-col items-center px-4 py-6"
-                style={{ borderLeft: i > 0 ? '1px solid #2A2A2A' : undefined }}
-              >
-                <p
-                  className="font-serif tabular-nums leading-none mb-2"
-                  style={{ fontSize: 'clamp(2.5rem,4vw,4rem)', color: '#F4F4F0' }}
-                >
-                  {value}
-                </p>
-                <p className="font-mono text-[10px] uppercase tracking-[0.1em]" style={{ color: '#6B6B6B' }}>
-                  {label}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-      </div>
-
-      {/* ── Career arc — the shape of a career, before the chapters ── */}
-      {seasonRows.length > 1 && (
-        <div className="border-b border-border px-6 py-6">
-          <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.1em] mb-3">
-            {t('careerArc.title')}
-          </p>
-          <CareerArc
-            data={[...seasonRows].reverse().map((r) => ({
-              year: r.year,
-              points: r.points,
-              position: r.position,
-            }))}
-            variant="full"
-            championshipYears={championshipYears}
-          />
-        </div>
-      )}
-
-      {/* ── 01 · Stat band ───────────────────────────────────────── */}
-      <div className="border-b border-border" style={{ background: '#1A1A1A' }}>
-        <div className="grid grid-cols-3 md:grid-cols-6">
-          {[
-            {
-              label: t('stats.championships'),
-              value: String(championshipYears.length),
-              sub:   championshipYears.length ? championshipYears.join(' · ') : null,
-              red:   false,
-            },
-            { label: t('stats.poles'),            value: String(stats.poles         as number), sub: null, red: false },
-            { label: t('stats.fastestLaps'),       value: String(stats.fastest_laps  as number), sub: null, red: false },
-            { label: t('stats.dnfs'),             value: String(stats.dnfs          as number), sub: null, red: false },
-            { label: t('stats.winPct'),           value: `${winPct}%`,                          sub: null, red: parseFloat(winPct) > 20 },
-            { label: t('qualifying.avgPosition'), value: avgQuali !== null ? `P${avgQuali}` : '—', sub: null, red: false },
-          ].map(({ label, value, sub, red }, i) => (
-            <div
-              key={label}
-              className="flex flex-col items-center justify-center py-6 px-3 text-center"
-              style={{ borderLeft: i > 0 ? '1px solid #2A2A2A' : undefined }}
-            >
-              <p className="font-mono text-[10px] uppercase tracking-[0.1em] mb-2" style={{ color: '#6B6B6B' }}>
-                {label}
-              </p>
-              <p
-                className="font-sans font-black tabular-nums leading-none"
-                style={{ fontSize: '2rem', color: red ? '#E10600' : '#F4F4F0' }}
-              >
-                {value}
-              </p>
-              {sub && (
-                <p className="font-mono text-[10px] mt-1.5 leading-relaxed" style={{ color: '#6B6B6B' }}>
-                  {sub}
-                </p>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Two-column grid: Seasons | Win History + Qualifying ─── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 border-b border-border" style={{ borderTop: '1px solid var(--border-subtle)' }}>
-
-        {/* LEFT: 02 · Season by Season */}
-        {seasonRows.length > 0 && (
-          <section style={{ borderRight: '1px solid var(--border-subtle)' }}>
-            <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
-              <span className="font-mono text-xs text-text-2 leading-none">02 ·</span>
-              <h2 className="text-[13px] font-medium text-text-2">{t('seasons.title')}</h2>
-              <span className="font-mono text-[11px] text-text-3 ml-1 tabular-nums">{seasonRows.length}</span>
-            </div>
-            <div className="max-h-[600px] overflow-y-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="sticky top-0 bg-surface border-b border-border z-10">
-                    <th className="px-4 py-2 text-left font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-14">{t('seasons.year')}</th>
-                    <th className="px-3 py-2 text-left font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">{t('seasons.constructor')}</th>
-                    <th className="px-3 py-2 text-right font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-12">{t('seasons.pos')}</th>
-                    <th className="px-3 py-2 text-right font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-14">{t('seasons.pts')}</th>
-                    <th className="px-3 py-2 text-right font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-10">{t('seasons.wins')}</th>
-                    <th className="px-3 py-2 text-right font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-10">{t('seasons.pod')}</th>
-                    <th className="px-4 py-2 text-right font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-12">{t('seasons.races')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {seasonRows.map((row) => {
-                    const isChamp = championshipYears.includes(row.year);
-                    return (
-                      <tr
-                        key={row.year}
-                        style={{
-                          borderBottom: '1px solid var(--border-subtle)',
-                          height: 40,
-                          background: isChamp ? '#F0EDE6' : undefined,
-                        }}
-                        className="hover:bg-surface transition-colors duration-100"
-                      >
-                        <td className="px-4 font-mono text-xs tabular-nums">
-                          <span className={isChamp ? 'text-gold' : 'text-text-3'}>{row.year}</span>
-                          {isChamp && <span className="font-mono text-[9px] text-gold ml-2">★</span>}
-                        </td>
-                        <td className="px-3">
-                          <div className="flex items-center gap-1.5">
-                            <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: teamColor(row.constructorRef) }} />
-                            <span className="text-[12px] text-text-2 truncate">{row.constructorName}</span>
-                          </div>
-                        </td>
-                        <td className="px-3 text-right font-mono text-[12px] text-text-1 tabular-nums">{row.position !== null ? `P${row.position}` : '—'}</td>
-                        <td className="px-3 text-right font-mono text-[12px] text-text-1 tabular-nums">{row.points}</td>
-                        <td className="px-3 text-right font-mono text-[12px] text-text-2 tabular-nums">{row.wins}</td>
-                        <td className="px-3 text-right font-mono text-[12px] text-text-2 tabular-nums">{row.podiums}</td>
-                        <td className="px-4 text-right font-mono text-[12px] text-text-3 tabular-nums">{row.races}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        )}
-
-        {/* RIGHT: 03 Win History + 04 Qualifying stacked */}
-        <div className="flex flex-col divide-y divide-border">
-
-          {/* 03 · Win History */}
-          <section>
-            <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
-              <span className="font-mono text-xs text-text-2 leading-none">03 ·</span>
-              <h2 className="text-[13px] font-medium text-text-2">{t('winsSection.title')}</h2>
-              <span className="font-mono text-[11px] text-text-3 ml-1 tabular-nums">{winRows.length}</span>
-            </div>
-            {winRows.length > 0 ? (
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-surface border-b border-border">
-                    <th className="px-4 py-2 text-left font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-14">{t('winsSection.year')}</th>
-                    <th className="px-3 py-2 text-left font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">{t('winsSection.race')}</th>
-                    <th className="px-3 py-2 text-left font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">{t('winsSection.constructor')}</th>
-                    <th className="px-4 py-2 text-right font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">{t('winsSection.fastestLap')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {winRows.map((row, i) => (
-                    <tr
-                      key={i}
-                      style={{ borderBottom: '1px solid var(--border-subtle)' }}
-                      className="hover:bg-surface transition-colors duration-100"
-                    >
-                      <td className="px-4 py-2 font-mono text-xs text-text-3 tabular-nums">{row.year}</td>
-                      <td className="px-3 py-2 text-[12px] text-text-1 max-w-[140px] truncate">{row.raceName}</td>
-                      <td className="px-3 py-2 text-[12px] text-text-2 truncate">{row.constructorName}</td>
-                      <td className="px-4 py-2 text-right font-mono text-[12px] tabular-nums">
-                        {row.fastestLap
-                          ? <span style={{ color: 'var(--red)' }}>{row.fastestLap}</span>
-                          : <span className="text-text-3">—</span>
-                        }
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <div className="px-6 py-6"><span className="font-mono text-[13px] text-text-3">—</span></div>
-            )}
-          </section>
-
-          {/* 04 · Qualifying Record */}
-          <section>
-            <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
-              <span className="font-mono text-xs text-text-2 leading-none">04 ·</span>
-              <h2 className="text-[13px] font-medium text-text-2">{t('qualifying.title')}</h2>
-            </div>
-            <div className="grid grid-cols-3 divide-x divide-border border-b border-border">
-              <div className="px-5 py-4">
-                <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">{t('qualifying.poles')}</p>
-                <p className="font-serif text-[32px] text-text-1 leading-none tabular-nums">{poleRows.length}</p>
-              </div>
-              <div className="px-5 py-4">
-                <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">{t('qualifying.frontRow')}</p>
-                <p className="font-serif text-[32px] text-text-1 leading-none tabular-nums">{frontRowCount}</p>
-              </div>
-              <div className="px-5 py-4">
-                <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">{t('qualifying.avgPosition')}</p>
-                <p className="font-serif text-[32px] text-text-1 leading-none tabular-nums">{avgQuali !== null ? `P${avgQuali}` : '—'}</p>
-              </div>
-            </div>
-            {poleRows.length > 0 && (
-              <div className="overflow-hidden">
-                <table className="w-full">
-                  <thead>
-                    <tr className="bg-surface border-b border-border">
-                      <th className="px-4 py-2 text-left font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-14">{t('qualifying.year')}</th>
-                      <th className="px-3 py-2 text-left font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">{t('qualifying.race')}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {poleRows.map((row, i) => (
-                      <tr key={i} style={{ borderBottom: '1px solid var(--border-subtle)' }} className="hover:bg-surface transition-colors duration-100">
-                        <td className="px-4 py-2 font-mono text-xs text-text-3 tabular-nums">{row.year}</td>
-                        <td className="px-3 py-2 text-[12px] text-text-1 truncate">{row.raceName}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </section>
-
-        </div>
-
-      </div>
-
-      {/* ── 05 · Constructors ─────────────────────────────────────── */}
-      {constructorRows.length > 0 && (
-        <section className="border-b border-border">
-          <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
-            <span className="font-mono text-xs text-text-2 leading-none">05 ·</span>
-            <h2 className="text-[13px] font-medium text-text-2">{t('constructors.title')}</h2>
-          </div>
-          <div className="px-6 py-5 flex flex-col gap-3">
-            {constructorRows.map((row) => {
-              const hex = teamHex(row.ref);
-              return (
-                <div key={row.constructorId} className="flex items-center gap-4">
-                  <div
-                    className="flex items-center gap-2 px-3 py-1 shrink-0"
-                    style={{ background: `${hex}1A`, minWidth: 144 }}
-                  >
-                    <span className="text-[13px] font-medium text-text-1 truncate">{row.name}</span>
-                  </div>
-                  <span className="font-mono text-[11px] text-text-3 tabular-nums shrink-0">
-                    {row.firstYear === row.lastYear ? String(row.firstYear) : `${row.firstYear}–${row.lastYear}`}
-                  </span>
-                  <div className="flex-1 h-px overflow-hidden" style={{ background: 'var(--border-subtle)' }}>
-                    <div className="h-full" style={{ width: `${(row.races / maxConRaces) * 100}%`, background: hex }} />
-                  </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <span className="font-mono text-[11px] text-text-1 tabular-nums w-12 text-right">
-                      {row.races}<span className="text-text-3 ml-1">{t('constructors.races')}</span>
-                    </span>
-                    <span className="font-mono text-[11px] tabular-nums w-10 text-right" style={{ color: hex }}>
-                      {row.wins}<span className="text-text-3 ml-1">{t('constructors.wins')}</span>
-                    </span>
-                    <span className="font-mono text-[11px] text-text-2 tabular-nums w-12 text-right">
-                      {row.podiums}<span className="text-text-3 ml-1">{t('constructors.podiums')}</span>
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      )}
-
-      {/* ── 06 · Circuit Record — DO NOT MODIFY ──────────────── */}
-      {circuitRecords.length > 0 && (
-        <CircuitRecordSection
-          records={circuitRecords}
-          driver={{
-            forename:   driver.forename,
-            surname:    driver.surname,
-            code:       driver.code,
-            driver_ref: driver.driver_ref,
-          }}
-        />
-      )}
-
-      {/* ── Share scorecard ───────────────────────────────────── */}
-      <div className="px-6 py-3 border-t border-border">
-        <DriverScorecardButton
-          data={{
-            forename:       driver.forename,
-            surname:        driver.surname,
-            code:           driver.code,
-            nationality:    driver.nationality,
-            firstYear:      stats.first_year as number,
-            lastYear:       stats.last_year  as number,
-            races:          stats.races       as number,
-            wins:           stats.wins        as number,
-            podiums:        stats.podiums     as number,
-            poles:          stats.poles       as number,
-            fastestLaps:    stats.fastest_laps as number,
-            championships:  championshipYears.length,
-            constructorRef: seasonRows[0]?.constructorRef ?? '',
-          }}
-        />
-      </div>
-
-    </main>
+    <DriverDetailExperience
+      driver={{
+        forename:    driver.forename,
+        surname:     driver.surname,
+        code:        driver.code,
+        number:      driver.number,
+        nationality: driver.nationality,
+        dob:         driver.dob,
+        driver_ref:  driver.driver_ref,
+      }}
+      stats={{
+        races:       stats.races        as number,
+        wins:        stats.wins         as number,
+        podiums:     stats.podiums      as number,
+        poles:       stats.poles        as number,
+        fastestLaps: stats.fastest_laps as number,
+        dnfs:        stats.dnfs         as number,
+        firstYear:   stats.first_year   as number,
+        lastYear:    stats.last_year    as number,
+      }}
+      winPct={winPct}
+      avgQuali={avgQuali}
+      frontRowCount={frontRowCount}
+      championshipYears={championshipYears}
+      seasonRows={seasonRows}
+      winRows={winRows}
+      poleRows={poleRows}
+      constructorRows={constructorRows}
+      maxConRaces={maxConRaces}
+      circuitRecords={circuitRecords}
+    />
   );
 }

@@ -291,7 +291,8 @@
       "drivers": "Pilotos"
     },
     "careerArc": {
-      "title": "Trayectoria"
+      "title": "Trayectoria",
+      "champion": "Campeón"
     },
     "hero": {
       "label": "Piloto",
@@ -322,7 +323,9 @@
       "year": "Año",
       "race": "Carrera",
       "constructor": "Constructor",
-      "fastestLap": "Vuelta Rápida"
+      "fastestLap": "Vuelta Rápida",
+      "showAll": "Ver las {count} victorias",
+      "showRecent": "Ver solo recientes"
     },
     "qualifying": {
       "title": "Clasificación",
