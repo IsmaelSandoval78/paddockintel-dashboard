@@ -4,10 +4,24 @@ import { useState, useRef, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { gsap } from 'gsap';
 import { SplitText } from 'gsap/SplitText';
-import type { DriverSeasonRow, DriverAllTimeRow, DriverDetail } from '@/lib/types';
+import type {
+  DriverSeasonRow,
+  DriverAllTimeRow,
+  DriverDetail,
+  DriversBattleData,
+  DriversFormGuide,
+  QualiDuelPair,
+  ChampionYear,
+  FormRace,
+} from '@/lib/types';
 import InlineDriverPanel from './InlineDriverPanel';
 import BottomSheet from '@/components/ui/BottomSheet';
 import EraGrid, { type EraKey } from './EraGrid';
+import ChampionshipBattle from './ChampionshipBattle';
+import QualiDuel from './QualiDuel';
+import ChampionsWall from './ChampionsWall';
+import FormStrip from './FormStrip';
+import InfoTooltip from '@/components/circuits/kinetic/InfoTooltip';
 
 gsap.registerPlugin(SplitText);
 
@@ -38,10 +52,12 @@ const COLLAPSE_MS = 200;
 // ─── Season row ──────────────────────────────────────────────────
 function SeasonRow({
   driver,
+  form,
   selected,
   onClick,
 }: {
   driver: DriverSeasonRow;
+  form: FormRace[] | undefined;
   selected: boolean;
   onClick: () => void;
 }) {
@@ -104,6 +120,11 @@ function SeasonRow({
         <span className="font-mono text-[11px] text-text-2 truncate">{driver.constructor_name}</span>
       </div>
 
+      {/* FORM — last 5 races, desktop only */}
+      <div className="hidden lg:flex w-[102px] shrink-0 justify-end mr-4">
+        {form && form.length > 0 && <FormStrip form={form} />}
+      </div>
+
       {/* PTS — Archivo Black 18px, dominant */}
       <span
         className="w-16 text-right shrink-0 tabular-nums text-[18px]"
@@ -136,10 +157,18 @@ export default function DriversClient({
   season2026,
   allTime,
   totalCount,
+  battle,
+  formGuide,
+  qualiDuels,
+  champions,
 }: {
   season2026: DriverSeasonRow[];
   allTime: DriverAllTimeRow[];
   totalCount: number;
+  battle: DriversBattleData;
+  formGuide: DriversFormGuide;
+  qualiDuels: QualiDuelPair[];
+  champions: ChampionYear[];
 }) {
   const t = useTranslations('drivers');
 
@@ -260,6 +289,11 @@ export default function DriversClient({
         </button>
       </div>
 
+      {/* ── Champions wall (all-time view) ────────────────────── */}
+      {view === 'all' && (
+        <ChampionsWall champions={champions} motionOk={motionOk} onSelect={handleSelectDriver} />
+      )}
+
       {/* ── Era + search filters (all-time view only) ─────── */}
       {view === 'all' && (
         <div className="border-b border-border shrink-0">
@@ -298,7 +332,18 @@ export default function DriversClient({
         </div>
       )}
 
-      {/* ── 2026 Season standings table ───────────────────────── */}
+      {/* ── 01 · Championship battle chart ────────────────────── */}
+      {view === '2026' && <ChampionshipBattle data={battle} motionOk={motionOk} />}
+
+      {/* ── 02 · 2026 Season standings table ──────────────────── */}
+      {view === '2026' && battle.series.length >= 2 && (
+        <div className="flex items-center gap-3 px-5 pt-5 pb-4">
+          <span className="font-mono text-[10px] text-text-2 uppercase tracking-[0.1em]">
+            02 · {t('sections.standings')}
+          </span>
+          <InfoTooltip text={t('sections.standingsInfo')} />
+        </div>
+      )}
       {view === '2026' && (
         <div className="grid gap-px" style={{ background: 'var(--border)' }}>
 
@@ -319,6 +364,9 @@ export default function DriversClient({
             <span className="hidden md:block font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-36 shrink-0 mx-4">
               {t('table.team')}
             </span>
+            <span className="hidden lg:block font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-[102px] text-right shrink-0 mr-4">
+              {t('table.form')}
+            </span>
             <span className="font-mono text-[10px] text-bg uppercase tracking-[0.1em] w-16 text-right shrink-0">
               {t('table.pts')}
             </span>
@@ -337,12 +385,16 @@ export default function DriversClient({
             <SeasonRow
               key={driver.driver_id}
               driver={driver}
+              form={formGuide[driver.driver_id]}
               selected={driver.driver_id === selectedId}
               onClick={() => handleSelectDriver(driver.driver_id)}
             />
           ))}
         </div>
       )}
+
+      {/* ── 03 · Qualifying head-to-head ──────────────────────── */}
+      {view === '2026' && <QualiDuel duels={qualiDuels} motionOk={motionOk} />}
 
       {/* ── Era grid (all-time view) ──────────────────────────── */}
       {view === 'all' && (

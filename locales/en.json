@@ -245,6 +245,30 @@
   "drivers": {
     "title": "Drivers",
     "count": "{count} drivers",
+    "sections": {
+      "standings": "Standings",
+      "standingsInfo": "Championship standings after the latest round. Last 5 shows the finishing position of the most recent races, oldest to newest: gold = win, black = podium, red × = retirement."
+    },
+    "battle": {
+      "title": "The Title Fight",
+      "after": "After {race} · R{round}",
+      "pts": "PTS",
+      "gapToP2": "Gap to P2",
+      "chartAria": "Championship points progression, top {count} drivers",
+      "info": "Cumulative championship points, round by round, for the current top 5. A dashed line marks the second driver of a team. The red number is the leader's points advantage over P2."
+    },
+    "duel": {
+      "title": "Qualifying H2H",
+      "note": "Score = sessions ahead · Δ = avg gap",
+      "gapTitle": "Average gap in the deepest shared session",
+      "info": "Teammate head-to-head in 2026 qualifying. The score counts sessions where each driver out-qualified the other; Δ is the average time gap in the deepest session both ran, credited to the faster driver."
+    },
+    "wall": {
+      "title": "Champions · {from} → {to}",
+      "hint": "Drag ←",
+      "inProgress": "Leader",
+      "info": "Every World Champion since 1950, most recent on the right. ×N counts that driver's titles so far. The red cell is the current season's points leader — the title is still in play. Click a champion to open their profile."
+    },
     "view": {
       "season": "2026 Season",
       "allTime": "All Time"
@@ -259,6 +283,7 @@
       "pos": "Pos",
       "driver": "Driver",
       "team": "Team",
+      "form": "Last 5",
       "pts": "PTS",
       "wins": "Wins",
       "pod": "Pod",

@@ -245,6 +245,30 @@
   "drivers": {
     "title": "Pilotos",
     "count": "{count} pilotos",
+    "sections": {
+      "standings": "Clasificación general",
+      "standingsInfo": "Clasificación del campeonato tras la última ronda. Últimas 5 muestra la posición final de las carreras más recientes, de la más antigua a la más nueva: dorado = victoria, negro = podio, × roja = abandono."
+    },
+    "battle": {
+      "title": "La lucha por el título",
+      "after": "Tras {race} · R{round}",
+      "pts": "PTS",
+      "gapToP2": "Ventaja sobre P2",
+      "chartAria": "Progresión de puntos del campeonato, top {count} pilotos",
+      "info": "Puntos acumulados del campeonato, ronda a ronda, del top 5 actual. La línea discontinua marca al segundo piloto de un equipo. El número rojo es la ventaja en puntos del líder sobre el P2."
+    },
+    "duel": {
+      "title": "Cara a cara en qualy",
+      "note": "Marcador = veces por delante · Δ = media",
+      "gapTitle": "Diferencia media en la sesión común más profunda",
+      "info": "Duelo entre compañeros de equipo en la qualy 2026. El marcador cuenta las sesiones en que cada piloto superó al otro; Δ es la diferencia media de tiempo en la sesión más profunda que ambos disputaron, acreditada al más rápido."
+    },
+    "wall": {
+      "title": "Campeones · {from} → {to}",
+      "hint": "Arrastra ←",
+      "inProgress": "Líder",
+      "info": "Todos los Campeones del Mundo desde 1950, el más reciente a la derecha. ×N cuenta los títulos del piloto hasta ese año. La celda roja es el líder de la temporada en curso — el título aún está en juego. Toca un campeón para abrir su perfil."
+    },
     "view": {
       "season": "Temporada 2026",
       "allTime": "Histórico"
@@ -259,6 +283,7 @@
       "pos": "Pos",
       "driver": "Piloto",
       "team": "Equipo",
+      "form": "Últimas 5",
       "pts": "PTS",
       "wins": "Vic",
       "pod": "Pod",

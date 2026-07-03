@@ -143,6 +143,61 @@ export interface DriverAllTimeRow {
   number: number | null;
 }
 
+export interface BattleRound {
+  round: number;
+  race_name: string;
+}
+
+export interface BattleSeries {
+  driver_id: number;
+  surname: string;
+  code: string | null;
+  constructor_ref: string;
+  /** Cumulative championship points after each completed round */
+  points: number[];
+}
+
+export interface DriversBattleData {
+  rounds: BattleRound[];
+  series: BattleSeries[];
+}
+
+export interface FormRace {
+  round: number;
+  position: number | null;
+  retired: boolean;
+  raced: boolean;
+}
+
+/** driver_id → last N completed races, oldest first */
+export type DriversFormGuide = Record<number, FormRace[]>;
+
+export interface QualiDuelDriver {
+  driver_id: number;
+  surname: string;
+  code: string | null;
+  score: number;
+}
+
+export interface QualiDuelPair {
+  constructor_id: number;
+  constructor_ref: string;
+  constructor_name: string;
+  a: QualiDuelDriver;
+  b: QualiDuelDriver;
+  /** Average delta in ms across deepest common sessions; positive = a faster */
+  avg_gap_ms: number | null;
+  sessions: number;
+}
+
+export interface ChampionYear {
+  year: number;
+  driver_id: number;
+  forename: string;
+  surname: string;
+  in_progress?: boolean;
+}
+
 export interface DriverDetail {
   driver_id: number;
   driver_ref: string;
