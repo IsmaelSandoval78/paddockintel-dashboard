@@ -469,6 +469,31 @@
       "drivers": "Drivers",
       "constructors": "Constructors"
     },
+    "duels": {
+      "label": "Rivalries"
+    },
+    "tape": {
+      "vs": "VS",
+      "titles": "Titles"
+    },
+    "verdict": {
+      "title": "The Verdict",
+      "info": "Career totals, metric by metric. Bars grow from the center axis; the side with the better number keeps full color and scores one point on the tally above. Percentages normalize for career length."
+    },
+    "h2h": {
+      "title": "On-Track Head-to-Head",
+      "info": "Every Grand Prix both drivers actually started, and who finished ahead. If one retired and the other was classified, the classified driver takes it; double retirements score nothing. The smaller line counts qualifying sessions.",
+      "meta": "{races} shared races · {from}–{to}",
+      "never": "They never shared a grid — different eras.",
+      "finishedAhead": "Finished ahead",
+      "quali": "Qualifying"
+    },
+    "arc": {
+      "title": "Career Arc",
+      "info": "Cumulative race wins by career season — both careers start at S1, so drivers from different eras overlay honestly. Gold dots mark championship-winning seasons.",
+      "axis": "Wins by career season",
+      "champion": "World Champion"
+    },
     "selector": {
       "searchDrivers": "Search drivers",
       "searchConstructors": "Search constructors",
@@ -484,11 +509,14 @@
       "fastestLaps": "Fastest Laps",
       "championships": "Championships",
       "winPct": "Win%",
+      "podiumPct": "Podium%",
       "era": "Era"
     },
     "hth": {
       "teammates": "As Teammates",
       "headToHead": "Head-to-Head",
+      "infoTeammates": "Seasons in which both drivers raced for the same team — the only years with truly equal machinery. Championship position, points and wins for each.",
+      "infoShared": "Every season both teams competed in — championship position, points and wins for each.",
       "neverTeammates": "Never teammates",
       "year": "Year",
       "team": "Team",

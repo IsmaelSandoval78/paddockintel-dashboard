@@ -45,6 +45,18 @@ export interface CompareDriverData {
   seasons: CompareDriverSeason[];
 }
 
+export interface CompareH2HData {
+  /** Races where both drivers started */
+  shared_races: number;
+  a_race_ahead: number;
+  b_race_ahead: number;
+  quali_sessions: number;
+  a_quali_ahead: number;
+  b_quali_ahead: number;
+  first_shared_year: number | null;
+  last_shared_year: number | null;
+}
+
 export interface CompareConstructorSeason {
   year: number;
   wins: number;

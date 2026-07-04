@@ -469,6 +469,31 @@
       "drivers": "Pilotos",
       "constructors": "Construtores"
     },
+    "duels": {
+      "label": "Rivalidades"
+    },
+    "tape": {
+      "vs": "VS",
+      "titles": "Títulos"
+    },
+    "verdict": {
+      "title": "O Veredicto",
+      "info": "Totais de carreira, métrica a métrica. As barras crescem a partir do eixo central; o lado com o melhor número mantém a cor plena e soma um ponto no placar acima. As porcentagens normalizam pela duração da carreira."
+    },
+    "h2h": {
+      "title": "Cara a cara na pista",
+      "info": "Cada Grande Prêmio que ambos os pilotos disputaram, e quem terminou à frente. Se um abandonou e o outro foi classificado, vence o classificado; abandono duplo não pontua. A linha menor conta as sessões de classificação.",
+      "meta": "{races} corridas compartilhadas · {from}–{to}",
+      "never": "Nunca dividiram um grid — eras diferentes.",
+      "finishedAhead": "Terminou à frente",
+      "quali": "Classificação"
+    },
+    "arc": {
+      "title": "Arco de carreira",
+      "info": "Vitórias acumuladas por temporada de carreira — ambas as carreiras começam em S1, então pilotos de eras diferentes se sobrepõem honestamente. Os pontos dourados marcam temporadas de título.",
+      "axis": "Vitórias por temporada de carreira",
+      "champion": "Campeão Mundial"
+    },
     "selector": {
       "searchDrivers": "Buscar pilotos",
       "searchConstructors": "Buscar construtores",
@@ -484,11 +509,14 @@
       "fastestLaps": "Voltas Rápidas",
       "championships": "Campeonatos",
       "winPct": "% Vit",
+      "podiumPct": "% Pódio",
       "era": "Era"
     },
     "hth": {
       "teammates": "Como Companheiros",
       "headToHead": "Frente a Frente",
+      "infoTeammates": "Temporadas em que ambos os pilotos correram pela mesma equipe — os únicos anos com máquinas realmente iguais. Posição no campeonato, pontos e vitórias de cada um.",
+      "infoShared": "Cada temporada em que ambas as equipes competiram — posição no campeonato, pontos e vitórias de cada uma.",
       "neverTeammates": "Nunca companheiros",
       "year": "Ano",
       "team": "Equipe",

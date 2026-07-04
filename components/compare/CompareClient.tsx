@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { gsap } from 'gsap';
+import { SplitText } from 'gsap/SplitText';
 import type {
   DriverSelectorRow,
   ConstructorSelectorRow,
@@ -10,9 +12,33 @@ import type {
   CompareConstructorData,
   CompareDriverSeason,
   CompareConstructorSeason,
+  CompareH2HData,
 } from '@/lib/types';
+import TaleOfTape, { type TapeSide } from './kinetic/TaleOfTape';
+import VerdictBoard, { type VerdictMetric } from './kinetic/VerdictBoard';
+import H2HDuel from './kinetic/H2HDuel';
+import CareerArcDuel, { type ArcSeason } from './kinetic/CareerArcDuel';
+import InfoTooltip from '@/components/circuits/kinetic/InfoTooltip';
+
+gsap.registerPlugin(SplitText);
 
 type Mode = 'drivers' | 'constructors';
+
+// Preloaded rivalries — one click loads the duel, and the URL becomes a
+// shareable landing page for it. Refs verified against the drivers table.
+const DRIVER_DUELS: Array<[string, string]> = [
+  ['senna', 'prost'],
+  ['hunt', 'lauda'],
+  ['hamilton', 'max_verstappen'],
+  ['alonso', 'michael_schumacher'],
+  ['mansell', 'piquet'],
+  ['antonelli', 'russell'],
+];
+const CONSTRUCTOR_DUELS: Array<[string, string]> = [
+  ['ferrari', 'mclaren'],
+  ['red_bull', 'mercedes'],
+  ['williams', 'ferrari'],
+];
 
 const Loader = () => (
   <span className="font-mono text-[11px] text-text-3 animate-pulse">···</span>
@@ -138,46 +164,6 @@ function Combobox<T extends { label: string; ref: string; sub: string }>({
   );
 }
 
-// ─── Career stat row ──────────────────────────────────────────────
-function StatRow({
-  label,
-  a,
-  b,
-  lowerIsBetter = false,
-}: {
-  label: string;
-  a: string | number;
-  b: string | number;
-  lowerIsBetter?: boolean;
-}) {
-  const aNum = typeof a === 'number' ? a : parseFloat(String(a));
-  const bNum = typeof b === 'number' ? b : parseFloat(String(b));
-  const aWins = !isNaN(aNum) && !isNaN(bNum) && aNum !== bNum
-    ? lowerIsBetter ? aNum < bNum : aNum > bNum
-    : null;
-  const bWins = aWins === null ? null : !aWins;
-
-  return (
-    <div className="flex items-center h-10 border-b border-border px-0">
-      <span className={[
-        'flex-1 text-right font-mono text-[13px] tabular-nums pr-5',
-        aWins ? 'text-text-1 font-semibold' : 'text-text-2',
-      ].join(' ')}>
-        {a}
-      </span>
-      <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] w-36 text-center shrink-0 px-2">
-        {label}
-      </span>
-      <span className={[
-        'flex-1 font-mono text-[13px] tabular-nums pl-5',
-        bWins ? 'text-text-1 font-semibold' : 'text-text-2',
-      ].join(' ')}>
-        {b}
-      </span>
-    </div>
-  );
-}
-
 // ─── Head-to-head table row ───────────────────────────────────────
 function HthRow({
   year,
@@ -188,7 +174,6 @@ function HthRow({
   bPos,
   bPts,
   bWins,
-  t,
 }: {
   year: number;
   team?: string;
@@ -198,7 +183,6 @@ function HthRow({
   bPos: number | null;
   bPts: number;
   bWins: number;
-  t: ReturnType<typeof useTranslations<'compare'>>;
 }) {
   const aIsWinner = aPos !== null && bPos !== null
     ? aPos < bPos
@@ -268,6 +252,48 @@ export default function CompareClient({
   const [dataB, setDataB] = useState<CompareDriverData | CompareConstructorData | null>(null);
   const [loadingA, setLoadingA] = useState(false);
   const [loadingB, setLoadingB] = useState(false);
+  const [h2h, setH2h] = useState<CompareH2HData | null>(null);
+  const [motionOk, setMotionOk] = useState(false);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+
+  // Header entrance — mirrors DriversClient
+  useEffect(() => {
+    const ok = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Must run post-mount: matching SSR's default here would mismatch the client's real preference.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMotionOk(ok);
+    if (!ok) {
+      if (titleRef.current) titleRef.current.style.visibility = 'visible';
+      return;
+    }
+    const ctx = gsap.context(() => {
+      document.fonts.ready.then(() => {
+        if (!titleRef.current) return;
+        const split = new SplitText(titleRef.current, { type: 'chars' });
+        gsap.set(titleRef.current, { visibility: 'visible' });
+        gsap.from(split.chars, { yPercent: 110, duration: 0.7, stagger: 0.04, ease: 'power4.out' });
+      });
+    }, headerRef);
+    return () => ctx.revert();
+  }, []);
+
+  // Real on-track H2H — drivers mode only, refetch on pair change
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setH2h(null);
+    if (mode !== 'drivers' || !driverA || !driverB) return;
+    let cancelled = false;
+    fetch(`/api/compare/h2h/${driverA.driver_ref}/${driverB.driver_ref}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: CompareH2HData | null) => {
+        if (!cancelled) setH2h(data);
+      })
+      .catch(() => {
+        if (!cancelled) setH2h(null);
+      });
+    return () => { cancelled = true; };
+  }, [mode, driverA, driverB]);
 
   // Sync URL params
   useEffect(() => {
@@ -414,15 +440,124 @@ export default function CompareClient({
     }
   }
 
+  // ─── Preloaded duels ─────────────────────────────────────────────
+
+  const driversByRef = new Map(drivers.map((d) => [d.driver_ref, d]));
+  const constructorsByRef = new Map(constructors.map((c) => [c.constructor_ref, c]));
+
+  const driverDuels = DRIVER_DUELS.flatMap(([refA, refB]) => {
+    const rowA = driversByRef.get(refA);
+    const rowB = driversByRef.get(refB);
+    if (!rowA || !rowB) return [];
+    const active =
+      mode === 'drivers' &&
+      ((driverA?.driver_ref === refA && driverB?.driver_ref === refB) ||
+        (driverA?.driver_ref === refB && driverB?.driver_ref === refA));
+    return [{
+      key: `${refA}|${refB}`,
+      label: `${rowA.surname} — ${rowB.surname}`,
+      active,
+      load: () => { setDriverA(rowA); setDriverB(rowB); },
+    }];
+  });
+
+  const constructorDuels = CONSTRUCTOR_DUELS.flatMap(([refA, refB]) => {
+    const rowA = constructorsByRef.get(refA);
+    const rowB = constructorsByRef.get(refB);
+    if (!rowA || !rowB) return [];
+    const active =
+      mode === 'constructors' &&
+      ((constructorA?.constructor_ref === refA && constructorB?.constructor_ref === refB) ||
+        (constructorA?.constructor_ref === refB && constructorB?.constructor_ref === refA));
+    return [{
+      key: `${refA}|${refB}`,
+      label: `${rowA.name} — ${rowB.name}`,
+      active,
+      load: () => { setConstructorA(rowA); setConstructorB(rowB); },
+    }];
+  });
+
+  // ─── Kinetic section inputs ──────────────────────────────────────
+
+  const ready = bothSelected && dataA !== null && dataB !== null;
+  const pairKey = ready
+    ? isDriverData(dataA!) ? `${dataA!.driver_ref}|${(dataB as CompareDriverData).driver_ref}` : `${(dataA as CompareConstructorData).constructor_ref}|${(dataB as CompareConstructorData).constructor_ref}`
+    : '';
+
+  // Side colors: ink vs racing red for drivers (Blueprint convention); team
+  // colors for constructors, falling back to ink/red when both are unmapped.
+  let aColor = 'var(--text-1)';
+  let bColor = 'var(--red)';
+  if (ready && !isDriverData(dataA!)) {
+    const ca = teamColor((dataA as CompareConstructorData).constructor_ref);
+    const cb = teamColor((dataB as CompareConstructorData).constructor_ref);
+    if (!(ca === cb)) { aColor = ca; bColor = cb; }
+  }
+
+  const tapeSide = (d: CompareDriverData | CompareConstructorData, color: string): TapeSide =>
+    isDriverData(d)
+      ? {
+          name: d.surname,
+          sub: d.forename,
+          meta: `${d.first_year}–${d.last_year} · ${d.nationality}${d.code ? ` · ${d.code}` : ''}`,
+          championships: d.championships,
+          color,
+        }
+      : {
+          name: d.name,
+          sub: d.nationality,
+          meta: `${d.first_year}–${d.last_year} · ${d.races} GP`,
+          championships: d.championships,
+          color,
+        };
+
+  const pct = (n: number, of: number) => (of > 0 ? Math.round((n / of) * 1000) / 10 : 0);
+
+  const verdictMetrics: VerdictMetric[] = ready
+    ? isDriverData(dataA!) && isDriverData(dataB!)
+      ? [
+          { label: t('stats.championships'), a: dataA!.championships, b: dataB!.championships },
+          { label: t('stats.wins'), a: dataA!.wins, b: dataB!.wins },
+          { label: t('stats.winPct'), a: dataA!.win_pct, b: dataB!.win_pct, aDisplay: `${dataA!.win_pct}%`, bDisplay: `${dataB!.win_pct}%` },
+          { label: t('stats.podiums'), a: dataA!.podiums, b: dataB!.podiums },
+          { label: t('stats.podiumPct'), a: pct(dataA!.podiums, dataA!.races), b: pct(dataB!.podiums, dataB!.races), aDisplay: `${pct(dataA!.podiums, dataA!.races)}%`, bDisplay: `${pct(dataB!.podiums, dataB!.races)}%` },
+          { label: t('stats.poles'), a: (dataA as CompareDriverData).poles, b: (dataB as CompareDriverData).poles },
+          { label: t('stats.fastestLaps'), a: dataA!.fastest_laps, b: dataB!.fastest_laps },
+        ]
+      : [
+          { label: t('stats.championships'), a: dataA!.championships, b: dataB!.championships },
+          { label: t('stats.wins'), a: dataA!.wins, b: dataB!.wins },
+          { label: t('stats.winPct'), a: dataA!.win_pct, b: dataB!.win_pct, aDisplay: `${dataA!.win_pct}%`, bDisplay: `${dataB!.win_pct}%` },
+          { label: t('stats.podiums'), a: dataA!.podiums, b: dataB!.podiums },
+          { label: t('stats.fastestLaps'), a: dataA!.fastest_laps, b: dataB!.fastest_laps },
+        ]
+    : [];
+
+  const arcSeasons = (d: CompareDriverData | CompareConstructorData): ArcSeason[] =>
+    [...d.seasons]
+      .sort((x, y) => x.year - y.year)
+      .map((s) => ({ year: s.year, wins: s.wins, title: s.position === 1 }));
+
+  const sideLabel = (d: CompareDriverData | CompareConstructorData): string =>
+    isDriverData(d) ? (d.code ?? d.surname.slice(0, 3).toUpperCase()) : d.name;
+
   // ─── Rendering ───────────────────────────────────────────────────
 
   return (
     <main className="flex flex-col">
 
       {/* ── Header + mode tabs ─────────────────────────────────── */}
-      <div className="h-12 px-5 border-b border-border flex items-center gap-5 shrink-0">
-        <span className="font-mono text-xs text-text-3">05 ·</span>
-        <h1 className="font-serif text-2xl text-text-1">{t('title')}</h1>
+      <div ref={headerRef} className="h-12 px-5 border-b border-border flex items-center gap-3 shrink-0 overflow-hidden bg-bg">
+        <span className="font-mono text-[10px] text-text-2 uppercase tracking-[0.1em]">05 ·</span>
+        <div className="kinetic-mask shrink-0">
+          <h1
+            ref={titleRef}
+            className="text-[clamp(1.4rem,2vw,1.8rem)] uppercase leading-none tracking-[-0.03em]"
+            style={{ fontFamily: 'var(--pi-display)', visibility: 'hidden' }}
+          >
+            {t('title')}
+          </h1>
+        </div>
         <div className="flex items-center gap-4 ml-4">
           {(['drivers', 'constructors'] as const).map((m) => (
             <button
@@ -437,6 +572,23 @@ export default function CompareClient({
             </button>
           ))}
         </div>
+      </div>
+
+      {/* ── Preloaded rivalries ────────────────────────────────── */}
+      <div className="border-b border-border px-5 py-2.5 flex items-center gap-4 overflow-x-auto">
+        <span className="font-mono text-[9px] text-text-3 uppercase tracking-[0.16em] shrink-0">
+          {t('duels.label')}
+        </span>
+        {(mode === 'drivers' ? driverDuels : constructorDuels).map((duel) => (
+          <button
+            key={duel.key}
+            onClick={duel.load}
+            className="font-mono text-[10px] uppercase tracking-[0.08em] cursor-pointer bg-transparent border-0 p-0 shrink-0 transition-colors duration-150"
+            style={{ color: duel.active ? 'var(--red)' : 'var(--text-2)' }}
+          >
+            {duel.label}
+          </button>
+        ))}
       </div>
 
       {/* ── Selectors ──────────────────────────────────────────── */}
@@ -498,111 +650,71 @@ export default function CompareClient({
       {/* ── Comparison panels (once both selected + data loaded) ── */}
       {bothSelected && dataA && dataB && (
         <>
-          {/* ── Entity headers ───────────────────────────────────── */}
-          <div className="grid grid-cols-[1fr_144px_1fr] border-b border-border">
-            <div className="px-6 py-5 border-r border-border">
-              {isDriverData(dataA) ? (
-                <>
-                  <p className="font-mono text-[11px] text-text-3 mb-0.5">
-                    {dataA.nationality}
-                    {dataA.code && <span className="ml-2">{dataA.code}</span>}
-                  </p>
-                  <h2 className="font-serif text-[28px] text-text-1 leading-tight">
-                    {dataA.surname}
-                  </h2>
-                  <p className="text-[13px] text-text-2">{dataA.forename}</p>
-                  <p className="font-mono text-[11px] text-text-3 mt-1">
-                    {dataA.first_year}–{dataA.last_year}
-                  </p>
-                </>
-              ) : (
-                <>
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: teamColor(dataA.constructor_ref) }} />
-                    <p className="font-mono text-[11px] text-text-3">{dataA.nationality}</p>
-                  </div>
-                  <h2 className="font-serif text-[28px] text-text-1 leading-tight">{dataA.name}</h2>
-                  <p className="font-mono text-[11px] text-text-3 mt-1">
-                    {dataA.first_year}–{dataA.last_year}
-                  </p>
-                </>
-              )}
-            </div>
-            <div className="flex items-center justify-center border-r border-border">
-              <span className="font-mono text-[11px] text-text-3 uppercase tracking-[0.06em]">vs</span>
-            </div>
-            <div className="px-6 py-5">
-              {isDriverData(dataB) ? (
-                <>
-                  <p className="font-mono text-[11px] text-text-3 mb-0.5">
-                    {dataB.nationality}
-                    {dataB.code && <span className="ml-2">{dataB.code}</span>}
-                  </p>
-                  <h2 className="font-serif text-[28px] text-text-1 leading-tight">
-                    {dataB.surname}
-                  </h2>
-                  <p className="text-[13px] text-text-2">{dataB.forename}</p>
-                  <p className="font-mono text-[11px] text-text-3 mt-1">
-                    {dataB.first_year}–{dataB.last_year}
-                  </p>
-                </>
-              ) : (
-                <>
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: teamColor(dataB.constructor_ref) }} />
-                    <p className="font-mono text-[11px] text-text-3">{dataB.nationality}</p>
-                  </div>
-                  <h2 className="font-serif text-[28px] text-text-1 leading-tight">{dataB.name}</h2>
-                  <p className="font-mono text-[11px] text-text-3 mt-1">
-                    {dataB.first_year}–{dataB.last_year}
-                  </p>
-                </>
-              )}
-            </div>
-          </div>
+          {/* ── Tale of the tape — lights out ────────────────────── */}
+          {/* Keyed remount: SplitText mutates the heading DOM, so React can't
+              patch the name text on pair change — a fresh mount replays the
+              lights-out sequence for the new duel, which is what we want. */}
+          <TaleOfTape
+            key={pairKey}
+            a={tapeSide(dataA, aColor)}
+            b={tapeSide(dataB, bColor)}
+            pairKey={pairKey}
+            motionOk={motionOk}
+          />
 
-          {/* ── 01 · Career Stats ────────────────────────────────── */}
-          <section className="border-b border-border">
-            <div className="px-5 py-3 border-b border-border flex items-baseline gap-2">
-              <span className="font-mono text-xs text-text-2 leading-none">01 ·</span>
-              <h2 className="text-[13px] font-medium text-text-2">{t('career')}</h2>
-            </div>
-            <div className="px-5 py-2">
-              <StatRow label={t('stats.races')} a={dataA.races} b={dataB.races} />
-              <StatRow label={t('stats.wins')} a={dataA.wins} b={dataB.wins} />
-              <StatRow label={t('stats.podiums')} a={dataA.podiums} b={dataB.podiums} />
-              {isDriverData(dataA) && isDriverData(dataB) && (
-                <>
-                  <StatRow label={t('stats.poles')} a={dataA.poles} b={dataB.poles} />
-                  <StatRow label={t('stats.fastestLaps')} a={dataA.fastest_laps} b={dataB.fastest_laps} />
-                </>
-              )}
-              {!isDriverData(dataA) && !isDriverData(dataB) && (
-                <StatRow label={t('stats.fastestLaps')} a={dataA.fastest_laps} b={dataB.fastest_laps} />
-              )}
-              <StatRow label={t('stats.championships')} a={dataA.championships} b={dataB.championships} />
-              <StatRow label={`${t('stats.winPct')}`} a={`${dataA.win_pct}%`} b={`${dataB.win_pct}%`} />
-              <StatRow label={t('stats.era')}
-                a={`${dataA.first_year}–${dataA.last_year}`}
-                b={`${dataB.first_year}–${dataB.last_year}`}
-                lowerIsBetter />
-            </div>
-          </section>
+          {/* ── 01 · The verdict ─────────────────────────────────── */}
+          <VerdictBoard
+            metrics={verdictMetrics}
+            aLabel={sideLabel(dataA)}
+            bLabel={sideLabel(dataB)}
+            aColor={aColor}
+            bColor={bColor}
+            pairKey={pairKey}
+            motionOk={motionOk}
+            index="01"
+          />
 
-          {/* ── 02 · Head-to-Head ────────────────────────────────── */}
+          {/* ── 02 · On-track head-to-head (drivers) ─────────────── */}
+          {mode === 'drivers' && (
+            <H2HDuel
+              h2h={h2h}
+              aLabel={sideLabel(dataA)}
+              bLabel={sideLabel(dataB)}
+              aColor={aColor}
+              bColor={bColor}
+              pairKey={pairKey}
+              motionOk={motionOk}
+              index="02"
+            />
+          )}
+
+          {/* ── Career arc — cumulative wins by career season ────── */}
+          <CareerArcDuel
+            aSeasons={arcSeasons(dataA)}
+            bSeasons={arcSeasons(dataB)}
+            aLabel={sideLabel(dataA)}
+            bLabel={sideLabel(dataB)}
+            aColor={aColor}
+            bColor={bColor}
+            pairKey={pairKey}
+            motionOk={motionOk}
+            index={mode === 'drivers' ? '03' : '02'}
+          />
+
+          {/* ── Teammate seasons / shared seasons ────────────────── */}
           <section>
-            <div className="px-5 py-3 border-b border-border flex items-baseline gap-2">
-              <span className="font-mono text-xs text-text-2 leading-none">02 ·</span>
-              <h2 className="text-[13px] font-medium text-text-2">
-                {mode === 'drivers' ? t('hth.teammates') : t('hth.headToHead')}
-              </h2>
+            <div className="px-5 pt-5 pb-3 border-b border-border flex items-center gap-3">
+              <span className="font-mono text-[10px] text-text-2 uppercase tracking-[0.1em]">
+                {mode === 'drivers' ? '04' : '03'} · {mode === 'drivers' ? t('hth.teammates') : t('hth.headToHead')}
+              </span>
+              <InfoTooltip text={mode === 'drivers' ? t('hth.infoTeammates') : t('hth.infoShared')} />
               {mode === 'constructors' && (
-                <span className="font-mono text-[11px] text-text-3 ml-1 tabular-nums">
+                <span className="font-mono text-[10px] text-text-3 tabular-nums">
                   {sharedSeasonRows.length}
                 </span>
               )}
               {mode === 'drivers' && teammateRows.length > 0 && (
-                <span className="font-mono text-[11px] text-text-3 ml-1 tabular-nums">
+                <span className="font-mono text-[10px] text-text-3 tabular-nums">
                   {teammateRows.length}
                 </span>
               )}
@@ -615,7 +727,7 @@ export default function CompareClient({
                   <span className="font-mono text-[13px] text-text-3">{t('hth.neverTeammates')}</span>
                 </div>
               ) : (
-                <div className="max-h-[480px] overflow-y-auto">
+                <div className="max-h-[480px] overflow-y-auto overflow-x-auto">
                   <table className="w-full">
                     <thead>
                       <tr className="sticky top-0 bg-surface border-b border-border z-10">
@@ -643,7 +755,6 @@ export default function CompareClient({
                           bPos={row.bSeason.position}
                           bPts={row.bSeason.points}
                           bWins={row.bSeason.wins}
-                          t={t}
                         />
                       ))}
                     </tbody>
@@ -659,7 +770,7 @@ export default function CompareClient({
                   <span className="font-mono text-[13px] text-text-3">—</span>
                 </div>
               ) : (
-                <div className="max-h-[480px] overflow-y-auto">
+                <div className="max-h-[480px] overflow-y-auto overflow-x-auto">
                   <table className="w-full">
                     <thead>
                       <tr className="sticky top-0 bg-surface border-b border-border z-10">
@@ -685,7 +796,6 @@ export default function CompareClient({
                           bPos={row.bSeason.position}
                           bPts={row.bSeason.points}
                           bWins={row.bSeason.wins}
-                          t={t}
                         />
                       ))}
                     </tbody>
