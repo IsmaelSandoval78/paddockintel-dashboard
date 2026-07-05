@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { draftMode } from 'next/headers';
 import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
@@ -16,16 +17,18 @@ type Source = { name: string; url: string };
 
 type PageParams = Promise<{ locale: string; slug: string }>;
 
-async function getArticle(locale: string, slug: string) {
+async function getArticle(locale: string, slug: string, isDraft: boolean) {
   const supabase = createClient();
 
-  const { data: core } = await supabase
+  let query = supabase
     .from('articles')
     .select('title, meta_description, body_markdown, published_at, tags, translation_group_id')
     .eq('locale', locale)
-    .eq('slug', slug)
-    .eq('status', 'published')
-    .single();
+    .eq('slug', slug);
+
+  if (!isDraft) query = query.eq('status', 'published');
+
+  const { data: core } = await query.single();
 
   if (!core) return null;
 
@@ -51,13 +54,14 @@ async function getHreflangUrls(translationGroupId: string) {
 
 function localeUrl(locale: string, slug: string): string {
   return locale === 'en'
-    ? `https://hub.paddockintel.com/${slug}/`
-    : `https://hub.paddockintel.com/${locale}/${slug}/`;
+    ? `https://paddockintel.com/${slug}/`
+    : `https://paddockintel.com/${locale}/${slug}/`;
 }
 
 export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
   const { locale, slug } = await params;
-  const article = await getArticle(locale, slug);
+  const { isEnabled: isDraft } = await draftMode();
+  const article = await getArticle(locale, slug, isDraft);
   if (!article) return { title: 'Article — PaddockIntel' };
 
   const alternates: Record<string, string> = {};
@@ -77,7 +81,8 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
 
 export default async function ArticlePage({ params }: { params: PageParams }) {
   const { locale, slug } = await params;
-  const article = await getArticle(locale, slug);
+  const { isEnabled: isDraft } = await draftMode();
+  const article = await getArticle(locale, slug, isDraft);
   if (!article) notFound();
 
   const body        = article.body_markdown as string;
@@ -116,6 +121,20 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
       }
     : null;
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: locale === 'en' ? 'https://hub.paddockintel.com/' : `https://hub.paddockintel.com/${locale}/`,
+      },
+      { '@type': 'ListItem', position: 2, name: title },
+    ],
+  };
+
   const hasSidebar = toc.length > 0 || stats.length > 0;
 
   return (
@@ -130,6 +149,10 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
         />
       )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
 
       <main className="bg-bg min-h-screen article-bg-grid">
 

@@ -1,8 +1,11 @@
+import { headers } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
 import NavLinks from './NavLinks';
 import LocaleSwitcher from './LocaleSwitcher';
 import MobileNav from './MobileNav';
+
+const MAGAZINE_HOSTS = new Set(['paddockintel.com', 'www.paddockintel.com']);
 
 async function getCurrentRound(): Promise<{ round: number; year: number } | null> {
   try {
@@ -26,7 +29,9 @@ async function getCurrentRound(): Promise<{ round: number; year: number } | null
 }
 
 export default async function Navbar() {
-  const current = await getCurrentRound();
+  const host = (await headers()).get('host')?.split(':')[0] ?? '';
+  const isMagazine = MAGAZINE_HOSTS.has(host);
+  const current = isMagazine ? null : await getCurrentRound();
 
   return (
     <nav className="bg-bg border-b border-border sticky top-0 z-50 shrink-0">
@@ -38,18 +43,20 @@ export default async function Navbar() {
           <span className="font-sans font-bold text-sm tracking-wider text-text-1">INTEL</span>
         </Link>
 
-        <NavLinks />
+        <NavLinks isMagazine={isMagazine} />
 
         <div className="flex items-center gap-5 shrink-0">
-          <span className="font-mono text-xs text-text-3 tracking-[0.04em]">
-            Vol.01 · Rd.{current ? String(current.round).padStart(2, '0') : '—'} · {current?.year ?? '—'}
-          </span>
+          {!isMagazine && (
+            <span className="font-mono text-xs text-text-3 tracking-[0.04em]">
+              Vol.01 · Rd.{current ? String(current.round).padStart(2, '0') : '—'} · {current?.year ?? '—'}
+            </span>
+          )}
           <LocaleSwitcher />
         </div>
       </div>
 
       {/* Mobile — hidden above md breakpoint */}
-      <MobileNav />
+      <MobileNav isMagazine={isMagazine} />
     </nav>
   );
 }

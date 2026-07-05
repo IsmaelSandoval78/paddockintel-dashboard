@@ -13,9 +13,24 @@ const links: { key: NavKey; href: string }[] = [
   { key: 'compare', href: '/compare' },
 ];
 
-export default function NavLinks() {
+export default function NavLinks({ isMagazine }: { isMagazine: boolean }) {
   const t = useTranslations('nav');
   const pathname = usePathname();
+
+  if (isMagazine) {
+    return (
+      <div className="flex items-center gap-6 flex-1">
+        <a
+          href="https://hub.paddockintel.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-sans text-[13px] font-medium no-underline text-text-2 hover:text-text-1 transition-colors duration-150"
+        >
+          {t('hub')}
+        </a>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center gap-6 flex-1">

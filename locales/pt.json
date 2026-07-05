@@ -553,5 +553,20 @@
   "book": {
     "kicker": "Temporada",
     "chapter": "Capítulo"
+  },
+  "magazine": {
+    "kicker": "PaddockIntel",
+    "headline": "Economia da F1, sem filtro.",
+    "description": "Reportagens originais sobre o negócio da Fórmula 1 — contratos, patrocínios, premiação e os números por trás das corridas.",
+    "noArticles": "Nenhum artigo publicado ainda.",
+    "promo": {
+      "hub": "O Hub",
+      "hubDescription": "Mapa interativo de circuitos, classificações e estatísticas de pilotos desde 1950.",
+      "digest": "Digest Semanal",
+      "digestDescription": "Notícias selecionadas sobre economia da F1 com síntese original, toda semana.",
+      "book": "O Livro",
+      "bookDescription": "Em breve.",
+      "goTo": "Ir para →"
+    }
   }
 }

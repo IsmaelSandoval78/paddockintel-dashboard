@@ -16,7 +16,7 @@ const links: { key: NavKey; href: string }[] = [
   { key: 'compare',      href: '/compare' },
 ];
 
-export default function MobileNav() {
+export default function MobileNav({ isMagazine }: { isMagazine: boolean }) {
   const [open, setOpen] = useState(false);
   const t = useTranslations('nav');
   const pathname = usePathname();
@@ -55,30 +55,44 @@ export default function MobileNav() {
       {/* ── Dropdown ─────────────────────────────────────── */}
       {open && (
         <div className="border-t border-border" style={{ borderRadius: 0 }}>
-          {links.map(({ key, href }) => {
-            const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
-            return (
-              <Link
-                key={key}
-                href={href}
-                onClick={() => setOpen(false)}
-                className={[
-                  'flex items-center h-12 px-5 border-b border-border',
-                  'font-mono text-[11px] uppercase tracking-[0.1em]',
-                  isActive ? 'text-red bg-surface-raised' : 'text-text-2 bg-bg',
-                ].join(' ')}
-              >
-                {t(key)}
-              </Link>
-            );
-          })}
+          {isMagazine ? (
+            <a
+              href="https://hub.paddockintel.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setOpen(false)}
+              className="flex items-center h-12 px-5 border-b border-border font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 bg-bg"
+            >
+              {t('hub')}
+            </a>
+          ) : (
+            links.map(({ key, href }) => {
+              const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
+              return (
+                <Link
+                  key={key}
+                  href={href}
+                  onClick={() => setOpen(false)}
+                  className={[
+                    'flex items-center h-12 px-5 border-b border-border',
+                    'font-mono text-[11px] uppercase tracking-[0.1em]',
+                    isActive ? 'text-red bg-surface-raised' : 'text-text-2 bg-bg',
+                  ].join(' ')}
+                >
+                  {t(key)}
+                </Link>
+              );
+            })
+          )}
 
           {/* Vol/Rd + locale footer row */}
           <div className="h-12 px-5 flex items-center justify-between bg-bg">
-            <span className="font-mono text-[11px] text-text-3 tracking-[0.04em]">
-              Vol.01 · Rd.09 · 2026
-            </span>
-            <div className="flex items-center gap-2">
+            {!isMagazine && (
+              <span className="font-mono text-[11px] text-text-3 tracking-[0.04em]">
+                Vol.01 · Rd.09 · 2026
+              </span>
+            )}
+            <div className="flex items-center gap-2 ml-auto">
               {routing.locales.map((loc, i) => (
                 <span key={loc} className="flex items-center gap-2">
                   {i > 0 && <span className="font-mono text-[11px] text-text-3">·</span>}

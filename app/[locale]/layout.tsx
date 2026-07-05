@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   description: 'F1 economic and performance intelligence hub',
   alternates: {
     types: {
-      'application/rss+xml': 'https://hub.paddockintel.com/feed.xml',
+      'application/rss+xml': 'https://paddockintel.com/feed.xml',
     },
   },
 };

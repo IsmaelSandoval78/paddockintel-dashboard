@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 
 export const revalidate = 3600;
 
-const BASE = 'https://hub.paddockintel.com';
+const BASE = 'https://paddockintel.com';
 
 function escapeXml(str: string): string {
   return str

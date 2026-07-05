@@ -1,9 +1,16 @@
 # PaddockIntel — Unified Rebuild: PHASES.md
 
-## Status snapshot
+## Status snapshot (corrected 2026-07-05 — see note below)
 - Ghost(Pro): invoice paid, reactivation requested — awaiting support response
 - Domain: secured on Namecheap through 2028, unaffected by the Ghost suspension
-- Target: Austria GP, Sun June 28 — Blog + Digest + Book MVP all live by then
+- **Correction to an earlier version of this doc (same day):** an earlier pass through this file claimed Phase 3/4/5 (Blog/Digest/Book) were "completely untouched, zero progress" after an unplanned pivot to Hub polish. That was wrong — based on an incomplete check (`git log` only 20 commits back, `articles/` folder never inspected). Verified directly against Supabase + the live production domain just now:
+  - **Blog is live**: two real published articles (`austria-gp-2026-russell-win-economic-impact`, `canada-gp-2026-economic-impact`) — sourced economic analysis, both return HTTP 200 on `hub.paddockintel.com`, both correctly in `sitemap.xml`/`feed.xml`.
+  - **Digest is live**: Vol. 01 ("Austria Week 2026"), published, 8 sourced items + synthesis, `/weekly/vol-01-austria-week-2026/` returns HTTP 200.
+  - **Book still appears incomplete**: `/season/2026/` returns HTTP 404 on production. Only a single 63-line route file exists (`(book)/season/[year]/page.tsx`) — not verified further this session, needs a real look before assuming status.
+  - Hub visual polish (map, circuit/driver/compare pages) also genuinely happened in parallel — not a full pivot away from Blog/Digest, both tracks moved.
+- **Bug found and fixed 2026-07-05**: `subscribers` table denied ALL access (SELECT/INSERT/DELETE) even to the `service_role` key, despite `supabase/migrations/20260626000001_subscribers.sql` granting full privileges — that migration was never actually run against the live database (same failure mode already hit once before with `digest_issues`/`digest_items`, see Phase 2 below). Grants applied via `scripts/grant_subscribers.sql` in the Supabase SQL Editor; verified end-to-end against the live `/api/subscribe` endpoint (`201 {"message":"subscribed"}`), test row cleaned up. Newsletter signup is live and working again.
+- Data pipeline: British GP (round 9, 2026-07-05) loaded into Supabase; `refresh_stats()` RPC added so the loader no longer needs a manual SQL Editor step (`scripts/refresh_stats_rpc.sql`)
+- Blog template also gained: BreadcrumbList JSON-LD (was missing, Phase 3 explicitly wants it) and a Next.js Draft Mode preview path (`/api/draft`) so unpublished articles can be previewed without going live — added this session, see Phase 3 below.
 
 ## Build calendar — week of June 22-28
 Austrian GP: Fri June 26 – Sun June 28 (race 15:00 CEST / ~9:00 AM ET). Two-block week — build first, publish last. The real Austria article can't exist until the race does, so it's the last thing written, not the first thing attempted.
@@ -53,17 +60,19 @@ Austrian GP: Fri June 26 – Sun June 28 (race 15:00 CEST / ~9:00 AM ET). Two-bl
 - [x] `/about` author page — real background, linked from every article and digest issue
 
 ## Phase 3 — Blog MVP
-- [ ] One article: Austria GP economic angle, written per the existing framework (WHAT HAPPENED / WHY IT HAPPENED / ECONOMIC IMPACT / THE FRAMEWORK / Verdict)
-- [ ] EN, ES, and PT versions — all three, not staggered (see Language/i18n rule above)
-- [ ] hreflang tags across all three locale versions
-- [ ] Slug matches the old Ghost convention exactly (root-level, trailing slash) — confirmed no redirect needed
-- [ ] NewsArticle + BreadcrumbList + FAQPage schema, validated in Google Rich Results Test
-- [ ] Title ≤ 60 chars / meta description ≤ 145 chars
-- [ ] sitemap.xml + RSS feed generated at build time from Supabase content — automatic, not manually maintained
-- [ ] Auto-generated TOC from the fixed five-section structure, sticky on desktop with scroll-spy, collapsible drawer on mobile
-- [ ] Sticky data visualization (desktop two-column layout) that highlights/updates as the reader scrolls past the paragraph referencing it — CSS `position: sticky` + `IntersectionObserver`, no GSAP
-- [ ] Subtle technical-grid background parallax (same texture as the Remotion Blueprint standard), CSS scroll-driven animation, no JS library
-- [ ] Newsletter invitation card after the ECONOMIC IMPACT section, and a second after Verdict before the share buttons — inline, never a modal/popup
+**Corrected 2026-07-05** — this was NOT paused; it shipped. Two real articles are live in production (verified via HTTP 200 + Supabase, see Status snapshot).
+- [x] Article(s) live: Austria GP (Russell win, economic angle) AND a bonus Canadian GP economics piece — both `status: published`, both real sourced content, neither is placeholder
+- [ ] EN, ES, and PT versions — only EN exists for both articles so far; ES/PT genuinely not started
+- [ ] hreflang tags across all three locale versions — code supports this (`generateMetadata`'s `alternates`) but is a no-op until ES/PT rows exist
+- [x] Slug matches the old Ghost convention (root-level, trailing slash) — no redirect issues reported
+- [x] NewsArticle + FAQPage schema — confirmed in `page.tsx`. **BreadcrumbList added 2026-07-05** (this session) — was the one real gap, now closed (2-level Home→Article; upgrade to 3-level once a Blog index page exists)
+- [ ] Title ≤ 60 / meta ≤ 145 chars — not audited this session, verify per-article before next publish
+- [x] sitemap.xml + RSS feed — confirmed live, both articles present in `/sitemap.xml` and `/feed.xml`
+- [x] Auto-generated TOC — `ArticleTOC` confirmed working (desktop sticky scroll-spy, mobile collapsible)
+- [ ] Sticky scrollytelling chart (highlights as reader scrolls past the referencing paragraph) — not built; a static stat-callout sidebar exists instead, not the same thing
+- [ ] Scroll-driven background parallax — a static technical grid (`article-bg-grid` CSS class) exists; not scroll-driven, doesn't fully meet the spec
+- [x] Newsletter card exists on the article page, wired to `/api/subscribe` + `subscribers` table — grants bug fixed 2026-07-05, verified working end-to-end in production. Only one card position (after body), not the two originally specced (after Economic Impact + after Verdict)
+- [x] Draft Mode preview path added 2026-07-05 (`/api/draft?secret=...`) — lets a new article be previewed before flipping `status` to `published`, so testing a new piece no longer means publishing it live first
 
 **If the week runs short, cut from the bottom of this list up — never from the top:**
 1. Article live in English, correct schema — non-negotiable floor
@@ -76,24 +85,41 @@ Austrian GP: Fri June 26 – Sun June 28 (race 15:00 CEST / ~9:00 AM ET). Two-bl
 8. Book MVP — already last in the original ladder, stays last
 
 ## Phase 4 — Digest MVP
-- [ ] One issue, 6-10 verified items, numbered-source format (`1. [Outlet — description](url?ref=paddockintel.com)`)
-- [ ] One original synthesis paragraph tying the week's items together
-- [ ] No coverage-cluster mechanism yet — that's a later-stage feature once volume justifies it, not part of MVP
-- [ ] Email capture component (input + button) → subscriber table in Supabase
-- [ ] Basic privacy policy page — required once email capture goes live, international audience (EN/ES/PT)
-- [ ] Resend + React Email wired up — sends automatically when an issue is marked published in Supabase, never a manual export/send
+**Corrected 2026-07-05** — also NOT paused; also shipped. Vol. 01 ("Austria Week 2026") is live at `/weekly/vol-01-austria-week-2026/` (HTTP 200 confirmed).
+- [x] One issue, 8 verified items, sourced format (`source_name`/`source_url`/`headline`/`our_summary` per item) — within the 6-10 range
+- [x] One original synthesis paragraph tying the week's items together — present (`intro_synthesis`), real content about F1's 2026 commercial restructuring
+- [x] No coverage-cluster mechanism — correctly not built, not needed for MVP
+- [x] Email capture — component exists, `subscribers` grants bug fixed 2026-07-05, verified working end-to-end in production
+- [ ] Basic privacy policy page — not verified this session
+- [ ] Resend + Vercel Cron auto-send — a "Phase 4 digest plumbing — subscribers, email send, Vercel Cron" commit exists, but whether it's actually sending on schedule wasn't verified this session — check before assuming it works
 
 ## Phase 5 — Book MVP
-- [ ] One chapter view rendering the Austria article inside book-style layout
+**Still genuinely incomplete** — this one wasn't a false alarm. `/season/2026/` returns HTTP 404 in production. Only a single 63-line route file exists (`(book)/season/[year]/page.tsx`), not investigated further this session.
+- [ ] One chapter view rendering an article inside book-style layout — needs a real look, not just a file-existence check
 - [ ] Typography only — no PDF export, no full-season assembly yet
+
+## Hub Polish (2026-06-28 → 2026-07-05)
+Not part of the original phase ladder. **Correction:** an earlier version of this section claimed this was a full pivot that left Phase 3-5 untouched — that was wrong (see corrected Phase 3/4 above, both actually shipped in this window too). What's true: this visual "wow pass" across the existing Hub/dashboard happened *in addition to*, not instead of, the Blog/Digest work. Kept here so the phase ladder stays complete about everything that happened, not just Blog/Digest.
+
+- [x] Map: replaced 3D globe with flat SVG map (d3-geo Natural Earth), region filter zooms via per-region d3 projection, fixed globe FrontSide culling ghosting (pre-replacement bug, moot now)
+- [x] Circuit detail page rebuilt: full-bleed hero (sector-colored track, era wall), Circuit Intelligence Grid (10-section analysis, renumbered from an earlier 01/03/05 layout), Champions Timeline, H2H panel, `LapRecordArc`, corner markers (SVG `path_percent` positioning + hover intel), track SVG restyled (flag-gradient stroke, 8px)
+- [x] Driver detail page wow pass: kinetic hero, gold championships treatment, win history collapse
+- [x] Drivers index wow pass: title fight chart, form guide, quali H2H, champions wall
+- [x] Compare page wow pass: lights-out tale of the tape, real H2H, verdict board, career arc
+- [x] Data pipeline: `refresh_stats()` RPC added (`scripts/refresh_stats_rpc.sql`) so post-race loads no longer need a manual Supabase SQL Editor step
+
+**Not done / still open from this pass:**
+- Driver page polish backlog items (Season by Season align-items, Qualifying Record scroll, Russell nationality mapping) — still listed in Backlog below, untouched
+- Constructors detail page redesign — still listed in Backlog below, untouched
+- Circuits **list** page — only the detail page and map panel got the wow pass; the list view itself wasn't touched
 
 ## Phase 6 — Circuit Hub (post-Austria, the real expansion of "Hub")
 Each circuit gets its own page (`/circuits/[circuit_id]`) combining historical Ergast data with FastF1 telemetry-derived insight — this is what turns Hub from "stats tables" into "circuit intelligence."
 
 **From Ergast (reorganized, not new data):**
-- All-time lap record + holder
-- Winners list by year, most successful driver/constructor at this track
-- Historical pole-to-win conversion rate
+- [x] All-time lap record + holder — `LapRecordArc` + `CircuitIntelGrid`, built during the Hub Polish pass (`components/circuits/kinetic/`)
+- [x] Winners list by year, most successful driver/constructor at this track — `CircuitTimeline` (Champions Timeline) + `CircuitHero`
+- [x] Historical pole-to-win conversion rate — in `CircuitIntelGrid` / hub home `SeasonShapeSection`
 
 **From FastF1 (new — telemetry-derived, pre-computed offline):**
 - Track dominance map for the most recent race weekend (uses the Blueprint motion standard, can be a static SVG render or a Remotion piece)

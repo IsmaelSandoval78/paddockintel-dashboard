@@ -256,7 +256,7 @@ export default function AboutPage() {
       </ul>
 
       <p className="mt-12 pt-6 border-t border-border-subtle font-mono text-[11px] uppercase tracking-[0.06em] text-text-3">
-        PaddockIntel · hub.paddockintel.com
+        PaddockIntel · paddockintel.com
       </p>
     </main>
   );
