@@ -42,3 +42,9 @@ next-env.d.ts
 
 # Claude Code local settings (contains credentials)
 .claude/settings.local.json
+
+# local agent tooling & caches
+.agents/
+.codex/
+.fastf1_cache/
+.claude/settings.json
