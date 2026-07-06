@@ -567,6 +567,11 @@
       "book": "The Book",
       "bookDescription": "Coming soon.",
       "goTo": "Go to →"
+    },
+    "pagination": {
+      "newer": "← Newer",
+      "older": "Older →",
+      "page": "Page {current} of {total}"
     }
   }
 }

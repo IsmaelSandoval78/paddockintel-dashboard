@@ -567,6 +567,11 @@
       "book": "El Libro",
       "bookDescription": "Próximamente.",
       "goTo": "Ir a →"
+    },
+    "pagination": {
+      "newer": "← Más recientes",
+      "older": "Más antiguos →",
+      "page": "Página {current} de {total}"
     }
   }
 }

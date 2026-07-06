@@ -567,6 +567,11 @@
       "book": "O Livro",
       "bookDescription": "Em breve.",
       "goTo": "Ir para →"
+    },
+    "pagination": {
+      "newer": "← Mais recentes",
+      "older": "Mais antigos →",
+      "page": "Página {current} de {total}"
     }
   }
 }

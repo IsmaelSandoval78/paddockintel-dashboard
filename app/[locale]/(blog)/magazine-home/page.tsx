@@ -9,6 +9,9 @@ export const revalidate = 3600;
 type Stat = { value: string; label: string; unit?: string };
 
 type PageParams = Promise<{ locale: string }>;
+type SearchParams = Promise<{ page?: string }>;
+
+const PAGE_SIZE = 20;
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -18,21 +21,35 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-async function getArticles(locale: string) {
+async function getArticles(locale: string, page: number) {
   const supabase = createClient();
-  const { data } = await supabase
+  const from = (page - 1) * PAGE_SIZE;
+  const { data, count } = await supabase
     .from('articles')
-    .select('slug, title, meta_description, tags, published_at, stats')
+    .select('slug, title, meta_description, tags, published_at, stats', { count: 'exact' })
     .eq('locale', locale)
     .eq('status', 'published')
-    .order('published_at', { ascending: false });
-  return data ?? [];
+    .order('published_at', { ascending: false })
+    .range(from, from + PAGE_SIZE - 1);
+  return { articles: data ?? [], total: count ?? 0 };
 }
 
-export default async function MagazineHomePage({ params }: { params: PageParams }) {
+export default async function MagazineHomePage({
+  params,
+  searchParams,
+}: {
+  params: PageParams;
+  searchParams: SearchParams;
+}) {
   const { locale } = await params;
+  const { page: pageParam } = await searchParams;
   const t = await getTranslations('magazine');
-  const articles = await getArticles(locale);
+
+  const page = Math.max(1, Number.parseInt(pageParam ?? '1', 10) || 1);
+  const { articles, total } = await getArticles(locale, page);
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const basePath = locale === 'en' ? '/' : `/${locale}/`;
+  const pageHref = (p: number) => (p === 1 ? basePath : `${basePath}?page=${p}`);
 
   return (
     <main className="bg-bg min-h-screen">
@@ -74,6 +91,38 @@ export default async function MagazineHomePage({ params }: { params: PageParams 
               );
             })}
           </div>
+        )}
+
+        {totalPages > 1 && (
+          <nav className="flex items-center justify-between mt-10 pt-5 border-t border-border">
+            {page > 1 ? (
+              <a
+                href={pageHref(page - 1)}
+                className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-150"
+              >
+                {t('pagination.newer')}
+              </a>
+            ) : (
+              <span aria-hidden className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-3 opacity-40">
+                {t('pagination.newer')}
+              </span>
+            )}
+            <span className="font-mono text-[11px] tracking-[0.1em] text-text-3 tabular-nums">
+              {t('pagination.page', { current: page, total: totalPages })}
+            </span>
+            {page < totalPages ? (
+              <a
+                href={pageHref(page + 1)}
+                className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-150"
+              >
+                {t('pagination.older')}
+              </a>
+            ) : (
+              <span aria-hidden className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-3 opacity-40">
+                {t('pagination.older')}
+              </span>
+            )}
+          </nav>
         )}
       </div>
 
