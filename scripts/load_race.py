@@ -231,12 +231,18 @@ def main() -> None:
             race_session = fastf1.get_session(year, round_num, "R")
             race_session.load(telemetry=False, weather=False, messages=False)
 
-            # Fastest lap holder
+            # Fastest lap holder + per-driver best lap (FastestLapTime is NOT a
+            # column of session.results — it must come from the laps dataframe)
             fastest_lap_code: str | None = None
+            best_lap_by_code: dict[str, object] = {}
             try:
                 fl = race_session.laps.pick_fastest()
                 if fl is not None:
                     fastest_lap_code = fl["Driver"]
+                for drv_code in race_session.laps["Driver"].unique():
+                    best = race_session.laps.pick_drivers(drv_code)["LapTime"].min()
+                    if td_to_ms(best):
+                        best_lap_by_code[drv_code] = best
             except Exception:
                 pass
 
@@ -253,7 +259,7 @@ def main() -> None:
                 position_text = str(position) if position else "R"
                 status_id = status_map.get(status_text, status_map.get("Finished", 1))
 
-                fl_time = td_to_str(row.get("FastestLapTime"))
+                fl_time = td_to_str(best_lap_by_code.get(row.get("Abbreviation")))
                 fl_speed_f = safe_float(row.get("FastestLapSpeed"))
                 is_fastest = (row.get("Abbreviation") == fastest_lap_code)
 
@@ -277,6 +283,11 @@ def main() -> None:
                 print(f"  P{str(position or 'R'):>3}  {row.get('Abbreviation')}  {status_text}  {safe_float(row.get('Points')) or 0:.0f}pts")
 
             # ── Pit stops ────────────────────────────────────────────
+            # FastF1 semantics: PitInTime is stamped on the in-lap (lap N) and
+            # PitOutTime on the out-lap (lap N+1) — they are session-clock
+            # timestamps, never both on the same lap row. Duration is
+            # PitOutTime(N+1) - PitInTime(N) = total pit-lane time (Ergast
+            # convention, ~20s+), not the ~2s stationary time.
             print("\n── Pit stops ───────────────────────────────────────")
             pit_rows: list[dict] = []
             try:
@@ -286,27 +297,55 @@ def main() -> None:
                     if not driver:
                         continue
                     drv_laps = laps.pick_drivers(drv_code).sort_values("LapNumber")
-                    stop_num = 0
+                    pit_ins: dict[int, int] = {}
+                    pit_outs: dict[int, int] = {}
                     for _, lap in drv_laps.iterrows():
-                        pit_in = lap.get("PitInTime")
-                        pit_out = lap.get("PitOutTime")
-                        pit_in_ms = td_to_ms(pit_in)
-                        pit_out_ms = td_to_ms(pit_out)
-                        if pit_in_ms and pit_out_ms and pit_out_ms > pit_in_ms:
-                            dur_ms = pit_out_ms - pit_in_ms
-                            if 1500 < dur_ms < 120000:  # sanity: 1.5s–120s
+                        n = safe_int(lap.get("LapNumber"))
+                        in_ms = td_to_ms(lap.get("PitInTime"))
+                        out_ms = td_to_ms(lap.get("PitOutTime"))
+                        if in_ms:
+                            pit_ins[n] = in_ms
+                        if out_ms:
+                            pit_outs[n] = out_ms
+                    stop_num = 0
+                    for n, in_ms in sorted(pit_ins.items()):
+                        out_ms = pit_outs.get(n + 1) or pit_outs.get(n)
+                        if out_ms and out_ms > in_ms:
+                            dur_ms = out_ms - in_ms
+                            if 1500 < dur_ms < 180000:  # sanity: 1.5s–180s (red flags run long)
                                 stop_num += 1
                                 pit_rows.append({
                                     "race_id": race_id,
                                     "driver_id": driver["id"],
                                     "stop": stop_num,
-                                    "lap": safe_int(lap.get("LapNumber")),
+                                    "lap": n,
                                     "duration": f"{dur_ms / 1000:.3f}",
                                     "milliseconds": dur_ms,
                                 })
                 print(f"  {len(pit_rows)} pit stop rows extracted")
             except Exception as exc:
                 print(f"  WARN: pit stop extraction failed — {exc}")
+
+            # ── Lap times ────────────────────────────────────────────
+            print("\n── Lap times ───────────────────────────────────────")
+            lap_rows: list[dict] = []
+            try:
+                for _, lap in race_session.laps.iterrows():
+                    driver = resolve_driver(code=lap.get("Driver"))
+                    ms = td_to_ms(lap.get("LapTime"))
+                    if not driver or not ms:
+                        continue
+                    lap_rows.append({
+                        "race_id": race_id,
+                        "driver_id": driver["id"],
+                        "lap": safe_int(lap.get("LapNumber")),
+                        "position": safe_int(lap.get("Position")) or None,
+                        "time": td_to_str(lap.get("LapTime")),
+                        "milliseconds": ms,
+                    })
+                print(f"  {len(lap_rows)} lap time rows extracted")
+            except Exception as exc:
+                print(f"  WARN: lap time extraction failed — {exc}")
 
             if not dry_run:
                 if result_rows:
@@ -317,8 +356,13 @@ def main() -> None:
                     sb.table("pit_stops").delete().eq("race_id", race_id).execute()
                     sb.table("pit_stops").insert(pit_rows).execute()
                     print(f"  ✓ {len(pit_rows)} pit stop rows inserted")
+                if lap_rows:
+                    sb.table("lap_times").delete().eq("race_id", race_id).execute()
+                    for i in range(0, len(lap_rows), 500):
+                        sb.table("lap_times").insert(lap_rows[i : i + 500]).execute()
+                    print(f"  ✓ {len(lap_rows)} lap time rows inserted")
             else:
-                print(f"  [dry-run] would insert {len(result_rows)} results, {len(pit_rows)} pit stops")
+                print(f"  [dry-run] would insert {len(result_rows)} results, {len(pit_rows)} pit stops, {len(lap_rows)} lap times")
 
         except Exception as exc:
             print(f"  ERROR: {exc}")
@@ -405,12 +449,13 @@ def main() -> None:
         print(f"  ERROR: {exc}")
 
     # ── Done ─────────────────────────────────────────────────────────
-    print(f"\n{'[DRY RUN — nothing written] ' if dry_run else ''}Done.")
     if not dry_run:
-        print("\nNext step: refresh aggregated stats in Supabase SQL Editor:")
-        print("  REFRESH MATERIALIZED VIEW driver_stats;")
-        print("  REFRESH MATERIALIZED VIEW constructor_stats;")
-        print("(If these are plain tables, run scripts/refresh_stats.sql)")
+        try:
+            sb.rpc("refresh_stats", {}).execute()
+            print("\n  ✓ driver_stats / constructor_stats refreshed via RPC")
+        except Exception as exc:
+            print(f"\n  WARN: refresh_stats RPC failed ({exc}) — run it manually in the SQL Editor")
+    print(f"\n{'[DRY RUN — nothing written] ' if dry_run else ''}Done.")
 
 
 if __name__ == "__main__":
