@@ -91,7 +91,7 @@ Austrian GP: Fri June 26 – Sun June 28 (race 15:00 CEST / ~9:00 AM ET). Two-bl
 - [x] No coverage-cluster mechanism — correctly not built, not needed for MVP
 - [x] Email capture — component exists, `subscribers` grants bug fixed 2026-07-05, verified working end-to-end in production
 - [ ] Basic privacy policy page — not verified this session
-- [ ] Resend + Vercel Cron auto-send — a "Phase 4 digest plumbing — subscribers, email send, Vercel Cron" commit exists, but whether it's actually sending on schedule wasn't verified this session — check before assuming it works
+- [x] Resend + Vercel Cron auto-send — verified end-to-end 2026-07-05. It had NEVER worked: `digest_issues.sent_at` was missing in the live DB (same partial migration as the subscribers grants), so the cron silently no-oped and Vol. 01 was never emailed. Fixed via `scripts/add_digest_sent_at.sql` (column added, Vol. 01 backfilled as sent so the stale issue doesn't go out); `RESEND_API_KEY` + `CRON_SECRET` were also missing in Vercel (route 500'd), now set + redeployed. Authenticated cron call returns `200 {"message":"no issues to send"}` — next published issue (Vol. 02) will send automatically at 09:00 UTC. Resend domain verified (DKIM/SPF/MX confirmed in DNS); pending nicety: Namecheap email forwarding for `info@` so subscriber replies don't bounce
 
 ## Phase 5 — Book MVP
 **Still genuinely incomplete** — this one wasn't a false alarm. `/season/2026/` returns HTTP 404 in production. Only a single 63-line route file exists (`(book)/season/[year]/page.tsx`), not investigated further this session.
