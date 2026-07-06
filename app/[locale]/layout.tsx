@@ -6,6 +6,7 @@ import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/lib/i18n/routing';
 import Navbar from '@/components/nav/Navbar';
+import Footer from '@/components/nav/Footer';
 import '../globals.css';
 
 const display = Archivo_Black({
@@ -79,6 +80,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <Navbar />
           {children}
+          <Footer />
         </NextIntlClientProvider>
       </body>
     </html>

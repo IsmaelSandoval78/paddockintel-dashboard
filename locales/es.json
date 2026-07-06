@@ -596,5 +596,15 @@
     "s5p": "paddockintel.com no usa cookies publicitarias ni rastreadores de analítica de terceros. Nuestro proveedor de hosting (Vercel) mantiene registros de servidor estándar y de corta duración (dirección IP, página solicitada) necesarios para operar y proteger el servicio.",
     "s6h": "Contacto",
     "s6p": "Preguntas sobre esta política: <mail>info@paddockintel.com</mail> o a través de la <about>página About</about>."
+  },
+  "footer": {
+    "disclaimer": "Publicación independiente. Sin afiliación con Formula 1 ni la FIA.",
+    "about": "Acerca de",
+    "privacy": "Política de Privacidad"
+  },
+  "aboutDisclaimer": {
+    "heading": "Descargo de responsabilidad",
+    "affiliation": "PaddockIntel es una publicación independiente. No está afiliada, asociada, autorizada ni respaldada por Formula 1, Formula One Licensing B.V., la FIA, ni ningún equipo o piloto de Fórmula 1. F1, FORMULA 1, GRAND PRIX y las marcas relacionadas son marcas registradas de sus respectivos propietarios y se usan aquí únicamente con fines de identificación editorial.",
+    "accuracy": "El contenido se ofrece únicamente con fines informativos. Las cifras financieras — salarios, premios, valuaciones de equipos, montos de patrocinio — son estimaciones compiladas de reportes públicos salvo que se indique otra fuente; los montos reales pueden diferir. Nada en este sitio constituye asesoría financiera, de inversión ni profesional."
   }
 }

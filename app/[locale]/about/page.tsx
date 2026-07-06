@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 
 export const metadata: Metadata = {
   title: 'About — PaddockIntel',
@@ -52,7 +53,8 @@ const AUDIENCE = [
   'Data-driven competitive analysis',
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const tDisclaimer = await getTranslations('aboutDisclaimer');
   return (
     <main className="bg-bg min-h-screen px-5 py-12 max-w-2xl mx-auto">
 
@@ -254,6 +256,17 @@ export default function AboutPage() {
           </li>
         ))}
       </ul>
+
+      {/* 07 · Disclaimer */}
+      <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-2 border-b border-border pb-3 mt-12 mb-6">
+        07 · {tDisclaimer('heading')}
+      </p>
+      <p className="font-sans text-sm text-text-2 leading-relaxed mb-4">
+        {tDisclaimer('affiliation')}
+      </p>
+      <p className="font-sans text-sm text-text-2 leading-relaxed">
+        {tDisclaimer('accuracy')}
+      </p>
 
       <p className="mt-12 pt-6 border-t border-border-subtle font-mono text-[11px] uppercase tracking-[0.06em] text-text-3">
         PaddockIntel · paddockintel.com
