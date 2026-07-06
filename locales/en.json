@@ -572,6 +572,10 @@
       "newer": "← Newer",
       "older": "Older →",
       "page": "Page {current} of {total}"
+    },
+    "filter": {
+      "label": "Filtered by",
+      "clear": "Clear"
     }
   }
 }

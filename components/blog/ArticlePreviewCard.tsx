@@ -31,17 +31,21 @@ export default function ArticlePreviewCard({
   locale,
   featuredStat,
 }: ArticlePreviewCardProps) {
-  const kicker = [tags[0] ?? '', publishedAt ? formatDate(publishedAt, locale) : '']
-    .filter(Boolean)
-    .join(' · ')
-    .toUpperCase();
-
+  const tag = tags[0];
+  const date = publishedAt ? formatDate(publishedAt, locale) : '';
   const pageUrl = locale === 'en' ? `/${slug}` : `/${locale}/${slug}`;
+  const tagHref = `${locale === 'en' ? '/' : `/${locale}/`}?tag=${encodeURIComponent(tag ?? '')}`;
 
   return (
     <article className="border border-border p-6 flex flex-col h-full">
       <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-text-2 mb-3">
-        {kicker}
+        {tag && (
+          <a href={tagHref} className="hover:text-red transition-colors duration-150">
+            {tag.toUpperCase()}
+          </a>
+        )}
+        {tag && date && ' · '}
+        {date.toUpperCase()}
       </p>
 
       <Link href={`/${slug}`} className="group flex-1">

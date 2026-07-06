@@ -9,7 +9,7 @@ export const revalidate = 3600;
 type Stat = { value: string; label: string; unit?: string };
 
 type PageParams = Promise<{ locale: string }>;
-type SearchParams = Promise<{ page?: string }>;
+type SearchParams = Promise<{ page?: string; tag?: string }>;
 
 const PAGE_SIZE = 20;
 
@@ -21,14 +21,16 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-async function getArticles(locale: string, page: number) {
+async function getArticles(locale: string, page: number, tag?: string) {
   const supabase = createClient();
   const from = (page - 1) * PAGE_SIZE;
-  const { data, count } = await supabase
+  let query = supabase
     .from('articles')
     .select('slug, title, meta_description, tags, published_at, stats', { count: 'exact' })
     .eq('locale', locale)
-    .eq('status', 'published')
+    .eq('status', 'published');
+  if (tag) query = query.contains('tags', [tag]);
+  const { data, count } = await query
     .order('published_at', { ascending: false })
     .range(from, from + PAGE_SIZE - 1);
   return { articles: data ?? [], total: count ?? 0 };
@@ -42,14 +44,21 @@ export default async function MagazineHomePage({
   searchParams: SearchParams;
 }) {
   const { locale } = await params;
-  const { page: pageParam } = await searchParams;
+  const { page: pageParam, tag: tagParam } = await searchParams;
   const t = await getTranslations('magazine');
 
   const page = Math.max(1, Number.parseInt(pageParam ?? '1', 10) || 1);
-  const { articles, total } = await getArticles(locale, page);
+  const tag = tagParam?.slice(0, 64) || undefined;
+  const { articles, total } = await getArticles(locale, page, tag);
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const basePath = locale === 'en' ? '/' : `/${locale}/`;
-  const pageHref = (p: number) => (p === 1 ? basePath : `${basePath}?page=${p}`);
+  const pageHref = (p: number) => {
+    const q = new URLSearchParams();
+    if (p > 1) q.set('page', String(p));
+    if (tag) q.set('tag', tag);
+    const qs = q.toString();
+    return qs ? `${basePath}?${qs}` : basePath;
+  };
 
   return (
     <main className="bg-bg min-h-screen">
@@ -69,6 +78,20 @@ export default async function MagazineHomePage({
 
       {/* Article grid */}
       <div className="max-w-5xl mx-auto px-5 py-10">
+        {tag && (
+          <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 mb-6 flex items-center gap-3">
+            <span>
+              {t('filter.label')} <span className="text-red">{tag}</span>
+            </span>
+            <a
+              href={basePath}
+              className="text-text-3 hover:text-text-1 transition-colors duration-150"
+              aria-label={t('filter.clear')}
+            >
+              {t('filter.clear')} ×
+            </a>
+          </p>
+        )}
         {articles.length === 0 ? (
           <p className="font-mono text-[11px] text-text-3 uppercase tracking-[0.1em]">
             {t('noArticles')}
