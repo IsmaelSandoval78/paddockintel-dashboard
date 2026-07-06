@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
+import { Link } from '@/lib/i18n/navigation';
 
 export default function NewsletterCard() {
   const t = useTranslations('newsletter');
@@ -63,7 +64,13 @@ export default function NewsletterCard() {
       )}
 
       <p className="font-mono text-[10px] text-text-3 mt-3">
-        {t('legal')}
+        {t.rich('legal', {
+          link: (chunks) => (
+            <Link href="/privacy" className="underline hover:text-text-1 transition-colors duration-150">
+              {chunks}
+            </Link>
+          ),
+        })}
       </p>
     </aside>
   );

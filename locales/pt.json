@@ -548,7 +548,7 @@
     "loading": "…",
     "success": "✓ Assinado",
     "error": "Tente novamente",
-    "legal": "Ao assinar você concorda com a política de privacidade."
+    "legal": "Ao assinar você concorda com a <link>política de privacidade</link>."
   },
   "book": {
     "kicker": "Temporada",
@@ -577,5 +577,24 @@
       "label": "Filtrando por",
       "clear": "Limpar"
     }
+  },
+  "privacyPage": {
+    "metaTitle": "Política de Privacidade — PaddockIntel",
+    "metaDescription": "Como o PaddockIntel coleta e usa seu endereço de e-mail.",
+    "kicker": "Legal",
+    "title": "Política de Privacidade",
+    "updated": "Última atualização: julho de 2026",
+    "s1h": "O que coletamos",
+    "s1p": "Quando você assina o Weekly Digest do PaddockIntel, coletamos seu endereço de e-mail e seu idioma preferido (inglês, espanhol ou português). Não coletamos mais nada — nem nome, nem cookies de rastreamento vinculados à sua assinatura.",
+    "s2h": "Como usamos",
+    "s2p": "Seu e-mail é usado apenas para enviar o Weekly Digest do PaddockIntel. Não vendemos, compartilhamos nem transferimos seu e-mail a terceiros. Não usamos seu endereço para publicidade ou perfilamento.",
+    "s3h": "Quem processa seus dados",
+    "s3p": "Os registros de assinatura são armazenados no Supabase (banco de dados hospedado nos Estados Unidos). Os e-mails são enviados via Resend (provedor de e-mail transacional). Ambos operam sob suas próprias políticas de privacidade e acordos de processamento de dados.",
+    "s4h": "Cancelar a assinatura",
+    "s4p": "Todo e-mail do digest contém um link de cancelamento no rodapé. Ao clicar, seu endereço é removido de forma imediata e permanente. Você também pode nos contatar diretamente em <mail>info@paddockintel.com</mail>.",
+    "s5h": "Cookies e análises",
+    "s5p": "paddockintel.com não usa cookies de publicidade nem rastreadores de análise de terceiros. Nosso provedor de hospedagem (Vercel) mantém logs de servidor padrão e de curta duração (endereço IP, página solicitada) necessários para operar e proteger o serviço.",
+    "s6h": "Contato",
+    "s6p": "Dúvidas sobre esta política: <mail>info@paddockintel.com</mail> ou pela <about>página About</about>."
   }
 }

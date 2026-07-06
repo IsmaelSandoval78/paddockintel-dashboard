@@ -548,7 +548,7 @@
     "loading": "…",
     "success": "✓ Subscribed",
     "error": "Try again",
-    "legal": "By subscribing you agree to the privacy policy."
+    "legal": "By subscribing you agree to the <link>privacy policy</link>."
   },
   "book": {
     "kicker": "Season",
@@ -577,5 +577,24 @@
       "label": "Filtered by",
       "clear": "Clear"
     }
+  },
+  "privacyPage": {
+    "metaTitle": "Privacy Policy — PaddockIntel",
+    "metaDescription": "How PaddockIntel collects and uses your email address.",
+    "kicker": "Legal",
+    "title": "Privacy Policy",
+    "updated": "Last updated: July 2026",
+    "s1h": "What we collect",
+    "s1p": "When you subscribe to the PaddockIntel Weekly Digest, we collect your email address and your preferred language (English, Spanish, or Portuguese). We collect nothing else — no name, no tracking cookies tied to your subscription.",
+    "s2h": "How we use it",
+    "s2p": "Your email address is used only to send the PaddockIntel Weekly Digest. We do not sell, share, or transfer your email to any third party. We do not use your address for advertising or profiling.",
+    "s3h": "Who processes your data",
+    "s3p": "Subscription records are stored in Supabase (database hosted in the United States). Emails are delivered via Resend (transactional email provider). Both operate under their own privacy policies and data processing agreements.",
+    "s4h": "Unsubscribing",
+    "s4p": "Every digest email contains an unsubscribe link at the bottom. Clicking it removes your address immediately and permanently. You can also contact us directly at <mail>info@paddockintel.com</mail>.",
+    "s5h": "Cookies & analytics",
+    "s5p": "paddockintel.com does not use advertising cookies or third-party analytics trackers. Our hosting provider (Vercel) keeps standard, short-lived server logs (IP address, requested page) needed to operate and secure the service.",
+    "s6h": "Contact",
+    "s6p": "Questions about this policy: <mail>info@paddockintel.com</mail> or via the <about>about page</about>."
   }
 }
