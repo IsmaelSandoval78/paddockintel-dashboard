@@ -4,7 +4,11 @@
     "circuits": "Circuitos",
     "drivers": "Pilotos",
     "constructors": "Construtores",
-    "compare": "Comparar"
+    "compare": "Comparar",
+    "economics": "Economia",
+    "operations": "Operações",
+    "regulations": "Regulamentações",
+    "supplyChain": "Cadeia de Suprimentos"
   },
   "hub": {
     "title": "PaddockIntel",

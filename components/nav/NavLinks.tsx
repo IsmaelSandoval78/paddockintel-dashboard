@@ -13,6 +13,15 @@ const links: { key: NavKey; href: string }[] = [
   { key: 'compare', href: '/compare' },
 ];
 
+type MagazineKey = 'economics' | 'operations' | 'regulations' | 'supplyChain';
+
+const magazineSections: { key: MagazineKey; tag: string }[] = [
+  { key: 'economics', tag: 'economic-intelligence' },
+  { key: 'operations', tag: 'operational-strategy' },
+  { key: 'regulations', tag: 'regulations' },
+  { key: 'supplyChain', tag: 'supply-chain-operations' },
+];
+
 export default function NavLinks({ isMagazine }: { isMagazine: boolean }) {
   const t = useTranslations('nav');
   const pathname = usePathname();
@@ -20,6 +29,15 @@ export default function NavLinks({ isMagazine }: { isMagazine: boolean }) {
   if (isMagazine) {
     return (
       <div className="flex items-center gap-6 flex-1">
+        {magazineSections.map(({ key, tag }) => (
+          <Link
+            key={key}
+            href={`/?tag=${tag}`}
+            className="font-sans text-[13px] font-medium no-underline text-text-2 hover:text-text-1 transition-colors duration-150"
+          >
+            {t(key)}
+          </Link>
+        ))}
         <a
           href="https://hub.paddockintel.com"
           target="_blank"

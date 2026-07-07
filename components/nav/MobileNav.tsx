@@ -16,6 +16,15 @@ const links: { key: NavKey; href: string }[] = [
   { key: 'compare',      href: '/compare' },
 ];
 
+type MagazineKey = 'economics' | 'operations' | 'regulations' | 'supplyChain';
+
+const magazineSections: { key: MagazineKey; tag: string }[] = [
+  { key: 'economics', tag: 'economic-intelligence' },
+  { key: 'operations', tag: 'operational-strategy' },
+  { key: 'regulations', tag: 'regulations' },
+  { key: 'supplyChain', tag: 'supply-chain-operations' },
+];
+
 export default function MobileNav({ isMagazine }: { isMagazine: boolean }) {
   const [open, setOpen] = useState(false);
   const t = useTranslations('nav');
@@ -56,15 +65,27 @@ export default function MobileNav({ isMagazine }: { isMagazine: boolean }) {
       {open && (
         <div className="border-t border-border" style={{ borderRadius: 0 }}>
           {isMagazine ? (
-            <a
-              href="https://hub.paddockintel.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => setOpen(false)}
-              className="flex items-center h-12 px-5 border-b border-border font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 bg-bg"
-            >
-              {t('hub')}
-            </a>
+            <>
+              {magazineSections.map(({ key, tag }) => (
+                <Link
+                  key={key}
+                  href={`/?tag=${tag}`}
+                  onClick={() => setOpen(false)}
+                  className="flex items-center h-12 px-5 border-b border-border font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 bg-bg"
+                >
+                  {t(key)}
+                </Link>
+              ))}
+              <a
+                href="https://hub.paddockintel.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setOpen(false)}
+                className="flex items-center h-12 px-5 border-b border-border font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 bg-bg"
+              >
+                {t('hub')}
+              </a>
+            </>
           ) : (
             links.map(({ key, href }) => {
               const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
