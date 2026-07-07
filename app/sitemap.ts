@@ -26,7 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .from('articles')
       .select('slug, locale, published_at')
       .eq('status', 'published')
-      .order('published_at', { ascending: false });
+      .order('published_at', { ascending: false, nullsFirst: false });
 
     const { data: issues } = await supabase
       .from('digest_issues')
@@ -35,11 +35,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .order('published_at', { ascending: false });
 
     const staticRoutes: MetadataRoute.Sitemap = [
-      { url: `${MAGAZINE_BASE}/`,       lastModified: new Date(), changeFrequency: 'daily',   priority: 1.0 },
-      { url: `${MAGAZINE_BASE}/weekly/`, lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.8 },
-      { url: `${MAGAZINE_BASE}/about/`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
-      { url: `${MAGAZINE_BASE}/es/`,    lastModified: new Date(), changeFrequency: 'daily',   priority: 0.9 },
-      { url: `${MAGAZINE_BASE}/pt/`,    lastModified: new Date(), changeFrequency: 'daily',   priority: 0.9 },
+      { url: `${MAGAZINE_BASE}/`,             lastModified: new Date(), changeFrequency: 'daily',   priority: 1.0 },
+      { url: `${MAGAZINE_BASE}/es/`,          lastModified: new Date(), changeFrequency: 'daily',   priority: 0.9 },
+      { url: `${MAGAZINE_BASE}/pt/`,          lastModified: new Date(), changeFrequency: 'daily',   priority: 0.9 },
+      { url: `${MAGAZINE_BASE}/weekly/`,      lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.8 },
+      { url: `${MAGAZINE_BASE}/es/weekly/`,   lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.8 },
+      { url: `${MAGAZINE_BASE}/pt/weekly/`,   lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.8 },
+      { url: `${MAGAZINE_BASE}/about/`,       lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
+      { url: `${MAGAZINE_BASE}/es/about/`,    lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
+      { url: `${MAGAZINE_BASE}/pt/about/`,    lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
+      { url: `${MAGAZINE_BASE}/privacy/`,     lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.3 },
+      { url: `${MAGAZINE_BASE}/es/privacy/`,  lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.3 },
+      { url: `${MAGAZINE_BASE}/pt/privacy/`,  lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.3 },
     ];
 
     const articleRoutes: MetadataRoute.Sitemap = (articles ?? []).map((a) => ({
