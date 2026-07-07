@@ -4,6 +4,10 @@ import { createClient } from '@/lib/supabase/server';
 import EmailCapture from '@/components/ui/EmailCapture';
 import ArticlePreviewCard from '@/components/blog/ArticlePreviewCard';
 import FeaturedArticleCard from '@/components/blog/FeaturedArticleCard';
+import NewsletterCard from '@/components/blog/NewsletterCard';
+import StandingsPanel from '@/components/blog/StandingsPanel';
+import CircuitOfTheDay from '@/components/blog/CircuitOfTheDay';
+import { getFeaturedAndRecent, getDataDeskArticles, getStandings, getCircuitOfTheDay } from './data';
 
 export const revalidate = 3600;
 
@@ -37,6 +41,21 @@ async function getArticles(locale: string, page: number, tag?: string) {
   return { articles: data ?? [], total: count ?? 0 };
 }
 
+function ArticleCard({ a, locale }: { a: NonNullable<Awaited<ReturnType<typeof getArticles>>['articles']>[number]; locale: string }) {
+  const stats = (a.stats as Stat[]) ?? [];
+  return (
+    <ArticlePreviewCard
+      slug={a.slug as string}
+      title={a.title as string}
+      metaDescription={a.meta_description as string | null}
+      tags={(a.tags as string[]) ?? []}
+      publishedAt={a.published_at as string}
+      locale={locale}
+      featuredStat={stats[0]}
+    />
+  );
+}
+
 export default async function MagazineHomePage({
   params,
   searchParams,
@@ -50,13 +69,24 @@ export default async function MagazineHomePage({
 
   const page = Math.max(1, Number.parseInt(pageParam ?? '1', 10) || 1);
   const tag = tagParam?.slice(0, 64) || undefined;
-  const { articles, total } = await getArticles(locale, page, tag);
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
-  // Front-page state only (page 1, unfiltered) gets a lead story — a filtered
-  // or paginated view is an archive, not a cover, so it stays a flat index.
+  // Front-page state only (page 1, unfiltered) gets the full editorial
+  // treatment — a filtered or paginated view is an archive, not a cover.
   const isFrontPage = page === 1 && !tag;
-  const [lead, ...rest] = isFrontPage ? articles : [undefined, ...articles];
+
+  const [{ articles, total }, frontPageExtras] = await Promise.all([
+    getArticles(locale, page, tag),
+    isFrontPage
+      ? Promise.all([
+          getFeaturedAndRecent(locale),
+          getStandings(),
+          getDataDeskArticles(locale),
+          getCircuitOfTheDay(),
+        ])
+      : Promise.resolve(null),
+  ]);
+
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const basePath = locale === 'en' ? '/' : `/${locale}/`;
   const pageHref = (p: number) => {
     const q = new URLSearchParams();
@@ -65,6 +95,19 @@ export default async function MagazineHomePage({
     const qs = q.toString();
     return qs ? `${basePath}?${qs}` : basePath;
   };
+
+  const [featuredAndRecent, standings, dataDeskArticles, circuit] = frontPageExtras ?? [
+    { featured: null, recent: [] },
+    { drivers: [], constructors: [] },
+    [],
+    null,
+  ];
+  const { featured, recent } = featuredAndRecent;
+
+  // The archive grid below the curated modules excludes anything already
+  // shown as featured/recent, so page 1 never repeats the same article twice.
+  const shownSlugs = new Set([featured?.slug, ...recent.map((a) => a.slug)].filter(Boolean));
+  const archiveArticles = isFrontPage ? articles.filter((a) => !shownSlugs.has(a.slug as string)) : articles;
 
   return (
     <main className="bg-bg min-h-screen">
@@ -82,10 +125,9 @@ export default async function MagazineHomePage({
         <EmailCapture className="max-w-sm" />
       </div>
 
-      {/* Article grid */}
-      <div className="max-w-5xl mx-auto px-5 pt-10 md:pt-14 pb-10">
+      <div className="max-w-5xl mx-auto px-5">
         {tag && (
-          <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 mb-6 flex items-center gap-3">
+          <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 mt-10 flex items-center gap-3">
             <span>
               {t('filter.label')} <span className="text-red">{tag}</span>
             </span>
@@ -98,102 +140,121 @@ export default async function MagazineHomePage({
             </a>
           </p>
         )}
-        {articles.length === 0 ? (
-          <p className="font-mono text-[11px] text-text-3 uppercase tracking-[0.1em]">
-            {t('noArticles')}
-          </p>
-        ) : (
-          <>
-            {lead && (
-              <div className="mb-10 md:mb-14">
-                <FeaturedArticleCard
-                  slug={lead.slug as string}
-                  title={lead.title as string}
-                  metaDescription={lead.meta_description as string | null}
-                  tags={(lead.tags as string[]) ?? []}
-                  publishedAt={lead.published_at as string}
-                  locale={locale}
-                  featuredStat={((lead.stats as Stat[]) ?? [])[0]}
-                />
-              </div>
-            )}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {rest.map((a) => {
-                if (!a) return null;
-                const stats = (a.stats as Stat[]) ?? [];
-                return (
-                  <ArticlePreviewCard
-                    key={a.slug as string}
-                    slug={a.slug as string}
-                    title={a.title as string}
-                    metaDescription={a.meta_description as string | null}
-                    tags={(a.tags as string[]) ?? []}
-                    publishedAt={a.published_at as string}
-                    locale={locale}
-                    featuredStat={stats[0]}
-                  />
-                );
-              })}
-            </div>
-          </>
+
+        {/* Featured */}
+        {featured && (
+          <div className="pt-10 md:pt-14">
+            <FeaturedArticleCard
+              slug={featured.slug as string}
+              title={featured.title as string}
+              metaDescription={featured.meta_description as string | null}
+              tags={(featured.tags as string[]) ?? []}
+              publishedAt={featured.published_at as string}
+              locale={locale}
+              featuredStat={((featured.stats as Stat[]) ?? [])[0]}
+            />
+          </div>
         )}
 
-        {totalPages > 1 && (
-          <nav className="flex items-center justify-between mt-10 pt-5 border-t border-border">
-            {page > 1 ? (
-              <a
-                href={pageHref(page - 1)}
-                className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-150"
-              >
-                {t('pagination.newer')}
-              </a>
-            ) : (
-              <span aria-hidden className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-3 opacity-40">
-                {t('pagination.newer')}
-              </span>
-            )}
-            <span className="font-mono text-[11px] tracking-[0.1em] text-text-3 tabular-nums">
-              {t('pagination.page', { current: page, total: totalPages })}
-            </span>
-            {page < totalPages ? (
-              <a
-                href={pageHref(page + 1)}
-                className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-150"
-              >
-                {t('pagination.older')}
-              </a>
-            ) : (
-              <span aria-hidden className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-3 opacity-40">
-                {t('pagination.older')}
-              </span>
-            )}
-          </nav>
+        {/* Latest */}
+        {recent.length > 0 && (
+          <section className="py-10 md:py-14">
+            <h2
+              className="font-display uppercase text-text-1 tracking-[-0.02em] mb-6"
+              style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}
+            >
+              {t('recent')}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {recent.map((a) => (
+                <ArticleCard key={a.slug} a={a} locale={locale} />
+              ))}
+            </div>
+          </section>
         )}
+
+        {/* Top 5 Drivers / Top 5 Constructors */}
+        {(standings.drivers.length > 0 || standings.constructors.length > 0) && (
+          <StandingsPanel drivers={standings.drivers} constructors={standings.constructors} />
+        )}
+
+        {/* Newsletter invite */}
+        {isFrontPage && <NewsletterCard />}
+
+        {/* The Data Desk — pure-data articles, section only renders once tagged content exists */}
+        {dataDeskArticles.length > 0 && (
+          <section className="py-10 md:py-14 border-t border-border">
+            <h2
+              className="font-display uppercase text-text-1 tracking-[-0.02em] mb-6"
+              style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}
+            >
+              {t('dataDesk.title')}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {dataDeskArticles.map((a) => (
+                <ArticleCard key={a.slug} a={a} locale={locale} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Circuit of the day (next race circuit) */}
+        {circuit && <CircuitOfTheDay circuit={circuit} locale={locale} />}
+
+        {/* Archive grid */}
+        <div className="py-10 md:py-14">
+          {archiveArticles.length === 0 ? (
+            <p className="font-mono text-[11px] text-text-3 uppercase tracking-[0.1em]">
+              {t('noArticles')}
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {archiveArticles.map((a) => (
+                <ArticleCard key={a.slug as string} a={a} locale={locale} />
+              ))}
+            </div>
+          )}
+
+          {totalPages > 1 && (
+            <nav className="flex items-center justify-between mt-10 pt-5 border-t border-border">
+              {page > 1 ? (
+                <a
+                  href={pageHref(page - 1)}
+                  className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-150"
+                >
+                  {t('pagination.newer')}
+                </a>
+              ) : (
+                <span aria-hidden className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-3 opacity-40">
+                  {t('pagination.newer')}
+                </span>
+              )}
+              <span className="font-mono text-[11px] tracking-[0.1em] text-text-3 tabular-nums">
+                {t('pagination.page', { current: page, total: totalPages })}
+              </span>
+              {page < totalPages ? (
+                <a
+                  href={pageHref(page + 1)}
+                  className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-150"
+                >
+                  {t('pagination.older')}
+                </a>
+              ) : (
+                <span aria-hidden className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-3 opacity-40">
+                  {t('pagination.older')}
+                </span>
+              )}
+            </nav>
+          )}
+        </div>
       </div>
 
-      {/* Cross-promo: Hub / Digest / Book — ruled band, not three more boxes */}
+      {/* Cross-promo: Weekly Digest / The Book — Hub already got its CTA in the standings section above */}
       <div className="max-w-5xl mx-auto px-5 py-12 md:py-16 border-t border-border">
-        <div className="grid grid-cols-1 md:grid-cols-3 divide-y divide-border-subtle md:divide-y-0 md:divide-x">
-          <a
-            href="https://hub.paddockintel.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group py-5 first:pt-0 md:py-0 md:px-8 md:first:pl-0"
-          >
-            <h2 className="font-sans font-semibold text-text-1 group-hover:text-red transition-colors duration-150">
-              {t('promo.hub')}
-            </h2>
-            <p className="font-sans text-sm text-text-2 leading-relaxed mt-2">
-              {t('promo.hubDescription')}
-            </p>
-            <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 mt-4">
-              {t('promo.goTo')}
-            </p>
-          </a>
-
+        <div className="grid grid-cols-1 md:grid-cols-2 divide-y divide-border-subtle md:divide-y-0 md:divide-x">
           <a
             href={locale === 'en' ? '/weekly' : `/${locale}/weekly`}
-            className="group py-5 md:py-0 md:px-8"
+            className="group py-5 first:pt-0 md:py-0 md:pr-8 md:first:pl-0"
           >
             <h2 className="font-sans font-semibold text-text-1 group-hover:text-red transition-colors duration-150">
               {t('promo.digest')}
@@ -206,7 +267,7 @@ export default async function MagazineHomePage({
             </p>
           </a>
 
-          <div className="py-5 pb-0 md:py-0 md:px-8 md:last:pr-0 opacity-50">
+          <div className="py-5 pb-0 md:py-0 md:pl-8 opacity-50">
             <h2 className="font-sans font-semibold text-text-1">{t('promo.book')}</h2>
             <p className="font-sans text-sm text-text-2 leading-relaxed mt-2">
               {t('promo.bookDescription')}

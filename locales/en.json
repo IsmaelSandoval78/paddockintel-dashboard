@@ -552,7 +552,9 @@
     "loading": "…",
     "success": "✓ Subscribed",
     "error": "Try again",
-    "legal": "By subscribing you agree to the <link>privacy policy</link>."
+    "legal": "By subscribing you agree to the <link>privacy policy</link>.",
+    "kicker": "PaddockIntel Digest",
+    "headline": "F1 economics weekly, in your inbox."
   },
   "book": {
     "kicker": "Season",
@@ -580,6 +582,30 @@
     "filter": {
       "label": "Filtered by",
       "clear": "Clear"
+    },
+    "recent": "Latest",
+    "standings": {
+      "title": "Standings",
+      "cta": "Full standings on the Hub",
+      "drivers": "Drivers",
+      "constructors": "Constructors"
+    },
+    "circuit": {
+      "kicker": "Circuit Intelligence",
+      "round": "Round {round}",
+      "since": "Racing since",
+      "races": "races",
+      "raceLaps": "Race distance",
+      "avgWinnerGrid": "Avg. winner start",
+      "lapRecord": "Lap record",
+      "fastestPit": "Fastest pit stop",
+      "mostWins": "Most wins",
+      "topConstructor": "Top constructor",
+      "lastWinners": "Last 5 winners",
+      "cta": "Full circuit intelligence on the Hub"
+    },
+    "dataDesk": {
+      "title": "The Data Desk"
     }
   },
   "privacyPage": {

@@ -29,10 +29,10 @@ export default function NewsletterCard() {
   return (
     <aside className="my-10 border border-border-subtle bg-surface-raised px-6 py-6">
       <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-text-3 mb-2">
-        PADDOCKINTEL DIGEST
+        {t('kicker')}
       </p>
       <p className="font-display text-[clamp(1rem,2.2vw,1.3rem)] uppercase text-text-1 tracking-[-0.02em] leading-tight mb-4">
-        F1 economics weekly, in your inbox.
+        {t('headline')}
       </p>
 
       {status === 'success' ? (

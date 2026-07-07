@@ -552,7 +552,9 @@
     "loading": "…",
     "success": "✓ Assinado",
     "error": "Tente novamente",
-    "legal": "Ao assinar você concorda com a <link>política de privacidade</link>."
+    "legal": "Ao assinar você concorda com a <link>política de privacidade</link>.",
+    "kicker": "PaddockIntel Digest",
+    "headline": "Economia da F1 toda semana, na sua caixa de entrada."
   },
   "book": {
     "kicker": "Temporada",
@@ -580,6 +582,30 @@
     "filter": {
       "label": "Filtrando por",
       "clear": "Limpar"
+    },
+    "recent": "Mais recentes",
+    "standings": {
+      "title": "Classificação",
+      "cta": "Classificação completa no Hub",
+      "drivers": "Pilotos",
+      "constructors": "Construtores"
+    },
+    "circuit": {
+      "kicker": "Inteligência do Circuito",
+      "round": "Rodada {round}",
+      "since": "Correndo desde",
+      "races": "corridas",
+      "raceLaps": "Distância da corrida",
+      "avgWinnerGrid": "Largada média do vencedor",
+      "lapRecord": "Recorde de volta",
+      "fastestPit": "Pit stop mais rápido",
+      "mostWins": "Mais vitórias",
+      "topConstructor": "Construtor dominante",
+      "lastWinners": "Últimos 5 vencedores",
+      "cta": "Inteligência completa do circuito no Hub"
+    },
+    "dataDesk": {
+      "title": "O Data Desk"
     }
   },
   "privacyPage": {
