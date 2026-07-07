@@ -562,8 +562,8 @@
   },
   "magazine": {
     "kicker": "PaddockIntel",
-    "headline": "Economia da F1, sem filtro.",
-    "description": "Reportagens originais sobre o negócio da Fórmula 1 — contratos, patrocínios, premiação e os números por trás das corridas.",
+    "headline": "A economia que a F1 não publica.",
+    "description": "Contratos, patrocínios, premiações — verificados com 75 anos de dados de corrida, não comunicados das equipes.",
     "noArticles": "Nenhum artigo publicado ainda.",
     "promo": {
       "hub": "O Hub",

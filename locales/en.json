@@ -562,8 +562,8 @@
   },
   "magazine": {
     "kicker": "PaddockIntel",
-    "headline": "F1 economics, unfiltered.",
-    "description": "Original reporting on the business of Formula 1 — contracts, sponsorships, prize money, and the numbers behind the racing.",
+    "headline": "The economics F1 doesn't publish.",
+    "description": "Contracts, sponsorships, prize money — verified against 75 years of race data, not team press releases.",
     "noArticles": "No articles published yet.",
     "promo": {
       "hub": "The Hub",

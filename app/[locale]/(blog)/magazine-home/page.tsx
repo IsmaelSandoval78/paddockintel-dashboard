@@ -20,9 +20,9 @@ const PAGE_SIZE = 20;
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: 'PaddockIntel — F1 Economics, Unfiltered',
+    title: 'PaddockIntel — The Economics F1 Doesn\'t Publish',
     description:
-      'Original reporting on the business of Formula 1 — contracts, sponsorships, prize money, and the numbers behind the racing.',
+      'Contracts, sponsorships, prize money — verified against 75 years of F1 race data, not team press releases.',
   };
 }
 
