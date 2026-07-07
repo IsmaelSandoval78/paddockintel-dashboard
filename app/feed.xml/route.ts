@@ -22,7 +22,7 @@ export async function GET() {
     .select('slug, title, meta_description, published_at')
     .eq('locale', 'en')
     .eq('status', 'published')
-    .order('published_at', { ascending: false })
+    .order('published_at', { ascending: false, nullsFirst: false })
     .limit(25);
 
   const items = (articles ?? [])

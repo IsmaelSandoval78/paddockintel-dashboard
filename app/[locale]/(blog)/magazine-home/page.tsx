@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import EmailCapture from '@/components/ui/EmailCapture';
 import ArticlePreviewCard from '@/components/blog/ArticlePreviewCard';
+import FeaturedArticleCard from '@/components/blog/FeaturedArticleCard';
 
 export const revalidate = 3600;
 
@@ -31,7 +32,7 @@ async function getArticles(locale: string, page: number, tag?: string) {
     .eq('status', 'published');
   if (tag) query = query.contains('tags', [tag]);
   const { data, count } = await query
-    .order('published_at', { ascending: false })
+    .order('published_at', { ascending: false, nullsFirst: false })
     .range(from, from + PAGE_SIZE - 1);
   return { articles: data ?? [], total: count ?? 0 };
 }
@@ -51,6 +52,11 @@ export default async function MagazineHomePage({
   const tag = tagParam?.slice(0, 64) || undefined;
   const { articles, total } = await getArticles(locale, page, tag);
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
+  // Front-page state only (page 1, unfiltered) gets a lead story — a filtered
+  // or paginated view is an archive, not a cover, so it stays a flat index.
+  const isFrontPage = page === 1 && !tag;
+  const [lead, ...rest] = isFrontPage ? articles : [undefined, ...articles];
   const basePath = locale === 'en' ? '/' : `/${locale}/`;
   const pageHref = (p: number) => {
     const q = new URLSearchParams();
@@ -63,21 +69,21 @@ export default async function MagazineHomePage({
   return (
     <main className="bg-bg min-h-screen">
       {/* Hero */}
-      <div className="border-b border-border px-5 py-10 max-w-5xl mx-auto">
+      <div className="border-b border-border px-5 py-12 md:py-16 max-w-5xl mx-auto">
         <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-text-2">
           {t('kicker')}
         </p>
         <h1 className="font-display text-[clamp(2rem,6vw,3.5rem)] leading-[0.92] tracking-[-0.03em] text-text-1 mt-3 mb-5">
           {t('headline')}
         </h1>
-        <p className="font-sans text-text-2 leading-relaxed max-w-md mb-6">
+        <p className="font-sans text-text-2 leading-relaxed max-w-lg mb-6">
           {t('description')}
         </p>
         <EmailCapture className="max-w-sm" />
       </div>
 
       {/* Article grid */}
-      <div className="max-w-5xl mx-auto px-5 py-10">
+      <div className="max-w-5xl mx-auto px-5 pt-10 md:pt-14 pb-10">
         {tag && (
           <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 mb-6 flex items-center gap-3">
             <span>
@@ -97,23 +103,39 @@ export default async function MagazineHomePage({
             {t('noArticles')}
           </p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {articles.map((a) => {
-              const stats = (a.stats as Stat[]) ?? [];
-              return (
-                <ArticlePreviewCard
-                  key={a.slug as string}
-                  slug={a.slug as string}
-                  title={a.title as string}
-                  metaDescription={a.meta_description as string | null}
-                  tags={(a.tags as string[]) ?? []}
-                  publishedAt={a.published_at as string}
+          <>
+            {lead && (
+              <div className="mb-10 md:mb-14">
+                <FeaturedArticleCard
+                  slug={lead.slug as string}
+                  title={lead.title as string}
+                  metaDescription={lead.meta_description as string | null}
+                  tags={(lead.tags as string[]) ?? []}
+                  publishedAt={lead.published_at as string}
                   locale={locale}
-                  featuredStat={stats[0]}
+                  featuredStat={((lead.stats as Stat[]) ?? [])[0]}
                 />
-              );
-            })}
-          </div>
+              </div>
+            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {rest.map((a) => {
+                if (!a) return null;
+                const stats = (a.stats as Stat[]) ?? [];
+                return (
+                  <ArticlePreviewCard
+                    key={a.slug as string}
+                    slug={a.slug as string}
+                    title={a.title as string}
+                    metaDescription={a.meta_description as string | null}
+                    tags={(a.tags as string[]) ?? []}
+                    publishedAt={a.published_at as string}
+                    locale={locale}
+                    featuredStat={stats[0]}
+                  />
+                );
+              })}
+            </div>
+          </>
         )}
 
         {totalPages > 1 && (
@@ -149,14 +171,14 @@ export default async function MagazineHomePage({
         )}
       </div>
 
-      {/* Cross-promo: Hub / Digest / Book */}
-      <div className="max-w-5xl mx-auto px-5 py-10 border-t border-border">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      {/* Cross-promo: Hub / Digest / Book — ruled band, not three more boxes */}
+      <div className="max-w-5xl mx-auto px-5 py-12 md:py-16 border-t border-border">
+        <div className="grid grid-cols-1 md:grid-cols-3 divide-y divide-border-subtle md:divide-y-0 md:divide-x">
           <a
             href="https://hub.paddockintel.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="group border border-border p-6 hover:border-red transition-colors duration-150"
+            className="group py-5 first:pt-0 md:py-0 md:px-8 md:first:pl-0"
           >
             <h2 className="font-sans font-semibold text-text-1 group-hover:text-red transition-colors duration-150">
               {t('promo.hub')}
@@ -171,7 +193,7 @@ export default async function MagazineHomePage({
 
           <a
             href={locale === 'en' ? '/weekly' : `/${locale}/weekly`}
-            className="group border border-border p-6 hover:border-red transition-colors duration-150"
+            className="group py-5 md:py-0 md:px-8"
           >
             <h2 className="font-sans font-semibold text-text-1 group-hover:text-red transition-colors duration-150">
               {t('promo.digest')}
@@ -184,7 +206,7 @@ export default async function MagazineHomePage({
             </p>
           </a>
 
-          <div className="border border-border-subtle p-6 opacity-50">
+          <div className="py-5 pb-0 md:py-0 md:px-8 md:last:pr-0 opacity-50">
             <h2 className="font-sans font-semibold text-text-1">{t('promo.book')}</h2>
             <p className="font-sans text-sm text-text-2 leading-relaxed mt-2">
               {t('promo.bookDescription')}
