@@ -143,3 +143,6 @@ Each circuit gets its own page (`/circuits/[circuit_id]`) combining historical E
 - **Hyperframes** (hyperframes.heygen.com) evaluated 2026-06-23 as a possible alternative to the Remotion "Blueprint" standard for Phase 6 FastF1 motion pieces — HTML→video via headless Chrome/FFmpeg, native GSAP support (matches Hub's existing motion stack better than Remotion's React components), deterministic rendering, CLI-first/agent-friendly, Lambda/Cloud Run render adapters for batch automation. Not adopted — Remotion stays the locked standard; revisit only when Phase 6 actually starts, not before
 - Book: full-season assembly + PDF export
 - Digest: coverage-cluster mechanism (post-volume feature, not now)
+
+## Docs archivados
+`HUB-REDESIGN-SPEC.md` (v0.2.0) y `ROADMAP.md` (plan original Fase 0-5) se movieron a `docs/archive/` — superados por el trabajo ya descrito arriba en este archivo. No son el plan vigente; consultar solo como referencia histórica.

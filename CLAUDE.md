@@ -4,7 +4,7 @@
 
 **hub.paddockintel.com** — F1 economic and performance intelligence hub.
 Interactive map-driven dashboard with historical data from 1950 to present.
-Stack: Next.js 16 + TypeScript + Tailwind v4 + Supabase + Vercel + Leaflet + next-intl.
+Stack: Next.js 16 + TypeScript + Tailwind v4 + Supabase + Vercel + d3-geo (SVG map) + next-intl.
 i18n: EN / ES / PT. Default locale: `en`.
 
 ---
@@ -49,7 +49,7 @@ paddockintel-dashboard/
 │   │   └── compare/        # Comparador interactivo
 │   └── api/                # Supabase server-side queries
 ├── components/
-│   ├── map/                # Mapa interactivo Leaflet (circuitos)
+│   ├── map/                # Mapa interactivo SVG con d3-geo (circuitos)
 │   ├── panels/             # Panel derecho dinámico
 │   ├── cards/              # Driver cards, constructor cards
 │   ├── scorecards/         # Shareable scorecards
@@ -106,7 +106,7 @@ All data lives in Supabase. Never use mock data — always query real tables.
 ┌─────────────────────────────┬──────────────────────┐
 │                             │  [default state]      │
 │     MAPA INTERACTIVO        │  01 · Top 10 Drivers  │
-│     Leaflet + CartoDB Dark  │  ─────────────────    │
+│     SVG map (d3-geo)        │  ─────────────────    │
 │     (60% width)             │  02 · Top 5 Constructors
 │                             │  (40% width)          │
 │     Click circuit →         │                       │
@@ -132,13 +132,11 @@ All data lives in Supabase. Never use mock data — always query real tables.
 
 ## Design System
 
-See `DESIGN.md` for full visual spec.
+`DESIGN.md` is the single source of truth for all visual tokens (colors, typography, spacing, motion). Do not duplicate values here — they drift out of sync. Read `DESIGN.md` before touching any styling.
 
 - Tailwind v4 utility classes only — no inline styles, no CSS modules unless absolutely necessary
-- Dark mode first — `#080808` base, never white backgrounds
 - Use CSS variables from `globals.css` — never hardcode hex values that exist as tokens
 - Never hardcode spacing in `px` where Tailwind tokens exist
-- Font classes: `font-serif` (DM Serif Display), `font-sans` (Inter), `font-mono` (JetBrains Mono)
 - Tabular numbers always: `font-variant-numeric: tabular-nums` on any stat column
 
 ---
@@ -159,7 +157,7 @@ See `DESIGN.md` for full visual spec.
 - No client-side fetching unless interactive (map clicks, comparator, locale switcher)
 - Paginate any list over 20 items
 - Images: `next/image` always, WebP format
-- Leaflet: dynamic import with `ssr: false` — never import server-side
+- Map component (`components/map/`): client component (`"use client"`) — d3-geo projections run in the browser
 
 ---
 
@@ -168,7 +166,7 @@ See `DESIGN.md` for full visual spec.
 - Generated client-side as canvas/PNG
 - Always include paddockintel.com watermark + logo
 - Aspect ratios: 1:1 (Instagram), 9:16 (Stories/TikTok), 16:9 (X/Twitter)
-- Dark background `#080808` always — never light scorecards
+- Light background (`#F4F4F0`) always, matching the site — never a dark scorecard
 
 ---
 
@@ -202,7 +200,7 @@ Minimum to ship: **4 on all five**. If any score < 4, iterate before moving on.
 - Do not generate placeholder or lorem ipsum content
 - Do not invent circuit records, lap times, or historical data — query Supabase
 - Do not use inline styles or hardcoded hex values — use CSS variables from globals.css
-- Do not import Leaflet at the top level — always dynamic import with `ssr: false`
+- Do not reintroduce Leaflet or a 3D globe — the map is a flat SVG using a d3-geo Natural Earth projection
 - Do not use `rounded-3xl`, gradients, glassmorphism, or shadows on data surfaces
 - Do not use pie charts — use ranked lists
 ## Skills

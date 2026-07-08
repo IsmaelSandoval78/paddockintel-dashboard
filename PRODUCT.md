@@ -29,14 +29,14 @@ The hub is the only light-substrate F1 property. Where competitors go dark and l
 
 1. **Motion maps to meaning** — Every animation references an F1 concept (lights out, flying lap, gap closing, g-force). If you cannot name the F1 reference, cut the animation.
 2. **Editorial, not dashboard** — Data surfaces earn their place by telling a story. A standings table is not a table; it is a chapter. Hierarchy and restraint over completeness.
-3. **Light is the differentiator** — The warm off-white substrate (`#FAFAF7`) is a deliberate brand position. Dark mode is not offered. The spectacle is motion and typography, not darkness.
+3. **Light is the differentiator** — The warm off-white substrate (`#F4F4F0`) is a deliberate brand position. Dark mode is not offered. The spectacle is motion and typography, not darkness.
 4. **Specificity over genericism** — Unmistakably F1. Circuit coordinates in JetBrains Mono, team colors darkened for the light substrate, lap times parsed carefully. Nothing interchangeable with another sport.
 5. **Restraint compounds** — Every element earns its place. Nothing decorative. The aggregate of invisible correctness creates interfaces people trust without knowing why.
 
 ## Accessibility & Inclusion
 
 Target: WCAG AA minimum.
-- Body text contrast ≥ 4.5:1 against `--bg` (`#FAFAF7`)
+- Body text contrast ≥ 4.5:1 against `--bg` (`#F4F4F0`)
 - Large text ≥ 3:1
 - Keyboard navigation complete across all interactive surfaces
 - `prefers-reduced-motion`: GSAP teardown via `matchMedia`, static fallback renders a complete, usable page — no blank sections, no hidden content
