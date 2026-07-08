@@ -48,3 +48,4 @@ next-env.d.ts
 .codex/
 .fastf1_cache/
 .claude/settings.json
+supabase/.temp/
