@@ -6,7 +6,7 @@ import { usePathname, Link, useRouter } from '@/lib/i18n/navigation';
 import { useLocale } from 'next-intl';
 import { routing } from '@/lib/i18n/routing';
 
-type NavKey = 'hub' | 'circuits' | 'drivers' | 'constructors' | 'compare';
+type NavKey = 'hub' | 'circuits' | 'drivers' | 'constructors' | 'compare' | 'records';
 
 const links: { key: NavKey; href: string }[] = [
   { key: 'hub',          href: '/' },
@@ -14,6 +14,7 @@ const links: { key: NavKey; href: string }[] = [
   { key: 'drivers',      href: '/drivers' },
   { key: 'constructors', href: '/constructors' },
   { key: 'compare',      href: '/compare' },
+  { key: 'records',      href: '/records' },
 ];
 
 type MagazineKey = 'economics' | 'operations' | 'regulations' | 'supplyChain';

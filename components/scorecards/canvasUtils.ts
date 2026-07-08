@@ -293,6 +293,238 @@ function drawLandscape(
   ctx.textAlign = 'left';
 }
 
+// ─── Record scorecard (Records Hub) — light theme per DESIGN.md v0.3.0 ───────
+
+const RECORD_COLORS = {
+  bg:     '#F4F4F0',
+  text1:  '#0A0A0A',
+  text2:  '#6B6B6B',
+  text3:  '#B5B4AE',
+  red:    '#E61919',
+};
+
+export interface ScorecardRecordEntry {
+  rank: number;
+  name: string;
+  value: string;    // pre-formatted, locale-aware
+  detail?: string;  // e.g. streak end year
+}
+
+export interface ScorecardRecordData {
+  kicker: string;   // "F1 ALL-TIME RECORD"
+  title: string;    // "MOST RACE WINS"
+  unit: string;     // "WINS"
+  path: string;     // "records/most-wins" — watermark line
+  entries: ScorecardRecordEntry[]; // top 5, entries[0] = record holder
+}
+
+// next/font hashes family names — resolve the real family list from the CSS var
+function cssFontFamily(varName: string, fallback: string): string {
+  if (typeof document === 'undefined') return fallback;
+  const v = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+  return v || fallback;
+}
+
+function recordFontFamilies() {
+  return {
+    display: cssFontFamily('--pi-display', '"Archivo Black", sans-serif'),
+    sans:    cssFontFamily('--pi-sans', 'Inter, sans-serif'),
+    mono:    cssFontFamily('--pi-mono', '"JetBrains Mono", monospace'),
+  };
+}
+
+export async function loadRecordFonts(): Promise<void> {
+  const { display, sans, mono } = recordFontFamilies();
+  try {
+    await Promise.all([
+      document.fonts.load(`400 96px ${display}`),
+      document.fonts.load(`600 24px ${sans}`),
+      document.fonts.load(`400 20px ${mono}`),
+      document.fonts.load(`500 20px ${mono}`),
+      document.fonts.load(`700 20px ${sans}`),
+    ]);
+  } catch {
+    // Canvas falls back to system fonts if unavailable
+  }
+}
+
+function fitFontSize(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  family: string,
+  weight: number,
+  maxSize: number,
+  maxWidth: number,
+): number {
+  let size = maxSize;
+  ctx.font = `${weight} ${size}px ${family}`;
+  while (size > 10 && ctx.measureText(text).width > maxWidth) {
+    size *= 0.94;
+    ctx.font = `${weight} ${size}px ${family}`;
+  }
+  return size;
+}
+
+function drawRecordChrome(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  pad: number,
+  ref: number,
+  path: string,
+  fonts: { sans: string; mono: string },
+): void {
+  ctx.fillStyle = RECORD_COLORS.bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Ink bar — bottom, mirrors the team-color bar on driver cards
+  ctx.fillStyle = RECORD_COLORS.text1;
+  ctx.fillRect(0, h - Math.round(ref * 0.0055), w, Math.round(ref * 0.0055));
+
+  // Wordmark — top-left, matches navbar (PADDOCK·INTEL, red middot)
+  const wmSize = ref * 0.021;
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.font = `700 ${wmSize}px ${fonts.sans}`;
+  const wmY = pad + wmSize;
+  ctx.fillStyle = RECORD_COLORS.text1;
+  ctx.fillText('PADDOCK', pad, wmY);
+  const wPaddock = ctx.measureText('PADDOCK').width;
+  ctx.fillStyle = RECORD_COLORS.red;
+  ctx.fillText('·', pad + wPaddock, wmY);
+  const wDot = ctx.measureText('·').width;
+  ctx.fillStyle = RECORD_COLORS.text1;
+  ctx.fillText('INTEL', pad + wPaddock + wDot, wmY);
+
+  // Watermark URL — bottom-left
+  ctx.font = `400 ${ref * 0.015}px ${fonts.mono}`;
+  ctx.fillStyle = RECORD_COLORS.text2;
+  ctx.fillText(`hub.paddockintel.com/${path}`, pad, h - pad * 0.55);
+}
+
+function drawRecordRows(
+  ctx: CanvasRenderingContext2D,
+  entries: ScorecardRecordEntry[],
+  x: number,
+  xEnd: number,
+  yTop: number,
+  rowH: number,
+  ref: number,
+  fonts: { sans: string; mono: string },
+): void {
+  entries.forEach((e, i) => {
+    const top = yTop + i * rowH;
+    const baseline = top + rowH * 0.66;
+
+    // Hairline above each row
+    ctx.fillStyle = RECORD_COLORS.text3;
+    ctx.fillRect(x, top, xEnd - x, 1);
+
+    ctx.textAlign = 'left';
+    ctx.font = `400 ${ref * 0.016}px ${fonts.mono}`;
+    ctx.fillStyle = RECORD_COLORS.text3;
+    ctx.fillText(String(e.rank).padStart(2, '0'), x, baseline);
+
+    ctx.font = `600 ${ref * 0.023}px ${fonts.sans}`;
+    ctx.fillStyle = RECORD_COLORS.text1;
+    const nameX = x + ref * 0.045;
+    ctx.fillText(e.name.toUpperCase(), nameX, baseline);
+
+    if (e.detail) {
+      const nameW = ctx.measureText(e.name.toUpperCase()).width;
+      ctx.font = `400 ${ref * 0.015}px ${fonts.mono}`;
+      ctx.fillStyle = RECORD_COLORS.text3;
+      ctx.fillText(e.detail, nameX + nameW + ref * 0.014, baseline);
+    }
+
+    ctx.textAlign = 'right';
+    ctx.font = `500 ${ref * 0.024}px ${fonts.mono}`;
+    ctx.fillStyle = RECORD_COLORS.text1;
+    ctx.fillText(e.value, xEnd, baseline);
+  });
+  ctx.textAlign = 'left';
+}
+
+export function drawRecordCard(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  data: ScorecardRecordData,
+): void {
+  const ref = Math.min(w, h);
+  const pad = ref * 0.07;
+  const fonts = recordFontFamilies();
+  const [leader, ...rest] = data.entries;
+  if (!leader) return;
+
+  drawRecordChrome(ctx, w, h, pad, ref, data.path, fonts);
+
+  const kicker = data.kicker.toUpperCase();
+  const title = data.title.toUpperCase();
+  const leaderMeta = [data.unit.toUpperCase(), leader.detail]
+    .filter(Boolean)
+    .join('  ·  ');
+
+  if (w > h) {
+    // ── Landscape 16:9 — title + record holder left, rows 02–05 right ──
+    const divider = w * 0.54;
+    const colW = divider - pad * 1.75;
+
+    ctx.font = `400 ${ref * 0.017}px ${fonts.mono}`;
+    ctx.fillStyle = RECORD_COLORS.text2;
+    ctx.fillText(kicker, pad, h * 0.26);
+
+    const titleSize = fitFontSize(ctx, title, fonts.display, 400, ref * 0.062, colW);
+    ctx.fillStyle = RECORD_COLORS.text1;
+    ctx.fillText(title, pad, h * 0.26 + titleSize * 1.35);
+
+    const heroSize = ref * 0.17;
+    ctx.font = `400 ${heroSize}px ${fonts.display}`;
+    ctx.fillStyle = RECORD_COLORS.red;
+    ctx.fillText(leader.value, pad, h * 0.66);
+
+    const nameSize = fitFontSize(ctx, leader.name.toUpperCase(), fonts.display, 400, ref * 0.045, colW);
+    ctx.fillStyle = RECORD_COLORS.text1;
+    ctx.fillText(leader.name.toUpperCase(), pad, h * 0.66 + nameSize * 1.6);
+
+    ctx.font = `400 ${ref * 0.017}px ${fonts.mono}`;
+    ctx.fillStyle = RECORD_COLORS.text2;
+    ctx.fillText(leaderMeta, pad, h * 0.66 + nameSize * 1.6 + ref * 0.034);
+
+    // Divider hairline
+    ctx.fillStyle = RECORD_COLORS.text3;
+    ctx.fillRect(divider, pad * 1.4, 1, h - pad * 2.8);
+
+    drawRecordRows(ctx, rest, divider + pad * 0.8, w - pad, h * 0.26, h * 0.145, ref, fonts);
+  } else {
+    // ── Portrait 1:1 / 9:16 — stacked ──
+    const contentW = w - pad * 2;
+
+    ctx.font = `400 ${ref * 0.017}px ${fonts.mono}`;
+    ctx.fillStyle = RECORD_COLORS.text2;
+    ctx.fillText(kicker, pad, h * 0.145);
+
+    const titleSize = fitFontSize(ctx, title, fonts.display, 400, ref * 0.062, contentW);
+    ctx.fillStyle = RECORD_COLORS.text1;
+    ctx.fillText(title, pad, h * 0.145 + titleSize * 1.35);
+
+    const heroSize = ref * 0.185;
+    ctx.font = `400 ${heroSize}px ${fonts.display}`;
+    ctx.fillStyle = RECORD_COLORS.red;
+    ctx.fillText(leader.value, pad, h * 0.42);
+
+    const nameSize = fitFontSize(ctx, leader.name.toUpperCase(), fonts.display, 400, ref * 0.05, contentW);
+    ctx.fillStyle = RECORD_COLORS.text1;
+    ctx.fillText(leader.name.toUpperCase(), pad, h * 0.42 + nameSize * 1.55);
+
+    ctx.font = `400 ${ref * 0.017}px ${fonts.mono}`;
+    ctx.fillStyle = RECORD_COLORS.text2;
+    ctx.fillText(leaderMeta, pad, h * 0.42 + nameSize * 1.55 + ref * 0.034);
+
+    drawRecordRows(ctx, rest, pad, w - pad, h * 0.60, h * 0.063, ref, fonts);
+  }
+}
+
 // ─── Public draw functions ────────────────────────────────────────────────────
 
 export function drawDriverCard(

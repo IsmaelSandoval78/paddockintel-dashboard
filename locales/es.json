@@ -5,6 +5,7 @@
     "drivers": "Pilotos",
     "constructors": "Constructores",
     "compare": "Comparar",
+    "records": "Récords",
     "economics": "Economía",
     "operations": "Operaciones",
     "regulations": "Regulaciones",
@@ -534,6 +535,29 @@
   "scorecard": {
     "share": "Compartir →",
     "download": "Descargar PNG"
+  },
+  "records": {
+    "title": "Récords",
+    "allTime": "Histórico",
+    "count": "{count} categorías",
+    "top10": "Top 10 · Histórico",
+    "leader": "Poseedor del récord",
+    "fullRanking": "Top 10 completo",
+    "back": "Todos los récords",
+    "updated": "Actualizado tras cada Gran Premio",
+    "cardKicker": "Récord Histórico de F1",
+    "shareScorecard": "Scorecard →",
+    "metaTitle": "{title} en la Historia de la F1",
+    "metaDescription": "{title} en la Fórmula 1, de 1950 a hoy — el top 10 histórico, con datos reales actualizados tras cada Gran Premio.",
+    "indexMetaTitle": "Récords Históricos de la F1",
+    "indexMetaDescription": "¿Quién tiene más victorias, poles, podios y campeonatos en la historia de la F1? Siete rankings históricos, actualizados tras cada Gran Premio.",
+    "most-wins": { "title": "Más Victorias", "unit": "Victorias" },
+    "most-poles": { "title": "Más Pole Positions", "unit": "Poles" },
+    "most-podiums": { "title": "Más Podios", "unit": "Podios" },
+    "most-fastest-laps": { "title": "Más Vueltas Rápidas", "unit": "Vueltas rápidas" },
+    "most-championships": { "title": "Más Campeonatos Mundiales", "unit": "Títulos" },
+    "most-points": { "title": "Más Puntos", "unit": "Puntos" },
+    "longest-win-streak": { "title": "Racha de Victorias Más Larga", "unit": "Victorias consecutivas" }
   },
   "digest": {
     "kicker": "Resumen Semanal",

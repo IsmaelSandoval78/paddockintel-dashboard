@@ -66,12 +66,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return [...staticRoutes, ...articleRoutes, ...issueRoutes];
   }
 
+  const recordSlugs = [
+    'most-wins',
+    'most-poles',
+    'most-podiums',
+    'most-fastest-laps',
+    'most-championships',
+    'most-points',
+    'longest-win-streak',
+  ];
+
   return [
     { url: `${HUB_BASE}/`,              lastModified: new Date(), changeFrequency: 'daily',   priority: 1.0 },
     { url: `${HUB_BASE}/circuits/`,     lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.8 },
     { url: `${HUB_BASE}/drivers/`,      lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.8 },
     { url: `${HUB_BASE}/constructors/`, lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.8 },
     { url: `${HUB_BASE}/compare/`,      lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${HUB_BASE}/records/`,      lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.8 },
+    ...recordSlugs.map((slug) => ({
+      url: `${HUB_BASE}/records/${slug}/`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.75,
+    })),
     { url: `${HUB_BASE}/es/`,           lastModified: new Date(), changeFrequency: 'daily',   priority: 0.9 },
     { url: `${HUB_BASE}/pt/`,           lastModified: new Date(), changeFrequency: 'daily',   priority: 0.9 },
   ];
