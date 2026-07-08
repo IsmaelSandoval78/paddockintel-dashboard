@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PaddockIntel Dashboard
 
-## Getting Started
+**hub.paddockintel.com** — F1 economic and performance intelligence hub. Interactive, editorial platform covering historical F1 data (1950–present) across four surfaces: Hub (stats/map), Blog, Digest (newsletter), and Book.
 
-First, run the development server:
+## Stack
+
+Next.js 16 (App Router, Turbopack) · TypeScript · Tailwind v4 · Supabase (Postgres + Ergast dataset) · Vercel · next-intl (EN/ES/PT)
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You'll need a `.env.local` with Supabase credentials (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and a service role key for server routes) — see `.env.example` if present, or ask for the values, they are **not** in git.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Key docs — read these before making changes
 
-## Learn More
+- **`DESIGN.md`** — the single source of truth for visual tokens (color, type, spacing, motion). Never hardcode a value that contradicts this file.
+- **`PRODUCT.md`** — brand voice, anti-references, design principles.
+- **`PHASES.md`** — living status log of what's actually shipped vs. pending. Check here before assuming a feature does or doesn't exist.
+- **`CLAUDE.md`** / **`AGENTS.md`** — guidelines for AI coding agents working in this repo.
+- **`docs/archive/`** — superseded planning docs, kept for historical reference only. Not the active plan.
 
-To learn more about Next.js, take a look at the following resources:
+## Database / migrations
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Schema changes **always** go through the Supabase CLI, never pasted directly into the SQL Editor:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npx supabase migration new nombre_del_cambio
+# edit the generated .sql file
+npx supabase db push
+```
 
-## Deploy on Vercel
+The full baseline schema lives in `supabase/migrations/00000000000000_baseline_schema.sql`. If `npx supabase migration list` ever shows local/remote out of sync, resolve it with `supabase migration repair` — don't just re-run migrations blindly.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deploy
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Auto-deploys to Vercel on push to `main`.
