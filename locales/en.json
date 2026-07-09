@@ -539,7 +539,7 @@
   "records": {
     "title": "Records",
     "allTime": "All time",
-    "count": "{count} categories",
+    "count": "{count, plural, one {# category} other {# categories}}",
     "top10": "Top 10 · All time",
     "leader": "Record holder",
     "fullRanking": "Full top 10",
@@ -575,7 +575,17 @@
       "oldest": "Oldest winner",
       "ageUnit": "years old"
     },
-    "most-wins-single-circuit": { "title": "Most Wins at a Single Circuit", "unit": "Wins" }
+    "most-wins-single-circuit": { "title": "Most Wins at a Single Circuit", "unit": "Wins" },
+    "sectionSeasonBattles": "Season Battles",
+    "closestChampionships": {
+      "title": "Closest Championships",
+      "unit": "Point gap",
+      "gapUnit": "pts",
+      "vs": "vs.",
+      "round": "Rd",
+      "race": "Race",
+      "gapColumn": "Gap"
+    }
   },
   "digest": {
     "kicker": "Weekly Digest",

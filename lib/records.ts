@@ -418,3 +418,170 @@ export async function fetchCircuitWinRecord(limit = 10): Promise<CircuitWinRecor
     };
   });
 }
+
+// ─── Record categories (v3 — closest championships, season_title_fights) ──
+
+export interface SeasonTitleFight {
+  year: number;
+  championId: number;
+  championRef: string | null;
+  championName: string;
+  runnerUpId: number;
+  runnerUpRef: string | null;
+  runnerUpName: string;
+  championPoints: number;
+  runnerUpPoints: number;
+  gap: number;
+}
+
+async function fetchDriverNames(driverIds: number[]): Promise<Map<number, string>> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from('drivers')
+    .select('id, forename, surname')
+    .in('id', driverIds);
+  return new Map(
+    (data ?? []).map((d) => [d.id as number, `${d.forename as string} ${d.surname as string}`])
+  );
+}
+
+function mapTitleFightRow(
+  row: { year: number; champion_id: number; runner_up_id: number; champion_points: number; runner_up_points: number; gap: number },
+  names: Map<number, string>,
+  refs: Map<number, { driver_ref: string; code: string | null; nationality: string | null }>
+): SeasonTitleFight {
+  return {
+    year: row.year,
+    championId: row.champion_id,
+    championRef: refs.get(row.champion_id)?.driver_ref ?? null,
+    championName: names.get(row.champion_id) ?? '',
+    runnerUpId: row.runner_up_id,
+    runnerUpRef: refs.get(row.runner_up_id)?.driver_ref ?? null,
+    runnerUpName: names.get(row.runner_up_id) ?? '',
+    championPoints: row.champion_points,
+    runnerUpPoints: row.runner_up_points,
+    gap: row.gap,
+  };
+}
+
+export async function fetchClosestChampionships(limit = 10): Promise<SeasonTitleFight[]> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from('season_title_fights')
+    .select('year, champion_id, runner_up_id, champion_points, runner_up_points, gap')
+    .order('gap', { ascending: true })
+    .limit(limit);
+
+  const rows = data ?? [];
+  const ids = [...new Set(rows.flatMap((r) => [r.champion_id as number, r.runner_up_id as number]))];
+  const [refs, names] = await Promise.all([fetchDriverRefs(ids), fetchDriverNames(ids)]);
+
+  return rows.map((r) =>
+    mapTitleFightRow(
+      {
+        year: r.year as number,
+        champion_id: r.champion_id as number,
+        runner_up_id: r.runner_up_id as number,
+        champion_points: r.champion_points as number,
+        runner_up_points: r.runner_up_points as number,
+        gap: r.gap as number,
+      },
+      names,
+      refs
+    )
+  );
+}
+
+export async function fetchSeasonTitleFight(year: number): Promise<SeasonTitleFight | null> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from('season_title_fights')
+    .select('year, champion_id, runner_up_id, champion_points, runner_up_points, gap')
+    .eq('year', year)
+    .maybeSingle();
+  if (!data) return null;
+
+  const ids = [data.champion_id as number, data.runner_up_id as number];
+  const [refs, names] = await Promise.all([fetchDriverRefs(ids), fetchDriverNames(ids)]);
+
+  return mapTitleFightRow(
+    {
+      year: data.year as number,
+      champion_id: data.champion_id as number,
+      runner_up_id: data.runner_up_id as number,
+      champion_points: data.champion_points as number,
+      runner_up_points: data.runner_up_points as number,
+      gap: data.gap as number,
+    },
+    names,
+    refs
+  );
+}
+
+export async function fetchTitleFightYears(): Promise<number[]> {
+  const supabase = createClient();
+  const { data } = await supabase.from('season_title_fights').select('year');
+  return (data ?? []).map((r) => r.year as number);
+}
+
+export interface SeasonBattleRound {
+  round: number;
+  raceName: string;
+  championPoints: number;
+  runnerUpPoints: number;
+  gap: number;
+}
+
+// driver_standings coverage varies by era (1991-2002 top 6 only, 2010+ top 10) —
+// rows simply won't exist for a driver outside the points that round. Missing
+// rows are treated as 0, the real historical points tally, not "corrected".
+export async function fetchSeasonBattle(
+  year: number,
+  championId: number,
+  runnerUpId: number
+): Promise<SeasonBattleRound[]> {
+  const supabase = createClient();
+  const { data: races } = await supabase
+    .from('races')
+    .select('id, round, name')
+    .eq('year', year)
+    .order('round', { ascending: true });
+  const seasonRaces = races ?? [];
+  const raceIds = seasonRaces.map((r) => r.id as number);
+
+  const { data: standings } = await supabase
+    .from('driver_standings')
+    .select('race_id, driver_id, points')
+    .in('race_id', raceIds)
+    .in('driver_id', [championId, runnerUpId]);
+
+  const byRace = new Map<number, { champion: number; runnerUp: number }>();
+  for (const s of standings ?? []) {
+    const raceId = s.race_id as number;
+    const entry = byRace.get(raceId) ?? { champion: 0, runnerUp: 0 };
+    if (s.driver_id === championId) entry.champion = s.points as number;
+    if (s.driver_id === runnerUpId) entry.runnerUp = s.points as number;
+    byRace.set(raceId, entry);
+  }
+
+  return seasonRaces.map((r) => {
+    const entry = byRace.get(r.id as number) ?? { champion: 0, runnerUp: 0 };
+    return {
+      round: r.round as number,
+      raceName: r.name as string,
+      championPoints: entry.champion,
+      runnerUpPoints: entry.runnerUp,
+      gap: entry.champion - entry.runnerUp,
+    };
+  });
+}
+
+// signDisplay adds the "+"/"-" the index rows and hero number need — a bare
+// gap of 0.5 reads as an unsigned quantity otherwise
+export function formatGap(gap: number, locale: string): string {
+  return new Intl.NumberFormat(locale, {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+    signDisplay: 'exceptZero',
+  }).format(gap);
+}

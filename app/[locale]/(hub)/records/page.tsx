@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { Link } from '@/lib/i18n/navigation';
 import {
   RECORD_SLUGS,
   CONSTRUCTOR_RECORD_SLUGS,
@@ -8,9 +9,11 @@ import {
   fetchAllConstructorRecords,
   fetchYoungestOldestWinners,
   fetchCircuitWinRecord,
+  fetchClosestChampionships,
   formatRecordValue,
   formatConstructorRecordValue,
   formatAgeYears,
+  formatGap,
 } from '@/lib/records';
 import { RecordCard, type RecordCardRow } from '@/components/records/RecordCard';
 
@@ -18,8 +21,13 @@ export const revalidate = 3600;
 
 type PageParams = Promise<{ locale: string }>;
 
+const SEASON_BATTLE_CATEGORY_COUNT = 1;
+
 const TOTAL_CATEGORIES =
-  RECORD_SLUGS.length + CONSTRUCTOR_RECORD_SLUGS.length + SPECIAL_RECORD_SLUGS.length;
+  RECORD_SLUGS.length +
+  CONSTRUCTOR_RECORD_SLUGS.length +
+  SPECIAL_RECORD_SLUGS.length +
+  SEASON_BATTLE_CATEGORY_COUNT;
 
 export async function generateMetadata({
   params,
@@ -53,11 +61,12 @@ export default async function RecordsPage({ params }: { params: PageParams }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'records' });
 
-  const [driverRecords, constructorRecords, { youngest, oldest }, circuitWins] = await Promise.all([
+  const [driverRecords, constructorRecords, { youngest, oldest }, circuitWins, seasonBattles] = await Promise.all([
     fetchAllRecords(3),
     fetchAllConstructorRecords(3),
     fetchYoungestOldestWinners(3),
     fetchCircuitWinRecord(3),
+    fetchClosestChampionships(3),
   ]);
 
   const youngestLeader = youngest[0];
@@ -253,6 +262,42 @@ export default async function RecordsPage({ params }: { params: PageParams }) {
             valueDisplay: formatRecordValue('most-wins', e.value, locale),
           }))}
         />
+      </div>
+
+      {/* ── Season Battles ───────────────────────────────────── */}
+      <SectionHeader
+        number="D"
+        label={t('sectionSeasonBattles')}
+        count={t('count', { count: SEASON_BATTLE_CATEGORY_COUNT })}
+      />
+      <div className="border-l border-r border-border">
+        {seasonBattles.map((f, i) => (
+          <Link
+            key={f.year}
+            href={`/records/closest-championships/${f.year}`}
+            className="flex items-center gap-3 md:gap-5 h-12 px-5 border-b border-border-subtle hover:bg-surface-raised transition-colors duration-150 no-underline"
+          >
+            <span className="font-mono text-[10px] text-text-3 tabular-nums w-7 shrink-0">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <span className="font-mono text-[13px] text-text-1 tabular-nums w-12 shrink-0">{f.year}</span>
+            <span className="text-[13px] font-medium uppercase truncate text-text-1">
+              {f.championName} <span className="text-text-3 normal-case">{t('closestChampionships.vs')}</span>{' '}
+              {f.runnerUpName}
+            </span>
+            <span className="font-mono text-[13px] tabular-nums ml-auto shrink-0 text-red">
+              {formatGap(f.gap, locale)} {t('closestChampionships.gapUnit')}
+            </span>
+          </Link>
+        ))}
+        <Link
+          href="/records/closest-championships"
+          className="flex items-center h-10 px-5 border-b border-border hover:bg-surface-raised transition-colors duration-150 no-underline"
+        >
+          <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-2 hover:text-red transition-colors duration-150 ml-auto">
+            {t('fullRanking')} →
+          </span>
+        </Link>
       </div>
     </main>
   );

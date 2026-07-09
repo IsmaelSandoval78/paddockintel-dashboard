@@ -525,6 +525,126 @@ export function drawRecordCard(
   }
 }
 
+// ─── Season battle scorecard (Records Hub v3 — closest championships) ────────
+
+export interface ScorecardSeasonBattleData {
+  kicker: string;      // "F1 CLOSEST CHAMPIONSHIPS"
+  year: string;         // "1984"
+  path: string;          // "records/closest-championships/1984"
+  championName: string;
+  runnerUpName: string;
+  gapValue: string;      // pre-formatted, e.g. "+0.5"
+  gapUnit: string;        // "PTS"
+  rounds: { championPoints: number; runnerUpPoints: number }[];
+}
+
+function drawSeasonSparkline(
+  ctx: CanvasRenderingContext2D,
+  rounds: { championPoints: number; runnerUpPoints: number }[],
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  ref: number,
+): void {
+  if (rounds.length < 2) return;
+  const maxPoints = Math.max(1, ...rounds.flatMap((r) => [r.championPoints, r.runnerUpPoints]));
+  const n = rounds.length;
+  const px = (i: number) => x + (w * i) / (n - 1);
+  const py = (v: number) => y + h - (h * v) / maxPoints;
+
+  ctx.lineWidth = Math.max(2, ref * 0.006);
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+
+  ctx.strokeStyle = RECORD_COLORS.text3;
+  ctx.beginPath();
+  rounds.forEach((r, i) => (i === 0 ? ctx.moveTo(px(i), py(r.runnerUpPoints)) : ctx.lineTo(px(i), py(r.runnerUpPoints))));
+  ctx.stroke();
+
+  ctx.strokeStyle = RECORD_COLORS.red;
+  ctx.beginPath();
+  rounds.forEach((r, i) => (i === 0 ? ctx.moveTo(px(i), py(r.championPoints)) : ctx.lineTo(px(i), py(r.championPoints))));
+  ctx.stroke();
+}
+
+export function drawSeasonBattleCard(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  data: ScorecardSeasonBattleData,
+): void {
+  const ref = Math.min(w, h);
+  const pad = ref * 0.07;
+  const fonts = recordFontFamilies();
+
+  drawRecordChrome(ctx, w, h, pad, ref, data.path, fonts);
+
+  const kicker = data.kicker.toUpperCase();
+  const vsLine = `${data.championName.toUpperCase()}  VS  ${data.runnerUpName.toUpperCase()}`;
+
+  if (w > h) {
+    const divider = w * 0.54;
+    const colW = divider - pad * 1.75;
+
+    ctx.font = `400 ${ref * 0.017}px ${fonts.mono}`;
+    ctx.fillStyle = RECORD_COLORS.text2;
+    ctx.fillText(kicker, pad, h * 0.20);
+
+    const yearSize = ref * 0.17;
+    ctx.font = `400 ${yearSize}px ${fonts.display}`;
+    ctx.fillStyle = RECORD_COLORS.text1;
+    ctx.fillText(data.year, pad, h * 0.20 + yearSize * 1.05);
+
+    const vsSize = fitFontSize(ctx, vsLine, fonts.sans, 600, ref * 0.026, colW);
+    ctx.font = `600 ${vsSize}px ${fonts.sans}`;
+    ctx.fillStyle = RECORD_COLORS.text1;
+    const vsY = h * 0.20 + yearSize * 1.05 + vsSize * 1.8;
+    ctx.fillText(vsLine, pad, vsY);
+
+    const gapSize = ref * 0.05;
+    ctx.font = `400 ${gapSize}px ${fonts.display}`;
+    ctx.fillStyle = RECORD_COLORS.red;
+    const gapY = vsY + gapSize * 1.4;
+    ctx.fillText(data.gapValue, pad, gapY);
+
+    ctx.font = `400 ${ref * 0.015}px ${fonts.mono}`;
+    ctx.fillStyle = RECORD_COLORS.text2;
+    ctx.fillText(data.gapUnit.toUpperCase(), pad, gapY + ref * 0.03);
+
+    drawSeasonSparkline(ctx, data.rounds, divider + pad * 0.8, h * 0.28, w - pad - (divider + pad * 0.8), h * 0.44, ref);
+  } else {
+    const contentW = w - pad * 2;
+
+    ctx.font = `400 ${ref * 0.017}px ${fonts.mono}`;
+    ctx.fillStyle = RECORD_COLORS.text2;
+    ctx.fillText(kicker, pad, h * 0.145);
+
+    const yearSize = ref * 0.185;
+    ctx.font = `400 ${yearSize}px ${fonts.display}`;
+    ctx.fillStyle = RECORD_COLORS.text1;
+    ctx.fillText(data.year, pad, h * 0.145 + yearSize * 1.05);
+
+    const vsSize = fitFontSize(ctx, vsLine, fonts.sans, 600, ref * 0.026, contentW);
+    ctx.font = `600 ${vsSize}px ${fonts.sans}`;
+    ctx.fillStyle = RECORD_COLORS.text1;
+    const vsY = h * 0.145 + yearSize * 1.05 + vsSize * 1.8;
+    ctx.fillText(vsLine, pad, vsY);
+
+    const gapSize = ref * 0.06;
+    ctx.font = `400 ${gapSize}px ${fonts.display}`;
+    ctx.fillStyle = RECORD_COLORS.red;
+    const gapY = vsY + gapSize * 1.5;
+    ctx.fillText(data.gapValue, pad, gapY);
+
+    ctx.font = `400 ${ref * 0.015}px ${fonts.mono}`;
+    ctx.fillStyle = RECORD_COLORS.text2;
+    ctx.fillText(data.gapUnit.toUpperCase(), pad, gapY + ref * 0.03);
+
+    drawSeasonSparkline(ctx, data.rounds, pad, h * 0.62, contentW, h * 0.22, ref);
+  }
+}
+
 // ─── Public draw functions ────────────────────────────────────────────────────
 
 export function drawDriverCard(

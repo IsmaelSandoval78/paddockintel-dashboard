@@ -539,7 +539,7 @@
   "records": {
     "title": "Recordes",
     "allTime": "Histórico",
-    "count": "{count} categorias",
+    "count": "{count, plural, one {# categoria} other {# categorias}}",
     "top10": "Top 10 · Histórico",
     "leader": "Detentor do recorde",
     "fullRanking": "Top 10 completo",
@@ -575,7 +575,17 @@
       "oldest": "Vencedor mais veterano",
       "ageUnit": "anos"
     },
-    "most-wins-single-circuit": { "title": "Mais Vitórias em um Mesmo Circuito", "unit": "Vitórias" }
+    "most-wins-single-circuit": { "title": "Mais Vitórias em um Mesmo Circuito", "unit": "Vitórias" },
+    "sectionSeasonBattles": "Batalhas de Temporada",
+    "closestChampionships": {
+      "title": "Campeonatos Mais Disputados",
+      "unit": "Diferença de pontos",
+      "gapUnit": "pts",
+      "vs": "vs.",
+      "round": "Rodada",
+      "race": "Corrida",
+      "gapColumn": "Diferença"
+    }
   },
   "digest": {
     "kicker": "Resumo Semanal",
