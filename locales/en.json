@@ -324,6 +324,9 @@
       "title": "Career Arc",
       "champion": "Champion"
     },
+    "careerPath": {
+      "title": "Path to F1"
+    },
     "hero": {
       "label": "Driver",
       "races": "Races",

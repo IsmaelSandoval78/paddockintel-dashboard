@@ -243,6 +243,24 @@ export default async function DriverDetailPage({
     ])
   );
 
+  // ─── Assemble: career history (junior categories → F1) ─────────────
+
+  const { data: careerHistoryRaw } = await supabase
+    .from('driver_career_history')
+    .select('season, series_name, team, position, points, role_note')
+    .eq('driver_id', driver.driver_ref)
+    .order('season', { ascending: true });
+
+  const careerHistory = (careerHistoryRaw ?? []).map((r) => ({
+    season: r.season as string,
+    series: r.series_name as string,
+    team: (r.team as string | null) ?? null,
+    position: (r.position as string | null) ?? null,
+    points: (r.points as string | null) ?? null,
+    roleNote: (r.role_note as string | null) ?? null,
+    isF1: (r.series_name as string) === 'Formula One',
+  }));
+
   // ─── Assemble: §06 circuit records ────────────────────────────────────────
 
   const finishedStatusId =
@@ -530,6 +548,7 @@ export default async function DriverDetailPage({
       constructorRows={constructorRows}
       maxConRaces={maxConRaces}
       circuitRecords={circuitRecords}
+      careerHistory={careerHistory}
     />
   );
 }

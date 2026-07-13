@@ -1,0 +1,202 @@
+{
+  "gasly": {
+    "full_name": "Pierre Gasly",
+    "wikipedia_title": "Pierre Gasly",
+    "confidence": "high",
+    "other_candidates": [
+      "George Russell (racing driver)",
+      "Pierre"
+    ]
+  },
+  "hulkenberg": {
+    "full_name": "Nico Hülkenberg",
+    "wikipedia_title": "Nico Hülkenberg",
+    "confidence": "high",
+    "other_candidates": [
+      "Nico Rosberg",
+      "Formula One drivers from Germany"
+    ]
+  },
+  "perez": {
+    "full_name": "Sergio Pérez",
+    "wikipedia_title": "Sergio Pérez",
+    "confidence": "high",
+    "other_candidates": [
+      "Racing Point F1 Team",
+      "Red Bull Racing"
+    ]
+  },
+  "bottas": {
+    "full_name": "Valtteri Bottas",
+    "wikipedia_title": "Valtteri Bottas",
+    "confidence": "high",
+    "other_candidates": [
+      "George Russell (racing driver)",
+      "Williams Racing"
+    ]
+  },
+  "max_verstappen": {
+    "full_name": "Max Verstappen",
+    "wikipedia_title": "Max Verstappen",
+    "confidence": "high",
+    "other_candidates": [
+      "Jos Verstappen",
+      "2024 Formula One World Championship",
+      "2025 Formula One World Championship",
+      "2026 Formula One World Championship"
+    ]
+  },
+  "bearman": {
+    "full_name": "Oliver Bearman",
+    "wikipedia_title": "Oliver Bearman",
+    "confidence": "high",
+    "other_candidates": [
+      "Thomas Bearman",
+      "Ferrari Driver Academy"
+    ]
+  },
+  "colapinto": {
+    "full_name": "Franco Colapinto",
+    "wikipedia_title": "Franco Colapinto",
+    "confidence": "high",
+    "other_candidates": [
+      "Williams F1 Team Driver Academy",
+      "2025 British Grand Prix"
+    ]
+  },
+  "antonelli": {
+    "full_name": "Andrea Kimi Antonelli",
+    "wikipedia_title": "Kimi Antonelli",
+    "confidence": "high",
+    "other_candidates": [
+      "George Russell (racing driver)",
+      "2024 Formula 2 Championship"
+    ]
+  },
+  "bortoleto": {
+    "full_name": "Gabriel Bortoleto",
+    "wikipedia_title": "Gabriel Bortoleto",
+    "confidence": "high",
+    "other_candidates": [
+      "2024 Formula 2 Championship",
+      "Formula One drivers from Brazil"
+    ]
+  },
+  "hadjar": {
+    "full_name": "Isack Hadjar",
+    "wikipedia_title": "Isack Hadjar",
+    "confidence": "high",
+    "other_candidates": [
+      "Red Bull Racing RB22",
+      "Racing Bulls"
+    ]
+  },
+  "arvid_lindblad": {
+    "full_name": "Arvid Lindblad",
+    "wikipedia_title": "Arvid Lindblad",
+    "confidence": "high",
+    "other_candidates": [
+      "Freddie Slater (racing driver)",
+      "Campos Racing"
+    ]
+  },
+  "hamilton": {
+    "full_name": "Lewis Hamilton",
+    "wikipedia_title": "Lewis Hamilton",
+    "confidence": "high",
+    "other_candidates": [
+      "Anthony Hamilton (racing manager)",
+      "Nicolas Hamilton"
+    ]
+  },
+  "alonso": {
+    "full_name": "Fernando Alonso",
+    "wikipedia_title": "Fernando Alonso",
+    "confidence": "high",
+    "other_candidates": [
+      "Campos Racing",
+      "Formula One drivers from Spain"
+    ]
+  },
+  "sainz": {
+    "full_name": "Carlos Sainz",
+    "wikipedia_title": "Carlos Sainz Jr.",
+    "confidence": "high",
+    "other_candidates": [
+      "Carlos Sainz Sr.",
+      "Formula One drivers from Spain"
+    ]
+  },
+  "ocon": {
+    "full_name": "Esteban Ocon",
+    "wikipedia_title": "Esteban Ocon",
+    "confidence": "high",
+    "other_candidates": [
+      "George Russell (racing driver)",
+      "Esteban"
+    ]
+  },
+  "stroll": {
+    "full_name": "Lance Stroll",
+    "wikipedia_title": "Lance Stroll",
+    "confidence": "high",
+    "other_candidates": [
+      "Lawrence Stroll",
+      "Racing Point F1 Team"
+    ]
+  },
+  "leclerc": {
+    "full_name": "Charles Leclerc",
+    "wikipedia_title": "Charles Leclerc",
+    "confidence": "high",
+    "other_candidates": [
+      "Hervé Leclerc",
+      "Arthur Leclerc"
+    ]
+  },
+  "norris": {
+    "full_name": "Lando Norris",
+    "wikipedia_title": "Lando Norris",
+    "confidence": "high",
+    "other_candidates": [
+      "George Russell (racing driver)",
+      "2025 British Grand Prix"
+    ]
+  },
+  "russell": {
+    "full_name": "George Russell",
+    "wikipedia_title": "George Russell (racing driver)",
+    "confidence": "high",
+    "other_candidates": [
+      "Kimi Antonelli",
+      "George Russell"
+    ]
+  },
+  "albon": {
+    "full_name": "Alexander Albon",
+    "wikipedia_title": "Alex Albon",
+    "confidence": "high",
+    "other_candidates": [
+      "Red Bull Racing RB16",
+      "Williams Racing"
+    ]
+  },
+  "piastri": {
+    "full_name": "Oscar Piastri",
+    "wikipedia_title": "Oscar Piastri",
+    "confidence": "high",
+    "other_candidates": [
+      "George Russell (racing driver)",
+      "2025 British Grand Prix"
+    ]
+  },
+  "lawson": {
+    "full_name": "Liam Lawson",
+    "wikipedia_title": "Liam Lawson",
+    "confidence": "high",
+    "other_candidates": [
+      "Racing Bulls",
+      "George Russell (racing driver)"
+    ]
+  }
+}

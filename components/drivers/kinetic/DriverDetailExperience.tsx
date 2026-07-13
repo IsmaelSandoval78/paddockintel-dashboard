@@ -10,6 +10,7 @@ import DriverHero from './DriverHero';
 import WinHistory, { type WinRow } from './WinHistory';
 import CareerArc from '@/components/drivers/CareerArc';
 import CircuitRecordSection, { type CircuitRecord } from '@/components/drivers/CircuitRecordSection';
+import CareerPathTimeline, { type CareerStageRow } from '@/components/drivers/CareerPathTimeline';
 import { DriverScorecardButton } from '@/components/scorecards/DriverScorecard';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -73,6 +74,7 @@ export interface DriverDetailProps {
   constructorRows: ConstructorRow[];
   maxConRaces: number;
   circuitRecords: CircuitRecord[];
+  careerHistory: CareerStageRow[];
 }
 
 // ─── Orchestrator ──────────────────────────────────────────────────
@@ -90,6 +92,7 @@ export default function DriverDetailExperience({
   constructorRows,
   maxConRaces,
   circuitRecords,
+  careerHistory,
 }: DriverDetailProps) {
   const t = useTranslations('driverDetail');
   const mainRef = useRef<HTMLElement>(null);
@@ -488,6 +491,18 @@ export default function DriverDetailExperience({
           }}
         />
       )}
+      {/* ── 07 · Career Path ───────────────────────────────────── */}
+      {careerHistory.length > 0 && (
+        <section className="driver-section border-b border-border">
+          <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
+            <span className="font-mono text-xs text-text-2 leading-none">07 ·</span>
+            <h2 className="text-[13px] font-medium text-text-2">{t('careerPath.title')}</h2>
+            <span className="font-mono text-[11px] text-text-3 ml-1 tabular-nums">{careerHistory.length}</span>
+          </div>
+          <CareerPathTimeline rows={careerHistory} />
+        </section>
+      )}
+
 
       {/* ── Share scorecard ───────────────────────────────────── */}
       <div className="px-6 py-3 border-t border-border">

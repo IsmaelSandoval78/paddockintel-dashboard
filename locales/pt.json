@@ -324,6 +324,9 @@
       "title": "Trajetória",
       "champion": "Campeão"
     },
+    "careerPath": {
+      "title": "Caminho até a F1"
+    },
     "hero": {
       "label": "Piloto",
       "races": "Corridas",
