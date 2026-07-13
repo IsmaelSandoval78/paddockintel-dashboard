@@ -49,3 +49,4 @@ next-env.d.ts
 .fastf1_cache/
 .claude/settings.json
 supabase/.temp/
+__pycache__/
