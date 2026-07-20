@@ -36,6 +36,7 @@ SUPABASE_KEY = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
 # FastF1 team name → Supabase constructor_ref
 TEAM_TO_CONSTRUCTOR_REF: dict[str, str] = {
     "Red Bull Racing": "red_bull",
+    "Oracle Red Bull Racing": "red_bull",
     "McLaren": "mclaren",
     "Ferrari": "ferrari",
     "Mercedes": "mercedes",
