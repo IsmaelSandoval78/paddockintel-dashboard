@@ -1,0 +1,33 @@
+name: Post-race data loader
+
+# Runs every 3 hours, every day. The loader is idempotent — it auto-detects
+# the oldest past race with no results yet and does nothing if none is
+# pending — so firing well outside actual race windows costs nothing.
+on:
+  schedule:
+    - cron: "0 */3 * * *"
+  workflow_dispatch: {}
+
+concurrency:
+  group: post-race-loader
+  cancel-in-progress: false
+
+jobs:
+  load:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r scripts/requirements-data.txt
+
+      - name: Run loader (auto-detect pending race)
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python scripts/load_race.py --auto

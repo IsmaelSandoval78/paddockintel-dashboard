@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """
 Post-race data loader: FastF1 → Supabase
-Run after each race weekend to update results, qualifying, pit_stops, standings.
+Run after each race weekend to update results, qualifying, sprint, standings.
 
 Usage:
   python scripts/load_race.py --year 2026 --round 11
   python scripts/load_race.py --year 2026 --round 11 --dry-run
   python scripts/load_race.py --year 2026 --round 11 --skip-quali
   python scripts/load_race.py --year 2026 --round 11 --skip-race
+  python scripts/load_race.py --auto              # oldest past race with no results yet
+  python scripts/load_race.py --auto --dry-run
 
 After running, refresh driver_stats / constructor_stats via the Supabase SQL Editor:
   REFRESH MATERIALIZED VIEW driver_stats;
@@ -19,7 +21,7 @@ import argparse
 import os
 import sys
 from collections import defaultdict
-from datetime import timedelta
+from datetime import date, timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -111,18 +113,48 @@ def safe_float(val) -> float | None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Load race weekend data into Supabase")
-    parser.add_argument("--year", type=int, required=True)
-    parser.add_argument("--round", type=int, required=True, dest="round_num")
+    parser.add_argument("--year", type=int, dest="year")
+    parser.add_argument("--round", type=int, dest="round_num")
+    parser.add_argument("--auto", action="store_true", help="Auto-detect the oldest past race with no results loaded yet, ignoring --year/--round")
     parser.add_argument("--dry-run", action="store_true", help="Print what would be inserted, write nothing")
     parser.add_argument("--skip-quali", action="store_true")
     parser.add_argument("--skip-race", action="store_true")
+    parser.add_argument("--skip-sprint", action="store_true")
     args = parser.parse_args()
 
-    year, round_num, dry_run = args.year, args.round_num, args.dry_run
-    print(f"{'[DRY RUN] ' if dry_run else ''}PaddockIntel loader — {year} Round {round_num}\n")
+    if not args.auto and (args.year is None or args.round_num is None):
+        parser.error("--year and --round are required unless --auto is set")
+
+    dry_run = args.dry_run
 
     # ── Supabase connection ──────────────────────────────────────────
     sb: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+    # ── Auto-detect pending race (for scheduled/cron runs) ─────────────
+    if args.auto:
+        today = date.today().isoformat()
+        candidates = (
+            sb.table("races")
+            .select("id, year, round, name, date")
+            .lte("date", today)
+            .order("date")
+            .execute()
+        )
+        target = None
+        for race in candidates.data:
+            has_results = sb.table("results").select("id").eq("race_id", race["id"]).limit(1).execute()
+            if not has_results.data:
+                target = race
+                break
+        if target is None:
+            print("[AUTO] No pending races — everything up to date. Nothing to do.")
+            sys.exit(0)
+        year, round_num = target["year"], target["round"]
+        print(f"[AUTO] Detected pending race: {target['name']} ({year} round {round_num})\n")
+    else:
+        year, round_num = args.year, args.round_num
+
+    print(f"{'[DRY RUN] ' if dry_run else ''}PaddockIntel loader — {year} Round {round_num}\n")
 
     # ── Fetch lookup tables ──────────────────────────────────────────
     drivers_res = sb.table("drivers").select("id, code, number, driver_ref, forename, surname").execute()
@@ -157,7 +189,7 @@ def main() -> None:
     # ── Find race in Supabase ────────────────────────────────────────
     race_res = (
         sb.table("races")
-        .select("id, name, circuit_id")
+        .select("id, name, circuit_id, sprint_date")
         .eq("year", year)
         .eq("round", round_num)
         .single()
@@ -170,15 +202,18 @@ def main() -> None:
 
     race_id: int = race_res.data["id"]
     race_name: str = race_res.data["name"]
-    print(f"Race: {race_name} (id={race_id})\n")
+    has_sprint: bool = bool(race_res.data.get("sprint_date"))
+    print(f"Race: {race_name} (id={race_id}){' [sprint weekend]' if has_sprint else ''}\n")
 
     # ── Fetch next available IDs (tables use serial PKs, not auto-increment) ──
     max_result_id_res  = sb.table("results").select("id").order("id", desc=True).limit(1).execute()
     max_quali_id_res   = sb.table("qualifying").select("id").order("id", desc=True).limit(1).execute()
+    max_sprint_id_res  = sb.table("sprint_results").select("id").order("id", desc=True).limit(1).execute()
     max_dstand_id_res  = sb.table("driver_standings").select("id").order("id", desc=True).limit(1).execute()
     max_cstand_id_res  = sb.table("constructor_standings").select("id").order("id", desc=True).limit(1).execute()
     next_result_id = (max_result_id_res.data[0]["id"]  if max_result_id_res.data  else 0) + 1
     next_quali_id  = (max_quali_id_res.data[0]["id"]   if max_quali_id_res.data   else 0) + 1
+    next_sprint_id = (max_sprint_id_res.data[0]["id"]  if max_sprint_id_res.data  else 0) + 1
     next_dstand_id = (max_dstand_id_res.data[0]["id"]  if max_dstand_id_res.data  else 0) + 1
     next_cstand_id = (max_cstand_id_res.data[0]["id"]  if max_cstand_id_res.data  else 0) + 1
 
@@ -368,6 +403,51 @@ def main() -> None:
         except Exception as exc:
             print(f"  ERROR: {exc}")
             raise
+
+    # ── SPRINT ───────────────────────────────────────────────────────
+    if has_sprint and not args.skip_sprint:
+        print("\n── Sprint ──────────────────────────────────────────")
+        try:
+            sprint_session = fastf1.get_session(year, round_num, "S")
+            sprint_session.load(telemetry=False, weather=False, messages=False, laps=False)
+
+            sprint_rows: list[dict] = []
+            for pos_order, (_, row) in enumerate(sprint_session.results.iterrows(), 1):
+                driver = resolve_driver(code=row.get("Abbreviation"), number=row.get("DriverNumber"))
+                constructor = resolve_constructor(str(row.get("TeamName", "")))
+                if not driver or not constructor:
+                    continue
+
+                status_text = str(row.get("Status", "Finished"))
+                pos_raw = safe_int(row.get("Position"), 0)
+                position = pos_raw if pos_raw > 0 else None
+                position_text = str(position) if position else "R"
+                status_id = status_map.get(status_text, status_map.get("Finished", 1))
+
+                sprint_rows.append({
+                    "id": next_sprint_id + len(sprint_rows),
+                    "race_id": race_id,
+                    "driver_id": driver["id"],
+                    "constructor_id": constructor["id"],
+                    "grid": safe_int(row.get("GridPosition")),
+                    "position": position,
+                    "position_text": position_text,
+                    "position_order": pos_order,
+                    "points": safe_float(row.get("Points")) or 0.0,
+                    "laps": safe_int(row.get("NumberOfLaps")),
+                    "time": td_to_str(row.get("Time")),
+                    "status_id": status_id,
+                })
+                print(f"  P{str(position or 'R'):>3}  {row.get('Abbreviation')}  {status_text}  {safe_float(row.get('Points')) or 0:.0f}pts")
+
+            if not dry_run and sprint_rows:
+                sb.table("sprint_results").delete().eq("race_id", race_id).execute()
+                sb.table("sprint_results").insert(sprint_rows).execute()
+                print(f"\n  ✓ {len(sprint_rows)} sprint result rows inserted")
+            elif dry_run:
+                print(f"\n  [dry-run] would insert {len(sprint_rows)} sprint result rows")
+        except Exception as exc:
+            print(f"  ERROR: {exc}")
 
     # ── STANDINGS ────────────────────────────────────────────────────
     print("\n── Standings ───────────────────────────────────────")
