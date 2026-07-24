@@ -117,21 +117,34 @@ def next_volume_number(sb: Client) -> int:
 def generate_draft(start: date, end: date) -> dict:
     client = Anthropic(api_key=ANTHROPIC_API_KEY)
 
-    max_attempts = 5
+    max_attempts = 7
     response = None
     for attempt in range(1, max_attempts + 1):
         try:
-            response = client.messages.create(
+            with client.messages.stream(
                 model="claude-opus-4-8",
-                max_tokens=8000,
+                max_tokens=16000,
                 system=SYSTEM_PROMPT,
                 tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 12}],
                 output_config={"format": {"type": "json_schema", "schema": DIGEST_JSON_SCHEMA}},
                 messages=[{"role": "user", "content": build_user_prompt(start, end)}],
-            )
+            ) as stream:
+                response = stream.get_final_message()
             break
-        except (anthropic.OverloadedError, anthropic.APIConnectionError, anthropic.InternalServerError) as exc:
-            if attempt == max_attempts:
+        except (anthropic.APIStatusError, anthropic.APIConnectionError) as exc:
+            # Errors that arrive as an SSE "error" event mid-stream carry the
+            # original 200 response, so response.status_code is useless for
+            # retry decisions — the real error type is on exc.type (from the
+            # error body) instead, e.g. "overloaded_error" with status_code 200.
+            status = getattr(exc, "status_code", None)
+            err_type = getattr(exc, "type", None)
+            retryable = (
+                status is None
+                or status == 429
+                or status >= 500
+                or err_type in {"overloaded_error", "rate_limit_error", "api_error"}
+            )
+            if not retryable or attempt == max_attempts:
                 raise
             wait_s = 30 * attempt
             print(f"Attempt {attempt}/{max_attempts} failed ({exc}); retrying in {wait_s}s", file=sys.stderr)
@@ -139,6 +152,10 @@ def generate_draft(start: date, end: date) -> dict:
 
     if response.stop_reason == "refusal":
         print("ERROR: request was refused, no draft generated", file=sys.stderr)
+        sys.exit(1)
+
+    if response.stop_reason == "max_tokens":
+        print("ERROR: hit max_tokens before finishing — output was truncated", file=sys.stderr)
         sys.exit(1)
 
     text_blocks = [b.text for b in response.content if b.type == "text"]
