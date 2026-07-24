@@ -16,9 +16,11 @@ import json
 import os
 import re
 import sys
+import time
 from datetime import date, timedelta
 from pathlib import Path
 
+import anthropic
 import requests
 from anthropic import Anthropic
 from dotenv import load_dotenv
@@ -114,14 +116,26 @@ def next_volume_number(sb: Client) -> int:
 
 def generate_draft(start: date, end: date) -> dict:
     client = Anthropic(api_key=ANTHROPIC_API_KEY)
-    response = client.messages.create(
-        model="claude-opus-4-8",
-        max_tokens=8000,
-        system=SYSTEM_PROMPT,
-        tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 12}],
-        output_config={"format": {"type": "json_schema", "schema": DIGEST_JSON_SCHEMA}},
-        messages=[{"role": "user", "content": build_user_prompt(start, end)}],
-    )
+
+    max_attempts = 5
+    response = None
+    for attempt in range(1, max_attempts + 1):
+        try:
+            response = client.messages.create(
+                model="claude-opus-4-8",
+                max_tokens=8000,
+                system=SYSTEM_PROMPT,
+                tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 12}],
+                output_config={"format": {"type": "json_schema", "schema": DIGEST_JSON_SCHEMA}},
+                messages=[{"role": "user", "content": build_user_prompt(start, end)}],
+            )
+            break
+        except (anthropic.OverloadedError, anthropic.APIConnectionError, anthropic.InternalServerError) as exc:
+            if attempt == max_attempts:
+                raise
+            wait_s = 30 * attempt
+            print(f"Attempt {attempt}/{max_attempts} failed ({exc}); retrying in {wait_s}s", file=sys.stderr)
+            time.sleep(wait_s)
 
     if response.stop_reason == "refusal":
         print("ERROR: request was refused, no draft generated", file=sys.stderr)
