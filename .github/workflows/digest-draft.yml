@@ -1,0 +1,40 @@
+name: Weekly digest draft
+
+# Runs every Monday. Researches the past week's F1 business/economics news
+# and saves a digest issue as status:'draft' in Supabase — never auto-
+# published. Opens a GitHub issue for human review; publish with
+# `python scripts/publish_digest.py <slug>` once approved.
+on:
+  schedule:
+    - cron: "0 13 * * 1"
+  workflow_dispatch: {}
+
+permissions:
+  issues: write
+
+concurrency:
+  group: digest-draft
+  cancel-in-progress: false
+
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r scripts/requirements-data.txt
+
+      - name: Generate digest draft
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: python scripts/generate_digest_draft.py
