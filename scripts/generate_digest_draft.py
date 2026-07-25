@@ -122,7 +122,11 @@ def generate_draft(start: date, end: date) -> dict:
     for attempt in range(1, max_attempts + 1):
         try:
             with client.messages.stream(
-                model="claude-opus-4-8",
+                # Sonnet, not Opus: this is web research + synthesis, not
+                # heavy agentic reasoning — Sonnet 5 is close to Opus quality
+                # here at ~40% of the cost, and every failed retry against an
+                # overloaded API still bills partial search/token usage.
+                model="claude-sonnet-5",
                 max_tokens=16000,
                 system=SYSTEM_PROMPT,
                 tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 12}],
