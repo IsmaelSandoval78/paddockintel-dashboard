@@ -6,7 +6,7 @@ meta_description: "A última corrida antes do recesso de verão da F1 é em 26 d
 status: published
 published_at: "2026-07-25"
 translation_group_id: "e4a29fcd-4101-448e-b858-4833e84b010f"
-tags: ["analise-de-corrida", "economia", "europa"]
+tags: ["featured", "analise-de-corrida", "economia", "europa"]
 
 stats:
   - value: "45"

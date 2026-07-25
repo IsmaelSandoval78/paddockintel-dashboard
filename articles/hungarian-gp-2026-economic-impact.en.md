@@ -6,7 +6,7 @@ meta_description: "F1's last race before summer break runs July 26. Ticket price
 status: published
 published_at: "2026-07-25"
 translation_group_id: "e4a29fcd-4101-448e-b858-4833e84b010f"
-tags: ["race-analysis", "economics", "europe"]
+tags: ["featured", "race-analysis", "economics", "europe"]
 
 stats:
   - value: "45"
