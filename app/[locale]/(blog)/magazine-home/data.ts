@@ -170,6 +170,149 @@ export async function getStandings(): Promise<{ drivers: Top5Driver[]; construct
   return { drivers, constructors };
 }
 
+export type Mover = {
+  id: number;
+  name: string;
+  constructor_ref: string;
+  position: number;
+  prevPosition: number;
+  positionDelta: number;
+};
+
+export type MoversResult = {
+  raceName: string;
+  driverRiser: Mover | null;
+  driverFaller: Mover | null;
+  constructorRiser: Mover | null;
+  constructorFaller: Mover | null;
+};
+
+const EMPTY_MOVERS: MoversResult = {
+  raceName: '',
+  driverRiser: null,
+  driverFaller: null,
+  constructorRiser: null,
+  constructorFaller: null,
+};
+
+function biggestDelta<T extends { positionDelta: number }>(rows: T[], direction: 'up' | 'down'): T | null {
+  const sorted = [...rows].sort((a, b) =>
+    direction === 'up' ? b.positionDelta - a.positionDelta : a.positionDelta - b.positionDelta
+  );
+  const top = sorted[0];
+  if (!top) return null;
+  if (direction === 'up' && top.positionDelta <= 0) return null;
+  if (direction === 'down' && top.positionDelta >= 0) return null;
+  return top;
+}
+
+// Movers = who gained/lost the most standings positions in the most recently
+// scored race, compared to the race immediately before it. Not a media-
+// attention signal like AI Weekly's index (we don't track that) — this is
+// real points-table movement, derived the same way getStandings() finds
+// "latest": off driver_standings' own race_id ordering, not races.date.
+export async function getMovers(): Promise<MoversResult> {
+  const supabase = createClient();
+
+  const { data: raceIdRows } = await supabase
+    .from('driver_standings')
+    .select('race_id')
+    .order('race_id', { ascending: false })
+    .limit(50);
+  const distinctRaceIds = [...new Set((raceIdRows ?? []).map((r) => r.race_id as number))];
+  const [currentRaceId, previousRaceId] = distinctRaceIds;
+  if (!currentRaceId || !previousRaceId) return EMPTY_MOVERS;
+
+  const [raceRes, curDriverRes, prevDriverRes, curConstructorRes, prevConstructorRes, resultsRes] =
+    await Promise.all([
+      supabase.from('races').select('name').eq('id', currentRaceId).single(),
+      supabase.from('driver_standings').select('driver_id, position').eq('race_id', currentRaceId),
+      supabase.from('driver_standings').select('driver_id, position').eq('race_id', previousRaceId),
+      supabase.from('constructor_standings').select('constructor_id, position').eq('race_id', currentRaceId),
+      supabase.from('constructor_standings').select('constructor_id, position').eq('race_id', previousRaceId),
+      supabase.from('results').select('driver_id, constructor_id').eq('race_id', currentRaceId),
+    ]);
+
+  const prevDriverPos = new Map((prevDriverRes.data ?? []).map((s) => [s.driver_id as number, s.position as number]));
+  const driverDeltas = (curDriverRes.data ?? []).flatMap((s) => {
+    const prevPosition = prevDriverPos.get(s.driver_id as number);
+    if (prevPosition === undefined) return [];
+    return [{
+      id: s.driver_id as number,
+      position: s.position as number,
+      prevPosition,
+      positionDelta: prevPosition - (s.position as number),
+    }];
+  });
+
+  const prevConstructorPos = new Map(
+    (prevConstructorRes.data ?? []).map((s) => [s.constructor_id as number, s.position as number])
+  );
+  const constructorDeltas = (curConstructorRes.data ?? []).flatMap((s) => {
+    const prevPosition = prevConstructorPos.get(s.constructor_id as number);
+    if (prevPosition === undefined) return [];
+    return [{
+      id: s.constructor_id as number,
+      position: s.position as number,
+      prevPosition,
+      positionDelta: prevPosition - (s.position as number),
+    }];
+  });
+
+  const driverRiserRaw = biggestDelta(driverDeltas, 'up');
+  const driverFallerRaw = biggestDelta(driverDeltas, 'down');
+  const constructorRiserRaw = biggestDelta(constructorDeltas, 'up');
+  const constructorFallerRaw = biggestDelta(constructorDeltas, 'down');
+
+  const driverIds = [driverRiserRaw?.id, driverFallerRaw?.id].filter((v): v is number => v !== undefined);
+  const driverConstructorMap = new Map(
+    (resultsRes.data ?? []).map((r) => [r.driver_id as number, r.constructor_id as number])
+  );
+  const constructorIds = [
+    ...new Set([
+      constructorRiserRaw?.id,
+      constructorFallerRaw?.id,
+      ...driverIds.map((id) => driverConstructorMap.get(id)),
+    ].filter((v): v is number => v !== undefined)),
+  ];
+
+  const [driversRes, constructorsRes] = await Promise.all([
+    driverIds.length
+      ? supabase.from('drivers').select('id, forename, surname').in('id', driverIds)
+      : Promise.resolve({ data: [] as Array<{ id: number; forename: string; surname: string }> }),
+    constructorIds.length
+      ? supabase.from('constructors').select('id, name, constructor_ref').in('id', constructorIds)
+      : Promise.resolve({ data: [] as Array<{ id: number; name: string; constructor_ref: string }> }),
+  ]);
+
+  const driverNameMap = new Map((driversRes.data ?? []).map((d) => [d.id as number, `${d.forename} ${d.surname}`]));
+  const constructorMap = new Map((constructorsRes.data ?? []).map((c) => [c.id as number, c]));
+
+  const toDriverMover = (raw: typeof driverRiserRaw): Mover | null => {
+    if (!raw) return null;
+    const name = driverNameMap.get(raw.id);
+    const cid = driverConstructorMap.get(raw.id);
+    const constructor = cid !== undefined ? constructorMap.get(cid) : undefined;
+    if (!name) return null;
+    return { ...raw, name, constructor_ref: constructor?.constructor_ref ?? '' };
+  };
+
+  const toConstructorMover = (raw: typeof constructorRiserRaw): Mover | null => {
+    if (!raw) return null;
+    const constructor = constructorMap.get(raw.id);
+    if (!constructor) return null;
+    return { ...raw, name: constructor.name as string, constructor_ref: constructor.constructor_ref as string };
+  };
+
+  return {
+    raceName: (raceRes.data?.name as string) ?? '',
+    driverRiser: toDriverMover(driverRiserRaw),
+    driverFaller: toDriverMover(driverFallerRaw),
+    constructorRiser: toConstructorMover(constructorRiserRaw),
+    constructorFaller: toConstructorMover(constructorFallerRaw),
+  };
+}
+
 export type CircuitOfTheDay = {
   circuit_ref: string;
   name: string;

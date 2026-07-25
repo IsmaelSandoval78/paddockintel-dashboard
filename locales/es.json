@@ -645,6 +645,13 @@
       "drivers": "Pilotos",
       "constructors": "Constructores"
     },
+    "movers": {
+      "title": "Movimientos de la Carrera",
+      "driverRiser": "Mayor Subida · Pilotos",
+      "driverFaller": "Mayor Caída · Pilotos",
+      "constructorRiser": "Mayor Subida · Constructores",
+      "constructorFaller": "Mayor Caída · Constructores"
+    },
     "circuit": {
       "kicker": "Inteligencia del Circuito",
       "round": "Ronda {round}",

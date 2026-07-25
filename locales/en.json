@@ -645,6 +645,13 @@
       "drivers": "Drivers",
       "constructors": "Constructors"
     },
+    "movers": {
+      "title": "This Race's Movers",
+      "driverRiser": "Biggest Riser · Drivers",
+      "driverFaller": "Biggest Fall · Drivers",
+      "constructorRiser": "Biggest Riser · Constructors",
+      "constructorFaller": "Biggest Fall · Constructors"
+    },
     "circuit": {
       "kicker": "Circuit Intelligence",
       "round": "Round {round}",

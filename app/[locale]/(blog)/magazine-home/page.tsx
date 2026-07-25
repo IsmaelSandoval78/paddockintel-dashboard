@@ -6,8 +6,9 @@ import ArticlePreviewCard from '@/components/blog/ArticlePreviewCard';
 import FeaturedArticleCard from '@/components/blog/FeaturedArticleCard';
 import NewsletterCard from '@/components/blog/NewsletterCard';
 import StandingsPanel from '@/components/blog/StandingsPanel';
+import MoversPanel from '@/components/blog/MoversPanel';
 import CircuitOfTheDay from '@/components/blog/CircuitOfTheDay';
-import { getFeaturedAndRecent, getDataDeskArticles, getStandings, getCircuitOfTheDay } from './data';
+import { getFeaturedAndRecent, getDataDeskArticles, getStandings, getMovers, getCircuitOfTheDay } from './data';
 
 export const revalidate = 3600;
 
@@ -80,6 +81,7 @@ export default async function MagazineHomePage({
       ? Promise.all([
           getFeaturedAndRecent(locale),
           getStandings(),
+          getMovers(),
           getDataDeskArticles(locale),
           getCircuitOfTheDay(),
         ])
@@ -96,9 +98,10 @@ export default async function MagazineHomePage({
     return qs ? `${basePath}?${qs}` : basePath;
   };
 
-  const [featuredAndRecent, standings, dataDeskArticles, circuit] = frontPageExtras ?? [
+  const [featuredAndRecent, standings, movers, dataDeskArticles, circuit] = frontPageExtras ?? [
     { featured: null, recent: [] },
     { drivers: [], constructors: [] },
+    { raceName: '', driverRiser: null, driverFaller: null, constructorRiser: null, constructorFaller: null },
     [],
     null,
   ];
@@ -177,6 +180,9 @@ export default async function MagazineHomePage({
         {(standings.drivers.length > 0 || standings.constructors.length > 0) && (
           <StandingsPanel drivers={standings.drivers} constructors={standings.constructors} />
         )}
+
+        {/* This race's movers — real standings deltas, not a "trending" signal */}
+        <MoversPanel movers={movers} />
 
         {/* Newsletter invite */}
         {isFrontPage && <NewsletterCard />}
