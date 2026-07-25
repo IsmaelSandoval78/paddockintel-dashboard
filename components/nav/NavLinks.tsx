@@ -39,6 +39,12 @@ export default function NavLinks({ isMagazine }: { isMagazine: boolean }) {
             {t(key)}
           </Link>
         ))}
+        <Link
+          href="/glossary"
+          className="font-sans text-[13px] font-medium no-underline text-text-2 hover:text-text-1 transition-colors duration-150"
+        >
+          {t('glossary')}
+        </Link>
         <a
           href="https://hub.paddockintel.com"
           target="_blank"

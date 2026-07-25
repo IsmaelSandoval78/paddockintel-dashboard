@@ -10,7 +10,8 @@
     "operations": "Operations",
     "regulations": "Regulations",
     "supplyChain": "Supply Chain",
-    "magazine": "Magazine"
+    "magazine": "Magazine",
+    "glossary": "Glossary"
   },
   "hub": {
     "title": "PaddockIntel",
@@ -670,6 +671,19 @@
     "dataDesk": {
       "title": "The Data Desk"
     }
+  },
+  "glossary": {
+    "kicker": "PaddockIntel Reference",
+    "title": "F1 Economics Glossary",
+    "description": "The regulatory and financial terms behind every contract, cap, and payout in Formula 1 — defined once, cited to real sources.",
+    "categories": {
+      "regulations": "Regulations",
+      "revenue": "Revenue",
+      "sponsorship": "Sponsorship"
+    },
+    "relatedTerms": "Related Terms",
+    "sources": "Sources",
+    "backToGlossary": "Glossary"
   },
   "privacyPage": {
     "metaTitle": "Privacy Policy — PaddockIntel",

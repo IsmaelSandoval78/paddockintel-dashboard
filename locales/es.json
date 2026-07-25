@@ -10,7 +10,8 @@
     "operations": "Operaciones",
     "regulations": "Regulaciones",
     "supplyChain": "Cadena de Suministro",
-    "magazine": "Magazine"
+    "magazine": "Magazine",
+    "glossary": "Glosario"
   },
   "hub": {
     "title": "PaddockIntel",
@@ -670,6 +671,19 @@
     "dataDesk": {
       "title": "El Data Desk"
     }
+  },
+  "glossary": {
+    "kicker": "Referencia PaddockIntel",
+    "title": "Glosario de Economía F1",
+    "description": "Los términos regulatorios y financieros detrás de cada contrato, tope y pago en la Fórmula 1 — definidos una vez, citados con fuentes reales.",
+    "categories": {
+      "regulations": "Regulaciones",
+      "revenue": "Ingresos",
+      "sponsorship": "Patrocinio"
+    },
+    "relatedTerms": "Términos Relacionados",
+    "sources": "Fuentes",
+    "backToGlossary": "Glosario"
   },
   "privacyPage": {
     "metaTitle": "Política de Privacidad — PaddockIntel",

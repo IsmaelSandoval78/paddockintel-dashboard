@@ -77,6 +77,13 @@ export default function MobileNav({ isMagazine }: { isMagazine: boolean }) {
                   {t(key)}
                 </Link>
               ))}
+              <Link
+                href="/glossary"
+                onClick={() => setOpen(false)}
+                className="flex items-center h-12 px-5 border-b border-border font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 bg-bg"
+              >
+                {t('glossary')}
+              </Link>
               <a
                 href="https://hub.paddockintel.com"
                 target="_blank"
