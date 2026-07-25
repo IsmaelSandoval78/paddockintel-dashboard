@@ -68,6 +68,14 @@ export default function NavLinks({ isMagazine }: { isMagazine: boolean }) {
           </Link>
         );
       })}
+      <a
+        href="https://paddockintel.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-sans text-[13px] font-medium no-underline text-text-2 hover:text-text-1 transition-colors duration-150"
+      >
+        {t('magazine')}
+      </a>
     </div>
   );
 }

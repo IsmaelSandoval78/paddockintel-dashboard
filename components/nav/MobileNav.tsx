@@ -88,23 +88,34 @@ export default function MobileNav({ isMagazine }: { isMagazine: boolean }) {
               </a>
             </>
           ) : (
-            links.map(({ key, href }) => {
-              const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
-              return (
-                <Link
-                  key={key}
-                  href={href}
-                  onClick={() => setOpen(false)}
-                  className={[
-                    'flex items-center h-12 px-5 border-b border-border',
-                    'font-mono text-[11px] uppercase tracking-[0.1em]',
-                    isActive ? 'text-red bg-surface-raised' : 'text-text-2 bg-bg',
-                  ].join(' ')}
-                >
-                  {t(key)}
-                </Link>
-              );
-            })
+            <>
+              {links.map(({ key, href }) => {
+                const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
+                return (
+                  <Link
+                    key={key}
+                    href={href}
+                    onClick={() => setOpen(false)}
+                    className={[
+                      'flex items-center h-12 px-5 border-b border-border',
+                      'font-mono text-[11px] uppercase tracking-[0.1em]',
+                      isActive ? 'text-red bg-surface-raised' : 'text-text-2 bg-bg',
+                    ].join(' ')}
+                  >
+                    {t(key)}
+                  </Link>
+                );
+              })}
+              <a
+                href="https://paddockintel.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setOpen(false)}
+                className="flex items-center h-12 px-5 border-b border-border font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 bg-bg"
+              >
+                {t('magazine')}
+              </a>
+            </>
           )}
 
           {/* Vol/Rd + locale footer row */}
