@@ -1,15 +1,10 @@
-import { headers } from 'next/headers';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/lib/i18n/navigation';
 
-const MAGAZINE_HOSTS = new Set(['paddockintel.com', 'www.paddockintel.com']);
-
-// Magazine-only footer: the Hub keeps its own KineticFooter on the home
-// experience, and Hub inner pages intentionally have none.
+// Shared across the Hub and the magazine — the Hub home also keeps its own
+// animated KineticFooter above this one; this is the functional/legal
+// footer (About, Privacy) every page needs regardless of surface.
 export default async function Footer() {
-  const host = (await headers()).get('host')?.split(':')[0] ?? '';
-  if (!MAGAZINE_HOSTS.has(host)) return null;
-
   const t = await getTranslations('footer');
 
   return (
