@@ -3,7 +3,7 @@
 import { useLocale } from 'next-intl';
 import { useRouter, usePathname } from '@/lib/i18n/navigation';
 import { routing } from '@/lib/i18n/routing';
-import { getAlternateLocaleHref } from '@/lib/i18n/switchLocale';
+import { getAlternateLocaleHref, goToAlternateLocale } from '@/lib/i18n/switchLocale';
 
 export default function LocaleSwitcher() {
   const locale = useLocale();
@@ -16,7 +16,7 @@ export default function LocaleSwitcher() {
     // the locale prefix on the current path 404s for that content.
     const alternateHref = getAlternateLocaleHref(next);
     if (alternateHref) {
-      window.location.href = alternateHref;
+      goToAlternateLocale(next, alternateHref);
       return;
     }
     // Preserve current search params (e.g. ?c=6 for selected circuit)
