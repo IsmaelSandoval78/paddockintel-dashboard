@@ -3,6 +3,7 @@
 import { useLocale } from 'next-intl';
 import { useRouter, usePathname } from '@/lib/i18n/navigation';
 import { routing } from '@/lib/i18n/routing';
+import { getAlternateLocaleHref } from '@/lib/i18n/switchLocale';
 
 export default function LocaleSwitcher() {
   const locale = useLocale();
@@ -10,6 +11,14 @@ export default function LocaleSwitcher() {
   const pathname = usePathname();
 
   function switchLocale(next: string) {
+    // Content with a locale-specific slug (e.g. articles) declares the
+    // correct URL via hreflang — use it when present, since swapping just
+    // the locale prefix on the current path 404s for that content.
+    const alternateHref = getAlternateLocaleHref(next);
+    if (alternateHref) {
+      window.location.href = alternateHref;
+      return;
+    }
     // Preserve current search params (e.g. ?c=6 for selected circuit)
     const search = typeof window !== 'undefined' ? window.location.search : '';
     router.replace(`${pathname}${search}`, { locale: next });

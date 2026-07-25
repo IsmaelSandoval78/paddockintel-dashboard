@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { usePathname, Link, useRouter } from '@/lib/i18n/navigation';
 import { useLocale } from 'next-intl';
 import { routing } from '@/lib/i18n/routing';
+import { getAlternateLocaleHref } from '@/lib/i18n/switchLocale';
 
 type NavKey = 'hub' | 'circuits' | 'drivers' | 'constructors' | 'compare' | 'records';
 
@@ -34,6 +35,11 @@ export default function MobileNav({ isMagazine }: { isMagazine: boolean }) {
   const router = useRouter();
 
   function switchLocale(next: string) {
+    const alternateHref = getAlternateLocaleHref(next);
+    if (alternateHref) {
+      window.location.href = alternateHref;
+      return;
+    }
     const search = typeof window !== 'undefined' ? window.location.search : '';
     router.replace(`${pathname}${search}`, { locale: next });
     setOpen(false);
