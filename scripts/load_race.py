@@ -138,6 +138,7 @@ def main() -> None:
             .select("id, year, round, name, date")
             .lte("date", today)
             .order("date")
+            .limit(5000)
             .execute()
         )
         target = None
