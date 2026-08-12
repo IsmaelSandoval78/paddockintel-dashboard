@@ -596,12 +596,18 @@ código real — §5–§9, y todas las decisiones de alcance están cerradas �
    mayoría de componentes auditados en §5–§9 ya usaban variables CSS, así que el cambio de color
    cascadeó solo, sin tocar componentes uno por uno — confirma que esos audits tenían razón.
 
-   **Pendiente, no incluido en este paso:** (a) recalibración de `WarpField` para Data Mode
-   (§5) — hoy sus streaks al 78% "tinta casi-negra" quedan invisibles contra el navy oscuro; la
-   página no se ve rota, solo con menos densidad de movimiento en el Hero, y sigue siendo la
-   tarea más profunda que un cambio de token, como ya estaba anotado; (b) el radio de 4-8px en
+   ~~Recalibración de `WarpField` para Data Mode~~ — **hecho 2026-08-11.** El 78% "tinta
+   casi-negra" (`0x0a0a0a`) se reemplazó por casi-blanco (`0xf4f4f0`), visible contra el navy;
+   el 8% de rojo tenía el mismo bug de marca que ya se había corregido en otros 3 archivos
+   (`0xe10600` en minúscula, no lo agarró el grep anterior por case-sensitive) — corregido a
+   `0xe61919` de paso. Verificado con dev server: el flujo de líneas ahora tiene densidad
+   completa (blanco/teal/rojo) en vez del ~22% que quedaba visible antes, cero errores de
+   consola. Confirmado con `grep -rn "e10600"` (minúscula incluida) en todo el repo: cero
+   resultados.
+
+   **Pendiente, no incluido en este paso:** (a) el radio de 4-8px en
    tarjetas de dato (`DESIGN.md` §Tokens Data Mode) — quedó afuera de este paso, todas las
-   superficies siguen con el radio-cero anterior; (c) consolidación
+   superficies siguen con el radio-cero anterior; (b) consolidación
    Streaks+FormGuide+SeasonShape del Hub (§10) — es un cambio de layout, no de color, sigue
    pendiente aparte.
 6. Antes de construir la UI de Mi Box Fase 1: decidir el mecanismo mínimo de persistencia
