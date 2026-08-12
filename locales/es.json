@@ -15,7 +15,7 @@
   },
   "hub": {
     "title": "PaddockIntel",
-    "tagline": "Hub de inteligencia F1",
+    "tagline": "Entender la Fórmula 1. No solo mirarla.",
     "status": {
       "connected": "Supabase conectado",
       "error": "Error de conexión"

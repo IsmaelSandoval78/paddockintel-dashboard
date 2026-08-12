@@ -796,6 +796,94 @@ async function getHomeData(): Promise<{
   const p1Constr = constrStands.find((c) => c.position === 1) ?? null;
   const p2Constr = constrStands.find((c) => c.position === 2) ?? null;
 
+  // ── Championship gap history — cumulative points per round, P1 vs P2 only ──
+  // (compact BattleChart under each gap panel; not the top-5 battle Drivers computes)
+  const gapDriverIds = p1Driver && p2Driver ? [p1Driver.driver_id, p2Driver.driver_id] : [];
+  const gapConstructorIds = p1Constr && p2Constr ? [p1Constr.constructor_id, p2Constr.constructor_id] : [];
+
+  const [gapDriverStandRes, gapConstructorStandRes] = await Promise.all([
+    gapDriverIds.length && races2026Ids.length
+      ? supabase
+          .from('driver_standings')
+          .select('race_id, driver_id, points')
+          .in('race_id', races2026Ids)
+          .in('driver_id', gapDriverIds)
+      : Promise.resolve({ data: [] as Array<{ race_id: number; driver_id: number; points: number }> }),
+    gapConstructorIds.length && races2026Ids.length
+      ? supabase
+          .from('constructor_standings')
+          .select('race_id, constructor_id, points')
+          .in('race_id', races2026Ids)
+          .in('constructor_id', gapConstructorIds)
+      : Promise.resolve({ data: [] as Array<{ race_id: number; constructor_id: number; points: number }> }),
+  ]);
+
+  const gapRounds = races2026Completed
+    .slice()
+    .sort((a, b) => a.round - b.round)
+    .map((r) => ({ round: r.round, race_name: '' }));
+
+  function cumulativeByEntity<TId extends number>(
+    rows: Array<{ race_id: number; points: number }> & Array<Record<string, unknown>>,
+    idKey: string,
+    id: TId
+  ): number[] {
+    const byRace = new Map<number, number>();
+    for (const row of rows) {
+      if ((row[idKey] as number) === id) byRace.set(row.race_id as number, row.points as number);
+    }
+    let prev = 0;
+    return races2026Completed
+      .slice()
+      .sort((a, b) => a.round - b.round)
+      .map((r) => {
+        const v = byRace.get(r.id);
+        if (v !== undefined) prev = v;
+        return prev;
+      });
+  }
+
+  const gapDriverRows = (gapDriverStandRes.data ?? []) as Array<{ race_id: number; driver_id: number; points: number }>;
+  const gapConstructorRows = (gapConstructorStandRes.data ?? []) as Array<{ race_id: number; constructor_id: number; points: number }>;
+
+  const historyDriverSeries =
+    p1Driver && p2Driver && gapRounds.length > 1
+      ? [
+          {
+            driver_id: p1Driver.driver_id,
+            surname: p1Driver.surname,
+            code: p1Driver.code,
+            constructor_ref: p1Driver.constructor_ref,
+            points: cumulativeByEntity(gapDriverRows, 'driver_id', p1Driver.driver_id),
+          },
+          {
+            driver_id: p2Driver.driver_id,
+            surname: p2Driver.surname,
+            code: p2Driver.code,
+            constructor_ref: p2Driver.constructor_ref,
+            points: cumulativeByEntity(gapDriverRows, 'driver_id', p2Driver.driver_id),
+          },
+        ]
+      : null;
+
+  const historyConstructorSeries =
+    p1Constr && p2Constr && gapRounds.length > 1
+      ? [
+          {
+            constructor_id: p1Constr.constructor_id,
+            name: constructorMap.get(p1Constr.constructor_id)?.name ?? '?',
+            constructor_ref: constructorMap.get(p1Constr.constructor_id)?.constructor_ref ?? '',
+            points: cumulativeByEntity(gapConstructorRows, 'constructor_id', p1Constr.constructor_id),
+          },
+          {
+            constructor_id: p2Constr.constructor_id,
+            name: constructorMap.get(p2Constr.constructor_id)?.name ?? '?',
+            constructor_ref: constructorMap.get(p2Constr.constructor_id)?.constructor_ref ?? '',
+            points: cumulativeByEntity(gapConstructorRows, 'constructor_id', p2Constr.constructor_id),
+          },
+        ]
+      : null;
+
   const championshipGapData: import('@/lib/types').HomeChampionshipGapData = {
     driver:
       p1Driver && p2Driver
@@ -821,6 +909,11 @@ async function getHomeData(): Promise<{
             gap: p1Constr.points - p2Constr.points,
           }
         : null,
+    history: {
+      rounds: gapRounds,
+      driverSeries: historyDriverSeries,
+      constructorSeries: historyConstructorSeries,
+    },
   };
 
   return {

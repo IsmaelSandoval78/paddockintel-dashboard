@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
+import { useTranslations } from 'next-intl';
 import { gsap } from 'gsap';
 import { SplitText } from 'gsap/SplitText';
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
@@ -21,8 +22,10 @@ interface HeroProps {
 }
 
 export default function Hero({ leader, round, year, motionOk, isMobile }: HeroProps) {
+  const t = useTranslations('hub');
   const rootRef      = useRef<HTMLElement>(null);
   const metaRef      = useRef<HTMLParagraphElement>(null);
+  const taglineRef   = useRef<HTMLParagraphElement>(null);
   const numberRef    = useRef<HTMLSpanElement>(null);
   const surnameRef   = useRef<HTMLHeadingElement>(null);
   const constructorRef = useRef<HTMLParagraphElement>(null);
@@ -53,6 +56,12 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
         gsap.fromTo(numberRef.current,
           { opacity: 0, scale: 0.95 },
           { opacity: 0.22, scale: 1, duration: 1.4, ease: 'power3.out', delay: 0.3 },
+        );
+
+        // Tagline rises — the "why" registers before the "who"
+        gsap.fromTo(taglineRef.current,
+          { y: 12, autoAlpha: 0 },
+          { y: 0, autoAlpha: 1, duration: 0.6, ease: 'power3.out', delay: 0.05 },
         );
 
         // Constructor name rises
@@ -152,6 +161,19 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
             LIVE
           </span>
         </div>
+
+        {/* Tagline — the product promise, ahead of any single driver's stats */}
+        <p
+          ref={taglineRef}
+          className="font-sans text-text-1 mt-3 max-w-[36ch]"
+          style={{
+            fontSize: 'clamp(14px, 1.6vw, 18px)',
+            lineHeight: 1.4,
+            opacity: motionOk ? 0 : 1,
+          }}
+        >
+          {t('tagline')}
+        </p>
 
         {/* Two-column layout: number left, name + stats right */}
         <div className="flex-1 flex items-center gap-0 mt-4">

@@ -85,7 +85,7 @@ function flagGradient(country: string): string {
 
 const CARD_BG   = '#EDEAE0';
 const DIVIDER   = '#C8C5BB';
-const RED       = '#E10600';
+const RED       = '#E61919';
 const LOGO_URL  = 'https://paddockintel.com/content/images/2026/02/paddockintel-logo-light-xl.png';
 
 function CircuitCard({

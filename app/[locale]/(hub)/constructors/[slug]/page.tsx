@@ -541,7 +541,7 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
               </p>
               <p
                 className="font-sans font-black tabular-nums leading-none"
-                style={{ fontSize: '2rem', color: red ? '#E10600' : '#F4F4F0' }}
+                style={{ fontSize: '2rem', color: red ? '#E61919' : '#F4F4F0' }}
               >
                 {value}
               </p>
@@ -635,7 +635,7 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
                       <td className="px-3 py-2 text-[12px] text-text-2 max-w-[120px] truncate">{row.driverName}</td>
                       <td className="px-4 py-2 text-right font-mono text-[12px] tabular-nums">
                         {row.fastestLap
-                          ? <span style={{ color: '#E10600' }}>{row.fastestLap}</span>
+                          ? <span style={{ color: '#E61919' }}>{row.fastestLap}</span>
                           : <span className="text-text-3">—</span>
                         }
                       </td>
