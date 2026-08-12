@@ -167,6 +167,17 @@
       "noOverlap": "Sem corridas compartilhadas neste circuito.",
       "prompt": "Selecione dois pilotos para comparar o histórico cara a cara neste circuito."
     },
+    "deltaRibbon": {
+      "title": "Fita de Delta",
+      "methodology": "Delta de tempo histórico entre {driverA} e {driverB} em {raceName}. A largura da fita = tamanho da diferença, a cor = quem estava à frente.",
+      "snap": "Ultrapassagem",
+      "defend": "Defesa",
+      "braid": "Trança",
+      "corner": "Curva",
+      "lap": "Volta",
+      "finalGap": "Diferença final",
+      "vs": "vs"
+    },
     "qualifying": {
       "title": "Qualificação",
       "allTimePole": "Pole histórica",

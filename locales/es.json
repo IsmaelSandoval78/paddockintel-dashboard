@@ -167,6 +167,17 @@
       "noOverlap": "Sin carreras compartidas en este circuito.",
       "prompt": "Selecciona dos pilotos para comparar su historial cara a cara en este circuito."
     },
+    "deltaRibbon": {
+      "title": "Cinta de Delta",
+      "methodology": "Delta de tiempo histórico entre {driverA} y {driverB} en {raceName}. El grosor de la cinta = magnitud de la brecha, el color = quién iba adelante.",
+      "snap": "Rebase",
+      "defend": "Defensa",
+      "braid": "Trenza",
+      "corner": "Curva",
+      "lap": "Vuelta",
+      "finalGap": "Brecha final",
+      "vs": "vs"
+    },
     "qualifying": {
       "title": "Clasificación",
       "allTimePole": "Pole histórica",

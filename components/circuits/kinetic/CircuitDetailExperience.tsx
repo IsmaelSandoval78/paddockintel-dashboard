@@ -9,8 +9,12 @@ import CircuitHero from './CircuitHero';
 import CircuitTimeline from './CircuitTimeline';
 import CircuitIntelGrid from './CircuitIntelGrid';
 import TrackDominancePanel from './TrackDominancePanel';
+import DeltaRibbonSection from './DeltaRibbonSection';
+import InfoTooltip from './InfoTooltip';
 import type { IntelData } from './CircuitIntelGrid';
 import type { DriverSelectorRow, CircuitCorner } from '@/lib/types';
+import type { RibbonFrame } from './deltaRibbon/geometry';
+import type { DeltaRibbonEventRow, DeltaRibbonDriver } from './DeltaRibbonSection';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -68,6 +72,14 @@ interface Race2026Row {
   points: number;
 }
 
+interface DeltaRibbonData {
+  raceName: string;
+  frames: RibbonFrame[];
+  events: DeltaRibbonEventRow[];
+  driverA: DeltaRibbonDriver;
+  driverB: DeltaRibbonDriver;
+}
+
 export interface CircuitDetailProps {
   circuit: {
     id: number;
@@ -96,6 +108,7 @@ export interface CircuitDetailProps {
   allTimePole: PoleRow | null;
   recentPoles: PoleRow[];
   intelData: IntelData;
+  deltaRibbon: DeltaRibbonData | null;
 }
 
 // ─── Orchestrator ──────────────────────────────────────────────────
@@ -120,6 +133,7 @@ export default function CircuitDetailExperience({
   allTimePole,
   recentPoles,
   intelData,
+  deltaRibbon,
 }: CircuitDetailProps) {
   const t = useTranslations('circuitDetail');
   const format = useFormatter();
@@ -538,6 +552,30 @@ export default function CircuitDetailExperience({
             <h2 className="text-[13px] font-medium text-text-2">{t('headToHead.title')}</h2>
           </div>
           <TrackDominancePanel circuitId={circuit.id} drivers={drivers} />
+        </section>
+      )}
+
+      {/* ── 08 · Delta Ribbon ───────────────────────────────────── */}
+      {deltaRibbon && (
+        <section className="circuit-section">
+          <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
+            <span className="font-mono text-xs text-text-2 leading-none">08 ·</span>
+            <h2 className="text-[13px] font-medium text-text-2">{t('deltaRibbon.title')}</h2>
+            <InfoTooltip
+              text={t('deltaRibbon.methodology', {
+                driverA: deltaRibbon.driverA.code ?? deltaRibbon.driverA.surname,
+                driverB: deltaRibbon.driverB.code ?? deltaRibbon.driverB.surname,
+                raceName: deltaRibbon.raceName,
+              })}
+            />
+          </div>
+          <DeltaRibbonSection
+            trackPathData={trackPathData}
+            frames={deltaRibbon.frames}
+            events={deltaRibbon.events}
+            driverA={deltaRibbon.driverA}
+            driverB={deltaRibbon.driverB}
+          />
         </section>
       )}
 
