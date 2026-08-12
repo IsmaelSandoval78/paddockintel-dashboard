@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import { headers } from 'next/headers';
 import { Archivo_Black, DM_Serif_Display, Inter, JetBrains_Mono, Lora } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/lib/i18n/routing';
+import { siteModeForHost } from '@/lib/siteMode';
 import Navbar from '@/components/nav/Navbar';
 import Footer from '@/components/nav/Footer';
 import '../globals.css';
@@ -70,10 +72,13 @@ export default async function LocaleLayout({
   }
 
   const messages = await getMessages();
+  const host = (await headers()).get('host') ?? '';
+  const siteMode = siteModeForHost(host);
 
   return (
     <html
       lang={locale}
+      data-mode={siteMode}
       className={`${display.variable} ${serif.variable} ${sans.variable} ${mono.variable} ${prose.variable}`}
     >
       <body>

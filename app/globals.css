@@ -47,10 +47,41 @@
   --team-sauber:     #259825;
   --team-rb:         #3A5EC4;
 
+  /* Data-viz accent (Delta Ribbon, track dominance lines) — reserved, never a CTA */
+  --teal:            #0E9488;
+
   /* Motion */
   --ease:            cubic-bezier(0.16, 1, 0.3, 1);
   --fast:            100ms;
   --base:            150ms;
+}
+
+/* ── Data Mode — Hub + Digest (DESIGN.md v2.0.0) ────────────────────
+   Scoped to [data-mode="data"] on <html>, set by the root layout from the
+   request host (see lib/siteMode.ts) — hub.paddockintel.com gets this, the
+   magazine host (Blog/Book, Story Mode) keeps the :root values above
+   untouched. Card radius exception lives in component classes, not here —
+   this file only owns color tokens. */
+[data-mode="data"] {
+  --bg:              #0B1220;
+  --surface:         #0B1220;
+  --surface-raised:  #141C2E;
+  --surface-overlay: #141C2E;
+
+  --border:          #1F2A3F;
+  --border-subtle:   #182234;
+
+  --text-1:          #F4F4F0;
+  --text-2:          #8A93A6;
+  --text-3:          #5B6478;
+
+  --red:             #E61919;
+  --red-dim:         rgba(230, 25, 25, 0.12);
+  --gold:            #D4B563;
+  --gold-dim:        rgba(212, 181, 99, 0.12);
+  --green:           #34D399;
+  --green-dim:       rgba(52, 211, 153, 0.12);
+  --teal:            #2DD4BF;
 }
 
 @theme inline {
@@ -70,6 +101,7 @@
   --color-gold-dim:        var(--gold-dim);
   --color-green:           var(--green);
   --color-green-dim:       var(--green-dim);
+  --color-teal:            var(--teal);
 
   /* Fonts — variables injected by next/font on <html> */
   --font-display: var(--pi-display);  /* Archivo Black — kinetic display */

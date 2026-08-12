@@ -581,10 +581,29 @@ código real — §5–§9, y todas las decisiones de alcance están cerradas �
 4. ~~Confirmar contra `Hero.tsx` si el subhead existe~~ — **hecho 2026-08-11.** No existía,
    se agregó (EN + ES; PT queda con placeholder viejo a propósito, pendiente pase nativo). Ver
    §5.
-5. Re-skin de tokens en Hub/Drivers/Circuits/Records (confirmado rápido y de bajo riesgo en
-   §5–§9), incluyendo la recalibración de `WarpField` para Data Mode (§5) — marcada aparte
-   porque es más profunda que un cambio de token, no la dejar para el final por asumir que es
-   parte del lote "rápido". Consolidación Streaks+FormGuide+SeasonShape del Hub (§10) entra acá.
+5. ~~Re-skin de tokens en Hub/Drivers/Circuits/Records~~ — **hecho 2026-08-11, colores base.**
+   Hallazgo antes de tocar nada: los cuatro registros (Hub, Blog, Digest, Book) compartían **un
+   solo set de variables CSS** en `globals.css` — cambiar `:root` directo habría roto Blog
+   (Story Mode) también. Solución: nuevo `lib/siteMode.ts` (reusa la misma detección de host
+   `hub.paddockintel.com` vs. `paddockintel.com` que ya usaba `Navbar.tsx` para
+   `isMagazine` — refactorizado para no duplicar el set de hosts), `data-mode="data"|"story"`
+   seteado en `<html>` desde `[locale]/layout.tsx` según el host de la request, y los tokens
+   oscuros de Data Mode viven en un bloque `[data-mode="data"] { ... }` en `globals.css` — el
+   `:root` original (Story Mode) queda intacto, Blog/Book no se tocan. Verificado: Hub, Drivers,
+   Circuits, Records — los 4 con `data-mode="data"` y fondo `#0B1220` real, cero errores de
+   consola; el host de magazine (`curl -H "Host: paddockintel.com"` — los navegadores no dejan
+   spoofear ese header, se verificó con curl) devuelve `data-mode="story"` correctamente. La
+   mayoría de componentes auditados en §5–§9 ya usaban variables CSS, así que el cambio de color
+   cascadeó solo, sin tocar componentes uno por uno — confirma que esos audits tenían razón.
+
+   **Pendiente, no incluido en este paso:** (a) recalibración de `WarpField` para Data Mode
+   (§5) — hoy sus streaks al 78% "tinta casi-negra" quedan invisibles contra el navy oscuro; la
+   página no se ve rota, solo con menos densidad de movimiento en el Hero, y sigue siendo la
+   tarea más profunda que un cambio de token, como ya estaba anotado; (b) el radio de 4-8px en
+   tarjetas de dato (`DESIGN.md` §Tokens Data Mode) — quedó afuera de este paso, todas las
+   superficies siguen con el radio-cero anterior; (c) consolidación
+   Streaks+FormGuide+SeasonShape del Hub (§10) — es un cambio de layout, no de color, sigue
+   pendiente aparte.
 6. Antes de construir la UI de Mi Box Fase 1: decidir el mecanismo mínimo de persistencia
    (cookie o `localStorage`, sin cuentas — §4).
 7. Delta Ribbon en modo histórico únicamente (§3) — los 5 estados del ciclo de vida, leyendo de
