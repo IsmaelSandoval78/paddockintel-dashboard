@@ -6,6 +6,7 @@ import { Link } from '@/lib/i18n/navigation';
 import { routing } from '@/lib/i18n/routing';
 import { ConstructorScorecardButton } from '@/components/scorecards/ConstructorScorecard';
 import { flagGradient } from '@/lib/flagGradient';
+import FollowButton from '@/components/ui/FollowButton';
 
 type PageParams = Promise<{ locale: string; slug: string }>;
 
@@ -482,6 +483,15 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
               `${stats.first_year as number}–${stats.last_year as number}`,
             ].join(' · ')}
           </p>
+          <div>
+            <FollowButton
+              kind="constructor"
+              reference={constructor.constructor_ref}
+              color={color}
+              idleBorderColor="#D4D0C8"
+              idleTextColor="#6B6B6B"
+            />
+          </div>
         </div>
 
         {/* Right 40%: dark stat band */}

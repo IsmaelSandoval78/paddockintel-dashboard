@@ -5,6 +5,7 @@ import { isMagazineHost } from '@/lib/siteMode';
 import NavLinks from './NavLinks';
 import LocaleSwitcher from './LocaleSwitcher';
 import MobileNav from './MobileNav';
+import MiBoxIndicator from './MiBoxIndicator';
 
 async function getCurrentRound(): Promise<{ round: number; year: number } | null> {
   try {
@@ -46,9 +47,12 @@ export default async function Navbar() {
 
         <div className="flex items-center gap-5 shrink-0">
           {!isMagazine && (
-            <span className="font-mono text-xs text-text-3 tracking-[0.04em]">
-              Vol.01 · Rd.{current ? String(current.round).padStart(2, '0') : '—'} · {current?.year ?? '—'}
-            </span>
+            <>
+              <span className="font-mono text-xs text-text-3 tracking-[0.04em]">
+                Vol.01 · Rd.{current ? String(current.round).padStart(2, '0') : '—'} · {current?.year ?? '—'}
+              </span>
+              <MiBoxIndicator />
+            </>
           )}
           <LocaleSwitcher />
         </div>

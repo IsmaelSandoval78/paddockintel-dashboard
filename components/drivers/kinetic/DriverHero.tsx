@@ -8,6 +8,7 @@ import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 import { fitToWidth, observeFit } from '@/components/home/kinetic/fitText';
 import { teamColor } from '@/components/home/kinetic/teamColors';
 import { flagGradient } from '@/lib/flagGradient';
+import FollowButton from '@/components/ui/FollowButton';
 
 gsap.registerPlugin(SplitText, ScrambleTextPlugin);
 
@@ -18,6 +19,7 @@ export interface DriverHeroProps {
   number: number | null;
   nationality: string;
   dob: string | null;
+  driverRef: string;
   championshipYears: number[];
   currentTeamRef: string;
   races: number;
@@ -27,7 +29,7 @@ export interface DriverHeroProps {
 }
 
 export default function DriverHero({
-  forename, surname, code, number, nationality, dob,
+  forename, surname, code, number, nationality, dob, driverRef,
   championshipYears, currentTeamRef,
   races, wins, podiums, motionOk,
 }: DriverHeroProps) {
@@ -201,6 +203,7 @@ export default function DriverHero({
               ))}
             </p>
           )}
+          <FollowButton kind="driver" reference={driverRef} color={accent} />
         </div>
       </div>
 

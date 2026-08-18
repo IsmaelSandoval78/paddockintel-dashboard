@@ -1,4 +1,14 @@
 {
+  "miBox": {
+    "follow": "Seguir",
+    "following": "Seguindo",
+    "title": "Mi Box",
+    "yourNumber": "Seu número",
+    "empty": "Siga pilotos e construtores para montar seu box.",
+    "driversHeading": "Pilotos",
+    "constructorsHeading": "Construtores",
+    "unfollow": "Remover"
+  },
   "nav": {
     "hub": "Hub",
     "circuits": "Circuitos",

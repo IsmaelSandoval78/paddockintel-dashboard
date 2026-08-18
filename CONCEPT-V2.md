@@ -610,8 +610,50 @@ código real — §5–§9, y todas las decisiones de alcance están cerradas �
    superficies siguen con el radio-cero anterior; (b) consolidación
    Streaks+FormGuide+SeasonShape del Hub (§10) — es un cambio de layout, no de color, sigue
    pendiente aparte.
-6. Antes de construir la UI de Mi Box Fase 1: decidir el mecanismo mínimo de persistencia
-   (cookie o `localStorage`, sin cuentas — §4).
+6. ~~Mi Box Fase 1~~ — **hecho 2026-08-17: seguir + número propio + franja personal.**
+   Decisión de persistencia: **cookie de cliente** (`pi_box`, no `localStorage`) — necesitaba
+   ser legible potencialmente desde Server Components para orden personalizado sin flash, y
+   escribible al instante desde el cliente sin cuentas ni login.
+
+   - `lib/miBox.ts` — estado puro (número, `driver_ref[]`, `constructor_ref[]`) + parse/
+     serialize. `lib/useMiBox.ts` — hook de cliente, lee/escribe la cookie, número personal
+     auto-asignado (2–99, "no es un token de seguridad, es un capricho personal como elegir
+     un número de auto") en el primer montaje.
+   - **Bug real encontrado y corregido en el momento:** cada instancia de `useMiBox()` tenía
+     su propio estado de React — seguir algo en una página no actualizaba el badge/panel del
+     Navbar hasta recargar. Arreglado con un evento custom (`mibox-change`) que dispara cada
+     escritura de cookie y que todas las instancias escuchan — sincronización en el momento,
+     sin librería de estado global.
+   - `FollowButton.tsx` — en el header de Driver detail y Constructor detail (colores
+     configurables porque Constructors detail sigue con hex hardcodeado, Fase 2 — ver §7).
+   - `MiBoxIndicator.tsx` en el Navbar (solo lado Hub, nunca en magazine) — badge `#NN`,
+     dropdown con lo que seguís y botón de sacar.
+   - `MiBoxStrip.tsx` en el Hub, justo debajo del Hero — **cliente-fetch contra
+     `/api/mi-box/summary`, no Server Component:** el Hub tiene `revalidate = 3600` (ISR), y
+     leer la cookie en un Server Component ahí forzaría toda la página a renderizado dinámico
+     en cada visita. Mismo patrón que ya usa `TrackDominancePanel` (excepción ya permitida en
+     `CLAUDE.md` § Performance Rules: "no client-side fetching unless interactive").
+   - **Decisión de diseño explícita: no reordena ninguna lista rankeada** (standings, wins) —
+     eso falsearía datos reales de posición, contra la regla central del proyecto. En cambio
+     es su propio módulo ("cómo les va a los que seguís"), aparte de las listas oficiales que
+     quedan intactas.
+   - Verificado en vivo: seguir un piloto y un constructor sincroniza Navbar + panel +
+     franja del Hub al instante, con datos reales de standings 2026, cero errores de consola.
+     Confirmado que no aparece del lado magazine.
+
+   **Hallazgo colateral, no corregido — Constructors detail:** al verificar visualmente se
+   confirmó que el re-skin a Data Mode (§13 punto 5) hizo que el fondo de esa página se vuelva
+   oscuro (usa `bg-bg`/tokens en el layout general) mientras el texto del nombre del
+   constructor sigue hardcodeado casi-negro (`#050505`) — el wordmark queda prácticamente
+   ilegible, negro sobre navy. Ya estaba fuera de alcance por la decisión de Fase 2 (§7/§10),
+   pero es peor de lo que ese texto sugería (no es "se ve como antes", es "quedó roto por un
+   efecto colateral del re-skin"). Anotado, no corregido — decidir si amerita un patch mínimo
+   aparte antes del 23.
+
+   **No construido en este v1, con criterio:** Fase 2 completa (pronósticos + score de
+   aciertos) sigue post-lanzamiento (§3/§4, ya decidido). `MiBoxIndicator` no tiene versión
+   mobile todavía (`MobileNav.tsx` no se tocó) — el Follow y la franja del Hub sí son
+   responsive, pero el badge/panel del header solo vive en el nav desktop hoy.
 7. ~~Delta Ribbon en modo histórico~~ — **v1 hecho 2026-08-12/17, con datos reales de OpenF1.**
    Se construyó en paralelo en otra sesión, con una arquitectura más fiel a la especificación
    original de lo que este documento anticipaba — anotado acá el 2026-08-17 tras verificar el
