@@ -612,9 +612,48 @@ código real — §5–§9, y todas las decisiones de alcance están cerradas �
    pendiente aparte.
 6. Antes de construir la UI de Mi Box Fase 1: decidir el mecanismo mínimo de persistencia
    (cookie o `localStorage`, sin cuentas — §4).
-7. Delta Ribbon en modo histórico únicamente (§3) — los 5 estados del ciclo de vida, leyendo de
-   Supabase precalculado. Mi Box Fase 1 (seguir + número propio + orden personalizado),
-   standalone.
+7. ~~Delta Ribbon en modo histórico~~ — **v1 hecho 2026-08-12/17, con datos reales de OpenF1.**
+   Se construyó en paralelo en otra sesión, con una arquitectura más fiel a la especificación
+   original de lo que este documento anticipaba — anotado acá el 2026-08-17 tras verificar el
+   código real y reconciliar con un intento propio más simple (basado solo en `lap_times`) que
+   se descartó a favor de esta versión.
+
+   - **Ingesta** (`scripts/load-delta-ribbon.ts`) — loader offline de OpenF1 → dos tablas
+     nuevas de Supabase (`delta_ribbon_frames`, `delta_ribbon_events`), respetando la regla
+     de siempre ("nunca llamar a OpenF1 directo desde una request, precalcular"). El
+     `path_percent` se computa desde la distancia de arco acumulada de cada piloto en
+     `/location` de OpenF1 — no se proyecta contra el SVG del trazado externo, porque no hay
+     origen/escala/rotación en común entre esos dos sistemas de coordenadas — y coincide con
+     la misma convención 0-100 de `CircuitCorner.path_percent` (verificado contra las curvas
+     reales de Spa).
+   - **Alcance deliberado — un solo par, no un sistema genérico:** el loader está
+     "hardcoded a un race/driver pair por diseño" (comentario en el código, citando este
+     documento) — no es un loader multi-carrera. Hoy solo existe un par cargado: **Leclerc vs.
+     Verstappen, GP de Bélgica 2026 (Spa)**. Cualquier otro circuito muestra la sección "08"
+     vacía/ausente hasta que alguien corra el loader para ese par — la página lo detecta de
+     forma genérica (busca `delta_ribbon_frames` por circuito), no hay nada hardcodeado del
+     lado del front.
+   - **Render** (`DeltaRibbonSection.tsx` + `deltaRibbon/geometry.ts`) — polígono real de
+     ancho variable (offset perpendicular al trazado, no `stroke-width`), última vuelta
+     grabada, gap-filled y densificada a un loop completo; segmentado por líder con
+     marcadores de snap/defend en posición real de pista, y un patrón de trenza (hatch
+     diagonal con los dos colores de equipo) para tramos con varios cambios de mano — sin
+     verificar aún contra un caso real porque la única carrera cargada no tuvo trenzas. El
+     ancho se escala con un cap derivado del propio delta máximo de esa carrera (no un cap
+     fijo — encontraron y corrigieron ese bug verificando contra Spa).
+   - **Verificado de nuevo el 2026-08-17** contra el estado real del repo tras la
+     reconciliación: la página `/circuits/spa` renderiza la cinta real, "FINAL GAP: LEC
+     +9.739s", 3 snaps, 4 defends, cero errores de consola.
+   - **Diferido a fase posterior (ya confirmado en los commits):** cono de proyección,
+     export/scorecard, scrub táctil interactivo, cluster de telemetría en vivo.
+
+   **Decisión pendiente, no tomada todavía:** con 6 días para el lanzamiento, ¿se carga más de
+   un par/circuito antes del 23, o el Delta Ribbon lanza como una sola demo insignia (Spa,
+   Leclerc vs. Verstappen) en vez de una feature presente en todos los circuitos? Cargar más
+   pares requiere correr el script contra OpenF1 por cada uno (rate-limited, no instantáneo).
+
+   Mi Box Fase 1 (seguir + número propio + orden personalizado), standalone, sigue sin
+   construirse.
 8. Confirmado fuera de alcance del 23 de agosto, no requieren acción antes del lanzamiento:
    modo en vivo del Delta Ribbon, Mi Box Fase 2, motor de "rivalidades" de Drivers, módulo
    "récords en riesgo esta temporada" de Records (§9), reconstrucción completa de Constructors
