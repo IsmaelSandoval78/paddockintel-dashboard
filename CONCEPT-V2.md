@@ -701,3 +701,30 @@ código real — §5–§9, y todas las decisiones de alcance están cerradas �
    "récords en riesgo esta temporada" de Records (§9), reconstrucción completa de Constructors
    detail (§7/§10), subtipos de desnivel de Circuits (§8), reemplazo de Leaflet en
    `CircuitMap.tsx` (§8).
+9. ~~Tres decisiones pendientes de la lista anterior~~ — **cerradas 2026-08-21, patch mínimo
+   pre-lanzamiento:**
+   - **Constructors detail — wordmark ilegible (§13.6 colateral):** un solo cambio, el
+     `color: '#050505'` hardcodeado del `<h1>` (línea ~476) pasó a `color: 'var(--text-1)'` —
+     el mismo token que ya resuelve correctamente casi-negro en Story Mode y casi-blanco en
+     Data Mode, sin tocar layout, `font-serif` ni el resto del hex hardcodeado de la página
+     (eso sigue en Fase 2, §7/§10). Verificado con dev server: `data-mode="data"` +
+     `color:var(--text-1)` presentes, cero ocurrencias de `#050505`, cero errores de consola.
+   - **PT del Hero tagline — dueño asignado, hecho en el momento:** usuario pidió que la
+     tradujera yo. `hub.tagline` en `locales/pt.json` pasó de un placeholder viejo
+     ("Hub de inteligência F1") a una traducción nativa real: "Entenda a Fórmula 1. Não apenas
+     assista." — construida en paralelo a la estructura del EN/ES ("Understand the sport. Not
+     just watch it." / "Entender la Fórmula 1. No solo mirarla."), no traducción literal
+     palabra por palabra. La **línea de firma** ("Every number has a source.") sigue sin estar
+     conectada a ningún componente en ningún idioma — no es un gap específico de PT, es una
+     pieza de copy todavía no implementada (confirmado con grep, cero resultados en
+     `locales/`/`components/`/`app/`), queda anotado para cuando se construya.
+   - **CTA de inversores — versión simple:** nuevo link "Investors"/"Inversores"/
+     "Investidores" (`footer.investors`, agregado a los 3 locale files) en `Footer.tsx` (el
+     footer funcional/legal compartido entre Hub y magazine, no el `KineticFooter` animado
+     del Hub) — `mailto:info@paddockintel.com?subject=Investor%20inquiry`, mismo email de
+     contacto que ya usan Privacy/About, con asunto propio para poder filtrar estos leads del
+     resto del inbox. Sin página ni flujo nuevo — es el punto de contacto discreto que el
+     panel de asesores (§12) marcó como gap, no un rediseño del recorrido de conversión.
+   - Verificado en conjunto: `tsc --noEmit` limpio, `eslint` sin errores nuevos (1 warning
+     preexistente sin relación, `teamHex` sin usar), los 3 `locales/*.json` parsean como JSON
+     válido, dev server sin errores en consola/log para EN/ES/PT.

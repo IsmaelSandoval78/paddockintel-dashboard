@@ -473,7 +473,7 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
           />
           <h1
             className="font-serif leading-[0.92] tracking-[-0.02em]"
-            style={{ fontSize: 'clamp(2.5rem,6vw,4.5rem)', color: '#050505' }}
+            style={{ fontSize: 'clamp(2.5rem,6vw,4.5rem)', color: 'var(--text-1)' }}
           >
             <span style={{ fontWeight: 700 }}>{constructor.name.toUpperCase()}</span>
           </h1>

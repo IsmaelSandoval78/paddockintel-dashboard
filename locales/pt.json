@@ -25,7 +25,7 @@
   },
   "hub": {
     "title": "PaddockIntel",
-    "tagline": "Hub de inteligência F1",
+    "tagline": "Entenda a Fórmula 1. Não apenas assista.",
     "status": {
       "connected": "Supabase conectado",
       "error": "Erro de conexão"
@@ -728,7 +728,8 @@
   "footer": {
     "disclaimer": "Publicação independente. Sem afiliação com a Formula 1 ou a FIA.",
     "about": "Sobre",
-    "privacy": "Política de Privacidade"
+    "privacy": "Política de Privacidade",
+    "investors": "Investidores"
   },
   "aboutDisclaimer": {
     "heading": "Aviso legal",
