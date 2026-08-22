@@ -728,3 +728,41 @@ código real — §5–§9, y todas las decisiones de alcance están cerradas �
    - Verificado en conjunto: `tsc --noEmit` limpio, `eslint` sin errores nuevos (1 warning
      preexistente sin relación, `teamHex` sin usar), los 3 `locales/*.json` parsean como JSON
      válido, dev server sin errores en consola/log para EN/ES/PT.
+10. **"Muy oscuro" (Circuits/Constructors/Drivers) — reportado por el usuario 2026-08-21,
+    diagnosticado como falta de capas, no como el tono de navy en sí.** Dos causas reales
+    encontradas, ambas corregidas:
+    - **Bug real, no era solo percepción — Constructors mostraba "0 CONSTRUCTORS":** exacto
+      mismo bug que el de `/drivers` (§13.2, corregido 2026-08-11) — `getConstructorsData()`
+      (`app/[locale]/(hub)/constructors/page.tsx`) buscaba "última carrera 2026 por fecha de
+      calendario" (`races.date <= hoy`) en vez de "última carrera CON standings cargados"
+      (`MAX(race_id)` de `constructor_standings`). La ronda más reciente por fecha todavía no
+      tenía resultados cargados → tabla vacía, página entera reducida a un header sobre un
+      fondo oscuro sin nada más. Corregido con el mismo patrón que ya usan Hub/Drivers.
+      Verificado contra Supabase real: 11 constructores con standings 2026 reales
+      (Mercedes 358pts P1 ... Cadillac 0pts P11).
+    - **Falta de capas real, confirmada leyendo el código:** `ConstructorsClient.tsx`,
+      `DriversClient.tsx` y `CircuitsClient.tsx` — las filas de tabla en reposo y las barras
+      de toolbar usaban `bg-bg`/sin clase (el mismo tono que el canvas de la página), con
+      `bg-surface-raised` reservado solo para hover/selected. En Story Mode (borde 1px casi-
+      negro sobre papel crema) esto se leía nítido; en Data Mode, un borde `#1F2A3F` sobre
+      `#0B1220` es demasiado sutil como única separación → toda la página se lee como una sola
+      masa oscura. `--surface-overlay` (definido en `DESIGN.md` pero sin un solo uso real en
+      el código, duplicado del valor de `--surface-raised`) se re-calibró a `#1C2740` (un
+      tercer tono, más claro) para poder distinguir hover/selected de la fila en reposo.
+      Aplicado: **zebra striping** en las filas de standings de Constructors y Drivers
+      (par/impar alternando `--bg`/`--surface-raised`, vía `position % 2`, sin necesidad de
+      pasar un `index` nuevo por prop) y **barras de toolbar elevadas** (`bg-surface-raised`)
+      en las tres páginas — el header, los filtros de vista/era, la barra de búsqueda. De
+      paso, arregla un bug de hover muerto en Constructors: `hover:bg-surface` no hacía nada
+      visible en Data Mode porque `--surface` y `--bg` son el mismo valor ahí — ahora usa
+      `hover:bg-surface-overlay`, el tono realmente distinto.
+    - Circuits sigue siendo mayormente un mapa a pantalla completa (no una tabla) — el mapa en
+      sí no se tocó, solo la barra de header/filtros/búsqueda/leyenda que flota sobre él. Su
+      "vacío" percibido es en parte estructural (sin circuito seleccionado no hay panel lateral
+      ni contenido adicional) — no se rediseñó el fill del mapa en este pase.
+    - Verificado con dev server + Playwright tras un reinicio limpio (`rm -rf .next` — el
+      primer intento de verificación agarró CSS cacheado y dio un falso negativo en el test de
+      hover): zebra confirmado a nivel de color computado (`rgb(20,28,46)`/`rgb(11,18,32)`
+      alternando), hover de Constructors confirmado cambiando a `rgb(28,39,64)`, Constructors
+      con 11 filas reales, cero errores de consola en las tres páginas. `tsc --noEmit` y
+      `eslint` limpios (mismos 2 warnings preexistentes sin relación: `flyTo`, `t`).

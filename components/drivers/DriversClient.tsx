@@ -64,6 +64,7 @@ function SeasonRow({
   const isP1 = driver.position === 1;
   const winRate =
     driver.races > 0 ? Math.round((driver.wins / driver.races) * 100) : 0;
+  const restBg = driver.position % 2 === 0 ? 'var(--surface-raised)' : 'var(--bg)';
 
   return (
     <div
@@ -74,15 +75,15 @@ function SeasonRow({
       aria-label={`${driver.forename} ${driver.surname}`}
       className="drivers-season-row flex items-center h-[52px] pr-5 cursor-pointer select-none"
       style={{
-        background: isP1 ? 'var(--surface-raised)' : selected ? 'var(--surface-raised)' : 'var(--bg)',
+        background: isP1 ? 'var(--surface-raised)' : selected ? 'var(--surface-overlay)' : restBg,
         borderLeft: isP1 ? '3px solid var(--red)' : '3px solid transparent',
         paddingLeft: '17px',
       }}
       onMouseEnter={(e) => {
-        if (!isP1 && !selected) (e.currentTarget as HTMLDivElement).style.background = 'var(--surface-raised)';
+        if (!isP1 && !selected) (e.currentTarget as HTMLDivElement).style.background = 'var(--surface-overlay)';
       }}
       onMouseLeave={(e) => {
-        if (!isP1 && !selected) (e.currentTarget as HTMLDivElement).style.background = 'var(--bg)';
+        if (!isP1 && !selected) (e.currentTarget as HTMLDivElement).style.background = restBg;
       }}
     >
       {/* POS — Archivo Black 13px */}
@@ -255,7 +256,7 @@ export default function DriversClient({
     <main className="flex flex-col">
 
       {/* ── Page header ──────────────────────────────────────── */}
-      <div ref={headerRef} className="h-12 px-5 border-b border-border flex items-center gap-3 shrink-0 overflow-hidden bg-bg">
+      <div ref={headerRef} className="h-12 px-5 border-b border-border flex items-center gap-3 shrink-0 overflow-hidden bg-surface-raised">
         <span className="font-mono text-[10px] text-text-2 uppercase tracking-[0.1em]">03 ·</span>
         <div className="kinetic-mask shrink-0">
           <h1
@@ -272,7 +273,7 @@ export default function DriversClient({
       </div>
 
       {/* ── View toggle ──────────────────────────────────────── */}
-      <div className="h-9 px-5 border-b border-border flex items-center gap-5 shrink-0 overflow-x-auto">
+      <div className="h-9 px-5 border-b border-border flex items-center gap-5 shrink-0 overflow-x-auto bg-surface-raised">
         <button
           onClick={() => handleViewChange('2026')}
           className="drivers-filter-btn font-mono text-[11px] uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0 shrink-0"
@@ -296,7 +297,7 @@ export default function DriversClient({
 
       {/* ── Era + search filters (all-time view only) ─────── */}
       {view === 'all' && (
-        <div className="border-b border-border shrink-0">
+        <div className="border-b border-border shrink-0 bg-surface-raised">
           {/* Era tabs */}
           <div className="h-9 px-5 flex items-center gap-4 overflow-x-auto">
             {(['all', 'modern', 'v10', 'turbo', 'v8', 'classic'] as EraFilter[]).map((era) => (
