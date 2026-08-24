@@ -199,7 +199,7 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
                         key={i}
                         className={`py-4 ${i > 0 ? 'border-t border-border-subtle' : ''}`}
                       >
-                        <dt className="font-sans font-semibold text-text-1 mb-1.5 text-sm">
+                        <dt className="font-prose font-semibold text-text-1 mb-1.5 text-sm">
                           {faq.q}
                         </dt>
                         <dd className="font-prose text-sm text-text-2 leading-relaxed">

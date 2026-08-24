@@ -57,7 +57,7 @@ export default function FeaturedArticleCard({
             {title}
           </h2>
           {metaDescription && (
-            <p className="font-sans text-base text-text-2 leading-relaxed mt-4 max-w-2xl">
+            <p className="font-prose text-base text-text-2 leading-relaxed mt-4 max-w-2xl">
               {metaDescription}
             </p>
           )}

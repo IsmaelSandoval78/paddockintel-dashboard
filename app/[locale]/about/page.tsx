@@ -71,7 +71,7 @@ export default async function AboutPage() {
         winners and losers happen faster.
       </h1>
 
-      <p className="font-sans text-text-1 leading-relaxed mt-6">
+      <p className="font-prose text-text-1 leading-relaxed mt-6">
         Paddock Intel decodes the operational intelligence, strategic execution, and economic
         calculations that transform grid positions into podium finishes—and racing teams into
         billion-dollar businesses.
@@ -87,7 +87,7 @@ export default async function AboutPage() {
             <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2">
               {p.label}
             </span>
-            <p className="font-sans text-sm text-text-1 leading-relaxed">{p.body}</p>
+            <p className="font-prose text-sm text-text-1 leading-relaxed">{p.body}</p>
           </li>
         ))}
       </ul>
@@ -96,27 +96,27 @@ export default async function AboutPage() {
       <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-2 border-b border-border pb-3 mt-12 mb-6">
         02 · Why This Perspective Matters
       </p>
-      <p className="font-sans text-sm text-text-2 leading-relaxed mb-5">
+      <p className="font-prose text-sm text-text-2 leading-relaxed mb-5">
         Most F1 media covers what happened. Paddock Intel explains why it happened and what it cost.
       </p>
 
       <div className="space-y-3">
-        <p className="font-sans text-sm text-text-1 leading-relaxed border-l-2 border-terracotta pl-4">
+        <p className="font-prose text-sm text-text-1 leading-relaxed border-l-2 border-terracotta pl-4">
           When a team executes a one-stop strategy while competitors commit to two stops, that&apos;s not
           luck—it&apos;s calculated risk backed by operational execution, supply chain readiness, and
           economic incentive structures.
         </p>
-        <p className="font-sans text-sm text-text-1 leading-relaxed border-l-2 border-terracotta pl-4">
+        <p className="font-prose text-sm text-text-1 leading-relaxed border-l-2 border-terracotta pl-4">
           When a sponsor signs a $90 million deal with the grid&apos;s worst-performing team, that&apos;s not
           irrational—it&apos;s defensive market positioning in a proxy war for consumer attention.
         </p>
-        <p className="font-sans text-sm text-text-1 leading-relaxed border-l-2 border-terracotta pl-4">
+        <p className="font-prose text-sm text-text-1 leading-relaxed border-l-2 border-terracotta pl-4">
           When Red Bull invests $500 million to become an engine manufacturer, that&apos;s not
           ambition—it&apos;s vertical integration to control competitive destiny and enterprise valuation.
         </p>
       </div>
 
-      <p className="font-sans text-sm text-text-2 leading-relaxed mt-5">
+      <p className="font-prose text-sm text-text-2 leading-relaxed mt-5">
         The numbers tell the real story. The operations determine the outcome.
       </p>
 
@@ -125,7 +125,7 @@ export default async function AboutPage() {
         03 · Who&apos;s Behind This
       </p>
 
-      <p className="font-sans text-text-1 leading-relaxed mb-5">
+      <p className="font-prose text-text-1 leading-relaxed mb-5">
         I&apos;m Ismael, and I analyze Formula 1 through the lens of supply chain operations and
         business strategy.
       </p>
@@ -157,18 +157,18 @@ export default async function AboutPage() {
         </div>
       </div>
 
-      <p className="font-sans text-sm text-text-2 leading-relaxed mt-5">
+      <p className="font-prose text-sm text-text-2 leading-relaxed mt-5">
         I&apos;ve followed Formula 1 since the Schumacher era. Attending the 2024 Las Vegas Grand Prix
         crystallized something: the operational complexity I manage daily in supply chain—coordinating
         multi-million-dollar shipments, optimizing production schedules, managing procurement under cost
         pressure—maps directly to how F1 teams execute race weekends.
       </p>
-      <p className="font-sans text-sm text-text-2 leading-relaxed mt-3">
+      <p className="font-prose text-sm text-text-2 leading-relaxed mt-3">
         The difference: F1 operates under time compression, public scrutiny, and higher stakes. A
         delayed shipment in logistics costs money. A delayed pit stop costs podium positions and
         championship points.
       </p>
-      <p className="font-sans text-sm text-text-2 leading-relaxed mt-3">
+      <p className="font-prose text-sm text-text-2 leading-relaxed mt-3">
         That parallel fascinated me. So I started analyzing Formula 1 as an operations and economics
         case study, applying frameworks from corporate supply chain management to understand how teams
         make decisions when performance, budgets, and milliseconds intersect.
@@ -188,7 +188,7 @@ export default async function AboutPage() {
               <h3 className="font-display uppercase text-text-1 text-base leading-tight">
                 {item.title}
               </h3>
-              <p className="font-sans text-sm text-text-2 leading-relaxed mt-1.5">{item.body}</p>
+              <p className="font-prose text-sm text-text-2 leading-relaxed mt-1.5">{item.body}</p>
             </div>
           </li>
         ))}
@@ -204,7 +204,7 @@ export default async function AboutPage() {
             <span className="font-display uppercase text-text-1 text-base">Weekly Newsletter</span>
             <span className="font-mono text-[10px] text-terracotta uppercase tracking-[0.08em]">Free</span>
           </div>
-          <p className="font-sans text-sm text-text-2 leading-relaxed mt-1.5">
+          <p className="font-prose text-sm text-text-2 leading-relaxed mt-1.5">
             Economic and operational analysis of major F1 business developments. Sponsor deals. Team
             budgets. Market movements. Strategic decisions. Delivered to your inbox.
           </p>
@@ -218,7 +218,7 @@ export default async function AboutPage() {
               Coming Soon
             </span>
           </div>
-          <p className="font-sans text-sm text-text-2 leading-relaxed mt-1.5">
+          <p className="font-prose text-sm text-text-2 leading-relaxed mt-1.5">
             Real-time operational analysis during Grand Prix weekends. Strategy execution. Pit stop
             efficiency. Risk decisions. The paddock intelligence that explains how races are won in
             the garage, not just on track.
@@ -231,7 +231,7 @@ export default async function AboutPage() {
               Coming Soon
             </span>
           </div>
-          <p className="font-sans text-sm text-text-2 leading-relaxed mt-1.5">
+          <p className="font-prose text-sm text-text-2 leading-relaxed mt-1.5">
             Deep-dive reports. Team financial health assessments. Season-long strategy tracking.
             Proprietary data tables. Institutional-grade intelligence for investors, analysts, and
             industry professionals.
@@ -243,7 +243,7 @@ export default async function AboutPage() {
       <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-2 border-b border-border pb-3 mt-12 mb-6">
         06 · Who This Is For
       </p>
-      <p className="font-sans text-sm text-text-2 leading-relaxed mb-4">
+      <p className="font-prose text-sm text-text-2 leading-relaxed mb-4">
         Paddock Intel is for people who want to understand Formula 1&apos;s invisible layer—the operations,
         economics, and strategic execution that racing media doesn&apos;t cover because they require supply
         chain expertise, financial analysis, and operational thinking to decode.
@@ -252,7 +252,7 @@ export default async function AboutPage() {
         {AUDIENCE.map((item) => (
           <li key={item} className="flex items-start gap-3">
             <span className="font-mono text-[11px] text-terracotta mt-0.5 shrink-0">—</span>
-            <span className="font-sans text-sm text-text-1">{item}</span>
+            <span className="font-prose text-sm text-text-1">{item}</span>
           </li>
         ))}
       </ul>
@@ -261,10 +261,10 @@ export default async function AboutPage() {
       <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-2 border-b border-border pb-3 mt-12 mb-6">
         07 · {tDisclaimer('heading')}
       </p>
-      <p className="font-sans text-sm text-text-2 leading-relaxed mb-4">
+      <p className="font-prose text-sm text-text-2 leading-relaxed mb-4">
         {tDisclaimer('affiliation')}
       </p>
-      <p className="font-sans text-sm text-text-2 leading-relaxed">
+      <p className="font-prose text-sm text-text-2 leading-relaxed">
         {tDisclaimer('accuracy')}
       </p>
 

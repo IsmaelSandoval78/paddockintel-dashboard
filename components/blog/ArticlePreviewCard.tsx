@@ -56,7 +56,7 @@ export default function ArticlePreviewCard({
           {title}
         </h2>
         {metaDescription && (
-          <p className="font-sans text-sm text-text-2 leading-relaxed mt-3 line-clamp-2">
+          <p className="font-prose text-sm text-text-2 leading-relaxed mt-3 line-clamp-2">
             {metaDescription}
           </p>
         )}

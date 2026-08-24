@@ -165,7 +165,7 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
         {/* Tagline — the product promise, ahead of any single driver's stats */}
         <p
           ref={taglineRef}
-          className="font-sans text-text-1 mt-3 max-w-[36ch]"
+          className="font-prose text-text-1 mt-3 max-w-[36ch]"
           style={{
             fontSize: 'clamp(14px, 1.6vw, 18px)',
             lineHeight: 1.4,

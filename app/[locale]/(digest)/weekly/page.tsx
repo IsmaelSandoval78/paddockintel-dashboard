@@ -39,7 +39,7 @@ export default async function DigestIndexPage() {
         <h1 className="font-display text-[clamp(2rem,6vw,3.5rem)] leading-[0.92] tracking-[-0.03em] text-text-1 mt-3 mb-5">
           F1 economics,<br />weekly.
         </h1>
-        <p className="font-sans text-text-2 leading-relaxed max-w-md mb-6">
+        <p className="font-prose text-text-2 leading-relaxed max-w-md mb-6">
           Verified sources. Original synthesis. No wire-service summaries — every issue has a first-person economic angle on what happened in and around F1.
         </p>
         <EmailCapture className="max-w-sm" />
@@ -77,7 +77,7 @@ export default async function DigestIndexPage() {
                     <span className="block font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 mb-1">
                       {format.dateTime(new Date(issue.published_at as string), { dateStyle: 'long' })}
                     </span>
-                    <span className="block font-sans text-text-1 leading-snug line-clamp-2">
+                    <span className="block font-prose text-text-1 leading-snug line-clamp-2">
                       {issue.intro_synthesis as string}
                     </span>
                   </span>

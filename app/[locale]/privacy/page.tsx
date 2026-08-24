@@ -61,7 +61,7 @@ export default async function PrivacyPage({ params }: { params: PageParams }) {
           {t('updated')}
         </p>
 
-        <div className="space-y-8 font-sans text-text-1 leading-relaxed">
+        <div className="space-y-8 font-prose text-text-1 leading-relaxed">
           {sections.map((s) => (
             <section key={s.num}>
               <h2 className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-2 mb-3 border-b border-border-subtle pb-2">

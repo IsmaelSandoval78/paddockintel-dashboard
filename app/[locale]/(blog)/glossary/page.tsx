@@ -64,7 +64,7 @@ export default async function GlossaryIndexPage({ params }: { params: PageParams
           <h1 className="font-display text-[clamp(2rem,6vw,3.5rem)] leading-[0.92] tracking-[-0.03em] text-text-1 mt-3 mb-5">
             {t('title')}
           </h1>
-          <p className="font-sans text-text-2 leading-relaxed max-w-lg">
+          <p className="font-prose text-text-2 leading-relaxed max-w-lg">
             {t('description')}
           </p>
         </div>
@@ -85,10 +85,10 @@ export default async function GlossaryIndexPage({ params }: { params: PageParams
                     href={`/glossary/${term.slug}`}
                     className="group py-5 flex flex-col md:flex-row md:items-baseline gap-1 md:gap-6"
                   >
-                    <span className="font-sans font-semibold text-text-1 group-hover:text-terracotta transition-colors duration-150 md:w-64 shrink-0">
+                    <span className="font-prose font-semibold text-text-1 group-hover:text-terracotta transition-colors duration-150 md:w-64 shrink-0">
                       {term.term}
                     </span>
-                    <span className="font-sans text-sm text-text-2 leading-relaxed">
+                    <span className="font-prose text-sm text-text-2 leading-relaxed">
                       {term.short_definition}
                     </span>
                   </Link>

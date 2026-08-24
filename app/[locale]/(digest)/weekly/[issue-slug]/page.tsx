@@ -131,7 +131,7 @@ export default async function DigestIssuePage({ params }: { params: PageParams }
                     href={item.source_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block font-sans font-semibold text-text-1 leading-snug mb-2 hover:text-terracotta transition-colors duration-150"
+                    className="block font-prose font-semibold text-text-1 leading-snug mb-2 hover:text-terracotta transition-colors duration-150"
                     style={{ fontSize: '0.9375rem' }}
                   >
                     {item.headline}

@@ -122,7 +122,7 @@ export default async function MagazineHomePage({
         <h1 className="font-display text-[clamp(2rem,6vw,3.5rem)] leading-[0.92] tracking-[-0.03em] text-text-1 mt-3 mb-5">
           {t('headline')}
         </h1>
-        <p className="font-sans text-text-2 leading-relaxed max-w-lg mb-6">
+        <p className="font-prose text-text-2 leading-relaxed max-w-lg mb-6">
           {t('description')}
         </p>
         <EmailCapture className="max-w-sm" />
@@ -262,10 +262,10 @@ export default async function MagazineHomePage({
             href={locale === 'en' ? '/weekly' : `/${locale}/weekly`}
             className="group py-5 first:pt-0 md:py-0 md:pr-8 md:first:pl-0"
           >
-            <h2 className="font-sans font-semibold text-text-1 group-hover:text-terracotta transition-colors duration-150">
+            <h2 className="font-prose font-semibold text-text-1 group-hover:text-terracotta transition-colors duration-150">
               {t('promo.digest')}
             </h2>
-            <p className="font-sans text-sm text-text-2 leading-relaxed mt-2">
+            <p className="font-prose text-sm text-text-2 leading-relaxed mt-2">
               {t('promo.digestDescription')}
             </p>
             <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 mt-4">
@@ -274,8 +274,8 @@ export default async function MagazineHomePage({
           </a>
 
           <div className="py-5 pb-0 md:py-0 md:pl-8 opacity-50">
-            <h2 className="font-sans font-semibold text-text-1">{t('promo.book')}</h2>
-            <p className="font-sans text-sm text-text-2 leading-relaxed mt-2">
+            <h2 className="font-prose font-semibold text-text-1">{t('promo.book')}</h2>
+            <p className="font-prose text-sm text-text-2 leading-relaxed mt-2">
               {t('promo.bookDescription')}
             </p>
           </div>
