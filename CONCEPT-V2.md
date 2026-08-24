@@ -3,6 +3,12 @@
 > Documento vivo. Nace de una sesión de diseño en conversación — no reemplaza `DESIGN.md`
 > (tokens visuales) ni `CLAUDE.md`/`SKILL.md` (reglas de implementación), es el puente entre
 > "por qué" y "qué construir". Rama: `v2-relanzamiento`.
+>
+> **Revertido 2026-08-23 — el Data Mode oscuro (el eje central de este documento) ya no
+> gobierna el producto**, ver §13 punto 11 para el detalle completo. El resto del documento
+> queda como registro histórico de las decisiones que sí se tomaron (Delta Ribbon, Mi Box,
+> las auditorías página por página) — no asumas que "Data Mode" sigue siendo el modo real del
+> Hub al leer las secciones de abajo.
 
 ## 1. Visión
 
@@ -800,3 +806,55 @@ código real — §5–§9, y todas las decisiones de alcance están cerradas �
       alternando), hover de Constructors confirmado cambiando a `rgb(28,39,64)`, Constructors
       con 11 filas reales, cero errores de consola en las tres páginas. `tsc --noEmit` y
       `eslint` limpios (mismos 2 warnings preexistentes sin relación: `flyTo`, `t`).
+11. **Data Mode oscuro — revertido por completo, 2026-08-23.** El usuario vio el resultado en
+    vivo (después del pase de capas del punto 10) y decidió que no lo quiere: "todo el Data
+    Mode oscuro está mal, volver a claro". Se confirmó primero que esto nunca llegó a
+    `main`/producción (`v2-relanzamiento` nunca se mergeó, `main` sin tocar desde el 27/7) —
+    el impacto real era cero usuarios, no una reversión de algo en vivo.
+
+    **Alcance confirmado con el usuario antes de tocar código:** Story Mode (Blog/Book) se
+    queda como está — el problema era específicamente el navy oscuro del Hub. Al revisar el
+    CSS real apareció algo que cambia esa distinción: `:root` en `globals.css` **nunca tuvo la
+    paleta cálida nueva** que describe este documento y `DESIGN.md` (crema/rojo ladrillo/
+    mostaza) — siempre fue la paleta v0.3.0 original (`#F4F4F0`), y el comentario del código ya
+    decía explícitamente que Story Mode "keeps the :root values above untouched". Es decir: la
+    paleta cálida de Story Mode fue una decisión de diseño tomada en documento pero nunca
+    construida. Con esto, "Data Mode vuelve a claro" y "Story Mode se queda como está" son la
+    misma acción técnica: **borrar el bloque `[data-mode="data"]` de `globals.css`** — todo el
+    sitio (Hub, Digest, Blog, Book) converge de nuevo a un único `:root`, exactamente como
+    antes de esta sesión.
+
+    **Cambios de código, mínimos gracias a la arquitectura por variables CSS:**
+    - `app/globals.css` — eliminado el bloque `[data-mode="data"]` completo (colores navy,
+      `--surface-overlay` recalibrado del punto 10 incluido). Reemplazado por un comentario
+      explicando el revert. El atributo `data-mode="data"|"story"` que sigue seteando
+      `lib/siteMode.ts` en `<html>` queda inerte (ambos valores resuelven al mismo `:root`) —
+      no se borró esa plomería, es inofensiva y queda por si se retoma un Data Mode no-oscuro
+      más adelante.
+    - `components/home/kinetic/WarpField.tsx` — el color "ink" de las líneas del Hero, que se
+      había recalibrado a casi-blanco (`0xf4f4f0`) para verse sobre navy, volvió a casi-negro
+      (`0x0a0a0a`) para el fondo claro.
+    - Grep de todo `components/` confirmó que estos eran los **únicos** dos lugares con color
+      hardcodeado (no variable CSS) dependiente del modo oscuro — todo lo demás (Drivers,
+      Circuits, Constructors, Records, Delta Ribbon, Mi Box) usa `var(--...)`/clases Tailwind
+      mapeadas a variables, así que revirtió solo con el cambio de `globals.css`, sin tocar
+      componente por componente — el mismo motivo por el que el re-skin hacia oscuro también
+      había "cascadeado solo" en su momento (§13.5).
+    - Las mejoras de capas del punto 10 (zebra striping, barras de toolbar `bg-surface-raised`)
+      **no se revirtieron** — son mode-agnósticas, siguen siendo una mejora legítima sobre el
+      sistema claro también, verificado visualmente.
+    - `CLAUDE.md` — la nota "dos registros" tachada con fecha (mismo patrón que la nota de
+      OpenF1); la excepción de radio `4-8px` para tarjetas de Data Mode eliminada (nunca se
+      había aplicado a ningún componente real, según el propio punto 5 de esta lista — no
+      quedaba nada que revertir ahí); la regla de scorecard siempre-claro simplificada (ya no
+      es "independiente del modo del sitio", ahora coincide con el sitio en vivo también).
+    - `DESIGN.md` y este documento — nota de reversión agregada al principio de cada uno, el
+      resto del contenido de Data Mode/Story Mode queda como registro histórico, no como
+      fuente de verdad vigente.
+    - **`PRODUCT.md` no necesitó ningún cambio** — su afirmación "Dark mode is not offered...
+      the only light-substrate F1 property" (que había quedado falsa mientras Data Mode
+      estuvo activo, hallazgo del punto de limpieza de `.md` de esta misma sesión) volvió a
+      ser cierta con el revert.
+    - Verificado con dev server + Playwright, reinicio limpio (`rm -rf .next`): Hub, Drivers,
+      Circuits, Constructors, Records y el detalle de Ferrari — los seis renderizan en el
+      sistema claro, `tsc --noEmit` y `eslint` limpios, cero errores de consola.

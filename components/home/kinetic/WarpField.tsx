@@ -45,9 +45,8 @@ export default function WarpField({ teamColor, density = 320 }: WarpFieldProps) 
     const colors     = new Float32Array(N * 2 * 3);
     const velocities = new Float32Array(N);
 
-    // Recalibrated for Data Mode (dark navy #0B1220 substrate) — was near-black ink
-    // tuned for the light paper background, invisible against navy at this opacity.
-    const ink  = new THREE.Color(0xf4f4f0);
+    // Near-black ink, tuned for the light paper background (#F4F4F0).
+    const ink  = new THREE.Color(0x0a0a0a);
     const team = new THREE.Color(teamColor);
     const red  = new THREE.Color(0xe61919);
 

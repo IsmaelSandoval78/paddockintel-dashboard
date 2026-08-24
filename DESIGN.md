@@ -1,5 +1,20 @@
 # PaddockIntel DESIGN.md v2.0.0 — Relanzamiento (Holanda, 23 ago 2026)
 
+> **Revertido 2026-08-23 — el Data Mode oscuro de este documento ya NO gobierna el producto.**
+> El usuario decidió en contra del rediseño oscuro después de verlo en vivo (páginas Hub/
+> Drivers/Circuits/Records/Constructors). Todo el sitio volvió al sistema único v0.3.0 ("Swiss
+> Industrial Print", `#F4F4F0`) descrito más abajo bajo "Tokens — Story Mode", que en la
+> práctica es y siempre fue el único `:root` real en `globals.css` (el bloque
+> `[data-mode="data"]` que sobreescribía esos valores para Hub/Digest se eliminó del CSS). La
+> paleta cálida "Story Mode" (crema/rojo ladrillo/mostaza) que describe la sección de abajo
+> **nunca se implementó en código** — Blog/Book siempre renderizaron con la paleta v0.3.0
+> también, así que no hay nada que revertir ahí; queda como decisión de diseño abierta y sin
+> tomar, no como algo que se rompió. Esto nunca llegó a `main`/producción — vivió y murió
+> dentro de la rama `v2-relanzamiento`. Ver `CONCEPT-V2.md` §13 para el detalle completo. El
+> resto de este documento (Data Mode, Story Mode, dos registros) queda como registro histórico
+> de la decisión, no como fuente de verdad vigente — la fuente de verdad vigente es el sistema
+> único descrito en `PRODUCT.md` y el `:root` de `app/globals.css`.
+
 Reemplaza el criterio visual v0.3.0 ("Swiss Industrial Print" único) por un sistema de **dos
 registros** basado en 13 referencias analizadas en sesión de diseño. Sigue gobernando las
 cuatro superficies (Hub, Blog, Digest, Book) — lo que cambia es que ya no comparten una única

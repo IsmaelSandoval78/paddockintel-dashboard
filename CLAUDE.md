@@ -134,7 +134,7 @@ All data lives in Supabase. Never use mock data — always query real tables.
 
 `DESIGN.md` is the single source of truth for all visual tokens (colors, typography, spacing, motion). Do not duplicate values here — they drift out of sync. Read `DESIGN.md` before touching any styling.
 
-**v2 relaunch (targeting Dutch GP, 2026-08-23, branch `v2-relanzamiento`):** the site is now two registers, not one — **Data Mode** (dark navy, Hub + Digest) and **Story Mode** (warm editorial, Blog + Book). Check which mode a surface belongs to in `DESIGN.md` before styling it; do not apply Data Mode tokens to Blog/Book or vice versa.
+~~**v2 relaunch:** the site is now two registers, not one — **Data Mode** (dark navy, Hub + Digest) and **Story Mode** (warm editorial, Blog + Book).~~ — **reverted 2026-08-23:** the dark Data Mode redesign is gone. The whole site (Hub, Digest, Blog, Book) is back to the single light "Swiss Industrial Print" system (`#F4F4F0` paper, `--red` accent, zero-radius data surfaces) — see `DESIGN.md` and `CONCEPT-V2.md` §13 for the full note. It never shipped to `main`/production, so this was a branch-only revert, not a live rollback.
 
 - Tailwind v4 utility classes only — no inline styles, no CSS modules unless absolutely necessary
 - Use CSS variables from `globals.css` — never hardcode hex values that exist as tokens
@@ -170,7 +170,7 @@ All data lives in Supabase. Never use mock data — always query real tables.
 - Generated client-side as canvas/PNG
 - Always include paddockintel.com watermark + logo
 - Aspect ratios: 1:1 (Instagram), 9:16 (Stories/TikTok), 16:9 (X/Twitter)
-- Light background (`#F4F4F0`) always — deliberately independent of the live site's mode, same rationale as the Remotion "Blueprint" motion standard (a shareable exported outward doesn't need to match the in-app Data Mode dashboard). Never a dark scorecard
+- Light background (`#F4F4F0`) always, same rationale as the Remotion "Blueprint" motion standard. Never a dark scorecard — matches the live site now that Data Mode is reverted (2026-08-23), not just an export-time exception
 
 ---
 
@@ -205,7 +205,7 @@ Minimum to ship: **4 on all five**. If any score < 4, iterate before moving on.
 - Do not invent circuit records, lap times, or historical data — query Supabase
 - Do not use inline styles or hardcoded hex values — use CSS variables from globals.css
 - Do not reintroduce Leaflet or a 3D globe — the map is a flat SVG using a d3-geo Natural Earth projection
-- Do not use `rounded-3xl`, gradients, glassmorphism, or shadows on data surfaces — Data Mode cards (v2) get a soft `4–8px` radius, that's the one exception; still no gradients/glass/shadow
+- Do not use `rounded-3xl`, gradients, glassmorphism, or shadows on data surfaces — zero-radius, no exceptions (the Data Mode `4–8px` radius exception from the v2 relaunch was never actually applied to any component, and no longer applies now that Data Mode itself is reverted, 2026-08-23)
 - Do not use pie charts — use ranked lists
 ## Skills
 Before starting any task, read `.claude/skills/paddockintel/SKILL.md` (loaded automatically as the
