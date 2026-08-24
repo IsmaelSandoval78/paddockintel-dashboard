@@ -472,19 +472,25 @@
     },
     "seasons": {
       "title": "Por Temporada",
-      "year": "Año",
-      "pos": "Pos",
       "pts": "PTS",
-      "wins": "Vic",
-      "pod": "Pod",
+      "wins": "Vic"
+    },
+    "rivalry": {
+      "title": "Rivalidad",
+      "championships": "Campeonatos",
+      "wins": "Victorias",
       "races": "Carreras"
     },
-    "winsSection": {
-      "title": "Victorias",
-      "year": "Año",
-      "race": "Carrera",
-      "driver": "Piloto",
-      "fastestLap": "Vuelta Rápida"
+    "pitWall": {
+      "title": "Pit Wall",
+      "fastestPit": "Parada Más Rápida",
+      "fastestLap": "Vuelta Más Rápida",
+      "dnfRate": "% Abandonos"
+    },
+    "circuitDomination": {
+      "title": "Dominio por Circuito",
+      "wins": "Vic",
+      "podiums": "Pod"
     },
     "drivers": {
       "title": "Pilotos",

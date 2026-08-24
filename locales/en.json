@@ -472,19 +472,25 @@
     },
     "seasons": {
       "title": "Season by Season",
-      "year": "Year",
-      "pos": "Pos",
       "pts": "PTS",
+      "wins": "Wins"
+    },
+    "rivalry": {
+      "title": "Rivalry",
+      "championships": "Championships",
       "wins": "Wins",
-      "pod": "Pod",
       "races": "Races"
     },
-    "winsSection": {
-      "title": "Win History",
-      "year": "Year",
-      "race": "Race",
-      "driver": "Driver",
-      "fastestLap": "Fastest Lap"
+    "pitWall": {
+      "title": "Pit Wall",
+      "fastestPit": "Fastest Pit Stop",
+      "fastestLap": "Fastest Lap Ever",
+      "dnfRate": "DNF Rate"
+    },
+    "circuitDomination": {
+      "title": "Circuit Domination",
+      "wins": "Wins",
+      "podiums": "Podiums"
     },
     "drivers": {
       "title": "Drivers",
