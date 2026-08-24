@@ -222,7 +222,7 @@ short-form. Wired via `next/font/google` in `app/[locale]/layout.tsx` (`--pi-pro
 
 **Scope note:** these patterns are already shipped across Hub (`components/home/kinetic/*`,
 `components/circuits/kinetic/*`). They remain valid documentation for maintaining that code. They are
-**not** the default for Blog/Digest/Book: per PHASES.md, "GSAP — only adopt on a specific page once a
+**not** the default for Blog/Digest/Book: per docs/archive/PHASES.md, "GSAP — only adopt on a specific page once a
 specific effect justifies it; never a global dependency." New surfaces should reach for CSS-native motion
 (scroll-driven animations, transitions, `prefers-reduced-motion` respected) first, and only dynamic-import
 GSAP on a specific page when a specific effect earns it.

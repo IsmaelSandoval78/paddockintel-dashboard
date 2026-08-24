@@ -21,9 +21,9 @@ You'll need a `.env.local` with Supabase credentials (`NEXT_PUBLIC_SUPABASE_URL`
 
 - **`DESIGN.md`** — the single source of truth for visual tokens (color, type, spacing, motion). Never hardcode a value that contradicts this file.
 - **`PRODUCT.md`** — brand voice, anti-references, design principles.
-- **`PHASES.md`** — living status log of what's actually shipped vs. pending. Check here before assuming a feature does or doesn't exist.
+- **`EDITORIAL.md`** — source of truth for voice/structure/process on any article, digest issue, or newsletter copy.
 - **`CLAUDE.md`** / **`AGENTS.md`** — guidelines for AI coding agents working in this repo.
-- **`docs/archive/`** — superseded planning docs, kept for historical reference only. Not the active plan.
+- **`docs/archive/`** — superseded planning/spec docs (including the old `PHASES.md` status log and the shipped `RECORDS-HUB-SPEC*.md` specs), kept for historical reference only. Not the active plan.
 
 ## Database / migrations
 
