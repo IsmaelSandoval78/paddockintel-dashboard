@@ -293,12 +293,39 @@ como Hub/Drivers** — hay que reconstruirla. Recomendación: usar `DriverDetail
 como plantilla de grammar (breadcrumb → hero → banda de stats → grid 2 columnas → secciones
 numeradas), no parchear los hex existentes uno por uno.
 
+**Actualización 2026-08-24 — el archivo creció y ya no es 100% hex.** Entre la fecha de este
+audit y hoy, sesiones de iteración visual (no la reconstrucción de Fase 2, todavía sin
+empezar) agregaron tres secciones nuevas (Rivalry, Pit Wall, Circuit Domination) y reescribieron
+Season by Season y Drivers — el archivo pasó de 708 a 1086 líneas. Esas cinco secciones ya usan
+`var(--red)`/`var(--text-1)`/`var(--text-2)` para barras y acentos (7/3/3 usos respectivamente,
+verificado por `grep`) en vez de hex nuevo. Pero el hallazgo central del audit sigue vigente
+donde no se tocó: hero, banda de stats 01 y el fondo de Pit Wall siguen con `#0A0A0A`,
+`#1A1A1A`, `#2A2A2A`, `#6B6B6B`, `#D4D0C8`, `#F4F4F0` hardcodeados, y el hero sigue en
+`font-serif`. Es decir, el parche mínimo pre-lanzamiento (§10) se respetó — nadie tocó el
+esqueleto — pero la superficie de "hex 100%" original ya no describe el archivo completo; la
+reconstrucción de Fase 2 hereda un punto de partida parcialmente mejor de lo que este audit
+registró.
+
 **Decisión cerrada 2026-08-04 — Fase 2, patch mínimo ahora.** La reconstrucción completa
 (plantilla `DriverDetailExperience.tsx`, Data Mode, motion) queda para después del 23 de
 agosto — no entra en el alcance del lanzamiento. Antes del 23 de agosto, solo se corrige el
 bug de marca `#E10600` → `--red: #E61919` (cambio de una línea, sin tocar el resto del hex
 hardcodeado ni agregar motion). El resto de la página sigue tal cual está — sin Data Mode, sin
 `'use client'`, sin `font-serif` corregido — hasta la reconstrucción de fase 2.
+
+**Actualización 2026-08-24 — planificación de Fase 2 retomada, alcance de color cerrado.** Con
+el Data Mode oscuro revertido por completo (§13 punto 11), la reconstrucción de esta página ya
+no tiene la opción de dark navy que este documento asumía en 2026-08-04 — queda **100% Swiss
+Industrial Print claro** (`#F4F4F0`, el mismo `:root` que ya usan Hub/Drivers/Circuits/
+Records), sin excepción. Se evaluó explícitamente si valía la pena mantener un panel oscuro
+puntual en la sección "Pit Wall" (candidato más fuerte: mismo argumento que ya usa Circuits
+para el trazado del circuito, "objeto oscuro, no fondo de página") — decisión del usuario:
+**no, mantener todo claro**, sin panel oscuro en ninguna sección de la página, Pit Wall
+incluida. La plantilla de referencia sigue siendo `DriverDetailExperience.tsx` (breadcrumb →
+hero → banda de stats → grid 2 columnas → secciones numeradas), ahora sin la ambigüedad de qué
+hacer con Data Mode al copiarla. Plan de refactor sección por sección (qué se reusa tal cual,
+qué se adapta, qué es nuevo) discutido en sesión aparte del 2026-08-24 — no volcado en detalle
+a este documento, este párrafo registra solo la decisión de color que lo encuadra.
 
 ## 8. Circuits — auditoría real (código leído) — mejor de lo esperado
 
@@ -412,7 +439,9 @@ Circuits, Records — §5–§9).
   sesión, sin cambios.
 - **Constructors detail — Fase 2, patch mínimo ahora.** Reconstrucción completa queda para
   después del 23 de agosto. Antes del lanzamiento solo se corrige el bug de rojo `#E10600` →
-  `--red`. Ver §7.
+  `--red`. Ver §7. **Actualización 2026-08-24:** con Data Mode revertido (§13 punto 11), la
+  reconstrucción de Fase 2 queda cerrada en 100% sistema claro — sin panel oscuro en ninguna
+  sección, incluida "Pit Wall", evaluada explícitamente y descartada. Ver nota ampliada en §7.
 
 **Sigue abierto:** `skills.md` sección 6 — falta en el documento fuente que subió el usuario
 (salta de 5 a 7), sin definir si se retoma o se descarta. No bloquea nada del trabajo actual.
@@ -682,6 +711,13 @@ código real — §5–§9, y todas las decisiones de alcance están cerradas �
    pero es peor de lo que ese texto sugería (no es "se ve como antes", es "quedó roto por un
    efecto colateral del re-skin"). Anotado, no corregido — decidir si amerita un patch mínimo
    aparte antes del 23.
+
+   **Resuelto, 2026-08-24 — moot por dos motivos independientes.** `#050505` ya no existe en
+   ningún lado del archivo (`grep` en `constructors/[slug]/page.tsx` da cero coincidencias) —
+   el patch de marca del wordmark ya se aplicó en algún punto entre esta nota y hoy. Y aunque no
+   se hubiera aplicado, el Data Mode oscuro que causaba el contraste roto ya no existe (§13
+   punto 11) — no hay fondo navy contra el que el wordmark pueda quedar ilegible. Cierra el
+   punto pendiente sin necesidad de un patch aparte.
 
    **No construido en este v1, con criterio:** Fase 2 completa (pronósticos + score de
    aciertos) sigue post-lanzamiento (§3/§4, ya decidido). `MiBoxIndicator` no tiene versión
