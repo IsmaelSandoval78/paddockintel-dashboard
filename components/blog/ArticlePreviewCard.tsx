@@ -40,7 +40,7 @@ export default function ArticlePreviewCard({
     <article className="border border-border p-6 flex flex-col h-full">
       <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-text-2 mb-3">
         {tag && (
-          <a href={tagHref} className="hover:text-red transition-colors duration-150">
+          <a href={tagHref} className="hover:text-terracotta transition-colors duration-150">
             {tag.toUpperCase()}
           </a>
         )}
@@ -50,7 +50,7 @@ export default function ArticlePreviewCard({
 
       <Link href={`/${slug}`} className="group flex-1">
         <h2
-          className="uppercase text-text-1 leading-[0.95] tracking-[-0.02em] group-hover:text-red transition-colors duration-150"
+          className="uppercase text-text-1 leading-[0.95] tracking-[-0.02em] group-hover:text-terracotta transition-colors duration-150"
           style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.4rem, 3.5vw, 2rem)' }}
         >
           {title}
@@ -67,7 +67,7 @@ export default function ArticlePreviewCard({
           <div>
             <p
               className="tabular-nums leading-none tracking-[-0.03em]"
-              style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', color: 'var(--red)' }}
+              style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', color: 'var(--terracotta)' }}
             >
               {featuredStat.value}
             </p>

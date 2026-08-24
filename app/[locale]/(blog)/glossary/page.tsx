@@ -85,7 +85,7 @@ export default async function GlossaryIndexPage({ params }: { params: PageParams
                     href={`/glossary/${term.slug}`}
                     className="group py-5 flex flex-col md:flex-row md:items-baseline gap-1 md:gap-6"
                   >
-                    <span className="font-sans font-semibold text-text-1 group-hover:text-red transition-colors duration-150 md:w-64 shrink-0">
+                    <span className="font-sans font-semibold text-text-1 group-hover:text-terracotta transition-colors duration-150 md:w-64 shrink-0">
                       {term.term}
                     </span>
                     <span className="font-sans text-sm text-text-2 leading-relaxed">

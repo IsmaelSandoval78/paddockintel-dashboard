@@ -224,7 +224,7 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
                           href={src.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="font-mono text-[11px] text-text-2 hover:text-red transition-colors duration-150"
+                          className="font-mono text-[11px] text-text-2 hover:text-terracotta transition-colors duration-150"
                         >
                           {src.name} →
                         </a>
@@ -240,7 +240,7 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
                   Written by{' '}
                   <Link
                     href="/about"
-                    className="text-text-1 hover:text-red transition-colors duration-150"
+                    className="text-text-1 hover:text-terracotta transition-colors duration-150"
                   >
                     Ismael Sandoval
                   </Link>

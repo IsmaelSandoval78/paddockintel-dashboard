@@ -49,7 +49,7 @@ export default async function ClosestChampionshipsPage({ params }: { params: Pag
             <span className="text-[13px] font-medium uppercase truncate text-text-1">
               {f.championName} <span className="text-text-3 normal-case">{vs}</span> {f.runnerUpName}
             </span>
-            <span className="font-mono text-[13px] tabular-nums ml-auto shrink-0 text-red">
+            <span className="font-mono text-[13px] tabular-nums ml-auto shrink-0 text-terracotta">
               {formatGap(f.gap, locale)} {gapUnit}
             </span>
             <span className="text-text-2 hidden sm:block">→</span>

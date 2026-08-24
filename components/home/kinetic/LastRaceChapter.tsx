@@ -181,7 +181,7 @@ export default function LastRaceChapter({ race, motionOk }: LastRaceChapterProps
                 >
                   {race.fastest_lap.surname}
                 </p>
-                <p className="font-mono text-[12px] tabular-nums mt-1" style={{ color: 'var(--red)' }}>
+                <p className="font-mono text-[12px] tabular-nums mt-1" style={{ color: 'var(--terracotta)' }}>
                   {race.fastest_lap.time}
                 </p>
               </div>
@@ -197,7 +197,7 @@ export default function LastRaceChapter({ race, motionOk }: LastRaceChapterProps
                 >
                   {race.fastest_pit.surname}
                 </p>
-                <p className="font-mono text-[12px] tabular-nums mt-1" style={{ color: 'var(--red)' }}>
+                <p className="font-mono text-[12px] tabular-nums mt-1" style={{ color: 'var(--terracotta)' }}>
                   {race.fastest_pit.duration}s
                 </p>
               </div>
@@ -220,7 +220,7 @@ export default function LastRaceChapter({ race, motionOk }: LastRaceChapterProps
           <Link
             href={`/circuits/${race.circuit_ref}`}
             data-cursor
-            className="font-mono text-[9px] uppercase tracking-[0.16em] text-text-2 hover:text-red transition-colors duration-150 inline-block mt-8"
+            className="font-mono text-[9px] uppercase tracking-[0.16em] text-text-2 hover:text-terracotta transition-colors duration-150 inline-block mt-8"
           >
             [ {t('viewCircuit').toUpperCase()} → ]
           </Link>

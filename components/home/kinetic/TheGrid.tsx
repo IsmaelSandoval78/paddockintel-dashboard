@@ -151,7 +151,7 @@ export default function TheGrid({ drivers, motionOk }: TheGridProps) {
                 style={{
                   fontFamily: 'var(--pi-display)',
                   fontSize:   'clamp(16px, 2.2vw, 26px)',
-                  color:      isP1 ? 'var(--red)' : 'var(--text-3)',
+                  color:      isP1 ? 'var(--terracotta)' : 'var(--text-3)',
                 }}
               >
                 {d.position}
@@ -204,7 +204,7 @@ export default function TheGrid({ drivers, motionOk }: TheGridProps) {
                 </span>
                 <span
                   className="font-mono text-[8px] md:text-[9px] uppercase tracking-[0.12em] mt-1 tabular-nums"
-                  style={{ color: isP1 ? 'var(--red)' : 'var(--text-3)' }}
+                  style={{ color: isP1 ? 'var(--terracotta)' : 'var(--text-3)' }}
                 >
                   {isP1 ? 'LEADER' : gap}
                 </span>

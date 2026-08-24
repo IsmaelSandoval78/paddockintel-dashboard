@@ -66,7 +66,7 @@ export default function WinHistory({ rows }: { rows: WinRow[] }) {
             </span>
             <span className="font-mono text-[12px] tabular-nums w-20 text-right relative">
               {row.fastestLap
-                ? <span style={{ color: 'var(--red)' }}>{row.fastestLap}</span>
+                ? <span style={{ color: 'var(--terracotta)' }}>{row.fastestLap}</span>
                 : <span className="text-text-3">—</span>
               }
             </span>
@@ -79,7 +79,7 @@ export default function WinHistory({ rows }: { rows: WinRow[] }) {
           type="button"
           onClick={() => setExpanded((v) => !v)}
           className="w-full px-6 h-10 text-left font-mono text-[11px] uppercase tracking-[0.08em] transition-colors duration-150 hover:bg-surface-raised"
-          style={{ color: 'var(--red)' }}
+          style={{ color: 'var(--terracotta)' }}
         >
           {expanded
             ? `[ ${t('showRecent')} ]`

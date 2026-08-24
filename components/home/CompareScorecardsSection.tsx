@@ -208,7 +208,7 @@ function ScorecardSlot({
             {open && filtered.length > 0 && (
               <div
                 className="absolute top-full left-0 right-0 z-20 max-h-56 overflow-y-auto"
-                style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 0, marginTop: '2px' }}
+                style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', marginTop: '2px' }}
               >
                 {filtered.map((d) => (
                   <button

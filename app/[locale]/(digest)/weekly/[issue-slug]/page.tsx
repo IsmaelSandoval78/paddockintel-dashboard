@@ -131,7 +131,7 @@ export default async function DigestIssuePage({ params }: { params: PageParams }
                     href={item.source_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block font-sans font-semibold text-text-1 leading-snug mb-2 hover:text-red transition-colors duration-150"
+                    className="block font-sans font-semibold text-text-1 leading-snug mb-2 hover:text-terracotta transition-colors duration-150"
                     style={{ fontSize: '0.9375rem' }}
                   >
                     {item.headline}
@@ -150,7 +150,7 @@ export default async function DigestIssuePage({ params }: { params: PageParams }
                     href={item.source_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-3 inline-block font-mono text-[10px] uppercase tracking-[0.1em] text-red hover:underline"
+                    className="mt-3 inline-block font-mono text-[10px] uppercase tracking-[0.1em] text-terracotta hover:underline"
                   >
                     Read source →
                   </a>
@@ -165,14 +165,14 @@ export default async function DigestIssuePage({ params }: { params: PageParams }
         <div className="px-5 py-8 border-t border-border-subtle flex items-center justify-between gap-4 flex-wrap">
           <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-3">
             Curated by{' '}
-            <Link href="/about" className="text-text-1 hover:text-red transition-colors duration-150">
+            <Link href="/about" className="text-text-1 hover:text-terracotta transition-colors duration-150">
               Ismael Sandoval
             </Link>
             {' '}· PaddockIntel
           </p>
           <Link
             href="/weekly"
-            className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 hover:text-red transition-colors duration-150"
+            className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 hover:text-terracotta transition-colors duration-150"
           >
             ← All issues
           </Link>

@@ -57,10 +57,10 @@ function SeasonRow({
       aria-label={c.name}
       className={[
         'flex items-center h-[52px] border-b border-border cursor-pointer transition-colors duration-100 select-none',
-        isP1 ? 'bg-red-dim' : selected ? 'bg-surface-overlay' : zebra ? 'bg-surface-raised hover:bg-surface-overlay' : 'hover:bg-surface-overlay',
+        isP1 ? 'bg-terracotta-dim' : selected ? 'bg-surface-overlay' : zebra ? 'bg-surface-raised hover:bg-surface-overlay' : 'hover:bg-surface-overlay',
       ].join(' ')}
       style={{
-        borderLeft: isP1 ? '2px solid var(--red)' : '2px solid transparent',
+        borderLeft: isP1 ? '2px solid var(--terracotta)' : '2px solid transparent',
         paddingLeft: isP1 ? '18px' : '20px',
         paddingRight: '20px',
       }}
@@ -192,14 +192,14 @@ export default function ConstructorsClient({
         <button
           onClick={() => handleViewChange('2026')}
           className="font-mono text-[11px] uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0 shrink-0"
-          style={{ color: view === '2026' ? 'var(--red)' : 'var(--text-2)' }}
+          style={{ color: view === '2026' ? 'var(--terracotta)' : 'var(--text-2)' }}
         >
           {t('view.season')}
         </button>
         <button
           onClick={() => handleViewChange('all')}
           className="font-mono text-[11px] uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0 shrink-0"
-          style={{ color: view === 'all' ? 'var(--red)' : 'var(--text-2)' }}
+          style={{ color: view === 'all' ? 'var(--terracotta)' : 'var(--text-2)' }}
         >
           {t('view.allTime')}
         </button>
@@ -214,7 +214,7 @@ export default function ConstructorsClient({
                 key={era}
                 onClick={() => setActiveEra(era)}
                 className="font-mono text-[11px] uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0 shrink-0"
-                style={{ color: activeEra === era ? 'var(--red)' : 'var(--text-2)' }}
+                style={{ color: activeEra === era ? 'var(--terracotta)' : 'var(--text-2)' }}
               >
                 {era === 'all' ? 'ALL' : era.toUpperCase()}
               </button>

@@ -20,7 +20,7 @@ export default function UnsubscribedPage() {
         </p>
         <Link
           href="/"
-          className="font-mono text-[11px] uppercase tracking-[0.08em] text-red hover:underline"
+          className="font-mono text-[11px] uppercase tracking-[0.08em] text-terracotta hover:underline"
         >
           ← Back to PaddockIntel
         </Link>

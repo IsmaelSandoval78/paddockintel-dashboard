@@ -132,7 +132,7 @@ export default async function MagazineHomePage({
         {tag && (
           <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 mt-10 flex items-center gap-3">
             <span>
-              {t('filter.label')} <span className="text-red">{tag}</span>
+              {t('filter.label')} <span className="text-terracotta">{tag}</span>
             </span>
             <a
               href={basePath}
@@ -262,7 +262,7 @@ export default async function MagazineHomePage({
             href={locale === 'en' ? '/weekly' : `/${locale}/weekly`}
             className="group py-5 first:pt-0 md:py-0 md:pr-8 md:first:pl-0"
           >
-            <h2 className="font-sans font-semibold text-text-1 group-hover:text-red transition-colors duration-150">
+            <h2 className="font-sans font-semibold text-text-1 group-hover:text-terracotta transition-colors duration-150">
               {t('promo.digest')}
             </h2>
             <p className="font-sans text-sm text-text-2 leading-relaxed mt-2">

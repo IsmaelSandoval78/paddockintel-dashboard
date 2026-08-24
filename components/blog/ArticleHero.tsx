@@ -75,7 +75,7 @@ export default function ArticleHero({
                 style={{
                   fontFamily: 'var(--pi-display)',
                   fontSize: 'clamp(3.5rem, 12vw, 9rem)',
-                  color: 'var(--red)',
+                  color: 'var(--terracotta)',
                 }}
               >
                 {featuredStat.value}

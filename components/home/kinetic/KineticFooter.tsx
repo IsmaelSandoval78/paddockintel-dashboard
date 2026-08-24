@@ -65,7 +65,7 @@ export default function KineticFooter({ motionOk }: { motionOk: boolean }) {
           © PADDOCKINTEL · MMXXVI
         </span>
         <span className="font-mono text-[9px] text-text-3 uppercase tracking-[0.14em] flex items-center gap-1.5">
-          <span className="pulse-red inline-block w-1.5 h-1.5 rounded-full bg-red" />
+          <span className="pulse-red inline-block w-1.5 h-1.5 rounded-full bg-terracotta" />
           DATA · CONTEXT · EDGE
         </span>
       </div>

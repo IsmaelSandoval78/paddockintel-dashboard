@@ -52,7 +52,7 @@ export default function NewsletterCard() {
           <button
             type="submit"
             disabled={status === 'loading'}
-            className="h-9 px-4 font-mono text-[11px] uppercase tracking-[0.1em] text-bg bg-text-1 border border-text-1 hover:bg-red hover:border-red transition-colors duration-150 disabled:opacity-50 shrink-0"
+            className="h-9 px-4 font-mono text-[11px] uppercase tracking-[0.1em] text-bg bg-text-1 border border-text-1 hover:bg-terracotta hover:border-terracotta transition-colors duration-150 disabled:opacity-50 shrink-0"
           >
             {status === 'loading' ? t('loading') : t('button')}
           </button>
@@ -60,7 +60,7 @@ export default function NewsletterCard() {
       )}
 
       {status === 'error' && (
-        <p className="font-mono text-[11px] text-red mt-2">{t('error')}</p>
+        <p className="font-mono text-[11px] text-terracotta mt-2">{t('error')}</p>
       )}
 
       <p className="font-mono text-[10px] text-text-3 mt-3">

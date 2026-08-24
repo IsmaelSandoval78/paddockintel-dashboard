@@ -86,7 +86,7 @@ export default async function GlossaryTermPage({ params }: { params: PageParams 
                   <Link
                     key={r.slug}
                     href={`/glossary/${r.slug}`}
-                    className="font-sans text-sm text-text-1 border border-border px-3 py-1.5 hover:border-red hover:text-red transition-colors duration-150"
+                    className="font-sans text-sm text-text-1 border border-border px-3 py-1.5 hover:border-terracotta hover:text-terracotta transition-colors duration-150"
                   >
                     {r.term}
                   </Link>
@@ -107,7 +107,7 @@ export default async function GlossaryTermPage({ params }: { params: PageParams 
                       href={src.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-mono text-[11px] text-text-2 hover:text-red transition-colors duration-150"
+                      className="font-mono text-[11px] text-text-2 hover:text-terracotta transition-colors duration-150"
                     >
                       {src.name} →
                     </a>

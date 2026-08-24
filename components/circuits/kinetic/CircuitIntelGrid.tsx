@@ -110,7 +110,7 @@ export default function CircuitIntelGrid({ intelData, lapEntries, motionOk }: Pr
           <div className="intel-stat flex items-end gap-4 mb-5">
             <p
               className="leading-none tabular-nums"
-              style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(3rem, 8vw, 5rem)', color: dnfRate > 0.3 ? 'var(--red)' : 'var(--text-1)' }}
+              style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(3rem, 8vw, 5rem)', color: dnfRate > 0.3 ? 'var(--terracotta)' : 'var(--text-1)' }}
             >
               {(dnfRate * 100).toFixed(1)}%
             </p>
@@ -184,7 +184,7 @@ export default function CircuitIntelGrid({ intelData, lapEntries, motionOk }: Pr
                 style={{
                   fontFamily: 'var(--pi-display)',
                   fontSize: 'clamp(2.6rem, 5vw, 3.8rem)',
-                  color: avgGridDelta > 0 ? 'var(--text-1)' : 'var(--red)',
+                  color: avgGridDelta > 0 ? 'var(--text-1)' : 'var(--terracotta)',
                 }}
               >
                 {avgGridDelta > 0 ? '+' : ''}{avgGridDelta.toFixed(1)}
@@ -382,7 +382,7 @@ export default function CircuitIntelGrid({ intelData, lapEntries, motionOk }: Pr
                         className="intel-bar h-full"
                         style={{
                           width: `${barPct}%`,
-                          background: idx === 0 ? 'var(--red)' : 'var(--text-2)',
+                          background: idx === 0 ? 'var(--terracotta)' : 'var(--text-2)',
                         }}
                       />
                     </div>

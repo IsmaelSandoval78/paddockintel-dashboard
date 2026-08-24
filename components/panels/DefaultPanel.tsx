@@ -45,9 +45,9 @@ function DriverRow({ driver }: { driver: DriverRow }) {
         // P1: red left border + tinted background. Border-l set via style to
         // avoid Tailwind cascade conflict between border-border (all sides)
         // and side-specific border-l-red.
-        isP1 ? 'bg-red-dim pl-[10px]' : 'pl-3',
+        isP1 ? 'bg-terracotta-dim pl-[10px]' : 'pl-3',
       ].join(' ')}
-      style={isP1 ? { borderLeft: '2px solid var(--red)' } : { borderLeft: '2px solid transparent' }}
+      style={isP1 ? { borderLeft: '2px solid var(--terracotta)' } : { borderLeft: '2px solid transparent' }}
     >
       {/* Rank */}
       <span className="font-mono text-xs text-text-3 w-5 shrink-0 tabular-nums text-right mr-3">

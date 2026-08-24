@@ -31,7 +31,7 @@ export function SeasonBattleChart({
           id: 'champion',
           label: championName,
           points: rounds.map((r) => r.championPoints),
-          color: 'var(--red)',
+          color: 'var(--terracotta)',
           emphasize: true,
         },
         {

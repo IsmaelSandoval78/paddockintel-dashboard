@@ -226,7 +226,7 @@ export default function DriverHero({
               style={{
                 fontFamily: 'var(--pi-display)',
                 fontSize: 'clamp(1.7rem, 6vw, 4.5rem)',
-                color: red ? 'var(--red)' : 'var(--text-1)',
+                color: red ? 'var(--terracotta)' : 'var(--text-1)',
               }}
             >
               {value}

@@ -17,7 +17,7 @@ const MAIL = 'info@paddockintel.com';
 
 function mailLink(chunks: React.ReactNode) {
   return (
-    <a href={`mailto:${MAIL}`} className="text-red hover:underline">
+    <a href={`mailto:${MAIL}`} className="text-terracotta hover:underline">
       {chunks}
     </a>
   );
@@ -39,7 +39,7 @@ export default async function PrivacyPage({ params }: { params: PageParams }) {
       body: t.rich('s6p', {
         mail: mailLink,
         about: (chunks) => (
-          <Link href="/about" className="text-red hover:underline">
+          <Link href="/about" className="text-terracotta hover:underline">
             {chunks}
           </Link>
         ),

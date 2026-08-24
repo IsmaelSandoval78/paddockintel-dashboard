@@ -195,7 +195,7 @@ export default async function RecordsPage({ params }: { params: PageParams }) {
               {youngestLeader ? (
                 <>
                   <p
-                    className="text-[2rem] leading-none tabular-nums text-red mt-3"
+                    className="text-[2rem] leading-none tabular-nums text-terracotta mt-3"
                     style={{ fontFamily: 'var(--pi-display)' }}
                   >
                     {formatAgeYears(youngestLeader.ageDays, locale)}
@@ -215,7 +215,7 @@ export default async function RecordsPage({ params }: { params: PageParams }) {
               {oldestLeader ? (
                 <>
                   <p
-                    className="text-[2rem] leading-none tabular-nums text-red mt-3"
+                    className="text-[2rem] leading-none tabular-nums text-terracotta mt-3"
                     style={{ fontFamily: 'var(--pi-display)' }}
                   >
                     {formatAgeYears(oldestLeader.ageDays, locale)}
@@ -232,7 +232,7 @@ export default async function RecordsPage({ params }: { params: PageParams }) {
           <p className="font-mono text-[10px] text-text-2 uppercase tracking-[0.1em] mt-5">
             {t(`${SPECIAL_RECORD_SLUGS[0]}.ageUnit`)}
           </p>
-          <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-2 group-hover:text-red transition-colors duration-150 mt-auto pt-5">
+          <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-2 group-hover:text-terracotta transition-colors duration-150 mt-auto pt-5">
             {t('fullRanking')} →
           </p>
         </a>
@@ -285,7 +285,7 @@ export default async function RecordsPage({ params }: { params: PageParams }) {
               {f.championName} <span className="text-text-3 normal-case">{t('closestChampionships.vs')}</span>{' '}
               {f.runnerUpName}
             </span>
-            <span className="font-mono text-[13px] tabular-nums ml-auto shrink-0 text-red">
+            <span className="font-mono text-[13px] tabular-nums ml-auto shrink-0 text-terracotta">
               {formatGap(f.gap, locale)} {t('closestChampionships.gapUnit')}
             </span>
           </Link>
@@ -294,7 +294,7 @@ export default async function RecordsPage({ params }: { params: PageParams }) {
           href="/records/closest-championships"
           className="flex items-center h-10 px-5 border-b border-border hover:bg-surface-raised transition-colors duration-150 no-underline"
         >
-          <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-2 hover:text-red transition-colors duration-150 ml-auto">
+          <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-2 hover:text-terracotta transition-colors duration-150 ml-auto">
             {t('fullRanking')} →
           </span>
         </Link>

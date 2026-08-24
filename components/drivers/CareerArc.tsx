@@ -115,7 +115,7 @@ export default function CareerArc({
           <span className="font-mono text-[11px] text-text-2 tabular-nums">
             {readout.points} pts
           </span>
-          <span className="font-mono text-[11px] tabular-nums" style={{ color: readout.position === 1 ? 'var(--red)' : 'var(--text-2)' }}>
+          <span className="font-mono text-[11px] tabular-nums" style={{ color: readout.position === 1 ? 'var(--terracotta)' : 'var(--text-2)' }}>
             {readout.position !== null ? `P${readout.position}` : '—'}
           </span>
           {championshipYears.includes(readout.year) && (

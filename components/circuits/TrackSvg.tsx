@@ -25,7 +25,7 @@ export default function TrackSvg({ pathData, viewBox, circuitName }: TrackSvgPro
             transition: stroke 120ms ease;
           }
           .track-line:hover {
-            stroke: var(--red);
+            stroke: var(--terracotta);
           }
         `}</style>
         <path

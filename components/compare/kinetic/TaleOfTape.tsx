@@ -125,7 +125,7 @@ export default function TaleOfTape({
 
         // Lights on, one by one
         lights.forEach((light, i) => {
-          tl.to(light, { backgroundColor: 'var(--red)', duration: 0.06 }, 0.22 * i);
+          tl.to(light, { backgroundColor: 'var(--terracotta)', duration: 0.06 }, 0.22 * i);
         });
         // Hold — randomized like the real start procedure
         const hold = 0.35 + Math.random() * 0.5;

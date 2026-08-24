@@ -152,7 +152,7 @@ export default function CircuitsClient({
             key={key}
             onClick={() => handleRegion(key)}
             className="circuits-filter-btn font-mono text-[11px] text-text-1 uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0 shrink-0 transition-colors duration-150"
-            style={{ color: activeRegion === key ? 'var(--red)' : undefined }}
+            style={{ color: activeRegion === key ? 'var(--terracotta)' : undefined }}
           >
             {label}
           </button>
@@ -163,7 +163,7 @@ export default function CircuitsClient({
             <button
               onClick={() => setShowCalendar((v) => !v)}
               className="font-mono text-[11px] uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0 shrink-0 transition-colors duration-150"
-              style={{ color: showCalendar ? 'var(--red)' : 'var(--text-2)' }}
+              style={{ color: showCalendar ? 'var(--terracotta)' : 'var(--text-2)' }}
             >
               {t('calendar.toggle')}
             </button>
@@ -232,7 +232,7 @@ export default function CircuitsClient({
       {/* ── Legend ───────────────────────────────────────────── */}
       <div className="h-9 px-5 border-t border-border flex items-center gap-6 shrink-0 bg-surface-raised">
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--red)' }} />
+          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--terracotta)' }} />
           <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">{t('legend.season')}</span>
         </div>
         <div className="flex items-center gap-2">

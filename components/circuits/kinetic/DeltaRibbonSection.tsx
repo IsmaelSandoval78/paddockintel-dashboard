@@ -158,7 +158,7 @@ export default function DeltaRibbonSection({
                 cx={pt.x}
                 cy={pt.y}
                 r={vw * 0.008}
-                fill={isSnap ? 'var(--red)' : 'var(--text-1)'}
+                fill={isSnap ? 'var(--terracotta)' : 'var(--text-1)'}
                 stroke="var(--bg)"
                 strokeWidth={vw * 0.002}
               />

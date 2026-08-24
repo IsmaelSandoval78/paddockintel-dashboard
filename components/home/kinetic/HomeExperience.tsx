@@ -140,7 +140,7 @@ export default function HomeExperience({
           <div
             ref={cursorDot}
             className="absolute top-0 left-0 w-1.5 h-1.5 rounded-full"
-            style={{ background: 'var(--red)' }}
+            style={{ background: 'var(--terracotta)' }}
           />
           <div
             ref={cursorRing}

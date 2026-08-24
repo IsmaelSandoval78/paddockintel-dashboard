@@ -49,7 +49,7 @@ const FLAG_COLORS: Record<string, string[]> = {
 };
 
 function getFlagColors(country: string): string[] {
-  return FLAG_COLORS[country] ?? ['#E61919', '#FFFFFF', '#E61919'];
+  return FLAG_COLORS[country] ?? ['#C1502E', '#FFFFFF', '#C1502E'];
 }
 
 function formatCoord(lat: number, lng: number): string {
@@ -249,7 +249,7 @@ export default function CircuitLeftPanel({
             </p>
             <p
               className="font-mono tabular-nums leading-none mb-1.5"
-              style={{ fontSize: '1.5rem', color: 'var(--red)' }}
+              style={{ fontSize: '1.5rem', color: 'var(--terracotta)' }}
             >
               {info.fastest_lap.time}
             </p>
@@ -266,7 +266,7 @@ export default function CircuitLeftPanel({
         <Link
           href={`/circuits/${info.circuit_ref}`}
           className="font-mono text-[11px] uppercase tracking-[0.08em] transition-colors duration-150 hover:opacity-70"
-          style={{ color: 'var(--red)' }}
+          style={{ color: 'var(--terracotta)' }}
         >
           {t('viewFull')} →
         </Link>

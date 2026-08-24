@@ -41,7 +41,7 @@ export default function FeaturedArticleCard({
       <div>
         <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-text-2 mb-4">
           {tag && (
-            <a href={tagHref} className="hover:text-red transition-colors duration-150">
+            <a href={tagHref} className="hover:text-terracotta transition-colors duration-150">
               {tag.toUpperCase()}
             </a>
           )}
@@ -51,7 +51,7 @@ export default function FeaturedArticleCard({
 
         <Link href={`/${slug}`} className="group">
           <h2
-            className="uppercase text-text-1 leading-[0.9] tracking-[-0.03em] group-hover:text-red transition-colors duration-150"
+            className="uppercase text-text-1 leading-[0.9] tracking-[-0.03em] group-hover:text-terracotta transition-colors duration-150"
             style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2.25rem, 5.5vw, 4rem)' }}
           >
             {title}
@@ -72,7 +72,7 @@ export default function FeaturedArticleCard({
         <div className="shrink-0 lg:text-right lg:pl-8 lg:border-l lg:border-border-subtle">
           <p
             className="tabular-nums leading-none tracking-[-0.03em]"
-            style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(3rem, 7vw, 5.5rem)', color: 'var(--red)' }}
+            style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(3rem, 7vw, 5.5rem)', color: 'var(--terracotta)' }}
           >
             {featuredStat.value}
           </p>

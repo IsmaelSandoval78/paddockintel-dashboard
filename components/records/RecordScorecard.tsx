@@ -74,7 +74,7 @@ export function RecordScorecardButton({ data, slug }: { data: ScorecardRecordDat
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-2 hover:text-red transition-colors duration-150"
+        className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-2 hover:text-terracotta transition-colors duration-150"
       >
         {tr('shareScorecard')}
       </button>
@@ -95,7 +95,7 @@ export function RecordScorecardButton({ data, slug }: { data: ScorecardRecordDat
                   onClick={() => setFormat(key)}
                   className={[
                     'font-mono text-[11px] tracking-[0.06em] transition-colors duration-150',
-                    format === key ? 'text-red' : 'text-text-2 hover:text-text-1',
+                    format === key ? 'text-terracotta' : 'text-text-2 hover:text-text-1',
                   ].join(' ')}
                 >
                   {label}
@@ -124,7 +124,7 @@ export function RecordScorecardButton({ data, slug }: { data: ScorecardRecordDat
             <div className="px-5 py-3 border-t border-border shrink-0">
               <button
                 onClick={handleDownload}
-                className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-1 hover:text-red transition-colors duration-150"
+                className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-1 hover:text-terracotta transition-colors duration-150"
               >
                 {t('download')}
               </button>

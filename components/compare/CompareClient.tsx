@@ -220,9 +220,9 @@ function HthRow({
       </td>
       <td className="px-5 py-2.5 font-mono text-[11px] text-right w-14">
         {aIsWinner
-          ? <span className="text-red">A</span>
+          ? <span className="text-terracotta">A</span>
           : bIsWinner
-            ? <span className="text-red">B</span>
+            ? <span className="text-terracotta">B</span>
             : <span className="text-text-3">—</span>}
       </td>
     </tr>
@@ -487,7 +487,7 @@ export default function CompareClient({
   // Side colors: ink vs racing red for drivers (Blueprint convention); team
   // colors for constructors, falling back to ink/red when both are unmapped.
   let aColor = 'var(--text-1)';
-  let bColor = 'var(--red)';
+  let bColor = 'var(--terracotta)';
   if (ready && !isDriverData(dataA!)) {
     const ca = teamColor((dataA as CompareConstructorData).constructor_ref);
     const cb = teamColor((dataB as CompareConstructorData).constructor_ref);
@@ -565,7 +565,7 @@ export default function CompareClient({
               onClick={() => switchMode(m)}
               className={[
                 'font-mono text-[11px] uppercase tracking-[0.06em] transition-colors duration-150 cursor-pointer bg-transparent border-0 p-0',
-                mode === m ? 'text-red' : 'text-text-2 hover:text-text-1',
+                mode === m ? 'text-terracotta' : 'text-text-2 hover:text-text-1',
               ].join(' ')}
             >
               {t(`mode.${m}`)}
@@ -584,7 +584,7 @@ export default function CompareClient({
             key={duel.key}
             onClick={duel.load}
             className="font-mono text-[10px] uppercase tracking-[0.08em] cursor-pointer bg-transparent border-0 p-0 shrink-0 transition-colors duration-150"
-            style={{ color: duel.active ? 'var(--red)' : 'var(--text-2)' }}
+            style={{ color: duel.active ? 'var(--terracotta)' : 'var(--text-2)' }}
           >
             {duel.label}
           </button>

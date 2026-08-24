@@ -101,16 +101,16 @@ export default async function AboutPage() {
       </p>
 
       <div className="space-y-3">
-        <p className="font-sans text-sm text-text-1 leading-relaxed border-l-2 border-red pl-4">
+        <p className="font-sans text-sm text-text-1 leading-relaxed border-l-2 border-terracotta pl-4">
           When a team executes a one-stop strategy while competitors commit to two stops, that&apos;s not
           luck—it&apos;s calculated risk backed by operational execution, supply chain readiness, and
           economic incentive structures.
         </p>
-        <p className="font-sans text-sm text-text-1 leading-relaxed border-l-2 border-red pl-4">
+        <p className="font-sans text-sm text-text-1 leading-relaxed border-l-2 border-terracotta pl-4">
           When a sponsor signs a $90 million deal with the grid&apos;s worst-performing team, that&apos;s not
           irrational—it&apos;s defensive market positioning in a proxy war for consumer attention.
         </p>
-        <p className="font-sans text-sm text-text-1 leading-relaxed border-l-2 border-red pl-4">
+        <p className="font-sans text-sm text-text-1 leading-relaxed border-l-2 border-terracotta pl-4">
           When Red Bull invests $500 million to become an engine manufacturer, that&apos;s not
           ambition—it&apos;s vertical integration to control competitive destiny and enterprise valuation.
         </p>
@@ -202,7 +202,7 @@ export default async function AboutPage() {
         <div className="py-5 border-b border-border-subtle">
           <div className="flex items-baseline gap-3">
             <span className="font-display uppercase text-text-1 text-base">Weekly Newsletter</span>
-            <span className="font-mono text-[10px] text-red uppercase tracking-[0.08em]">Free</span>
+            <span className="font-mono text-[10px] text-terracotta uppercase tracking-[0.08em]">Free</span>
           </div>
           <p className="font-sans text-sm text-text-2 leading-relaxed mt-1.5">
             Economic and operational analysis of major F1 business developments. Sponsor deals. Team
@@ -251,7 +251,7 @@ export default async function AboutPage() {
       <ul className="space-y-2">
         {AUDIENCE.map((item) => (
           <li key={item} className="flex items-start gap-3">
-            <span className="font-mono text-[11px] text-red mt-0.5 shrink-0">—</span>
+            <span className="font-mono text-[11px] text-terracotta mt-0.5 shrink-0">—</span>
             <span className="font-sans text-sm text-text-1">{item}</span>
           </li>
         ))}

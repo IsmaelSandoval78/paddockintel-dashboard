@@ -90,7 +90,7 @@ export default async function CircuitOfTheDay({ circuit, locale }: { circuit: Ci
         href={hubUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-block mt-8 font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-red transition-colors duration-150"
+        className="inline-block mt-8 font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-terracotta transition-colors duration-150"
       >
         {t('cta')} →
       </a>

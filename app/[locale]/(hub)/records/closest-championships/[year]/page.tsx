@@ -68,7 +68,7 @@ export default async function ClosestChampionshipYearPage({ params }: { params: 
       <div className="p-5 md:p-6 border-b border-border">
         <p className="font-mono text-[10px] text-text-2 uppercase tracking-[0.1em]">{t('leader')}</p>
         <p
-          className="text-[clamp(2.4rem,6vw,4rem)] leading-none tabular-nums text-red mt-4"
+          className="text-[clamp(2.4rem,6vw,4rem)] leading-none tabular-nums text-terracotta mt-4"
           style={{ fontFamily: 'var(--pi-display)' }}
         >
           {gapDisplay}
@@ -82,7 +82,7 @@ export default async function ClosestChampionshipYearPage({ params }: { params: 
               className="no-underline hover:opacity-80 transition-opacity duration-150"
             >
               <span
-                className="text-[clamp(1.3rem,2.6vw,1.9rem)] uppercase leading-none tracking-[-0.02em] text-red"
+                className="text-[clamp(1.3rem,2.6vw,1.9rem)] uppercase leading-none tracking-[-0.02em] text-terracotta"
                 style={{ fontFamily: 'var(--pi-display)' }}
               >
                 {fight.championName}
@@ -90,7 +90,7 @@ export default async function ClosestChampionshipYearPage({ params }: { params: 
             </Link>
           ) : (
             <span
-              className="text-[clamp(1.3rem,2.6vw,1.9rem)] uppercase leading-none tracking-[-0.02em] text-red"
+              className="text-[clamp(1.3rem,2.6vw,1.9rem)] uppercase leading-none tracking-[-0.02em] text-terracotta"
               style={{ fontFamily: 'var(--pi-display)' }}
             >
               {fight.championName}
@@ -100,7 +100,7 @@ export default async function ClosestChampionshipYearPage({ params }: { params: 
           {fight.runnerUpRef ? (
             <Link
               href={`/drivers/${fight.runnerUpRef}`}
-              className="no-underline text-text-1 hover:text-red transition-colors duration-150"
+              className="no-underline text-text-1 hover:text-terracotta transition-colors duration-150"
             >
               <span
                 className="text-[clamp(1.3rem,2.6vw,1.9rem)] uppercase leading-none tracking-[-0.02em]"
@@ -139,7 +139,7 @@ export default async function ClosestChampionshipYearPage({ params }: { params: 
           <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.1em] flex-1">
             {t('closestChampionships.race')}
           </span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.1em] w-20 text-right shrink-0 truncate text-red">
+          <span className="font-mono text-[10px] uppercase tracking-[0.1em] w-20 text-right shrink-0 truncate text-terracotta">
             {fight.championName}
           </span>
           <span className="font-mono text-[10px] text-text-2 uppercase tracking-[0.1em] w-20 text-right shrink-0 truncate">
@@ -155,7 +155,7 @@ export default async function ClosestChampionshipYearPage({ params }: { params: 
               {String(r.round).padStart(2, '0')}
             </span>
             <span className="text-[12px] uppercase truncate text-text-1 flex-1">{r.raceName}</span>
-            <span className="font-mono text-[12px] tabular-nums text-red w-20 text-right shrink-0">
+            <span className="font-mono text-[12px] tabular-nums text-terracotta w-20 text-right shrink-0">
               {r.championPoints}
             </span>
             <span className="font-mono text-[12px] tabular-nums text-text-1 w-20 text-right shrink-0">
@@ -172,7 +172,7 @@ export default async function ClosestChampionshipYearPage({ params }: { params: 
       <div className="border-t border-border px-5 py-4">
         <Link
           href="/records/closest-championships"
-          className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-red transition-colors duration-150 no-underline"
+          className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-terracotta transition-colors duration-150 no-underline"
         >
           ← {t('sectionSeasonBattles')}
         </Link>

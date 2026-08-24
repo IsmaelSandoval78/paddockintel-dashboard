@@ -45,7 +45,7 @@ export default async function DigestIndexPage() {
         <EmailCapture className="max-w-sm" />
         <p className="mt-2 font-mono text-[10px] text-text-3">
           By subscribing you agree to the{' '}
-          <Link href="/privacy" className="underline hover:text-red transition-colors duration-150">
+          <Link href="/privacy" className="underline hover:text-terracotta transition-colors duration-150">
             privacy policy
           </Link>
           .
@@ -81,7 +81,7 @@ export default async function DigestIndexPage() {
                       {issue.intro_synthesis as string}
                     </span>
                   </span>
-                  <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-red opacity-0 group-hover:opacity-100 transition-opacity duration-150 shrink-0 pt-0.5">
+                  <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-terracotta opacity-0 group-hover:opacity-100 transition-opacity duration-150 shrink-0 pt-0.5">
                     Read →
                   </span>
                 </Link>

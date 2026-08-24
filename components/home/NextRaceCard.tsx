@@ -165,7 +165,7 @@ export default function NextRaceCard({ race }: { race: HomeNextRace | null }) {
           </p>
           {race.circuit_lap_record ? (
             <>
-              <p className="font-mono text-[13px] tabular-nums" style={{ color: 'var(--red)' }}>
+              <p className="font-mono text-[13px] tabular-nums" style={{ color: 'var(--terracotta)' }}>
                 {race.circuit_lap_record.time}
               </p>
               <p className="font-mono text-[9px] text-text-3 mt-0.5">

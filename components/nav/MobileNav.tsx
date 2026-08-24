@@ -51,7 +51,7 @@ export default function MobileNav({ isMagazine }: { isMagazine: boolean }) {
       <div className="h-12 px-5 flex items-center justify-between">
         <Link href="/" className="flex items-center" onClick={() => setOpen(false)}>
           <span className="font-sans font-bold text-sm tracking-wider text-text-1">PADDOCK</span>
-          <span className="font-sans font-bold text-sm text-red">·</span>
+          <span className="font-sans font-bold text-sm text-terracotta">·</span>
           <span className="font-sans font-bold text-sm tracking-wider text-text-1">INTEL</span>
         </Link>
 
@@ -112,7 +112,7 @@ export default function MobileNav({ isMagazine }: { isMagazine: boolean }) {
                     className={[
                       'flex items-center h-12 px-5 border-b border-border',
                       'font-mono text-[11px] uppercase tracking-[0.1em]',
-                      isActive ? 'text-red bg-surface-raised' : 'text-text-2 bg-bg',
+                      isActive ? 'text-terracotta bg-surface-raised' : 'text-text-2 bg-bg',
                     ].join(' ')}
                   >
                     {t(key)}

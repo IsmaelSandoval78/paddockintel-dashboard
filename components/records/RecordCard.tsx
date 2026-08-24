@@ -39,7 +39,7 @@ export function RecordCard({
         <>
           {/* Record holder */}
           <p
-            className="text-[2.6rem] leading-none tabular-nums text-red"
+            className="text-[2.6rem] leading-none tabular-nums text-terracotta"
             style={{ fontFamily: 'var(--pi-display)' }}
           >
             {leader.valueDisplay}
@@ -77,7 +77,7 @@ export function RecordCard({
       )}
 
       {/* CTA */}
-      <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-2 group-hover:text-red transition-colors duration-150 mt-auto pt-5">
+      <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-2 group-hover:text-terracotta transition-colors duration-150 mt-auto pt-5">
         {fullRankingLabel} →
       </p>
     </Link>

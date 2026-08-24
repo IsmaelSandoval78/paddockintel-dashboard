@@ -157,7 +157,7 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
             {motionOk ? '' : metaText}
           </p>
           <span className="font-mono text-[9px] text-text-3 uppercase tracking-[0.12em] hidden sm:flex items-center gap-1.5">
-            <span className="pulse-red inline-block w-1.5 h-1.5 rounded-full bg-red" />
+            <span className="pulse-red inline-block w-1.5 h-1.5 rounded-full bg-terracotta" />
             LIVE
           </span>
         </div>
@@ -321,7 +321,7 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
         style={{ opacity: motionOk ? 0 : 1 }}
       >
         <div className="w-px h-8 overflow-hidden">
-          <div className="hero-cue-line w-px h-full bg-red" style={{ transform: 'scaleY(0.2)' }} />
+          <div className="hero-cue-line w-px h-full bg-terracotta" style={{ transform: 'scaleY(0.2)' }} />
         </div>
       </div>
     </section>

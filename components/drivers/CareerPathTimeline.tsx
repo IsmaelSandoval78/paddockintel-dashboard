@@ -33,7 +33,7 @@ export default function CareerPathTimeline({ rows }: { rows: CareerStageRow[] })
             <div
               className="w-2.5 h-2.5 shrink-0 relative z-10"
               style={{
-                background: row.isF1 ? 'var(--red)' : 'var(--text-3)',
+                background: row.isF1 ? 'var(--terracotta)' : 'var(--text-3)',
                 border: '2px solid var(--surface)',
               }}
               aria-hidden="true"
@@ -43,7 +43,7 @@ export default function CareerPathTimeline({ rows }: { rows: CareerStageRow[] })
             <div
               className="w-full px-3 py-2.5 text-center"
               style={{
-                border: `1px solid ${row.isF1 ? 'var(--red)' : 'var(--border)'}`,
+                border: `1px solid ${row.isF1 ? 'var(--terracotta)' : 'var(--border)'}`,
                 background: 'var(--surface)',
               }}
             >
@@ -61,7 +61,7 @@ export default function CareerPathTimeline({ rows }: { rows: CareerStageRow[] })
               )}
               <p
                 className="font-mono text-[11px] tabular-nums"
-                style={{ color: row.isF1 ? 'var(--red)' : 'var(--text-2)' }}
+                style={{ color: row.isF1 ? 'var(--terracotta)' : 'var(--text-2)' }}
               >
                 {row.roleNote ?? (row.position ?? '—')}
               </p>

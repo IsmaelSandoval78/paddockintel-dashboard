@@ -95,7 +95,7 @@ function GapPanel({
             fontFamily: 'var(--pi-display)',
             fontSize: 'clamp(40px, 6vw, 80px)',
             letterSpacing: '-0.04em',
-            color: 'var(--red)',
+            color: 'var(--terracotta)',
           }}
         >
           +{gap}
