@@ -134,7 +134,7 @@ All data lives in Supabase. Never use mock data — always query real tables.
 
 `DESIGN.md` is the single source of truth for all visual tokens (colors, typography, spacing, motion). Do not duplicate values here — they drift out of sync. Read `DESIGN.md` before touching any styling.
 
-~~**v2 relaunch:** the site is now two registers, not one — **Data Mode** (dark navy, Hub + Digest) and **Story Mode** (warm editorial, Blog + Book).~~ — **reverted 2026-08-23:** the dark Data Mode redesign is gone. The whole site (Hub, Digest, Blog, Book) is back to the single light "Swiss Industrial Print" system (`#F4F4F0` paper, `--red` accent, zero-radius data surfaces) — see `DESIGN.md` and `CONCEPT-V2.md` §13 for the full note. It never shipped to `main`/production, so this was a branch-only revert, not a live rollback.
+**Current system: DESIGN.md v3.0.0 "Vintage Editorial"** — one unified visual language across Hub, Circuits, Drivers, Constructors, Blog, Digest, and Book (no more per-surface "modes"). Kraft-paper substrate, terracotta accent, `--radius-sm`/`--radius-md` (no longer zero-radius). Decided 2026-08-24, not yet applied to `globals.css`. Full design history (Swiss Industrial Print, Data Mode, Story Mode — all superseded) lives in `docs/archive/CONCEPT-V2.md` §13; this file does not restate it.
 
 - Tailwind v4 utility classes only — no inline styles, no CSS modules unless absolutely necessary
 - Use CSS variables from `globals.css` — never hardcode hex values that exist as tokens
@@ -170,7 +170,7 @@ All data lives in Supabase. Never use mock data — always query real tables.
 - Generated client-side as canvas/PNG
 - Always include paddockintel.com watermark + logo
 - Aspect ratios: 1:1 (Instagram), 9:16 (Stories/TikTok), 16:9 (X/Twitter)
-- Light background (`#F4F4F0`) always, same rationale as the Remotion "Blueprint" motion standard. Never a dark scorecard — matches the live site now that Data Mode is reverted (2026-08-23), not just an export-time exception
+- Light background always — never a dark scorecard, matches the live site's light-substrate identity. **Open question, not yet decided:** whether that means the old Blueprint `#F4F4F0` (kept deliberately cold/distinct from the site) or the new kraft-paper `--bg: #EDE3D0` from DESIGN.md v3.0.0 (visual consistency with the live site) — this is the same undecided question DESIGN.md flags under "Motion pieces (Remotion)". Do not resolve it without asking; flag it if you touch scorecard generation before it's decided.
 
 ---
 
@@ -195,7 +195,7 @@ Minimum to ship: **4 on all five**. If any score < 4, iterate before moving on.
 
 - Do not use Next.js 14/15 APIs or patterns — this is Next.js 16, breaking changes apply
 - Do not use Tailwind v3 config syntax — this is Tailwind v4
-- ~~Do not use any F1 official API (no Ergast, no OpenF1 live)~~ — **superseded 2026-08-04 (v2 relaunch):** OpenF1 (live/historical telemetry) and jolpica-f1 (`api.jolpi.ca/ergast/f1`, Ergast successor) are now approved sources, needed for the Delta Ribbon comparator. Supabase stays the authority layer — precompute/cache external calls there, never call OpenF1/jolpica directly from a request path. See `CONCEPT-V2.md` §3.
+- ~~Do not use any F1 official API (no Ergast, no OpenF1 live)~~ — **superseded 2026-08-04 (v2 relaunch):** OpenF1 (live/historical telemetry) and jolpica-f1 (`api.jolpi.ca/ergast/f1`, Ergast successor) are now approved sources, needed for the Delta Ribbon comparator. Supabase stays the authority layer — precompute/cache external calls there, never call OpenF1/jolpica directly from a request path. See `docs/archive/CONCEPT-V2.md` §3.
 - Do not add dependencies without asking first
 - Do not hardcode any F1 data that exists in Supabase
 - Do not hardcode standings, points, results, or statistics — always query or verify
@@ -205,8 +205,12 @@ Minimum to ship: **4 on all five**. If any score < 4, iterate before moving on.
 - Do not invent circuit records, lap times, or historical data — query Supabase
 - Do not use inline styles or hardcoded hex values — use CSS variables from globals.css
 - Do not reintroduce Leaflet or a 3D globe — the map is a flat SVG using a d3-geo Natural Earth projection
-- Do not use `rounded-3xl`, gradients, glassmorphism, or shadows on data surfaces — zero-radius, no exceptions (the Data Mode `4–8px` radius exception from the v2 relaunch was never actually applied to any component, and no longer applies now that Data Mode itself is reverted, 2026-08-23)
-- Do not use pie charts — use ranked lists
+- Do not use `rounded-3xl`, gradients, glassmorphism, or shadows on data surfaces — shape is `--radius-sm`/`--radius-md` only per DESIGN.md v3.0.0 (Vintage Editorial), not zero-radius anymore; illustrated circular containers (`rounded-full`) are the one deliberate exception, not a UI card pattern
+- Two-tone pie/donut breakdowns are allowed (max 3 segments) per DESIGN.md v3.0.0 — prefer ranked lists otherwise
 ## Skills
 Before starting any task, read `.claude/skills/paddockintel/SKILL.md` (loaded automatically as the
 `paddockintel` skill). DESIGN.md is the source of truth for visual tokens.
+
+Before any content task (article, digest issue, copy), also read the four advisor files in
+`docs/advisors/`: `SEO-EXPERT.md`, `DATA-EXPERT.md`, `EEAT-EXPERT.md`, `SPORTS-JOURNALISM-EXPERT.md`.
+They are an additional gate on top of `EDITORIAL.md` — they do not replace it.

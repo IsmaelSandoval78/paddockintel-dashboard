@@ -1,241 +1,175 @@
-# PaddockIntel DESIGN.md v2.0.0 — Relanzamiento (Holanda, 23 ago 2026)
+# PaddockIntel DESIGN.md v3.0.0 — Vintage Editorial (single system)
 
-> **Revertido 2026-08-23 — el Data Mode oscuro de este documento ya NO gobierna el producto.**
-> El usuario decidió en contra del rediseño oscuro después de verlo en vivo (páginas Hub/
-> Drivers/Circuits/Records/Constructors). Todo el sitio volvió al sistema único v0.3.0 ("Swiss
-> Industrial Print", `#F4F4F0`) descrito más abajo bajo "Tokens — Story Mode", que en la
-> práctica es y siempre fue el único `:root` real en `globals.css` (el bloque
-> `[data-mode="data"]` que sobreescribía esos valores para Hub/Digest se eliminó del CSS). La
-> paleta cálida "Story Mode" (crema/rojo ladrillo/mostaza) que describe la sección de abajo
-> **nunca se implementó en código** — Blog/Book siempre renderizaron con la paleta v0.3.0
-> también, así que no hay nada que revertir ahí; queda como decisión de diseño abierta y sin
-> tomar, no como algo que se rompió. Esto nunca llegó a `main`/producción — vivió y murió
-> dentro de la rama `v2-relanzamiento`. Ver `CONCEPT-V2.md` §13 para el detalle completo. El
-> resto de este documento (Data Mode, Story Mode, dos registros) queda como registro histórico
-> de la decisión, no como fuente de verdad vigente — la fuente de verdad vigente es el sistema
-> único descrito en `PRODUCT.md` y el `:root` de `app/globals.css`.
+> Replaces v0.3.0 "Swiss Industrial Print" and the v2.0.0 "Data Mode / Story Mode" two-register
+> system (built Aug 11–23 2026, reverted Aug 23 2026 — see `docs/archive/CONCEPT-V2.md` §13.11 for that
+> history). This is not a patch on top of either — it is a full replacement. If any other repo
+> doc still describes Data Mode, Story Mode, or `#F4F4F0`/`--red: #E61919` as current, that doc
+> is stale; this file wins.
+>
+> Decided 2026-08-24, in a Claude.ai planning session (not yet applied to code). Before writing
+> any component against these tokens, confirm `globals.css` has actually been updated — until
+> then, the live site still runs on the old v0.3.0 tokens.
 
-Reemplaza el criterio visual v0.3.0 ("Swiss Industrial Print" único) por un sistema de **dos
-registros** basado en 13 referencias analizadas en sesión de diseño. Sigue gobernando las
-cuatro superficies (Hub, Blog, Digest, Book) — lo que cambia es que ya no comparten una única
-paleta/forma, sino que cada una se asigna a un modo.
+## Identity (unchanged)
 
-## Identidad
-
-PaddockIntel es la **Wikipedia visual de la Fórmula 1**: autoridad de datos verificables +
+PaddockIntel is the **Wikipedia visual de la Fórmula 1**: autoridad de datos verificables +
 storytelling que hace sentir al lector "el que entiende el juego por dentro" — nunca el drama
 manufacturado de los medios genéricos de F1.
 
-## Dos modos, no uno
+## One system, not two
 
-El error a evitar es forzar un solo lenguaje visual para todo el sitio. No son dos sitios
-distintos — son dos registros del mismo sistema, como una revista física tiene páginas de
-datos/tablas y páginas de reportaje.
+There is no Data Mode, no Story Mode, no per-surface skin decision. Hub, Circuits, Drivers,
+Constructors, Blog, Digest, and Book all share one `:root` and one visual language:
+**Vintage Editorial** — a warm, poster-style, illustrated-data aesthetic, reference: 2011 Japan
+Earthquake & Tsunami-style infographic (single-subject illustration + hero numbers + ranked
+stat blocks + bar/pie breakdowns, on a kraft-paper substrate).
 
-| Modo | Superficies | Referencia base | Peso |
-|---|---|---|---|
-| **Data Mode** | Hub, Digest | Dark Mode Techy (navy, no negro puro) | ~80% del producto |
-| **Story Mode** | Blog, Book | Editorial cálido tipo revista independiente | ~20% del producto |
+This replaces the old rule "each surface has an assigned mode" entirely — there is nothing to
+assign anymore.
 
-## Tokens — Data Mode (Hub, Digest)
+## Tokens
 
-- **Color:**
-  - Fondo: `#0B1220` – `#0F1729` (azul marino oscuro, NO negro puro `#000000`)
-  - Superficie de tarjeta: `#141C2E` con borde sutil `#1F2A3F`
-  - Acento primario: `#E61919` (rojo de marca — sin cambios, misma disciplina de uso: enlaces,
-    estados activos, callouts clave, nunca como fill grande)
-  - Acento secundario de dato: teal/cian `#2DD4BF` para líneas de red/mapas — reservado para
-    visualizaciones (track dominance, gráficos), nunca para CTAs
-  - Oro (logros/campeonatos): `#D4B563` con wash `rgba(212,181,99,0.12)` — más claro que el
-    `#C9A84C` de v0.3.0 para mantener contraste sobre navy; el wash es alpha sobre el fondo, no
-    un hex sólido (a diferencia de v0.3.0 donde `--gold-dim` era un crema sólido, eso solo
-    funciona sobre fondo claro)
-  - Verde (stats positivos, ej. delta favorable): `#34D399` con wash `rgba(52,211,153,0.12)` —
-    mismo criterio de wash por alpha, no hex sólido
-  - Texto: blanco `#F4F4F0` / gris secundario `#8A93A6`
-- **Tipografía:** Archivo Black (headlines) + JetBrains Mono (datos, labels, cifras) — igual
-  que antes, funciona bien sobre fondo oscuro
-- **Forma:** esquinas suavizadas en tarjetas de dato, `4–8px` — **ya no `0` universal**. Esto
-  reemplaza la regla anterior de radio-cero, solo para superficies Data Mode. Botones/iconos
-  chicos (ej. share button) se mantienen cuadrados — ver sección de ese componente
-- **Motion:** líneas de flujo animadas (tipo "Energy Flow") reservadas para UN elemento por
-  pantalla — nunca decorativo en todos lados. **Excepción:** los videos Remotion de track
-  dominance NO usan este lenguaje — ver "Motion pieces" más abajo, se mantienen en el estándar
-  Blueprint claro/sin-glow independientemente del modo del sitio en vivo
+```css
+/* Substrate */
+--bg              #EDE3D0   /* kraft paper base, with subtle dot-noise texture — see Texture */
+--surface         #EDE3D0
+--surface-raised  #E4D9C2   /* section alternates, cells — slightly darker kraft */
 
-## Tokens — Story Mode (Blog, Book)
+/* Borders */
+--border          #2B2620   /* full-weight divider, near-black-brown, never pure #000 */
+--border-subtle   #C9BC9F   /* ghost hairlines, dashed rules */
 
-- **Color:** paleta cálida — crema `#F4F1EA`, rojo ladrillo, mostaza — inspirada en "Side
-  Note", NO en "Fashora" (demasiado comercial/genérico para el tono buscado)
-- **Tipografía:** Archivo Black (headlines cortos/callouts), Lora para body/prosa
-  (line-height 1.6+) — sin cambios respecto a v0.3.0
-- **Detalle de autor:** ilustraciones o marcas hechas a mano son opcionales, pero el tono de
-  copy debe sentirse curado, no producido en masa
-- **Grid editorial:** tarjetas de artículo con fotografía real + títulos con gancho de
-  curiosidad, categorías codificadas por color
-- **Forma:** se mantiene sin radio (`0`) — Story Mode no adopta las esquinas suaves de Data
-  Mode, conserva el registro editorial/print anterior
+/* Text hierarchy */
+--text-1          #2B2620   /* primary — near-black-brown */
+--text-2          #6B5F4E   /* secondary — metadata, mono labels */
+--text-3          #A69A82   /* tertiary — ghosts, placeholders */
 
-## Elementos firma (lo que hace esto reconocible como PaddockIntel y no genérico)
+/* Accent */
+--terracotta      #C1502E   /* primary accent — replaces old --red. Same discipline: links,
+                                active states, key callouts, hero numbers. NEVER a large fill. */
+--terracotta-dim  #F2DDD3   /* terracotta wash for hover states */
+--navy            #2B3A4A   /* secondary — illustrated map/diagram backgrounds, dark blocks */
+--mustard         #D9A441   /* tertiary — secondary bar/chart series, never primary emphasis */
+--gold            #C9A84C   /* achievements/championships, unchanged from v0.3.0 */
+--gold-dim        #F5E8CC
+--green           #22C55E   /* positive deltas, unchanged from v0.3.0 */
+--green-dim       #E8F5EE
 
-**Regla del track dominance:** se representa plano, no isométrico — la claridad del dato
-importa más que la personalidad visual, y en formato 9:16 (TikTok/Reels) lo plano escala mejor
-a pantallas pequeñas.
+/* Motion */
+--ease            cubic-bezier(0.16, 1, 0.3, 1)
+--fast            100ms
+--base            150ms
 
-**Excepción explícita — circuitos con desnivel real (dos subtipos, no confundir):**
+/* Shape */
+--radius-sm       2px       /* cards, stat blocks — a small radius now, not zero. See Shape. */
+--radius-md       4px       /* illustrated map containers, circular diagram frames */
+```
 
-- **Subtipo A — Cruce real (la pista pasa por encima de sí misma):** el puente de Suzuka es el
-  único caso claro en el calendario actual. Se representa con pilares, sombra proyectada y
-  separación de nivel — en planta los dos trazados se superpondrían como si estuvieran
-  conectados, lo cual sería literalmente falso.
-- **Subtipo B — Desnivel severo sin cruce:** Eau Rouge-Raidillon en Spa (~40m de desnivel en
-  ese complejo, según fuentes públicas) y la subida de curva 1 en COTA. Sin pilares ni
-  estructura elevada — es una rampa/ladera ascendente. Se representa como terrazas isométricas
-  ascendentes con la cinta de pista siguiendo el perfil de subida, sin inventar un puente que
-  no existe.
+**Migration note:** this is a hex-value change plus a shape-rule change (see Shape below), not
+a structural rewrite. Any component already reading from CSS variables (`var(--bg)`,
+`var(--red)`, etc.) updates automatically once `globals.css` changes — the same mechanism that
+made both the Data Mode rollout and its revert "cascade for free" across most of the codebase
+(`docs/archive/CONCEPT-V2.md` §13.5, §13.11). Audit for hardcoded hex first (Constructors detail page is
+the known offender, still Phase 2 — see below).
 
-Verificar cuál subtipo aplica a cada circuito antes de diseñar su página — confundirlos es
-inventar geometría que no es real.
+## Typography
 
-1. **Track Dominance Map** — circuito real (no mapa del mundo) con trazado coloreado por
-   dominancia entre dos pilotos, lenguaje de nodos/líneas brillantes (referencia Vireon)
-   aplicado a un circuito de F1 en vez de un mapa mundial de amenazas. Aplica al componente
-   interactivo en el sitio (Data Mode); los exports de video para redes siguen el estándar
-   Blueprint, no este lenguaje de glow
-2. **Panel personal ("arma tu equipo")** — nombre, avatar, stats propios, inspirado en el
-   saludo personalizado de dashboards financieros y el "Customize dashboard" de fintech dark
-3. **Feed social de predicciones/comparaciones** — inspirado en el "Master Trade Feed" de
-   BitP: ver qué predicen o comparan otros fans que sigues, no solo tus propios datos
-4. **Cifra grande como hero** — cuando un dato es el punto central de una pantalla, se
-   presenta como tipografía gigante (inspirado en Vobiz "<80ms"), no enterrado en una tabla
+| Role | Font | Usage |
+|---|---|---|
+| Display/headlines | Archivo Black | Hero numbers, section titles, short callout lines — never full paragraphs |
+| Body/prose | Lora | **Now used everywhere**, not just Blog/Book — this is a real change from v0.3.0/v2, where Lora was long-form-only and Hub used Inter for UI. Vintage Editorial's editorial-poster identity calls for prose everywhere it appears, even short captions |
+| Data/numbers | JetBrains Mono | Stats, timestamps, lap times, source lines — unchanged invariant, still applies everywhere |
 
-## Psicología aplicada — resumen
+Inter is retired as a UI font under this system — Lora replaces it for anything that isn't a
+number. If a specific component (form inputs, buttons) genuinely needs a plain UI sans for
+legibility at small sizes, propose it explicitly rather than defaulting back to Inter.
 
-- **Fan F1 que más se repitió en referencias "Encaja":** entender estrategia/técnica + estatus
-  de "el que sabe" — el producto debe hablarle al fan que quiere números y contexto, no chisme
-- **Lectura web que más se repitió:** autoridad por data cruda + recompensa inmediata arriba —
-  el dato más importante de cada pantalla va arriba, sin requerir lectura previa
+## Texture
 
-## Qué evitar explícitamente
+Every surface carries a **subtle dot-noise texture** over the kraft base (see the two circuit
+mockups from the 2026-08-24 session for the reference implementation — `radial-gradient` dots,
+~1px, low opacity, 3px grid). This is load-bearing to the "poster on paper" identity — a flat
+`#EDE3D0` fill without texture reads as a generic warm background, not as Vintage Editorial.
 
-- Isométrico genérico de kit de iconos — se ve como cualquier producto, no como F1
-- Negro puro + un solo acento vibrante sin contexto real detrás — es el default de cualquier
-  IA generando diseño; solo funciona si está anclado a algo específico del dominio
-- Mezclar comercial genérico (estilo Fashora) con el tono editorial buscado — el sitio debe
-  sentirse curado, no vendedor
-- Aplicar Data Mode a Blog/Book o Story Mode a Hub/Digest — cada superficie tiene un modo
-  asignado, no se mezclan registros en la misma pantalla sin criterio
+```css
+background-image: radial-gradient(#00000006 1px, transparent 1px);
+background-size: 3px 3px;
+```
 
-## Superficies
+## Shape
 
-**Hub** (Data Mode)
-- Mapa interactivo + panel derecho, KPI cards con esquinas 4–8px sobre fondo `#0B1220`
-- Neumorfismo previo de las KPI cards queda retirado — reemplazado por el lenguaje de tarjeta
-  Data Mode (superficie `#141C2E`, borde `#1F2A3F`, sin sombra difusa)
+**Not zero-radius anymore.** The old "radius-cero universal, no exceptions" rule from v0.3.0 is
+retired under this system:
+- Stat blocks, cards: `--radius-sm` (2px) — barely-there rounding, still reads as "print," not
+  soft/app-like
+- Illustrated map/diagram circular containers: full circle (`border-radius: 50%`) — this is a
+  deliberate illustration choice (the "epicenter map" pattern), not a UI card
+- Buttons/small controls: `--radius-sm`
+- No component should read as `rounded-2xl`/pill-shaped/glassmorphic — the ceiling is "print
+  poster," not "consumer app"
 
-**Digest** (Data Mode)
-- Card-list layout sobre fondo Data Mode
-- Headline: Archivo Black o Inter bold (evaluar en implementación)
-- Source chip: JetBrains Mono, small, uppercase, acento teal `#2DD4BF` permitido para el chip
-  (visualización de dato, no CTA)
-- `our_summary`: Inter, regular (short-form, permanece Inter — Lora sigue reservada a
-  superficies long-form)
+## Signature elements
 
-**Blog** (Story Mode)
-- Max content width ~680-720px para legibilidad
-- Header stats block en JetBrains Mono sobre fondo Story Mode
-- Body en Lora
-- Pull-quotes / sección Verdict pueden usar Archivo Black, solo para líneas de callout cortas
-  — nunca párrafos completos
+**Hero numbers.** A dominant Archivo Black figure (a lap record, a win count, a red-flag
+duration) in `--terracotta`, paired with a muted JetBrains Mono label underneath. This is the
+single most repeated pattern in the system — see both circuit mockups.
 
-**Book** (Story Mode)
-- Ritmo tipo página — márgenes más anchos que Blog
-- Números de capítulo en Archivo Black
-- Body en Lora
-- Fondo puede virar a blanco puro por "página" para diferenciarse del chrome web; rojo de
-  acento reservado solo para separadores de capítulo
+**Illustrated single-subject diagrams.** Replace flat schematic maps with an illustrated,
+single-subject treatment: a circuit becomes a navy circle containing a simplified ghost
+trace of the track with concentric rings marking a point of interest (an incident, a record
+corner) — directly modeled on the earthquake-epicenter pattern from the reference infographic.
+This applies to circuits now, and should be the default pattern for any single-subject visual
+going forward (a driver's career arc, a constructor's dominant era) — propose the specific
+illustration per case, don't force the exact epicenter-rings motif where it doesn't fit.
 
-## Responsive breakpoints
+**Poster-style bar/pie breakdowns.** Ranked or comparative data renders as flat-color bar
+charts (terracotta primary series, mustard secondary) or simple two-tone pie/donut breakdowns
+— not tables, not the old JetBrains-Mono-dense ranked-row pattern. Never pie charts with more
+than 3 segments (readability ceiling from the reference style).
 
-Mobile/tablet-first en las cuatro superficies — se revisan en 375px, 768px y 1280px mínimo.
+**Stat block grids.** 3-up (sometimes 2-up) grids of Archivo Black number + JetBrains Mono
+label, divided by hairlines, inside a bordered container — the direct equivalent of the
+earthquake infographic's icon+number blocks (quake distance, aftershock count, etc.).
 
-- **Phone (<768px)**: Bento grids → columna única. Headlines con `clamp()`, nunca `rem` fijo.
-  Blog/Book → ancho completo con padding, sin max-width fijo. Tablas de datos → scroll
-  horizontal o fallback de card apilada. Nav → menú colapsado.
-- **Tablet (768-1024px)**: Bento grids → 2 columnas. Blog/Book mantienen max-width relajado,
-  todavía no el column de 680-720px de escritorio.
-- **Desktop (>1024px)**: Layout completo según lo especificado por superficie arriba.
+**Source line.** Every data-driven block ends with a JetBrains Mono, muted-color source
+citation (`SOURCE: SUPABASE (table) · VERIFIED AGAINST X`) — this is the Vintage Editorial
+execution of the project's existing "every number has a source" line (see `docs/archive/CONCEPT-V2.md`
+§11), now a required visual element, not just an editorial policy.
 
-## Share button component
+## Track dominance rule — unchanged
 
-Aparece en cada card de Digest y de preview de artículo de Blog — mismo componente, misma
-posición, en ambos modos.
+Flat/non-isometric by default. Subtype A (real crossover, e.g. Suzuka bridge) gets pillars +
+shadow. Subtype B (severe elevation without crossing, e.g. Spa Eau Rouge-Raidillon, COTA T1)
+gets ascending terraces, never an invented bridge. This rule is orthogonal to the visual system
+change — it governs geometric accuracy, not palette, and survives untouched.
 
-- Forma: cuadrado, `0` border-radius siempre — es un control de icono, no una tarjeta de dato,
-  no adopta las esquinas suaves de Data Mode
-- Icon-only (glifo de share), sin texto de label
-- Mobile/tablet: dispara el share sheet nativo del OS vía Web Share API — WhatsApp, Facebook,
-  etc. aparecen automáticamente según lo instalado, sin código extra
-- Desktop fallback (sin soporte Web Share API): flyout chico — copiar link, X, Facebook,
-  WhatsApp (vía link `wa.me/?text=`, sin SDK) — WhatsApp con prioridad de posición dado el
-  público ES/PT en LatAm y Brasil — esquinas cuadradas, borde acento-rojo en hover, sin sombra
-- Color: texto/icono en color de texto del modo por defecto (blanco en Data Mode, near-black
-  en Story Mode), acento rojo `#E61919` solo en hover/active — misma disciplina de acento que
-  el resto del sistema
+## What this replaces, explicitly
 
-## Motion pieces (Remotion) — estándar "Blueprint" (sin cambios, deliberado)
+- v0.3.0 Swiss Industrial Print (`#F4F4F0`, zero-radius, JetBrains-Mono-dense ranked lists) —
+  retired as the live system, though its "every number sourced, ranked not pie-charted" DNA
+  carries forward into the new poster-style bar patterns
+- v2.0.0 Data Mode (`#0B1220` dark navy) — already reverted before this document; this
+  supersedes it a second time, for clarity, so no future session resurrects it by accident
+- v2.0.0 Story Mode (planned but never built warm palette for Blog/Book only) — absorbed into
+  this system, now applying everywhere instead of two surfaces
+- The aiweekly.co-as-visual-skin plan (dense, mono, low-motion) — superseded same day it was
+  proposed; see `DECISIONS-2026-08-24-radical-pivot.md` §2 for the full history. Its
+  information-architecture ideas (ranked attention dashboard, numbered issues) survive,
+  re-skinned into this system
 
-Aplica a cualquier composición de video data-driven (track dominance, tendencias de temporada,
-etc.) que se exporte para redes. **Se mantiene independiente del Data Mode del sitio en vivo**
-— el video es un objeto que circula fuera del sitio y no necesita matchear el navy oscuro del
-dashboard.
+## Known technical debt this system inherits
 
-- **Fondo**: `#F4F4F0` con grid técnico sutil (líneas tipo papel cuadriculado, apenas más
-  oscuras que la base) — funcional, no decorativo
-- **Dibujo de línea**: el trazado/track se dibuja progresivamente (`stroke-dashoffset`), nunca
-  aparece completo de golpe
-- **Highlight de dominancia**: el segmento del piloto líder en acento rojo `#E61919`, sólido,
-  borde duro — sin blur, sin glow, sin gradiente (explícitamente NO el lenguaje Vireon del
-  componente interactivo en Data Mode)
-- **Piloto secundario**: neutral negro/gris — nunca un segundo color saturado
-- **Profundidad sin oscuridad**: sombras hard-offset (sin blur) en elementos flotantes — mismo
-  lenguaje "sticker sobre papel" que las cards Hub pre-v2, aplicado a un elemento en movimiento
-- **Call-outs de medición**: marcas de tick al inicio/fin de segmento con label delta en
-  JetBrains Mono (ej. `|— Δ0.32s —|`) — estilo de línea de cota arquitectónica
-- **Un dato a la vez**: el elemento más grande en pantalla es siempre un solo número/label
-- **Cámara**: ángulo fijo top-down tipo dibujo técnico — sin perspectiva 3D forzada
-- **Easing**: aceleración/desaceleración orgánica en todo movimiento, nunca lineal o hard-cut
+Constructors detail page (`app/[locale]/(hub)/constructors/[slug]/page.tsx`) still has
+100% hardcoded hex, `font-serif` outside the type system, no `'use client'`/motion — this was
+already Phase 2 debt under the old system (`docs/archive/CONCEPT-V2.md` §7) and remains Phase 2 debt under
+this one. Do not attempt to patch it token-by-token; rebuild it against these tokens using
+`DriverDetailExperience.tsx` as structural reference, same recommendation as before.
 
-## Qué NO cambia entre superficies (invariantes v2)
+## Motion pieces (Remotion) — re-evaluate, not yet decided
 
-- Acento primario `#E61919` y su disciplina de uso (nunca fill grande, siempre puntual)
-- Archivo Black reservado exclusivamente a texto de peso headline
-- JetBrains Mono para todo dato tabular/numérico en ambos modos
-- La asignación superficie → modo (Hub/Digest = Data Mode, Blog/Book = Story Mode) no se
-  mezcla dentro de una misma pantalla
-- El estándar Blueprint de Motion/Remotion no adopta el lenguaje glow de Data Mode
-
-Lo que **sí** cambia respecto a v0.3.0: radio-cero universal (ahora solo aplica a Story Mode
-y a controles de icono como el share button; Data Mode usa 4–8px en tarjetas), y el
-neumorfismo de las KPI cards del Hub (retirado, reemplazado por tarjeta Data Mode estándar).
-
-## Referencia de sesión (13 analizadas)
-
-| # | Referencia | Estilo | Veredicto |
-|---|---|---|---|
-| 1 | SaaS Logística Isométrica | Swiss + Motorsport HUD | Encaja |
-| 2 | GT Diagram Kit | Isometric Icon Kit | Tal vez |
-| 3 | SaaS Isométrico Genérico | Isometric Icon Kit | No |
-| 4 | Financial Dashboard (Bento) | Minimal Data-Viz | Encaja |
-| 5 | Phoenix Zeus-X | Dark Mode Techy | Encaja |
-| 6 | Milkinside | Glassmorphism | Tal vez |
-| 7 | Fintech Dark Glow | Dark Mode Techy + Glass | Encaja |
-| 8 | Fashora | Editorial Bold Maximalist | Tal vez |
-| 9 | Side Note | Editorial / Luxury cálido | Encaja |
-| 10 | BitP Trading Dashboard | Dark Mode Techy | Encaja |
-| 11 | Vireon Threat Center | Dark Mode Techy | Encaja |
-| 12 | Vobiz | Minimal Data-Viz | Tal vez |
-| 13 | Fig.com | Editorial/Luxury + 3D Cinematográfico | Tal vez |
-
-*(La librería visual completa con imágenes vive en el artifact de Claude original de la
-sesión de diseño — este documento es la fuente de verdad textual para el repo.)*
+The old "Blueprint" export standard (`#F4F4F0`, hard lines, no glow, technical grid) was
+explicitly *independent* of the live site's mode so exports wouldn't need to match a dark
+dashboard. Now that the live site itself is warm/illustrated, it's an open question whether
+exports should adopt Vintage Editorial too (for visual consistency with the live site) or keep
+the colder Blueprint look (for a deliberate "measurement tool" contrast). Not decided — flag
+this explicitly before touching any Remotion composition.

@@ -1,6 +1,6 @@
 # PaddockIntel · Project Skill (canonical)
 # Read this before every task. Source of truth for route structure, data model, and implementation patterns.
-# DESIGN.md (repo root, v0.3.0) is the source of truth for visual tokens — Swiss Industrial Print —
+# DESIGN.md (repo root, v3.0.0) is the source of truth for visual tokens — Vintage Editorial —
 # and governs all four surfaces, including Hub. This file does not restate it; it implements it.
 # EDITORIAL.md (repo root) is the source of truth for voice, article structure, and writing process —
 # read it before drafting any article, digest issue, or newsletter copy.
@@ -16,8 +16,9 @@
 - **Digest** — curated weekly aggregator of external F1/F1-economics news with original synthesis on top
 - **Book** — collectible, chapter-based presentation of published articles + live data, no content of its own
 
-All four read from one Supabase project. Design language: **Swiss Industrial Print** (DESIGN.md v0.3.0) —
-confident, data-forward, zero ornamentation, zero border-radius, one visual language across every surface.
+All four read from one Supabase project. Design language: **Vintage Editorial** (DESIGN.md v3.0.0) — warm,
+poster-style, illustrated-data aesthetic on a kraft-paper substrate, `--radius-sm`/`--radius-md` shape
+(no longer zero-radius), one visual language across every surface, no per-surface modes.
 Stack: Next.js 16 · TypeScript · Tailwind v4 · Supabase · next-intl (EN/ES/PT). GSAP/Three.js exist as
 established Hub patterns (§06–07) but are **not** a global dependency for new surfaces — see §06 note.
 
@@ -78,6 +79,11 @@ including external information. Digest items use the numbered-source format:
 `1. [Outlet Name — description](url?ref=paddockintel.com)`. One quote max per source; default to
 paraphrase.
 
+**Advisor gate (required, not optional):** before publishing any article, digest issue, or data-vertical
+piece, read the four advisor files in `docs/advisors/`: `SEO-EXPERT.md`, `DATA-EXPERT.md`,
+`EEAT-EXPERT.md`, `SPORTS-JOURNALISM-EXPERT.md`. They are an additional gate on top of this section and
+`EDITORIAL.md` — none of their requirements are waived by a redesign or a new content vertical.
+
 **EEAT signals (required, not optional):**
 - `/about` or `/author/ismael-sandoval` — real, verifiable background. Every article and digest issue
   links to it.
@@ -127,29 +133,33 @@ redesign.
 
 ## 03 · CSS TOKENS (globals.css — never hardcode these values)
 
-Aligned to DESIGN.md v0.3.0 — Swiss Industrial Print, governs Hub + Blog + Digest + Book.
+Aligned to DESIGN.md v3.0.0 — Vintage Editorial, governs Hub + Circuits + Drivers + Constructors + Blog +
+Digest + Book (one system, no per-surface modes).
 
 ```css
 /* Substrate */
---bg              #F4F4F0   /* page base — warm off-white paper */
---surface         #F4F4F0
---surface-raised  #ECEBE6   /* section alternates, cells */
+--bg              #EDE3D0   /* kraft paper base, with subtle dot-noise texture — see DESIGN.md Texture */
+--surface         #EDE3D0
+--surface-raised  #E4D9C2   /* section alternates, cells — slightly darker kraft */
 
 /* Borders */
---border          #0A0A0A   /* 1px divider — full weight */
---border-subtle   #B5B4AE   /* ghost hairlines */
+--border          #2B2620   /* full-weight divider, near-black-brown, never pure #000 */
+--border-subtle   #C9BC9F   /* ghost hairlines, dashed rules */
 
 /* Text hierarchy */
---text-1          #0A0A0A   /* primary — near black, never pure #000 */
---text-2          #6B6B6B   /* secondary — metadata, section labels */
---text-3          #B5B4AE   /* tertiary — ghosts, placeholders */
+--text-1          #2B2620   /* primary — near-black-brown */
+--text-2          #6B5F4E   /* secondary — metadata, mono labels */
+--text-3          #A69A82   /* tertiary — ghosts, placeholders */
 
 /* Accent */
---red             #E61919   /* racing red — links, active states, key callouts. Never a large fill. */
---red-dim         #FBE9E8   /* red wash for hover states */
---gold            #C9A84C
+--terracotta      #C1502E   /* primary accent — replaces old --red. Links, active states, key callouts,
+                                hero numbers. Never a large fill. */
+--terracotta-dim  #F2DDD3   /* terracotta wash for hover states */
+--navy            #2B3A4A   /* secondary — illustrated map/diagram backgrounds, dark blocks */
+--mustard         #D9A441   /* tertiary — secondary bar/chart series, never primary emphasis */
+--gold            #C9A84C   /* achievements/championships, unchanged from v0.3.0 */
 --gold-dim        #F5E8CC
---green           #22C55E
+--green           #22C55E   /* positive deltas, unchanged from v0.3.0 */
 --green-dim       #E8F5EE
 
 /* Motion */
@@ -158,17 +168,19 @@ Aligned to DESIGN.md v0.3.0 — Swiss Industrial Print, governs Hub + Blog + Dig
 --base            150ms
 
 /* Shape */
---radius          0          /* zero everywhere, no exceptions, on any surface */
+--radius-sm       2px       /* cards, stat blocks, buttons — barely-there rounding, still reads as "print" */
+--radius-md       4px       /* illustrated map containers, circular diagram frames */
 ```
 
-**Tailwind usage:** `bg-bg`, `text-text-1`, `text-text-2`, `text-text-3`, `text-red`, `border-border`,
-`border-border-subtle`, `bg-surface-raised`. `rounded-none` (or no radius utility at all) everywhere.
+**Tailwind usage:** `bg-bg`, `text-text-1`, `text-text-2`, `text-text-3`, `text-terracotta`,
+`border-border`, `border-border-subtle`, `bg-surface-raised`. `rounded-sm`/`rounded-md` map to the tokens
+above — zero-radius is no longer the default (see DESIGN.md Shape); illustrated circular containers use
+`rounded-full`.
 
-**Migration note:** Hub components currently reference `--bg: #FAFAF7` in `globals.css`. DESIGN.md v0.3.0
-intentionally extends to Hub (confirmed decision, 2026-06-24) — updating the single CSS variable in
-`globals.css` is the actual code change required to apply this; it has **not** been made yet. Audit any
-component with a hardcoded `rounded-*` (other than `rounded-none`) at the same time — zero-radius is a
-DESIGN.md hard rule the existing Hub may not yet satisfy everywhere.
+**Migration note:** not yet applied to code. `globals.css` still has the old v0.3.0 tokens (`--bg:
+#FAFAF7`, `--red: #E61919`, `--radius: 0`) — updating `globals.css` to the values above is the actual code
+change required. Audit any component with a hardcoded hex at the same time — Constructors detail page is
+the known offender, still Phase 2 debt (see DESIGN.md "Known technical debt this system inherits").
 
 **Neumorphism:** reserved exclusively for Hub home KPI cards. Does not appear in Blog, Digest, or Book.
 Never default to it on a new surface — propose explicitly if one wants a "lifted" card.
@@ -180,24 +192,26 @@ Never default to it on a new surface — propose explicitly if one wants a "lift
 | Role | CSS var | Tailwind class | Usage |
 |---|---|---|---|
 | Display/headlines | `var(--pi-display)` | `font-display` | Archivo Black — section titles, hero numbers, KPI labels, short callout lines only |
-| UI / short-form | `var(--pi-sans)` | `font-sans` | Inter, regular weight — Hub UI labels, Digest `our_summary` (short-form only) |
-| Long-form prose | `var(--pi-prose)` | `font-prose` | Lora, regular/medium, line-height 1.6+ — Blog/Book body copy only |
+| Body/prose | `var(--pi-prose)` | `font-prose` | Lora, regular/medium, line-height 1.6+ — **now used everywhere**, not just Blog/Book: Hub UI labels, Digest `our_summary`, any copy that isn't a number |
 | Data/numbers | `var(--pi-mono)` | `font-mono` | JetBrains Mono — stats, timestamps, lap times, anything tabular |
 
 **Always** `tabular-nums` on any numeric column — body has `font-variant-numeric: tabular-nums` globally.
 **Never** DM Serif Display. Archivo Black for display weight only — never forced into paragraphs.
 
-Body font decision **locked 2026-06-22**: Lora for Blog/Book long-form reading surfaces (gives them a
-distinct "reading" register from the Hub's data-forward UI); Digest `our_summary` stays Inter since it's
-short-form. Wired via `next/font/google` in `app/[locale]/layout.tsx` (`--pi-prose` → `--font-prose`).
+**Inter is retired** as a UI font under DESIGN.md v3.0.0 (Vintage Editorial) — Lora replaces it for
+anything that isn't a number, site-wide. If a specific component (form inputs, buttons) genuinely needs a
+plain UI sans for legibility at small sizes, propose it explicitly rather than defaulting back to Inter.
+Not yet wired in code — `next/font/google` in `app/[locale]/layout.tsx` still loads Inter for `--pi-sans`;
+updating that wiring is the actual code change required.
 
 **Surface-specific (DESIGN.md):**
 - **Blog** — max content width ~680-720px desktop; header stats in JetBrains Mono; body in Lora;
   pull-quotes/Verdict may use Archivo Black for short lines only.
-- **Digest** — card-list layout; headline Inter bold; source chip JetBrains Mono small uppercase;
-  `our_summary` Inter regular (short-form, not Lora).
+- **Digest** — card-list layout; headline in Lora (was Inter bold); source chip JetBrains Mono small
+  uppercase; `our_summary` in Lora too now, not the short-form Inter exception it used to be.
 - **Book** — page-like rhythm, wider margins than Blog; chapter numbers Archivo Black; body Lora;
-  background may shift to pure white per "page"; accent red reserved for chapter dividers only.
+  background may shift to pure white per "page"; accent terracotta reserved for chapter dividers only
+  (was accent red).
 
 ---
 
@@ -608,12 +622,15 @@ git commit --allow-empty -m "chore: trigger redeploy post-race" && git push
 
 ## 17 · DO NOT LIST (project-wide)
 
-- No dark page backgrounds — ever. `#F4F4F0` minimum.
-- No border-radius anywhere, on any surface. No exceptions.
+- No dark page backgrounds — ever. `#EDE3D0` (kraft paper) minimum.
+- Border-radius is `--radius-sm` (2px) or `--radius-md` (4px) only — see DESIGN.md v3.0.0 Shape. No
+  `rounded-2xl`/pill/glassmorphic shapes; illustrated circular containers (`rounded-full`) are the one
+  deliberate exception, not a UI card pattern.
 - No motion without F1 meaning (no floating blobs, aimless drift, decorative pulse).
 - No scroll-jacking — scrub ScrollTrigger, never override `window.scrollY`.
 - No layout shift from animation — SplitText containers must reserve height.
-- No pie charts, no glassmorphism, no gradients on data surfaces.
+- Two-tone pie/donut breakdowns are allowed (max 3 segments) per DESIGN.md v3.0.0 — prefer ranked lists
+  otherwise. Still no glassmorphism, no gradients on data surfaces.
 - No `any` TypeScript type.
 - No hardcoded F1 data that exists in Supabase.
 - No Leaflet imported at top level — always `dynamic(() => import(...), { ssr: false })`.
