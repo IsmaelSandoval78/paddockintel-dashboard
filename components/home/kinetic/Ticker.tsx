@@ -37,12 +37,12 @@ export default function Ticker({ drivers, motionOk }: TickerProps) {
               fontFamily:    'var(--pi-display)',
               fontSize:      'clamp(14px, 2vw, 20px)',
               letterSpacing: '-0.01em',
-              color:         '#FAFAF7',
+              color:         'var(--text-on-accent)',
             }}
           >
             {item}
           </span>
-          <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: '#FAFAF7', opacity: 0.5 }} />
+          <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: 'var(--text-on-accent)', opacity: 0.5 }} />
         </span>
       ))}
     </div>

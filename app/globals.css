@@ -30,6 +30,7 @@
   --red-dim:         #FBE9E8;
   --gold:            #C9A84C;
   --gold-dim:        #F5E8CC;
+  --text-on-accent:  #FAFAF7;
 
   /* Semantic */
   --green:           #22C55E;
@@ -76,6 +77,7 @@
   --color-text-3:          var(--text-3);
   --color-red:             var(--red);
   --color-red-dim:         var(--red-dim);
+  --color-text-on-accent:  var(--text-on-accent);
   --color-gold:            var(--gold);
   --color-gold-dim:        var(--gold-dim);
   --color-green:           var(--green);
