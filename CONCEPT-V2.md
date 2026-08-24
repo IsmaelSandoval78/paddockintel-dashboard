@@ -574,10 +574,22 @@ código real — §5–§9, y todas las decisiones de alcance están cerradas �
 
 **Secuencia recomendada por el panel de asesores (§12), reemplaza el orden anterior:**
 
-3. En paralelo, sin bloquear desarrollo, esta semana: escribir a OpenF1 (openf1.org/contact) y
-   a los mantenedores de jolpica-f1 pidiendo autorización explícita de uso comercial (§3/§10);
-   identificar fuente alternativa como plan B si la respuesta tarda o es negativa. Asignar dueño
-   y fecha para el pase nativo de portugués de Brasil del Hero y la línea de firma (§11).
+3. ~~Escribir a OpenF1 y jolpica-f1 pidiendo autorización de uso comercial~~ — **emails
+   enviados 2026-08-23.** Antes de escribir se verificaron los canales reales de contacto (no
+   se asumieron): jolpica-f1 tiene un `TERMS.md` propio que pide explícitamente escribir a
+   `admin@jolpi.ca` para uso comercial — y ahí se encontró una corrección importante al
+   registro anterior: el **dato de jolpica-f1 también es CC BY-NC-SA 4.0**, no solo el código
+   (que sí es Apache 2.0) — mismo riesgo que OpenF1, no uno menor como se había anotado antes.
+   OpenF1 solo tiene un formulario web (`openf1.org/contact`), no email directo — se redactó
+   el texto y el usuario lo completó y envió manualmente ahí. Verificado contra el código antes
+   de escribir: hoy **solo OpenF1 está realmente integrado** (`scripts/load-delta-ribbon.ts`,
+   Delta Ribbon) — jolpica-f1 no tiene ni una sola referencia fuera de `CLAUDE.md`/este
+   documento, así que el email a jolpica se redactó como "estamos evaluando", no "ya lo
+   usamos", para no sobrerreclamar. **Esperando respuesta de ambos — sigue siendo el riesgo
+   legal abierto más serio del proyecto, ahora en estado "en trámite" en vez de "sin iniciar".**
+   Plan B (fuente alternativa si la respuesta tarda o es negativa) sigue sin identificarse.
+   Asignar dueño y fecha para el pase nativo de portugués de Brasil del Hero y la línea de
+   firma (§11) sigue pendiente aparte.
 4. ~~Confirmar contra `Hero.tsx` si el subhead existe~~ — **hecho 2026-08-11.** No existía,
    se agregó (EN + ES; PT queda con placeholder viejo a propósito, pendiente pase nativo). Ver
    §5.
