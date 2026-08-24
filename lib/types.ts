@@ -479,6 +479,13 @@ export interface HomeChampionshipGapData {
     p2: { name: string; constructor_ref: string; points: number };
     gap: number;
   } | null;
+  /** Cumulative points per completed round, P1 vs P2 only — powers the season-arc chart
+   *  under each gap panel. Null entries mean not enough rounds/data to chart yet. */
+  history: {
+    rounds: BattleRound[];
+    driverSeries: BattleSeries[] | null;
+    constructorSeries: Array<{ constructor_id: number; name: string; constructor_ref: string; points: number[] }> | null;
+  };
 }
 
 export interface HomeScorecardData {

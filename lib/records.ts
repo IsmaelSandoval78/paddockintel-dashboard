@@ -93,7 +93,7 @@ async function fetchStatRecord(slug: Exclude<RecordSlug, 'longest-win-streak'>, 
 
 async function fetchStreakRecord(limit: number): Promise<RecordEntry[]> {
   const supabase = createClient();
-  // View has no code/nationality — join drivers by driver_id (see RECORDS-HUB-SPEC.md)
+  // View has no code/nationality — join drivers by driver_id (see docs/archive/RECORDS-HUB-SPEC.md)
   const { data } = await supabase
     .from('driver_win_streaks')
     .select('driver_id, forename, surname, streak_len, end_year')
@@ -157,7 +157,7 @@ export function isConstructorRecordSlug(slug: string): slug is ConstructorRecord
 }
 
 // constructor_stats column each stat-based category ranks by — note pole_positions,
-// not poles (different name than driver_stats, see RECORDS-HUB-SPEC-V2.md)
+// not poles (different name than driver_stats, see docs/archive/RECORDS-HUB-SPEC-V2.md)
 const CONSTRUCTOR_STAT_COLUMN: Record<
   Exclude<ConstructorRecordSlug, 'constructors-longest-win-streak'>,
   string
@@ -226,7 +226,7 @@ async function fetchConstructorStatRecord(
 async function fetchConstructorStreakRecord(limit: number): Promise<ConstructorRecordEntry[]> {
   const supabase = createClient();
   // View already carries name + constructor_ref — no extra join needed
-  // (unlike driver_win_streaks), see RECORDS-HUB-SPEC-V2.md.
+  // (unlike driver_win_streaks), see docs/archive/RECORDS-HUB-SPEC-V2.md.
   const { data } = await supabase
     .from('constructor_win_streaks')
     .select('constructor_id, name, constructor_ref, streak_len, end_year')

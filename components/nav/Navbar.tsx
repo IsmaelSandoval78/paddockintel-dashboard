@@ -1,11 +1,11 @@
 import { headers } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
+import { isMagazineHost } from '@/lib/siteMode';
 import NavLinks from './NavLinks';
 import LocaleSwitcher from './LocaleSwitcher';
 import MobileNav from './MobileNav';
-
-const MAGAZINE_HOSTS = new Set(['paddockintel.com', 'www.paddockintel.com']);
+import MiBoxIndicator from './MiBoxIndicator';
 
 async function getCurrentRound(): Promise<{ round: number; year: number } | null> {
   try {
@@ -29,8 +29,8 @@ async function getCurrentRound(): Promise<{ round: number; year: number } | null
 }
 
 export default async function Navbar() {
-  const host = (await headers()).get('host')?.split(':')[0] ?? '';
-  const isMagazine = MAGAZINE_HOSTS.has(host);
+  const host = (await headers()).get('host') ?? '';
+  const isMagazine = isMagazineHost(host);
   const current = isMagazine ? null : await getCurrentRound();
 
   return (
@@ -47,9 +47,12 @@ export default async function Navbar() {
 
         <div className="flex items-center gap-5 shrink-0">
           {!isMagazine && (
-            <span className="font-mono text-xs text-text-3 tracking-[0.04em]">
-              Vol.01 · Rd.{current ? String(current.round).padStart(2, '0') : '—'} · {current?.year ?? '—'}
-            </span>
+            <>
+              <span className="font-mono text-xs text-text-3 tracking-[0.04em]">
+                Vol.01 · Rd.{current ? String(current.round).padStart(2, '0') : '—'} · {current?.year ?? '—'}
+              </span>
+              <MiBoxIndicator />
+            </>
           )}
           <LocaleSwitcher />
         </div>

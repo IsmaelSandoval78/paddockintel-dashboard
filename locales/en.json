@@ -1,4 +1,14 @@
 {
+  "miBox": {
+    "follow": "Follow",
+    "following": "Following",
+    "title": "Mi Box",
+    "yourNumber": "Your number",
+    "empty": "Follow drivers and constructors to build your box.",
+    "driversHeading": "Drivers",
+    "constructorsHeading": "Constructors",
+    "unfollow": "Remove"
+  },
   "nav": {
     "hub": "Hub",
     "circuits": "Circuits",
@@ -15,7 +25,7 @@
   },
   "hub": {
     "title": "PaddockIntel",
-    "tagline": "F1 intelligence hub",
+    "tagline": "Understand the sport. Not just watch it.",
     "status": {
       "connected": "Supabase connected",
       "error": "Connection error"
@@ -166,6 +176,17 @@
       "ties": "{count} ties (both DNF)",
       "noOverlap": "No shared races at this circuit.",
       "prompt": "Select two drivers to compare their head-to-head record at this circuit."
+    },
+    "deltaRibbon": {
+      "title": "Delta Ribbon",
+      "methodology": "Historical time delta between {driverA} and {driverB} at {raceName}. Ribbon width = size of the gap, color = who was ahead.",
+      "snap": "Snap",
+      "defend": "Defend",
+      "braid": "Braid",
+      "corner": "Corner",
+      "lap": "Lap",
+      "finalGap": "Final gap",
+      "vs": "vs"
     },
     "qualifying": {
       "title": "Qualifying",
@@ -451,19 +472,25 @@
     },
     "seasons": {
       "title": "Season by Season",
-      "year": "Year",
-      "pos": "Pos",
       "pts": "PTS",
+      "wins": "Wins"
+    },
+    "rivalry": {
+      "title": "Rivalry",
+      "championships": "Championships",
       "wins": "Wins",
-      "pod": "Pod",
       "races": "Races"
     },
-    "winsSection": {
-      "title": "Win History",
-      "year": "Year",
-      "race": "Race",
-      "driver": "Driver",
-      "fastestLap": "Fastest Lap"
+    "pitWall": {
+      "title": "Pit Wall",
+      "fastestPit": "Fastest Pit Stop",
+      "fastestLap": "Fastest Lap Ever",
+      "dnfRate": "DNF Rate"
+    },
+    "circuitDomination": {
+      "title": "Circuit Domination",
+      "wins": "Wins",
+      "podiums": "Podiums"
     },
     "drivers": {
       "title": "Drivers",

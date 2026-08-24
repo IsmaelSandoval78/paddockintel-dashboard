@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { teamColor } from './teamColors';
+import { BattleChart, type BattleChartRound, type BattleChartSeries } from '@/components/ui/BattleChart';
 import type { HomeChampionshipGapData } from '@/lib/types';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -24,6 +25,7 @@ function GapPanel({
   p2Pts,
   gap,
   motionOk,
+  chart,
 }: {
   label: string;
   p1Name: string;
@@ -34,6 +36,7 @@ function GapPanel({
   p2Pts: number;
   gap: number;
   motionOk: boolean;
+  chart: { rounds: BattleChartRound[]; series: BattleChartSeries[] } | null;
 }) {
   const t = useTranslations('hub.home');
   const gapRef = useRef<HTMLSpanElement>(null);
@@ -115,6 +118,19 @@ function GapPanel({
           {p2Pts} {t('csPts').toUpperCase()}
         </span>
       </div>
+
+      {chart && (
+        <div className="mt-6 pt-5 border-t border-border-subtle">
+          <BattleChart
+            variant="compact"
+            motionOk={motionOk}
+            rounds={chart.rounds}
+            series={chart.series}
+            height={180}
+            ariaLabel={`${label}: ${p1Name} vs ${p2Name} points by round`}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -140,6 +156,34 @@ export default function ChampionshipGapSection({ data, motionOk }: ChampionshipG
 
   if (!data.driver && !data.constructor) return null;
 
+  const chartRounds: BattleChartRound[] = data.history.rounds.map((r) => ({ round: r.round }));
+
+  const driverChart = data.history.driverSeries
+    ? {
+        rounds: chartRounds,
+        series: data.history.driverSeries.map((s, i) => ({
+          id: s.driver_id,
+          label: s.code ?? s.surname.slice(0, 3).toUpperCase(),
+          points: s.points,
+          color: teamColor(s.constructor_ref),
+          emphasize: i === 0,
+        })),
+      }
+    : null;
+
+  const constructorChart = data.history.constructorSeries
+    ? {
+        rounds: chartRounds,
+        series: data.history.constructorSeries.map((s, i) => ({
+          id: s.constructor_id,
+          label: s.name,
+          points: s.points,
+          color: teamColor(s.constructor_ref),
+          emphasize: i === 0,
+        })),
+      }
+    : null;
+
   return (
     <section ref={rootRef} className="border-t border-border px-5 md:px-10 py-10 md:py-16">
       <p className="font-mono text-[9px] md:text-[10px] text-text-2 uppercase tracking-[0.18em] mb-8 md:mb-10">
@@ -158,6 +202,7 @@ export default function ChampionshipGapSection({ data, motionOk }: ChampionshipG
             p2Pts={data.driver.p2.points}
             gap={data.driver.gap}
             motionOk={motionOk}
+            chart={driverChart}
           />
         )}
         {data.constructor && (
@@ -171,6 +216,7 @@ export default function ChampionshipGapSection({ data, motionOk }: ChampionshipG
             p2Pts={data.constructor.p2.points}
             gap={data.constructor.gap}
             motionOk={motionOk}
+            chart={constructorChart}
           />
         )}
       </div>

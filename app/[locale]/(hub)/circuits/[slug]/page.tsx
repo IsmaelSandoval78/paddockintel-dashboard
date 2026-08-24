@@ -5,8 +5,11 @@ import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
 import { routing } from '@/lib/i18n/routing';
 import { fetchTrackPathData } from '@/lib/trackSvg';
+import { teamColor } from '@/components/home/kinetic/teamColors';
 import CircuitDetailExperience from '@/components/circuits/kinetic/CircuitDetailExperience';
 import type { DriverSelectorRow, CircuitCorner } from '@/lib/types';
+import type { RibbonFrame } from '@/components/circuits/kinetic/deltaRibbon/geometry';
+import type { DeltaRibbonEventRow, DeltaRibbonDriver } from '@/components/circuits/kinetic/DeltaRibbonSection';
 
 export const revalidate = 3600;
 
@@ -152,6 +155,110 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
         </div>
       </main>
     );
+  }
+
+  // Batch 2b — Delta Ribbon existence check for this circuit (generic by circuit, not
+  // hardcoded — extends automatically as more races get loaded via scripts/load-delta-ribbon.ts)
+  const { data: ribbonRaceRows } = await supabase
+    .from('delta_ribbon_frames')
+    .select('race_id')
+    .in('race_id', raceIds)
+    .limit(2000);
+  const ribbonRaceIds = [...new Set((ribbonRaceRows ?? []).map((r) => r.race_id as number))];
+  const deltaRibbonRaceId = ribbonRaceIds.length
+    ? ribbonRaceIds.sort((a, b) => (raceYearMap.get(b) ?? 0) - (raceYearMap.get(a) ?? 0))[0]
+    : null;
+
+  let deltaRibbon: {
+    raceName: string;
+    frames: RibbonFrame[];
+    events: DeltaRibbonEventRow[];
+    driverA: DeltaRibbonDriver;
+    driverB: DeltaRibbonDriver;
+  } | null = null;
+
+  if (deltaRibbonRaceId) {
+    const [{ data: framesRaw }, { data: eventsRaw }] = await Promise.all([
+      supabase
+        .from('delta_ribbon_frames')
+        .select('driver_a_id, driver_b_id, path_percent, lap, delta_seconds, leader_driver_id')
+        .eq('race_id', deltaRibbonRaceId)
+        .order('lap', { ascending: true })
+        .order('path_percent', { ascending: true }),
+      supabase
+        .from('delta_ribbon_events')
+        .select('path_percent, lap, event_type, corner_name')
+        .eq('race_id', deltaRibbonRaceId)
+        .order('lap', { ascending: true })
+        .order('path_percent', { ascending: true }),
+    ]);
+
+    const ribbonFrames = framesRaw ?? [];
+    if (ribbonFrames.length) {
+      const idA = ribbonFrames[0].driver_a_id as number;
+      const idB = ribbonFrames[0].driver_b_id as number;
+
+      const [{ data: ribbonResultsRaw }, { data: ribbonDriversRaw }] = await Promise.all([
+        supabase
+          .from('results')
+          .select('driver_id, constructor_id')
+          .eq('race_id', deltaRibbonRaceId)
+          .in('driver_id', [idA, idB]),
+        supabase
+          .from('drivers')
+          .select('id, forename, surname, code')
+          .in('id', [idA, idB]),
+      ]);
+
+      const constructorIdByDriver = new Map(
+        (ribbonResultsRaw ?? []).map((r) => [r.driver_id as number, r.constructor_id as number])
+      );
+      const ribbonConstructorIds = [...new Set([...constructorIdByDriver.values()])];
+      const { data: ribbonConstructorsRaw } = ribbonConstructorIds.length
+        ? await supabase.from('constructors').select('id, constructor_ref').in('id', ribbonConstructorIds)
+        : { data: [] as Array<{ id: unknown; constructor_ref: unknown }> };
+      const constructorRefById = new Map(
+        (ribbonConstructorsRaw ?? []).map((c) => [c.id as number, c.constructor_ref as string])
+      );
+      const ribbonDriverById = new Map((ribbonDriversRaw ?? []).map((d) => [d.id as number, d]));
+
+      const buildRibbonDriver = (id: number): DeltaRibbonDriver | null => {
+        const d = ribbonDriverById.get(id);
+        if (!d) return null;
+        const conRef = constructorRefById.get(constructorIdByDriver.get(id) ?? -1);
+        return {
+          id,
+          code: (d.code as string | null) ?? null,
+          forename: d.forename as string,
+          surname: d.surname as string,
+          teamColor: teamColor(conRef ?? ''),
+        };
+      };
+
+      const ribbonDriverA = buildRibbonDriver(idA);
+      const ribbonDriverB = buildRibbonDriver(idB);
+      const ribbonRaceName = races.find((r) => (r.id as number) === deltaRibbonRaceId)?.name as string | undefined;
+
+      if (ribbonDriverA && ribbonDriverB && ribbonRaceName) {
+        deltaRibbon = {
+          raceName: ribbonRaceName,
+          frames: ribbonFrames.map((f) => ({
+            lap: f.lap as number,
+            path_percent: f.path_percent as number,
+            delta_seconds: f.delta_seconds as number,
+            leader_driver_id: f.leader_driver_id as number,
+          })),
+          events: (eventsRaw ?? []).map((e) => ({
+            path_percent: e.path_percent as number,
+            lap: e.lap as number,
+            event_type: e.event_type as DeltaRibbonEventRow['event_type'],
+            corner_name: e.corner_name as string | null,
+          })),
+          driverA: ribbonDriverA,
+          driverB: ribbonDriverB,
+        };
+      }
+    }
   }
 
   // Batch 3 — race winners + all fastest laps + rank-1 lap record + winner laps (parallel)
@@ -645,6 +752,7 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
       allTimePole={allTimePole}
       recentPoles={recentPoles}
       intelData={intelData}
+      deltaRibbon={deltaRibbon}
     />
   );
 }

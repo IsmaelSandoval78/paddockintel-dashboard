@@ -242,6 +242,7 @@ export default function DriverDetailExperience({
         number={driver.number}
         nationality={driver.nationality}
         dob={driver.dob}
+        driverRef={driver.driver_ref}
         championshipYears={championshipYears}
         currentTeamRef={currentTeamRef}
         races={stats.races}

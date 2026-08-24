@@ -123,7 +123,7 @@ export default function CircuitsClient({
       {/* ── Page header ──────────────────────────────────────── */}
       <div
         ref={headerRef}
-        className="h-12 px-5 border-b border-border flex items-center gap-3 shrink-0 overflow-hidden bg-bg"
+        className="h-12 px-5 border-b border-border flex items-center gap-3 shrink-0 overflow-hidden bg-surface-raised"
       >
         <span className="font-mono text-[10px] text-text-2 uppercase tracking-[0.1em] shrink-0">02 ·</span>
         <div className="kinetic-mask shrink-0">
@@ -146,7 +146,7 @@ export default function CircuitsClient({
       </div>
 
       {/* ── Filter bar ───────────────────────────────────────── */}
-      <div className="h-9 px-5 border-b border-border flex items-center gap-5 shrink-0 overflow-x-auto bg-bg">
+      <div className="h-9 px-5 border-b border-border flex items-center gap-5 shrink-0 overflow-x-auto bg-surface-raised">
         {REGIONS.map(({ key, label }) => (
           <button
             key={key}
@@ -172,7 +172,7 @@ export default function CircuitsClient({
       </div>
 
       {/* ── Search row — own row, no clipping ancestors for the dropdown ── */}
-      <div className="h-9 px-5 border-b border-border flex items-center shrink-0 relative bg-bg">
+      <div className="h-9 px-5 border-b border-border flex items-center shrink-0 relative bg-surface-raised">
         <input
           type="text"
           value={search}
@@ -181,7 +181,7 @@ export default function CircuitsClient({
           className="font-mono text-[11px] text-text-2 bg-transparent border-0 p-0 focus:outline-none placeholder:text-text-3 w-full max-w-[280px]"
         />
         {search.trim() && (
-          <div className="absolute left-5 top-full w-[300px] max-h-[260px] overflow-y-auto bg-bg border border-border">
+          <div className="absolute left-5 top-full w-[300px] max-h-[260px] overflow-y-auto bg-surface-overlay border border-border">
             {searchMatches.length > 0 ? (
               searchMatches.map((c) => (
                 <button
@@ -230,7 +230,7 @@ export default function CircuitsClient({
       </div>
 
       {/* ── Legend ───────────────────────────────────────────── */}
-      <div className="h-9 px-5 border-t border-border flex items-center gap-6 shrink-0 bg-bg">
+      <div className="h-9 px-5 border-t border-border flex items-center gap-6 shrink-0 bg-surface-raised">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--red)' }} />
           <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em]">{t('legend.season')}</span>

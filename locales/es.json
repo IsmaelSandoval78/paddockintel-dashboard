@@ -1,4 +1,14 @@
 {
+  "miBox": {
+    "follow": "Seguir",
+    "following": "Siguiendo",
+    "title": "Mi Box",
+    "yourNumber": "Tu número",
+    "empty": "Seguí pilotos y constructores para armar tu box.",
+    "driversHeading": "Pilotos",
+    "constructorsHeading": "Constructores",
+    "unfollow": "Quitar"
+  },
   "nav": {
     "hub": "Hub",
     "circuits": "Circuitos",
@@ -15,7 +25,7 @@
   },
   "hub": {
     "title": "PaddockIntel",
-    "tagline": "Hub de inteligencia F1",
+    "tagline": "Entender la Fórmula 1. No solo mirarla.",
     "status": {
       "connected": "Supabase conectado",
       "error": "Error de conexión"
@@ -166,6 +176,17 @@
       "ties": "{count} empates (ambos DNF)",
       "noOverlap": "Sin carreras compartidas en este circuito.",
       "prompt": "Selecciona dos pilotos para comparar su historial cara a cara en este circuito."
+    },
+    "deltaRibbon": {
+      "title": "Cinta de Delta",
+      "methodology": "Delta de tiempo histórico entre {driverA} y {driverB} en {raceName}. El grosor de la cinta = magnitud de la brecha, el color = quién iba adelante.",
+      "snap": "Rebase",
+      "defend": "Defensa",
+      "braid": "Trenza",
+      "corner": "Curva",
+      "lap": "Vuelta",
+      "finalGap": "Brecha final",
+      "vs": "vs"
     },
     "qualifying": {
       "title": "Clasificación",
@@ -451,19 +472,25 @@
     },
     "seasons": {
       "title": "Por Temporada",
-      "year": "Año",
-      "pos": "Pos",
       "pts": "PTS",
-      "wins": "Vic",
-      "pod": "Pod",
+      "wins": "Vic"
+    },
+    "rivalry": {
+      "title": "Rivalidad",
+      "championships": "Campeonatos",
+      "wins": "Victorias",
       "races": "Carreras"
     },
-    "winsSection": {
-      "title": "Victorias",
-      "year": "Año",
-      "race": "Carrera",
-      "driver": "Piloto",
-      "fastestLap": "Vuelta Rápida"
+    "pitWall": {
+      "title": "Pit Wall",
+      "fastestPit": "Parada Más Rápida",
+      "fastestLap": "Vuelta Más Rápida",
+      "dnfRate": "% Abandonos"
+    },
+    "circuitDomination": {
+      "title": "Dominio por Circuito",
+      "wins": "Vic",
+      "podiums": "Pod"
     },
     "drivers": {
       "title": "Pilotos",

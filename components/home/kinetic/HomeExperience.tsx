@@ -13,6 +13,7 @@ import FormGuideSection from './FormGuideSection';
 import SeasonShapeSection from './SeasonShapeSection';
 import ChampionshipGapSection from './ChampionshipGapSection';
 import KineticFooter from './KineticFooter';
+import MiBoxStrip from './MiBoxStrip';
 import type {
   HomeNextRace,
   HomeDriverRow,
@@ -112,6 +113,8 @@ export default function HomeExperience({
       {leader && (
         <Hero leader={leader} round={round} year={year} motionOk={motionOk} isMobile={isMobile} />
       )}
+
+      <MiBoxStrip />
 
       <Ticker drivers={topDrivers} motionOk={motionOk} />
 

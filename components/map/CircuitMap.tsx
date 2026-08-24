@@ -34,7 +34,7 @@ function makeIcon(isActive: boolean, selected: boolean): ReturnType<typeof L.div
 // ─── Dominance dot ────────────────────────────────────────────────
 //
 // Color encodes who dominates:
-//   #E10600  Driver A (race red)
+//   #E61919  Driver A (race red)
 //   #2A5DB0  Driver B (blue)
 //   #B5B4AE  Even
 //   #D8D7D1  No overlap
@@ -56,7 +56,7 @@ function dotHtmlDominance(
     size = 6;
   } else if (dominance.winsA > dominance.winsB) {
     const pct = dominance.winsA / dominance.total;
-    color = '#E10600';
+    color = '#E61919';
     size = pct >= 0.7 ? 11 : pct >= 0.55 ? 8 : 6;
   } else {
     const pct = dominance.winsB / dominance.total;
