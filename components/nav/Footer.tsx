@@ -26,12 +26,6 @@ export default async function Footer() {
           >
             {t('privacy')}
           </Link>
-          <a
-            href="mailto:info@paddockintel.com?subject=Investor%20inquiry"
-            className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-150"
-          >
-            {t('investors')}
-          </a>
         </nav>
       </div>
     </footer>

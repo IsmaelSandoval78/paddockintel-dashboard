@@ -588,6 +588,21 @@ código real — §5–§9, y todas las decisiones de alcance están cerradas �
    usamos", para no sobrerreclamar. **Esperando respuesta de ambos — sigue siendo el riesgo
    legal abierto más serio del proyecto, ahora en estado "en trámite" en vez de "sin iniciar".**
    Plan B (fuente alternativa si la respuesta tarda o es negativa) sigue sin identificarse.
+
+   **Corrección real de objetivo de negocio, 2026-08-23 — no cambia la conclusión legal,
+   la refuerza.** El usuario aclaró que PaddockIntel no busca inversión — el modelo de
+   monetización real es publicidad (Google AdSense y/o venta directa de espacios) y
+   newsletter, no una ronda de capital. Esto NO reduce el riesgo de licencia con
+   OpenF1/jolpica-f1: la cláusula "NonCommercial" de CC BY-NC-SA 4.0 se define como uso "not
+   primarily intended for or directed towards commercial advantage or **monetary
+   compensation**" — publicidad y newsletter monetizada encajan ahí de forma más directa que
+   levantar inversión (ahí incluso hay más debate legal de si calificaría). Los dos emails ya
+   enviados siguen siendo válidos (pedían autorización comercial en general, no específica a
+   inversión) pero describían el sitio como "investor-facing" — si alguno de los dos
+   responde pidiendo más detalle del modelo de negocio, corregir ahí con la info real
+   (ads/newsletter/publicidad propia). Efecto en cadena: el CTA "Investors" agregado al
+   footer el 21/8 (punto 9 de esta lista) quedó basado en el objetivo viejo — se revirtió el
+   mismo día de esta corrección, ver el punto 9 actualizado arriba.
    Asignar dueño y fecha para el pase nativo de portugués de Brasil del Hero y la línea de
    firma (§11) sigue pendiente aparte.
 4. ~~Confirmar contra `Hero.tsx` si el subhead existe~~ — **hecho 2026-08-11.** No existía,
@@ -730,13 +745,20 @@ código real — §5–§9, y todas las decisiones de alcance están cerradas �
      conectada a ningún componente en ningún idioma — no es un gap específico de PT, es una
      pieza de copy todavía no implementada (confirmado con grep, cero resultados en
      `locales/`/`components/`/`app/`), queda anotado para cuando se construya.
-   - **CTA de inversores — versión simple:** nuevo link "Investors"/"Inversores"/
-     "Investidores" (`footer.investors`, agregado a los 3 locale files) en `Footer.tsx` (el
-     footer funcional/legal compartido entre Hub y magazine, no el `KineticFooter` animado
-     del Hub) — `mailto:info@paddockintel.com?subject=Investor%20inquiry`, mismo email de
-     contacto que ya usan Privacy/About, con asunto propio para poder filtrar estos leads del
-     resto del inbox. Sin página ni flujo nuevo — es el punto de contacto discreto que el
-     panel de asesores (§12) marcó como gap, no un rediseño del recorrido de conversión.
+   - **CTA de inversores — versión simple, agregado 2026-08-21, revertido 2026-08-23.** Nuevo
+     link "Investors"/"Inversores"/"Investidores" (`footer.investors`) en `Footer.tsx`,
+     `mailto:info@paddockintel.com?subject=Investor%20inquiry`. Basado en el objetivo de
+     negocio que se venía anotando desde el inicio de la relanzamiento ("que inversores llamen
+     para invertir" — ver la sesión de concepto inicial). **Corrección real de objetivo de
+     negocio, 2026-08-23:** el usuario aclaró que no busca inversión — el modelo de
+     monetización real es publicidad (Google AdSense y/o venta directa) y newsletter. El link
+     se sacó del footer (`components/nav/Footer.tsx`) y la key `footer.investors` de los 3
+     locale files. No se agregó reemplazo — ver §14 para el efecto en cadena que tuvo esta
+     corrección sobre la licencia de OpenF1/jolpica-f1. La mención de "investors" que queda en
+     `app/[locale]/about/page.tsx:236` es distinta y no se tocó: describe un tier "Premium
+     Analysis" (Coming Soon) dirigido a "investors, analysts, and industry professionals" como
+     segmento de cliente pagador (más al estilo Bloomberg terminal), no una solicitud de
+     inversión en PaddockIntel — consistente con el modelo real de monetización.
    - Verificado en conjunto: `tsc --noEmit` limpio, `eslint` sin errores nuevos (1 warning
      preexistente sin relación, `teamHex` sin usar), los 3 `locales/*.json` parsean como JSON
      válido, dev server sin errores en consola/log para EN/ES/PT.
