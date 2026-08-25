@@ -40,6 +40,16 @@
   --gold-dim:        #F5E8CC;
   --text-on-accent:  #FAFAF7;
 
+  /* On-accent text/border — for content sitting inside a dark/navy panel (e.g. a stat band
+     on --navy), where the light-substrate --text-1/--text-2/--border-subtle tokens don't
+     have enough contrast. Both derive from --text-on-accent (near-white) blended toward
+     --navy, NOT from --text-2 — blending two already-dark tones together stays dark no
+     matter the ratio (a --text-2-over-navy attempt measured 1.44:1 contrast, effectively
+     illegible). Starting from a light color and reducing it is the only way to land in a
+     legible range. 2026-08-24. */
+  --border-on-accent:  #7E878F;  /* text-on-accent @ 40% over navy — contrast 3.18:1 */
+  --text-2-on-accent:  #A7ADB2;  /* text-on-accent @ 60% over navy — contrast 5.13:1, passes WCAG AA */
+
   /* Semantic */
   --green:           #22C55E;
   --green-dim:       #E8F5EE;
@@ -89,6 +99,8 @@
   --color-navy:            var(--navy);
   --color-mustard:         var(--mustard);
   --color-text-on-accent:  var(--text-on-accent);
+  --color-border-on-accent: var(--border-on-accent);
+  --color-text-2-on-accent: var(--text-2-on-accent);
   --color-gold:            var(--gold);
   --color-gold-dim:        var(--gold-dim);
   --color-green:           var(--green);

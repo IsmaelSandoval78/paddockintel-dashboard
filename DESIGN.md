@@ -65,6 +65,32 @@ assign anymore.
 --radius-md       4px       /* illustrated map containers, circular diagram frames */
 ```
 
+### On-accent text — for dark/navy panels
+
+The tokens above all assume content sits on the light kraft substrate. Some components
+(a stat band on `--navy`, a highlighted callout) put content *inside* a dark panel instead —
+`--text-1`/`--text-2`/`--border-subtle` don't have workable contrast there. Three tokens cover
+that case:
+
+```css
+--text-on-accent      #FAFAF7   /* primary text/icons on a dark or accent-colored panel
+                                    (--navy, --terracotta) — e.g. the Ticker on --terracotta */
+--text-2-on-accent    #A7ADB2   /* secondary/muted text on a dark panel — e.g. a stat band's
+                                    label under a hero number */
+--border-on-accent    #7E878F   /* hairline dividers inside a dark panel */
+```
+
+**Both `-on-accent` tokens are derived from `--text-on-accent`, never from `--text-2`/
+`--border-subtle`.** Blending two already-dark colors together stays dark no matter the ratio —
+`--text-2` (`#6B5F4E`) blended 60% over `--navy` (`#2B3A4A`) measures **1.44:1** contrast,
+effectively illegible. Starting from a light color and dialing the opacity down is the only way
+to land in a legible range: `--text-2-on-accent` is `--text-on-accent` blended 60% over `--navy`
+(5.13:1, passes WCAG AA), `--border-on-accent` is the same at 40% (3.18:1, fine for a
+non-text hairline). If a future dark panel needs its own on-accent text/border color, compute it
+the same way — don't reach for `--text-2`/`--border-subtle` as the blend source. Added
+2026-08-24, fixing a hardcoded-hex regression on the Constructors detail page's stat bands — see
+"Known technical debt" below.
+
 **Migration note:** this is a hex-value change plus a shape-rule change (see Shape below), not
 a structural rewrite. Any component already reading from CSS variables (`var(--bg)`,
 `var(--red)`, etc.) updates automatically once `globals.css` changes — the same mechanism that
@@ -160,10 +186,17 @@ change — it governs geometric accuracy, not palette, and survives untouched.
 ## Known technical debt this system inherits
 
 Constructors detail page (`app/[locale]/(hub)/constructors/[slug]/page.tsx`) still has
-100% hardcoded hex, `font-serif` outside the type system, no `'use client'`/motion — this was
-already Phase 2 debt under the old system (`docs/archive/CONCEPT-V2.md` §7) and remains Phase 2 debt under
-this one. Do not attempt to patch it token-by-token; rebuild it against these tokens using
+`font-serif` outside the type system and no `'use client'`/motion — this was already Phase 2
+debt under the old system (`docs/archive/CONCEPT-V2.md` §7) and remains Phase 2 debt under this
+one. Do not attempt to patch it token-by-token; rebuild it against these tokens using
 `DriverDetailExperience.tsx` as structural reference, same recommendation as before.
+
+**Partial exception, 2026-08-24:** the stat-band/Rivalry/Pit Wall hardcoded hex (introduced by
+the Aug 24 "Rivalry, Pit Wall, Circuit Domination" rebuild, plus one older stat band from the
+page's original June build) was patched to real tokens, including two new ones —
+`--border-on-accent`/`--text-2-on-accent`, see "On-accent text" above — as a scoped regression
+fix, not a rebuild. `TEAM_HEX` (the team-color swatch map) and the `FollowButton` idle-color
+overrides are still hardcoded hex, deliberately out of scope for that fix.
 
 ## Motion pieces (Remotion) — re-evaluate, not yet decided
 
