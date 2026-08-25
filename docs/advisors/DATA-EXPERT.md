@@ -91,6 +91,13 @@ the bar on this advisor's checks because the entire credibility of the pillar re
       sources — never take `status_id`'s category as the full story. Verified case: Zandvoort
       2026, Verstappen — `status_id` said generic "Retired," the real event was a crash under red
       flag (confirmed against Formula1.com, Sky Sports, and other independent sources).
+- [ ] The last-race recap in `components/circuits/CircuitOverview.tsx` picks the linked article
+      by `ORDER BY race_id DESC LIMIT 1` (most recent race at that circuit wins) — implemented
+      2026-08-24 but with no empirical verification against a real multiple-article circuit,
+      because none exists yet: today there is exactly one published article anywhere with
+      `race_id` set (Silverstone, `british-gp-2026-data-analysis`). Verify the ordering for real
+      once a circuit has two or more race-linked articles — don't assume it's correct just
+      because it read correctly in code review.
 
 ## When this advisor should block publication
 
