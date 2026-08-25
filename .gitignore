@@ -19,6 +19,7 @@
 
 # opennext (cloudflare)
 /.open-next/
+/.wrangler/
 
 # production
 /build
@@ -38,6 +39,9 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# cloudflare (wrangler API token, kept separate from .env*/Supabase secrets)
+.wrangler-token.local
 
 # typescript
 *.tsbuildinfo
