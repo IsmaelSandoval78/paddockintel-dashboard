@@ -6,6 +6,46 @@ nobody re-investigates something already settled.
 
 ---
 
+## ⚠️ NOT PRODUCTION-READY (as of 2026-08-25) — do not point paddockintel.com/hub.paddockintel.com at this
+
+The current `*.workers.dev` deploy has **R2 incremental cache population
+deliberately disabled** in `open-next.config.ts` (`incrementalCache` commented
+out, only `queue: doQueue` active). This was done ONLY to get a one-off smoke
+test deployed after `opennextjs-cloudflare deploy`'s R2 population step hung
+indefinitely with zero progress output — reproduced twice, from two different
+networks (this session's sandboxed environment, and the user's own
+unrestricted terminal), so it isn't a local network fluke.
+
+**With this config, there is no persistent cache at all — not "fills in after
+the first visit," genuinely none.** Every request, from every visitor,
+forever, re-renders from scratch (fresh Supabase queries, fresh React render).
+`revalidate: 3600` on the 13 ISR routes has no effect with this config. This
+is fine for confirming the Worker responds to requests; it is not fine for
+real traffic.
+
+**Before any real production cutover:**
+1. Restore `open-next.config.ts` to re-enable `r2IncrementalCache` — the
+   change was never committed, so `git checkout -- open-next.config.ts`
+   restores the last committed (correct) version.
+2. Actually solve the R2 population hang first, or re-enabling will just
+   reproduce the same stuck deploy. Known related upstream issues (closed,
+   but resolution unconfirmed against our exact symptom — see the note
+   below on what didn't match):
+   - https://github.com/opennextjs/opennextjs-cloudflare/issues/1110
+   - https://github.com/cloudflare/workers-sdk/issues/12413
+   - Both describe R2 bulk-upload trouble on large-ISR-page-count projects
+     (matches this project's 3760 generated pages), closed after a
+     contested back-and-forth between competing fix PRs (#1099, #925,
+     #1116) — never confirmed which (if any) shipped in the
+     `@opennextjs/cloudflare` version this project pins. **Not a confirmed
+     match**: those issues describe visible progress before a 503
+     (`Uploaded 0% (10 out of 16,974)` then fails); our hang produced zero
+     progress output at all, in either attempt. Worth trying `wrangler
+     deploy`'s `--rclone` flag (seen in `opennextjs-cloudflare deploy
+     --help`, not yet tried) before assuming it's the same root cause.
+
+---
+
 ## 2026-08-25 — `middleware.ts` instead of `proxy.ts` (temporary, tied to specific PRs)
 
 **Decision:** use the deprecated `middleware.ts` file convention (function name
