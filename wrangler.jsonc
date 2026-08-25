@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "paddockintel-dashboard",
+  "account_id": "dbf60dad00f30c6d52b094b3ec552f73",
   "main": "custom-worker.ts",
   "compatibility_date": "2026-08-25",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
