@@ -12,9 +12,33 @@ The current `*.workers.dev` deploy has **R2 incremental cache population
 deliberately disabled** in `open-next.config.ts` (`incrementalCache` commented
 out, only `queue: doQueue` active). This was done ONLY to get a one-off smoke
 test deployed after `opennextjs-cloudflare deploy`'s R2 population step hung
-indefinitely with zero progress output — reproduced twice, from two different
-networks (this session's sandboxed environment, and the user's own
-unrestricted terminal), so it isn't a local network fluke.
+indefinitely with zero progress output — reproduced across 3 separate deploy
+attempts.
+
+**Two more specific causes were investigated and ruled out** (2026-08-25),
+narrowing this down rather than just "reproduced it a few times":
+- **Bucket didn't exist yet** — real, and fixed (`wrangler r2 bucket create
+  paddockintel-isr-cache`), but not the whole story: after creating the
+  bucket, a 3rd deploy attempt still hung with `object_count: 0` (checked via
+  `wrangler r2 bucket info paddockintel-isr-cache` — that command surfaces
+  `object_count`/`bucket_size` directly, unlike `wrangler r2 object` which has
+  no `list` subcommand) for 4.5+ minutes straight, polled every 90s.
+- **Network egress to R2 blocked** — real for this session's sandboxed
+  environment specifically (confirmed:
+  `https://<account-id>.r2.cloudflarestorage.com` → `SSL routines::sslv3
+  alert handshake failure` at 56ms, while `example.com` and
+  `api.cloudflare.com` both responded normally and fast from the same
+  sandbox) — but **ruled out for the user's own terminal**: same curl test
+  from there returned `HTTP 400` in 62ms, a real server response (missing
+  request signature for that bare unsigned request, not a network-layer
+  failure) — confirmed clean connectivity, same as the `example.com` (200)
+  and `api.cloudflare.com` (401) controls.
+
+So: bucket exists, network is clean end-to-end from the machine actually
+running the deploy, and it still hangs at zero objects. That combination
+points more strongly at the known upstream OpenNext/R2 population issue
+(links below) than at anything specific to this project's setup or
+environment.
 
 **With this config, there is no persistent cache at all — not "fills in after
 the first visit," genuinely none.** Every request, from every visitor,
