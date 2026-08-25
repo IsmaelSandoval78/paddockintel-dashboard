@@ -72,3 +72,42 @@ from Next.js itself, so this isn't an indefinite workaround.
   for on-demand revalidation. Add it later (`D1NextModeTagCache` +
   `d1_databases` block + `tagCache` in `open-next.config.ts`) if that changes.
 - Worker name: `paddockintel-dashboard` (matches `package.json`).
+
+## Cron Triggers — replaces the Vercel Cron in `vercel.json` (applied 2026-08-25)
+
+- `wrangler.jsonc`: `triggers.crons: ["0 9 * * *"]` — same schedule, both run
+  in UTC so timing is unchanged.
+- `.open-next/worker.js` (OpenNext's generated Worker) only exports `fetch`,
+  no `scheduled` handler — added `custom-worker.ts` at the repo root
+  (OpenNext's documented "custom worker" pattern:
+  https://opennext.js.org/cloudflare/howtos/custom-worker) that re-exports the
+  generated `fetch` + `DOQueueHandler`, and adds `scheduled`, which calls the
+  existing `/api/digest/send` route via an internal `handler.fetch(...)` call
+  — same route, same `Authorization: Bearer ${CRON_SECRET}` check, same
+  `sent_at IS NULL` idempotency, no logic duplicated. `wrangler.jsonc`'s
+  `main` points at `custom-worker.ts` instead of `.open-next/worker.js`
+  directly.
+- **Avoided `@cloudflare/workers-types`** for the handler's TS types — its
+  global ambient declarations override `lib.dom`'s `fetch`/`Response` types
+  for the *whole* TypeScript program, not just the file that references it,
+  and broke `.then()`/`.json()` inference in 3 unrelated components
+  (`TrackDominancePanel.tsx`, `CompareClient.tsx`, `MiBoxStrip.tsx`) when
+  tried. `custom-worker.ts` uses small local interfaces instead
+  (`MinimalExecutionContext`, etc.) scoped to what it actually touches.
+- Verified with `npx wrangler deploy --dry-run` (no auth needed, doesn't
+  publish): bindings resolve correctly (R2, DO Queue, self-reference
+  service), ~1.98 MB gzipped upload — well under the Workers size limit.
+
+**Duplicate-send risk during the cutover window (still applies):** don't run
+both Vercel's cron and Cloudflare's cron long-term — turn one off the moment
+the other is confirmed working. Softer than originally thought, though:
+`/api/digest/send` already stamps `sent_at` on `digest_issues` right after a
+successful send and only selects rows where `sent_at IS NULL`, so two crons
+firing the same day mostly self-guards — the risk window is only the few
+seconds between one cron's send completing and its `sent_at` UPDATE
+committing, not the whole day.
+
+**Still pending before a real deploy:** `wrangler secret put CRON_SECRET`
+(and the other non-`NEXT_PUBLIC_*` secrets from the original migration
+investigation — `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `DRAFT_SECRET`) once
+`wrangler login` is done on the user's side.
