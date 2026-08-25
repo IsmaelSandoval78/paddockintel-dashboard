@@ -208,6 +208,26 @@ open:
   props** (`idleBorderColor`/`idleTextColor`, ~L720–722) — unrelated hardcoded-hex debt, not
   part of the Aug 24 regression.
 
+**Circuit detail — "duplicate key" React warning, found 2026-08-24, not fixed.** Several lists
+in the existing (untouched) circuit detail experience key their rows on a bare race year —
+`year` alone, not `year + something else` — which breaks for any circuit that hosted more than
+one race in the same calendar year. This is real, not hypothetical: Silverstone 2020 had both
+the British Grand Prix and the 70th Anniversary Grand Prix, so `/circuits/silverstone` throws
+4 "Encountered two children with the same key" console warnings today. Confirmed the new
+`CircuitOverview.tsx` overview block (prepended above this experience the same day) isn't the
+source — Zandvoort, which has no 2020 race at all, renders through the identical untouched
+components with zero console errors, isolating this to the pre-existing code below.
+Known offending call sites, all keyed on a bare year:
+- `CircuitHero.tsx:552` — `lastWinners.map(...)`, `key={w.year}`
+- `CircuitDetailExperience.tsx:300` — decade-dominance `decadeWinners.map(...)`, `key={w.year}`
+- `CircuitDetailExperience.tsx:392` — `recentPoles.map(...)`, `key={pole.year}`
+- `LapRecordArc.tsx:204` and `:235` — two parallel `.map()` calls over `lapEntries`, both
+  `key={c.year}`
+`CircuitTimeline.tsx:109` already uses a composite key (`` `${w.year}-${w.surname}` ``) and is
+not affected — that's the fix pattern to copy into the five call sites above (year + surname,
+or year + race round, whichever is available and guaranteed unique per row) whenever someone
+next touches these files.
+
 ## Future enhancements (deferred, not blocking)
 
 **Circuits index (`app/[locale]/(hub)/circuits/page.tsx`), 2026-08-24.** The Vintage Editorial

@@ -7,6 +7,7 @@ import { routing } from '@/lib/i18n/routing';
 import { fetchTrackPathData } from '@/lib/trackSvg';
 import { teamColor } from '@/components/home/kinetic/teamColors';
 import CircuitDetailExperience from '@/components/circuits/kinetic/CircuitDetailExperience';
+import CircuitOverview from '@/components/circuits/CircuitOverview';
 import type { DriverSelectorRow, CircuitCorner } from '@/lib/types';
 import type { RibbonFrame } from '@/components/circuits/kinetic/deltaRibbon/geometry';
 import type { DeltaRibbonEventRow, DeltaRibbonDriver } from '@/components/circuits/kinetic/DeltaRibbonSection';
@@ -62,7 +63,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function CircuitDetailPage({ params }: { params: PageParams }) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const t = await getTranslations('circuitDetail');
   const supabase = createClient();
 
@@ -729,31 +730,88 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
     podNoWin,
   };
 
+  // ─── CircuitOverview (Vintage Editorial block, prepended above the untouched
+  // CircuitDetailExperience below) ───────────────────────────────────────────
+
+  // Most wins by a single driver — derived from `winners` (already fetched), no new query.
+  const driverWinsMap = new Map<number, number>();
+  for (const w of winners) {
+    const did = w.driver_id as number;
+    driverWinsMap.set(did, (driverWinsMap.get(did) ?? 0) + 1);
+  }
+  const topWinEntry = [...driverWinsMap.entries()].sort((a, b) => b[1] - a[1])[0];
+  const topWinDriver = topWinEntry
+    ? (() => {
+        const d = driverMap.get(topWinEntry[0]);
+        return d ? { forename: d.forename, surname: d.surname, wins: topWinEntry[1] } : null;
+      })()
+    : null;
+
+  // Binary event marker — first verified circuit_corners row with a real path_percent,
+  // already fetched above. Never approximated (see docs/advisors/DATA-EXPERT.md).
+  const cornerWithPercent = corners.find((c) => c.path_percent !== null);
+  const event = cornerWithPercent
+    ? { cornerNumber: cornerWithPercent.corner_number, cornerName: cornerWithPercent.name, pathPercent: cornerWithPercent.path_percent as number }
+    : null;
+
+  // Last-race recap — only if a real published article is linked to a race at this circuit.
+  const { data: lastArticleRaw } = await supabase
+    .from('articles')
+    .select('slug, title, meta_description, race_id')
+    .in('race_id', raceIds)
+    .eq('locale', locale)
+    .eq('status', 'published')
+    .order('race_id', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const lastRaceArticle = lastArticleRaw
+    ? {
+        title: lastArticleRaw.title as string,
+        metaDescription: lastArticleRaw.meta_description as string,
+        href: `https://paddockintel.com${locale === 'en' ? '' : `/${locale}`}/${lastArticleRaw.slug as string}`,
+      }
+    : null;
+
   // ─── Render ──────────────────────────────────────────────────────────────
 
   return (
-    <CircuitDetailExperience
-      circuit={circuit}
-      drivers={drivers}
-      firstYear={firstYear}
-      totalRaces={totalRaces}
-      standardLaps={standardLaps}
-      rankLapRecord={rankLapRecord}
-      trackPathData={trackPathData}
-      corners={corners}
-      winnerRows={winnerRows}
-      decadeDominance={decadeDominance}
-      lapEntries={lapEntries}
-      allTimeRecord={allTimeRecord}
-      constructorWins={constructorWins}
-      maxConWins={maxConWins}
-      nextRace={nextRace}
-      race2026Result={race2026Result}
-      allTimePole={allTimePole}
-      recentPoles={recentPoles}
-      intelData={intelData}
-      deltaRibbon={deltaRibbon}
-    />
+    <>
+      <CircuitOverview
+        name={circuit.name}
+        location={circuit.location}
+        country={circuit.country}
+        firstYear={firstYear}
+        totalRaces={totalRaces}
+        rankLapRecord={rankLapRecord}
+        topWinDriver={topWinDriver}
+        trackPathData={trackPathData}
+        event={event}
+        lastRaceArticle={lastRaceArticle}
+      />
+      <CircuitDetailExperience
+        circuit={circuit}
+        drivers={drivers}
+        firstYear={firstYear}
+        totalRaces={totalRaces}
+        standardLaps={standardLaps}
+        rankLapRecord={rankLapRecord}
+        trackPathData={trackPathData}
+        corners={corners}
+        winnerRows={winnerRows}
+        decadeDominance={decadeDominance}
+        lapEntries={lapEntries}
+        allTimeRecord={allTimeRecord}
+        constructorWins={constructorWins}
+        maxConWins={maxConWins}
+        nextRace={nextRace}
+        race2026Result={race2026Result}
+        allTimePole={allTimePole}
+        recentPoles={recentPoles}
+        intelData={intelData}
+        deltaRibbon={deltaRibbon}
+      />
+    </>
   );
 }
 

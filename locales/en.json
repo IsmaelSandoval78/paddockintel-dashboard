@@ -146,6 +146,10 @@
     "breadcrumb": {
       "circuits": "Circuits"
     },
+    "recap": {
+      "title": "Last Race",
+      "readMore": "Read full analysis"
+    },
     "hero": {
       "label": "Circuit",
       "firstRace": "First Race",
