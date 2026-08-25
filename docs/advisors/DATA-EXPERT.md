@@ -83,6 +83,14 @@ the bar on this advisor's checks because the entire credibility of the pillar re
 - [ ] Any new derived table/materialized view gets a one-paragraph note on what it computes
       and from which source tables — future-you (or future Claude Code session) should not
       have to reverse-engineer a SQL view to know what it means
+- [ ] `results.status_id` (populated verbatim from FastF1's `Status` field) does not reliably
+      distinguish a crash from other generic retirement causes — `"Retired"` covers both. FastF1
+      does not always generate a `race_control_messages` entry tied to the specific car when an
+      incident ends in an immediate red flag. To confirm the real cause of a dramatic DNF, cross-
+      check `race_control_messages` (look for `RED FLAG` near the retirement's lap) and external
+      sources — never take `status_id`'s category as the full story. Verified case: Zandvoort
+      2026, Verstappen — `status_id` said generic "Retired," the real event was a crash under red
+      flag (confirmed against Formula1.com, Sky Sports, and other independent sources).
 
 ## When this advisor should block publication
 
