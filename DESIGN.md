@@ -195,8 +195,18 @@ one. Do not attempt to patch it token-by-token; rebuild it against these tokens 
 the Aug 24 "Rivalry, Pit Wall, Circuit Domination" rebuild, plus one older stat band from the
 page's original June build) was patched to real tokens, including two new ones —
 `--border-on-accent`/`--text-2-on-accent`, see "On-accent text" above — as a scoped regression
-fix, not a rebuild. `TEAM_HEX` (the team-color swatch map) and the `FollowButton` idle-color
-overrides are still hardcoded hex, deliberately out of scope for that fix.
+fix, not a rebuild. Two zones were deliberately left out of that fix, still hardcoded, still
+open:
+- **Hero's own dark stat band** (races/wins/championships block, right ~40% of the hero,
+  roughly L727–753) — a third, separate dark-panel instance using `#0A0A0A` (not `--navy`) as
+  its background, with its own `#2A2A2A`/`#F4F4F0`/`#6B6B6B` internal text/border colors. Same
+  fix pattern as the stat bands above would apply (`--navy` or a dedicated darker token, plus
+  `--border-on-accent`/`--text-2-on-accent`) — just confirm first whether `#0A0A0A` should stay
+  a distinct near-black or also become `--navy`, since unlike the other two panels this one was
+  never touched by the Aug 24 rebuild.
+- **`TEAM_HEX`** (the team-color swatch map, ~L37–58) and the **`FollowButton` idle-color
+  props** (`idleBorderColor`/`idleTextColor`, ~L720–722) — unrelated hardcoded-hex debt, not
+  part of the Aug 24 regression.
 
 ## Motion pieces (Remotion) — re-evaluate, not yet decided
 
