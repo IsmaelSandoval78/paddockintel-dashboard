@@ -16,7 +16,7 @@ import BottomSheet from '@/components/ui/BottomSheet';
 
 gsap.registerPlugin(SplitText);
 
-const CircuitMapSVG = dynamic(() => import('@/components/map/CircuitMapSVG'), {
+const CircuitMapSVG = dynamic(() => import('./CircuitMapSVG'), {
   ssr: false,
   loading: () => <div className="w-full h-full bg-bg" />,
 });
