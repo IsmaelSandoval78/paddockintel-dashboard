@@ -208,6 +208,24 @@ open:
   props** (`idleBorderColor`/`idleTextColor`, ~L720–722) — unrelated hardcoded-hex debt, not
   part of the Aug 24 regression.
 
+## Future enhancements (deferred, not blocking)
+
+**Circuits index (`app/[locale]/(hub)/circuits/page.tsx`), 2026-08-24.** The Vintage Editorial
+rebuild (featured circuit + compact 2026-calendar list + a plain-text historical-circuits
+section for SEO reachability) replaced the old interactive world map
+(`components/circuits/CircuitsClient.tsx`, `components/map/CircuitMapSVG.tsx`,
+`components/circuits/CircuitLeftPanel.tsx` — all three left in place, marked `UNUSED` with a
+pointer to this note and to git log, not deleted). None of the following block shipping the
+new index; they're real interaction the old page had that the new one doesn't yet:
+- Interactive world map (d3-geo) for browsing circuits by geography
+- Region filter (Europe/Americas/Asia-Pacific/Africa-Middle East/Oceania) with crossfade
+- Live text search across all circuits, with fly-to-on-select
+- Quick-look preview panel (slide-in desktop / bottom sheet mobile) without leaving the index
+- GSAP entrance motion (title SplitText, filter stagger, track DrawSVG)
+
+If any of these come back, they'd need a Vintage Editorial pass too (kraft/navy/terracotta
+tokens, not the old Swiss Industrial `--red`/zero-radius look CircuitMapSVG.tsx still uses).
+
 ## Motion pieces (Remotion) — re-evaluate, not yet decided
 
 The old "Blueprint" export standard (`#F4F4F0`, hard lines, no glow, technical grid) was

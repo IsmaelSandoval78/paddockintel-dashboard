@@ -132,6 +132,14 @@
       "mostPoles": "Mais Poles",
       "avgStart": "Largada Média",
       "viewFull": "Circuito Completo →"
+    },
+    "featured": {
+      "kicker": "Próximo no calendário",
+      "since": "Desde"
+    },
+    "list": {
+      "title": "Calendário 2026",
+      "races": "corridas"
     }
   },
   "circuitDetail": {

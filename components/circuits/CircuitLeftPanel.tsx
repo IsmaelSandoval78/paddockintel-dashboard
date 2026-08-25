@@ -1,3 +1,7 @@
+// UNUSED as of 2026-08-24 — was CircuitsClient's slide-in/bottom-sheet quick-look panel,
+// replaced by the Vintage Editorial /circuits index (app/[locale]/(hub)/circuits/page.tsx).
+// See git log if the "preview a circuit without leaving the index" pattern needs reviving.
+
 'use client';
 
 import { useEffect, useRef } from 'react';

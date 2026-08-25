@@ -132,6 +132,14 @@
       "mostPoles": "Most Poles",
       "avgStart": "Avg. Start",
       "viewFull": "Full Circuit →"
+    },
+    "featured": {
+      "kicker": "Next on the calendar",
+      "since": "Since"
+    },
+    "list": {
+      "title": "2026 Calendar",
+      "races": "races"
     }
   },
   "circuitDetail": {

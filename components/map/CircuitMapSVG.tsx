@@ -1,3 +1,7 @@
+// UNUSED as of 2026-08-24 — the d3-geo interactive world map for the old /circuits index,
+// replaced by the Vintage Editorial index (app/[locale]/(hub)/circuits/page.tsx), which has
+// no map at all. See git log if map/globe-based circuit discovery needs reviving.
+
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';

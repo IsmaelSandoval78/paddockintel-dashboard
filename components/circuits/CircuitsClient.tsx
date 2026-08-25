@@ -1,3 +1,8 @@
+// UNUSED as of 2026-08-24 — replaced by the Vintage Editorial /circuits index
+// (app/[locale]/(hub)/circuits/page.tsx: featured circuit + compact 2026-calendar list).
+// See git log if the map's interactivity (region filter, click-to-select, live search,
+// fly-to-on-search-result) needs to be revived — the new index doesn't have it yet.
+
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
