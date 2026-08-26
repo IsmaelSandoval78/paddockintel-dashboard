@@ -11,7 +11,7 @@
     "remotion:render": "remotion render remotion/index.ts LapComparison-Belgium2026-ANT-vs-LEC out/lap-comparison.mp4"
   },
   "dependencies": {
-    "@opennextjs/cloudflare": "1.20.0",
+    "@opennextjs/cloudflare": "^1.20.2",
     "@react-email/components": "^1.0.12",
     "@react-email/render": "^2.0.9",
     "@remotion/cli": "^4.0.495",
