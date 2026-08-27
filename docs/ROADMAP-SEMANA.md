@@ -8,15 +8,25 @@ borra sin dejar rastro.
 ## Los 5 pasos, en orden
 
 ### 1. Migración a Cloudflare
-**Estado: en curso, bloqueado parcialmente.**
-- Bloqueador: bug de población de R2 (issues #1110/#12413/#1284 de opennextjs/opennextjs-cloudflare).
-  Fix candidato: PR #1290 (`--rclone` opt-in), aprobado por un reviewer pero **no mergeado**
-  a la fecha de esta nota. Revisar `npm view @opennextjs/cloudflare version` cada vez que
-  se retome, y buscar si #1290 ya se mergeó.
-- Mientras tanto: R2 incremental cache desactivado en `open-next.config.ts` (comentario
-  fechado en el archivo explica por qué), deploy funcional en modo degradado
-  (sin cache persistente, cada request re-renderiza).
-- Detalle técnico completo: `docs/CLOUDFLARE-MIGRATION.md`.
+**Estado: bloqueador principal RESUELTO esta sesión.**
+- El bug de población de R2 (issues #1110/#12413/#1284) está confirmado resuelto con
+  evidencia real: PR #1290 (`--rclone` opt-in) YA estaba mergeado desde la versión 1.20.0
+  (ya instalada). Se probó con un deploy real: 9 objetos subidos en 0.5 segundos, cierre
+  limpio, sin colgarse — vs el hang indefinido en 0 objetos de antes.
+- Se descartó primero la hipótesis de `cloudflared` faltante (instalado y probado sin
+  efecto — ese binario no interviene en el paso de población de R2, que sube directo por
+  API, no por túneles de Cloudflare).
+- Setup que hizo falta: cuenta R2 API Token nuevo (Object Read & Write, scoped al bucket
+  `paddockintel-isr-cache`), `rclone.js` instalado como dependencia opcional, 3 variables
+  en `.dev.vars` (`R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `CF_ACCOUNT_ID`) — confirmado
+  en `.gitignore`.
+- Comando de deploy actualizado: `opennextjs-cloudflare deploy --rclone` (no `wrangler
+  deploy` directo — el flag es del CLI de OpenNext).
+- `r2IncrementalCache` reactivado en `open-next.config.ts` (ya no desactivado).
+- **Pendiente si se automatiza el deploy en el futuro** (ej. GitHub Actions): las 3
+  variables de `.dev.vars` van a necesitar vivir como secrets del pipeline de CI, no solo
+  en el Codespace local.
+- Detalle técnico completo: `docs/CLOUDFLARE-MIGRATION.md` (actualizar con esta resolución).
 
 ### 2. Estructura de blog
 **Estado: no empezado.**
