@@ -1,11 +1,24 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { createClient } from '@/lib/supabase/server';
 
 export const metadata: Metadata = {
   title: 'About — PaddockIntel',
   description:
     'F1 economic intelligence by Ismael Sandoval — applying Fortune 100 supply chain expertise to decode racing strategy and team economics.',
 };
+
+export const revalidate = 3600;
+
+async function getAuthorBio(): Promise<string | null> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from('authors')
+    .select('bio')
+    .eq('slug', 'ismael-sandoval')
+    .single();
+  return data?.bio ?? null;
+}
 
 const PILLARS = [
   {
@@ -55,6 +68,7 @@ const AUDIENCE = [
 
 export default async function AboutPage() {
   const tDisclaimer = await getTranslations('aboutDisclaimer');
+  const bio = await getAuthorBio();
   return (
     <main className="bg-bg min-h-screen px-5 py-12 max-w-2xl mx-auto">
 
@@ -157,22 +171,14 @@ export default async function AboutPage() {
         </div>
       </div>
 
-      <p className="font-prose text-sm text-text-2 leading-relaxed mt-5">
-        I&apos;ve followed Formula 1 since the Schumacher era. Attending the 2024 Las Vegas Grand Prix
-        crystallized something: the operational complexity I manage daily in supply chain—coordinating
-        multi-million-dollar shipments, optimizing production schedules, managing procurement under cost
-        pressure—maps directly to how F1 teams execute race weekends.
-      </p>
-      <p className="font-prose text-sm text-text-2 leading-relaxed mt-3">
-        The difference: F1 operates under time compression, public scrutiny, and higher stakes. A
-        delayed shipment in logistics costs money. A delayed pit stop costs podium positions and
-        championship points.
-      </p>
-      <p className="font-prose text-sm text-text-2 leading-relaxed mt-3">
-        That parallel fascinated me. So I started analyzing Formula 1 as an operations and economics
-        case study, applying frameworks from corporate supply chain management to understand how teams
-        make decisions when performance, budgets, and milliseconds intersect.
-      </p>
+      {bio?.split('\n\n').map((paragraph, i) => (
+        <p
+          key={i}
+          className={`font-prose text-sm text-text-2 leading-relaxed ${i === 0 ? 'mt-5' : 'mt-3'}`}
+        >
+          {paragraph}
+        </p>
+      ))}
 
       {/* 04 · Philosophy */}
       <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-2 border-b border-border pb-3 mt-12 mb-0">
