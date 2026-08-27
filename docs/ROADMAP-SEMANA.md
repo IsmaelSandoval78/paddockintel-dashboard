@@ -232,25 +232,6 @@ JetBrains Mono). Ninguna aprobada — Ismael decidió no forzarlo y enfocarse en
   Reddit/Quora investigadas y descartadas para automatización en esta fase, idea de
   "F1 para niños" evaluada y aparcada con nota de COPPA
 
-**27 ago 2026 (sesión de esquema de blog):**
-- Confirmado que `articles` ya tenía 315 filas reales en Supabase — se corrigió la
-  suposición de "arranca de cero" del paso 2
-- Migración aditiva #1 aplicada: `content_type` (backfill a `original_analysis` en las
-  315 filas), tabla `authors` (con la fila de Ismael), `author_id` en `articles`
-  (backfill a las 315 filas), tabla `article_sources` (vacía, lista para agregación
-  futura). Verificado vía REST API: 315/315 filas con `content_type` y `author_id`
-  poblados, cero `NULL`s
-- Migración aditiva #2 aplicada (tagging real): 45 valores distintos de `articles.tags`
-  auditados y fusionados en 33 conceptos canónicos (`tags` + `article_tags`, 870
-  relaciones), `season_year` extraído como columna propia (237/315 filas), `japanese-gp`/
-  `miami-gp`/`hub` descartados a propósito. Verificado vía REST API: conteos exactos
-  (33 tags, 870 article_tags, 237 season_year poblados) y 3 artículos de muestra con
-  tags relacionados correctos
-- Hallazgo de seguridad detectado durante la migración #1: `ALTER DEFAULT PRIVILEGES` en
-  `baseline_schema.sql` le da `TRUNCATE`/`MAINTAIN`/`TRIGGER`/`REFERENCES` a `anon` y
-  `authenticated` en toda tabla nueva del schema `public` — afecta decenas de tablas
-  existentes, no solo esta migración (detalle completo en la sección dedicada más abajo)
-
 ## Newsletter v2 (futuro, NO esta semana): personalización tipo AI Weekly wizard
 
 Referencia: aiweekly.co/intelligence/wizard — cada suscriptor arma su propia edición vía
@@ -267,11 +248,6 @@ simple por perseguir la versión sofisticada primero.
 1. **Tagging del paso 2 como base** — cada artículo con metadata estructurada: equipo(s),
    piloto(s), tema, y "tipo de señal" (fichaje, sanción, resultado, análisis técnico,
    rumor de mercado...). Ya estaba planeado en el paso 2; ahora tiene un consumidor más.
-   **Ya implementado** (ver sesión del 27 ago arriba) — tablas `tags`/`article_tags`
-   pobladas, aunque el tipo de señal (fichaje/sanción/resultado/rumor) todavía no tiene
-   su propia categoría dentro de `tags.category` (hoy son `team`/`topic`/`format`/
-   `series`/`region`) — pendiente de evaluar si hace falta una categoría nueva o si
-   entra dentro de `topic`.
 2. **Newsletter fijo para todos primero** — el plan original del paso 3, sin personalización,
    funcionando de punta a punta antes de tocar nada de esto.
 3. **2-3 "roles" predefinidos como filtros simples** (no texto libre todavía) — equivalente
@@ -373,8 +349,6 @@ redes. Los briefs de agregación son relleno de ritmo, no la propuesta de valor 
 **Implicación para el esquema de datos del paso 2:** agregar un campo `content_type` desde
 el día 1 (`original_analysis` / `aggregated_brief` / `recap`) para poder filtrar y destacar
 selectivamente en home/newsletter, aunque el feed del paso 5 muestre todo mezclado.
-**Ya implementado** (ver sesión del 27 ago arriba) — columna agregada a `articles`, las
-315 filas existentes backfilleadas a `original_analysis`.
 
 **Impacto en EEAT de cada tipo (distinción confirmada esta sesión):**
 - Artículo propio con datos de Jolpica/OpenF1 → construye Experience y Expertise fuerte
@@ -383,8 +357,7 @@ selectivamente en home/newsletter, aunque el feed del paso 5 muestre todo mezcla
 
 **Autoría:** aunque hoy Ismael es el único autor, el esquema de blog debería tener un campo
 `author` real desde el día 1 (no hardcodeado), para escalar sin fricción el día que se sume
-alguien más al equipo editorial. **Ya implementado** — tabla `authors` + `articles.author_id`
-(ver sesión del 27 ago arriba).
+alguien más al equipo editorial.
 
 ## Pendiente crítico: página `/about` de Ismael Sandoval
 
@@ -404,11 +377,6 @@ verificable de Ismael — ver `/profile.md` para lo ya conocido: coordinador de 
 onboarding en Verst Logistics, background en retail/Amazon warehouse antes de eso — decidir
 qué de esto es relevante mostrar como credencial de análisis de F1, y qué credenciales
 específicas de F1/datos/economía respaldan la autoridad del autor).
-
-Nota de esta sesión: la tabla `authors` (`bio`, `avatar_url`) ya tiene la fila de Ismael
-creada pero con esos dos campos en `NULL` — quedan pendientes de completar el mismo día
-que se defina el contenido del `/about`, para no tener que sincronizar dos fuentes de
-verdad por separado.
 
 ## Multi-idioma: inglés + español ahora, portugués en fase 2
 
@@ -488,10 +456,10 @@ alta en carga de revisión.**
   nuevas a la vez (el feed + la traducción en volumen) desde el día 1. Pendiente de decidir
   cuál de las dos vías tomar al construir el paso 5.
 
-## Hallazgo de seguridad pendiente: GRANT excesivo a nivel de schema completo
+## Hallazgo de seguridad: GRANT excesivo a nivel de schema completo — RESUELTO
 
 Descubierto durante la migración de `content_type`/`authors`/`article_sources` (paso 2).
-**No es un problema de esta migración puntual — es una configuración base de todo el
+**No era un problema de esa migración puntual — era una configuración base de todo el
 esquema**, encontrada en `supabase/migrations/00000000000000_baseline_schema.sql`:
 
 ```sql
@@ -501,34 +469,48 @@ ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public"
   GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLES TO "authenticated";
 ```
 
-Esto le da automáticamente `TRUNCATE`/`MAINTAIN`/`TRIGGER`/`REFERENCES` a `anon` y
+Esto le daba automáticamente `TRUNCATE`/`MAINTAIN`/`TRIGGER`/`REFERENCES` a `anon` y
 `authenticated` en **cualquier tabla nueva** creada en el schema `public` — confirmado que
-afecta decenas de tablas existentes (`drivers`, `driver_stats`, `seasons`, `status`,
+afectaba decenas de tablas existentes (`drivers`, `driver_stats`, `seasons`, `status`,
 `sprint_results`, `subscribers`, y más), no solo un par sueltas.
 
-**Por qué importa:** `TRUNCATE` en Postgres **ignora completamente RLS** — no importa que
+**Por qué importaba:** `TRUNCATE` en Postgres **ignora completamente RLS** — no importa que
 una tabla tenga policies de "solo lectura", el permiso de `TRUNCATE` es una puerta aparte.
 El rol `anon` corresponde a la key pública que vive en el bundle de cliente del sitio
 (`NEXT_PUBLIC_SUPABASE_ANON_KEY`), visible por cualquiera.
 
-**Ya se corrigió puntualmente en dos lugares** (evidencia de que no es la primera vez que
-se detecta):
-- La migración de `authors`/`article_sources` de esta sesión (corregida a solo `SELECT`)
-- La migración de `delta_ribbon` (12 de agosto) — ya fue corregida ahí también, sin volver
-  a arreglar `glossary_terms` retroactivamente
+**Ya se había corregido puntualmente en dos lugares** antes de esta sesión (evidencia de
+que no era la primera vez que se detectaba):
+- La migración de `authors`/`article_sources` (corregida a solo `SELECT`)
+- La migración de `delta_ribbon` (12 de agosto) — corregida ahí también, sin volver
+  a arreglar `glossary_terms` retroactivamente en su momento
 
-**`glossary_terms` sigue con el problema sin corregir.**
+**RESUELTO en esta sesión (misma tarde del 27 ago).** Auditoría real vía SQL contra
+las 37 tablas/vistas del schema `public` (no solo lo reconstruido de archivos de
+migración), y corrección aplicada:
 
-**Por qué NO se arregla hoy, a propósito:** un `REVOKE` masivo sobre decenas de tablas
-existentes es delicado y necesita revisión tabla por tabla, no una regla ciega. Ejemplo
-concreto de riesgo: `subscribers` tiene además `INSERT, DELETE` — el `INSERT` ahí podría
-ser legítimo (un formulario de suscripción al newsletter necesita que `anon` pueda
-insertar una fila). Revocar todo sin distinguir rompería funcionalidad real.
+- Confirmado el exceso real: `REFERENCES, TRIGGER, TRUNCATE, MAINTAIN` en prácticamente
+  todas las tablas para `anon` y `authenticated`, sin ningún caso de uso que lo
+  justificara — el sitio solo lee, nunca necesita esos 4 privilegios desde el cliente
+- **Hallazgo adicional serio, no esperado**: `subscribers` tenía RLS activado pero
+  **cero policies** — es decir, `TRUNCATE` (que ignora RLS de todos modos) podía vaciar
+  la tabla completa de suscriptores del newsletter sin ninguna barrera. Confirmado con
+  grep que los únicos 3 usos reales de `subscribers` en el código corren 100%
+  server-side con `service_role` (rutas `/api/subscribe`, `/api/unsubscribe`,
+  `/api/digest/send`) — ningún cliente `anon`/`authenticated` la toca nunca
+- Migración aplicada (`REVOKE ... ON ALL TABLES IN SCHEMA public FROM anon,
+  authenticated`, más excepción para dejar `SELECT` donde ya existía): las 33
+  tablas/vistas quedaron con solo `SELECT` para `anon`/`authenticated` (o `(none)` en
+  el caso de `subscribers`, que no necesita nada)
+- `ALTER DEFAULT PRIVILEGES` revocado **sin reemplazo automático** — de ahora en más,
+  cualquier tabla nueva no recibe ningún grant por default; hay que otorgarlo
+  explícitamente en su propia migración (mismo patrón ya usado hoy con
+  `authors`/`tags`/`article_sources`)
+- Verificado con la misma consulta de auditoría después de aplicar: resultado exacto
+  al esperado, sin sorpresas
 
-**Pendiente para una sesión dedicada (no ahora, no de paso):**
-1. Corregir el `ALTER DEFAULT PRIVILEGES` en `baseline_schema.sql` para futuras tablas
-   (que solo otorgue `SELECT` por default a `anon`/`authenticated`)
-2. Auditar tabla por tabla cuáles necesitan legítimamente algo más que `SELECT` (ej.
-   `subscribers` con `INSERT` para el formulario) antes de revocar en las existentes
-3. Corregir `glossary_terms` específicamente, que quedó con el problema sin arreglar
-   pese a que `delta_ribbon` ya se corrigió
+**Nota aparte, no bloqueante:** algunas tablas (`constructors`, `lap_times`,
+`qualifying`, `series`, `sprint_results`, `status`, `constructor_stats`,
+`driver_stats`) muestran `authenticated: (none)` — esto ya era así **antes** de esta
+migración (no es una regresión de hoy), puede ser intencional o un gap menor separado,
+sin urgencia.
