@@ -514,3 +514,35 @@ migración), y corrección aplicada:
 `driver_stats`) muestran `authenticated: (none)` — esto ya era así **antes** de esta
 migración (no es una regresión de hoy), puede ser intencional o un gap menor separado,
 sin urgencia.
+
+## Backfill de articles.race_id — completado (Fase 1)
+
+Resuelto lo que quedaba pendiente de la migración de tags: `japanese-gp`/`miami-gp`
+dependían de resolverse vía `race_id` en vez de tags de texto libre.
+
+**Hallazgo clave antes de tocar nada:** el matching por tag (`japanese-gp`/`miami-gp`)
+solo hubiera cubierto 12 de 74 casos reales — muchos artículos mencionan la carrera en
+el título (ej. "Suzuka") sin tener el tag correspondiente. El conteo inicial de "74 filas"
+también se corrigió a "27 historias × 3 idiomas = 81 filas candidatas" al agrupar
+correctamente por `slug`/`translation_group_id` en vez de por fila individual.
+
+**Resultado de la Fase 1 (matching de alta confianza, año + nombre de carrera/circuito
+inequívoco):**
+- 19 historias (57 filas, 3 idiomas cada una) backfilleadas con `race_id` real, verificado
+  sin ninguna historia partida entre dos carreras ni propagación parcial
+- Distribución: Australian GP (15), Chinese GP (15), Japanese GP (18), Miami GP (3),
+  Canadian GP (3), British GP (3)
+- 8 historias quedaron deliberadamente en NULL por ambigüedad real, cada una con motivo
+  específico confirmado (no forzado): GP de Bahrein cancelado (no existe en `races`),
+  varios artículos de testing pretemporada (no son carreras), un artículo sobre Barcelona
+  2032 (año distinto, asociarlo al GP de España 2026 sería un dato falso), un artículo
+  sobre residencia fiscal en Mónaco (coincidencia de nombre de país, no del evento), un
+  artículo sobre plazos regulatorios que solo menciona "Miami" como fecha límite
+- 163 filas restantes (season_year sin indicio de carrera puntual — fichajes, finanzas,
+  regulaciones generales) quedan con `race_id` NULL a propósito, correcto que así sea
+
+**Principio aplicado:** ante la duda, NULL — nunca forzar una asociación cuando el dato
+real es ambiguo o inexistente, mismo criterio que ya rige todo el proyecto.
+
+Documentado en `supabase/migrations/` como registro histórico del backfill (no
+re-ejecutable), no como migración de schema.
