@@ -6,14 +6,15 @@ nobody re-investigates something already settled.
 
 ---
 
-## ⚠️ NOT PRODUCTION-READY (as of 2026-08-25) — do not point paddockintel.com/hub.paddockintel.com at this
+## ⚠️ R2 population hang — RESOLVED 2026-08-27, see below
 
-The current `*.workers.dev` deploy has **R2 incremental cache population
-deliberately disabled** in `open-next.config.ts` (`incrementalCache` commented
-out, only `queue: doQueue` active). This was done ONLY to get a one-off smoke
-test deployed after `opennextjs-cloudflare deploy`'s R2 population step hung
-indefinitely with zero progress output — reproduced across 3 separate deploy
-attempts.
+**Status as of 2026-08-25 (kept for the record — see the resolution section
+below for the current, correct state):** the `*.workers.dev` deploy had **R2
+incremental cache population deliberately disabled** in `open-next.config.ts`
+(`incrementalCache` commented out, only `queue: doQueue` active). This was
+done ONLY to get a one-off smoke test deployed after `opennextjs-cloudflare
+deploy`'s R2 population step hung indefinitely with zero progress output —
+reproduced across 3 separate deploy attempts.
 
 **Two more specific causes were investigated and ruled out** (2026-08-25),
 narrowing this down rather than just "reproduced it a few times":
@@ -47,12 +48,12 @@ forever, re-renders from scratch (fresh Supabase queries, fresh React render).
 is fine for confirming the Worker responds to requests; it is not fine for
 real traffic.
 
-**Before any real production cutover:**
-1. Restore `open-next.config.ts` to re-enable `r2IncrementalCache` — the
-   change was never committed, so `git checkout -- open-next.config.ts`
-   restores the last committed (correct) version.
-2. Actually solve the R2 population hang first, or re-enabling will just
-   reproduce the same stuck deploy. Known related upstream issues (closed,
+**Before any real production cutover (steps 1-2 below: DONE as of 2026-08-27,
+see the resolution section right after this one):**
+1. ~~Restore `open-next.config.ts` to re-enable `r2IncrementalCache`~~ — done,
+   re-enabled and deploy-verified.
+2. ~~Actually solve the R2 population hang first~~ — done, via `--rclone`.
+   Known related upstream issues (closed,
    but resolution unconfirmed against our exact symptom — see the note
    below on what didn't match):
    - https://github.com/opennextjs/opennextjs-cloudflare/issues/1110
@@ -67,6 +68,50 @@ real traffic.
      progress output at all, in either attempt. Worth trying `wrangler
      deploy`'s `--rclone` flag (seen in `opennextjs-cloudflare deploy
      --help`, not yet tried) before assuming it's the same root cause.
+
+---
+
+## 2026-08-27 — R2 population hang RESOLVED via `--rclone`
+
+**Root cause confirmed, fix applied and verified with a real deploy.**
+
+PR #1290 (`--rclone` opt-in, referenced above) was **already merged** as of
+`@opennextjs/cloudflare` 1.20.0 — the version already installed in this
+project. No package upgrade was needed; the fix was purely a matter of using
+the right deploy command and having R2 credentials available for it.
+
+**Hypothesis ruled out first:** `cloudflared` (the Cloudflare Tunnel daemon)
+was suspected and installed, then tested — no effect on the hang. Makes
+sense in hindsight: R2 population uploads directly via the S3-compatible API,
+it never goes through a Cloudflare Tunnel, so `cloudflared` was never going to
+be relevant here.
+
+**The actual fix:**
+1. Created a new R2 Account API Token scoped to Object Read & Write on the
+   `paddockintel-isr-cache` bucket specifically (not a broad account token).
+2. Installed `rclone.js` as a project dependency (`package.json` — `--rclone`
+   shells out to a real `rclone` binary, which this npm package provides).
+3. Added three variables to `.dev.vars` (confirmed present in `.gitignore` —
+   never commit this file): `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`,
+   `CF_ACCOUNT_ID`.
+4. Deploy command changed from a direct `wrangler deploy` to
+   `opennextjs-cloudflare deploy --rclone` — the flag belongs to the OpenNext
+   CLI wrapper, not to `wrangler` itself.
+5. `r2IncrementalCache` re-enabled in `open-next.config.ts` (import +
+   `incrementalCache: r2IncrementalCache` in the config — matches the version
+   committed before the 2026-08-25 temporary disable).
+
+**Verified with a real deploy, not just a dry run:** R2 population went from
+an indefinite hang at 0 objects to **9 objects uploaded in 0.5 seconds**, with
+visible per-file progress the whole way (`Checks:`, `Transferred: N / 9`), and
+a clean `Successfully populated cache with 9 entries` close. The rest of the
+deploy (assets, worker upload, triggers) completed normally afterward —
+`https://paddockintel-dashboard.paddockintel.workers.dev`, exit code 0.
+
+**Pending if the deploy is ever automated (e.g. GitHub Actions):**
+`R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, and `CF_ACCOUNT_ID` currently only
+exist in the local `.dev.vars` (this Codespace). A CI pipeline will need them
+as CI secrets — they won't carry over automatically.
 
 ---
 
