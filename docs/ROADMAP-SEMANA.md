@@ -361,6 +361,10 @@ alguien más al equipo editorial.
 
 ## Pendiente crítico: página `/about` de Ismael Sandoval
 
+**RESUELTO — ver la sección "`/about` de Ismael — resuelto" al final de este documento.**
+Contenido histórico de esta sección sin modificar, se deja como registro de por qué se
+marcó como bloqueador crítico en su momento.
+
 Marcado como importantísimo esta sesión — es la pieza central de verificación de identidad
 real que sostiene la "E" de Experience en todo el sitio. Ya requerida explícitamente por
 `docs/advisors/EEAT-EXPERT.md`: *"Author byline present and consistent... Bio must state
@@ -546,3 +550,28 @@ real es ambiguo o inexistente, mismo criterio que ya rige todo el proyecto.
 
 Documentado en `supabase/migrations/` como registro histórico del backfill (no
 re-ejecutable), no como migración de schema.
+
+## `/about` de Ismael — resuelto
+
+Bloqueador de EEAT marcado ayer como crítico, cerrado hoy mismo.
+
+**Hallazgo importante en el camino:** ya existía una página `/about` con contenido
+hardcodeado (no conectado a Supabase), y sus datos **no coincidían** con lo que Ismael
+confirmó en esta sesión — la página vieja decía "GP de Las Vegas 2024" y "Production
+Planner en Jabil", ninguno de los dos verificado hasta preguntarle directamente. Se
+confirmó: el año estaba mal (fue 2025, no 2024), y Jabil/los clientes (P&G, Unilever,
+Sazerac) sí son reales — Verst sigue trabajando con esos mismos clientes hoy.
+
+**Bio final** (fusiona la era Schumacher-Montoya como gancho personal + la trayectoria
+profesional real en logística/estimación): guardado en `authors.bio`, con el año
+corregido.
+
+**Arquitectura corregida:** `/about` pasó de tener el bio hardcodeado en el `.tsx` a
+consultar `authors` por `slug='ismael-sandoval'` server-side — una sola fuente de verdad,
+en vez de dos biografías que podían (y ya habían) desincronizarse. `revalidate = 3600`
+agregado para que futuras ediciones del bio se reflejen sin necesitar un redeploy
+completo, mismo patrón que ya usa el blog para contenido de Supabase.
+
+**Principio general reforzado:** cuando el contenido existente no coincide con lo
+confirmado en la sesión, preguntar directamente en vez de asumir cuál versión es la
+correcta — en este caso evitó publicar una fecha incorrecta de forma permanente.
