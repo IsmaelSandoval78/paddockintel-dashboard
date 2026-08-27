@@ -45,15 +45,32 @@ equivalente y más simple al que se había diseñado desde cero, no hizo falta m
   definida en la sesión anterior, lista para cuando arranque el pipeline de agregación)
 - `tags` (text[]) y `sources` (jsonb) existentes NO se tocaron — quedan como están,
   decisión de refactor futuro cuando se construya la personalización del newsletter v2
-- Migración aplicada manualmente vía Supabase SQL Editor (sin CLI/`psql` conectado en
-  este entorno) y verificada después vía REST API: 315/315 filas con `content_type` y
-  `author_id` poblados, cero `NULL`s; `authors` con la única fila de Ismael Sandoval;
-  `article_sources` existe y vacía como se esperaba. Archivo:
-  `supabase/migrations/20260827160000_articles_content_type_authors_sources.sql`
 
-**Pendiente:** tagging real por equipo/piloto/tema para publicar 2-3 historias diarias
-sigue sin construirse (el `tags` existente es un array de texto plano, no relacional por
-categoría) — esto alimenta directamente los pasos 3 (newsletters) y 5 (feed).
+**Tagging real ya construido esta sesión** — segunda migración aditiva aplicada sobre
+los 315 artículos existentes:
+- Se auditaron los 45 valores distintos que vivían en `articles.tags` (text[]) — se
+  encontró fragmentación real: mismo concepto tageado en 3 idiomas distintos sin vínculo
+  entre ellos (ej. `race-analysis`/`analisis-de-carrera`/`analise-de-corrida`), y dos
+  taxonomías mezcladas en un solo campo (equipos + temas editoriales + formato)
+- Tabla `tags` creada (33 conceptos canónicos, categorías: `team`/`topic`/`format`/
+  `series`/`region`) + `article_tags` (relación muchos-a-muchos), pobladas a partir de
+  fusionar los tags viejos por concepto (no por idioma) — 870 relaciones generadas
+- `season_year` (int) agregado a `articles` — el tag `season-2026` (75% de los artículos)
+  resultó ser metadata estructural disfrazada de tag, se extrajo a un campo propio en vez
+  de vivir en la tabla de tags. 237/315 artículos quedaron con el campo poblado
+- `japanese-gp`/`miami-gp` (nombres de carrera como tag) se descartaron a propósito de la
+  migración — se resolverán después vía `articles.race_id` → tabla `races` (pendiente
+  aparte, `race_id` está NULL en las 315 filas hoy), no como tags de texto
+- `hub` (tag de significado ambiguo, 3 usos) se descartó sin reemplazo, confirmado
+  innecesario por Ismael
+- `articles.tags` (text[]) viejo **no se tocó** — convive con la tabla nueva hasta
+  confirmar que la migración está completa; el drop queda para una sesión futura
+- RLS/grants de las tablas nuevas ya aplicados con el fix de seguridad (solo `SELECT`
+  para `anon`/`authenticated`, sin `TRUNCATE`/`MAINTAIN`)
+
+**Pendiente real que queda:** backfillear `articles.race_id` para poder resolver
+`japanese-gp`/`miami-gp` y cualquier referencia a carrera específica de forma estructural,
+no como texto libre.
 
 **Sub-línea: contenido educativo evergreen (glosario F1).**
 Inspirado en aiweekly.co/learning-ai — contenido educativo, no noticioso, con vida útil
@@ -218,12 +235,18 @@ JetBrains Mono). Ninguna aprobada — Ismael decidió no forzarlo y enfocarse en
 **27 ago 2026 (sesión de esquema de blog):**
 - Confirmado que `articles` ya tenía 315 filas reales en Supabase — se corrigió la
   suposición de "arranca de cero" del paso 2
-- Migración aditiva aplicada: `content_type` (backfill a `original_analysis` en las 315
-  filas), tabla `authors` (con la fila de Ismael), `author_id` en `articles` (backfill a
-  las 315 filas), tabla `article_sources` (vacía, lista para agregación futura)
-- Verificado post-migración vía REST API: 315/315 filas con `content_type` y `author_id`
+- Migración aditiva #1 aplicada: `content_type` (backfill a `original_analysis` en las
+  315 filas), tabla `authors` (con la fila de Ismael), `author_id` en `articles`
+  (backfill a las 315 filas), tabla `article_sources` (vacía, lista para agregación
+  futura). Verificado vía REST API: 315/315 filas con `content_type` y `author_id`
   poblados, cero `NULL`s
-- Hallazgo de seguridad detectado durante la migración: `ALTER DEFAULT PRIVILEGES` en
+- Migración aditiva #2 aplicada (tagging real): 45 valores distintos de `articles.tags`
+  auditados y fusionados en 33 conceptos canónicos (`tags` + `article_tags`, 870
+  relaciones), `season_year` extraído como columna propia (237/315 filas), `japanese-gp`/
+  `miami-gp`/`hub` descartados a propósito. Verificado vía REST API: conteos exactos
+  (33 tags, 870 article_tags, 237 season_year poblados) y 3 artículos de muestra con
+  tags relacionados correctos
+- Hallazgo de seguridad detectado durante la migración #1: `ALTER DEFAULT PRIVILEGES` en
   `baseline_schema.sql` le da `TRUNCATE`/`MAINTAIN`/`TRIGGER`/`REFERENCES` a `anon` y
   `authenticated` en toda tabla nueva del schema `public` — afecta decenas de tablas
   existentes, no solo esta migración (detalle completo en la sección dedicada más abajo)
@@ -244,6 +267,11 @@ simple por perseguir la versión sofisticada primero.
 1. **Tagging del paso 2 como base** — cada artículo con metadata estructurada: equipo(s),
    piloto(s), tema, y "tipo de señal" (fichaje, sanción, resultado, análisis técnico,
    rumor de mercado...). Ya estaba planeado en el paso 2; ahora tiene un consumidor más.
+   **Ya implementado** (ver sesión del 27 ago arriba) — tablas `tags`/`article_tags`
+   pobladas, aunque el tipo de señal (fichaje/sanción/resultado/rumor) todavía no tiene
+   su propia categoría dentro de `tags.category` (hoy son `team`/`topic`/`format`/
+   `series`/`region`) — pendiente de evaluar si hace falta una categoría nueva o si
+   entra dentro de `topic`.
 2. **Newsletter fijo para todos primero** — el plan original del paso 3, sin personalización,
    funcionando de punta a punta antes de tocar nada de esto.
 3. **2-3 "roles" predefinidos como filtros simples** (no texto libre todavía) — equivalente
