@@ -244,3 +244,166 @@ Windsor, Driver61, podcasts como Beyond the Grid) + oficial de equipos/F1 cuando
 
 Se agrupa como sub-línea del paso 5 (mismo patrón de "agregación automática + tagging",
 misma infraestructura de n8n) más que como paso separado nuevo.
+
+## Regla de citación/agregación para el paso 5 (feed estilo "F1 news today")
+
+Confirmado con un ejemplo real de aiweekly.co/ai-news-today: sí es legal y viable escribir
+análisis propio sobre la cobertura de otro medio (ej. un "5 takeaways del GP de X" de otro
+sitio), siempre que se cumpla el patrón de citación honesta:
+
+**Permitido:**
+- Resumen/análisis en palabras propias, nunca copiar párrafos del original
+- Fuente citada explícitamente con nombre del medio + link de salida prominente
+  (idealmente dos: uno arriba tipo "our brief →", uno abajo "Read the original article →")
+- Agregar valor real encima de la nota original: cruzar varias fuentes, comparar cifras,
+  sumar reacciones de expertos con sus links reales, sumar datos propios (Jolpica/OpenF1)
+  que el original no tenía
+- Mantener el título original citado como referencia ("Original headline: ..."), nunca
+  apropiárselo como propio
+
+**No permitido:**
+- Copiar el artículo reordenado o "reescrito con sinónimos" sin agregar nada real
+- Citas textuales de más de ~15 palabras sin comillas y sin necesidad real
+- Presentar el análisis como 100% propio sin mencionar que parte de cobertura de otro medio
+
+**Relación con EEAT (corrección importante de esta sesión):** citar bien NO construye EEAT
+por sí solo — es la condición mínima para no PERDERLA al hacer agregación. Un sitio que
+agrega sin citar bien no gana autoridad, corre riesgo real de ser detectado como contenido
+de baja calidad/duplicado por los sistemas de Google (Helpful Content). Lo que realmente
+construye Authoritativeness y Trustworthiness de forma positiva es el valor agregado
+encima de la cita: el cruce de fuentes, el análisis propio, los datos propios de Jolpica/
+OpenF1 — no la mecánica de citación en sí misma.
+
+**Ya cubierto por `docs/advisors/EEAT-EXPERT.md`:** este patrón no es nuevo para el proyecto
+— el advisor de EEAT ya anticipaba exactamente este caso en su sección "Expertise" (nunca
+parafrasear la postura de un experto sin atribución) y en "New surface area" sobre el
+feature de expertos ("la personalización no puede funcionar como pipeline de lavado de
+contenido sin atribuir — si se muestra la postura de alguien, debe ser visiblemente de esa
+persona, linkeada al original"). El paso 5 es el primer caso de uso concreto donde aplicar
+esa regla ya existente, no una regla nueva.
+
+## Contenido propio (Ismael Sandoval) vs contenido de agregación — cómo encajan
+
+Dos tipos de contenido claramente distintos, que se complementan, no compiten:
+
+1. **Contenido propio** (economía de F1, análisis estadístico profundo con datos propios de
+   Jolpica/OpenF1) — el corazón editorial del sitio, lo único que construye **Experience**
+   de EEAT de verdad. Nadie más puede escribirlo con la voz y el acceso a datos de Ismael.
+2. **Contenido de agregación** (paso 5, briefs tipo "5 takeaways del GP X" citados y
+   analizados) — volumen y frescura, no la voz principal. Mantiene el ritmo de publicación
+   (2-3 piezas/día) sin depender de que todo sea 100% original, algo insostenible para una
+   sola persona escribiendo.
+
+**Jerarquía editorial:** el contenido propio pesa más — debería ser lo destacado en home,
+lo elegido como "análisis profundo del evento ancla" del newsletter, y lo más impulsado en
+redes. Los briefs de agregación son relleno de ritmo, no la propuesta de valor central.
+
+**Implicación para el esquema de datos del paso 2:** agregar un campo `content_type` desde
+el día 1 (`original_analysis` / `aggregated_brief` / `recap`) para poder filtrar y destacar
+selectivamente en home/newsletter, aunque el feed del paso 5 muestre todo mezclado.
+
+**Impacto en EEAT de cada tipo (distinción confirmada esta sesión):**
+- Artículo propio con datos de Jolpica/OpenF1 → construye Experience y Expertise fuerte
+- Brief de agregación bien citado → mantiene Trustworthiness (no la destruye), pero no
+  construye Experience — en el mejor caso suma algo de Expertise si cruza fuentes con criterio
+
+**Autoría:** aunque hoy Ismael es el único autor, el esquema de blog debería tener un campo
+`author` real desde el día 1 (no hardcodeado), para escalar sin fricción el día que se sume
+alguien más al equipo editorial.
+
+## Pendiente crítico: página `/about` de Ismael Sandoval
+
+Marcado como importantísimo esta sesión — es la pieza central de verificación de identidad
+real que sostiene la "E" de Experience en todo el sitio. Ya requerida explícitamente por
+`docs/advisors/EEAT-EXPERT.md`: *"Author byline present and consistent... Bio must state
+real, verifiable background — no invented credentials, no vague 'F1 analyst' without
+specifics"*.
+
+Sin este `/about` sólido, cada byline de "Ismael Sandoval" en cada artículo apunta a nada
+verificable — debilita el Trust de todo el sitio, no solo de un artículo. Tratar como
+bloqueador temprano, no como tarea de "más adelante" — construirlo en paralelo al arranque
+del paso 2 (blog), no después.
+
+Pendiente de definir en una próxima sesión: contenido real del `/about` (background
+verificable de Ismael — ver `/profile.md` para lo ya conocido: coordinador de estimación y
+onboarding en Verst Logistics, background en retail/Amazon warehouse antes de eso — decidir
+qué de esto es relevante mostrar como credencial de análisis de F1, y qué credenciales
+específicas de F1/datos/economía respaldan la autoridad del autor).
+
+## Multi-idioma: inglés + español ahora, portugués en fase 2
+
+**Decisión final de esta sesión: arrancar YA con inglés + español, empezando por el
+glosario (sub-línea del paso 2). Portugués queda explícitamente en el roadmap pero
+recortado de esta semana — no descartado, pospuesto.**
+
+**Por qué se recortó portugués de esta semana (decisión, no indecisión):**
+- Ya hay mucho comprometido esta semana (Cloudflare, blog, newsletter, Who's Who, feed,
+  glosario, `/about`) — cada idioma extra multiplica la carga de revisión en todo lo demás.
+- Ismael es bilingüe real en español/inglés — puede auditar con criterio propio la calidad
+  de la traducción al español. En portugués no tiene ese mismo control, dependería 100%
+  del LLM sin poder verificar matices — choca con la regla de nunca publicar algo que no
+  se puede verificar.
+- Más seguro validar el proceso de traducción (glosario de términos que no se traducen,
+  nivel de revisión) con un idioma auditable primero, antes de escalarlo a uno que no.
+- La oportunidad de Brasil sigue siendo real y válida (ver razones abajo) pero la ventana
+  se mide en meses, no en la urgencia de esta semana puntual — no justifica el riesgo de
+  calidad ahora.
+
+**Fase 2 (no esta semana): sumar portugués una vez que el proceso de traducción
+inglés→español esté probado y estable.**
+
+**Por qué portugués, no solo inglés/español:** Brasil es una de las bases de fans de F1 más
+grandes y apasionadas del mundo (herencia de Senna, Interlagos), mercado desatendido en
+contenido escrito de F1 en profundidad. No es un capricho, es oportunidad real de SEO/alcance.
+
+**Estado de partida:** el routing por `[locale]` ya existe en la estructura de la app
+(`app/[locale]/circuits`, etc.) — no se arranca de cero en infraestructura técnica.
+
+**Por qué el glosario es el punto de entrada correcto:** cada idioma tiene intención de
+búsqueda propia y separada en Google — "qué es DRS" / "what is DRS" / "o que é DRS" son
+3 búsquedas distintas, no una traducida. Esto multiplica el SEO real ganado, no duplica
+trabajo por duplicar.
+
+**Priorización de qué se traduce, por tipo de contenido:**
+1. **Glosario ELI5** — máxima prioridad, mejor ratio de SEO ganado vs esfuerzo (arranca ya)
+2. **Contenido propio/análisis original** — alto valor pero más caro, necesita la voz real
+   de Ismael en cada idioma, no traducción mecánica — prioridad futura, no de esta semana
+3. **Briefs de agregación diaria (paso 5)** — menor prioridad, pero SÍ se traducen
+   eventualmente (ver nota de complejidad abajo), no quedan encerrados en un solo idioma
+   para siempre
+
+**Método de traducción:** LLM asistido + revisión humana de Ismael siempre, nunca 100%
+automático sin revisión — un término técnico mal traducido sería un error de calidad, no
+solo de estilo. Requiere armar un pequeño glosario de términos que se quedan en inglés a
+propósito en cada idioma (ej. "undercut" probablemente se usa tal cual en español/portugués
+en la práctica de los fans, no traducido) para no sonar forzado.
+
+**Estructura de URL:** paths (`/es/`, `/pt/`), no subdominios separados — mismo patrón visto
+en aiweekly.co para contenido multi-idioma, coincide con el `[locale]` ya existente en la app.
+
+**Pendiente de definir en próxima sesión:** lista de 15-20 términos candidatos del glosario
+(usando el método de minería manual de preguntas reales ya definido arriba), y el glosario
+de términos "que se quedan en inglés" por idioma.
+
+**Corrección de dirección de idioma (esta sesión):** el idioma fuente de los artículos
+propios es **inglés**, traducidos a español y portugués — no al revés como se había asumido
+inicialmente sin confirmar.
+
+**Complejidad de traducir los briefs de agregación diaria (paso 5): baja técnicamente,
+alta en carga de revisión.**
+- Técnicamente fácil: reusa el mismo pipeline de n8n + LLM ya planeado para resumir/
+  clasificar/taggear cada brief — traducir es una llamada más al mismo LLM, no arquitectura
+  nueva.
+- El costo real es la revisión humana a volumen diario: 2-3 briefs/día × 3 idiomas = 6-9
+  piezas de texto diarias, insostenible de revisar todas con el mismo rigor que un
+  artículo propio.
+- **Estándar de revisión propuesto, distinto por tipo de contenido:**
+  - Artículos propios → revisión completa de Ismael en cada idioma, siempre, sin atajos
+  - Briefs de agregación → revisión tipo "spot-check" (muestreo, no el 100%), aceptando un
+    estándar ligeramente menor a cambio de volumen sostenible — el prompt del LLM debe
+    tener el glosario de términos que no se traducen bien definido, para minimizar errores
+    desde el origen en vez de depender de corregir después
+- **Alternativa más conservadora**: arrancar los briefs solo en inglés, sumar es/pt recién
+  cuando el pipeline del paso 5 esté rodando de forma estable — evita cargar dos cosas
+  nuevas a la vez (el feed + la traducción en volumen) desde el día 1. Pendiente de decidir
+  cuál de las dos vías tomar al construir el paso 5.
