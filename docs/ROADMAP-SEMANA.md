@@ -700,3 +700,54 @@ no hizo falta ningún cambio de código para esto.
 español (undercut, overcut, DRS, parc fermé, safety car, pole position, pit stop) se
 usó de forma consistente en los 17 términos pero no se documentó como lista separada
 en ningún lado — vale la pena escribirla aparte si se retoma el glosario más adelante.
+
+## Glosario — capas eli5/fia para los 6 términos legacy, completado (2 sep 2026)
+
+Los 6 términos económicos que ya existían antes de la expansión (cost-cap, concorde-
+agreement, anti-dilution-fee, prize-money, hosting-fee, title-sponsorship) se habían
+quedado con una sola capa (`depth='technical'`, backfill automático de la migración
+de schema) mientras los 17 términos nuevos ya tenían las 3. Ismael pidió parejar esto.
+
+**24 filas nuevas publicadas** (6 términos × 2 capas nuevas × 2 idiomas — EN+ES, mismo
+criterio de idioma que el resto del glosario; PT no se tocó, sigue con una sola capa
+como ya estaba). La fila `technical` existente de cada término no se tocó.
+
+**La capa FIA de estos 6 términos requirió investigación real distinta a la de los 17
+nuevos** — son términos de economía/gobernanza de F1, no de reglamento deportivo en
+pista, así que "regulación FIA" significa algo distinto acá. Hallazgos verificados
+antes de escribir (no asumidos):
+- **Cost Cap**: la fiscalización real son DOS organismos separados — Cost Cap
+  Administration (audita) deriva casos al **Cost Cap Adjudication Panel** (tribunal
+  independiente de 12 jueces elegidos por la Asamblea General de la FIA), un detalle
+  que la capa técnica original no cubría
+- **Concorde Agreement**: la separación formal entre la FIA (autoridad regulatoria) y
+  el F1 Group (Titular de los Derechos Comerciales) — son roles distintos que el
+  propio Concorde Agreement define, confirmado con el 9no acuerdo firmado en diciembre
+  de 2025 (vigente hasta 2030, corrobora la cifra "2026-2030" que ya estaba en el
+  contenido viejo)
+- **Anti-Dilution Fee**: existen DOS filtros secuenciales para un equipo nuevo, no uno
+  — el proceso de Expresión de Interés de la FIA (evaluación técnica/financiera/
+  sostenibilidad, $20.000 no reembolsables) es previo y separado del pago comercial en
+  sí (que va a los equipos existentes, no a la FIA)
+- **Prize Money**: corrección de una confusión común — el premio en dinero **no es una
+  regulación de la FIA**, es 100% comercial vía Concorde Agreement entre el F1 Group y
+  los equipos. El único rol real de la FIA es certificar la clasificación del
+  campeonato de la que depende la fórmula de pago
+- **Hosting Fee**: la licencia FIA Grado 1 (el nivel más alto de un sistema de 7
+  niveles, con requisitos físicos de circuito: 3,5-7km, barreras, zonas de escape) es
+  un filtro de seguridad completamente separado de la cuota comercial — un circuito
+  puede estar dispuesto a pagar cualquier cifra, pero sin Grado 1 la negociación ni
+  siquiera aplica
+- **Title Sponsorship**: sin techo de valor regulado, pero sí restricciones reales de
+  contenido — publicidad política/religiosa prohibida directamente, prohibición de
+  patrocinio de tabaco eliminada gradualmente hacia fines de 2006, y un caso concreto
+  de fiscalización (las franjas blancas estilo código de barras de Ferrari 2007-2010,
+  que la FIA determinó que evocaban subliminalmente a Marlboro y ordenó quitar en 2010)
+
+**Preview antes de publicar:** mismo patrón que el piloto de undercut — artifact local
+con selector de término + toggle EN/ES + capas clickeables, sin tocar el status en
+Supabase hasta la aprobación de Ismael.
+
+**Sin cambio de código:** el ruteo (`DepthNav`, `/glossary/[slug]/[technical|fia-
+regulation]`) ya soportaba términos con más de una capa desde la tanda anterior — esto
+fue puramente contenido nuevo en `glossary_terms`, no requirió deploy.
