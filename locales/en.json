@@ -713,12 +713,21 @@
   },
   "glossary": {
     "kicker": "PaddockIntel Reference",
-    "title": "F1 Economics Glossary",
-    "description": "The regulatory and financial terms behind every contract, cap, and payout in Formula 1 — defined once, cited to real sources.",
+    "title": "F1 Glossary",
+    "description": "The terms behind every rule, strategy call, and payout in Formula 1 — defined once, cited to real sources.",
     "categories": {
       "regulations": "Regulations",
       "revenue": "Revenue",
-      "sponsorship": "Sponsorship"
+      "sponsorship": "Sponsorship",
+      "strategy": "Strategy",
+      "rules-format": "Rules & Format",
+      "technical": "Technical",
+      "tyres": "Tyres"
+    },
+    "depth": {
+      "eli5": "Simple",
+      "technical": "Technical",
+      "fia": "FIA Regulation"
     },
     "relatedTerms": "Related Terms",
     "sources": "Sources",

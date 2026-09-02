@@ -5,7 +5,15 @@ import { getGlossaryTerms } from './data';
 
 export const revalidate = 3600;
 
-const CATEGORY_ORDER = ['regulations', 'revenue', 'sponsorship'] as const;
+const CATEGORY_ORDER = [
+  'strategy',
+  'rules-format',
+  'technical',
+  'tyres',
+  'regulations',
+  'revenue',
+  'sponsorship',
+] as const;
 
 type PageParams = Promise<{ locale: string }>;
 

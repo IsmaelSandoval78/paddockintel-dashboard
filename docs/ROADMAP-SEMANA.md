@@ -433,9 +433,9 @@ en la práctica de los fans, no traducido) para no sonar forzado.
 **Estructura de URL:** paths (`/es/`, `/pt/`), no subdominios separados — mismo patrón visto
 en aiweekly.co para contenido multi-idioma, coincide con el `[locale]` ya existente en la app.
 
-**Pendiente de definir en próxima sesión:** lista de 15-20 términos candidatos del glosario
-(usando el método de minería manual de preguntas reales ya definido arriba), y el glosario
-de términos "que se quedan en inglés" por idioma.
+**RESUELTO (2 sep 2026):** 17 términos nuevos escritos y publicados en formato de capas
+(eli5/technical/fia), EN+ES, ver sección "Glosario — 17 términos en formato de capas,
+completado" al final de este documento.
 
 **Corrección de dirección de idioma (esta sesión):** el idioma fuente de los artículos
 propios es **inglés**, traducidos a español y portugués — no al revés como se había asumido
@@ -551,6 +551,74 @@ real es ambiguo o inexistente, mismo criterio que ya rige todo el proyecto.
 Documentado en `supabase/migrations/` como registro histórico del backfill (no
 re-ejecutable), no como migración de schema.
 
+## Backfill de articles.race_id — Fase 2 (2 sep 2026)
+
+Ismael pidió seguir con "los 163 artículos" pendientes citados en la nota de cierre de
+la Fase 1. **Verificación antes de actuar reveló que el número ya no era correcto**: el
+sitio siguió publicando desde la Fase 1, así que la cifra real al arrancar esta sesión
+era 258 filas / 86 historias con `race_id` NULL, no 163 — y contrario a la nota anterior
+("sin indicio de carrera puntual"), varias sí mencionaban una carrera puntual real que
+la Fase 1 no había capturado.
+
+**Método:** matching por palabra clave (nombre de circuito/ciudad/país) contra las 22
+carreras de 2026 en `races`, sobre título+tags+cuerpo de las 86 historias EN. 33
+historias dieron positivo por keyword — de esas, se leyó el cuerpo completo de cada una
+(no se confió en el título solo) para separar menciones reales de la carrera de falsos
+positivos (testing de pretemporada, lanzamientos de auto, residencia fiscal, etc.).
+
+**Resultado: 15 historias backfilleadas** (45 filas, 3 idiomas cada una), todas
+verificadas con contenido explícito de la carrera, no solo coincidencia de palabra:
+- Australian GP (6): melbourne-2026-f1-prize-money, aston-martin-honda-melbourne-
+  vibration-financial-cost-2026, aston-martin-honda-tax-budget-cap-2026, mercedes-pole-
+  verstappen-crash-qualifying-australia-2026, russell-wins-australian-gp-2026, australian-
+  gp-2026-analysis-mercedes-ferrari
+- Japanese GP (4): nagoya-2026-japanese-gp-economic-impact, suzuka-qualifying-2026,
+  bearman-50g-crash-suzuka-2026, verstappen-retirement-2026-f1-future (reacción post-
+  Suzuka, "Suzuka Aftermath" explícito en el cuerpo)
+- Miami GP (1), Canadian GP (1), Austrian GP (1), Hungarian GP (1), Belgian GP (1,
+  "russell-antonelli-mercedes-software-fault-spa")
+
+**Trampas reales evitadas verificando el cuerpo del artículo, no solo el título:**
+- `f1-drivers-monaco-2026` — sobre residencia fiscal en Mónaco (12 de 22 pilotos viven
+  ahí por el régimen impositivo), no sobre el GP de Mónaco. Mismo patrón que ya había
+  identificado la Fase 1.
+- `f1-2026-transition-barcelona`, `mercedes-w17-thermal-analysis`, `microsoft-mercedes-
+  f1-cost-cap`, `williams-barcelona-intelligent-failure`, `cyan-ambitions...`,
+  `f1-news-analysis-apple-newey-barcelona` — todos sobre testing de pretemporada o
+  lanzamiento de auto en el circuito de Barcelona-Catalunya, no sobre el GP de España
+  2026 (que es una carrera distinta, fecha distinta, mes distinto)
+- `f1-2026-rule-changes-six-fixes-miami` — sobre 6 cambios de reglamento que entran en
+  vigor "en" el GP de Miami, pero el artículo es sobre las reglas, no sobre la carrera —
+  mismo patrón que el "plazo regulatorio que solo menciona Miami como fecha límite" ya
+  descartado en Fase 1
+- `f1-academy-2026-sponsor-grid` — corre en paralelo al GP de China pero es sobre F1
+  Academy (categoría distinta), no sobre la carrera de F1 en sí
+- `bahrain-testing-2026-economic-impact`, `cadillac-f1-team-cost-analysis`, `mclaren-
+  2026-prize-money-ferrari-mercedes-cost` — parte de la serie "Team Finance" de
+  PaddockIntel, usan una carrera como referencia temporal pero el tema es la situación
+  financiera del equipo en general, no esa carrera puntual
+- `alex-zanardi-career-crashes-legacy` — perfil histórico de su carrera en CART/IndyCar,
+  la mención de Monza fue falso positivo del keyword matching
+- `bahrain-grand-prix-2026-cancelled` — confirmado de nuevo: no hay fila de Bahréin en
+  `races` 2026, no hay `race_id` posible
+- `barcelona-2032-f1-investment-strategy` — mismo caso ya documentado en Fase 1, año
+  distinto (2032), no es el GP de España 2026
+
+**Estado final:** 213 filas (71 historias) siguen con `race_id` NULL, a propósito —
+fichajes, valuaciones de equipo, salarios de pilotos, testing de pretemporada,
+lanzamientos de auto, noticias de personal, F1 Academy, y series editoriales de
+"Team Finance" que no son sobre una carrera puntual. Ninguna de las 71 mostró indicio
+real de carrera al leer el cuerpo completo.
+
+**Corrección de proceso importante:** la cifra "163" citada por Ismael venía de una nota
+de cierre de sesión que quedó desactualizada por publicaciones posteriores — se verificó
+contra la base antes de actuar en vez de confiar en el número recordado, y el método de
+Fase 1 (matching por tag + nombre en título) resultó más angosto de lo necesario: no
+capturaba menciones de carrera dentro del cuerpo del artículo cuando el título llevaba
+un enfoque distinto (ej. "The Honda Tax..." en vez de "Australian GP..."). La Fase 2
+usó body_markdown además de título/tags para el matching inicial, lo que encontró
+historias reales que la Fase 1 se había perdido.
+
 ## `/about` de Ismael — resuelto
 
 Bloqueador de EEAT marcado ayer como crítico, cerrado hoy mismo.
@@ -575,3 +643,60 @@ completo, mismo patrón que ya usa el blog para contenido de Supabase.
 **Principio general reforzado:** cuando el contenido existente no coincide con lo
 confirmado en la sesión, preguntar directamente en vez de asumir cuál versión es la
 correcta — en este caso evitó publicar una fecha incorrecta de forma permanente.
+
+## Glosario — 17 términos en formato de capas, completado (2 sep 2026)
+
+Cierra el pendiente de "elegir términos del glosario" marcado arriba. Sesión completa:
+selección de términos → migración de schema → ruteo → piloto validado → 4 tandas de
+contenido escritas, revisadas y publicadas.
+
+**Schema:** migración `20260902191345_glossary_terms_depth_layers.sql` (aditiva) agregó
+columna `depth` (`eli5`/`technical`/`fia`) a `glossary_terms` y cambió la unicidad de
+`(locale, slug)` a `(locale, slug, depth)`. Los 6 términos económicos viejos (cost-cap,
+concorde-agreement, anti-dilution-fee, prize-money, hosting-fee, title-sponsorship)
+quedaron backfilleados a `depth='technical'` sin tocar su contenido — conviven con el
+formato nuevo, no se migraron a 3 capas.
+
+**Ruteo nuevo:** `/glossary/[slug]` sirve la capa `eli5` por default (fallback a
+`technical` para los términos viejos sin capa eli5), `/glossary/[slug]/technical` y
+`/glossary/[slug]/fia-regulation` sirven las otras dos. `DepthNav` solo aparece cuando
+un término tiene más de 1 capa. Categorías nuevas agregadas en EN/ES (`strategy`,
+`rules-format`, `technical`, `tyres`) y el título del glosario pasó de "F1 Economics
+Glossary" a "F1 Glossary" — ya no es solo económico.
+
+**Piloto de validación:** `undercut` se escribió primero solo, se generó un preview
+local (artifact, sin tocar el status en Supabase) con toggle EN/ES × 3 capas para que
+Ismael aprobara el formato antes de escalar — aprobado sin cambios.
+
+**17 términos publicados**, EN+ES, 3 capas cada uno (102 filas nuevas + 18 de piloto/
+strategy = 120 filas totales en la tabla):
+- `strategy`: undercut, overcut, team-orders, dirty-air
+- `rules-format`: parc-ferme, track-limits, grid-penalty, safety-car-vsc, red-flag,
+  sprint-format
+- `technical`: ground-effect, overtake-mode, drs, porpoising, power-unit
+- `tyres`: tyre-compounds, tyre-blankets
+
+**Corrección importante durante la investigación:** el candidato original de la lista
+era "tyre-blanket-ban" (asumiendo que las mantas térmicas se prohibían en 2026). La
+investigación mostró que eso es falso — la prohibición se apuntó para 2024, se pospuso
+varias veces por objeciones de seguridad de pilotos y Pirelli, y en 2026 las mantas
+siguen siendo legales (Artículo C10.8.4). Lo que cambió en 2026 es que se cerraron
+otros trucos de calentamiento/enfriamiento por fuera de la manta (cubos, frenos,
+carenados de suspensión sellados). El término se reescribió como "Mantas Térmicas"
+reflejando la realidad verificada, no el mito — se verificó con búsqueda real antes de
+escribir, no se asumió del candidato original de la lista.
+
+**Ángulo "por qué cambió" (2026) explotado en varios términos**, tal como estaba
+planeado en la estrategia: `overtake-mode`/`drs` (DRS reemplazado por impulso de
+potencia eléctrica), `ground-effect`/`porpoising` (túneles venturi acortados),
+`power-unit` (split 50/50 combustión/eléctrico, MGU-H eliminada), `sprint-format`/
+`parc-ferme` (ventana de parc fermé dividida en dos para el fin de semana con Sprint).
+
+**Interlinking real entre términos** vía sintaxis `[texto](/glossary/slug)` dentro de
+`body_markdown` — el renderer de markdown del sitio ya la soportaba (`lib/markdown.ts`),
+no hizo falta ningún cambio de código para esto.
+
+**Pendiente real que queda:** el sub-glosario de términos que se quedan en inglés en
+español (undercut, overcut, DRS, parc fermé, safety car, pole position, pit stop) se
+usó de forma consistente en los 17 términos pero no se documentó como lista separada
+en ningún lado — vale la pena escribirla aparte si se retoma el glosario más adelante.

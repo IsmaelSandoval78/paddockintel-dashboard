@@ -713,12 +713,21 @@
   },
   "glossary": {
     "kicker": "Referencia PaddockIntel",
-    "title": "Glosario de Economía F1",
-    "description": "Los términos regulatorios y financieros detrás de cada contrato, tope y pago en la Fórmula 1 — definidos una vez, citados con fuentes reales.",
+    "title": "Glosario F1",
+    "description": "Los términos detrás de cada regla, jugada de estrategia y pago en la Fórmula 1 — definidos una vez, citados con fuentes reales.",
     "categories": {
       "regulations": "Regulaciones",
       "revenue": "Ingresos",
-      "sponsorship": "Patrocinio"
+      "sponsorship": "Patrocinio",
+      "strategy": "Estrategia",
+      "rules-format": "Reglas y Formato",
+      "technical": "Técnico",
+      "tyres": "Neumáticos"
+    },
+    "depth": {
+      "eli5": "Simple",
+      "technical": "Técnico",
+      "fia": "Reglamento FIA"
     },
     "relatedTerms": "Términos Relacionados",
     "sources": "Fuentes",
