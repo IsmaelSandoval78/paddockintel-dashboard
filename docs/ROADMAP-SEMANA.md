@@ -701,6 +701,86 @@ español (undercut, overcut, DRS, parc fermé, safety car, pole position, pit st
 usó de forma consistente en los 17 términos pero no se documentó como lista separada
 en ningún lado — vale la pena escribirla aparte si se retoma el glosario más adelante.
 
+## Drop de `articles.tags` (text[]) — completado (3 sep 2026)
+
+**Cerrado.** Ismael corrió las dos migraciones en el SQL Editor de Supabase (la de
+`position`+`data-desk` y el `DROP COLUMN` final) en la misma sesión. Verificado
+después con datos reales — consultas directas a `article_tags`/`tags` (orden por
+`position` correcto) y `npm run dev` local sirviendo artículo individual, magazine-
+home, filtro `?tag=` y la versión ES, sin errores en ninguna ruta. `articles.tags`
+confirmado inexistente (`column articles.tags does not exist`). Nada pendiente de
+esta línea.
+
+### Contexto de la migración (cómo se llegó a esto)
+
+Pendiente marcado en la migración del 27 de agosto ("el drop de `tags` queda para
+una sesión futura"). Al empezar esta sesión, verificación antes de tocar nada mostró
+que **no era un simple `DROP COLUMN`** — `articles.tags` seguía siendo la fuente real
+de 3 consumidores en producción, ninguno migrado a la tabla relacional `tags`/
+`article_tags` creada hace una semana:
+
+- `components/blog/ArticleHero.tsx` — usa `tags[0]` en el "kicker" del artículo
+- `app/[locale]/(blog)/magazine-home/{page,data}.tsx` — muestra tags en las cards,
+  filtra por `?tag=`, y usa tags especiales `featured`/`data-desk` para elegir qué
+  artículo es portada y qué 3 aparecen en "The Data Desk"
+- `scripts/ingest-article.ts` — todavía escribía en `tags` al ingestar artículos nuevos
+
+**Hallazgo adicional:** la tabla `tags` (creada 27 ago) solo tiene una columna `name`
+en inglés — sin variante por idioma. El texto que se mostraba hasta ahora funcionaba
+por accidente: `articles.tags` guardaba el string ya en el idioma correcto por fila
+(`analisis-de-carrera` en ES, `race-analysis` en EN). Migrar a la tabla canónica sin
+resolver esto hubiera roto la traducción del badge.
+
+**Solución aplicada, siguiendo el mismo patrón ya usado para categorías del glosario**
+(slug canónico en la base, texto traducido en `locales/*.json`):
+- Namespace nuevo `articleTags` agregado a `locales/en.json`, `es.json` y `pt.json`
+  (34 claves — los 33 tags canónicos + `data-desk`, que existía en el código desde
+  antes pero nunca se había canonizado porque ningún artículo lo usaba todavía)
+- `lib/blog/tags.ts` (nuevo): `getArticleTagSlugs()` (batch, respeta orden) y
+  `getArticleIdsForTagSlug()` (para `featured`/`data-desk`/`?tag=`)
+- Los 3 consumidores reescritos para leer de `article_tags`/`tags` + traducir vía
+  `getTranslations('articleTags')`, en vez de leer `articles.tags` directo
+- `ArticlePreviewCard`/`FeaturedArticleCard`: prop `tags: string[]` → `tags:
+  {slug, label}[]` (necesario para separar el texto mostrado del slug usado en el
+  link `?tag=`)
+- `scripts/ingest-article.ts`: ya no escribe `tags` en `articles` — resuelve los
+  slugs del frontmatter contra la tabla `tags` y escribe en `article_tags`
+  (reemplaza el set completo en cada re-ingesta, falla fuerte si un slug no existe)
+
+**Migración de orden (`article_tags.position`):** `article_tags` no guardaba el
+orden original del array viejo (se insertó con `select distinct`, sin posición) —
+y el primer tag de cada artículo es justo lo que arma el kicker editorial. Se
+recuperó el orden real re-leyendo `articles.tags` con `unnest ... with ordinality`
+y el mismo mapeo valor-viejo→tag-canónico de la migración de agosto, antes de que
+esa columna deje de existir — es la última oportunidad de hacerlo con la fuente
+de verdad todavía viva. 18 filas (6 historias) tenían `season-2026` como
+`tags[0]` — un bug de tageo preexistente (ese valor no es un tag real, se había
+extraído a la columna `season_year` en la migración de agosto) — al no migrarse,
+esas 6 historias muestran su primer tag real siguiente en vez de "SEASON-2026"
+como texto de kicker, mejora de contenido, no regresión.
+
+**Bloqueador real, no resuelto en esta sesión:** no hay forma de correr DDL
+(`ALTER TABLE`) contra Supabase desde este entorno — no hay CLI vinculado ni
+connection string de Postgres en `.env.local` (solo la `service_role` key, que
+sirve para INSERT/UPDATE/SELECT vía PostgREST, no para cambios de esquema).
+Confirmado con Ismael: las migraciones DDL anteriores se aplicaron pegándolas a
+mano en el SQL Editor de Supabase — mismo camino para esta.
+
+**Estado exacto al cierre — dos migraciones escritas, ninguna corrida todavía:**
+1. `supabase/migrations/20260903120000_article_tags_position.sql` — aditiva,
+   agrega `article_tags.position` + backfill + tag canónico `data-desk`. Correr
+   primero.
+2. `supabase/migrations/20260903130000_drop_articles_tags_column.sql` — el drop
+   real. Correr **recién después** de aplicar la #1, deployar este código, y
+   verificar en el sitio (o `npm run dev` local) que el artículo individual, la
+   home de magazine y el filtro `?tag=` siguen mostrando tags bien — la corrida
+   local de `npm run tsc`/`npm run build` pasó limpio, pero las queries reales a
+   `article_tags.position` no se pudieron probar en runtime porque la columna
+   todavía no existe en la base.
+
+**Próximo paso de esta línea:** Ismael corre la migración #1 en el SQL Editor →
+avisa → se verifica en local con datos reales → recién ahí se corre la #2.
+
 ## Glosario — capas eli5/fia para los 6 términos legacy, completado (2 sep 2026)
 
 Los 6 términos económicos que ya existían antes de la expansión (cost-cap, concorde-

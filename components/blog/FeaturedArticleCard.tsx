@@ -1,5 +1,6 @@
 import { Link } from '@/lib/i18n/navigation';
 import ShareButton from '@/components/ui/ShareButton';
+import type { TagRef } from '@/lib/blog/tags';
 
 type Stat = { value: string; label: string; unit?: string };
 
@@ -7,7 +8,7 @@ interface FeaturedArticleCardProps {
   slug: string;
   title: string;
   metaDescription: string | null;
-  tags: string[];
+  tags: TagRef[];
   publishedAt: string;
   locale: string;
   featuredStat?: Stat;
@@ -34,7 +35,7 @@ export default function FeaturedArticleCard({
   const tag = tags[0];
   const date = publishedAt ? formatDate(publishedAt, locale) : '';
   const pageUrl = locale === 'en' ? `/${slug}` : `/${locale}/${slug}`;
-  const tagHref = `${locale === 'en' ? '/' : `/${locale}/`}?tag=${encodeURIComponent(tag ?? '')}`;
+  const tagHref = `${locale === 'en' ? '/' : `/${locale}/`}?tag=${encodeURIComponent(tag?.slug ?? '')}`;
 
   return (
     <article className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 lg:gap-12 items-end pb-10 border-b border-border">
@@ -42,7 +43,7 @@ export default function FeaturedArticleCard({
         <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-text-2 mb-4">
           {tag && (
             <a href={tagHref} className="hover:text-terracotta transition-colors duration-150">
-              {tag.toUpperCase()}
+              {tag.label.toUpperCase()}
             </a>
           )}
           {tag && date && ' · '}

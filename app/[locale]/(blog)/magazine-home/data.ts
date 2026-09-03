@@ -1,32 +1,51 @@
 import { createClient } from '@/lib/supabase/server';
+import { getArticleIdsForTagSlug, getArticleTagSlugs, type TagRef } from '@/lib/blog/tags';
+import { getTranslations } from 'next-intl/server';
 
 const FEATURED_TAG = 'featured';
 export const DATA_DESK_TAG = 'data-desk';
 
 type ArticleRow = {
+  id: string;
   slug: string;
   title: string;
   meta_description: string | null;
-  tags: string[] | null;
+  tags: TagRef[];
   published_at: string | null;
   stats: unknown;
 };
 
-const ARTICLE_SELECT = 'slug, title, meta_description, tags, published_at, stats';
+const ARTICLE_SELECT = 'id, slug, title, meta_description, published_at, stats';
+
+async function attachTags(rows: Omit<ArticleRow, 'tags'>[]): Promise<ArticleRow[]> {
+  if (!rows.length) return [];
+  const supabase = createClient();
+  const [tTags, slugsByArticle] = await Promise.all([
+    getTranslations('articleTags'),
+    getArticleTagSlugs(supabase, rows.map((r) => r.id)),
+  ]);
+  return rows.map((r) => ({
+    ...r,
+    tags: (slugsByArticle.get(r.id) ?? []).map((slug) => ({ slug, label: tTags(slug) })),
+  }));
+}
 
 export async function getFeaturedAndRecent(locale: string) {
   const supabase = createClient();
 
-  const { data: featuredRows } = await supabase
-    .from('articles')
-    .select(ARTICLE_SELECT)
-    .eq('locale', locale)
-    .eq('status', 'published')
-    .contains('tags', [FEATURED_TAG])
-    .order('published_at', { ascending: false, nullsFirst: false })
-    .limit(1);
+  const featuredIds = await getArticleIdsForTagSlug(supabase, FEATURED_TAG);
+  const { data: featuredRows } = featuredIds.length
+    ? await supabase
+        .from('articles')
+        .select(ARTICLE_SELECT)
+        .eq('locale', locale)
+        .eq('status', 'published')
+        .in('id', featuredIds)
+        .order('published_at', { ascending: false, nullsFirst: false })
+        .limit(1)
+    : { data: [] };
 
-  let featured = (featuredRows?.[0] as ArticleRow | undefined) ?? null;
+  let featured = (featuredRows?.[0] as Omit<ArticleRow, 'tags'> | undefined) ?? null;
 
   const { data: latestRows } = await supabase
     .from('articles')
@@ -35,29 +54,37 @@ export async function getFeaturedAndRecent(locale: string) {
     .eq('status', 'published')
     .order('published_at', { ascending: false, nullsFirst: false })
     .limit(4);
-  const latest = (latestRows as ArticleRow[] | null) ?? [];
+  const latest = (latestRows as Omit<ArticleRow, 'tags'>[] | null) ?? [];
 
   // No editorial pick for this locale yet (e.g. a translation hasn't landed)
   // — fall back to the most recent article so the page never ships without
   // a lead story.
   if (!featured) featured = latest[0] ?? null;
 
-  const recent = latest.filter((a) => a.slug !== featured?.slug).slice(0, 3);
+  const recentRaw = latest.filter((a) => a.slug !== featured?.slug).slice(0, 3);
 
-  return { featured, recent };
+  const [[featuredTagged], recent] = await Promise.all([
+    attachTags(featured ? [featured] : []),
+    attachTags(recentRaw),
+  ]);
+
+  return { featured: featuredTagged ?? null, recent };
 }
 
 export async function getDataDeskArticles(locale: string) {
   const supabase = createClient();
+  const ids = await getArticleIdsForTagSlug(supabase, DATA_DESK_TAG);
+  if (!ids.length) return [];
+
   const { data } = await supabase
     .from('articles')
     .select(ARTICLE_SELECT)
     .eq('locale', locale)
     .eq('status', 'published')
-    .contains('tags', [DATA_DESK_TAG])
+    .in('id', ids)
     .order('published_at', { ascending: false, nullsFirst: false })
     .limit(3);
-  return (data as ArticleRow[] | null) ?? [];
+  return attachTags((data as Omit<ArticleRow, 'tags'>[] | null) ?? []);
 }
 
 export type Top5Driver = {

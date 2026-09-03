@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
+import { getArticleIdsForTagSlug, getArticleTagSlugs, type TagRef } from '@/lib/blog/tags';
 import EmailCapture from '@/components/ui/EmailCapture';
 import ArticlePreviewCard from '@/components/blog/ArticlePreviewCard';
 import FeaturedArticleCard from '@/components/blog/FeaturedArticleCard';
@@ -30,16 +31,34 @@ export async function generateMetadata(): Promise<Metadata> {
 async function getArticles(locale: string, page: number, tag?: string) {
   const supabase = createClient();
   const from = (page - 1) * PAGE_SIZE;
+
   let query = supabase
     .from('articles')
-    .select('slug, title, meta_description, tags, published_at, stats', { count: 'exact' })
+    .select('id, slug, title, meta_description, published_at, stats', { count: 'exact' })
     .eq('locale', locale)
     .eq('status', 'published');
-  if (tag) query = query.contains('tags', [tag]);
+
+  if (tag) {
+    const ids = await getArticleIdsForTagSlug(supabase, tag);
+    if (!ids.length) return { articles: [], total: 0 };
+    query = query.in('id', ids);
+  }
+
   const { data, count } = await query
     .order('published_at', { ascending: false, nullsFirst: false })
     .range(from, from + PAGE_SIZE - 1);
-  return { articles: data ?? [], total: count ?? 0 };
+
+  const rows = data ?? [];
+  const [tTags, slugsByArticle] = await Promise.all([
+    getTranslations('articleTags'),
+    getArticleTagSlugs(supabase, rows.map((r) => r.id as string)),
+  ]);
+  const articles = rows.map((r) => ({
+    ...r,
+    tags: (slugsByArticle.get(r.id as string) ?? []).map((slug): TagRef => ({ slug, label: tTags(slug) })),
+  }));
+
+  return { articles, total: count ?? 0 };
 }
 
 function ArticleCard({ a, locale }: { a: NonNullable<Awaited<ReturnType<typeof getArticles>>['articles']>[number]; locale: string }) {
@@ -49,7 +68,7 @@ function ArticleCard({ a, locale }: { a: NonNullable<Awaited<ReturnType<typeof g
       slug={a.slug as string}
       title={a.title as string}
       metaDescription={a.meta_description as string | null}
-      tags={(a.tags as string[]) ?? []}
+      tags={a.tags}
       publishedAt={a.published_at as string}
       locale={locale}
       featuredStat={stats[0]}
@@ -67,9 +86,13 @@ export default async function MagazineHomePage({
   const { locale } = await params;
   const { page: pageParam, tag: tagParam } = await searchParams;
   const t = await getTranslations('magazine');
+  const tArticleTags = await getTranslations('articleTags');
 
   const page = Math.max(1, Number.parseInt(pageParam ?? '1', 10) || 1);
   const tag = tagParam?.slice(0, 64) || undefined;
+  // tag comes from the URL — fall back to the raw slug if it doesn't match
+  // a known canonical tag (stale/bookmarked link, tampered param, etc.)
+  const tagLabel = tag ? (tArticleTags.has(tag) ? tArticleTags(tag) : tag) : undefined;
 
   // Front-page state only (page 1, unfiltered) gets the full editorial
   // treatment — a filtered or paginated view is an archive, not a cover.
@@ -132,7 +155,7 @@ export default async function MagazineHomePage({
         {tag && (
           <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 mt-10 flex items-center gap-3">
             <span>
-              {t('filter.label')} <span className="text-terracotta">{tag}</span>
+              {t('filter.label')} <span className="text-terracotta">{tagLabel}</span>
             </span>
             <a
               href={basePath}
@@ -151,7 +174,7 @@ export default async function MagazineHomePage({
               slug={featured.slug as string}
               title={featured.title as string}
               metaDescription={featured.meta_description as string | null}
-              tags={(featured.tags as string[]) ?? []}
+              tags={featured.tags}
               publishedAt={featured.published_at as string}
               locale={locale}
               featuredStat={((featured.stats as Stat[]) ?? [])[0]}
