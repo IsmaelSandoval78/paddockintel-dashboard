@@ -142,7 +142,8 @@ Para volumen de contenido retroactivo, usar la serie separada de "Recaps" (ver m
 con numeración independiente.
 
 ### 4. "Who's Who" — mapa de atención experta
-**Estado: research de arquitectura hecho, nada construido. Más caro que el paso 5.**
+**Estado: Fase 0 completada (3 sep 2026) — ver sección al final del documento. Fase 1
+(ingesta mínima de un source) sigue sin arrancar. Más caro que el paso 5.**
 Referencia: aiweekly.co/whos-who — motor de escucha social que agrupa reacciones de
 expertos por evento/tema, clasifica por "lente" (crítica, construcción, investigación...),
 asigna peer-trust score.
@@ -780,6 +781,49 @@ mano en el SQL Editor de Supabase — mismo camino para esta.
 
 **Próximo paso de esta línea:** Ismael corre la migración #1 en el SQL Editor →
 avisa → se verifica en local con datos reales → recién ahí se corre la #2.
+
+## Paso 4 "Who's Who" — Fase 0 completada (3 sep 2026)
+
+Lista curada de 34 voces (piso de 30 pedido por el roadmap cumplido), revisada en conjunto
+con Ismael categoría por categoría, con criterio de curación defendible escrito antes de
+listar nombres (acreditación de paddock / rol técnico real / trayectoria independiente
+larga). Documento completo: `docs/WHOS-WHO-FASE0-CANDIDATES.md`.
+
+**5 categorías ("lente"), adaptadas del modelo aiweekly.co a F1:** Investigación (16,
+reporteros de paddock), Construcción (6, analistas técnicos), Crítica (8, ex-pilotos/
+comentaristas), Contexto (3, veteranos independientes), Datos (1, estadística con
+identidad real).
+
+**Edición real aplicada en la revisión:** Antonio Lobato movido de Crítica a Contexto —
+entra por trayectoria de narrador (20+ años), no por credencial de ex-piloto/técnico como
+el resto de esa categoría.
+
+**Corrección importante durante la verificación de handles de X** (hecha uno por uno vía
+búsqueda real, no de memoria, para evitar cargar una cuenta equivocada en Supabase):
+Duncan Alexander salió de la lista — resultó ser estadístico de **fútbol** (co-fundador de
+OptaJoe), no de F1; se había colado por un hit de Wikipedia mal cruzado en la búsqueda
+original de candidatos. Bruce Jones también salió — autor real y verificable (*The Formula
+One Record Book*), pero sin cuenta de X pública confirmada, no sirve para el motor de
+embeds del MVP aunque sí como fuente bibliográfica a citar en contenido aparte. Mismo
+principio que ya rige el proyecto: ante la duda o el dato no verificable, afuera.
+
+Dos ambigüedades de cuenta resueltas (más de un handle candidato por persona): Antonio
+Lobato (`@alobatof1`, no `@Alobato_F1`) y Craig Scarborough (`@ScarbsTech`, no `@Scarbsf1`,
+vieja/inactiva).
+
+**Hallazgo aparte:** de las 34 personas, solo 2 tienen Bluesky confirmado en esta pasada
+(Nate Saunders, Joe Saward) — no se buscó sistemáticamente para el resto, queda para la
+Fase 1.
+
+**Excluido a propósito de esta lista:** cuentas de análisis de datos anónimas/pseudónimas
+(ej. `@f1dataanalytics`) — no pasan el criterio de identidad verificable definido; podrían
+sumarse en una fase futura con un criterio distinto (verificar metodología en vez de
+identidad).
+
+**Pendiente real, no bloqueante:** decidir si se suma una segunda tanda de voces (alemanas/
+italianas, dado el peso de Auto Motor und Sport / Sky Italia en la cobertura europea) para
+acercarse más al techo de 50. Próximo paso de la línea es la Fase 1 (ingesta mínima de un
+source vía embeds gratuitos de `publish.x.com`).
 
 ## Glosario — capas eli5/fia para los 6 términos legacy, completado (2 sep 2026)
 
