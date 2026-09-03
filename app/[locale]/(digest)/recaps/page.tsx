@@ -2,33 +2,32 @@ import type { Metadata } from 'next';
 import { getTranslations, getFormatter } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
-import EmailCapture from '@/components/ui/EmailCapture';
 
 export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: 'Weekly Digest — PaddockIntel',
+    title: 'Recap Series — PaddockIntel',
     description:
-      'Curated F1 and motorsport economics news with original synthesis. Every week, verified sources and first-party analysis.',
+      'Retrospective, week-by-week coverage of the 2026 F1 season published after the fact — separate from the live weekly digest.',
   };
 }
 
-async function getIssues() {
+async function getRecaps() {
   const supabase = createClient();
   const { data } = await supabase
     .from('digest_issues')
     .select('slug, published_at, intro_synthesis')
     .eq('status', 'published')
-    .eq('series', 'newsletter')
+    .eq('series', 'recap')
     .order('published_at', { ascending: false });
   return data ?? [];
 }
 
-export default async function DigestIndexPage() {
-  const t = await getTranslations('digest');
+export default async function RecapsIndexPage() {
+  const t = await getTranslations('recaps');
   const format = await getFormatter();
-  const issues = await getIssues();
+  const recaps = await getRecaps();
 
   return (
     <main className="bg-bg min-h-screen">
@@ -38,66 +37,57 @@ export default async function DigestIndexPage() {
           {t('kicker')}
         </p>
         <h1 className="font-display text-[clamp(2rem,6vw,3.5rem)] leading-[0.92] tracking-[-0.03em] text-text-1 mt-3 mb-5">
-          F1 economics,<br />weekly.
+          F1 economics,<br />revisited.
         </h1>
         <p className="font-prose text-text-2 leading-relaxed max-w-md mb-6">
-          Verified sources. Original synthesis. No wire-service summaries — every issue has a first-person economic angle on what happened in and around F1.
+          {t('index.description')}
         </p>
-        <EmailCapture className="max-w-sm" />
-        <p className="mt-2 font-mono text-[10px] text-text-3">
-          By subscribing you agree to the{' '}
-          <Link href="/privacy" className="underline hover:text-terracotta transition-colors duration-150">
-            privacy policy
+        <p className="font-mono text-[10px] text-text-3">
+          Looking for the live weekly digest?{' '}
+          <Link href="/weekly" className="underline hover:text-terracotta transition-colors duration-150">
+            Go to Weekly Digest
           </Link>
           .
         </p>
       </div>
 
-      {/* Issue list */}
+      {/* Recap list */}
       <div className="max-w-4xl mx-auto">
         <p className="px-5 py-3 font-mono text-[10px] uppercase tracking-[0.12em] text-text-2 border-b border-border-subtle">
-          {t('sources')} — {issues.length} {issues.length === 1 ? 'issue' : 'issues'}
+          {t('sources')} — {recaps.length} {recaps.length === 1 ? t('index.issue') : t('index.issues')}
         </p>
 
-        {issues.length === 0 ? (
+        {recaps.length === 0 ? (
           <p className="px-5 py-12 font-mono text-[11px] text-text-3 uppercase tracking-[0.1em]">
-            No issues published yet.
+            {t('index.noIssues')}
           </p>
         ) : (
           <ul>
-            {issues.map((issue, i) => (
-              <li key={issue.slug as string} className="border-b border-border-subtle">
+            {recaps.map((recap, i) => (
+              <li key={recap.slug as string} className="border-b border-border-subtle">
                 <Link
-                  href={`/weekly/${issue.slug as string}`}
+                  href={`/recaps/${recap.slug as string}`}
                   className="group flex items-start gap-5 px-5 py-5 hover:bg-surface-raised transition-colors duration-150"
                 >
                   <span className="font-mono text-[11px] text-text-3 tabular-nums pt-0.5 w-5 shrink-0">
-                    {String(issues.length - i).padStart(2, '0')}
+                    {String(recaps.length - i).padStart(2, '0')}
                   </span>
                   <span className="flex-1 min-w-0">
                     <span className="block font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 mb-1">
-                      {format.dateTime(new Date(issue.published_at as string), { dateStyle: 'long' })}
+                      {t('detail.published')} {format.dateTime(new Date(recap.published_at as string), { dateStyle: 'long' })}
                     </span>
                     <span className="block font-prose text-text-1 leading-snug line-clamp-2">
-                      {issue.intro_synthesis as string}
+                      {recap.intro_synthesis as string}
                     </span>
                   </span>
                   <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-terracotta opacity-0 group-hover:opacity-100 transition-opacity duration-150 shrink-0 pt-0.5">
-                    Read →
+                    {t('index.read')}
                   </span>
                 </Link>
               </li>
             ))}
           </ul>
         )}
-
-        <p className="px-5 py-6 font-mono text-[10px] uppercase tracking-[0.1em] text-text-3">
-          Looking for older ground?{' '}
-          <Link href="/recaps" className="underline hover:text-terracotta transition-colors duration-150">
-            Browse the Recap series
-          </Link>
-          .
-        </p>
       </div>
     </main>
   );

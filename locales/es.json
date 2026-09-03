@@ -642,6 +642,22 @@
       "read": "Leer →"
     }
   },
+  "recaps": {
+    "kicker": "Serie Recap",
+    "sources": "Fuentes",
+    "index": {
+      "description": "Cobertura retrospectiva de semanas ya pasadas, publicada después de los hechos — con la ventaja de contexto que el resumen semanal en vivo no tiene.",
+      "issues": "recaps",
+      "issue": "recap",
+      "noIssues": "Aún no hay recaps publicados.",
+      "read": "Leer →"
+    },
+    "detail": {
+      "weekOf": "Semana del",
+      "published": "Publicado",
+      "disclaimer": "Esto es una retrospectiva. Se escribió y publicó en la fecha indicada arriba, después de la semana que cubre — no en tiempo real."
+    }
+  },
   "newsletter": {
     "button": "Suscribirse",
     "placeholder": "tu@email.com",

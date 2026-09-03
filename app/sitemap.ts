@@ -32,6 +32,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .from('digest_issues')
       .select('slug, published_at')
       .eq('status', 'published')
+      .eq('series', 'newsletter')
+      .order('published_at', { ascending: false });
+
+    const { data: recaps } = await supabase
+      .from('digest_issues')
+      .select('slug, published_at')
+      .eq('status', 'published')
+      .eq('series', 'recap')
       .order('published_at', { ascending: false });
 
     const staticRoutes: MetadataRoute.Sitemap = [
@@ -41,6 +49,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       { url: `${MAGAZINE_BASE}/weekly/`,      lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.8 },
       { url: `${MAGAZINE_BASE}/es/weekly/`,   lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.8 },
       { url: `${MAGAZINE_BASE}/pt/weekly/`,   lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.8 },
+      { url: `${MAGAZINE_BASE}/recaps/`,      lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.6 },
+      { url: `${MAGAZINE_BASE}/es/recaps/`,   lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.6 },
+      { url: `${MAGAZINE_BASE}/pt/recaps/`,   lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.6 },
       { url: `${MAGAZINE_BASE}/about/`,       lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
       { url: `${MAGAZINE_BASE}/es/about/`,    lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
       { url: `${MAGAZINE_BASE}/pt/about/`,    lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
@@ -63,7 +74,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }));
 
-    return [...staticRoutes, ...articleRoutes, ...issueRoutes];
+    const recapRoutes: MetadataRoute.Sitemap = (recaps ?? []).map((r) => ({
+      url: `${MAGAZINE_BASE}/recaps/${r.slug as string}/`,
+      lastModified: r.published_at ? new Date(r.published_at as string) : new Date(),
+      changeFrequency: 'yearly' as const,
+      priority: 0.5,
+    }));
+
+    return [...staticRoutes, ...articleRoutes, ...issueRoutes, ...recapRoutes];
   }
 
   const recordSlugs = [

@@ -642,6 +642,22 @@
       "read": "Read →"
     }
   },
+  "recaps": {
+    "kicker": "Recap Series",
+    "sources": "Sources",
+    "index": {
+      "description": "Retrospective coverage of weeks already gone by, published after the fact — with the hindsight the live weekly digest doesn't have.",
+      "issues": "recaps",
+      "issue": "recap",
+      "noIssues": "No recaps published yet.",
+      "read": "Read →"
+    },
+    "detail": {
+      "weekOf": "Week of",
+      "published": "Published",
+      "disclaimer": "This is a retrospective. It was written and published on the date above, after the week it covers — not in real time."
+    }
+  },
   "newsletter": {
     "button": "Subscribe",
     "placeholder": "your@email.com",

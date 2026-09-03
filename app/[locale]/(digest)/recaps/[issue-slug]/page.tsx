@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
 
@@ -16,13 +17,13 @@ type DigestItem = {
   published_at: string;
 };
 
-async function getIssue(slug: string) {
+async function getRecap(slug: string) {
   const supabase = createClient();
   const { data } = await supabase
     .from('digest_issues')
     .select('id, slug, published_at, intro_synthesis')
     .eq('slug', slug)
-    .eq('series', 'newsletter')
+    .eq('series', 'recap')
     .single();
   return data;
 }
@@ -45,29 +46,41 @@ function formatDate(iso: string): string {
   });
 }
 
-function issueNumber(slug: string): string {
-  const m = slug.match(/vol-(\d+)/i);
+function recapNumber(slug: string): string {
+  const m = slug.match(/recap-(\d+)/i);
   return m ? m[1].padStart(2, '0') : '01';
+}
+
+// The slug carries the week the recap covers as a trailing YYYY-MM-DD
+// (e.g. recap-01-week-2026-07-27) -- distinct from `published_at`, which is
+// the real date the recap itself went live. Showing both is the point: never
+// implying the recap was written during the week it covers.
+function weekOf(slug: string): string | null {
+  const m = slug.match(/(\d{4}-\d{2}-\d{2})$/);
+  if (!m) return null;
+  return formatDate(m[1]);
 }
 
 export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
   const { 'issue-slug': slug } = await params;
-  const issue = await getIssue(slug);
-  if (!issue) return { title: 'Weekly Digest — PaddockIntel' };
+  const recap = await getRecap(slug);
+  if (!recap) return { title: 'Recap Series — PaddockIntel' };
   return {
-    title: `Digest Vol.${issueNumber(slug as string)} — PaddockIntel`,
-    description: (issue.intro_synthesis as string).slice(0, 145),
+    title: `Recap Vol.${recapNumber(slug as string)} — PaddockIntel`,
+    description: (recap.intro_synthesis as string).slice(0, 145),
   };
 }
 
-export default async function DigestIssuePage({ params }: { params: PageParams }) {
+export default async function RecapIssuePage({ params }: { params: PageParams }) {
   const { 'issue-slug': slug } = await params;
+  const t = await getTranslations('recaps');
 
-  const issue = await getIssue(slug);
-  if (!issue) notFound();
+  const recap = await getRecap(slug);
+  if (!recap) notFound();
 
-  const items = await getItems(issue.id as string);
-  const volNum = issueNumber(slug);
+  const items = await getItems(recap.id as string);
+  const volNum = recapNumber(slug);
+  const week = weekOf(slug);
 
   return (
     <main className="bg-bg min-h-screen">
@@ -78,23 +91,29 @@ export default async function DigestIssuePage({ params }: { params: PageParams }
 
           {/* Eyebrow */}
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-text-2 mb-6">
-            PaddockIntel Digest · Vol.{volNum} · {formatDate(issue.published_at as string)}
+            PaddockIntel Recap · Vol.{volNum}
+            {week ? ` · ${t('detail.weekOf')} ${week}` : ''}
           </p>
 
-          {/* Issue title — derived from synthesis lead */}
+          {/* Issue title */}
           <h1
-            className="uppercase text-text-1 leading-[0.92] tracking-[-0.03em] mb-8"
+            className="uppercase text-text-1 leading-[0.92] tracking-[-0.03em] mb-6"
             style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.6rem, 5vw, 3.8rem)' }}
           >
-            F1 Economics Weekly
+            F1 Economics Recap
           </h1>
+
+          {/* Retrospective disclaimer */}
+          <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-terracotta mb-8">
+            {t('detail.published')} {formatDate(recap.published_at as string)} — {t('detail.disclaimer')}
+          </p>
 
           {/* Synthesis paragraph */}
           <p
             className="text-text-1 leading-relaxed max-w-2xl"
             style={{ fontFamily: 'var(--pi-sans)', fontSize: '0.9375rem', lineHeight: '1.75' }}
           >
-            {issue.intro_synthesis as string}
+            {recap.intro_synthesis as string}
           </p>
 
         </div>
@@ -172,10 +191,10 @@ export default async function DigestIssuePage({ params }: { params: PageParams }
             {' '}· PaddockIntel
           </p>
           <Link
-            href="/weekly"
+            href="/recaps"
             className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 hover:text-terracotta transition-colors duration-150"
           >
-            ← All issues
+            ← All recaps
           </Link>
         </div>
 
