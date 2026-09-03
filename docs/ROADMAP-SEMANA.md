@@ -142,9 +142,9 @@ Para volumen de contenido retroactivo, usar la serie separada de "Recaps" (ver m
 con numeración independiente.
 
 ### 4. "Who's Who" — mapa de atención experta
-**Estado: Fase 0 y Fase 1 completadas (3 sep 2026) — ver secciones al final del
-documento. Fase 2 (clustering/clasificación con LLM) sigue sin arrancar. Más caro
-que el paso 5.**
+**Estado: Fase 0, Fase 1 y arranque de Fase 2 completados (3 sep 2026) — ver secciones
+al final del documento. Fase 2 corre semi-manual, no clustering automático con LLM
+(ver por qué en la sección de cierre). Más caro que el paso 5.**
 Referencia: aiweekly.co/whos-who — motor de escucha social que agrupa reacciones de
 expertos por evento/tema, clasifica por "lente" (crítica, construcción, investigación...),
 asigna peer-trust score.
@@ -856,6 +856,44 @@ la que decide la UI final, esto solo probó que el mecanismo funciona). La clasi
 automática por tema/lente y detección de tendencias sigue necesitando la Fase 2
 (clustering con LLM) o proceso editorial semi-manual, como ya estaba anotado en el
 research original.
+
+## Paso 4 "Who's Who" — Fase 2 semi-manual, primer pick real cargado (3 sep 2026)
+
+**Decisión de arquitectura, no solo de proceso:** el embed gratuito de X de la Fase 1
+corre 100% client-side — nunca le llega texto del post al servidor. Sin ese texto no
+hay nada que mandarle a un LLM para clasificación/tendencias automáticas, salvo pagando
+la API de X (~$200/mes), lo que anularía el hallazgo que abarató el MVP en la Fase 1.
+Se optó explícitamente por curación semi-manual en vez de eso: Ismael elige el post y
+escribe (o dicta) el takeaway editorial a mano.
+
+**Schema:** migración `20260903200000_expert_picks.sql` (aditiva) — tabla
+`expert_picks` (`expert_id` FK a `experts`, `post_url`, `topic` texto libre —
+deliberadamente sin FK a la tabla `tags` de artículos todavía, no hay volumen real
+para saber si esa taxonomía aplica acá —, `takeaway`, `locale`, `is_active`). Mismo
+patrón de RLS/grants que el resto (solo `SELECT` para `anon`/`authenticated`). Corrida
+por Ismael en el SQL Editor de Supabase.
+
+**Herramienta de carga:** `scripts/whos-who-pick.ts`, mismo patrón que
+`ingest-article.ts` — un archivo `.md` en `whos-who-picks/` con `expert_slug` +
+`post_url` en el frontmatter y el takeaway como cuerpo, sin prompts interactivos ni
+dependencias nuevas (reusa `gray-matter`, ya en el proyecto).
+
+**Primer pick real cargado y verificado:** tributo de Dieter Rencken a Bob Fernley
+(`whos-who-picks/dieter-rencken-bob-fernley-tribute.md`,
+`x.com/RacingLines/status/1723972603063287836`). Contenido del post confirmado
+directamente por Ismael (no se pudo leer vía scraping — X devuelve 402 sin login tanto
+a WebFetch como a WebSearch, confirmación en código de que la Fase 1 hizo bien en no
+depender de leer contenido de X sin pagar la API). El takeaway verificó además datos
+reales sobre Bob Fernley (director de facto de Force India 2008-2018, P4 en el
+campeonato de constructores 2016 y 2017 con presupuesto muy por debajo del midfield)
+antes de escribirlo — mismo principio de nunca inventar un dato que ya rige todo el
+proyecto, extendido acá a contenido atribuido a una persona real de la lista curada.
+
+**Pendiente real, no bloqueante:** ver con volumen real de varios picks si `topic`
+como texto libre alcanza o conviene migrarlo a la taxonomía de `tags` que ya usan los
+artículos (unificaría temas entre el blog y Who's Who). Fase 3 (UI mínima mostrable)
+sigue sin arrancar — hoy los picks solo existen en Supabase, no se muestran en
+ninguna página todavía.
 
 ## Glosario — capas eli5/fia para los 6 términos legacy, completado (2 sep 2026)
 
