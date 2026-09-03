@@ -142,8 +142,9 @@ Para volumen de contenido retroactivo, usar la serie separada de "Recaps" (ver m
 con numeración independiente.
 
 ### 4. "Who's Who" — mapa de atención experta
-**Estado: Fase 0 completada (3 sep 2026) — ver sección al final del documento. Fase 1
-(ingesta mínima de un source) sigue sin arrancar. Más caro que el paso 5.**
+**Estado: Fase 0 y Fase 1 completadas (3 sep 2026) — ver secciones al final del
+documento. Fase 2 (clustering/clasificación con LLM) sigue sin arrancar. Más caro
+que el paso 5.**
 Referencia: aiweekly.co/whos-who — motor de escucha social que agrupa reacciones de
 expertos por evento/tema, clasifica por "lente" (crítica, construcción, investigación...),
 asigna peer-trust score.
@@ -824,6 +825,37 @@ identidad).
 italianas, dado el peso de Auto Motor und Sport / Sky Italia en la cobertura europea) para
 acercarse más al techo de 50. Próximo paso de la línea es la Fase 1 (ingesta mínima de un
 source vía embeds gratuitos de `publish.x.com`).
+
+## Paso 4 "Who's Who" — Fase 1 completada (3 sep 2026)
+
+Ingesta mínima de un source, probada de punta a punta antes de escalar a las 34 voces.
+
+**Schema:** migración `20260903190000_whos_who_experts.sql` (aditiva) — tabla `experts`
+con las 34 filas de la Fase 0 ya cargadas (`name`, `slug`, `category` con check constraint
+a las 5 lentes, `role`, `x_handle`, `bluesky_handle`, `credibility_note`, `is_active`).
+RLS + grants siguiendo el mismo patrón que `authors`/`tags` (solo `SELECT` para
+`anon`/`authenticated`). Corrida por Ismael en el SQL Editor de Supabase — verificado
+después con conteo real: 34 filas, distribución exacta por categoría (investigation 16,
+construction 6, critique 8, context 3, data 1).
+
+**Embed técnico:** `components/whos-who/XProfileEmbed.tsx` — mismo mecanismo que genera
+`publish.x.com` (script `platform.twitter.com/widgets.js` + `<a class="twitter-timeline">`),
+sin API paga. Client component porque el script corre en el browser.
+
+**Piloto elegido:** Dieter Rencken (`@RacingLines`) — voz de RaceFans/RacingNews365 con
+foco fuerte en política/economía de F1, el ángulo más cercano al de PaddockIntel de las 34.
+
+**Ruta de prueba:** `/whos-who-preview`, deliberadamente sin linkear desde la navegación
+y con `robots: noindex` — el paso 4 no está aprobado para lanzamiento público (eso lo
+define la Fase 3, UI mínima mostrable). Verificado con `npm run dev` real: la página
+sirve 200, trae nombre/rol/handle reales desde Supabase (no hardcodeados) y el HTML
+incluye el embed inyectado correctamente.
+
+**Pendiente real, no bloqueante:** escalar el patrón de embed a las 34 voces (Fase 3 es
+la que decide la UI final, esto solo probó que el mecanismo funciona). La clasificación
+automática por tema/lente y detección de tendencias sigue necesitando la Fase 2
+(clustering con LLM) o proceso editorial semi-manual, como ya estaba anotado en el
+research original.
 
 ## Glosario — capas eli5/fia para los 6 términos legacy, completado (2 sep 2026)
 
