@@ -84,6 +84,11 @@ piece, read the four advisor files in `docs/advisors/`: `SEO-EXPERT.md`, `DATA-E
 `EEAT-EXPERT.md`, `SPORTS-JOURNALISM-EXPERT.md`. They are an additional gate on top of this section and
 `EDITORIAL.md` — none of their requirements are waived by a redesign or a new content vertical.
 
+A fifth advisor, `docs/advisors/CYBERSECURITY-EXPERT.md`, gates engineering work instead of content:
+read it before shipping anything touching auth, user data, secrets/tokens, third-party content
+ingestion, dependency upgrades, or infra changes (Cloudflare, Supabase) — relevant to the user-accounts
+step in `docs/ROADMAP-SEMANA.md` and any RLS-touching migration.
+
 **EEAT signals (required, not optional):**
 - `/about` or `/author/ismael-sandoval` — real, verifiable background. Every article and digest issue
   links to it.

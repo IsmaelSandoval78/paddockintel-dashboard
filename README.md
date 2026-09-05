@@ -27,16 +27,15 @@ You'll need a `.env.local` with Supabase credentials (`NEXT_PUBLIC_SUPABASE_URL`
 
 ## Database / migrations
 
-Schema changes **always** go through the Supabase CLI, never pasted directly into the SQL Editor:
-
-```bash
-npx supabase migration new nombre_del_cambio
-# edit the generated .sql file
-npx supabase db push
-```
-
-The full baseline schema lives in `supabase/migrations/00000000000000_baseline_schema.sql`. If `npx supabase migration list` ever shows local/remote out of sync, resolve it with `supabase migration repair` — don't just re-run migrations blindly.
+This project has **no linked Supabase CLI/DB URL** — schema changes are written as
+`.sql` files under `supabase/migrations/` (for the record and for future CLI linking)
+but applied by hand in the Supabase Dashboard SQL Editor, one file per change. Write
+the migration file first, then paste its contents into the SQL Editor and run it —
+don't skip the file (it's the only record of what changed and why).
 
 ## Deploy
 
-Auto-deploys to Vercel on push to `main`.
+Currently auto-deploys to **Vercel** on push to `main`. A migration to Cloudflare
+Workers (OpenNext adapter) is decided and technically ready (see
+`docs/CLOUDFLARE-MIGRATION.md`) but the production domain has **not** cut over yet —
+confirm current status in `docs/ROADMAP-SEMANA.md` before assuming either platform.

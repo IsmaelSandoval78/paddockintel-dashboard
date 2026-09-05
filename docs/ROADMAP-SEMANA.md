@@ -5,10 +5,57 @@ Este doc se actualiza al final de cada sesión con el progreso real, no se deja 
 aspiracional. Si algo cambia de prioridad o se descarta, se anota acá también, no se
 borra sin dejar rastro.
 
+**Cómo leer este doc:** las secciones "Los 5 pasos" de abajo son el estado *inicial*
+(25 ago) — quedaron desactualizadas a propósito, no se reescriben, el progreso real se
+agrega como secciones fechadas más abajo en el archivo. Si necesitás la verdad de HOY
+sin leer todo el historial, usá esta tabla — se actualiza cada vez que algo cambia de
+estado real, es la única parte de este doc que sí se edita en el lugar en vez de
+apilarse.
+
+## Estado real al 4 sep 2026 (la verdad de hoy, en una tabla)
+
+| Paso | Estado real | Bloqueador real si lo hay |
+|---|---|---|
+| 1. Cloudflare | Técnico resuelto, **dominio real sigue en Vercel** (confirmado con Ismael) | Falta el corte de DNS/dominio, no es solo código |
+| 2. Blog/estructura | Maduro — tags relacionales, race_id, glosario con capas, `/about` conectado | Ninguno bloqueante |
+| 3. Newsletter | Pipeline automatizado real (`generate_digest_draft.py`), Vol.06 publicado hoy | Gap sin llenar: faltan vol-03/vol-04 |
+| 4. Who's Who | 19/34 voces con pick real, Fase 3 (UI mínima) construida y localizada | Sin linkear del nav; 3 cuentas curadas sin servir (Piola/Slater/Davidson) |
+| 5. Feed | MVP construido hoy, reusa `digest_items`, localizado | Sin linkear del nav |
+| 6. Cuentas de usuario | Decidido 24 ago, cero código, confirmado vivo hoy | Proveedor de auth sin decidir |
+| 7. Vertical de datos puros | Decidido 24 ago, cero código, confirmado vivo hoy | Cero métricas definidas todavía |
+
+**Hallazgos de auditoría de docs, 4 sep 2026 (aplicados o pendientes):**
+- ✅ Corregido: `README.md` decía que las migraciones van por Supabase CLI — nunca fue
+  así, siempre se corrieron a mano en el SQL Editor (no hay CLI/DB URL enlazada).
+- ✅ Corregido: `README.md` decía "Deploy: Vercel" sin mencionar Cloudflare — sigue
+  siendo cierto hoy (ver fila del Paso 1), pero ya no por descuido, por confirmación real.
+- ✅ Corregido: `PRODUCT.md` seguía con los tokens visuales viejos (`#F4F4F0`) en vez de
+  Vintage Editorial (`#EDE3D0`).
+- ✅ Corregido: `docs/advisors/CYBERSECURITY-EXPERT.md` existe desde hace tiempo pero
+  nunca entró al "advisor gate" que `CLAUDE.md`/`SKILL.md` describen como "los cuatro
+  advisors" — ahora son cinco.
+- ✅ **Cerrado, no pendiente:** `docs/DEPENDENCY-SECURITY.md` tenía "0 vulnerabilidades"
+  (25 ago) desactualizado — el `npm install` de hoy mostró 5 nuevas (adm-zip high,
+  browserslist high×2, qs moderate×2). Triagadas y trazadas: ninguna tiene superficie
+  de ataque real (adm-zip solo procesa un ZIP autogenerado en deploy manual,
+  browserslist es build-time puro, qs solo corre en `wrangler dev` local). Decisión:
+  **riesgo aceptado**, no se aplica el fix porque revertiría `@opennextjs/cloudflare`
+  a 1.19.11 y reintroduciría el hang de población de R2 ya resuelto la semana pasada.
+  Detalle completo en `docs/DEPENDENCY-SECURITY.md`.
+- ⚠️ **Sin resolver, no bloqueante:** `docs/WHOS-WHO-FASE0-CANDIDATES.md` no refleja
+  todavía que Piola/Slater/Davidson no sirven para el mecanismo de picks (ver sección
+  de Who's Who más abajo) — la lista de 34 sigue "aprobada" tal cual, sin la nota.
+
 ## Los 5 pasos, en orden
 
 ### 1. Migración a Cloudflare
-**Estado: bloqueador principal RESUELTO esta sesión.**
+**Estado: bloqueador técnico principal RESUELTO, pero el corte de dominio real NO
+pasó todavía — confirmado con Ismael el 4 sep 2026.** `hub.paddockintel.com` sigue
+sirviendo desde Vercel en producción. Todo lo de abajo (R2, cron, middleware) está
+verificado contra un deploy de prueba en `*.workers.dev`, no contra el dominio real.
+No marcar este paso como cerrado hasta que el DNS/dominio corte de verdad —
+`docs/BILLING-UPTIME-CHECKLIST.md` (que sigue apuntando solo a Vercel) necesita
+actualizarse recién en ese momento, no antes.
 - El bug de población de R2 (issues #1110/#12413/#1284) está confirmado resuelto con
   evidencia real: PR #1290 (`--rclone` opt-in) YA estaba mergeado desde la versión 1.20.0
   (ya instalada). Se probó con un deploy real: 9 objetos subidos en 0.5 segundos, cierre
@@ -172,15 +219,30 @@ Fase 2: clustering/clasificación con LLM → Fase 3: UI mínima mostrable). Fas
 (trust scoring) no bloquea el lanzamiento.
 
 ### 5. Feed estilo "F1 news today"
-**Estado: research hecho, nada construido.**
-Referencia: aiweekly.co/ai-news-today — feed de noticias ya publicadas (no social),
-resumidas en 2-3 líneas, tageadas por categoría, con contador de "entidades más
-mencionadas esta semana" (movers, % de cambio vs promedio).
+**Estado: MVP construido y en vivo (4 sep 2026) — ver sección propia más abajo para el
+detalle completo.** `/feed` reusa `digest_items` en orden cronológico continuo, con
+contador real de "más mencionados esta semana". Sin linkear del nav todavía.
 
-Es casi gratis si el paso 2 se diseña bien desde el principio: misma base de datos
-(artículos tageados por equipo/piloto/tema), solo una vista distinta (feed cronológico +
-contador de menciones). Mucho más simple técnicamente que el paso 4 — no hay scraping
-social ni atribución a personas, es agregación de prensa + tagging.
+### 6. Cuentas de usuario (Google + email, personalización) — de docs/DECISIONS-2026-08-24-radical-pivot.md
+**Estado: decidido el 24 ago, cero código — confirmado vivo (no abandonado) el 4 sep 2026.**
+Auth: Google OAuth + email, proveedor final sin decidir (Supabase Auth es el candidato
+natural, pero falta verificar compatibilidad actual con Cloudflare antes de comprometerse).
+Personalización: seguir constructores/pilotos/"expertos" (Who's Who, paso 4). Regla ya
+establecida: la personalización cambia el *orden* del contenido, nunca fabrica ni reordena
+rankings/resultados oficiales — mismo principio que ya rige Mi Box. Requiere política de
+privacidad real antes de lanzar cuentas (ver `docs/advisors/EEAT-EXPERT.md`).
+**Bloqueadores reales:** proveedor de auth sin decidir; sin diseño de UI todavía.
+
+### 7. Vertical de datos puros (pace indices, métricas propietarias) — de docs/DECISIONS-2026-08-24-radical-pivot.md
+**Estado: decidido el 24 ago, cero código — confirmado vivo (no abandonado) el 4 sep 2026.**
+Expande PaddockIntel de "ángulo económico" a también cubrir análisis estadístico profundo
+propio (pace index, métricas que hoy no existen en ningún medio de F1 a este nivel de
+profundidad) — apuesta de producto real, no un feature más. Regla no negociable: toda
+métrica nueva necesita una página de metodología pública antes de citarse en cualquier
+lado (`docs/advisors/DATA-EXPERT.md`). El pipeline batch de FastF1 (§18 de SKILL.md) es
+el backbone computacional candidato; el Optiplex casero (ver infraestructura de
+automatización abajo) puede escalar cómputo adicional si hace falta.
+**Bloqueador real:** cero métricas definidas todavía, ni siquiera un primer candidato.
 
 ## Infraestructura de automatización: Optiplex + n8n
 
@@ -945,3 +1007,357 @@ Supabase hasta la aprobación de Ismael.
 **Sin cambio de código:** el ruteo (`DepthNav`, `/glossary/[slug]/[technical|fia-
 regulation]`) ya soportaba términos con más de una capa desde la tanda anterior — esto
 fue puramente contenido nuevo en `glossary_terms`, no requirió deploy.
+
+## Paso 4 "Who's Who" — Fase 2 escalada a 3 picks (4 sep 2026)
+
+**Bloqueador real encontrado y resuelto antes de poder cargar nada:** `.env.local`
+todavía tenía las API keys legacy de Supabase (formato JWT, `eyJhbGci...`), deshabilitadas
+por Supabase el 2026-08-25 — cualquier script que tocara Supabase desde local fallaba con
+`Legacy API keys are disabled`. Migradas a las keys nuevas (`sb_publishable_...` /
+`sb_secret_...`) desde Settings → API Keys → pestaña "Publishable and secret API keys"
+del dashboard (project `PaddockIntel-Data`, rama `main` production) — la confusión real
+fue que esa pestaña no es la que carga por defecto y hay que seleccionarla a mano; el
+publishable key se puede tratar como público (la propia UI de Supabase lo dice), el
+secret no.
+
+**2 picks nuevos cargados**, mismo mecanismo semi-manual de la Fase 2 (post real elegido
+por Ismael vía navegador logueado en X — leer contenido sin sesión sigue devolviendo el
+mismo bloqueo 402/muro de login ya documentado —, dato de fondo verificado antes de
+escribir el takeaway):
+- **Chris Medland** (`chris-medland`, Investigación) — Colton Herta se quedó sin el punto
+  bonus de Super Licencia en FP1 del GP de Italia en Monza por no completar el mínimo de
+  100km, más un accidente en Lesmo en la práctica de F2 el mismo día. Verificado contra
+  el reglamento real (100km mínimo por sesión FP1, tope de 10 puntos hacia el umbral de
+  40) y el programa 2026 de Cadillac (4 sesiones de FP1 para Herta, arrancó el año a 5
+  puntos de los 40 que necesita).
+- **Craig Scarborough** (`craig-scarborough`, Construcción) — nuevos carenados en el
+  "aero rake" de Aston Martin en Monza, con lectura honesta de Scarborough (no confirma
+  si es un concepto nuevo de morro o solo mejor toma de datos de referencia).
+
+**2 picks más, misma sesión, tras resolver el bloqueador de keys:**
+- **Adam Cooper** (`adam-cooper`, Investigación) — comunicado oficial de Alpine tras la
+  resolución del Tribunal de Apelación Internacional de la FIA sobre el P3 de Gasly en
+  Mónaco. Verificado con fuentes externas (Autosport, RaceFans, Formula1.com): las
+  penalizaciones se habían anulado primero por un error de medición de FOM en la
+  distancia del pitlane, McLaren y Red Bull apelaron esa reversión, la Corte falló a
+  favor de McLaren/Red Bull el viernes — Gasly baja a P7, Hadjar hereda el podio. Mismo
+  evento real que el pick de Medland, ángulo complementario (comunicado oficial del
+  equipo vs. la noticia en caliente).
+- **David Hayhoe** (`david-hayhoe`, Datos) — estadística de archivo (no noticia del día):
+  el GP de Rusia 2021 fue la primera carrera desde Gran Bretaña 2008 con primera fila
+  íntegramente de pilotos sin victorias previas. Citado directo a su propio libro de
+  referencia (sección 535 de *Formula 1 The Knowledge*) — contenido evergreen, no ligado
+  a la fecha de publicación del tweet.
+
+**1 pick más, cerrando la categoría Crítica:**
+- **Jenson Button** (`jenson-button`, Crítica) — Button desmintiendo en su propia cuenta
+  que vaya a reemplazar a Martin Brundle en la comentarista de Sky, después de que una
+  cuenta de rumores anunciara un "cambio mayor" para 2026. La propia Community Note de X
+  adjunta a ese post viral ya corrige el framing (Brundle sigue cubriendo ~16 carreras,
+  bajando apenas de 18 en 2025, no el cambio drástico que se insinuaba) — pick con la
+  corrección ya incorporada, no hizo falta buscarla aparte.
+
+**Categoría Contexto: cerrada en una segunda sesión de navegador.** El primer intento
+falló (solo página de perfil sin tweets, en los 3 nombres) — resultó ser vista inicial
+gateada, no rate-limiting: con sesión nueva + scroll manual hacia abajo en el perfil, los
+3 sí tenían contenido real más abajo en el feed. Lección para la próxima vez que se use
+este mecanismo: si el perfil carga sin tweets visibles, scrollear antes de descartar la
+cuenta.
+- **Joe Saward** — el título del GP de Países Bajos 2026 fue el último de Zandvoort en
+  el calendario. Verificado con fuentes externas: el promotor solo aceptó una extensión
+  de un año en dic. 2024, F1 ofreció alternativas (alternancia, evento anual) que
+  rechazó, razón declarada 100% financiera (sin respaldo estatal/soberano a diferencia
+  de sedes nuevas), Portimão vuelve en 2027 como reemplazo.
+- **James Allen** — paralelismo histórico real: Fisichella 2003 Brasil, mismo caso que
+  Gasly en Mónaco 2026 (trofeo/puntos sin el momento real del podio) pero para una
+  victoria, no un P3 — testimonio en primera persona, Allen comentaba esa carrera en
+  vivo para ITV. Ojo con la fecha: es de junio, previa al fallo final de la Corte de
+  Apelación de septiembre (ver picks de Medland/Cooper) — el takeaway lo aclara.
+- **Antonio Lobato** — estadística de brecha de competitividad en FP1 carrera a carrera
+  desde Mónaco (2.7s) hasta Bélgica (5.7s), lectura de temporada completa poco común en
+  un solo tuit.
+
+Total en `expert_picks` ahora: 9 (Rencken + estos ocho). Cobertura por categoría
+completa: Investigación 3, Construcción 1, Crítica 1, Datos 1, Contexto 3. Sigue
+corriendo solo en `/whos-who-preview`, sin linkear, `noindex` — Fase 3 (UI mínima
+mostrable) sigue sin arrancar, es el bloqueador real que queda para que esto se vea en
+el sitio.
+
+**Pregunta real de Ismael, respondida — dónde quedan escuderías/FIA:** no encajan en
+Who's Who — el schema de `experts` es de personas con lente propia (5 categorías fijas
+por check constraint), no de fuentes institucionales. Un comunicado de equipo o un fallo
+de FIA es la fuente primaria que un experto curado *reporta* (ya pasó sin planearlo: el
+pick de Adam Cooper es Cooper reportando el comunicado de Alpine, no Alpine mismo). Esas
+fuentes institucionales ya tienen hogar: `article_sources` (Paso 2, construida, vacía)
+para citarlas en artículos propios, y el feed del Paso 5 para agregarlas con link de
+salida. **Idea pendiente, no decidida:** un "wire" separado de comunicados oficiales de
+escuderías/FIA, distinto de Who's Who — sería un feature nuevo, no encaja en el schema
+actual de `experts`.
+
+## Paso 4 "Who's Who" — Fase 2, tanda grande hasta 14 picks (4 sep 2026, continuación)
+
+**Error real cometido y corregido antes de publicar:** al armar el pick de Thomas Maher,
+escribí un `post_url` de memoria en vez de copiarlo del resultado real de la herramienta
+de navegador — el link no coincidía con el tweet real. Detectado al releer el propio
+flujo antes de cargarlo a Supabase, corregido con el href real confirmado. Lección para
+la próxima vez: el `post_url` de cada pick tiene que venir literal de un resultado de
+herramienta (`find`/`read_page` con `href` explícito en el output), nunca escrito de
+memoria aunque parezca obvio cuál es.
+
+**5 picks nuevos, cerrando construcción y sumando profundidad a investigación:**
+- **Luke Smith** (Investigación) — Lando Norris (campeón vigente) cofundó LN4 Fusion,
+  equipo junior para F3/FRECA/F4 Italia desde 2027, aplicando a F2, con ex-jefe de Prema
+  como Team Principal. Verificado con fuentes externas, más rico que el tuit solo.
+- **Thomas Maher** (Investigación) — choque real entre Andrea Stella (McLaren) y Flavio
+  Briatore en la conferencia de prensa de Monza, sobre el mismo fallo del Tribunal de
+  Apelación de Mónaco (Briatore acusó a un juez de vínculos no declarados con McLaren).
+  Cita completa de Stella verificada con fuentes externas.
+- **Toni Cuquerella** (Construcción) — preview técnico real de Monza (carga aero más
+  baja del año, gestión de energía, compuestos, pit-loss de 24.5s).
+- **Mark Hughes** (Construcción) — misma carrera, ángulo de clasificación ("200mph
+  Rubik's Cube": frenada + velocidad de curva + batería + tow de 1.5s) — buen par
+  editorial con el pick de Cuquerella, dos lentes distintas sobre el mismo fin de semana.
+- **Nate Saunders** (Investigación) — Norris extiende con McLaren hasta 2030 (confirmado:
+  su contrato anterior vencía en 2027), con el ángulo propio de Saunders sobre escasez
+  real de asientos en los "Big 4" (McLaren/Red Bull/Ferrari ya atados a sus pilotos
+  hasta la próxima década).
+
+**Hallazgos reales sobre la lista curada, no bloqueantes pero worth anotar:**
+- **@Giorgio_Piola no sirve para este mecanismo** — la cuenta dejó de postear contenido
+  técnico real; el feed visible es 100% comercial (ventas de Black Friday, relojes de
+  edición limitada), última actividad real nov. 2021. Pendiente: confirmar si tiene una
+  cuenta más activa en otra red, o dejarlo sin picks por ahora.
+- **Categoría Crítica sigue floja (1 de 8 voces con pick real).** Intentado con Rosberg
+  (feed sin posts visibles en ningún intento), Villeneuve (cuenta casi inactiva, 78
+  posts totales), Chandhok y de la Rosa (contenido real pero de caridad/nostalgia, no
+  análisis — no forzado a pick por no ser sustancia real). Patrón real, no un fallo de
+  la técnica de scroll: las cuentas de ex-pilotos con marca personal fuerte tienden a
+  postear promoción/eventos, no análisis — puede necesitar picks de tipo "reacción en
+  vivo" (comentario de TV) en vez de posts propios, o simplemente aceptar que esta
+  categoría rinde menos con este mecanismo.
+
+Total en `expert_picks` ahora: **14** (de 34 voces curadas, 14 con al menos un pick).
+Cobertura por categoría: Investigación 6, Construcción 3, Crítica 1, Datos 1, Contexto 3.
+Sigue todo sin mostrarse fuera de `/whos-who-preview` — Fase 3 (UI mínima mostrable)
+sigue siendo el bloqueador real para que esto tenga impacto en el sitio.
+
+## Paso 4 "Who's Who" — Fase 3, primera versión mínima mostrable (4 sep 2026)
+
+**`/whos-who-preview` reconstruida de cero** — la versión de Fase 1 nunca leía
+`expert_picks`, solo embebía el timeline en vivo (crudo, sin curar) de un experto
+hardcodeado (Rencken) vía `XProfileEmbed`. Ahora la página hace la query real
+(`expert_picks` + `experts`), agrupa los 14 picks por las 5 categorías y renderiza
+nombre/rol/credibility_note del experto, el takeaway editorial completo, el tag de
+topic, y un link de salida prominente al post original — seguido del patrón de citación
+ya definido para el paso 5. `XProfileEmbed.tsx` queda sin uso (no se borró, por si sirve
+para un futuro "perfil completo" fuera de la vista curada); la ruta sigue exactamente
+igual de cautelosa que antes: `robots: noindex`, sin link desde ningún nav real.
+
+**Sistema visual real, no genérico:** siguió el patrón ya aplicado en
+`components/circuits/CircuitOverview.tsx` (Vintage Editorial post-relanzamiento) —
+`var(--pi-display)` para el título, `var(--pi-mono)` para meta/labels, `var(--terracotta)`
+para acentos y links de salida, `rounded-sm` en las cards (no zero-radius, ya superado),
+línea de transparencia `SOURCE: SUPABASE (...)` al pie, mismo patrón que Circuits.
+
+**Verificado antes de dar por terminado:** `tsc --noEmit` y `eslint` limpios, `npm run
+dev` real con los 14 picks renderizando (no datos de prueba), responsive verificado a
+375px (nav colapsa a hamburguesa, una sola columna, sin overflow horizontal) y desktop.
+Un "1 Issue" del overlay de Next.js resultó ser un falso positivo de hidratación
+causado por una extensión del navegador (`data-lt-installed`, corrector gramatical)
+inyectando en `<body>` antes de hidratar — apunta al `layout.tsx` raíz, no a este
+componente, no es un bug real.
+
+**Todavía no es la UI final, es la Fase 3 "mínima mostrable" del roadmap** — decisiones
+reales pendientes antes de considerar esto lanzable: ¿se linkea desde el nav real?, ¿se
+saca el `noindex`?, ¿va con paginación/límite cuando haya más de ~30-40 picks?, ¿los
+labels de categoría van con la etiqueta en inglés (como está ahora) o localizados por
+`next-intl` como el resto del sitio? Ninguna de estas se resolvió — la página existe
+para que Ismael la vea y decida, no como versión final.
+
+**Tres de esas decisiones, resueltas por Ismael (4 sep 2026, misma sesión):**
+1. **Sigue sin linkear del nav** — con 14/34 voces y Crítica floja, no está completa
+   para mostrarse como sección oficial todavía.
+2. **Sigue con `noindex`** — indexar algo no linkeado ni completo no suma, y contradice
+   el criterio EEAT de no publicar contenido a medio construir.
+3. **Los labels de categoría SÍ se localizan ya con `next-intl`** — nuevo namespace
+   `whosWho.categories` en `locales/en.json`/`es.json`/`pt.json` (label + descripción de
+   lente por cada una de las 5 categorías), la página usa `getTranslations('whosWho.
+   categories')` en vez del objeto hardcodeado. PT recibió traducción real cuidada, no
+   una pasada automática — son 5 etiquetas cortas + 5 oraciones descriptivas, mucho
+   menor riesgo editorial que un artículo completo, así que no se dejó en blanco a la
+   espera de una revisión nativa como pasó con otras piezas PT del proyecto.
+   Verificado en vivo: `/es/whos-who-preview` y `/pt/whos-who-preview` responden 200 y
+   muestran "Investigación/Construcción/Crítica/Contexto/Datos" e
+   "Investigação/Construção/Crítica/Contexto/Dados" correctamente — el resto del copy
+   estático de la página (título, intro, botón) queda en inglés a propósito, no se pidió
+   localizarlo todavía.
+   **Alcance deliberadamente angosto:** solo se localizaron las 5 categorías, no toda
+   la página — evita trabajo de i18n completo sobre una vista que ni siquiera está
+   aprobada para lanzamiento.
+
+## Paso 4 "Who's Who" — Fase 2, 2 picks más hasta 16 (4 sep 2026, continuación)
+
+- **Lawrence Barretto** (Investigación) — Verstappen extiende con Red Bull hasta 2030,
+  anunciado antes de su GP de casa. Verificado: el contrato anterior (hasta 2028) tenía
+  cláusulas de salida por rendimiento que alimentaron rumores de fuga; con este nuevo
+  contrato llega a 15 temporadas en el equipo. Mismo patrón de "asientos grandes
+  cerrados hasta 2027" que ya señaló el pick de Nate Saunders sobre Norris — dos
+  reporteros distintos confirmando el mismo movimiento estructural del mercado de
+  pilotos.
+- **Mat Coch** (Investigación) — Woody Johnson (dueño de los Jets de la NFL) compra
+  participación minoritaria en Aston Martin y entra como vice-chairman. Verificado:
+  Yew Tree Consortium (Stroll) mantiene el control, Arctos Partners y Adrian Newey
+  también son accionistas minoritarios. El ángulo real de Coch — "cómo se estructuró la
+  empresa para liberar valor sin ceder control" — mientras el equipo está P10 en pista
+  (Stroll+Alonso con 1 punto combinado) es exactamente el tipo de brecha entre
+  valuación y resultado que PaddockIntel existe para explicar.
+
+**Hallazgo adicional sobre la lista curada:** `@craigslatersky` tampoco sirve para este
+mecanismo — solo 190 posts totales, feed sin contenido visible en ningún intento (a
+diferencia de Piola, acá no hay ni contenido comercial, la cuenta parece casi vacía).
+Tercer caso de handle problemático (después de Piola y, en menor medida, Ben Anderson
+con solo 301 seguidores y su único post visible de 2019) — patrón real: algunas cuentas
+de la lista de 34 fueron verificadas por handle/identidad en Fase 0 pero no por volumen
+real de actividad reciente. Vale una segunda pasada futura confirmando actividad, no
+solo identidad, antes de aprobar la lista definitiva.
+
+Total en `expert_picks` ahora: **16** (de 34 voces curadas). Cobertura por categoría:
+Investigación 8, Construcción 3, Crítica 1, Datos 1, Contexto 3.
+
+## Paso 4 "Who's Who" — Fase 2, 2 picks más hasta 18, cierre de la sesión (4 sep 2026)
+
+- **Jon Noble** (Investigación) — Monza "energy-poor" será un reto real para los autos
+  2026, algunos pilotos creen que puede ser más lenta que Hungría. Cierra un cluster de
+  3 expertos independientes (Cuquerella, Hughes, Noble) confirmando el mismo hallazgo
+  real sobre el mismo fin de semana desde ángulos distintos — exactamente el tipo de
+  convergencia que Who's Who existe para mostrar.
+- **Scott Mitchell-Malm** (Investigación) — comentario real y polémico de Stefano
+  Domenicali (CEO de F1) justificando sacar los gráficos de uso de batería de la
+  transmisión citando una charla con George Lucas ("a nadie le interesa cómo manejás tu
+  auto"). Verificado con fuentes externas: generó backlash real de fans técnicos.
+  Tensión real de fondo (¿el crecimiento de F1 se construye ocultando la capa técnica o
+  explicándola?) que es literalmente la razón de ser de PaddockIntel.
+
+**Intentos sin resultado, no forzados:** Andrew Benson (BBC) no mostró ningún post en
+varios intentos con scroll — mismo patrón de cuenta sin contenido visible que
+Edmondson/Rosberg. Ted Kravitz repitió el mismo tuit de promoción de libro ya visto
+antes, sin sustancia nueva — no se cargó por no ser suficientemente rico.
+
+Total en `expert_picks` ahora: **18** (de 34 voces curadas). Cobertura por categoría:
+Investigación 10, Construcción 3, Crítica 1, Datos 1, Contexto 3.
+
+## Paso 4 "Who's Who" — Fase 2, último pick de la sesión hasta 19, límite real alcanzado (4 sep 2026)
+
+- **Madeline Coleman** (Investigación) — Alex Albon llega a 100 carreras con Williams,
+  con cita real suya ("I poured a lot of my time and energy into this team, and I hope
+  it's for something"). Verificado: primer piloto en la historia de Williams en llegar
+  a 100 arranques con el equipo, superó el récord de Nigel Mansell en el camino, menos
+  de 30 pilotos en la historia de F1 llegaron al centenar con una sola escudería.
+
+**Hallazgo real sobre Anthony Davidson (Crítica), no un handle roto sino inexistente:**
+confirmado por búsqueda externa — Davidson no tiene cuenta personal de X, solo aparece
+citado a través de la cuenta oficial `@SkySportsF1`. No es como Piola/Slater (cuentas
+reales pero sin contenido útil) — acá el mecanismo de "un post por persona" no aplica
+en absoluto, habría que decidir si se lo saca de la lista de 34 o se le busca otro
+mecanismo de representación.
+
+**Límite real alcanzado en esta sesión, no solo cansancio de intentos:** de las 34
+voces curadas, ya se probaron las 34 al menos una vez (contando sesiones anteriores).
+Los 15 nombres sin pick real quedan así, con motivo verificado, no por falta de
+intento:
+- **Sin contenido visible en ningún intento:** Rosberg, Villeneuve, Edmondson, Benson
+- **Cuenta rota/inactiva para este mecanismo:** Piola (100% comercial desde 2021),
+  Craig Slater (feed casi vacío), Anthony Davidson (no tiene cuenta personal)
+- **Contenido real pero insuficientemente sustancial (no forzado):** Kravitz, Chandhok,
+  de la Rosa, Brundle, Naomi Schiff, Gary Anderson, Bernie Collins
+
+Total en `expert_picks` ahora: **19** (de 34 voces curadas — techo real alcanzado por
+ahora, no por falta de tiempo). Cobertura por categoría: Investigación 11,
+Construcción 3, Crítica 1, Datos 1, Contexto 3. Para sumar más picks reales, el próximo
+paso sería que Ismael aporte contenido directo de las voces "sin sustancia" (mismo
+mecanismo del primer pick de Rencken), no más intentos automatizados sobre las mismas
+34 cuentas.
+
+## Paso 3 "Newsletters" — corrección real de estado + Vol.06 publicado (4 sep 2026)
+
+**Corrección importante, el estado de este doc estaba desactualizado.** La sección
+"Newsletters" de arriba dice "research hecho, nada construido" — falso. En esta sesión
+se encontró: la ruta `/weekly` ya existe y funciona (captura de email, listado real),
+`digest_issues`/`digest_items` ya tienen 3 issues reales publicados (`vol-01-austria`,
+`vol-02-belgium`, `vol-05-zandvoort`) con contenido genuino y bien sourceado (Apple
+$140M/año, Cadillac $450M de fee de entrada, cost cap $215M, etc.) más 2 Recaps
+(`recap-01`, `recap-02`) — nada de esto estaba documentado en ningún lado. Otra sesión
+lo construyó sin dejar rastro escrito, mismo patrón que ya pasó una vez con el Delta
+Ribbon (`v2_relaunch` memory). **Lección repetida:** verificar contra la base de datos
+real antes de afirmar el estado de una feature, no solo contra este documento.
+
+**Pipeline real ya existe y es automatizado, no manual:**
+`scripts/generate_digest_draft.py` — usa Claude (Sonnet 5) con web search real (hasta 12
+búsquedas) para investigar la semana, escribe el issue en la voz de PaddockIntel, y lo
+guarda como `draft` (nunca auto-publica). Abre un GitHub issue de aviso si hay
+`GITHUB_TOKEN` (localmente solo imprime). `scripts/publish_digest.py <slug>` flipea a
+`published`, lo que dispara el cron de envío de email ya existente
+(`app/api/digest/send`). Corre con `.venv-data` (ya tenía las deps instaladas:
+anthropic, supabase, python-dotenv, requests — mismo `requirements-data.txt`).
+
+**Vol.06 generado, corregido y publicado hoy:**
+- Corrido `python scripts/generate_digest_draft.py` — tardó ~25 min (de red, no de CPU:
+  búsquedas reales una por una). Generó `vol-06-week-2026-09-04`, 4 historias: valuación
+  de Mercedes/Ferrari, Woody Johnson en Aston Martin, slot de título sin vender de
+  Cadillac, extensión de Norris a 2030.
+- **Verificación real antes de publicar** (no confiar ciegamente en el draft de la IA,
+  mismo principio del sourcing rule de EDITORIAL.md aplicado a contenido generado):
+  `WebFetch` de las 4 URLs citadas — 3 confirmadas casi textuales. La 4ta reveló un
+  **error real, no solo falta de precisión**: el draft decía que Mercedes vale $6.4B —
+  ese número es en realidad la valuación de **Ferrari** (Sportico), Mercedes está en
+  $6B (venta de Wolff de ~5% a George Kurtz, CEO de CrowdStrike, por $300M). El dato de
+  Ineos ($800M implícito en 2022) sí se confirmó independiente (33% por £208M en 2022).
+  Corregido directamente en Supabase (intro_synthesis + el item de PlanetF1) antes de
+  publicar — la cifra corregida además mejoró la narrativa real (Mercedes "cerrando la
+  brecha" con Ferrari tiene sentido con $6B vs $6.4B, no con dos equipos al mismo número).
+- Publicado con `python scripts/publish_digest.py vol-06-week-2026-09-04`. Verificado en
+  vivo: `/weekly/vol-06-week-2026-09-04/` renderiza bien, la corrección está en el HTML
+  servido. Queda pendiente el envío real de email — dispara solo con el próximo corrido
+  del cron de `app/api/digest/send`, no se forzó manualmente.
+
+**Gap real sin resolver, no bloqueante:** faltan `vol-03`/`vol-04` entre Bélgica
+(20 jul) y Zandvoort (31 ago) — no se investigó por qué (¿semanas sin suficientes
+historias verificables, como el propio script prefiere, o simplemente no se corrió?).
+No se tocó esta sesión, queda para decidir si se llena o se deja como está.
+
+## Paso 5 "Feed F1 news today" — MVP construido y en vivo (4 sep 2026)
+
+**Confirmado en cero, a diferencia del Paso 3:** sin rutas, componentes ni migraciones
+antes de esta sesión — acá el roadmap sí estaba al día.
+
+**Decisión de arquitectura, confirmada con Ismael:** el feed reusa `digest_items` en
+orden cronológico continuo (sin agrupar por issue semanal) en vez de crear una tabla
+nueva — es literalmente el mismo patrón de cita (fuente externa + resumen propio + link
+de salida) que el newsletter ya usa. **Excluye la serie `recap`** a propósito: mezclar
+retrospectiva con "hoy" violaría el mismo principio de integridad que ya rige los
+Recaps (nunca presentar contenido viejo como si fuera del momento).
+
+**Gap real cerrado en el camino:** `generate_digest_draft.py` ya calculaba
+`entity_tags` por item (empresas/personas/equipos) desde su schema JSON, pero ni el
+propio script (`save_draft()`) ni `scripts/ingest-digest.ts` los guardaban nunca — la
+columna no existía. Agregada (`supabase/migrations/20260904200000_digest_items_
+entity_tags.sql`, corrida a mano en el SQL Editor de Supabase vía navegador, mismo
+patrón que la migración de Who's Who de hoy), y los dos scripts corregidos para
+persistirlos de acá en adelante. Backfilleados los 24 items existentes del newsletter
+(no las 8 de Recaps) leyendo el contenido real ya publicado — sin inventar entidades,
+solo categorizando lo que ya estaba escrito.
+
+**`/feed` construida y verificada:** lista cronológica de los 24 items reales (fecha
+real de cada historia, no la del issue — van desde oct. 2025 hasta hoy), con conteo real
+de "más mencionados esta semana" (entity_tags de items publicados en los últimos 7
+días, filtro de aparición >1 para no listar menciones únicas). Localizada en los tres
+idiomas (`feed` namespace nuevo en en/es/pt.json) — verificado en vivo que
+`/es/feed` y `/pt/feed` renderizan la UI traducida con el contenido real. `tsc`/`eslint`
+limpios, responsive verificado. Mismo sistema visual Vintage Editorial que
+`/weekly`/`/whos-who-preview` (Archivo Black, JetBrains Mono, terracota, `rounded-sm`).
+
+**Sin decidir todavía, no bloqueante:** si el feed debería tener un límite de
+antigüedad (¿90 días? ¿todo el histórico, como está ahora?) — con solo 24 items no
+hace falta paginar todavía, pero crecerá cada vez que se corra el generador semanal.
+Tampoco se linkeó desde el nav — mismo criterio cauteloso que Who's Who hasta que
+Ismael decida.

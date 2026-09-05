@@ -1,5 +1,41 @@
 # Dependency Security — audit log
 
+## 2026-09-04 — 5 new findings since the 25 ago fix: RISK ACCEPTED, not fixed
+
+**Context:** surfaced during a full docs/roadmap audit, not a dedicated security pass.
+The 25 ago entry below ended at "0 vulnerabilities" — these 5 are new, introduced by
+dependencies added since then (Cloudflare/OpenNext tooling, most likely).
+
+| Package | Severity | Where it came from | Exposure |
+|---|---|---|---|
+| `adm-zip` <0.6.0 | high | `@opennextjs/cloudflare`→`rclone.js` (the `--rclone` deploy flag from `docs/CLOUDFLARE-MIGRATION.md`) | Deploy-time only (R2 population during `opennextjs-cloudflare deploy --rclone`) — never in the request path. ZIP input comes from the deploy tooling itself, not attacker-supplied |
+| `browserslist` ≤4.28.6 | high (×2 advisories) | Remotion (local video-render pipeline) + `eslint-config-next` (lint/build) | Build-time only — runs in `next build`/webpack, never ships into the client bundle, never executes per-request |
+| `qs` 2.2.5–6.15.3 | moderate (×2 advisories) | `@opennextjs/cloudflare`→`@opennextjs/aws`→`express`→`body-parser` | Local-dev-only — part of OpenNext's local `wrangler dev`/preview server, not the deployed Cloudflare Worker runtime |
+
+**Decision: risk accepted, evaluated and dismissed for now — not a "pending" item, a
+closed triage.** All 5 advisories (1 package each for adm-zip and qs-adjacent chains,
+2 advisories each for browserslist and qs) were traced and none has a real attack
+surface reachable by a third party: `adm-zip` only ever parses a ZIP the deploy tooling
+generates itself during a manual `--rclone` deploy; `browserslist` never leaves
+build-time tooling or reaches the client bundle; `qs` only runs inside the local
+`wrangler dev` server, never the deployed Worker.
+
+**Why the fix isn't applied:** `npm audit fix --force` resolves `adm-zip` by
+downgrading `@opennextjs/cloudflare` to `1.19.11` — which reintroduces the R2
+population hang fixed last week (`docs/CLOUDFLARE-MIGRATION.md`, 2026-08-27 entry).
+That fix specifically requires `1.20.0+` for the merged `--rclone` support (PR #1290).
+Trading a real, already-solved production blocker (R2 population hanging indefinitely)
+for 3 packages with no real exploit path is the wrong trade. The plain `npm audit fix`
+(no `--force`) also isn't a clean escape hatch here — it fails with `ERESOLVE`, since
+the non-force resolution path still wants `@opennextjs/cloudflare` bumped to a version
+requiring `next >=16.3.3`, one minor ahead of this repo's exact-pinned `16.3.2`.
+
+**Revisit when:** `@opennextjs/cloudflare` ships a version that keeps the R2 `--rclone`
+fix without depending on a vulnerable `adm-zip`, or if new evidence shows any of these
+three becoming reachable from the real production request path (not just present in
+the dependency tree). Until then, no action needed — this is not a to-do.
+
+
 Not an editorial/content advisor (see `docs/advisors/` for those). This is where
 `npm audit` findings get triaged and recorded, so nobody re-does this investigation
 from scratch or panics at a bare vulnerability count without context.

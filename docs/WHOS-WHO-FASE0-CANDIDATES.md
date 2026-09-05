@@ -126,3 +126,16 @@ para la Fase 1 (ingesta mínima de un source) confirmar el resto si hace falta.
 4. **Ambigüedades de cuenta, ya resueltas:** Antonio Lobato → `@alobatof1` (no
    `@Alobato_F1`, secundaria) y Craig Scarborough → `@ScarbsTech` (no `@Scarbsf1`,
    vieja/inactiva). Ninguna bloquea la carga en Supabase.
+5. **Hallazgo real de Fase 2 (4 sep 2026) — 3 de las 34 cuentas verificadas por
+   identidad no sirven para el mecanismo de picks, por motivos distintos entre sí:**
+   - **Giorgio Piola** (`@Giorgio_Piola`) — cuenta real, pero 100% comercial desde
+     nov. 2021 (ventas de Black Friday, relojes de edición limitada), sin contenido
+     técnico real que citar.
+   - **Craig Slater** (`@craigslatersky`) — cuenta real pero prácticamente vacía
+     (190 posts totales, feed sin contenido visible en ningún intento).
+   - **Anthony Davidson** — no tiene cuenta personal de X en absoluto; solo aparece
+     citado a través de `@SkySportsF1`. Distinto a los dos anteriores: acá no hay
+     handle que corregir, el mecanismo de "un post por persona" no le aplica.
+   Ninguna se sacó de la lista todavía — queda pendiente decidir si se reemplazan por
+   otras voces de Crítica/Investigación o si simplemente no tendrán picks. Detalle
+   completo en `docs/ROADMAP-SEMANA.md`, sección Who's Who del 4 sep 2026.
