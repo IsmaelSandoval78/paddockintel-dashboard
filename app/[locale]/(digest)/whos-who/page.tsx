@@ -2,10 +2,13 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 
-export const metadata: Metadata = {
-  title: 'Who\'s Who — Fase 3 preview',
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('whosWho');
+  return {
+    title: `${t('title')} — PaddockIntel`,
+    description: t('description'),
+  };
+}
 
 export const revalidate = 3600;
 
@@ -38,8 +41,12 @@ async function getPicks() {
   return data ?? [];
 }
 
-export default async function WhosWhoPreviewPage() {
-  const [picks, t] = await Promise.all([getPicks(), getTranslations('whosWho.categories')]);
+export default async function WhosWhoPage() {
+  const [picks, t, tCategories] = await Promise.all([
+    getPicks(),
+    getTranslations('whosWho'),
+    getTranslations('whosWho.categories'),
+  ]);
 
   const byCategory = new Map<Category, PickRow[]>();
   for (const pick of picks) {
@@ -53,7 +60,7 @@ export default async function WhosWhoPreviewPage() {
     <main className="bg-bg min-h-screen">
       <div className="h-12 border-b border-border flex items-center px-5">
         <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-2">
-          Who&apos;s Who — Fase 3 preview · not linked, noindex · {picks.length} picks
+          {t('kicker')} · {picks.length}
         </p>
       </div>
 
@@ -62,11 +69,10 @@ export default async function WhosWhoPreviewPage() {
           className="uppercase leading-none tracking-[-0.02em] text-text-1"
           style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.8rem, 4vw, 2.6rem)' }}
         >
-          Who&apos;s Who
+          {t('title')}
         </h1>
         <p className="font-prose text-[15px] text-text-2 leading-relaxed mt-3 max-w-md">
-          Curated reactions from real, credentialed F1 voices — chosen and verified by hand,
-          not an algorithm.
+          {t('description')}
         </p>
 
         {CATEGORY_ORDER.map((category) => {
@@ -77,13 +83,13 @@ export default async function WhosWhoPreviewPage() {
             <section key={category} className="mt-12">
               <div className="flex items-baseline justify-between border-b border-border pb-2">
                 <h2 className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-1">
-                  {t(`${category}.label`)}
+                  {tCategories(`${category}.label`)}
                 </h2>
                 <p className="font-mono text-[9px] uppercase tracking-[0.08em] text-text-3">
                   {categoryPicks.length}
                 </p>
               </div>
-              <p className="font-mono text-[10px] text-text-3 mt-2 mb-5">{t(`${category}.lens`)}</p>
+              <p className="font-mono text-[10px] text-text-3 mt-2 mb-5">{tCategories(`${category}.lens`)}</p>
 
               <div className="flex flex-col gap-6">
                 {categoryPicks.map((pick) => {
@@ -123,7 +129,7 @@ export default async function WhosWhoPreviewPage() {
                           className="font-mono text-[10px] uppercase tracking-[0.08em] ml-auto hover:opacity-70 transition-opacity duration-150"
                           style={{ color: 'var(--terracotta)' }}
                         >
-                          Read the original post →
+                          {t('readOriginal')}
                         </a>
                       </div>
                     </article>
