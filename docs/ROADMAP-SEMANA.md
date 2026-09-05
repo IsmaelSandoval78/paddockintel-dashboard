@@ -16,7 +16,7 @@ apilarse.
 
 | Paso | Estado real | Bloqueador real si lo hay |
 |---|---|---|
-| 1. Cloudflare | **Resuelto de verdad 4 sep: causa raíz era un `account_id` equivocado en `wrangler.jsonc`.** Deploy real verificado, 6/6 rutas con datos reales en 200 | Falta solo confirmar el cron de Cloudflare disparando solo (sin forzar) antes de evaluar el corte de DNS |
+| 1. Cloudflare | **Resuelto de verdad 4 sep: causa raíz era un `account_id` equivocado en `wrangler.jsonc`.** Deploy real verificado, 6/6 rutas con datos reales en 200. **Cron confirmado disparando solo el 5 sep** (ver detalle abajo) | Ninguno — listo para evaluar el corte de DNS en una sesión futura |
 | 2. Blog/estructura | Maduro — tags relacionales, race_id, glosario con capas, `/about` conectado | Ninguno bloqueante |
 | 3. Newsletter | Pipeline automatizado real (`generate_digest_draft.py`), Vol.06 publicado hoy | Gap sin llenar: faltan vol-03/vol-04 |
 | 4. Who's Who | 19/34 voces con pick real, Fase 3 (UI mínima) construida y localizada | Sin linkear del nav; 3 cuentas curadas sin servir (Piola/Slater/Davidson) |
@@ -122,10 +122,35 @@ rutas verificadas (`/es/circuits`, `/es/drivers`, `/es/about`, `/es/weekly`,
 `trailingSlash: true` (308 en el primer request, esperado). `/about` confirmado
 sirviendo la bio real desde la tabla `authors` ("F1 economic intelligence by Ismael
 Sandoval...") — no contenido de placeholder, dato real de Supabase renderizando en el
-Worker real. **Queda pendiente:** (2) dejar que el cron de Cloudflare dispare solo, en
-su horario, al menos una vez — sin forzarlo manual — y confirmar que funcionó, (3)
-recién ahí evaluar el corte, con el plan de rollback ya documentado (TTL Auto ≈300s en
-el CNAME de `hub` sin proxy, ya suficientemente bajo).
+Worker real.
+
+**✅ Confirmado 5 sep 2026: el cron de Cloudflare disparó solo, sin forzarlo, en su
+horario real** (punto 2 del pendiente de arriba). Verificado en el dashboard real de
+Cloudflare (`Settings → Trigger events` del Worker `paddockintel-dashboard`, cuenta
+`551a6aba58a779d10acae0c5f0cde1e8`):
+- El campo **"Next"** del cron trigger mostraba "Sun, 06 Sep 2026 09:00:00" — Cloudflare
+  ya daba por ejecutada la corrida de hoy (5 sep, 09:00 UTC), lo cual solo ocurre si
+  disparó de verdad.
+- **Metrics → Invocations** (últimas 24h): una invocación aislada, exactamente en punto
+  (05:00 hora local del dashboard = 09:00 UTC), sin mezclarse con el tráfico HTTP manual
+  de la verificación de rutas de ayer (ese tráfico aparece disperso, no en punto exacto
+  — patrón consistente con un cron real vs. curls manuales).
+- **Metrics → Subrequests** de esa ventana: 100% `2xx` contra `supabase.co`, cero 4xx/5xx
+  en toda la ventana de 24h.
+- **Limitación de esta verificación:** `Workers Observability/Logs` está deshabilitado en
+  este Worker (plan free), así que no hay log textual línea por línea (el
+  `console.error('digest send cron failed...')` de `custom-worker.ts` no quedó
+  registrado en ningún lado retroactivamente consultable) — la confirmación es por
+  métricas agregadas (invocación única sin errores + subrequests todos 2xx), no por el
+  texto exacto de la respuesta. Suficiente para confirmar que disparó y no falló, no
+  para saber si esa corrida mandó un digest real o devolvió "no issues to send" (ambos
+  devuelven 200 en la ruta).
+
+**Con esto, los 3 pasos del "próximo paso real" de la sección de arriba quedan
+completos.** Antes de evaluar el corte de DNS en una sesión futura, sigue siendo buena
+idea habilitar `Workers Observability` (gratis en el plan free, con retención acotada)
+para tener logs reales de la próxima corrida en vez de solo métricas agregadas — no
+bloqueante, pero da mejor visibilidad el día que se decida cortar.
 
 ### 2. Estructura de blog
 **Estado: en curso — base de datos real ya existía (315 artículos), extendida esta sesión.**
