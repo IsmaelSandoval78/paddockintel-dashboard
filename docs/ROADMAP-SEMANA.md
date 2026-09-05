@@ -16,7 +16,7 @@ apilarse.
 
 | Paso | Estado real | Bloqueador real si lo hay |
 |---|---|---|
-| 1. Cloudflare | **Resuelto de verdad 4 sep: causa raíz era un `account_id` equivocado en `wrangler.jsonc`.** Corregido, deploy real verificado (HTTP 200, 4 secrets, cron) | Ninguno técnico — falta decidir cuándo cortar DNS, deliberadamente no hoy |
+| 1. Cloudflare | **Resuelto de verdad 4 sep: causa raíz era un `account_id` equivocado en `wrangler.jsonc`.** Deploy real verificado, 6/6 rutas con datos reales en 200 | Falta solo confirmar el cron de Cloudflare disparando solo (sin forzar) antes de evaluar el corte de DNS |
 | 2. Blog/estructura | Maduro — tags relacionales, race_id, glosario con capas, `/about` conectado | Ninguno bloqueante |
 | 3. Newsletter | Pipeline automatizado real (`generate_digest_draft.py`), Vol.06 publicado hoy | Gap sin llenar: faltan vol-03/vol-04 |
 | 4. Who's Who | 19/34 voces con pick real, Fase 3 (UI mínima) construida y localizada | Sin linkear del nav; 3 cuentas curadas sin servir (Piola/Slater/Davidson) |
@@ -115,11 +115,17 @@ bloquea nada hoy, pero conviene cerrarlo antes de que confunda a futuro.
 
 **Estado real ahora: Worker funcional en la cuenta correcta, con los 4 secrets
 sincronizados. El DNS sigue apuntando 100% a Vercel — el corte no se hizo hoy, a
-propósito.** Antes de evaluarlo en una sesión futura: (1) probar más rutas reales
-contra el Worker de Cloudflare directamente, (2) dejar que el cron de Cloudflare
-dispare solo, en su horario, al menos una vez — sin forzarlo manual — y confirmar que
-funcionó, (3) recién ahí evaluar el corte, con el plan de rollback ya documentado (TTL
-Auto ≈300s en el CNAME de `hub` sin proxy, ya suficientemente bajo).
+propósito.** Antes de evaluarlo en una sesión futura: ~~(1) probar más rutas reales
+contra el Worker de Cloudflare directamente~~ — **✅ hecho el mismo día 4 sep**: 6/6
+rutas verificadas (`/es/circuits`, `/es/drivers`, `/es/about`, `/es/weekly`,
+`/es/magazine-home`, `/api/health`), las 6 devuelven 200 siguiendo el redirect de
+`trailingSlash: true` (308 en el primer request, esperado). `/about` confirmado
+sirviendo la bio real desde la tabla `authors` ("F1 economic intelligence by Ismael
+Sandoval...") — no contenido de placeholder, dato real de Supabase renderizando en el
+Worker real. **Queda pendiente:** (2) dejar que el cron de Cloudflare dispare solo, en
+su horario, al menos una vez — sin forzarlo manual — y confirmar que funcionó, (3)
+recién ahí evaluar el corte, con el plan de rollback ya documentado (TTL Auto ≈300s en
+el CNAME de `hub` sin proxy, ya suficientemente bajo).
 
 ### 2. Estructura de blog
 **Estado: en curso — base de datos real ya existía (315 artículos), extendida esta sesión.**
