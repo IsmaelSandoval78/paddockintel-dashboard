@@ -75,6 +75,7 @@ async function main() {
     source_url: item.source_url,
     headline: item.headline,
     our_summary: item.our_summary,
+    entity_tags: item.entity_tags ?? [],
     published_at: item.published_at ?? issue.published_at,
   }));
 

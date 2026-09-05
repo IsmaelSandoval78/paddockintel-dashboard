@@ -813,5 +813,22 @@
     "heading": "Disclaimer",
     "affiliation": "PaddockIntel is an independent publication. It is not affiliated with, associated with, authorized by, or endorsed by Formula 1, Formula One Licensing B.V., the FIA, or any Formula 1 team or driver. F1, FORMULA 1, GRAND PRIX and related marks are trademarks of their respective owners and are used here solely for editorial identification.",
     "accuracy": "Content is provided for informational purposes only. Financial figures — salaries, prize money, team valuations, sponsorship amounts — are estimates compiled from public reporting unless otherwise sourced; actual amounts may differ. Nothing on this site constitutes financial, investment, or professional advice."
+  },
+  "whosWho": {
+    "categories": {
+      "investigation": { "label": "Investigation", "lens": "Paddock reporters — breaking news, real sources" },
+      "construction": { "label": "Construction", "lens": "Technical analysts — how and why something works" },
+      "critique": { "label": "Critique", "lens": "Ex-drivers and commentators — judging decisions and performance" },
+      "context": { "label": "Context", "lens": "Independent veterans — the sport's history and politics" },
+      "data": { "label": "Data", "lens": "Verifiable statistics, real identity behind the number" }
+    }
+  },
+  "feed": {
+    "kicker": "PaddockIntel Feed",
+    "title": "F1 News Today",
+    "description": "Every verified story from PaddockIntel's newsletter research, in one running feed — cited sources, our own analysis, no wire-service copy.",
+    "mostMentioned": "Most mentioned this week",
+    "noItems": "No stories yet.",
+    "readSource": "Read source →"
   }
 }

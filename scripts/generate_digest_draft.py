@@ -200,6 +200,7 @@ def save_draft(sb: Client, slug: str, week_start: date, draft: dict) -> None:
             "source_url": item["source_url"],
             "headline": item["headline"],
             "our_summary": item["our_summary"],
+            "entity_tags": item.get("entity_tags") or [],
             "published_at": item.get("published_at") or week_start.isoformat(),
         }
         for item in draft["items"]
