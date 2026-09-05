@@ -90,6 +90,20 @@ export default function MobileNav({ isMagazine }: { isMagazine: boolean }) {
               >
                 {t('glossary')}
               </Link>
+              <Link
+                href="/feed"
+                onClick={() => setOpen(false)}
+                className="flex items-center h-12 px-5 border-b border-border font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 bg-bg"
+              >
+                {t('feed')}
+              </Link>
+              <Link
+                href="/whos-who"
+                onClick={() => setOpen(false)}
+                className="flex items-center h-12 px-5 border-b border-border font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 bg-bg"
+              >
+                {t('whosWho')}
+              </Link>
               <a
                 href="https://hub.paddockintel.com"
                 target="_blank"

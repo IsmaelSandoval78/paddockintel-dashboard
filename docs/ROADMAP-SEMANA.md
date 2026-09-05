@@ -19,8 +19,8 @@ apilarse.
 | 1. Cloudflare | **Resuelto de verdad 4 sep: causa raíz era un `account_id` equivocado en `wrangler.jsonc`.** Deploy real verificado, 6/6 rutas con datos reales en 200. **Cron confirmado disparando solo el 5 sep** (ver detalle abajo) | Ninguno — listo para evaluar el corte de DNS en una sesión futura |
 | 2. Blog/estructura | Maduro — tags relacionales, race_id, glosario con capas, `/about` conectado | Ninguno bloqueante |
 | 3. Newsletter | Pipeline automatizado real (`generate_digest_draft.py`), Vol.06 publicado hoy | Gap sin llenar: faltan vol-03/vol-04 |
-| 4. Who's Who | 19/34 voces con pick real, Fase 3 (UI mínima) construida y localizada | Sin linkear del nav; 3 cuentas curadas sin servir (Piola/Slater/Davidson) |
-| 5. Feed | MVP construido hoy, reusa `digest_items`, localizado | Sin linkear del nav |
+| 4. Who's Who | 19/34 voces con pick real. **Linkeado del nav 5 sep** — ruta promovida de `/whos-who-preview` (noindex) a `/whos-who` real, indexable, con metadata/i18n propios | 3 cuentas curadas sin servir (Piola/Slater/Davidson) |
+| 5. Feed | MVP construido, reusa `digest_items`, localizado. **Linkeado del nav 5 sep** | Ninguno bloqueante |
 | 6. Cuentas de usuario | Decidido 24 ago, cero código, confirmado vivo hoy | Proveedor de auth sin decidir |
 | 7. Vertical de datos puros | Decidido 24 ago, cero código, confirmado vivo hoy | Cero métricas definidas todavía |
 
@@ -298,7 +298,9 @@ Fase 2: clustering/clasificación con LLM → Fase 3: UI mínima mostrable). Fas
 ### 5. Feed estilo "F1 news today"
 **Estado: MVP construido y en vivo (4 sep 2026) — ver sección propia más abajo para el
 detalle completo.** `/feed` reusa `digest_items` en orden cronológico continuo, con
-contador real de "más mencionados esta semana". Sin linkear del nav todavía.
+contador real de "más mencionados esta semana". **Linkeado del nav el 5 sep 2026**
+(sección magazine de `NavLinks`/`MobileNav`, ambos desktop y mobile), sumado a
+`app/sitemap.ts` para indexación (EN/ES/PT).
 
 ### 6. Cuentas de usuario (Google + email, personalización) — de docs/DECISIONS-2026-08-24-radical-pivot.md
 **Estado: decidido el 24 ago, cero código — confirmado vivo (no abandonado) el 4 sep 2026.**
