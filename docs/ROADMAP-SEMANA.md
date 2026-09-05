@@ -16,7 +16,7 @@ apilarse.
 
 | Paso | Estado real | Bloqueador real si lo hay |
 |---|---|---|
-| 1. Cloudflare | Técnico resuelto, **dominio real sigue en Vercel** (confirmado con Ismael) | Falta el corte de DNS/dominio, no es solo código |
+| 1. Cloudflare | **Corregido 4 sep: el deploy "exitoso" del 27 ago no existe en la cuenta real** — cero Workers en el dashboard | Falta desplegar de cero contra la cuenta real, no solo cortar DNS |
 | 2. Blog/estructura | Maduro — tags relacionales, race_id, glosario con capas, `/about` conectado | Ninguno bloqueante |
 | 3. Newsletter | Pipeline automatizado real (`generate_digest_draft.py`), Vol.06 publicado hoy | Gap sin llenar: faltan vol-03/vol-04 |
 | 4. Who's Who | 19/34 voces con pick real, Fase 3 (UI mínima) construida y localizada | Sin linkear del nav; 3 cuentas curadas sin servir (Piola/Slater/Davidson) |
@@ -49,31 +49,42 @@ apilarse.
 ## Los 5 pasos, en orden
 
 ### 1. Migración a Cloudflare
-**Estado: bloqueador técnico principal RESUELTO, pero el corte de dominio real NO
-pasó todavía — confirmado con Ismael el 4 sep 2026.** `hub.paddockintel.com` sigue
-sirviendo desde Vercel en producción. Todo lo de abajo (R2, cron, middleware) está
-verificado contra un deploy de prueba en `*.workers.dev`, no contra el dominio real.
-No marcar este paso como cerrado hasta que el DNS/dominio corte de verdad —
-`docs/BILLING-UPTIME-CHECKLIST.md` (que sigue apuntando solo a Vercel) necesita
-actualizarse recién en ese momento, no antes.
-- El bug de población de R2 (issues #1110/#12413/#1284) está confirmado resuelto con
-  evidencia real: PR #1290 (`--rclone` opt-in) YA estaba mergeado desde la versión 1.20.0
-  (ya instalada). Se probó con un deploy real: 9 objetos subidos en 0.5 segundos, cierre
-  limpio, sin colgarse — vs el hang indefinido en 0 objetos de antes.
-- Se descartó primero la hipótesis de `cloudflared` faltante (instalado y probado sin
-  efecto — ese binario no interviene en el paso de población de R2, que sube directo por
-  API, no por túneles de Cloudflare).
-- Setup que hizo falta: cuenta R2 API Token nuevo (Object Read & Write, scoped al bucket
-  `paddockintel-isr-cache`), `rclone.js` instalado como dependencia opcional, 3 variables
-  en `.dev.vars` (`R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `CF_ACCOUNT_ID`) — confirmado
-  en `.gitignore`.
-- Comando de deploy actualizado: `opennextjs-cloudflare deploy --rclone` (no `wrangler
-  deploy` directo — el flag es del CLI de OpenNext).
-- `r2IncrementalCache` reactivado en `open-next.config.ts` (ya no desactivado).
-- **Pendiente si se automatiza el deploy en el futuro** (ej. GitHub Actions): las 3
-  variables de `.dev.vars` van a necesitar vivir como secrets del pipeline de CI, no solo
-  en el Codespace local.
-- Detalle técnico completo: `docs/CLOUDFLARE-MIGRATION.md` (actualizar con esta resolución).
+**Estado, corregido 4 sep 2026 — hallazgo real durante el pre-flight check antes de un
+corte de DNS planeado: el "deploy exitoso" documentado abajo (27 ago) NO EXISTE en la
+cuenta real de Cloudflare (`551a6aba58a779d10acae0c5f0cde1e8`,
+`sandoval.ismael@gmail.com`).** Entrando al dashboard real: "Workers & Pages" muestra
+**cero proyectos** ("No projects found — you have not created any projects yet."), 0
+requests / 0 worker invocations en el período actual. El deploy a
+`paddockintel-dashboard.paddockintel.workers.dev` con 9 objetos en R2 y exit code 0 que
+el texto de abajo describe como verificado **nunca llegó a esta cuenta** — probablemente
+corrió en un Codespace/entorno cuya sesión de `wrangler login` nunca se conectó a la
+cuenta real, o contra una cuenta distinta nunca reconciliada. Cualquiera sea la causa,
+el resultado es el mismo: nada de la infraestructura real de Cloudflare existe hoy.
+
+**Lo que sí es real, verificado en código:** `open-next.config.ts` tiene
+`r2IncrementalCache` activo, `wrangler.jsonc` tiene los bindings de R2/DO Queue/cron
+configurados, `custom-worker.ts` existe con el handler `scheduled`. **Lo que NO es
+real, pese a estar documentado como hecho:** ningún Worker desplegado en la cuenta,
+ninguno de los 4 secrets (`SUPABASE_SERVICE_ROLE_KEY`, `CRON_SECRET`,
+`RESEND_API_KEY`, `DRAFT_SECRET`) puesto de verdad vía `wrangler secret put` contra
+esta cuenta (no hay Worker al cual atarlos), ninguna población de R2 que haya
+persistido.
+
+**Producción nunca estuvo en riesgo:** `hub.paddockintel.com` sigue con CNAME real a
+`d878f4083bbdeec6.vercel-dns-017.com`, DNS only (sin proxy), TTL Auto (~300s, ya
+suficientemente bajo para un rollback rápido el día que se corte de verdad). Vercel
+sirvió el 100% del tráfico real todo este tiempo.
+
+**Próximo paso real antes de considerar cualquier corte de DNS:** correr
+`opennextjs-cloudflare deploy --rclone` de verdad contra la cuenta real, confirmar que
+el Worker aparece en el dashboard de Workers & Pages (no solo un exit code limpio en
+terminal), volver a poner los 4 secrets contra ese Worker real, y recorrer todo el
+checklist de `docs/CLOUDFLARE-MIGRATION.md` desde el paso de deploy en adelante — no
+asumir que nada fechado 25/27 ago sigue vigente sin re-verificarlo contra el dashboard
+primero.
+
+Detalle completo del hallazgo y del historial previo (con la corrección aplicada):
+`docs/CLOUDFLARE-MIGRATION.md`.
 
 ### 2. Estructura de blog
 **Estado: en curso — base de datos real ya existía (315 artículos), extendida esta sesión.**

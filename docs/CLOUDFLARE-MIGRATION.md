@@ -6,6 +6,57 @@ nobody re-investigates something already settled.
 
 ---
 
+## 🚨 2026-09-04 — the 27 ago "successful deploy" does not exist in the real account
+
+**Discovered during a pre-flight check before a planned DNS cutover, before any DNS was
+touched.** Logged into the real Cloudflare account (`551a6aba58a779d10acae0c5f0cde1e8`,
+`sandoval.ismael@gmail.com`) via dashboard and checked Workers & Pages directly:
+**"No projects found — you have not created any projects yet."** Zero Workers,
+anywhere, in this account. `dash.cloudflare.com` home also showed 0 requests / 0 worker
+invocations for the last 24h and for the current billing period (Sep 1–5).
+
+This directly contradicts the 2026-08-27 entry below, which documents a verified real
+deploy — `https://paddockintel-dashboard.paddockintel.workers.dev`, 9 R2 objects
+populated in 0.5s, exit code 0. That deploy **is not present in the real account
+today**, full stop. There is no "it must have expired" explanation — Workers don't
+expire on their own.
+
+**Probable cause, not confirmed:** the 27 ago deploy most likely ran inside a sandboxed
+session/Codespace whose `wrangler login` state never persisted to (or was never
+actually pointed at) this real Cloudflare account — the same class of gap already
+flagged elsewhere in this doc ("`wrangler login` is done on the user's side," still
+listed as pending under Cron Triggers below). It's also possible it ran against a
+different Cloudflare account that was never reconciled with this one. Either way, the
+practical conclusion is identical: **nothing from that session's work reached this
+account's real infrastructure.**
+
+**What's actually real vs. what only exists in this repo:**
+- ✅ Real, verified in code: `open-next.config.ts` has `r2IncrementalCache` active,
+  `wrangler.jsonc` has the R2/DO Queue/cron bindings configured, `custom-worker.ts`
+  exists with the `scheduled` handler, `package.json` has `rclone.js` as a dependency.
+- ❌ Not real, despite being documented as done below: any Worker deployed to this
+  Cloudflare account, any of the 4 secrets (`SUPABASE_SERVICE_ROLE_KEY`,
+  `CRON_SECRET`, `RESEND_API_KEY`, `DRAFT_SECRET`) actually set via `wrangler secret
+  put` against this account (there's no Worker to attach them to), any R2 bucket
+  population that persisted, any evidence this account's `wrangler.jsonc` config was
+  ever actually deployed.
+
+**Production was never at risk.** Checked `hub.paddockintel.com`'s real DNS record in
+the Cloudflare dashboard: CNAME to `d878f4083bbdeec6.vercel-dns-017.com`, proxy status
+**DNS only** (grey cloud, unproxied), TTL **Auto** (≈300s for unproxied records — already
+low enough for a fast rollback later, no need to lower it further in advance). Vercel
+has been serving 100% of real traffic this whole time, untouched by any of this.
+
+**Real next step before any DNS cutover is even on the table:** run
+`opennextjs-cloudflare deploy --rclone` for real against this account, confirm the
+Worker actually appears under Workers & Pages in the dashboard (not just a clean exit
+code in a terminal), re-set all 4 secrets against that real Worker, and re-walk the
+entire checklist below from the deploy step forward. Do not assume anything dated
+2026-08-25/27 below is still true without re-verifying it against the dashboard first —
+that's exactly what this entry exists to prevent happening again.
+
+---
+
 ## ⚠️ R2 population hang — RESOLVED 2026-08-27, see below
 
 **Status as of 2026-08-25 (kept for the record — see the resolution section
