@@ -16,7 +16,7 @@ apilarse.
 
 | Paso | Estado real | Bloqueador real si lo hay |
 |---|---|---|
-| 1. Cloudflare | **Corregido 4 sep: el deploy "exitoso" del 27 ago no existe en la cuenta real** — cero Workers en el dashboard | Falta desplegar de cero contra la cuenta real, no solo cortar DNS |
+| 1. Cloudflare | **Resuelto de verdad 4 sep: causa raíz era un `account_id` equivocado en `wrangler.jsonc`.** Corregido, deploy real verificado (HTTP 200, 4 secrets, cron) | Ninguno técnico — falta decidir cuándo cortar DNS, deliberadamente no hoy |
 | 2. Blog/estructura | Maduro — tags relacionales, race_id, glosario con capas, `/about` conectado | Ninguno bloqueante |
 | 3. Newsletter | Pipeline automatizado real (`generate_digest_draft.py`), Vol.06 publicado hoy | Gap sin llenar: faltan vol-03/vol-04 |
 | 4. Who's Who | 19/34 voces con pick real, Fase 3 (UI mínima) construida y localizada | Sin linkear del nav; 3 cuentas curadas sin servir (Piola/Slater/Davidson) |
@@ -85,6 +85,41 @@ primero.
 
 Detalle completo del hallazgo y del historial previo (con la corrección aplicada):
 `docs/CLOUDFLARE-MIGRATION.md`.
+
+**Cierre real, mismo día 4 sep 2026 — causa raíz encontrada y arreglada, deploy
+verificado de punta a punta:**
+
+`wrangler.jsonc` tenía `account_id` hardcodeado a `dbf60dad00f30c6d52b094b3ec552f73` —
+una cuenta que no es la de Ismael. El deploy "exitoso" del 27 de agosto corrió contra
+esa cuenta ajena todo este tiempo; nunca desapareció de la cuenta real porque nunca
+estuvo ahí. Corregido a `551a6aba58a779d10acae0c5f0cde1e8` (`sandoval.ismael@gmail.com`).
+
+**Verificado con herramientas propias en esta sesión:** `wrangler login` real contra la
+cuenta correcta, `opennextjs-cloudflare deploy --rclone` con exit code 0, R2 poblado sin
+hang (15 entradas), cron desplegado, el Worker `paddockintel-dashboard` confirmado en el
+dashboard real (no solo en la terminal), los 4 secrets presentes por nombre
+(`SUPABASE_SERVICE_ROLE_KEY`/`CRON_SECRET`/`RESEND_API_KEY`/`DRAFT_SECRET`), y HTTP 200
+real en `/`, `/es/`, `/pt/` y `/es/weekly/` (con contenido real, no página de error).
+
+**Reportado por Ismael, hecho en sus propias terminales/dashboards, no re-verificado de
+forma independiente en esta sesión:** `CRON_SECRET`/`DRAFT_SECRET` regenerados
+(`openssl rand -hex 32`, este Mac/Codespace no tenía los originales), `RESEND_API_KEY`
+regenerada en el dashboard de Resend con la vieja revocada, todo sincronizado entre
+Cloudflare y Vercel con redeploy de Vercel confirmado, y un `curl POST` real a
+`/api/digest/send` en Vercel con el `CRON_SECRET` nuevo devolviendo 200 (confirma que la
+rotación de secrets no rompió el cron de Vercel que sigue activo).
+
+**Gap real encontrado al cruzar datos, confirmado por Ismael como un olvido simple:**
+`CRON_SECRET` nunca se agregó a `.env.local` local (solo está `DRAFT_SECRET`) — no
+bloquea nada hoy, pero conviene cerrarlo antes de que confunda a futuro.
+
+**Estado real ahora: Worker funcional en la cuenta correcta, con los 4 secrets
+sincronizados. El DNS sigue apuntando 100% a Vercel — el corte no se hizo hoy, a
+propósito.** Antes de evaluarlo en una sesión futura: (1) probar más rutas reales
+contra el Worker de Cloudflare directamente, (2) dejar que el cron de Cloudflare
+dispare solo, en su horario, al menos una vez — sin forzarlo manual — y confirmar que
+funcionó, (3) recién ahí evaluar el corte, con el plan de rollback ya documentado (TTL
+Auto ≈300s en el CNAME de `hub` sin proxy, ya suficientemente bajo).
 
 ### 2. Estructura de blog
 **Estado: en curso — base de datos real ya existía (315 artículos), extendida esta sesión.**

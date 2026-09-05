@@ -57,6 +57,63 @@ that's exactly what this entry exists to prevent happening again.
 
 ---
 
+## ✅ 2026-09-04, same day — root cause found, fixed, real deploy verified
+
+**Root cause of the entry above:** `wrangler.jsonc` had a hardcoded
+`account_id: "dbf60dad00f30c6d52b094b3ec552f73"` — not Ismael's real account
+(`551a6aba58a779d10acae0c5f0cde1e8`, `sandoval.ismael@gmail.com`). The 27 ago "verified"
+deploy ran against that other account the whole time. It never disappeared or expired —
+it was never in the real account to begin with, which is exactly why checking the real
+dashboard that day found nothing. Fixed: `wrangler.jsonc`'s `account_id` corrected to
+the real one, confirmed via `wrangler whoami` against the same value before applying.
+
+**Independently verified in this session, with my own tool calls (not just terminal
+output — the same discipline the entry above exists to enforce):**
+- `npx wrangler login` — real OAuth session confirmed via `whoami` against
+  `551a6aba58a779d10acae0c5f0cde1e8` / `sandoval.ismael@gmail.com`.
+- `bash scripts/cloudflare-build.sh` — clean build, secret-leak check passed
+  (`SUPABASE_SERVICE_ROLE_KEY` confirmed absent from `next-env.mjs`).
+- `npx opennextjs-cloudflare deploy --rclone` — exit code 0. R2 populated cleanly (15
+  entries, no hang). 75 assets uploaded. Cron trigger deployed (`0 9 * * *`).
+- Confirmed in the **real dashboard**, not just the CLI: `paddockintel-dashboard` now
+  appears under Workers & Pages, "38s ago" at the time of checking.
+- `npx wrangler secret list` on the real Worker → all 4 present by name:
+  `SUPABASE_SERVICE_ROLE_KEY`, `CRON_SECRET`, `RESEND_API_KEY`, `DRAFT_SECRET`.
+  (Names only — `wrangler secret list` never exposes values, by design.)
+- `curl` to `https://paddockintel-dashboard.sandoval-ismael.workers.dev/` → HTTP 200 on
+  `/`, `/es/`, and `/pt/`. Real content confirmed rendering (e.g. `/es/weekly/` returns
+  a real `<title>Weekly Digest — PaddockIntel</title>`, not an error page).
+
+**Reported by Ismael, done in his own terminal/dashboards outside this session's tool
+calls — not independently re-verified here, recorded as his report:**
+- `CRON_SECRET` and `DRAFT_SECRET` regenerated (`openssl rand -hex 32`) because this
+  Codespace/Mac never had the originals saved; set on both Cloudflare and Vercel.
+- `RESEND_API_KEY` regenerated in the Resend dashboard, old key revoked; synced to
+  Cloudflare and Vercel, with a Vercel redeploy confirmed.
+- A `curl POST` to Vercel's `/api/digest/send` with the new `CRON_SECRET` returned 200 —
+  reported as confirmation that the secret rotation didn't break the still-live Vercel
+  cron. (Not repeated in this session on purpose — that endpoint has real side effects
+  if an unsent digest exists, and re-triggering it wasn't necessary given Ismael already
+  ran it.)
+
+**Real gap found while cross-checking, confirmed by Ismael as a simple miss (not a
+disagreement):** `CRON_SECRET` was never added to local `.env.local` — only
+`DRAFT_SECRET` is there. Doesn't block anything (the local dev server doesn't call the
+cron-authenticated path), but worth closing before it causes a "works everywhere except
+locally" confusion later.
+
+**Where this leaves the migration:** the Cloudflare Worker is now real, deployed to the
+correct account, and serving real content with all 4 secrets attached. **DNS was not
+touched today, on purpose.** `hub.paddockintel.com` still points 100% at Vercel. Before
+evaluating a real cutover, a future session should: (1) exercise more real-data routes
+against the Cloudflare Worker directly (not just `/`, `/es/`, `/pt/`, `/weekly/`), (2)
+let the Cloudflare cron fire on its own schedule at least once and confirm it actually
+sent/attempted correctly, rather than only ever triggering it manually, (3) only then
+revisit the DNS cutover, using the rollback plan already on record (Auto TTL on the
+unproxied `hub` CNAME is already ≈300s — low enough, no pre-emptive TTL drop needed).
+
+---
+
 ## ⚠️ R2 population hang — RESOLVED 2026-08-27, see below
 
 **Status as of 2026-08-25 (kept for the record — see the resolution section
