@@ -33,7 +33,7 @@ export default function MiBoxIndicator() {
         type="button"
         onClick={() => setOpen((v) => !v)}
         data-cursor
-        className="font-mono text-[11px] tabular-nums border border-border px-2 py-0.5 text-text-1 hover:border-red hover:text-red transition-colors duration-150"
+        className="font-mono text-[11px] tabular-nums border border-border px-2 py-0.5 text-text-1 hover:border-terracotta hover:text-terracotta transition-colors duration-150"
         aria-expanded={open}
       >
         #{state.number}
@@ -63,7 +63,7 @@ export default function MiBoxIndicator() {
                       <button
                         type="button"
                         onClick={() => toggle('driver', ref)}
-                        className="font-mono text-[9px] text-text-3 hover:text-red uppercase tracking-[0.08em] shrink-0"
+                        className="font-mono text-[9px] text-text-3 hover:text-terracotta uppercase tracking-[0.08em] shrink-0"
                       >
                         {t('unfollow')}
                       </button>
@@ -82,7 +82,7 @@ export default function MiBoxIndicator() {
                       <button
                         type="button"
                         onClick={() => toggle('constructor', ref)}
-                        className="font-mono text-[9px] text-text-3 hover:text-red uppercase tracking-[0.08em] shrink-0"
+                        className="font-mono text-[9px] text-text-3 hover:text-terracotta uppercase tracking-[0.08em] shrink-0"
                       >
                         {t('unfollow')}
                       </button>

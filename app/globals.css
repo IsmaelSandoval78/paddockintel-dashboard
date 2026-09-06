@@ -7,30 +7,48 @@
   --breakpoint-lg:  1024px;
   --breakpoint-xl:  1280px;
   --breakpoint-2xl: 1536px;
+
+  /* Shape — Vintage Editorial (DESIGN.md v3.0.0). Defined in @theme (not :root) so Tailwind's
+     rounded-sm/rounded-md utilities pick these up directly, in addition to being usable as
+     var(--radius-sm)/var(--radius-md) anywhere else. */
+  --radius-sm: 2px;
+  --radius-md: 4px;
 }
 
 :root {
-  /* Backgrounds — Swiss Industrial Print paper substrate (DESIGN.md v0.3.0) */
-  --bg:              #F4F4F0;
-  --surface:         #F4F4F0;
-  --surface-raised:  #ECEBE6;
-  --surface-overlay: #ECEBE6;
+  /* Backgrounds — Vintage Editorial kraft paper substrate (DESIGN.md v3.0.0) */
+  --bg:              #EDE3D0;
+  --surface:         #EDE3D0;
+  --surface-raised:  #E4D9C2;
+  --surface-overlay: #E4D9C2;
 
   /* Borders — ink weight */
-  --border:          #0A0A0A;
-  --border-subtle:   #B5B4AE;
+  --border:          #2B2620;
+  --border-subtle:   #C9BC9F;
 
   /* Text — ink hierarchy */
-  --text-1:          #0A0A0A;
-  --text-2:          #6B6B6B;
-  --text-3:          #706E6D;
+  --text-1:          #2B2620;
+  --text-2:          #6B5F4E;
+  --text-3:          #A69A82;
 
-  /* Accent — racing red (DESIGN.md v0.3.0) */
-  --red:             #E61919;
-  --red-dim:         #FBE9E8;
+  /* Accent — terracotta (DESIGN.md v3.0.0, replaces racing red) */
+  --terracotta:      #C1502E;
+  --terracotta-dim:  #F2DDD3;
+  --navy:            #2B3A4A;
+  --mustard:         #D9A441;
   --gold:            #C9A84C;
   --gold-dim:        #F5E8CC;
   --text-on-accent:  #FAFAF7;
+
+  /* On-accent text/border — for content sitting inside a dark/navy panel (e.g. a stat band
+     on --navy), where the light-substrate --text-1/--text-2/--border-subtle tokens don't
+     have enough contrast. Both derive from --text-on-accent (near-white) blended toward
+     --navy, NOT from --text-2 — blending two already-dark tones together stays dark no
+     matter the ratio (a --text-2-over-navy attempt measured 1.44:1 contrast, effectively
+     illegible). Starting from a light color and reducing it is the only way to land in a
+     legible range. 2026-08-24. */
+  --border-on-accent:  #7E878F;  /* text-on-accent @ 40% over navy — contrast 3.18:1 */
+  --text-2-on-accent:  #A7ADB2;  /* text-on-accent @ 60% over navy — contrast 5.13:1, passes WCAG AA */
 
   /* Semantic */
   --green:           #22C55E;
@@ -48,7 +66,8 @@
   --team-sauber:     #259825;
   --team-rb:         #3A5EC4;
 
-  /* Data-viz accent (Delta Ribbon, track dominance lines) — reserved, never a CTA */
+  /* Data-viz accent (Delta Ribbon, track dominance lines) — reserved, never a CTA.
+     Out of scope for the v3.0.0 token pass — revisit with Circuits/Delta Ribbon specifically. */
   --teal:            #0E9488;
 
   /* Motion */
@@ -62,7 +81,7 @@
    light system above. The [data-mode="data"]/[data-mode="story"] attribute set on <html> by
    lib/siteMode.ts is now inert (both resolve to the same :root palette) — left in place since
    it's harmless, not deleted, in case a non-dark distinct Data Mode register is revisited
-   later. See CONCEPT-V2.md §13 and DESIGN.md for the full note. */
+   later. See docs/archive/CONCEPT-V2.md §13 and DESIGN.md for the full note. */
 
 @theme inline {
   /* Colors */
@@ -75,9 +94,13 @@
   --color-text-1:          var(--text-1);
   --color-text-2:          var(--text-2);
   --color-text-3:          var(--text-3);
-  --color-red:             var(--red);
-  --color-red-dim:         var(--red-dim);
+  --color-terracotta:      var(--terracotta);
+  --color-terracotta-dim:  var(--terracotta-dim);
+  --color-navy:            var(--navy);
+  --color-mustard:         var(--mustard);
   --color-text-on-accent:  var(--text-on-accent);
+  --color-border-on-accent: var(--border-on-accent);
+  --color-text-2-on-accent: var(--text-2-on-accent);
   --color-gold:            var(--gold);
   --color-gold-dim:        var(--gold-dim);
   --color-green:           var(--green);
@@ -165,7 +188,7 @@ body {
 
 .leaflet-bar {
   border: 1px solid var(--border) !important;
-  border-radius: 0 !important;
+  border-radius: var(--radius-sm) !important;
   box-shadow: none !important;
 }
 .leaflet-control-zoom a {
@@ -229,7 +252,7 @@ body {
 }
 .prose-article strong { color: var(--text-1); font-weight: 600; }
 .prose-article em { font-style: italic; color: var(--text-2); }
-.prose-article a { color: var(--red); text-decoration: none; }
+.prose-article a { color: var(--terracotta); text-decoration: none; }
 .prose-article a:hover { text-decoration: underline; }
 .prose-article code {
   font-family: var(--pi-mono);
@@ -252,14 +275,14 @@ body {
   content: '—';
   position: absolute;
   left: 0;
-  color: var(--red);
+  color: var(--terracotta);
   font-family: var(--pi-mono);
   font-size: 0.75rem;
 }
 
 /* Pull quote — use > text in markdown */
 .prose-article blockquote {
-  border-left: 3px solid var(--red);
+  border-left: 3px solid var(--terracotta);
   margin: 2.5rem 0;
   padding: 0.25rem 0 0.25rem 1.5rem;
 }

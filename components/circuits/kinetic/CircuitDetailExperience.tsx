@@ -289,7 +289,7 @@ export default function CircuitDetailExperience({
                       style={{
                         fontFamily: 'var(--pi-display)',
                         fontSize: `clamp(1.6rem, ${vwSize}vw, ${remCap}rem)`,
-                        color: isDominant ? 'var(--red)' : 'var(--text-1)',
+                        color: isDominant ? 'var(--terracotta)' : 'var(--text-1)',
                       }}
                     >
                       {topConstructor}
@@ -304,7 +304,7 @@ export default function CircuitDetailExperience({
                             width: '13px',
                             height: '13px',
                             background: w.constructor === topConstructor
-                              ? (isDominant ? 'var(--red)' : 'var(--text-1)')
+                              ? (isDominant ? 'var(--terracotta)' : 'var(--text-1)')
                               : 'var(--border-subtle)',
                           }}
                         />
@@ -367,7 +367,7 @@ export default function CircuitDetailExperience({
               </p>
               <p
                 className="tabular-nums leading-none tracking-[-0.03em]"
-                style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2rem, 5vw, 3.2rem)', color: 'var(--red)' }}
+                style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2rem, 5vw, 3.2rem)', color: 'var(--terracotta)' }}
               >
                 {allTimePole.time}
               </p>
@@ -395,7 +395,7 @@ export default function CircuitDetailExperience({
                   <span className="font-mono text-[11px] text-text-3 tabular-nums w-10 shrink-0">{pole.year}</span>
                   <span
                     className="font-mono text-[13px] tabular-nums w-20 shrink-0"
-                    style={{ color: pole.ms === allTimePole?.ms ? 'var(--red)' : 'var(--text-1)' }}
+                    style={{ color: pole.ms === allTimePole?.ms ? 'var(--terracotta)' : 'var(--text-1)' }}
                   >
                     {pole.time}
                   </span>
@@ -404,7 +404,7 @@ export default function CircuitDetailExperience({
                   </span>
                   <span className="font-mono text-[11px] text-text-3 shrink-0 hidden sm:block">{pole.constructor}</span>
                   {pole.ms === allTimePole?.ms && (
-                    <span className="font-mono text-[9px] uppercase tracking-[0.08em] shrink-0" style={{ color: 'var(--red)' }}>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.08em] shrink-0" style={{ color: 'var(--terracotta)' }}>
                       {t('lapRecord.allTime')}
                     </span>
                   )}
@@ -441,7 +441,7 @@ export default function CircuitDetailExperience({
                 <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">
                   {t('nextRace.countdown')}
                 </p>
-                <p className="text-[48px] leading-none tabular-nums" style={{ fontFamily: 'var(--pi-display)', color: 'var(--red)' }}>
+                <p className="text-[48px] leading-none tabular-nums" style={{ fontFamily: 'var(--pi-display)', color: 'var(--terracotta)' }}>
                   {nextRace.daysAway}
                   <span className="font-mono text-[13px] text-text-3 ml-2">{t('nextRace.days')}</span>
                 </p>
@@ -451,7 +451,7 @@ export default function CircuitDetailExperience({
 
           {nextRace.daysAway === 0 && (
             <div className="px-6 py-6">
-              <p className="font-mono text-[13px] uppercase tracking-[0.06em]" style={{ color: 'var(--red)' }}>
+              <p className="font-mono text-[13px] uppercase tracking-[0.06em]" style={{ color: 'var(--terracotta)' }}>
                 {t('nextRace.today')}
               </p>
             </div>

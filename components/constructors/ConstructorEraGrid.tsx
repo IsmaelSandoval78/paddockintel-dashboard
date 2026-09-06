@@ -76,7 +76,7 @@ const CONSTRUCTOR_COLORS: Record<string, string> = {
 };
 
 function constructorBorderColor(ref: string): string {
-  return CONSTRUCTOR_COLORS[ref] ?? '#E61919';
+  return CONSTRUCTOR_COLORS[ref] ?? '#C1502E';
 }
 
 

@@ -41,7 +41,7 @@ export default async function StandingsPanel({ drivers, constructors }: Standing
           href="https://hub.paddockintel.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-red transition-colors duration-150 shrink-0"
+          className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-terracotta transition-colors duration-150 shrink-0"
         >
           {t('cta')} →
         </a>

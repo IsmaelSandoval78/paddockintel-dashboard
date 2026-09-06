@@ -29,7 +29,7 @@ The hub is the only light-substrate F1 property. Where competitors go dark and l
 
 1. **Motion maps to meaning** — Every animation references an F1 concept (lights out, flying lap, gap closing, g-force). If you cannot name the F1 reference, cut the animation.
 2. **Editorial, not dashboard** — Data surfaces earn their place by telling a story. A standings table is not a table; it is a chapter. Hierarchy and restraint over completeness.
-3. **Light is the differentiator** — The warm off-white substrate (`#F4F4F0`) is a deliberate brand position. Dark mode is not offered. The spectacle is motion and typography, not darkness.
+3. **Light is the differentiator** — A warm light substrate is a deliberate brand position — currently kraft paper `#EDE3D0` under DESIGN.md v3.0.0 "Vintage Editorial" (was `#F4F4F0` under the earlier v0.3.0 system; see `DESIGN.md` for the current token, don't hardcode either value here). Dark mode is not offered. The spectacle is motion and typography, not darkness.
 4. **Specificity over genericism** — Unmistakably F1. Circuit coordinates in JetBrains Mono, team colors darkened for the light substrate, lap times parsed carefully. Nothing interchangeable with another sport.
 5. **Restraint compounds** — Every element earns its place. Nothing decorative. The aggregate of invisible correctness creates interfaces people trust without knowing why.
 

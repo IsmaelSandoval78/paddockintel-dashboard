@@ -39,7 +39,7 @@ export default async function Navbar() {
       <div className="h-12 px-5 gap-8 hidden lg:flex items-center">
         <Link href="/" className="shrink-0 flex items-center">
           <span className="font-sans font-bold text-sm tracking-wider text-text-1">PADDOCK</span>
-          <span className="font-sans font-bold text-sm text-red">·</span>
+          <span className="font-sans font-bold text-sm text-terracotta">·</span>
           <span className="font-sans font-bold text-sm tracking-wider text-text-1">INTEL</span>
         </Link>
 

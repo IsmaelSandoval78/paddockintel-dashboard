@@ -59,7 +59,7 @@ async function main() {
   const { frontmatter, body } = readArticle(path.resolve(filePath));
   const supabase = createClient();
 
-  const { error } = await supabase
+  const { data: article, error } = await supabase
     .from('articles')
     .upsert(
       {
@@ -70,7 +70,6 @@ async function main() {
         meta_description: frontmatter.meta_description ?? null,
         cover_image_url: frontmatter.cover_image_url ?? null,
         body_markdown: body,
-        tags: frontmatter.tags ?? [],
         status: frontmatter.status ?? 'draft',
         ...(frontmatter.published_at !== undefined ? { published_at: frontmatter.published_at } : {}),
         ...(frontmatter.stats    !== undefined ? { stats:     frontmatter.stats }     : {}),
@@ -79,11 +78,37 @@ async function main() {
         updated_at: new Date().toISOString(),
       },
       { onConflict: 'locale,slug' }
-    );
+    )
+    .select('id')
+    .single();
 
-  if (error) {
-    console.error('Ingestion failed:', error.message);
+  if (error || !article) {
+    console.error('Ingestion failed:', error?.message);
     process.exit(1);
+  }
+
+  // Tags are canonical slugs from the `tags` table (e.g. "race-analysis",
+  // "ferrari") — re-ingesting an article replaces its full tag set rather
+  // than merging, same idempotent semantics as the upsert above.
+  const tagSlugs = frontmatter.tags ?? [];
+  await supabase.from('article_tags').delete().eq('article_id', article.id);
+  if (tagSlugs.length) {
+    const { data: tagRows } = await supabase.from('tags').select('id, slug').in('slug', tagSlugs);
+    const unknown = tagSlugs.filter((slug) => !tagRows?.some((t) => t.slug === slug));
+    if (unknown.length) {
+      console.error(`Unknown tag slug(s), not in the "tags" table: ${unknown.join(', ')}`);
+      process.exit(1);
+    }
+    const rows = tagSlugs.map((slug, i) => ({
+      article_id: article.id,
+      tag_id: tagRows!.find((t) => t.slug === slug)!.id,
+      position: i + 1,
+    }));
+    const { error: tagError } = await supabase.from('article_tags').insert(rows);
+    if (tagError) {
+      console.error('Tag linking failed:', tagError.message);
+      process.exit(1);
+    }
   }
 
   console.log(`Ingested ${frontmatter.locale}/${frontmatter.slug}`);

@@ -88,7 +88,7 @@ export default function QualiDuel({
                 {gapMs !== null && (
                   <span
                     className="font-mono text-[10px] tabular-nums ml-auto"
-                    style={{ color: 'var(--red)' }}
+                    style={{ color: 'var(--terracotta)' }}
                     title={t('gapTitle')}
                   >
                     {fasterCode} {formatGap(gapMs)}

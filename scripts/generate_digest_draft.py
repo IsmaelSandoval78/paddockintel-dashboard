@@ -1,17 +1,34 @@
 #!/usr/bin/env python3
 """
-Weekly digest draft generator.
-Researches the past week's F1 business/economics news via Claude's web search,
-writes a digest issue in PaddockIntel's voice, and saves it to Supabase as
-status='draft' — never auto-published. A GitHub issue is opened so a human
-reviews before `scripts/publish_digest.py <slug>` flips it to published,
-at which point the existing daily send cron (app/api/digest/send) mails it.
+Digest draft generator — live weekly newsletter (series='newsletter') and
+retrospective Recap (series='recap').
 
-Run: python scripts/generate_digest_draft.py
+Researches real F1 business/economics news for a date window via Claude's
+web search, writes a digest issue in PaddockIntel's voice, and saves it to
+Supabase as status='draft' — never auto-published. A GitHub issue is opened
+so a human reviews before `scripts/publish_digest.py <slug>` flips it to
+published.
+
+For series='newsletter' (default), publishing triggers the existing daily
+send cron (app/api/digest/send) which emails subscribers. For series='recap',
+that cron explicitly excludes series != 'newsletter' — a Recap is web-only,
+never emailed, by design (docs/ROADMAP-SEMANA.md, "Idea aprobada: serie de
+Recaps retroactivos").
+
+Usage:
+  # Live newsletter, last 7 days ending today (default, unchanged behavior):
+  python scripts/generate_digest_draft.py
+
+  # Recap covering an explicit past range — always required for --series recap,
+  # a "last 7 days" recap makes no sense (that's just a newsletter issue):
+  python scripts/generate_digest_draft.py --series recap \\
+      --week-start 2026-02-02 --week-end 2026-03-02
+
 Env: ANTHROPIC_API_KEY, NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY,
      GITHUB_TOKEN (for the notification issue; optional locally)
 """
 
+import argparse
 import json
 import os
 import re
@@ -34,6 +51,13 @@ ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
 SITE_URL = os.environ.get("NEXT_PUBLIC_SITE_URL", "https://paddockintel.com")
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 GITHUB_REPO = os.environ.get("GITHUB_REPOSITORY", "IsmaelSandoval78/paddockintel-dashboard")
+
+# A Recap is explicitly allowed to write with hindsight the live newsletter
+# doesn't have ("this would prove decisive when, in April...") — the whole
+# editorial point of the series (docs/ROADMAP-SEMANA.md). Below this floor,
+# skip the range rather than force filler content — same "never invent"
+# rule as the base prompt, just a stricter minimum for a retrospective batch.
+RECAP_MIN_ITEMS = 3
 
 DIGEST_JSON_SCHEMA = {
     "type": "object",
@@ -81,8 +105,8 @@ story without inventing the number. It is far better to return 4 well-sourced st
 some are fabricated."""
 
 
-def build_user_prompt(start: date, end: date) -> str:
-    return f"""Research real Formula 1 business/economics news published between {start.isoformat()} and
+def build_user_prompt(start: date, end: date, series: str) -> str:
+    base = f"""Research real Formula 1 business/economics news published between {start.isoformat()} and
 {end.isoformat()}. Use web search to find actual articles — sponsorship deals, broadcast/media rights,
 team valuations or sales, driver/executive contracts, regulatory or Concorde Agreement developments,
 race-hosting fees, technology/AI partnerships, cost-cap stories.
@@ -103,18 +127,32 @@ Helmut Marko vacated at the end of 2025."
 Return only real findings. If fewer than 4 solid, verifiable stories exist for this window, return
 fewer rather than inventing any."""
 
+    if series == "recap":
+        return base + f"""
 
-def next_volume_number(sb: Client) -> int:
-    res = sb.table("digest_issues").select("slug").execute()
+This is a retrospective "Recap" covering a past window, written today ({date.today().isoformat()}) —
+not the live weekly digest. Unlike the live edition, you may explicitly use hindsight: note when a
+story from this window turned out to matter more than it seemed at the time (e.g. "this would prove
+decisive when..."), as long as the later outcome you're referencing is itself something you can
+verify, not a guess about how things turned out. If fewer than {RECAP_MIN_ITEMS} solid, verifiable
+stories exist for this whole window, return fewer rather than inventing any — a thin or quiet window
+gets skipped entirely rather than padded."""
+
+    return base
+
+
+def next_volume_number(sb: Client, series: str) -> int:
+    prefix_re = re.compile(r"vol-(\d+)") if series == "newsletter" else re.compile(r"recap-(\d+)")
+    res = sb.table("digest_issues").select("slug").eq("series", series).execute()
     max_vol = 0
     for row in res.data:
-        m = re.match(r"vol-(\d+)", row["slug"])
+        m = prefix_re.match(row["slug"])
         if m:
             max_vol = max(max_vol, int(m.group(1)))
     return max_vol + 1
 
 
-def generate_draft(start: date, end: date) -> dict:
+def generate_draft(start: date, end: date, series: str) -> dict:
     client = Anthropic(api_key=ANTHROPIC_API_KEY)
 
     max_attempts = 7
@@ -131,7 +169,7 @@ def generate_draft(start: date, end: date) -> dict:
                 system=SYSTEM_PROMPT,
                 tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 12}],
                 output_config={"format": {"type": "json_schema", "schema": DIGEST_JSON_SCHEMA}},
-                messages=[{"role": "user", "content": build_user_prompt(start, end)}],
+                messages=[{"role": "user", "content": build_user_prompt(start, end, series)}],
             ) as stream:
                 response = stream.get_final_message()
             break
@@ -175,13 +213,14 @@ def generate_draft(start: date, end: date) -> dict:
         sys.exit(1)
 
 
-def save_draft(sb: Client, slug: str, week_start: date, draft: dict) -> None:
+def save_draft(sb: Client, slug: str, series: str, issue_published_at: date, window_end: date, draft: dict) -> None:
     issue_row = (
         sb.table("digest_issues")
         .upsert(
             {
                 "slug": slug,
-                "published_at": week_start.isoformat(),
+                "series": series,
+                "published_at": issue_published_at.isoformat(),
                 "status": "draft",
                 "intro_synthesis": draft["intro_synthesis"],
             },
@@ -200,7 +239,13 @@ def save_draft(sb: Client, slug: str, week_start: date, draft: dict) -> None:
             "source_url": item["source_url"],
             "headline": item["headline"],
             "our_summary": item["our_summary"],
-            "published_at": item.get("published_at") or week_start.isoformat(),
+            "entity_tags": item.get("entity_tags") or [],
+            # Defensive fallback only — the schema requires the model to supply
+            # published_at for every item. If it's ever missing, fall back to
+            # the search window's end date, not the issue's own publish date
+            # (which for a Recap can be months later and would misdate a
+            # months-old story as if it happened today).
+            "published_at": item.get("published_at") or window_end.isoformat(),
         }
         for item in draft["items"]
     ]
@@ -208,21 +253,23 @@ def save_draft(sb: Client, slug: str, week_start: date, draft: dict) -> None:
         sb.table("digest_items").insert(rows).execute()
 
 
-def notify(slug: str, draft: dict) -> None:
+def notify(slug: str, series: str, draft: dict) -> None:
     if not GITHUB_TOKEN:
         print("No GITHUB_TOKEN set — skipping notification issue (local run).")
         return
 
     headlines = "\n".join(f"- {item['headline']} ({item['source_name']})" for item in draft["items"])
-    body = f"""A new digest draft is ready for review: **{slug}**
+    preview_path = "weekly" if series == "newsletter" else "recaps"
+    body = f"""A new {series} draft is ready for review: **{slug}**
 
-Preview: {SITE_URL}/weekly/{slug}/
+Preview: {SITE_URL}/{preview_path}/{slug}/
 
 **{len(draft['items'])} stories found:**
 {headlines}
 
 ---
-To publish (triggers the existing daily send cron):
+To publish (triggers the existing daily send cron for newsletter issues only —
+recap issues are web-only and never emailed):
 
 ```
 python scripts/publish_digest.py {slug}
@@ -238,26 +285,72 @@ python scripts/publish_digest.py {slug}
     print(f"Notification issue opened: {resp.json()['html_url']}")
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument(
+        "--series",
+        choices=["newsletter", "recap"],
+        default="newsletter",
+        help="'newsletter' (default, live weekly digest) or 'recap' (retrospective, web-only, never emailed).",
+    )
+    parser.add_argument("--week-start", type=str, default=None, help="ISO date (YYYY-MM-DD) — start of the research window.")
+    parser.add_argument("--week-end", type=str, default=None, help="ISO date (YYYY-MM-DD) — end of the research window.")
+    return parser.parse_args()
+
+
 def main() -> None:
+    args = parse_args()
+
+    if args.week_start and args.week_end:
+        start = date.fromisoformat(args.week_start)
+        end = date.fromisoformat(args.week_end)
+        if end < start:
+            print("ERROR: --week-end is before --week-start", file=sys.stderr)
+            sys.exit(1)
+        if end > date.today():
+            print("ERROR: --week-end is in the future", file=sys.stderr)
+            sys.exit(1)
+    elif args.week_start or args.week_end:
+        print("ERROR: pass both --week-start and --week-end together, or neither", file=sys.stderr)
+        sys.exit(1)
+    elif args.series == "recap":
+        print("ERROR: --series recap requires an explicit --week-start/--week-end range "
+              "— a recap of 'the last 7 days' is just a newsletter issue.", file=sys.stderr)
+        sys.exit(1)
+    else:
+        end = date.today()
+        start = end - timedelta(days=7)
+
     sb = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-    end = date.today()
-    start = end - timedelta(days=7)
-    vol = next_volume_number(sb)
-    slug = f"vol-{vol:02d}-week-{end.isoformat()}"
+    vol = next_volume_number(sb, args.series)
+    prefix = "vol" if args.series == "newsletter" else "recap"
+    slug_date = end if args.series == "newsletter" else start
+    slug = f"{prefix}-{vol:02d}-week-{slug_date.isoformat()}"
 
-    print(f"Generating draft {slug} for {start} .. {end}")
-    draft = generate_draft(start, end)
+    print(f"Generating {args.series} draft {slug} for {start} .. {end}")
+    draft = generate_draft(start, end, args.series)
     print(f"Got {len(draft['items'])} stories")
 
     if not draft["items"]:
         print("No verifiable stories found for this window — not saving an empty draft.")
         return
 
-    save_draft(sb, slug, end, draft)
+    if args.series == "recap" and len(draft["items"]) < RECAP_MIN_ITEMS:
+        print(
+            f"Only {len(draft['items'])} verifiable stories found — below the "
+            f"{RECAP_MIN_ITEMS}-story floor for a Recap, skipping (no draft saved)."
+        )
+        return
+
+    # The issue's own published_at is always "today" (when this draft is
+    # actually saved/reviewed), never the covered window — a Recap's window
+    # can be months in the past, and backdating published_at would violate
+    # the project's "never fabricate a publish date" rule.
+    save_draft(sb, slug, args.series, date.today(), end, draft)
     print(f"Saved as draft: {slug}")
 
-    notify(slug, draft)
+    notify(slug, args.series, draft)
 
 
 if __name__ == "__main__":

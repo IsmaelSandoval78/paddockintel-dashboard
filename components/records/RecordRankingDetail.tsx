@@ -35,7 +35,7 @@ export function RecordRankingDetail({
         <p className="font-mono text-[10px] text-text-2 uppercase tracking-[0.1em]">{leaderLabel}</p>
 
         <p
-          className="text-[clamp(3.5rem,9vw,7.5rem)] leading-none tabular-nums text-red mt-4"
+          className="text-[clamp(3.5rem,9vw,7.5rem)] leading-none tabular-nums text-terracotta mt-4"
           style={{ fontFamily: 'var(--pi-display)' }}
         >
           {leader.valueDisplay}
@@ -46,7 +46,7 @@ export function RecordRankingDetail({
           {leader.href ? (
             <Link
               href={leader.href}
-              className="no-underline text-text-1 hover:text-red transition-colors duration-150"
+              className="no-underline text-text-1 hover:text-terracotta transition-colors duration-150"
             >
               <span
                 className="text-[clamp(1.6rem,3.4vw,2.4rem)] uppercase leading-none tracking-[-0.03em] block"
@@ -95,7 +95,7 @@ export function RecordRankingDetail({
               <span
                 className={[
                   'font-mono text-[13px] tabular-nums ml-auto shrink-0',
-                  isFirst ? 'text-red' : 'text-text-1',
+                  isFirst ? 'text-terracotta' : 'text-text-1',
                 ].join(' ')}
               >
                 {e.valueDisplay}

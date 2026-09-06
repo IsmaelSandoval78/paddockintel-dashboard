@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { draftMode } from 'next/headers';
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
 import ShareButton from '@/components/ui/ShareButton';
@@ -8,6 +9,7 @@ import ArticleHero from '@/components/blog/ArticleHero';
 import ArticleTOC from '@/components/blog/ArticleTOC';
 import NewsletterCard from '@/components/blog/NewsletterCard';
 import { extractTOC, markdownToHtml, estimateReadTime } from '@/lib/markdown';
+import { getArticleTagSlugs } from '@/lib/blog/tags';
 
 export const revalidate = 3600;
 
@@ -22,7 +24,7 @@ async function getArticle(locale: string, slug: string, isDraft: boolean) {
 
   let query = supabase
     .from('articles')
-    .select('title, meta_description, body_markdown, published_at, tags, translation_group_id')
+    .select('id, title, meta_description, body_markdown, published_at, translation_group_id')
     .eq('locale', locale)
     .eq('slug', slug);
 
@@ -88,10 +90,13 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
   const body        = article.body_markdown as string;
   const title       = article.title as string;
   const publishedAt = article.published_at as string;
-  const tags        = (article.tags as string[]) ?? [];
   const stats       = (article.stats as Stat[]) ?? [];
   const faqItems    = (article.faq_items as FAQ[]) ?? [];
   const sources     = (article.sources as Source[]) ?? [];
+
+  const tTags = await getTranslations('articleTags');
+  const tagSlugs = (await getArticleTagSlugs(createClient(), [article.id as string])).get(article.id as string) ?? [];
+  const tags = tagSlugs.map((slug) => tTags(slug));
 
   const toc      = extractTOC(body);
   const html     = markdownToHtml(body);
@@ -199,7 +204,7 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
                         key={i}
                         className={`py-4 ${i > 0 ? 'border-t border-border-subtle' : ''}`}
                       >
-                        <dt className="font-sans font-semibold text-text-1 mb-1.5 text-sm">
+                        <dt className="font-prose font-semibold text-text-1 mb-1.5 text-sm">
                           {faq.q}
                         </dt>
                         <dd className="font-prose text-sm text-text-2 leading-relaxed">
@@ -224,7 +229,7 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
                           href={src.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="font-mono text-[11px] text-text-2 hover:text-red transition-colors duration-150"
+                          className="font-mono text-[11px] text-text-2 hover:text-terracotta transition-colors duration-150"
                         >
                           {src.name} →
                         </a>
@@ -240,7 +245,7 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
                   Written by{' '}
                   <Link
                     href="/about"
-                    className="text-text-1 hover:text-red transition-colors duration-150"
+                    className="text-text-1 hover:text-terracotta transition-colors duration-150"
                   >
                     Ismael Sandoval
                   </Link>

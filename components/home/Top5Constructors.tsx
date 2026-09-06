@@ -73,17 +73,17 @@ export default function Top5Constructors({ constructors }: { constructors: HomeC
                   </span>
                 </div>
 
-                {/* Proportional bar — border-radius: 0 per spec */}
+                {/* Proportional bar — --radius-sm per DESIGN.md v3.0.0 */}
                 <div
                   className="h-[3px] ml-[24px]"
-                  style={{ background: 'var(--surface-raised)', borderRadius: 0 }}
+                  style={{ background: 'var(--surface-raised)', borderRadius: 'var(--radius-sm)' }}
                 >
                   <div
                     className="h-full"
                     style={{
                       width: `${pct}%`,
                       backgroundColor: color,
-                      borderRadius: 0,
+                      borderRadius: 'var(--radius-sm)',
                     }}
                   />
                 </div>

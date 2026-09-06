@@ -21,7 +21,9 @@
     "regulations": "Regulations",
     "supplyChain": "Supply Chain",
     "magazine": "Magazine",
-    "glossary": "Glossary"
+    "glossary": "Glossary",
+    "feed": "Feed",
+    "whosWho": "Who's Who"
   },
   "hub": {
     "title": "PaddockIntel",
@@ -132,11 +134,23 @@
       "mostPoles": "Most Poles",
       "avgStart": "Avg. Start",
       "viewFull": "Full Circuit →"
+    },
+    "featured": {
+      "kicker": "Next on the calendar",
+      "since": "Since"
+    },
+    "list": {
+      "title": "2026 Calendar",
+      "races": "races"
     }
   },
   "circuitDetail": {
     "breadcrumb": {
       "circuits": "Circuits"
+    },
+    "recap": {
+      "title": "Last Race",
+      "readMore": "Read full analysis"
     },
     "hero": {
       "label": "Circuit",
@@ -630,6 +644,22 @@
       "read": "Read →"
     }
   },
+  "recaps": {
+    "kicker": "Recap Series",
+    "sources": "Sources",
+    "index": {
+      "description": "Retrospective coverage of weeks already gone by, published after the fact — with the hindsight the live weekly digest doesn't have.",
+      "issues": "recaps",
+      "issue": "recap",
+      "noIssues": "No recaps published yet.",
+      "read": "Read →"
+    },
+    "detail": {
+      "weekOf": "Week of",
+      "published": "Published",
+      "disclaimer": "This is a retrospective. It was written and published on the date above, after the week it covers — not in real time."
+    }
+  },
   "newsletter": {
     "button": "Subscribe",
     "placeholder": "your@email.com",
@@ -699,14 +729,59 @@
       "title": "The Data Desk"
     }
   },
+  "articleTags": {
+    "aston-martin": "Aston Martin",
+    "ferrari": "Ferrari",
+    "mclaren": "McLaren",
+    "williams": "Williams",
+    "mercedes-amg-f1": "Mercedes-AMG F1",
+    "red-bull": "Red Bull Racing",
+    "cadillac": "Cadillac F1 Team",
+    "f1-academy": "F1 Academy",
+    "indycar": "IndyCar",
+    "nascar": "NASCAR",
+    "breaking-news": "Breaking News",
+    "deep-dive": "Deep Dive",
+    "featured": "Featured",
+    "quick-take": "Quick Take",
+    "paddock-life": "Paddock Life",
+    "data-desk": "Data Desk",
+    "europe": "Europe",
+    "north-america": "North America",
+    "race-analysis": "Race Analysis",
+    "regulations": "Regulations",
+    "economics": "Economics",
+    "technical": "Technical",
+    "economic-intelligence": "Economic Intelligence",
+    "driver-finance": "Driver Finance",
+    "team-finance": "Team Finance",
+    "team-valuations": "Team Valuations",
+    "sponsorships": "Sponsorships",
+    "supply-chain-operations": "Supply Chain & Operations",
+    "operational-strategy": "Operational Strategy",
+    "race-weekend-economics": "Race Weekend Economics",
+    "race-intel": "Race Intel",
+    "motorsport-business": "Motorsport Business",
+    "liberty-media": "Liberty Media",
+    "disney": "Disney"
+  },
   "glossary": {
     "kicker": "PaddockIntel Reference",
-    "title": "F1 Economics Glossary",
-    "description": "The regulatory and financial terms behind every contract, cap, and payout in Formula 1 — defined once, cited to real sources.",
+    "title": "F1 Glossary",
+    "description": "The terms behind every rule, strategy call, and payout in Formula 1 — defined once, cited to real sources.",
     "categories": {
       "regulations": "Regulations",
       "revenue": "Revenue",
-      "sponsorship": "Sponsorship"
+      "sponsorship": "Sponsorship",
+      "strategy": "Strategy",
+      "rules-format": "Rules & Format",
+      "technical": "Technical",
+      "tyres": "Tyres"
+    },
+    "depth": {
+      "eli5": "Simple",
+      "technical": "Technical",
+      "fia": "FIA Regulation"
     },
     "relatedTerms": "Related Terms",
     "sources": "Sources",
@@ -717,19 +792,21 @@
     "metaDescription": "How PaddockIntel collects and uses your email address.",
     "kicker": "Legal",
     "title": "Privacy Policy",
-    "updated": "Last updated: July 2026",
+    "updated": "Last updated: September 2026",
     "s1h": "What we collect",
-    "s1p": "When you subscribe to the PaddockIntel Weekly Digest, we collect your email address and your preferred language (English, Spanish, or Portuguese). We collect nothing else — no name, no tracking cookies tied to your subscription.",
+    "s1p": "When you subscribe to the PaddockIntel Weekly Digest, we collect your email address and your preferred language (English, Spanish, or Portuguese) — no change there. Creating an account is separate and optional: you never need one to read the site. If you sign in with Google, we receive your name, email address, and profile picture from Google. If you sign in with email, we receive only your email address. Once signed in, we store which drivers, constructors, and experts you choose to follow — nothing else. We do not track your reading history or infer preferences you haven't explicitly set. Following someone, including an expert, is one-directional: it never gives that person access to any of your data or reveals your identity to them.",
     "s2h": "How we use it",
-    "s2p": "Your email address is used only to send the PaddockIntel Weekly Digest. We do not sell, share, or transfer your email to any third party. We do not use your address for advertising or profiling.",
+    "s2p": "Your email address is used only to send the PaddockIntel Weekly Digest. Account data is used only to run your account: signing you in, remembering who you follow, and, in the future, ordering content on the site based on those follows. We do not sell, share, or transfer your email or account data to any third party, and we do not use it for advertising or profiling. Following someone never changes official standings, results, or rankings — only the order in which things appear for you.",
     "s3h": "Who processes your data",
-    "s3p": "Subscription records are stored in Supabase (database hosted in the United States). Emails are delivered via Resend (transactional email provider). Both operate under their own privacy policies and data processing agreements.",
+    "s3p": "Subscription and account records are stored in Supabase (database hosted in the United States). Emails are delivered via Resend (transactional email provider). Signing in with Google is processed by Google under its own privacy policy. All three operate under their own privacy policies and data processing agreements.",
     "s4h": "Unsubscribing",
     "s4p": "Every digest email contains an unsubscribe link at the bottom. Clicking it removes your address immediately and permanently. You can also contact us directly at <mail>info@paddockintel.com</mail>.",
-    "s5h": "Cookies & analytics",
-    "s5p": "paddockintel.com does not use advertising cookies or third-party analytics trackers. Our hosting provider (Vercel) keeps standard, short-lived server logs (IP address, requested page) needed to operate and secure the service.",
-    "s6h": "Contact",
-    "s6p": "Questions about this policy: <mail>info@paddockintel.com</mail> or via the <about>about page</about>."
+    "s5h": "Deleting your account",
+    "s5p": "You can request account deletion at any time by contacting <mail>info@paddockintel.com</mail>. This permanently removes your profile and all follow data — it does not affect a separate newsletter subscription made with the same email address, which is unsubscribed separately (see above).",
+    "s6h": "Cookies & analytics",
+    "s6p": "paddockintel.com does not use advertising cookies or third-party analytics trackers. Our hosting provider (Vercel) keeps standard, short-lived server logs (IP address, requested page) needed to operate and secure the service. Signing in sets a session cookie so the site knows you're logged in — it isn't used for tracking or advertising.",
+    "s7h": "Contact",
+    "s7p": "Questions about this policy: <mail>info@paddockintel.com</mail> or via the <about>about page</about>."
   },
   "footer": {
     "disclaimer": "Independent publication. Not affiliated with Formula 1 or the FIA.",
@@ -740,5 +817,26 @@
     "heading": "Disclaimer",
     "affiliation": "PaddockIntel is an independent publication. It is not affiliated with, associated with, authorized by, or endorsed by Formula 1, Formula One Licensing B.V., the FIA, or any Formula 1 team or driver. F1, FORMULA 1, GRAND PRIX and related marks are trademarks of their respective owners and are used here solely for editorial identification.",
     "accuracy": "Content is provided for informational purposes only. Financial figures — salaries, prize money, team valuations, sponsorship amounts — are estimates compiled from public reporting unless otherwise sourced; actual amounts may differ. Nothing on this site constitutes financial, investment, or professional advice."
+  },
+  "whosWho": {
+    "kicker": "Who's Who",
+    "title": "Who's Who",
+    "description": "Curated reactions from real, credentialed F1 voices — chosen and verified by hand, not an algorithm.",
+    "readOriginal": "Read the original post →",
+    "categories": {
+      "investigation": { "label": "Investigation", "lens": "Paddock reporters — breaking news, real sources" },
+      "construction": { "label": "Construction", "lens": "Technical analysts — how and why something works" },
+      "critique": { "label": "Critique", "lens": "Ex-drivers and commentators — judging decisions and performance" },
+      "context": { "label": "Context", "lens": "Independent veterans — the sport's history and politics" },
+      "data": { "label": "Data", "lens": "Verifiable statistics, real identity behind the number" }
+    }
+  },
+  "feed": {
+    "kicker": "PaddockIntel Feed",
+    "title": "F1 News Today",
+    "description": "Every verified story from PaddockIntel's newsletter research, in one running feed — cited sources, our own analysis, no wire-service copy.",
+    "mostMentioned": "Most mentioned this week",
+    "noItems": "No stories yet.",
+    "readSource": "Read source →"
   }
 }

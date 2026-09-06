@@ -30,8 +30,8 @@ function DriverRow({
   const isP1 = driver.position === 1;
   const gap = leaderPoints - driver.points;
   const barPct = leaderPoints > 0 ? (driver.points / leaderPoints) * 100 : 0;
-  const leftColor = isP1 ? 'var(--red)' : teamColor(driver.constructor_ref);
-  const barColor = isP1 ? 'var(--red)' : teamColor(driver.constructor_ref);
+  const leftColor = isP1 ? 'var(--terracotta)' : teamColor(driver.constructor_ref);
+  const barColor = isP1 ? 'var(--terracotta)' : teamColor(driver.constructor_ref);
 
   return (
     <div
@@ -68,7 +68,7 @@ function DriverRow({
           className="w-8 shrink-0 tabular-nums text-[12px]"
           style={{
             fontFamily: 'var(--pi-display)',
-            color: isP1 ? 'var(--red)' : 'var(--text-3)',
+            color: isP1 ? 'var(--terracotta)' : 'var(--text-3)',
           }}
         >
           {String(driver.position).padStart(2, '0')}
@@ -128,7 +128,7 @@ function DriverRow({
           {isP1 ? (
             <span
               className="font-mono text-[9px] uppercase tracking-[0.1em] leading-none mt-[3px]"
-              style={{ color: 'var(--red)' }}
+              style={{ color: 'var(--terracotta)' }}
             >
               LEADER
             </span>

@@ -10,7 +10,7 @@ function posLabel(pos: number | null): string {
 }
 
 function posColor(pos: number | null): string {
-  if (pos === 1) return 'text-red';
+  if (pos === 1) return 'text-terracotta';
   if (pos !== null && pos <= 3) return 'text-gold';
   if (pos !== null) return 'text-text-1';
   return 'text-text-3';
@@ -139,7 +139,7 @@ export default function InlineDriverPanel({
                 {detail.season_2026.points}{' '}
                 <span className="text-text-3">pts</span>
                 {detail.season_2026.wins > 0 && (
-                  <span className="ml-2 text-red">{detail.season_2026.wins}W</span>
+                  <span className="ml-2 text-terracotta">{detail.season_2026.wins}W</span>
                 )}
               </p>
             </>
@@ -212,13 +212,13 @@ export default function InlineDriverPanel({
       <div className="px-6 py-3 border-t border-border flex items-center gap-5">
         <Link
           href={`/drivers/${detail.driver_ref}`}
-          className="text-[13px] text-text-2 hover:text-red transition-colors duration-150"
+          className="text-[13px] text-text-2 hover:text-terracotta transition-colors duration-150"
         >
           {t('viewFull')}
         </Link>
         <Link
           href={`/compare?type=drivers&a=${detail.driver_ref}`}
-          className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-3 hover:text-red transition-colors duration-150"
+          className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-3 hover:text-terracotta transition-colors duration-150"
         >
           {t('compare')}
         </Link>

@@ -79,25 +79,25 @@ export default function ChampionsWall({
               aria-label={`${c.year} · ${c.forename} ${c.surname}`}
             >
               <span className="flex items-baseline font-mono text-[10px] tabular-nums leading-none mb-2">
-                <span style={{ color: c.in_progress ? 'var(--red)' : 'var(--text-3)' }}>{c.year}</span>
+                <span style={{ color: c.in_progress ? 'var(--terracotta)' : 'var(--text-3)' }}>{c.year}</span>
                 {c.nth >= 2 && (
                   <span className="ml-auto" style={{ color: 'var(--text-3)' }}>×{c.nth}</span>
                 )}
               </span>
               <span
-                className="block uppercase text-[12px] leading-[1.05] truncate transition-colors duration-150 group-hover:text-[color:var(--red)]"
+                className="block uppercase text-[12px] leading-[1.05] truncate transition-colors duration-150 group-hover:text-[color:var(--terracotta)]"
                 style={{
                   fontFamily: 'var(--pi-display)',
                   letterSpacing: '-0.01em',
-                  color: c.in_progress ? 'var(--red)' : 'var(--text-1)',
+                  color: c.in_progress ? 'var(--terracotta)' : 'var(--text-1)',
                 }}
               >
                 {c.surname}
               </span>
               {c.in_progress && (
                 <span className="flex items-center gap-1.5 mt-1.5">
-                  <span className="pulse-red inline-block w-1.5 h-1.5 rounded-full bg-red" />
-                  <span className="font-mono text-[8px] uppercase tracking-[0.14em]" style={{ color: 'var(--red)' }}>
+                  <span className="pulse-red inline-block w-1.5 h-1.5 rounded-full bg-terracotta" />
+                  <span className="font-mono text-[8px] uppercase tracking-[0.14em]" style={{ color: 'var(--terracotta)' }}>
                     {t('inProgress')}
                   </span>
                 </span>

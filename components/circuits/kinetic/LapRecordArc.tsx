@@ -128,13 +128,13 @@ export default function LapRecordArc({ data }: { data: LapRecordPoint[] }) {
         <span className="font-mono text-[11px] text-text-1 tabular-nums">{readout.year}</span>
         <span
           className="font-mono text-[13px] tabular-nums"
-          style={{ color: isReadoutRecord ? 'var(--red)' : 'var(--text-2)' }}
+          style={{ color: isReadoutRecord ? 'var(--terracotta)' : 'var(--text-2)' }}
         >
           {readout.time}
         </span>
         <span className="text-[11px] text-text-2">{readout.forename[0]}. {readout.surname}</span>
         {isReadoutRecordBreak && (
-          <span className="font-mono text-[9px] uppercase tracking-[0.1em]" style={{ color: 'var(--red)' }}>
+          <span className="font-mono text-[9px] uppercase tracking-[0.1em]" style={{ color: 'var(--terracotta)' }}>
             {isReadoutRecord ? t('allTime') : t('newRecord')}
           </span>
         )}
@@ -205,7 +205,7 @@ export default function LapRecordArc({ data }: { data: LapRecordPoint[] }) {
               cx={c.x}
               cy={c.y}
               r={r}
-              fill={isRecordBreak ? 'var(--red)' : 'var(--text-2)'}
+              fill={isRecordBreak ? 'var(--terracotta)' : 'var(--text-2)'}
               opacity={isAbsRecord || isHovered ? 1 : isRecordBreak ? 0.75 : 0.45}
               tabIndex={0}
               onMouseEnter={() => setHoverIndex(i)}

@@ -57,12 +57,12 @@ export default function ArticleTOC({ toc, locale, mobileOnly, desktopOnly }: Art
             <a
               href={`#${item.id}`}
               className="font-mono text-[11px] flex items-baseline gap-1.5 transition-colors duration-150"
-              style={{ color: isActive ? 'var(--red)' : 'var(--text-2)' }}
+              style={{ color: isActive ? 'var(--terracotta)' : 'var(--text-2)' }}
             >
               <span
                 className="shrink-0 transition-colors duration-150"
                 aria-hidden="true"
-                style={{ color: isActive ? 'var(--red)' : 'var(--border-subtle)' }}
+                style={{ color: isActive ? 'var(--terracotta)' : 'var(--border-subtle)' }}
               >
                 →
               </span>

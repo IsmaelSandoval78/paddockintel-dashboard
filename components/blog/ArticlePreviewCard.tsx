@@ -1,5 +1,6 @@
 import { Link } from '@/lib/i18n/navigation';
 import ShareButton from '@/components/ui/ShareButton';
+import type { TagRef } from '@/lib/blog/tags';
 
 type Stat = { value: string; label: string; unit?: string };
 
@@ -7,7 +8,7 @@ interface ArticlePreviewCardProps {
   slug: string;
   title: string;
   metaDescription: string | null;
-  tags: string[];
+  tags: TagRef[];
   publishedAt: string;
   locale: string;
   featuredStat?: Stat;
@@ -34,14 +35,14 @@ export default function ArticlePreviewCard({
   const tag = tags[0];
   const date = publishedAt ? formatDate(publishedAt, locale) : '';
   const pageUrl = locale === 'en' ? `/${slug}` : `/${locale}/${slug}`;
-  const tagHref = `${locale === 'en' ? '/' : `/${locale}/`}?tag=${encodeURIComponent(tag ?? '')}`;
+  const tagHref = `${locale === 'en' ? '/' : `/${locale}/`}?tag=${encodeURIComponent(tag?.slug ?? '')}`;
 
   return (
     <article className="border border-border p-6 flex flex-col h-full">
       <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-text-2 mb-3">
         {tag && (
-          <a href={tagHref} className="hover:text-red transition-colors duration-150">
-            {tag.toUpperCase()}
+          <a href={tagHref} className="hover:text-terracotta transition-colors duration-150">
+            {tag.label.toUpperCase()}
           </a>
         )}
         {tag && date && ' · '}
@@ -50,13 +51,13 @@ export default function ArticlePreviewCard({
 
       <Link href={`/${slug}`} className="group flex-1">
         <h2
-          className="uppercase text-text-1 leading-[0.95] tracking-[-0.02em] group-hover:text-red transition-colors duration-150"
+          className="uppercase text-text-1 leading-[0.95] tracking-[-0.02em] group-hover:text-terracotta transition-colors duration-150"
           style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.4rem, 3.5vw, 2rem)' }}
         >
           {title}
         </h2>
         {metaDescription && (
-          <p className="font-sans text-sm text-text-2 leading-relaxed mt-3 line-clamp-2">
+          <p className="font-prose text-sm text-text-2 leading-relaxed mt-3 line-clamp-2">
             {metaDescription}
           </p>
         )}
@@ -67,7 +68,7 @@ export default function ArticlePreviewCard({
           <div>
             <p
               className="tabular-nums leading-none tracking-[-0.03em]"
-              style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', color: 'var(--red)' }}
+              style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', color: 'var(--terracotta)' }}
             >
               {featuredStat.value}
             </p>

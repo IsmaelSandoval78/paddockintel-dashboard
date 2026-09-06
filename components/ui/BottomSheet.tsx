@@ -42,7 +42,7 @@ export default function BottomSheet({ open, onClose, children }: Props) {
         style={{
           background: 'var(--bg)',
           borderTop: '1px solid var(--border)',
-          borderRadius: 0,
+          borderRadius: 'var(--radius-sm)',
           transform: open ? 'translateY(0)' : 'translateY(100%)',
           transition: 'transform 150ms ease-out',
         }}

@@ -50,13 +50,13 @@ export default function EmailCapture({ className }: { className?: string }) {
         <button
           type="submit"
           disabled={status === 'loading'}
-          className="border-l border-border px-4 py-2 font-mono text-[11px] uppercase tracking-[0.1em] text-text-1 hover:bg-red hover:text-bg transition-colors duration-150 disabled:opacity-50 shrink-0"
+          className="border-l border-border px-4 py-2 font-mono text-[11px] uppercase tracking-[0.1em] text-text-1 hover:bg-terracotta hover:text-bg transition-colors duration-150 disabled:opacity-50 shrink-0"
         >
           {status === 'loading' ? t('loading') : t('button')}
         </button>
       </div>
       {status === 'error' && (
-        <p className="mt-1 font-mono text-[10px] text-red">{t('error')}</p>
+        <p className="mt-1 font-mono text-[10px] text-terracotta">{t('error')}</p>
       )}
       <p className="font-mono text-[10px] text-text-3 mt-2">
         {t.rich('legal', {

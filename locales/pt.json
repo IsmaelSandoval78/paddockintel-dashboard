@@ -21,7 +21,9 @@
     "regulations": "Regulamentações",
     "supplyChain": "Cadeia de Suprimentos",
     "magazine": "Magazine",
-    "glossary": "Glossário"
+    "glossary": "Glossário",
+    "feed": "Feed",
+    "whosWho": "Quem É Quem"
   },
   "hub": {
     "title": "PaddockIntel",
@@ -132,11 +134,23 @@
       "mostPoles": "Mais Poles",
       "avgStart": "Largada Média",
       "viewFull": "Circuito Completo →"
+    },
+    "featured": {
+      "kicker": "Próximo no calendário",
+      "since": "Desde"
+    },
+    "list": {
+      "title": "Calendário 2026",
+      "races": "corridas"
     }
   },
   "circuitDetail": {
     "breadcrumb": {
       "circuits": "Circuitos"
+    },
+    "recap": {
+      "title": "Última Corrida",
+      "readMore": "Ler análise completa"
     },
     "hero": {
       "label": "Circuito",
@@ -630,6 +644,22 @@
       "read": "Ler →"
     }
   },
+  "recaps": {
+    "kicker": "Série Recap",
+    "sources": "Fontes",
+    "index": {
+      "description": "Cobertura retrospectiva de semanas já passadas, publicada depois dos fatos — com o contexto que o resumo semanal ao vivo não tem.",
+      "issues": "recaps",
+      "issue": "recap",
+      "noIssues": "Nenhum recap publicado ainda.",
+      "read": "Ler →"
+    },
+    "detail": {
+      "weekOf": "Semana de",
+      "published": "Publicado",
+      "disclaimer": "Isto é uma retrospectiva. Foi escrito e publicado na data acima, depois da semana que cobre — não em tempo real."
+    }
+  },
   "newsletter": {
     "button": "Assinar",
     "placeholder": "seu@email.com",
@@ -699,6 +729,42 @@
       "title": "O Data Desk"
     }
   },
+  "articleTags": {
+    "aston-martin": "Aston Martin",
+    "ferrari": "Ferrari",
+    "mclaren": "McLaren",
+    "williams": "Williams",
+    "mercedes-amg-f1": "Mercedes-AMG F1",
+    "red-bull": "Red Bull Racing",
+    "cadillac": "Cadillac F1 Team",
+    "f1-academy": "F1 Academy",
+    "indycar": "IndyCar",
+    "nascar": "NASCAR",
+    "breaking-news": "Notícia de Última Hora",
+    "deep-dive": "Análise Aprofundada",
+    "featured": "Destaque",
+    "quick-take": "Resumo Rápido",
+    "paddock-life": "Vida no Paddock",
+    "data-desk": "Data Desk",
+    "europe": "Europa",
+    "north-america": "América do Norte",
+    "race-analysis": "Análise de Corrida",
+    "regulations": "Regulamentações",
+    "economics": "Economia",
+    "technical": "Técnico",
+    "economic-intelligence": "Inteligência Econômica",
+    "driver-finance": "Finanças dos Pilotos",
+    "team-finance": "Finanças das Equipes",
+    "team-valuations": "Avaliação das Equipes",
+    "sponsorships": "Patrocínios",
+    "supply-chain-operations": "Cadeia de Suprimentos e Operações",
+    "operational-strategy": "Estratégia Operacional",
+    "race-weekend-economics": "Economia do Fim de Semana de Corrida",
+    "race-intel": "Inteligência de Corrida",
+    "motorsport-business": "Negócio do Automobilismo",
+    "liberty-media": "Liberty Media",
+    "disney": "Disney"
+  },
   "glossary": {
     "kicker": "Referência PaddockIntel",
     "title": "Glossário de Economia da F1",
@@ -717,19 +783,21 @@
     "metaDescription": "Como o PaddockIntel coleta e usa seu endereço de e-mail.",
     "kicker": "Legal",
     "title": "Política de Privacidade",
-    "updated": "Última atualização: julho de 2026",
+    "updated": "Última atualização: setembro de 2026",
     "s1h": "O que coletamos",
-    "s1p": "Quando você assina o Weekly Digest do PaddockIntel, coletamos seu endereço de e-mail e seu idioma preferido (inglês, espanhol ou português). Não coletamos mais nada — nem nome, nem cookies de rastreamento vinculados à sua assinatura.",
+    "s1p": "Quando você assina o Weekly Digest do PaddockIntel, coletamos seu endereço de e-mail e seu idioma preferido (inglês, espanhol ou português) — isso não mudou. Criar uma conta é algo separado e opcional: você nunca precisa de uma para ler o site. Se você entrar com o Google, recebemos seu nome, e-mail e foto de perfil do Google. Se você entrar com e-mail, recebemos apenas seu endereço de e-mail. Depois de logado, guardamos quais pilotos, construtores e especialistas você escolhe seguir — nada mais. Não rastreamos seu histórico de leitura nem inferimos preferências que você não declarou explicitamente. Seguir alguém, incluindo um especialista, é unidirecional: nunca dá a essa pessoa acesso aos seus dados nem revela sua identidade a ela.",
     "s2h": "Como usamos",
-    "s2p": "Seu e-mail é usado apenas para enviar o Weekly Digest do PaddockIntel. Não vendemos, compartilhamos nem transferimos seu e-mail a terceiros. Não usamos seu endereço para publicidade ou perfilamento.",
+    "s2p": "Seu e-mail é usado apenas para enviar o Weekly Digest do PaddockIntel. Os dados de conta são usados apenas para operar sua conta: fazer login, lembrar quem você segue e, no futuro, ordenar o conteúdo do site com base nesses follows. Não vendemos, compartilhamos nem transferimos seu e-mail ou dados de conta a terceiros, nem os usamos para publicidade ou perfilamento. Seguir alguém nunca muda classificações, resultados ou rankings oficiais — apenas a ordem em que as coisas aparecem para você.",
     "s3h": "Quem processa seus dados",
-    "s3p": "Os registros de assinatura são armazenados no Supabase (banco de dados hospedado nos Estados Unidos). Os e-mails são enviados via Resend (provedor de e-mail transacional). Ambos operam sob suas próprias políticas de privacidade e acordos de processamento de dados.",
+    "s3p": "Os registros de assinatura e de conta são armazenados no Supabase (banco de dados hospedado nos Estados Unidos). Os e-mails são enviados via Resend (provedor de e-mail transacional). O login com Google é processado pelo Google sob sua própria política de privacidade. Os três operam sob suas próprias políticas de privacidade e acordos de processamento de dados.",
     "s4h": "Cancelar a assinatura",
     "s4p": "Todo e-mail do digest contém um link de cancelamento no rodapé. Ao clicar, seu endereço é removido de forma imediata e permanente. Você também pode nos contatar diretamente em <mail>info@paddockintel.com</mail>.",
-    "s5h": "Cookies e análises",
-    "s5p": "paddockintel.com não usa cookies de publicidade nem rastreadores de análise de terceiros. Nosso provedor de hospedagem (Vercel) mantém logs de servidor padrão e de curta duração (endereço IP, página solicitada) necessários para operar e proteger o serviço.",
-    "s6h": "Contato",
-    "s6p": "Dúvidas sobre esta política: <mail>info@paddockintel.com</mail> ou pela <about>página About</about>."
+    "s5h": "Excluir sua conta",
+    "s5p": "Você pode pedir a exclusão da sua conta a qualquer momento entrando em contato pelo <mail>info@paddockintel.com</mail>. Isso remove permanentemente seu perfil e todos os seus follows — não afeta uma assinatura de newsletter separada feita com o mesmo e-mail, que é cancelada à parte (veja acima).",
+    "s6h": "Cookies e análises",
+    "s6p": "paddockintel.com não usa cookies de publicidade nem rastreadores de análise de terceiros. Nosso provedor de hospedagem (Vercel) mantém logs de servidor padrão e de curta duração (endereço IP, página solicitada) necessários para operar e proteger o serviço. Fazer login ativa um cookie de sessão para que o site saiba que você está logado — não é usado para rastreamento ou publicidade.",
+    "s7h": "Contato",
+    "s7p": "Dúvidas sobre esta política: <mail>info@paddockintel.com</mail> ou pela <about>página About</about>."
   },
   "footer": {
     "disclaimer": "Publicação independente. Sem afiliação com a Formula 1 ou a FIA.",
@@ -740,5 +808,26 @@
     "heading": "Aviso legal",
     "affiliation": "O PaddockIntel é uma publicação independente. Não é afiliado, associado, autorizado ou endossado pela Formula 1, Formula One Licensing B.V., pela FIA, nem por qualquer equipe ou piloto de Fórmula 1. F1, FORMULA 1, GRAND PRIX e marcas relacionadas são marcas registradas de seus respectivos proprietários e são usadas aqui apenas para identificação editorial.",
     "accuracy": "O conteúdo é fornecido apenas para fins informativos. Os valores financeiros — salários, premiações, avaliações de equipes, valores de patrocínio — são estimativas compiladas de reportagens públicas, salvo indicação de outra fonte; os valores reais podem diferir. Nada neste site constitui aconselhamento financeiro, de investimento ou profissional."
+  },
+  "whosWho": {
+    "kicker": "Quem É Quem",
+    "title": "Quem É Quem",
+    "description": "Reações curadas de vozes reais e credenciadas da F1 — escolhidas e verificadas manualmente, não por um algoritmo.",
+    "readOriginal": "Ler a publicação original →",
+    "categories": {
+      "investigation": { "label": "Investigação", "lens": "Repórteres de paddock — notícias em primeira mão, fontes reais" },
+      "construction": { "label": "Construção", "lens": "Analistas técnicos — como e por que algo funciona" },
+      "critique": { "label": "Crítica", "lens": "Ex-pilotos e comentaristas — avaliam decisões e desempenho" },
+      "context": { "label": "Contexto", "lens": "Veteranos independentes — a história e a política do esporte" },
+      "data": { "label": "Dados", "lens": "Estatística verificável, identidade real por trás do número" }
+    }
+  },
+  "feed": {
+    "kicker": "PaddockIntel Feed",
+    "title": "Notícias de F1 Hoje",
+    "description": "Cada história verificada da pesquisa do newsletter da PaddockIntel, em um único feed contínuo — fontes citadas, análise própria, sem copiar de agências.",
+    "mostMentioned": "Mais mencionados esta semana",
+    "noItems": "Ainda não há histórias.",
+    "readSource": "Ler fonte →"
   }
 }

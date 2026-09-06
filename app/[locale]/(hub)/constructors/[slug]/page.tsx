@@ -757,7 +757,7 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
       </div>
 
       {/* ── 01 · Stat band ───────────────────────────────────────── */}
-      <div className="border-b border-border" style={{ background: '#1A1A1A' }}>
+      <div className="border-b border-border" style={{ background: 'var(--navy)' }}>
         <div className="grid grid-cols-3 md:grid-cols-5">
           {[
             {
@@ -774,19 +774,19 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
             <div
               key={label}
               className="flex flex-col items-center justify-center py-6 px-3 text-center"
-              style={{ borderLeft: i > 0 ? '1px solid #2A2A2A' : undefined }}
+              style={{ borderLeft: i > 0 ? '1px solid var(--border-on-accent)' : undefined }}
             >
-              <p className="font-mono text-[10px] uppercase tracking-[0.1em] mb-2" style={{ color: '#6B6B6B' }}>
+              <p className="font-mono text-[10px] uppercase tracking-[0.1em] mb-2" style={{ color: 'var(--text-2-on-accent)' }}>
                 {label}
               </p>
               <p
                 className="font-sans font-black tabular-nums leading-none"
-                style={{ fontSize: '2rem', color: red ? '#E61919' : '#F4F4F0' }}
+                style={{ fontSize: '2rem', color: red ? 'var(--terracotta)' : 'var(--bg)' }}
               >
                 {value}
               </p>
               {sub && (
-                <p className="font-mono text-[10px] mt-1.5 leading-relaxed" style={{ color: '#6B6B6B' }}>
+                <p className="font-mono text-[10px] mt-1.5 leading-relaxed" style={{ color: 'var(--text-2-on-accent)' }}>
                   {sub}
                 </p>
               )}
@@ -853,7 +853,7 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
                     key={year}
                     title={String(year)}
                     className="w-2 h-2"
-                    style={{ background: primaryWon ? 'var(--red)' : 'var(--border-subtle)' }}
+                    style={{ background: primaryWon ? 'var(--terracotta)' : 'var(--border-subtle)' }}
                   />
                 ))}
               </div>
@@ -868,7 +868,7 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
           <span className="font-mono text-xs text-text-2 leading-none">03 ·</span>
           <h2 className="text-[13px] font-medium text-text-2">{t('pitWall.title')}</h2>
         </div>
-        <div style={{ background: '#1A1A1A' }}>
+        <div style={{ background: 'var(--navy)' }}>
           <div className="grid grid-cols-1 md:grid-cols-3">
             {[
               {
@@ -893,19 +893,19 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
               <div
                 key={label}
                 className="flex flex-col items-center justify-center py-6 px-3 text-center"
-                style={{ borderLeft: i > 0 ? '1px solid #2A2A2A' : undefined, borderTop: '1px solid #2A2A2A' }}
+                style={{ borderLeft: i > 0 ? '1px solid var(--border-on-accent)' : undefined, borderTop: '1px solid var(--border-on-accent)' }}
               >
-                <p className="font-mono text-[10px] uppercase tracking-[0.1em] mb-2" style={{ color: '#6B6B6B' }}>
+                <p className="font-mono text-[10px] uppercase tracking-[0.1em] mb-2" style={{ color: 'var(--text-2-on-accent)' }}>
                   {label}
                 </p>
                 <p
                   className="font-sans font-black tabular-nums leading-none"
-                  style={{ fontSize: '2rem', color: red ? '#E61919' : '#F4F4F0' }}
+                  style={{ fontSize: '2rem', color: red ? 'var(--terracotta)' : 'var(--bg)' }}
                 >
                   {value}
                 </p>
                 {sub && (
-                  <p className="font-mono text-[10px] mt-1.5 leading-relaxed" style={{ color: '#6B6B6B' }}>
+                  <p className="font-mono text-[10px] mt-1.5 leading-relaxed" style={{ color: 'var(--text-2-on-accent)' }}>
                     {sub}
                   </p>
                 )}
@@ -916,11 +916,11 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
       </section>
 
       {/* ── Two-column grid: Seasons | Circuit Domination ─────── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 border-b border-border" style={{ borderTop: '1px solid #D4D0C8' }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 border-b border-border" style={{ borderTop: '1px solid var(--border-subtle)' }}>
 
         {/* LEFT: 04 · Season by Season */}
         {seasonRows.length > 0 && (
-          <section style={{ borderRight: '1px solid #D4D0C8' }}>
+          <section style={{ borderRight: '1px solid var(--border-subtle)' }}>
             <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
               <span className="font-mono text-xs text-text-2 leading-none">04 ·</span>
               <h2 className="text-[13px] font-medium text-text-2">{t('seasons.title')}</h2>
@@ -934,21 +934,21 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
                     key={row.year}
                     className="flex items-center gap-4 px-6 py-2.5 hover:bg-surface transition-colors duration-100"
                     style={{
-                      borderBottom: '1px solid #D4D0C8',
-                      borderLeft: isChamp ? '3px solid var(--red)' : '3px solid transparent',
+                      borderBottom: '1px solid var(--border-subtle)',
+                      borderLeft: isChamp ? '3px solid var(--terracotta)' : '3px solid transparent',
                     }}
                   >
                     <span className="font-mono text-xs text-text-3 tabular-nums w-12 shrink-0">{row.year}</span>
                     <span
                       className="font-sans font-black tabular-nums w-10 shrink-0 leading-none"
-                      style={{ fontSize: '1.1rem', color: row.position === 1 ? 'var(--red)' : 'var(--text-1)' }}
+                      style={{ fontSize: '1.1rem', color: row.position === 1 ? 'var(--terracotta)' : 'var(--text-1)' }}
                     >
                       {row.position !== null ? `P${row.position}` : '—'}
                     </span>
-                    <div className="flex-1 h-px overflow-hidden" style={{ background: '#D4D0C8' }}>
+                    <div className="flex-1 h-px overflow-hidden" style={{ background: 'var(--border-subtle)' }}>
                       <div
                         className="h-full"
-                        style={{ width: `${(row.points / maxSeasonPoints) * 100}%`, background: isChamp ? 'var(--red)' : 'var(--text-2)' }}
+                        style={{ width: `${(row.points / maxSeasonPoints) * 100}%`, background: isChamp ? 'var(--terracotta)' : 'var(--text-2)' }}
                       />
                     </div>
                     <span className="font-mono text-[11px] text-text-1 tabular-nums w-14 text-right shrink-0">
@@ -986,10 +986,10 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
                     <span className="text-[13px] font-medium text-text-1 block truncate">{row.name}</span>
                     <span className="font-mono text-[10px] text-text-3">{row.country}</span>
                   </div>
-                  <div className="flex-1 h-px overflow-hidden" style={{ background: '#D4D0C8' }}>
+                  <div className="flex-1 h-px overflow-hidden" style={{ background: 'var(--border-subtle)' }}>
                     <div
                       className="h-full"
-                      style={{ width: `${(row.wins / maxCircuitWins) * 100}%`, background: i === 0 ? 'var(--red)' : 'var(--text-2)' }}
+                      style={{ width: `${(row.wins / maxCircuitWins) * 100}%`, background: i === 0 ? 'var(--terracotta)' : 'var(--text-2)' }}
                     />
                   </div>
                   <div className="flex items-center gap-4 shrink-0">
@@ -1033,7 +1033,7 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
                   <div className="w-40 shrink-0 min-w-0">
                     <span
                       className="text-[13px] block truncate"
-                      style={{ fontWeight: isLead ? 700 : 500, color: isLead ? 'var(--red)' : 'var(--text-1)' }}
+                      style={{ fontWeight: isLead ? 700 : 500, color: isLead ? 'var(--terracotta)' : 'var(--text-1)' }}
                     >
                       {row.name}
                     </span>
@@ -1041,10 +1041,10 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
                       {row.firstYear === row.lastYear ? String(row.firstYear) : `${row.firstYear}–${row.lastYear}`}
                     </span>
                   </div>
-                  <div className="flex-1 h-px overflow-hidden" style={{ background: '#D4D0C8' }}>
+                  <div className="flex-1 h-px overflow-hidden" style={{ background: 'var(--border-subtle)' }}>
                     <div
                       className="h-full"
-                      style={{ width: `${(row.podiums / maxDriverPodiums) * 100}%`, background: isLead ? 'var(--red)' : 'var(--text-2)' }}
+                      style={{ width: `${(row.podiums / maxDriverPodiums) * 100}%`, background: isLead ? 'var(--terracotta)' : 'var(--text-2)' }}
                     />
                   </div>
                   <div className="flex items-center gap-4 shrink-0">

@@ -206,7 +206,7 @@ export default function DriverDetailExperience({
       suffix: '%',
       decimals: true,
       sub: null,
-      color: parseFloat(winPct) > 20 ? 'var(--red)' : undefined,
+      color: parseFloat(winPct) > 20 ? 'var(--terracotta)' : undefined,
     },
     {
       label: t('qualifying.avgPosition'),

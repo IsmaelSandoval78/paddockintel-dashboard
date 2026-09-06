@@ -109,7 +109,7 @@ export default function ChampionshipBattle({
                 fontFamily: 'var(--pi-display)',
                 fontSize: 'clamp(44px, 6vw, 84px)',
                 letterSpacing: '-0.04em',
-                color: 'var(--red)',
+                color: 'var(--terracotta)',
               }}
             >
               +{gap}

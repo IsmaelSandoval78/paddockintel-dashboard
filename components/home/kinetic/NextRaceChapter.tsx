@@ -113,7 +113,7 @@ export default function NextRaceChapter({ race, motionOk }: NextRaceChapterProps
       {/* Chapter label */}
       <p className="font-mono text-[9px] md:text-[10px] text-text-2 uppercase tracking-[0.18em] mb-4">
         [ {t('nextRaceCard').toUpperCase()} ] · RD.{String(race.round).padStart(2, '0')} · {formatDate(race.date)}
-        <span className="ml-3" style={{ color: 'var(--red)' }}>
+        <span className="ml-3" style={{ color: 'var(--terracotta)' }}>
           {race.days_remaining === 0
             ? t('raceDay').toUpperCase()
             : t('inDays', { days: race.days_remaining }).toUpperCase()}
@@ -217,7 +217,7 @@ export default function NextRaceChapter({ race, motionOk }: NextRaceChapterProps
               </p>
               {race.circuit_lap_record ? (
                 <>
-                  <p className="font-mono text-[14px] tabular-nums" style={{ color: 'var(--red)' }}>
+                  <p className="font-mono text-[14px] tabular-nums" style={{ color: 'var(--terracotta)' }}>
                     {race.circuit_lap_record.time}
                   </p>
                   <p className="font-mono text-[9px] text-text-3 mt-1">
@@ -276,7 +276,7 @@ export default function NextRaceChapter({ race, motionOk }: NextRaceChapterProps
                     {row.q_time && (
                       <span
                         className="font-mono text-[10px] tabular-nums shrink-0"
-                        style={{ color: 'var(--red)' }}
+                        style={{ color: 'var(--terracotta)' }}
                       >
                         {row.q_time}
                       </span>
@@ -290,7 +290,7 @@ export default function NextRaceChapter({ race, motionOk }: NextRaceChapterProps
           <Link
             href={`/circuits/${race.circuit_ref}`}
             data-cursor
-            className="font-mono text-[9px] uppercase tracking-[0.16em] text-text-2 hover:text-red transition-colors duration-150 inline-block mt-8"
+            className="font-mono text-[9px] uppercase tracking-[0.16em] text-text-2 hover:text-terracotta transition-colors duration-150 inline-block mt-8"
           >
             [ {t('viewCircuit').toUpperCase()} → ]
           </Link>

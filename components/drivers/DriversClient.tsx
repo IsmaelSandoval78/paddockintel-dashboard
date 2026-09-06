@@ -76,7 +76,7 @@ function SeasonRow({
       className="drivers-season-row flex items-center h-[52px] pr-5 cursor-pointer select-none"
       style={{
         background: isP1 ? 'var(--surface-raised)' : selected ? 'var(--surface-overlay)' : restBg,
-        borderLeft: isP1 ? '3px solid var(--red)' : '3px solid transparent',
+        borderLeft: isP1 ? '3px solid var(--terracotta)' : '3px solid transparent',
         paddingLeft: '17px',
       }}
       onMouseEnter={(e) => {
@@ -277,14 +277,14 @@ export default function DriversClient({
         <button
           onClick={() => handleViewChange('2026')}
           className="drivers-filter-btn font-mono text-[11px] uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0 shrink-0"
-          style={{ color: view === '2026' ? 'var(--red)' : 'var(--text-2)' }}
+          style={{ color: view === '2026' ? 'var(--terracotta)' : 'var(--text-2)' }}
         >
           {t('view.season')}
         </button>
         <button
           onClick={() => handleViewChange('all')}
           className="drivers-filter-btn font-mono text-[11px] uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0 shrink-0"
-          style={{ color: view === 'all' ? 'var(--red)' : 'var(--text-2)' }}
+          style={{ color: view === 'all' ? 'var(--terracotta)' : 'var(--text-2)' }}
         >
           {t('view.allTime')}
         </button>
@@ -305,7 +305,7 @@ export default function DriversClient({
                 key={era}
                 onClick={() => setActiveEra(era)}
                 className="font-mono text-[11px] uppercase tracking-[0.1em] cursor-pointer bg-transparent border-0 p-0 shrink-0"
-                style={{ color: activeEra === era ? 'var(--red)' : 'var(--text-2)' }}
+                style={{ color: activeEra === era ? 'var(--terracotta)' : 'var(--text-2)' }}
               >
                 {era === 'all' ? 'ALL' : era.toUpperCase()}
               </button>

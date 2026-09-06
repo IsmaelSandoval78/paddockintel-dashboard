@@ -157,7 +157,7 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
             {motionOk ? '' : metaText}
           </p>
           <span className="font-mono text-[9px] text-text-3 uppercase tracking-[0.12em] hidden sm:flex items-center gap-1.5">
-            <span className="pulse-red inline-block w-1.5 h-1.5 rounded-full bg-red" />
+            <span className="pulse-red inline-block w-1.5 h-1.5 rounded-full bg-terracotta" />
             LIVE
           </span>
         </div>
@@ -165,7 +165,7 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
         {/* Tagline — the product promise, ahead of any single driver's stats */}
         <p
           ref={taglineRef}
-          className="font-sans text-text-1 mt-3 max-w-[36ch]"
+          className="font-prose text-text-1 mt-3 max-w-[36ch]"
           style={{
             fontSize: 'clamp(14px, 1.6vw, 18px)',
             lineHeight: 1.4,
@@ -321,7 +321,7 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
         style={{ opacity: motionOk ? 0 : 1 }}
       >
         <div className="w-px h-8 overflow-hidden">
-          <div className="hero-cue-line w-px h-full bg-red" style={{ transform: 'scaleY(0.2)' }} />
+          <div className="hero-cue-line w-px h-full bg-terracotta" style={{ transform: 'scaleY(0.2)' }} />
         </div>
       </div>
     </section>

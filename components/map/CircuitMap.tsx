@@ -20,9 +20,9 @@ export interface CircuitDominance {
 
 function dotHtml(isActive: boolean, selected: boolean): string {
   if (selected)
-    return '<div style="width:10px;height:10px;border-radius:50%;background:#E61919;border:2px solid #050505;box-shadow:0 0 10px rgba(230,25,25,0.4)"></div>';
+    return '<div style="width:10px;height:10px;border-radius:50%;background:#C1502E;border:2px solid #050505;box-shadow:0 0 10px rgba(193,80,46,0.4)"></div>';
   if (isActive)
-    return '<div style="width:8px;height:8px;border-radius:50%;background:#E61919;border:1.5px solid rgba(230,25,25,0.25)"></div>';
+    return '<div style="width:8px;height:8px;border-radius:50%;background:#C1502E;border:1.5px solid rgba(193,80,46,0.25)"></div>';
   return '<div style="width:6px;height:6px;border-radius:50%;background:#B0AFA8;border:1px solid #9B9A93"></div>';
 }
 
@@ -34,7 +34,7 @@ function makeIcon(isActive: boolean, selected: boolean): ReturnType<typeof L.div
 // ─── Dominance dot ────────────────────────────────────────────────
 //
 // Color encodes who dominates:
-//   #E61919  Driver A (race red)
+//   #C1502E  Driver A (terracotta)
 //   #2A5DB0  Driver B (blue)
 //   #B5B4AE  Even
 //   #D8D7D1  No overlap
@@ -56,7 +56,7 @@ function dotHtmlDominance(
     size = 6;
   } else if (dominance.winsA > dominance.winsB) {
     const pct = dominance.winsA / dominance.total;
-    color = '#E61919';
+    color = '#C1502E';
     size = pct >= 0.7 ? 11 : pct >= 0.55 ? 8 : 6;
   } else {
     const pct = dominance.winsB / dominance.total;

@@ -21,6 +21,7 @@ export async function GET(req: Request) {
     .from('digest_issues')
     .select('id, slug, published_at, intro_synthesis')
     .eq('status', 'published')
+    .eq('series', 'newsletter')
     .is('sent_at', null);
 
   if (!issues?.length) {

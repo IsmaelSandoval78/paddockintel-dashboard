@@ -29,7 +29,7 @@ export function SubBar({ t, updated }: { t: T; updated?: boolean }) {
     <div className="h-9 px-5 border-b border-border flex items-center bg-bg">
       <Link
         href="/records"
-        className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-red transition-colors duration-150 no-underline"
+        className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-terracotta transition-colors duration-150 no-underline"
       >
         ← {t('back')}
       </Link>
@@ -58,7 +58,7 @@ export function OtherRecordsNav({
         <Link
           key={s.slug}
           href={`/records/${s.slug}`}
-          className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-2 hover:text-red transition-colors duration-150 no-underline"
+          className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-2 hover:text-terracotta transition-colors duration-150 no-underline"
         >
           {s.title}
         </Link>

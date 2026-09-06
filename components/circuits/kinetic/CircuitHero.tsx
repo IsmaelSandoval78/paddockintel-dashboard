@@ -53,7 +53,7 @@ const FLAG_COLORS: Record<string, string[]> = {
 };
 
 function getFlagColors(country: string): string[] {
-  return FLAG_COLORS[country] ?? ['#E61919', '#FFFFFF', '#E61919'];
+  return FLAG_COLORS[country] ?? ['#C1502E', '#FFFFFF', '#C1502E'];
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -349,7 +349,7 @@ export default function CircuitHero({
                     <path
                       ref={s3PathRef}
                       d={trackPathData.path}
-                      stroke="var(--red)"
+                      stroke="var(--terracotta)"
                       strokeWidth="8"
                       fill="none"
                       strokeLinecap="round"
@@ -415,7 +415,7 @@ export default function CircuitHero({
                         width={markerHalf * 2}
                         height={markerHalf * 2}
                         style={{
-                          fill: corner.is_drs_zone ? 'var(--red)' : 'white',
+                          fill: corner.is_drs_zone ? 'var(--terracotta)' : 'white',
                           opacity: isActive ? 1 : (corner.is_drs_zone ? 0.85 : 0.65),
                         }}
                       />
@@ -438,7 +438,7 @@ export default function CircuitHero({
                         {' · '}{activeCorner.type.replace(/_/g, ' ')}
                       </span>
                       {activeCorner.is_drs_zone && (
-                        <span style={{ color: 'var(--red)' }}>{' · DRS'}</span>
+                        <span style={{ color: 'var(--terracotta)' }}>{' · DRS'}</span>
                       )}
                     </p>
                     {activeCorner.description && (
@@ -472,7 +472,7 @@ export default function CircuitHero({
                           <span style={{ display: 'inline-block', width: 6, height: 6, background: 'rgba(255,255,255,0.7)' }} />S2
                         </span>
                         <span className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.08em]" style={{ color: 'rgba(255,255,255,0.6)' }}>
-                          <span style={{ display: 'inline-block', width: 6, height: 6, background: 'var(--red)' }} />S3
+                          <span style={{ display: 'inline-block', width: 6, height: 6, background: 'var(--terracotta)' }} />S3
                         </span>
                       </div>
                     )}
@@ -504,7 +504,7 @@ export default function CircuitHero({
                             display: 'inline-block',
                             width: '5px',
                             height: '5px',
-                            background: corner.is_drs_zone ? 'var(--red)' : 'rgba(255,255,255,0.3)',
+                            background: corner.is_drs_zone ? 'var(--terracotta)' : 'rgba(255,255,255,0.3)',
                           }}
                         />
                         <span
@@ -620,7 +620,7 @@ export default function CircuitHero({
                 <p
                   ref={lapTimeRef}
                   className="font-mono leading-none tabular-nums"
-                  style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2rem)', color: 'var(--red)' }}
+                  style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2rem)', color: 'var(--terracotta)' }}
                 >
                   {rankLapRecord.time}
                 </p>

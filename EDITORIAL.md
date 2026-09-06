@@ -248,9 +248,11 @@ English is source of truth. ES and PT are parallel drafts — not machine transl
 
 ## The Writing Session Flow
 
-1. **Research first.** Before opening a draft, verify: race results from Formula1.com,
-   standings from Supabase Hub, economic claims from primary sources (FIA, team press releases,
-   FT/Bloomberg if available). Never estimate a number.
+1. **Research first.** Before opening a draft, read the four advisor files in `docs/advisors/`
+   (`SEO-EXPERT.md`, `DATA-EXPERT.md`, `EEAT-EXPERT.md`, `SPORTS-JOURNALISM-EXPERT.md`) — they are
+   an additional gate on top of this document, not a replacement for it. Then verify: race results
+   from Formula1.com, standings from Supabase Hub, economic claims from primary sources (FIA, team
+   press releases, FT/Bloomberg if available). Never estimate a number.
 
 2. **Angle before structure.** Write one sentence: *"This article argues that [X] because [Y]."*
    If you can't write that sentence, the angle isn't sharp enough yet.

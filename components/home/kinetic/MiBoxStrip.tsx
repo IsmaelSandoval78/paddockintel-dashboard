@@ -48,7 +48,7 @@ export default function MiBoxStrip() {
             key={`d-${d.ref}`}
             href={`/drivers/${d.ref}`}
             data-cursor
-            className="shrink-0 flex flex-col gap-1 px-4 py-3 border border-border-subtle hover:border-red transition-colors duration-150"
+            className="shrink-0 flex flex-col gap-1 px-4 py-3 border border-border-subtle hover:border-terracotta transition-colors duration-150"
             style={{ borderLeft: `2px solid ${teamColor(d.constructorRef)}` }}
           >
             <span className="font-mono text-[11px] text-text-1 uppercase tracking-[0.04em] whitespace-nowrap">
@@ -64,7 +64,7 @@ export default function MiBoxStrip() {
             key={`c-${c.ref}`}
             href={`/constructors/${c.ref}`}
             data-cursor
-            className="shrink-0 flex flex-col gap-1 px-4 py-3 border border-border-subtle hover:border-red transition-colors duration-150"
+            className="shrink-0 flex flex-col gap-1 px-4 py-3 border border-border-subtle hover:border-terracotta transition-colors duration-150"
             style={{ borderLeft: `2px solid ${teamColor(c.ref)}` }}
           >
             <span className="font-mono text-[11px] text-text-1 uppercase tracking-[0.04em] whitespace-nowrap">

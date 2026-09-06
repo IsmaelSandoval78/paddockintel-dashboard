@@ -46,7 +46,7 @@ export default async function BookSeasonPage({ params }: { params: PageParams })
 
         {chapters.map((chapter, i) => (
           <article key={chapter.id as number} className="mt-20 first:mt-12">
-            <p className="font-display text-sm uppercase text-red">
+            <p className="font-display text-sm uppercase text-terracotta">
               {t('chapter')} {i + 1}
             </p>
             <h1 className="font-display text-3xl text-text-1 mt-2 mb-8">

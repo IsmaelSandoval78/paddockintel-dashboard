@@ -148,7 +148,7 @@ export default function LastRaceCard({ race }: { race: HomeLastRaceData | null }
             >
               {race.fastest_lap.surname}
             </p>
-            <p className="font-mono text-[11px] tabular-nums mt-0.5" style={{ color: 'var(--red)' }}>
+            <p className="font-mono text-[11px] tabular-nums mt-0.5" style={{ color: 'var(--terracotta)' }}>
               {race.fastest_lap.time}
             </p>
           </div>
@@ -165,7 +165,7 @@ export default function LastRaceCard({ race }: { race: HomeLastRaceData | null }
             >
               {race.fastest_pit.surname}
             </p>
-            <p className="font-mono text-[11px] tabular-nums mt-0.5" style={{ color: 'var(--red)' }}>
+            <p className="font-mono text-[11px] tabular-nums mt-0.5" style={{ color: 'var(--terracotta)' }}>
               {race.fastest_pit.duration}s
             </p>
           </div>

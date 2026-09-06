@@ -17,7 +17,7 @@ const MAIL = 'info@paddockintel.com';
 
 function mailLink(chunks: React.ReactNode) {
   return (
-    <a href={`mailto:${MAIL}`} className="text-red hover:underline">
+    <a href={`mailto:${MAIL}`} className="text-terracotta hover:underline">
       {chunks}
     </a>
   );
@@ -32,14 +32,15 @@ export default async function PrivacyPage({ params }: { params: PageParams }) {
     { num: '02', heading: t('s2h'), body: t('s2p') },
     { num: '03', heading: t('s3h'), body: t('s3p') },
     { num: '04', heading: t('s4h'), body: t.rich('s4p', { mail: mailLink }) },
-    { num: '05', heading: t('s5h'), body: t('s5p') },
+    { num: '05', heading: t('s5h'), body: t.rich('s5p', { mail: mailLink }) },
+    { num: '06', heading: t('s6h'), body: t('s6p') },
     {
-      num: '06',
-      heading: t('s6h'),
-      body: t.rich('s6p', {
+      num: '07',
+      heading: t('s7h'),
+      body: t.rich('s7p', {
         mail: mailLink,
         about: (chunks) => (
-          <Link href="/about" className="text-red hover:underline">
+          <Link href="/about" className="text-terracotta hover:underline">
             {chunks}
           </Link>
         ),
@@ -61,7 +62,7 @@ export default async function PrivacyPage({ params }: { params: PageParams }) {
           {t('updated')}
         </p>
 
-        <div className="space-y-8 font-sans text-text-1 leading-relaxed">
+        <div className="space-y-8 font-prose text-text-1 leading-relaxed">
           {sections.map((s) => (
             <section key={s.num}>
               <h2 className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-2 mb-3 border-b border-border-subtle pb-2">

@@ -51,7 +51,7 @@ export default function Ticker({ drivers, motionOk }: TickerProps) {
   return (
     <div
       className="overflow-hidden py-2.5 md:py-3 border-y border-border select-none"
-      style={{ background: 'var(--red)' }}
+      style={{ background: 'var(--terracotta)' }}
       aria-hidden="true"
     >
       <div ref={trackRef} className="flex w-max will-change-transform">

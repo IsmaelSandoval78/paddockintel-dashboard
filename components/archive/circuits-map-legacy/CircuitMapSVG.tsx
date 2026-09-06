@@ -1,3 +1,7 @@
+// UNUSED as of 2026-08-24 — the d3-geo interactive world map for the old /circuits index,
+// replaced by the Vintage Editorial index (app/[locale]/(hub)/circuits/page.tsx), which has
+// no map at all. See git log if map/globe-based circuit discovery needs reviving.
+
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
@@ -136,12 +140,12 @@ export default function CircuitMapSVG({ circuits, onSelect, targetRegion, select
               style={{ cursor: 'pointer' }}
             >
               {isSelected && (
-                <circle cx={c.x} cy={c.y} r={isActive ? 10 : 8} fill="var(--red)" opacity={0.15} />
+                <circle cx={c.x} cy={c.y} r={isActive ? 10 : 8} fill="var(--terracotta)" opacity={0.15} />
               )}
               <circle
                 cx={c.x} cy={c.y}
                 r={isActive ? 4 : 2.5}
-                fill={isActive ? 'var(--red)' : 'var(--border-subtle)'}
+                fill={isActive ? 'var(--terracotta)' : 'var(--border-subtle)'}
                 opacity={isActive ? 1 : 0.7}
               />
               {isActive && !isSelected && (

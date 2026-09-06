@@ -67,7 +67,7 @@ export default function TrackDominancePanel({
           value={driverA}
           onChange={(e) => setDriverA(e.target.value)}
           className="font-mono text-[11px] uppercase tracking-[0.08em] bg-surface border border-border px-3 py-1.5 outline-none cursor-pointer appearance-none"
-          style={{ color: driverA ? 'var(--red)' : 'var(--text-3)', minWidth: '14ch' }}
+          style={{ color: driverA ? 'var(--terracotta)' : 'var(--text-3)', minWidth: '14ch' }}
         >
           <option value="">{t('driverA').toUpperCase()}</option>
           {drivers.map((d) => (
@@ -105,12 +105,12 @@ export default function TrackDominancePanel({
           {/* Score */}
           <div className="flex items-end gap-4">
             <div className="flex flex-col items-start">
-              <span className="font-mono text-[10px] uppercase tracking-[0.06em] mb-1" style={{ color: 'var(--red)' }}>
+              <span className="font-mono text-[10px] uppercase tracking-[0.06em] mb-1" style={{ color: 'var(--terracotta)' }}>
                 {driverAObj?.surname.toUpperCase() ?? 'A'}
               </span>
               <span
                 className="tabular-nums leading-none"
-                style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2.5rem,5vw,4rem)', color: 'var(--red)' }}
+                style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2.5rem,5vw,4rem)', color: 'var(--terracotta)' }}
               >
                 {result.winsA}
               </span>
@@ -144,7 +144,7 @@ export default function TrackDominancePanel({
           <div className="flex h-1.5 w-full overflow-hidden bg-border" style={{ maxWidth: '320px' }}>
             <div
               className="h-full transition-all duration-500 ease-out"
-              style={{ width: `${pctA * 100}%`, backgroundColor: 'var(--red)' }}
+              style={{ width: `${pctA * 100}%`, backgroundColor: 'var(--terracotta)' }}
             />
             <div
               className="h-full transition-all duration-500 ease-out"

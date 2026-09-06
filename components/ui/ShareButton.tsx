@@ -56,7 +56,7 @@ export default function ShareButton({ url, title, className }: ShareButtonProps)
       <button
         onClick={handleClick}
         aria-label="Share"
-        className="w-9 h-9 flex items-center justify-center rounded-none border border-border-subtle text-text-1 hover:text-red hover:border-red transition-colors duration-150"
+        className="w-9 h-9 flex items-center justify-center rounded-none border border-border-subtle text-text-1 hover:text-terracotta hover:border-terracotta transition-colors duration-150"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 3v12m0-12l-4 4m4-4l4 4M5 12v7a1 1 0 001 1h12a1 1 0 001-1v-7" />
@@ -69,13 +69,13 @@ export default function ShareButton({ url, title, className }: ShareButtonProps)
             href={`https://wa.me/?text=${encodeURIComponent(`${title} ${fullUrl}`)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="block px-3 py-2 font-mono text-[11px] tracking-[0.06em] uppercase text-text-1 hover:text-red hover:bg-surface-raised transition-colors duration-150 border-b border-border-subtle"
+            className="block px-3 py-2 font-mono text-[11px] tracking-[0.06em] uppercase text-text-1 hover:text-terracotta hover:bg-surface-raised transition-colors duration-150 border-b border-border-subtle"
           >
             WhatsApp
           </a>
           <button
             onClick={handleCopy}
-            className="block w-full text-left px-3 py-2 font-mono text-[11px] tracking-[0.06em] uppercase text-text-1 hover:text-red hover:bg-surface-raised transition-colors duration-150 border-b border-border-subtle"
+            className="block w-full text-left px-3 py-2 font-mono text-[11px] tracking-[0.06em] uppercase text-text-1 hover:text-terracotta hover:bg-surface-raised transition-colors duration-150 border-b border-border-subtle"
           >
             {copied ? 'Copied' : 'Copy link'}
           </button>
@@ -83,7 +83,7 @@ export default function ShareButton({ url, title, className }: ShareButtonProps)
             href={`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="block px-3 py-2 font-mono text-[11px] tracking-[0.06em] uppercase text-text-1 hover:text-red hover:bg-surface-raised transition-colors duration-150 border-b border-border-subtle"
+            className="block px-3 py-2 font-mono text-[11px] tracking-[0.06em] uppercase text-text-1 hover:text-terracotta hover:bg-surface-raised transition-colors duration-150 border-b border-border-subtle"
           >
             X
           </a>
@@ -91,7 +91,7 @@ export default function ShareButton({ url, title, className }: ShareButtonProps)
             href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="block px-3 py-2 font-mono text-[11px] tracking-[0.06em] uppercase text-text-1 hover:text-red hover:bg-surface-raised transition-colors duration-150"
+            className="block px-3 py-2 font-mono text-[11px] tracking-[0.06em] uppercase text-text-1 hover:text-terracotta hover:bg-surface-raised transition-colors duration-150"
           >
             Facebook
           </a>

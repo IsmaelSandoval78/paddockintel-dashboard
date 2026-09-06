@@ -20,6 +20,7 @@ async function getIssues() {
     .from('digest_issues')
     .select('slug, published_at, intro_synthesis')
     .eq('status', 'published')
+    .eq('series', 'newsletter')
     .order('published_at', { ascending: false });
   return data ?? [];
 }
@@ -39,13 +40,13 @@ export default async function DigestIndexPage() {
         <h1 className="font-display text-[clamp(2rem,6vw,3.5rem)] leading-[0.92] tracking-[-0.03em] text-text-1 mt-3 mb-5">
           F1 economics,<br />weekly.
         </h1>
-        <p className="font-sans text-text-2 leading-relaxed max-w-md mb-6">
+        <p className="font-prose text-text-2 leading-relaxed max-w-md mb-6">
           Verified sources. Original synthesis. No wire-service summaries — every issue has a first-person economic angle on what happened in and around F1.
         </p>
         <EmailCapture className="max-w-sm" />
         <p className="mt-2 font-mono text-[10px] text-text-3">
           By subscribing you agree to the{' '}
-          <Link href="/privacy" className="underline hover:text-red transition-colors duration-150">
+          <Link href="/privacy" className="underline hover:text-terracotta transition-colors duration-150">
             privacy policy
           </Link>
           .
@@ -77,11 +78,11 @@ export default async function DigestIndexPage() {
                     <span className="block font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 mb-1">
                       {format.dateTime(new Date(issue.published_at as string), { dateStyle: 'long' })}
                     </span>
-                    <span className="block font-sans text-text-1 leading-snug line-clamp-2">
+                    <span className="block font-prose text-text-1 leading-snug line-clamp-2">
                       {issue.intro_synthesis as string}
                     </span>
                   </span>
-                  <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-red opacity-0 group-hover:opacity-100 transition-opacity duration-150 shrink-0 pt-0.5">
+                  <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-terracotta opacity-0 group-hover:opacity-100 transition-opacity duration-150 shrink-0 pt-0.5">
                     Read →
                   </span>
                 </Link>
@@ -89,6 +90,14 @@ export default async function DigestIndexPage() {
             ))}
           </ul>
         )}
+
+        <p className="px-5 py-6 font-mono text-[10px] uppercase tracking-[0.1em] text-text-3">
+          Looking for older ground?{' '}
+          <Link href="/recaps" className="underline hover:text-terracotta transition-colors duration-150">
+            Browse the Recap series
+          </Link>
+          .
+        </p>
       </div>
     </main>
   );

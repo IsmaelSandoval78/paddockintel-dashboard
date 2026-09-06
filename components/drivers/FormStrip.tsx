@@ -14,7 +14,7 @@ export default function FormStrip({ form }: { form: FormRace[] }) {
           style = { border: '1px solid var(--border-subtle)', color: 'var(--text-3)', opacity: 0.5 };
           content = '';
         } else if (r.retired) {
-          style = { border: '1px solid var(--red)', color: 'var(--red)' };
+          style = { border: '1px solid var(--terracotta)', color: 'var(--terracotta)' };
           content = '×';
         } else if (r.position === 1) {
           style = { background: 'var(--gold)', color: 'var(--text-1)' };
