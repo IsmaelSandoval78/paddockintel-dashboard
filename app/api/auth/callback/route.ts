@@ -11,7 +11,12 @@ import { createAuthServerClient } from '@/lib/supabase/authServerClient';
 // Register this exact path (`<site>/api/auth/callback`) in the Supabase
 // dashboard under Authentication → URL Configuration → Redirect URLs, and as
 // an authorized redirect URI on the Google OAuth client — that's a manual
-// dashboard step, not something this route can configure for itself.
+// dashboard step, not something this route can configure for itself. Both
+// paddockintel.com and hub.paddockintel.com redirect their apex to a `www.`
+// or bare host at the platform level in at least one case (confirmed:
+// paddockintel.com -> www.paddockintel.com) — the allow-list entry needs to
+// be a wildcard (`https://*.paddockintel.com/api/auth/callback`) to survive
+// that, not just the exact bare-domain URLs.
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
@@ -23,13 +28,6 @@ export async function GET(request: Request) {
     if (!error) {
       return NextResponse.redirect(`${origin}${next}`);
     }
-    // TEMPORARY diagnostic logging — real exchangeCodeForSession() failure
-    // reason wasn't visible anywhere (Vercel logs showed only the 307, no
-    // error/warning). Never log the code itself (it's a live credential
-    // until exchanged/expired); the error message and status are safe.
-    console.error('exchangeCodeForSession failed:', error.message, error.status);
-  } else {
-    console.error('auth callback hit with no code param');
   }
 
   // No dedicated error page exists yet (no design for one) — redirect to
