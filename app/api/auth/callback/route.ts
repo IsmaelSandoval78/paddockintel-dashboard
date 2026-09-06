@@ -23,6 +23,13 @@ export async function GET(request: Request) {
     if (!error) {
       return NextResponse.redirect(`${origin}${next}`);
     }
+    // TEMPORARY diagnostic logging — real exchangeCodeForSession() failure
+    // reason wasn't visible anywhere (Vercel logs showed only the 307, no
+    // error/warning). Never log the code itself (it's a live credential
+    // until exchanged/expired); the error message and status are safe.
+    console.error('exchangeCodeForSession failed:', error.message, error.status);
+  } else {
+    console.error('auth callback hit with no code param');
   }
 
   // No dedicated error page exists yet (no design for one) — redirect to
