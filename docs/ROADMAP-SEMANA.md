@@ -21,7 +21,7 @@ apilarse.
 | 3. Newsletter | Pipeline automatizado real (`generate_digest_draft.py`), Vol.06 publicado hoy | Gap sin llenar: faltan vol-03/vol-04 |
 | 4. Who's Who | 19/34 voces con pick real. **Linkeado del nav 5 sep** — ruta promovida de `/whos-who-preview` (noindex) a `/whos-who` real, indexable, con metadata/i18n propios | 3 cuentas curadas sin servir (Piola/Slater/Davidson) |
 | 5. Feed | MVP construido, reusa `digest_items`, localizado. **Linkeado del nav 5 sep** | Ninguno bloqueante |
-| 6. Cuentas de usuario | Decidido 24 ago, cero código, confirmado vivo hoy | Proveedor de auth sin decidir |
+| 6. Cuentas de usuario | Proveedor decidido (Supabase Auth). Schema (`user_profiles`, 3 tablas de follows, RLS) aplicado y verificado contra la DB real. Clientes de auth (`authServerClient.ts`/`authBrowserClient.ts`) y callback implementados y pusheados — ver detalle 6 sep más abajo | **No completa** — verificación end-to-end con `Domain=.paddockintel.com` real y `auth.uid()` cross-domain pendiente de un entorno desplegado, no localhost (limitación de entorno, no duda sobre el código — detalle abajo). Sin diseño de UI de login todavía |
 | 7. Vertical de datos puros | Decidido 24 ago, cero código, confirmado vivo hoy | Cero métricas definidas todavía |
 
 **Hallazgos de auditoría de docs, 4 sep 2026 (aplicados o pendientes):**
@@ -311,6 +311,29 @@ establecida: la personalización cambia el *orden* del contenido, nunca fabrica 
 rankings/resultados oficiales — mismo principio que ya rige Mi Box. Requiere política de
 privacidad real antes de lanzar cuentas (ver `docs/advisors/EEAT-EXPERT.md`).
 **Bloqueadores reales:** proveedor de auth sin decidir; sin diseño de UI todavía.
+
+**Actualización 6 sep 2026 — schema y clientes de auth implementados, verificación final pendiente de entorno real (NO marcar como completo):**
+
+Proveedor confirmado: Supabase Auth, integrado vía el Worker de Cloudflare (que es esta misma app Next.js/OpenNext, no un worker separado) con la Anon key + JWT de sesión — nunca la Service Role key, para que RLS se aplique de verdad.
+
+**Auditoría previa a codear (misma sesión):** 30/31 tablas del schema ya tenían RLS habilitado; `driver_career_history` era la única excepción (sin RLS, pero sin grants a `anon`/`authenticated` tampoco — no explotable, pero inconsistente). `lib/supabase/server.ts` confirmado usando *siempre* la Service Role key (bypasea RLS por completo) — de ahí la necesidad de un cliente de auth completamente separado. `http` extension no instalada (sin vector de SSRF por esa vía). CLI de Supabase confirmado desalineado desde el 9-jul (10 migraciones con `remote: ""` pese a estar vivas en la DB) — **no se reparó, sigue pendiente como tarea aparte**.
+
+**Schema aplicado y verificado contra la DB real** (`supabase/migrations/20260906120000_user_accounts.sql` + `20260906130000_driver_career_history_grant.sql`, ambas corridas vía `supabase db query --linked -f` — el `db push` normal sigue bloqueado por el desalineamiento del CLI, no se forzó con `--include-all`):
+- `driver_career_history`: RLS habilitado + policy SELECT abierta, igual que las otras 30 tablas. **Bug real encontrado y corregido en el camino:** la primera migración habilitó RLS y la policy pero se olvidó el `GRANT SELECT` que la policy necesita para tener efecto — sin eso, la policy quedaba inerte (mismo resultado que antes: `anon` seguía recibiendo "permission denied"). Detectado probando con la Anon key real, no asumiendo que la migración funcionó. Corregido con una segunda migración, reverificado con una query real.
+- `user_profiles` (1:1 con `auth.users`) y `driver_follows`/`constructor_follows`/`expert_follows` (3 tablas separadas, no una genérica, para preservar FKs reales — `drivers.id`/`constructors.id` son `integer`, `experts.id` es `uuid`): RLS habilitado, policies exactas (select/insert/update propios en profiles sin delete; select/insert/delete en follows sin update), GRANTs verificados (`authenticated` tiene exactamente lo esperado, `anon` no tiene nada en ninguna de las 4). Todo confirmado con `pg_policies`/`information_schema.role_table_grants` y con queries reales usando la Anon key (que devuelven "permission denied" en las 4 tablas de cuentas, como corresponde).
+- `user_preferences` deliberadamente no creada — sin un campo real que guardar todavía (eso es del wizard de newsletter v2, fuera de alcance).
+
+**Decisión de producto tomada esta sesión:** un solo login, sesión compartida entre `paddockintel.com` y `hub.paddockintel.com` (no dos sesiones separadas) — los follows cubren tanto drivers/constructors (Hub) como experts (magazine), tiene que ser una sola cookie de sesión con `Domain=.paddockintel.com`.
+
+**Hallazgo real serio, encontrado con Chrome real, no asumido de la documentación:** la config inicial (`httpOnly: true` compartido entre el cliente server y el cliente browser) **rompía el login por completo**. Un `document.cookie = "...; HttpOnly"` no queda "escrito sin la protección" — Chrome rechaza la escritura entera, la cookie nunca se guarda. El verifier de PKCE (que el *browser* tiene que escribir antes de redirigir a Google/mandar el magic link) nunca llegaba a existir, así que el callback nunca podía validar el código de vuelta. Corregido separando la config: `authServerCookieOptions` (`httpOnly: true`, para la cookie de sesión final, que sí se escribe server-side vía un `Set-Cookie` real) y `authBrowserCookieOptions` (`httpOnly: false`, para lo que escribe el browser, que nunca puede ser httpOnly de verdad de todos modos). Confirmado con Chrome real después del fix: `signInWithOtp()` completa sin error y las 3 cookies del verifier PKCE quedan escritas y visibles.
+
+**Lo que queda pendiente de verificar, explícitamente, y por qué no es una duda sobre el código:**
+1. El flujo completo con `Domain=.paddockintel.com` real, de punta a punta (login → callback → usuario autenticado).
+2. Que `auth.uid()` se resuelva igual en Route Handlers corriendo en `paddockintel.com` y en `hub.paddockintel.com` con la misma cookie de sesión.
+
+Ninguna de las dos se puede probar en `localhost` — confirmado empíricamente: un navegador nunca acepta un `Set-Cookie`/`document.cookie` con `Domain=.paddockintel.com` viniendo de un origen `localhost` (mismatch de dominio real, no un bug). Se decidió explícitamente no editar `/etc/hosts` para simular el dominio real. **Queda pendiente de confirmar recién cuando haya un entorno desplegado real** (una vez registradas las redirect URIs en Supabase Auth y Google Cloud Console, paso manual de Ismael). Hasta entonces, este paso del roadmap se mantiene como "código implementado y pusheado, verificación final pendiente de entorno real" — no como completo.
+
+**Texto de privacidad** (`locales/en.json`/`es.json`/`pt.json`, `app/[locale]/privacy/page.tsx`) reescrito para divulgar la recolección de datos de cuenta (antes decía literalmente "no recolectamos nada más, sin cookies de rastreo", que dejaba de ser cierto) — confirmado por Ismael antes de subir.
 
 ### 7. Vertical de datos puros (pace indices, métricas propietarias) — de docs/DECISIONS-2026-08-24-radical-pivot.md
 **Estado: decidido el 24 ago, cero código — confirmado vivo (no abandonado) el 4 sep 2026.**
