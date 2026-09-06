@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
+import { authServerCookieOptions } from './authCookieOptions';
 
 // The ONLY Supabase client allowed to touch user_profiles or any *_follows
 // table. Uses the Anon key + the caller's own session cookie (never the
@@ -23,6 +24,7 @@ export async function createAuthServerClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      cookieOptions: authServerCookieOptions,
       cookies: {
         getAll() {
           return cookieStore.getAll();
