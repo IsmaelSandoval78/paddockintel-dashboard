@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useMiBox } from '@/lib/useMiBox';
+import { useFollows } from '@/lib/follows/useFollows';
 
 export default function FollowButton({
   kind,
@@ -20,7 +20,7 @@ export default function FollowButton({
   idleTextColor?: string;
 }) {
   const t = useTranslations('miBox');
-  const { ready, isFollowed, toggle } = useMiBox();
+  const { ready, isFollowed, toggle } = useFollows();
 
   // Renders the same size/position before and after hydration (unfollowed) to avoid layout
   // shift — `ready` only gates the color/label, never whether the button exists.

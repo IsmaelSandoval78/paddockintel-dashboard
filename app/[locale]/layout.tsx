@@ -7,6 +7,9 @@ import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/lib/i18n/routing';
 import { siteModeForHost } from '@/lib/siteMode';
+import { getCurrentAuthUser } from '@/lib/auth/getCurrentAuthUser';
+import { getFollowedRefs } from '@/lib/follows/actions';
+import { AuthProvider } from '@/lib/auth/AuthContext';
 import Navbar from '@/components/nav/Navbar';
 import Footer from '@/components/nav/Footer';
 import '../globals.css';
@@ -75,6 +78,14 @@ export default async function LocaleLayout({
   const host = (await headers()).get('host') ?? '';
   const siteMode = siteModeForHost(host);
 
+  // One auth read per request, shared by Navbar (via prop) and every
+  // FollowButton/MiBoxIndicator/MiBoxStrip anywhere in the tree (via
+  // AuthContext) — see lib/auth/AuthContext.tsx. Follows are only fetched
+  // when there's actually a session; the anonymous majority of requests
+  // never touches driver_follows/constructor_follows at all.
+  const authUser = await getCurrentAuthUser();
+  const initialFollows = authUser ? await getFollowedRefs() : { drivers: [], constructors: [] };
+
   return (
     <html
       lang={locale}
@@ -83,9 +94,11 @@ export default async function LocaleLayout({
     >
       <body>
         <NextIntlClientProvider messages={messages}>
-          <Navbar />
-          {children}
-          <Footer />
+          <AuthProvider value={{ user: authUser, initialFollows }}>
+            <Navbar authUser={authUser} />
+            {children}
+            <Footer />
+          </AuthProvider>
         </NextIntlClientProvider>
       </body>
     </html>

@@ -1,6 +1,5 @@
 import { headers } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
-import { createAuthServerClient } from '@/lib/supabase/authServerClient';
 import { Link } from '@/lib/i18n/navigation';
 import { isMagazineHost } from '@/lib/siteMode';
 import NavLinks from './NavLinks';
@@ -30,28 +29,10 @@ async function getCurrentRound(): Promise<{ round: number; year: number } | null
   }
 }
 
-async function getCurrentAuthUser(): Promise<AuthUser | null> {
-  // getUser() (validated server-side against Supabase Auth), never
-  // getSession() — same reasoning as app/api/auth/callback/route.ts and the
-  // deleted /api/auth/whoami harness: cookie-decoded session data isn't
-  // cryptographically verified on its own. Returns null fast when there's no
-  // session cookie at all, so this stays cheap for the anonymous majority of
-  // requests.
-  const supabase = await createAuthServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return null;
-  const metadata = user.user_metadata as Record<string, unknown> | null;
-  const name = (metadata?.full_name as string | undefined) ?? (metadata?.name as string | undefined) ?? null;
-  return { email: user.email ?? '', name };
-}
-
-export default async function Navbar() {
+export default async function Navbar({ authUser }: { authUser: AuthUser | null }) {
   const host = (await headers()).get('host') ?? '';
   const isMagazine = isMagazineHost(host);
-  const [current, authUser] = await Promise.all([
-    isMagazine ? Promise.resolve(null) : getCurrentRound(),
-    getCurrentAuthUser(),
-  ]);
+  const current = isMagazine ? null : await getCurrentRound();
 
   return (
     <nav className="bg-bg border-b border-border sticky top-0 z-50 shrink-0">

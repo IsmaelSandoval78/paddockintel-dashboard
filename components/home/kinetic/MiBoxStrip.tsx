@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/lib/i18n/navigation';
-import { useMiBox } from '@/lib/useMiBox';
+import { useFollows } from '@/lib/follows/useFollows';
 import { teamColor } from './teamColors';
 import type { MiBoxSummaryResponse } from '@/app/api/mi-box/summary/route';
 
@@ -17,7 +17,7 @@ import type { MiBoxSummaryResponse } from '@/app/api/mi-box/summary/route';
 // on every request. See app/api/mi-box/summary/route.ts for the fuller rationale.
 export default function MiBoxStrip() {
   const t = useTranslations('miBox');
-  const { state, ready } = useMiBox();
+  const { state, ready } = useFollows();
   const [data, setData] = useState<MiBoxSummaryResponse | null>(null);
 
   const hasFollows = state.drivers.length > 0 || state.constructors.length > 0;

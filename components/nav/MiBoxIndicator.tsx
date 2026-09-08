@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { useMiBox } from '@/lib/useMiBox';
+import { useFollows } from '@/lib/follows/useFollows';
 
 function formatRef(ref: string): string {
   return ref.replace(/_/g, ' ').toUpperCase();
@@ -10,7 +10,7 @@ function formatRef(ref: string): string {
 
 export default function MiBoxIndicator() {
   const t = useTranslations('miBox');
-  const { state, ready, toggle } = useMiBox();
+  const { state, ready, toggle } = useFollows();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
