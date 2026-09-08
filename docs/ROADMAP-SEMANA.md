@@ -21,7 +21,7 @@ apilarse.
 | 3. Newsletter | Pipeline automatizado real (`generate_digest_draft.py`), Vol.06 publicado hoy | Gap sin llenar: faltan vol-03/vol-04 |
 | 4. Who's Who | 19/34 voces con pick real. **Linkeado del nav 5 sep** — ruta promovida de `/whos-who-preview` (noindex) a `/whos-who` real, indexable, con metadata/i18n propios | 3 cuentas curadas sin servir (Piola/Slater/Davidson) |
 | 5. Feed | MVP construido, reusa `digest_items`, localizado. **Linkeado del nav 5 sep** | Ninguno bloqueante |
-| 6. Cuentas de usuario | **Completo de verdad, verificado en producción real el 6 sep 2026.** Proveedor Supabase Auth, schema + RLS aplicado, login con Google funcionando de punta a punta en `paddockintel.com`/`hub.paddockintel.com`, sesión compartida confirmada (mismo `auth.uid()` en ambos dominios), cookie de sesión con los 4 atributos correctos confirmados en DevTools real — ver detalle 6 sep más abajo | Sin diseño de UI de login todavía (tarea aparte, con su propio Design Gate) |
+| 6. Cuentas de usuario | **Backend completo de verdad, verificado en producción real el 6 sep 2026** (Supabase Auth, schema + RLS, login con Google de punta a punta, sesión compartida `paddockintel.com`/`hub.paddockintel.com`). **UI real de login construida el 8 sep 2026** (`AuthWidget.tsx`, dropdown en nav desktop + mobile, Google + magic link) — ver sección "UI real de login" más abajo | Falta verificar la UI con clic real en navegador (solo probada server-side/HTML hoy). Deuda de producto anotada, no resuelta: reconciliar Mi Box (localStorage) con `driver_follows`/`constructor_follows` (sesión) al loguearse |
 | 7. Vertical de datos puros | Decidido 24 ago, cero código, confirmado vivo hoy | Cero métricas definidas todavía |
 
 **Hallazgos de auditoría de docs, 4 sep 2026 (aplicados o pendientes):**
@@ -45,6 +45,11 @@ apilarse.
 - ⚠️ **Sin resolver, no bloqueante:** `docs/WHOS-WHO-FASE0-CANDIDATES.md` no refleja
   todavía que Piola/Slater/Davidson no sirven para el mecanismo de picks (ver sección
   de Who's Who más abajo) — la lista de 34 sigue "aprobada" tal cual, sin la nota.
+- ✅ **Cerrado 8 sep 2026:** deuda técnica del CLI de Supabase desalineado desde el
+  9-jul (17 migraciones con `remote: ""` pese a estar aplicadas de verdad) — reparado
+  con `supabase migration repair`, verificado una por una contra la DB real antes de
+  reparar. `supabase db push` vuelve a funcionar sin `--include-all`. Ver sección "CLI
+  de Supabase — historial de migraciones reparado" más abajo.
 
 ## Los 5 pasos, en orden
 
@@ -316,7 +321,7 @@ privacidad real antes de lanzar cuentas (ver `docs/advisors/EEAT-EXPERT.md`).
 
 Proveedor confirmado: Supabase Auth, integrado vía el Worker de Cloudflare (que es esta misma app Next.js/OpenNext, no un worker separado) con la Anon key + JWT de sesión — nunca la Service Role key, para que RLS se aplique de verdad.
 
-**Auditoría previa a codear (misma sesión):** 30/31 tablas del schema ya tenían RLS habilitado; `driver_career_history` era la única excepción (sin RLS, pero sin grants a `anon`/`authenticated` tampoco — no explotable, pero inconsistente). `lib/supabase/server.ts` confirmado usando *siempre* la Service Role key (bypasea RLS por completo) — de ahí la necesidad de un cliente de auth completamente separado. `http` extension no instalada (sin vector de SSRF por esa vía). CLI de Supabase confirmado desalineado desde el 9-jul (10 migraciones con `remote: ""` pese a estar vivas en la DB) — **no se reparó, sigue pendiente como tarea aparte**.
+**Auditoría previa a codear (misma sesión):** 30/31 tablas del schema ya tenían RLS habilitado; `driver_career_history` era la única excepción (sin RLS, pero sin grants a `anon`/`authenticated` tampoco — no explotable, pero inconsistente). `lib/supabase/server.ts` confirmado usando *siempre* la Service Role key (bypasea RLS por completo) — de ahí la necesidad de un cliente de auth completamente separado. `http` extension no instalada (sin vector de SSRF por esa vía). CLI de Supabase confirmado desalineado desde el 9-jul (10 migraciones con `remote: ""` pese a estar vivas en la DB) — **no se reparó en esta sesión, quedó pendiente como tarea aparte. Resuelto el 8 sep 2026, ver sección "CLI de Supabase — historial de migraciones reparado" al final de este documento.**
 
 **Schema aplicado y verificado contra la DB real** (`supabase/migrations/20260906120000_user_accounts.sql` + `20260906130000_driver_career_history_grant.sql`, ambas corridas vía `supabase db query --linked -f` — el `db push` normal sigue bloqueado por el desalineamiento del CLI, no se forzó con `--include-all`):
 - `driver_career_history`: RLS habilitado + policy SELECT abierta, igual que las otras 30 tablas. **Bug real encontrado y corregido en el camino:** la primera migración habilitó RLS y la policy pero se olvidó el `GRANT SELECT` que la policy necesita para tener efecto — sin eso, la policy quedaba inerte (mismo resultado que antes: `anon` seguía recibiendo "permission denied"). Detectado probando con la Anon key real, no asumiendo que la migración funcionó. Corregido con una segunda migración, reverificado con una query real.
@@ -350,9 +355,46 @@ Con el harness ya en producción, tres fallas reales, cada una encontrada con ev
 
 **Limpieza aplicada, misma disciplina que las verificaciones anteriores:** borrados `/test-login`, `/api/auth/whoami`, y el logging de diagnóstico temporal que se había agregado a `app/api/auth/callback/route.ts` para encontrar el error #3 (revertido a su versión limpia). Pendiente que Ismael borre el usuario de prueba de Google desde el dashboard de Supabase Auth.
 
-**Lo único que falta de verdad para "cuentas de usuario" como feature completa:** la UI real de login (botón/página con diseño, i18n, Critique Gate) — no arranca todavía, es tarea aparte.
+**Lo único que faltaba de verdad para "cuentas de usuario" como feature completa era la UI real de login — construida el 8 sep 2026, ver sección siguiente.**
 
 **Texto de privacidad** (`locales/en.json`/`es.json`/`pt.json`, `app/[locale]/privacy/page.tsx`) reescrito para divulgar la recolección de datos de cuenta (antes decía literalmente "no recolectamos nada más, sin cookies de rastreo", que dejaba de ser cierto) — confirmado por Ismael antes de subir.
+
+## UI real de login — construida (8 sep 2026)
+
+**Investigación previa a codear, no asumida:** confirmado contra `app/globals.css` (no solo contra `DESIGN.md`) que el sistema Vintage Editorial v3.0.0 (kraft `#EDE3D0`, terracotta `#C1502E`, `--radius-sm` 2px) ya está aplicado en código real, no solo decidido — descartó de entrada construir contra el sistema viejo Swiss Industrial Print (`#F4F4F0`, zero-radius) que un prompt de esta sesión describía por error como el vigente. Confirmado también contra el endpoint público `/auth/v1/settings` de Supabase (no asumido) que **Google y magic link por email están ambos habilitados de verdad en producción** — coincide con lo que `privacyPage` ya le promete al usuario en las 3 locales.
+
+**Patrón visual reusado, no inventado:** el trigger + panel dropdown copia la estructura exacta de `MiBoxIndicator.tsx` (badge bordered en el nav, panel `absolute`/`border`/sin `box-shadow`, click-fuera-para-cerrar), y el microcopy legal debajo del form copia el patrón de `EmailCapture.tsx` (`t.rich('legal', ...)`, sin checkbox). Badge post-login con iniciales en una caja `radius-sm` — no una foto de perfil circular, porque `rounded-full` en DESIGN.md está reservado explícitamente a contenedores ilustrados de diagrama, no a un patrón de UI card como un avatar.
+
+**Construido:**
+- `components/nav/AuthWidget.tsx` (nuevo) — Google OAuth + magic link por email, estado post-login con "Sign out", variantes `desktop` (dropdown flotante en `Navbar.tsx`, después de `LocaleSwitcher`) y `mobile` (fila inline en el flyout de `MobileNav.tsx`, mismo mecanismo para ambas — sin duplicar la lógica de Supabase).
+- `Navbar.tsx` — ahora resuelve el usuario real server-side vía `createAuthServerClient().auth.getUser()` (nunca `getSession()` sin validar, mismo criterio que ya se usó en el harness de verificación del 6 sep) y se lo pasa a los dos widgets.
+- Namespace `auth` agregado a `locales/en.json`/`es.json`/`pt.json` (mismo patrón plano usado para `privacyPage`).
+- Verificado: `tsc --noEmit` limpio, `eslint` limpio, `npm run dev` real levantado y las 3 locales (`/en/`, `/es/`, `/pt/`) responden 200 con el trigger de login renderizado correctamente en el HTML servido, sin errores en el log del servidor. **No verificado con clic real en navegador** — no había herramienta de automatización de browser disponible en esta sesión; falta ese paso antes de dar el feature por 100% probado en uso real.
+
+**Deuda de producto anotada, no resuelta en esta tarea:** reconciliar Mi Box (`useMiBox`, sigue drivers/constructors en una cookie de `localStorage`, sin cuenta) con `driver_follows`/`constructor_follows` (tablas reales, requieren sesión) cuando un usuario invitado se loguea — hoy los dos sistemas van a coexistir sin sincronizarse, no se decidió qué pasa con los follows que un usuario ya tenía en Mi Box antes de loguearse por primera vez.
+
+## CLI de Supabase — historial de migraciones reparado (8 sep 2026)
+
+**Deuda técnica desde el 9-jul, cerrada — 17 migraciones tenían `remote: ""` en `supabase migration list` pese a estar aplicadas de verdad en la DB (más de las "10 y pico" con las que se venía arrastrando la cifra; el número real, contado exacto, era 17).**
+
+Este Codespace nunca había tenido el proyecto enlazado (`supabase/config.toml` no existía, sin `SUPABASE_ACCESS_TOKEN`, `supabase link` nunca corrido acá) — el diagnóstico previo se había hecho en otro entorno. Se rehizo desde cero en este: `supabase login` interactivo, `supabase link --project-ref ozcmecoaofolbrzhlhum`, y recién ahí `supabase migration list --linked`.
+
+**Verificación real, no asumida — las 17 migraciones se confirmaron una por una contra la DB real** (`supabase db query --linked`, tabla/columna/constraint/policy/grant/índice según el contenido específico de cada `.sql`, no un chequeo genérico): tablas creadas (`driver_career_history`, `racing_series`, `glossary_terms`, `authors`, `article_sources`, `tags`/`article_tags`, `experts`, `expert_picks`, `user_profiles`, `driver_follows`/`constructor_follows`/`expert_follows`), columnas agregadas (`articles.content_type`/`author_id`/`season_year`, `glossary_terms.depth`, `article_tags.position`, `digest_issues.series`, `digest_items.entity_tags`), el drop real de `articles.tags`, conteos de datos exactos (870 `article_tags`, 102 `articles.race_id` no nulos, 237 `season_year`, 34 `experts`, 19 `expert_picks`, 34 `tags`), y RLS/policies/grants/índices de cada tabla nueva — incluida la revocación de los grants excesivos (`REFERENCES`/`TRIGGER`/`TRUNCATE`/`MAINTAIN`) confirmada con 0 resultados en todo el schema `public`. Ninguna resultó fantasma (archivo `.sql` sin aplicar de verdad).
+
+**Reparado con la herramienta correcta** — `supabase migration repair --status applied <versiones> --linked`, que solo escribe en la tabla de historial (`supabase_migrations.schema_migrations`), nunca re-ejecuta DDL/DML:
+
+```
+20260709183603 20260709183754 20260725000000
+20260827160000 20260827180000 20260827200000 20260827220000
+20260902191345 20260902220000
+20260903120000 20260903130000 20260903180000 20260903190000 20260903200000
+20260904200000
+20260906120000 20260906130000
+```
+
+**Verificación post-repair:** `supabase migration list --linked` → las 26 migraciones (17 reparadas + 9 ya sincronizadas) muestran `local == remote`, ninguna con `remote: ""`. `supabase db push --dry-run --linked` → `{"upToDate":true,"migrations":[]}`, sin pedir `--include-all` ni amenazar con reintentar migraciones viejas.
+
+**Estado ahora: el flujo normal de `supabase db push` vuelve a estar disponible para migraciones futuras** — ya no hace falta aplicar a mano vía `db query --linked -f`/SQL Editor por el desalineamiento del historial. No se tocó ningún schema, tabla, policy ni grant en esta tarea — exclusivamente metadata del historial de la CLI.
 
 ### 7. Vertical de datos puros (pace indices, métricas propietarias) — de docs/DECISIONS-2026-08-24-radical-pivot.md
 **Estado: decidido el 24 ago, cero código — confirmado vivo (no abandonado) el 4 sep 2026.**

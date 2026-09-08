@@ -1,11 +1,13 @@
 import { headers } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
+import { createAuthServerClient } from '@/lib/supabase/authServerClient';
 import { Link } from '@/lib/i18n/navigation';
 import { isMagazineHost } from '@/lib/siteMode';
 import NavLinks from './NavLinks';
 import LocaleSwitcher from './LocaleSwitcher';
 import MobileNav from './MobileNav';
 import MiBoxIndicator from './MiBoxIndicator';
+import AuthWidget, { type AuthUser } from './AuthWidget';
 
 async function getCurrentRound(): Promise<{ round: number; year: number } | null> {
   try {
@@ -28,10 +30,28 @@ async function getCurrentRound(): Promise<{ round: number; year: number } | null
   }
 }
 
+async function getCurrentAuthUser(): Promise<AuthUser | null> {
+  // getUser() (validated server-side against Supabase Auth), never
+  // getSession() — same reasoning as app/api/auth/callback/route.ts and the
+  // deleted /api/auth/whoami harness: cookie-decoded session data isn't
+  // cryptographically verified on its own. Returns null fast when there's no
+  // session cookie at all, so this stays cheap for the anonymous majority of
+  // requests.
+  const supabase = await createAuthServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+  const metadata = user.user_metadata as Record<string, unknown> | null;
+  const name = (metadata?.full_name as string | undefined) ?? (metadata?.name as string | undefined) ?? null;
+  return { email: user.email ?? '', name };
+}
+
 export default async function Navbar() {
   const host = (await headers()).get('host') ?? '';
   const isMagazine = isMagazineHost(host);
-  const current = isMagazine ? null : await getCurrentRound();
+  const [current, authUser] = await Promise.all([
+    isMagazine ? Promise.resolve(null) : getCurrentRound(),
+    getCurrentAuthUser(),
+  ]);
 
   return (
     <nav className="bg-bg border-b border-border sticky top-0 z-50 shrink-0">
@@ -55,11 +75,12 @@ export default async function Navbar() {
             </>
           )}
           <LocaleSwitcher />
+          <AuthWidget user={authUser} />
         </div>
       </div>
 
       {/* Mobile — hidden above md breakpoint */}
-      <MobileNav isMagazine={isMagazine} />
+      <MobileNav isMagazine={isMagazine} authUser={authUser} />
     </nav>
   );
 }

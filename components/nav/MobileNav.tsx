@@ -6,6 +6,7 @@ import { usePathname, Link, useRouter } from '@/lib/i18n/navigation';
 import { useLocale } from 'next-intl';
 import { routing } from '@/lib/i18n/routing';
 import { getAlternateLocaleHref, goToAlternateLocale } from '@/lib/i18n/switchLocale';
+import AuthWidget, { type AuthUser } from './AuthWidget';
 
 type NavKey = 'hub' | 'circuits' | 'drivers' | 'constructors' | 'compare' | 'records';
 
@@ -27,7 +28,13 @@ const magazineSections: { key: MagazineKey; tag: string }[] = [
   { key: 'supplyChain', tag: 'supply-chain-operations' },
 ];
 
-export default function MobileNav({ isMagazine }: { isMagazine: boolean }) {
+export default function MobileNav({
+  isMagazine,
+  authUser,
+}: {
+  isMagazine: boolean;
+  authUser: AuthUser | null;
+}) {
   const [open, setOpen] = useState(false);
   const t = useTranslations('nav');
   const pathname = usePathname();
@@ -144,6 +151,8 @@ export default function MobileNav({ isMagazine }: { isMagazine: boolean }) {
               </a>
             </>
           )}
+
+          <AuthWidget user={authUser} variant="mobile" />
 
           {/* Vol/Rd + locale footer row */}
           <div className="h-12 px-5 flex items-center justify-between bg-bg">
