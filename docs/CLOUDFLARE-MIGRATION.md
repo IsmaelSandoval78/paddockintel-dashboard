@@ -6,6 +6,70 @@ nobody re-investigates something already settled.
 
 ---
 
+## ✅ 2026-09-08 — TTL confirmed already low; edge audit found + fixed 2 real gaps
+
+**Step 1 of the cutover plan (lower DNS TTL, wait for propagation) — already satisfied,
+no change needed.** Queried live, directly against Cloudflare's own authoritative
+nameservers (`dig @lisa.ns.cloudflare.com`, not a cached resolver): `hub.paddockintel.com`
+(CNAME), `paddockintel.com` (apex A record), and `www.paddockintel.com` (CNAME) all
+already show TTL 300s. Also corrected a framing error in the plan: DNS for this domain is
+hosted at Cloudflare (`lisa.ns.cloudflare.com` / `algin.ns.cloudflare.com`), not Vercel —
+Vercel is only the current origin the records point at.
+
+**Step 2 — audited everything the Vercel edge does today against the deployed Cloudflare
+Worker, 1:1, including edge cases (not just happy paths).** Full inventory of what runs
+at the edge: `middleware.ts` (next-intl locale routing + host-based rewrite to
+`magazine-home`) and the cron (already migrated — see the ISR/Cron sections below). No
+`redirects()`/`headers()`/`rewrites()` in `next.config.ts`, no geolocation usage anywhere
+in the codebase.
+
+**Confirmed identical on both, with real curl against the real deployed Worker
+(`paddockintel-dashboard.sandoval-ismael.workers.dev`) and real production Vercel:**
+trailing slash enforcement (`/drivers` → 308 → `/drivers/`), i18n locale routing (`/es/`,
+`/pt/drivers/` → correct `NEXT_LOCALE` cookie + `hreflang` alternates).
+
+**2 real gaps found — neither is app code, both are Vercel platform/dashboard defaults
+that don't exist on Cloudflare:**
+1. `paddockintel.com` (bare apex) → 308 to `https://www.paddockintel.com/` on Vercel —
+   a dashboard-level domain redirect, not `next.config.ts`. Non-breaking on its own (the
+   apex is already in every `MAGAZINE_HOSTS` set, so it already serves the magazine
+   correctly without the redirect) — a canonicalization/SEO difference, not a functional
+   one.
+2. `strict-transport-security: max-age=63072000` present on 100% of Vercel responses
+   tested, absent on 100% of Worker responses tested. A real security-header gap, not
+   cosmetic.
+
+**Fix applied in `middleware.ts` rather than per-platform dashboard config** (a
+Cloudflare zone-level Redirect Rule + HSTS toggle would need to be hand-kept in sync with
+this file forever — one code path that behaves identically everywhere is simpler): bare
+`paddockintel.com` now redirects to `www` before anything else runs (308, path + query
+preserved), and every response (including that redirect) gets
+`strict-transport-security: max-age=63072000` set explicitly. Harmless on Vercel — its
+own platform-level apex redirect fires before Next.js middleware ever runs there, so this
+is dead code specifically on Vercel's copy of the app; it's what actually does the work on
+Cloudflare, which has no such platform default.
+
+**Verified locally with real curl against `next dev` (not just read the code), 4 cases:**
+bare apex root → 308 to `www` root with HSTS; bare apex with a path (`/es/weekly/`) → 308
+to the same path under `www`, path preserved; `www` root → 200, HSTS present,
+`x-middleware-rewrite: /en/magazine-home` (confirms the host-rewrite logic still fires
+correctly alongside the new redirect/header code); `hub.paddockintel.com/drivers/` → 200,
+HSTS present, normal Hub routing untouched. This also closes the one piece of the audit
+that couldn't be confirmed live before (the host→`magazine-home` rewrite — Cloudflare's
+own edge blocks a spoofed `Host` header against a `*.workers.dev` hostname as
+anti-domain-fronting protection, and local `wrangler dev` has no Supabase credentials in
+`.dev.vars` to render a real page — `next dev` with a spoofed `Host` header sidesteps
+both).
+
+`tsc --noEmit` and `eslint middleware.ts` both clean.
+
+**Where this leaves the cutover plan:** steps 1-2 done. Still pending: step 3 (write the
+rollback plan — exact DNS record values to revert to, kept somewhere other than memory)
+and step 4 (pick a low-traffic window and actually cut over, with active monitoring for
+the first hour).
+
+---
+
 ## 🚨 2026-09-04 — the 27 ago "successful deploy" does not exist in the real account
 
 **Discovered during a pre-flight check before a planned DNS cutover, before any DNS was

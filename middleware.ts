@@ -17,7 +17,7 @@
 // merging, so there may be a successor PR under a different number by the
 // time this is revisited.
 
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 import { routing } from './lib/i18n/routing';
 
@@ -29,8 +29,28 @@ const intlMiddleware = createMiddleware(routing);
 const MAGAZINE_HOSTS = new Set(['paddockintel.com', 'www.paddockintel.com']);
 const ROOT_PATHS = new Set(['/', '/es/', '/pt/']);
 
+// HSTS + the apex -> www redirect were never app code — Vercel adds both
+// automatically at the platform/domain level (confirmed via curl: every
+// vercel.com-served response carries this header, and the bare apex 308s to
+// www with no app logic involved). Neither exists on a Cloudflare Worker by
+// default, so both are made explicit here — one source of truth that
+// produces identical behavior on both platforms, instead of a Cloudflare
+// zone-level Redirect Rule + HSTS toggle that would need to be kept in sync
+// with this file by hand. See docs/CLOUDFLARE-MIGRATION.md.
+const HSTS_VALUE = 'max-age=63072000';
+
 export default function middleware(request: NextRequest) {
   const host = (request.headers.get('host') ?? '').split(':')[0];
+
+  if (host === 'paddockintel.com') {
+    const target = request.nextUrl.clone();
+    target.protocol = 'https:';
+    target.host = 'www.paddockintel.com';
+    target.port = '';
+    const redirect = NextResponse.redirect(target, 308);
+    redirect.headers.set('strict-transport-security', HSTS_VALUE);
+    return redirect;
+  }
 
   // Let next-intl's middleware run first — it sets the request-header signal
   // that `lib/i18n/request.ts` reads to pick the right locale/messages, and
@@ -46,6 +66,7 @@ export default function middleware(request: NextRequest) {
     response.headers.set('x-middleware-rewrite', target.toString());
   }
 
+  response.headers.set('strict-transport-security', HSTS_VALUE);
   return response;
 }
 
