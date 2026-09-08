@@ -808,6 +808,20 @@
     "s7h": "Contact",
     "s7p": "Questions about this policy: <mail>info@paddockintel.com</mail> or via the <about>about page</about>."
   },
+  "auth": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "title": "Sign in",
+    "google": "Continue with Google",
+    "or": "or",
+    "emailPlaceholder": "your@email.com",
+    "sendLink": "Send",
+    "sending": "…",
+    "linkSent": "Check your email for the link.",
+    "error": "Something went wrong. Try again.",
+    "legal": "By signing in you agree to the <link>privacy policy</link>.",
+    "signedInAs": "Signed in as"
+  },
   "footer": {
     "disclaimer": "Independent publication. Not affiliated with Formula 1 or the FIA.",
     "about": "About",

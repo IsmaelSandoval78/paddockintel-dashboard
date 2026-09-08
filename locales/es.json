@@ -808,6 +808,20 @@
     "s7h": "Contacto",
     "s7p": "Preguntas sobre esta política: <mail>info@paddockintel.com</mail> o a través de la <about>página About</about>."
   },
+  "auth": {
+    "signIn": "Iniciar sesión",
+    "signOut": "Cerrar sesión",
+    "title": "Iniciar sesión",
+    "google": "Continuar con Google",
+    "or": "o",
+    "emailPlaceholder": "tu@email.com",
+    "sendLink": "Enviar",
+    "sending": "…",
+    "linkSent": "Revisá tu email para el link.",
+    "error": "Algo salió mal. Intentá de nuevo.",
+    "legal": "Al iniciar sesión aceptás la <link>política de privacidad</link>.",
+    "signedInAs": "Sesión iniciada como"
+  },
   "footer": {
     "disclaimer": "Publicación independiente. Sin afiliación con Formula 1 ni la FIA.",
     "about": "Acerca de",
