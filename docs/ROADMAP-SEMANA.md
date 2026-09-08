@@ -21,7 +21,7 @@ apilarse.
 | 3. Newsletter | Pipeline automatizado real (`generate_digest_draft.py`), Vol.06 publicado hoy | Gap sin llenar: faltan vol-03/vol-04 |
 | 4. Who's Who | 19/34 voces con pick real. **Linkeado del nav 5 sep** — ruta promovida de `/whos-who-preview` (noindex) a `/whos-who` real, indexable, con metadata/i18n propios | 3 cuentas curadas sin servir (Piola/Slater/Davidson) |
 | 5. Feed | MVP construido, reusa `digest_items`, localizado. **Linkeado del nav 5 sep** | Ninguno bloqueante |
-| 6. Cuentas de usuario | **Completo de punta a punta — código + verificación real, confirmado con clic real en producción el 8-9 sep 2026.** Backend (Supabase Auth, schema + RLS, sesión compartida `paddockintel.com`/`hub.paddockintel.com`) y UI real de login (`AuthWidget.tsx`, dropdown desktop + mobile, Google + magic link) ambos verificados end-to-end. Critique Gate: **5/5**. Ver sección "UI real de login" más abajo | Ninguno bloqueante. Deuda de producto anotada, no resuelta: reconciliar Mi Box (localStorage) con `driver_follows`/`constructor_follows` (sesión) al loguearse |
+| 6. Cuentas de usuario | **Completo de punta a punta — código + verificación real, confirmado con clic real en producción el 8-9 sep 2026.** Backend (Supabase Auth, schema + RLS, sesión compartida `paddockintel.com`/`hub.paddockintel.com`) y UI real de login (`AuthWidget.tsx`, dropdown desktop + mobile, Google + magic link) ambos verificados end-to-end. Critique Gate: **5/5**. **Deuda de Mi Box resuelta 8 sep** — ver sección "Reconciliación Mi Box ↔ cuentas" más abajo | Ninguno bloqueante |
 | 7. Vertical de datos puros | Decidido 24 ago, cero código, confirmado vivo hoy | Cero métricas definidas todavía |
 
 **Hallazgos de auditoría de docs, 4 sep 2026 (aplicados o pendientes):**
@@ -1612,3 +1612,77 @@ antigüedad (¿90 días? ¿todo el histórico, como está ahora?) — con solo 2
 hace falta paginar todavía, pero crecerá cada vez que se corra el generador semanal.
 Tampoco se linkeó desde el nav — mismo criterio cauteloso que Who's Who hasta que
 Ismael decida.
+
+## Reconciliación Mi Box ↔ cuentas — completada y verificada (8 sep 2026)
+
+**Deuda cerrada:** desde que "Cuentas de usuario" se dio por completo (sección de
+arriba), Mi Box (cookie `pi_box`, sin login) y las cuentas (`driver_follows`/
+`constructor_follows`, con login) convivían sin conectarse — un usuario que se logueaba
+perdía de vista lo que venía siguiendo como invitado. Corregido de punta a punta,
+verificado contra la DB real de producción, no solo por revisión de código.
+
+**Corrección de nombre, sobre la propia entrada anterior de este doc:** Mi Box nunca
+fue `localStorage` — es una cookie no-`httpOnly` (`pi_box`), legible tanto por el
+browser como por Server Components. Ya estaba mal escrito arriba; queda corregido acá.
+
+**Arquitectura:** `lib/follows/useFollows.ts` reemplaza a `useMiBox()` como el hook que
+usan `FollowButton`, `MiBoxIndicator` y `MiBoxStrip` (mismo shape `{state, ready, toggle,
+isFollowed}`, sin tocar la lógica de esos tres componentes más allá del import).
+Desconectado, sigue delegando 100% a la cookie. Logueado, `drivers`/`constructors` salen
+de la cuenta (`lib/follows/actions.ts`, server actions sobre `authServerClient.ts` —
+nunca `lib/supabase/server.ts`, que usa la Service Role key y saltearía RLS); `number`
+(el numerito personal tipo auto de F1) se queda en la cookie para siempre, logueado o no
+— nunca se prometió como dato de cuenta en la política de privacidad
+(`docs/advisors/EEAT-EXPERT.md`: no expandir en silencio lo que se dice que se guarda).
+
+**Import único al loguearse, nunca un merge continuo:** `app/api/auth/callback/route.ts`
+llama a `importMiBoxFollowsOnLogin()` justo después de `exchangeCodeForSession()` — lee
+la cookie `pi_box` del propio request, y si la cuenta ya tiene algún follow propio
+(cualquiera, no necesariamente de esta sesión) no importa nada, para no pisar datos
+reales con los de una cookie de invitado vieja. Si importa, limpia `drivers`/
+`constructors` de la cookie en la respuesta (deja `number` intacto) — así un logout
+posterior no resucita follows fantasma de antes del login.
+
+**Auth/follows resueltos una sola vez por request:** `app/[locale]/layout.tsx` llama a
+`getCurrentAuthUser()` y `getFollowedRefs()` una vez y los expone via `AuthContext`
+(`lib/auth/AuthContext.tsx`) — evita que cada componente cliente haga su propio fetch.
+`Navbar.tsx` pasó de resolver su propio usuario a recibirlo como prop.
+
+**Rate limiting real, no cosmético:** `lib/follows/rateLimit.ts`, ventana de 60s / 20
+toggles máximo por usuario, en memoria (limitación documentada: por instancia, no
+distribuido — proporcional a la escala actual del proyecto, no pensado como defensa
+contra un ataque serio). Exigencia de `docs/advisors/CYBERSECURITY-EXPERT.md` sobre
+cualquier endpoint de escritura autenticado nuevo.
+
+**Hallazgo real durante la verificación, no bug de este código sino del schema base:**
+al probar `toggleFollow()`/`importMiBoxFollowsOnLogin()` con un usuario descartable real
+contra producción, `constructors` devolvió `permission denied for table constructors`
+(Postgres 42501) bajo el rol `authenticated` — `drivers` funcionaba, `constructors` no.
+Comparado contra `supabase/migrations/00000000000000_baseline_schema.sql`: casi todas
+las tablas públicas comparables (`drivers`, `races`, `results`, `constructor_standings`)
+tienen `GRANT SELECT ... TO authenticated` además de `anon`; `constructors` solo tenía
+`anon` — un hueco del schema base, dormido hasta ahora porque ningún código del proyecto
+había consultado `drivers`/`constructors` bajo el rol `authenticated` antes de
+`lib/follows/actions.ts` (todo el contenido público se lee con la Service Role key, que
+no pasa por grants de rol). Corregido con una migración de una sola línea
+(`supabase/migrations/20260908220000_constructors_authenticated_grant.sql`), aplicada a
+mano en el SQL Editor de Supabase (mismo motivo de siempre: sin CLI linkeada ni token de
+acceso en este entorno) y re-verificada después — `constructors` ya responde bajo
+`authenticated`.
+
+**Verificación real, ambos caminos, no solo revisión de código:**
+- **Invitado (cookie):** clic real en Chrome sobre `/drivers/antonelli/`, botón
+  "+ Follow" pasó a "✓ FOLLOWING", y el dropdown de Mi Box (`#92` en el nav) mostró
+  "ANTONELLI" bajo "DRIVERS" con opción de sacarlo — funcionando igual que antes del
+  refactor, a través del nuevo `useFollows()`.
+- **Logueado (cuenta):** usuario descartable creado y borrado vía la Auth Admin API
+  (nunca a mano, nunca con contraseña real), con una sesión real generada por
+  `verifyOtp()` — no un JWT decodificado a mano. Probado contra la base real de
+  producción: `importMiBoxFollowsOnLogin` (inserta drivers + constructors reales,
+  respeta el guard de "ya tiene follows, no importar de nuevo"), `getFollowedRefs`
+  (lectura de vuelta, refs correctos), y el ciclo completo de `toggleFollow` (unfollow +
+  re-follow). RLS confirmado aislando filas por `user_id` propio. Usuario y sus filas de
+  follow borrados en cascada al terminar — sin dejar datos de prueba en producción.
+
+`tsc --noEmit` limpio. Commiteado en `v2-relanzamiento`
+(`feat(accounts): reconcile Mi Box (guest cookie) follows with account-based follows`).
