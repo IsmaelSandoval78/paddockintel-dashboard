@@ -70,6 +70,27 @@ the first hour).
 
 ---
 
+## ✅ 2026-09-08, same day — rollback plan written (step 3)
+
+**`docs/DNS-ROLLBACK-CLOUDFLARE-CUTOVER.md`** — the exact 3 DNS records (type, name,
+value, TTL, proxy status) to restore if the cutover needs to be undone, plus the
+copy-paste dashboard steps and the `dig`/`curl` commands to confirm the rollback actually
+took. Written to be executable under pressure without re-deriving anything.
+
+**Real finding while gathering the values, not previously documented:** the apex
+(`paddockintel.com`) A record is a **static** IP (`216.150.1.1`), not a CNAME that
+tracks Vercel's edge automatically like `hub`/`www` do. Confirmed it can go stale fast —
+in this same session, `d878f4083bbdeec6.vercel-dns-017.com` (the actual Vercel CNAME
+target used by `hub`/`www`) resolved to `216.150.1.1`/`216.150.16.1` earlier, then to
+`216.150.1.193`/`216.150.16.193` minutes later. Vercel's edge IPs rotate; the apex's
+static snapshot doesn't follow. Not fixed here (out of scope for "write the rollback
+plan") — the rollback doc tells whoever executes it to re-verify that IP live before
+pasting it, rather than trusting a value that might be dated by then. Worth a real fix
+later (switch the apex to CNAME flattening/ALIAS at the same Vercel target `hub`/`www`
+already use, so it never needs a hardcoded IP at all) — flagged, not actioned.
+
+---
+
 ## 🚨 2026-09-04 — the 27 ago "successful deploy" does not exist in the real account
 
 **Discovered during a pre-flight check before a planned DNS cutover, before any DNS was

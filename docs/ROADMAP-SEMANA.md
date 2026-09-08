@@ -16,7 +16,7 @@ apilarse.
 
 | Paso | Estado real | Bloqueador real si lo hay |
 |---|---|---|
-| 1. Cloudflare | **Resuelto de verdad 4 sep: causa raíz era un `account_id` equivocado en `wrangler.jsonc`.** Deploy real verificado, 6/6 rutas con datos reales en 200. **Cron confirmado disparando solo el 5 sep** (ver detalle abajo) | Ninguno — listo para evaluar el corte de DNS en una sesión futura |
+| 1. Cloudflare | **Resuelto de verdad 4 sep: causa raíz era un `account_id` equivocado en `wrangler.jsonc`.** Deploy real verificado, 6/6 rutas con datos reales en 200. **Cron confirmado disparando solo el 5 sep** (ver detalle abajo). **Plan de corte de DNS en curso 8 sep: pasos 1-3 de 4 hechos** (TTL ya en 300s, auditoría del edge Vercel-vs-Worker con 2 gaps reales encontrados y corregidos en `middleware.ts`, plan de rollback escrito en `docs/DNS-ROLLBACK-CLOUDFLARE-CUTOVER.md`) — ver `docs/CLOUDFLARE-MIGRATION.md` | Falta el paso 4 (elegir ventana de bajo tráfico y cortar de verdad, con monitoreo activo la primera hora) — no se tocó DNS real todavía |
 | 2. Blog/estructura | Maduro — tags relacionales, race_id, glosario con capas, `/about` conectado | Ninguno bloqueante |
 | 3. Newsletter | Pipeline automatizado real (`generate_digest_draft.py`), Vol.06 publicado hoy | Gap sin llenar: faltan vol-03/vol-04 |
 | 4. Who's Who | 19/34 voces con pick real. **Linkeado del nav 5 sep** — ruta promovida de `/whos-who-preview` (noindex) a `/whos-who` real, indexable, con metadata/i18n propios | 3 cuentas curadas sin servir (Piola/Slater/Davidson) |
