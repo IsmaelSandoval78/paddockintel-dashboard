@@ -386,6 +386,81 @@ El primer intento de login real (8 sep) redirigió a `http://localhost:3000/?cod
 
 **Deuda de producto anotada, no resuelta en esta tarea:** reconciliar Mi Box (`useMiBox`, sigue drivers/constructors en una cookie de `localStorage`, sin cuenta) con `driver_follows`/`constructor_follows` (tablas reales, requieren sesión) cuando un usuario invitado se loguea — hoy los dos sistemas van a coexistir sin sincronizarse, no se decidió qué pasa con los follows que un usuario ya tenía en Mi Box antes de loguearse por primera vez.
 
+## Bug real: Hub mostraba "Season Shape" en 0 de 0 — causa real y resuelto (8-9 sep 2026)
+
+**Reportado por Ismael con evidencia real:** el Hub (`hub.paddockintel.com`) mostraba
+"Different Winners: 0 of 0 races", "Pole→Win: 0%", "Rounds Led: 0" — pese a que la
+temporada 2026 ya llevaba 13 rondas reales corridas, incluido Monza (6 sep).
+
+**Diagnóstico — descartadas las dos hipótesis iniciales, encontrada la causa real:**
+
+1. **No era "pipeline nunca corrió"** — `races` tenía las 22 rondas de 2026 con fechas
+   correctas, y `results`/`qualifying` tenían las 22 filas esperadas para las rondas 1-12
+   (hasta Países Bajos, 23 ago). Solo la ronda 13 (Monza) estaba realmente vacía — real,
+   pero no explica el "0 de 0" (debería haber mostrado "X de 13", no "0 de 0").
+2. **No era "query mal armada"** — la query de `app/[locale]/(hub)/page.tsx` (filtra
+   `races` por `year=2026` y `date <= today`, no por resultados existentes, a propósito)
+   se corrió tal cual directo contra la DB real y devolvió 13 filas correctamente. El
+   código estaba bien.
+3. **Causa real, confirmada con un endpoint de diagnóstico temporal** (mismo patrón
+   descartable que `/api/auth/whoami` del 6 sep, borrado después de usarlo): **TODO
+   `getHomeData()` volvía vacío** (`nextRace`, `topDrivers`, `streaksData`,
+   `seasonShapeData`, `championshipGapData` — no solo Season Shape), porque
+   `SUPABASE_SERVICE_ROLE_KEY` en Vercel producción era la **key legacy (JWT, 219
+   caracteres)**, y Supabase deshabilitó las legacy API keys de todo el proyecto **el 25
+   de agosto de 2026** (`"Legacy API keys are disabled"`, confirmado con el mensaje de
+   error real de Supabase, no asumido). Esa variable en Vercel llevaba **99 días sin
+   tocarse** — el fix del 6 sep solo había rotado `NEXT_PUBLIC_SUPABASE_ANON_KEY`, nunca
+   la service role key.
+
+**Por qué nadie lo había notado hasta ahora — mecanismo real, no casualidad:** antes de
+esta semana, ningún componente del sitio llamaba a `cookies()` (confirmado con grep sobre
+todo el repo). El Hub podía quedar servido como página estática/ISR (`revalidate=3600`),
+así que una build vieja — de antes del 25 de agosto, cuando la key todavía funcionaba —
+pudo seguir sirviéndose cacheada, con datos correctos aunque cada vez más viejos, sin que
+nadie lo notara. **El trabajo de login del 8 sep agregó el primer `cookies()` del sitio**
+(`Navbar.tsx` → `createAuthServerClient()`, para saber si hay sesión) — eso fuerza *todo*
+el Hub a renderizado dinámico por request, ejecutando la query rota en cada visita en vez
+de servir el caché viejo. **El fix de auth no causó este bug — lo expuso.** Confirmado con
+headers reales: `x-vercel-cache: MISS`, `cache-control: private, no-cache, no-store` en
+cada request al Hub desde el 8 sep.
+
+**Resuelto:**
+1. `SUPABASE_SERVICE_ROLE_KEY` rotada en Vercel producción al formato nuevo
+   (`sb_secret_...`, 41 caracteres) — el primer intento de Ismael pegó por error la key
+   legacy de nuevo (fácil de confundir, el dashboard de Supabase muestra ambas secciones
+   durante la migración); confirmado con el endpoint de diagnóstico (`keyEnvLength: 219`
+   → `41`, `status: 401` → `200`) antes de dar el segundo intento por bueno.
+2. Redeploy confirmado contra el sitio real (no localhost): `seasonShapeData` pasó de
+   `{totalRaces:0, uniqueWinners:0, poleToWinPct:0, roundsLedByLeader:0}` a datos reales.
+   Verificado también que la rotación no rompió ninguna otra ruta que dependa de
+   `lib/supabase/server.ts` (circuits, drivers, constructors, weekly, ambos hosts — 200 en
+   las seis, con contenido real).
+3. Ronda 13 (GP de Italia, Monza, 6 sep) cargada con `scripts/load_race.py --year 2026
+   --round 13` (vía FastF1, no Wikipedia) — **verificado antes de dar la carga por buena**:
+   el dry-run mostró Antonelli ganando desde grid P19 y Gasly con pole, cruzado contra
+   Formula1.com (`antonelli-beats-russell-to-italian-grand-prix-win...`,
+   `gasly-charges-to-sensational-maiden-f1-pole-at-monza...`) — coincide exacto, incluida
+   la cifra de puntos post-carrera (Antonelli 267, Russell 201, gap 66 — F1.com confirma
+   "leads Russell by 66 points"). `results`/`qualifying` de la ronda 13: 22/22 filas cada
+   una, confirmado contra la DB real.
+4. **Gap real, preexistente, no nuevo:** `pit_stops`/`lap_times` de la ronda 13 quedaron en
+   0 (FastF1 no pudo extraer esos datos) — pero **no es un problema nuevo de Monza**: las
+   rondas 6 (Mónaco) y 10 (Bélgica) ya tenían el mismo hueco antes de esta sesión. Es una
+   limitación intermitente conocida de FastF1, no bloquea nada de lo pedido (resultados,
+   qualifying y standings sí están completos), pendiente si se quiere investigar aparte.
+5. **Confirmado visualmente en `hub.paddockintel.com` real:** Season Shape muestra **13 de
+   13 races**, `Pole→Win 69%`, `Rounds Led 11 (Antonelli)` — números reales, no cero.
+
+**Recomendación a futuro, pedida explícitamente por Ismael:** extender el `/api/health`
+que ya existe (agregado durante la migración de Cloudflare) — hoy solo confirma que las
+env vars *existen* (`hasSupabaseUrl`, `hasAnonKey`, `hasServiceRoleKey`, todos booleanos),
+lo cual **no hubiera detectado este bug** — la key rota seguía "presente", solo inválida.
+Extenderlo para que corra una query real de una sola fila (ej. `select id from races limit
+1`) y reporte si Supabase la aceptó o la rechazó, no solo si la variable de entorno
+existe. Esto habría avisado el 25 de agosto, no 14 días después vía un usuario notando un
+"0" raro en el Hub.
+
 ## CLI de Supabase — historial de migraciones reparado (8 sep 2026)
 
 **Deuda técnica desde el 9-jul, cerrada — 17 migraciones tenían `remote: ""` en `supabase migration list` pese a estar aplicadas de verdad en la DB (más de las "10 y pico" con las que se venía arrastrando la cifra; el número real, contado exacto, era 17).**
