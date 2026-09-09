@@ -1729,3 +1729,22 @@ que se hizo visible al mapear los 78 refs reales de una sola vez.
 (`circuits.json` actualizado + el SVG del nuevo layout) del repo externo y correr
 `scripts/regenerate-track-paths.ts` — instrucciones completas en el comentario de cabecera
 de ese script. No amerita automatizarlo dado lo infrecuente del evento.
+
+## Fix separado: mapeo `ricard`/`tremblant` corregido (9 sep 2026, commit aparte)
+
+El "hallazgo lateral" documentado arriba (2 de los 9 circuitos sin trazado eran un bug de
+mapeo, no una ausencia real en el repo externo) se corrigió en un commit separado del fix
+de caching, a pedido explícito de Ismael. `paul-ricard` y `mont-tremblant` sí existen en
+el repo externo `julesr0y/f1-circuits-svg` — el diccionario `OVERRIDES` de
+`scripts/regenerate-track-paths.ts` solo tenía las claves `paul_ricard`/`mont_tremblant`,
+que no coinciden con los `circuit_ref` reales de nuestra base (`ricard`/`tremblant`, sin
+el prefijo). Agregadas las 2 claves correctas al lado de las existentes (no se tocaron
+`paul_ricard`/`mont_tremblant` por si algo más las usa), descargados los 2 SVGs que
+faltaban (`paul-ricard-3.svg`, `mont-tremblant-1.svg` — nunca se habían bajado porque
+antes no matcheaban con nada), y regenerado `track-paths.json`.
+
+**Conteo final, verificado:** 71 de 78 circuitos con trazado (antes 69), 7 sin match
+(antes 9) — los 7 restantes (`boavista`, `charade`, `essarts`, `galvez`, `george`,
+`lemans`, `okayama`) confirmados en vivo contra el índice real del repo externo que
+genuinamente no existen ahí bajo ningún nombre, no son un bug de mapeo. `tsc`/`eslint`/
+`next build` limpios en el estado final.

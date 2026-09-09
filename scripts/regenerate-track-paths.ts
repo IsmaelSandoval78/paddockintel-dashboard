@@ -53,6 +53,7 @@ const OVERRIDES: Record<string, string> = {
   brands_hatch:     'brands-hatch',
   long_beach:       'long-beach',
   paul_ricard:      'paul-ricard',
+  ricard:           'paul-ricard',
   east_london:      'east-london',
   ain_diab:         'ain-diab',
   buenos_aires:     'buenos-aires',
@@ -62,6 +63,7 @@ const OVERRIDES: Record<string, string> = {
   watkins_glen:     'watkins-glen',
   yas_marina:       'yas-marina',
   mont_tremblant:   'mont-tremblant',
+  tremblant:        'mont-tremblant',
 };
 
 function toRepoId(circuitRef: string): string {
