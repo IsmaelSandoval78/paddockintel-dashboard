@@ -6,6 +6,87 @@ nobody re-investigates something already settled.
 
 ---
 
+## ✅ 2026-09-08/09 — real cutover done (step 4): all 3 domains live on the Worker
+
+**Executed with Ismael's explicit go-ahead ("dale no tengo trafico ahora"), all 3 domains
+at once** (his choice over a `hub`-only canary, which was offered first). Real production
+DNS change, done in the real Cloudflare dashboard (browser session confirmed as
+`sandoval.ismael@g...` against account `551a6aba58a779d10acae0c5f0cde1e8` — two earlier
+attempts this session hit `/login` with no session; a third attempt worked, so the
+dashboard access itself was real, not assumed).
+
+**What was actually done, in order:**
+1. `wrangler.jsonc`/the Worker had **no Custom Domain or Route configured at all**
+   before this — confirmed via `Workers & Pages → paddockintel-dashboard → Domains`
+   showing "No custom domains". The Worker only existed at its `*.workers.dev` URL.
+2. Cloudflare refuses to attach a Custom Domain while a hostname already has an
+   "externally managed" DNS record — confirmed via the exact error: `Hostname
+   'hub.paddockintel.com' already has externally managed DNS records (A, CNAME, etc).
+   Delete them first or try a different hostname.` So the 3 records documented in
+   `docs/DNS-ROLLBACK-CLOUDFLARE-CUTOVER.md` (the CNAME/A pointing at Vercel) were
+   deleted first, one at a time, each confirmed against the exact name/type/content
+   shown in the delete dialog before confirming — no bulk action, no guessing.
+3. Added all 3 as Custom Domains (`Workers & Pages → paddockintel-dashboard → Domains →
+   Add Domain`): `hub.paddockintel.com`, `paddockintel.com` (root, empty subdomain
+   field), `www.paddockintel.com`. Cloudflare auto-created new proxied A records for
+   each, confirmed via `dig` immediately after — all 3 now resolve to Cloudflare
+   anycast IPs (`104.21.x.x`/`172.67.x.x`), not Vercel's.
+
+**🚨 Real finding, caught immediately by checking rather than assuming success:** right
+after the cutover, `curl` showed `paddockintel.com` returning a plain `200` instead of
+the expected `308` to `www`, and **no `strict-transport-security` header at all** on any
+of the 3 domains — i.e. today's `middleware.ts` fix (the one from the audit entry above)
+appeared to not exist. Root cause: **the deployed Worker was still the 2026-09-04 build.**
+Vercel redeploys automatically on every push to `main`; Cloudflare Workers does not —
+nothing in this project auto-deploys to Cloudflare, so every commit merged to `main`
+since 4 sep (the entire Mi Box/accounts reconciliation work, the constructors grant fix,
+and this session's own middleware fix) was live on Vercel but **absent from the Worker
+that had just been made responsible for real traffic.**
+
+**Fixed immediately, same session, before declaring the cutover done:**
+- `bash scripts/cloudflare-build.sh` — clean build from the current `main` tree
+  (confirmed `git log -1` matched `origin/main` before building), secret-leak check
+  passed.
+- No local Cloudflare deploy credentials existed in this environment (no
+  `.wrangler-token.local`, no `SUPABASE_ACCESS_TOKEN`/`CLOUDFLARE_API_TOKEN` env var,
+  `wrangler login` needs an interactive TTY this environment doesn't have). Since a
+  real Cloudflare dashboard session was available, created a short-lived **scoped** API
+  token instead (My Profile → API Tokens → "Edit Cloudflare Workers" template, resource
+  restricted to this one account + the `paddockintel.com` zone specifically, no broader
+  scope) — copied via the dashboard's own copy button and `pbpaste` (never hand-typed,
+  never printed in full in any tool output), used once for `CLOUDFLARE_API_TOKEN=... npx
+  wrangler deploy`, then **deleted the token from the Cloudflare dashboard immediately
+  after** the deploy succeeded. Nothing long-lived was left behind.
+- Deploy succeeded: `Deployed paddockintel-dashboard triggers`, cron confirmed
+  (`schedule: 0 9 * * *`), R2 incremental cache repopulated (6 entries, no hang).
+
+**Verified for real after the redeploy, not assumed fixed:**
+- `paddockintel.com` → `308` → `https://www.paddockintel.com/`, `strict-transport-
+  security: max-age=63072000` present on the redirect itself.
+- `hub.paddockintel.com` and `www.paddockintel.com` → `200`, HSTS present, `x-opennext:
+  1` (confirms it's actually the Worker responding, not a stale cache), `server:
+  cloudflare`.
+- Trailing slash (`/drivers` → `308` → `/drivers/`) and i18n (`/es/` → correct
+  `NEXT_LOCALE` cookie) both still correct post-redeploy.
+- **Real data, not just headers:** home page contains real standings text (`P1`–`P4`),
+  `/api/health` reports all 3 Supabase credentials present
+  (`hasSupabaseUrl`/`hasAnonKey`/`hasServiceRoleKey`: all `true`), a real driver page
+  (`/drivers/antonelli/`) returns `200`, the magazine home (`www`) returns `200` with
+  145KB of real content.
+
+**Lesson for next time, not yet automated:** any future change to shared code
+(`middleware.ts`, anything under `lib/`, `components/`, `app/`) needs an **explicit,
+manual** `bash scripts/cloudflare-build.sh && npx wrangler deploy` after merging to
+`main` — a Vercel deploy alone does not touch the Cloudflare Worker. Worth a real CI/CD
+fix later (a GitHub Action on push to `main`), not done here — flagged, not actioned,
+same as the apex static-IP finding above.
+
+**Not yet done, genuinely pending:** active monitoring for the first hour post-cutover
+(the second half of step 4) — this entry was written immediately after the fix and
+verification above, not after an hour of watching real traffic.
+
+---
+
 ## ✅ 2026-09-08 — TTL confirmed already low; edge audit found + fixed 2 real gaps
 
 **Step 1 of the cutover plan (lower DNS TTL, wait for propagation) — already satisfied,
