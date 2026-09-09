@@ -4,6 +4,7 @@ title: "Red Bull Ficha al Hijo de Kimi Raikkonen para su Junior Team"
 locale: es
 meta_description: "Red Bull fichó a Robin Raikkonen, hijo de Kimi, de 11 años. Por qué el apellido rinde antes de que demuestre algo en pista."
 status: published
+paywalled: true
 published_at: "2026-09-09"
 translation_group_id: "22b1566a-de79-4ada-a95c-60651e396592"
 tags: ["driver-finance", "red-bull", "economics"]
