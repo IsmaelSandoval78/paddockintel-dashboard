@@ -1686,3 +1686,46 @@ acceso en este entorno) y re-verificada después — `constructors` ya responde 
 
 `tsc --noEmit` limpio. Commiteado en `v2-relanzamiento`
 (`feat(accounts): reconcile Mi Box (guest cookie) follows with account-based follows`).
+
+## Fix: `fetchTrackPathData` ya no depende de GitHub en runtime (9 sep 2026)
+
+**Encontrado a partir de evidencia real, no sospecha:** el dashboard de Cloudflare
+(Workers → Metrics) mostraba un subrequest real de ~145ms a `raw.githubusercontent.com`
+en cada invocación. Investigado con evidencia antes de tocar nada: `lib/trackSvg.ts`
+hacía 2 `fetch()` (índice `circuits.json` + el SVG del trazado) contra
+`julesr0y/f1-circuits-svg` en GitHub, con `{ cache: 'force-cache' }`. De los 4 call
+sites, 2 tienen ISR (`revalidate = 3600`, acotados a 1 vez/hora) y 2 **no tenían
+ninguna caché declarada** — `/circuits` (el índice) y `/api/circuits/[id]` — así que
+corrían el fetch en cada visita/llamada real. El `cache: 'force-cache'` de Next.js no se
+sostiene igual en el runtime de Cloudflare Workers que en el Data Cache de Vercel, lo que
+explica que cada invocación repitiera el fetch en vez de servir desde caché.
+
+**Fix aplicado (confirmado por Ismael antes de tocar código):** se descargaron una sola
+vez `circuits.json` + los 68 SVGs de layout realmente usados por los 78 circuitos de
+nuestra base (`data/circuits-svg/circuits.json` + `data/circuits-svg/svg/*.svg`,
+comiteados al repo). Un script nuevo, `scripts/regenerate-track-paths.ts` (manual, no
+corre en build ni en CI a propósito), pre-computa `data/circuits-svg/track-paths.json`
+(`circuitRef → {path, viewBox}`) a partir de esos archivos locales. `lib/trackSvg.ts`
+quedó reducido a un `import` estático de ese JSON + un lookup en memoria — cero fetch,
+cero `fs` en runtime, funciona igual en Vercel y en Cloudflare Workers.
+
+**Verificado, no asumido:** `tsc --noEmit` limpio, `next build` completo sin errores
+(3761 páginas), y el resultado del nuevo lookup local comparado byte a byte contra el
+fetch remoto original para 4 circuitos (Monza, Mónaco, Spa, Silverstone) — idéntico.
+Grep final confirmado: cero referencias a `githubusercontent` en código ejecutable, solo
+en comentarios de documentación (`lib/trackSvg.ts`, `scripts/regenerate-track-paths.ts`).
+
+**Hallazgo lateral, preexistente, no corregido acá (fuera de alcance de esta tarea):** 9
+de los 78 `circuit_ref` reales no tienen trazado — 6 genuinamente no están en el repo
+externo (`boavista`, `charade`, `essarts`, `galvez`, `george`, `lemans`, `okayama`), y 2
+más (`ricard`, `tremblant`) sí existen en el repo (`paul-ricard`, `mont-tremblant`) pero
+el `OVERRIDES` de mapeo tiene las claves `paul_ricard`/`mont_tremblant`, que no coinciden
+con los `circuit_ref` reales de nuestra base (`ricard`/`tremblant`, sin el prefijo). Esto
+ya pasaba con el fetch remoto también — comportamiento idéntico, solo documentado ahora
+que se hizo visible al mapear los 78 refs reales de una sola vez.
+
+**Nota para el futuro, no implementar ahora:** si algún circuito real cambia de trazado
+(evento raro — remodelación física), hay que volver a descargar a mano esos 2 archivos
+(`circuits.json` actualizado + el SVG del nuevo layout) del repo externo y correr
+`scripts/regenerate-track-paths.ts` — instrucciones completas en el comentario de cabecera
+de ese script. No amerita automatizarlo dado lo infrecuente del evento.
