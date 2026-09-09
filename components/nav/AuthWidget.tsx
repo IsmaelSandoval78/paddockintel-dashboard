@@ -87,7 +87,15 @@ export default function AuthWidget({
 
   async function handleSignOut() {
     const supabase = createAuthBrowserClient();
+    // Revokes the refresh token against the Auth API and clears the
+    // browser client's own in-memory/localStorage session state — but it
+    // can never touch the httpOnly session cookie itself (see
+    // app/api/auth/signout/route.ts for why that cookie needed its own,
+    // server-side clear; without it, sign-out silently did nothing from
+    // the user's point of view, since the still-valid cookie kept them
+    // looking signed in).
     await supabase.auth.signOut();
+    await fetch('/api/auth/signout', { method: 'POST' });
     setOpen(false);
     // Full reload, not router.refresh(): Navbar reads the user server-side
     // from the session cookie on every request, and a reload is the
