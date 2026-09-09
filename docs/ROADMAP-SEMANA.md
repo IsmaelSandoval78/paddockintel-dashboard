@@ -18,7 +18,7 @@ apilarse.
 |---|---|---|
 | 1. Cloudflare | **CORTE REAL HECHO Y REVERTIDO 8-9 sep — de vuelta 100% en Vercel, verificado.** El corte funcionó ~64 min hasta que el monitoreo activo (que sí estaba corriendo, como estaba planeado) encontró 503 reales (`error code: 1102`) en todas las rutas con datos. Causa raíz real: la cuenta de Cloudflare está en el plan **Free** (10ms CPU/request) — insuficiente para SSR con Supabase real; el plan Paid ($5/mes) da 5 min. Rollback ejecutado con el plan ya escrito (`docs/DNS-ROLLBACK-CLOUDFLARE-CUTOVER.md`), verificado con `dig`/`curl` reales post-rollback. Ver `docs/CLOUDFLARE-MIGRATION.md` | **Decisión real pendiente con Ismael, no tomada:** ¿upgrade a Workers Paid y reintentar, o abandonar la migración a Cloudflare, o primero bajar el costo real de CPU por request (más caching) antes de reintentar? Ninguna opción ejecutada todavía |
 | 2. Blog/estructura | Maduro — tags relacionales, race_id, glosario con capas, `/about` conectado | Ninguno bloqueante |
-| 3. Newsletter | Pipeline automatizado real (`generate_digest_draft.py`), Vol.06 publicado hoy | Gap sin llenar: faltan vol-03/vol-04 |
+| 3. Newsletter | Pipeline automatizado real (`generate_digest_draft.py`), Vol.06 publicado. **Corrección 9 sep: "gap vol-03/vol-04" no era real** — esas semanas se re-clasificaron como `recap-01`/`recap-02` a propósito (ver issues #1/#2 en GitHub), la numeración viva del newsletter no tiene hueco. **Serie Recap pausada 9 sep, foco en contenido nuevo** — ver sección "Recaps retroactivos — pausados" más abajo | Ninguno bloqueante |
 | 4. Who's Who | 19/34 voces con pick real. **Linkeado del nav 5 sep** — ruta promovida de `/whos-who-preview` (noindex) a `/whos-who` real, indexable, con metadata/i18n propios | 3 cuentas curadas sin servir (Piola/Slater/Davidson) |
 | 5. Feed | MVP construido, reusa `digest_items`, localizado. **Linkeado del nav 5 sep** | Ninguno bloqueante |
 | 6. Cuentas de usuario | **Completo de punta a punta — código + verificación real, confirmado con clic real en producción el 8-9 sep 2026.** Backend (Supabase Auth, schema + RLS, sesión compartida `paddockintel.com`/`hub.paddockintel.com`) y UI real de login (`AuthWidget.tsx`, dropdown desktop + mobile, Google + magic link) ambos verificados end-to-end. Critique Gate: **5/5**. **Deuda de Mi Box resuelta 8 sep** — ver sección "Reconciliación Mi Box ↔ cuentas" más abajo | Ninguno bloqueante |
@@ -1748,3 +1748,33 @@ antes no matcheaban con nada), y regenerado `track-paths.json`.
 `lemans`, `okayama`) confirmados en vivo contra el índice real del repo externo que
 genuinamente no existen ahí bajo ningún nombre, no son un bug de mapeo. `tsc`/`eslint`/
 `next build` limpios en el estado final.
+
+## Recaps retroactivos — pausados, foco en contenido nuevo (9 sep 2026)
+
+**Decisión de Ismael:** dejar de invertir en la serie Recap (ver "Idea aprobada: serie
+de 'Recaps' retroactivos" más arriba) — foco pasa a contenido nuevo. No es un
+descarte de lo ya publicado, es una pausa hacia adelante.
+
+**Qué significa en concreto, alcance confirmado con Ismael (opción elegida: solo
+pausar, no tocar código ni lo ya publicado):**
+- No generar más drafts de la serie Recap (`generate_digest_draft.py --series recap`
+  no se corre más por ahora).
+- `recap-03-week-2026-01-01` (draft encontrado en esta sesión, cubre la última semana
+  de enero 2026, contenido completo mostrado a Ismael) **queda sin publicar** — no se
+  corrió `publish_digest.py` sobre él.
+- `recap-01-week-2026-07-27` y `recap-02-week-2026-08-17` **siguen publicados y en
+  vivo**, sin tocar — la pausa es sobre generar contenido nuevo de la serie, no un
+  rollback de lo que ya existe.
+- Código de la ruta `/recaps`, el script con `--series recap`, y las filas de
+  `digest_issues` existentes: **sin tocar**. No se evaluó ni se decidió sacarlos del
+  nav/sitemap ni borrar nada — si eso se quiere más adelante, es una decisión aparte,
+  no incluida en esta.
+
+**Corrección de un dato que este doc traía mal desde el 4 sep:** la fila del paso 3 en
+la tabla de arriba decía "gap sin llenar: faltan vol-03/vol-04" — no era un gap real.
+Esas dos semanas (27 jul y 17 ago) se generaron primero como drafts de newsletter
+(`vol-03-week-2026-07-27`, `vol-04-week-2026-08-17`) pero Ismael decidió el 3 sep
+re-publicarlas como `recap-01`/`recap-02` en su lugar (issues #1/#2 de GitHub,
+cerrados con esa explicación exacta). La numeración viva del newsletter
+(`vol-01`/`vol-02`/`vol-05`/`vol-06`) no tiene ningún hueco sin llenar — los slugs
+`vol-03`/`vol-04` simplemente no existen a propósito, no fue negligencia.
