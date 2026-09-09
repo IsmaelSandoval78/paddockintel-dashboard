@@ -3,7 +3,7 @@ slug: "economia-academias-junior-f1"
 title: "La Economía Real de las Academias Junior de F1"
 locale: es
 meta_description: "Las academias de F1 gastan millones en pilotos junior, pero ni Red Bull convierte a 1 de cada 5 en un asiento de F1. Los números reales."
-status: draft
+status: published
 translation_group_id: "f9e72134-5027-4d0d-9261-e3b4e4a28feb"
 tags: ["economics", "driver-finance"]
 

@@ -3,7 +3,7 @@ slug: "robin-raikkonen-red-bull-junior-team-signing"
 title: "Red Bull Signs Kimi Raikkonen's Son to Its Junior Team"
 locale: en
 meta_description: "Red Bull signed 11-year-old Robin Raikkonen, Kimi's son, to its junior program. Why the surname pays off before he's proven anything on track."
-status: draft
+status: published
 translation_group_id: "22b1566a-de79-4ada-a95c-60651e396592"
 tags: ["driver-finance", "red-bull", "economics"]
 
