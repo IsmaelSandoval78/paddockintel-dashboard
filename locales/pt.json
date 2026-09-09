@@ -670,6 +670,17 @@
     "kicker": "PaddockIntel Digest",
     "headline": "Economia da F1 toda semana, na sua caixa de entrada."
   },
+  "articlePaywall": {
+    "kicker": "Grátis, sem pegadinha",
+    "headline": "Continue lendo — é grátis",
+    "body": "O resto deste artigo é para assinantes. Deixe seu email, sem pagamento, nunca.",
+    "button": "Desbloquear artigo",
+    "placeholder": "seu@email.com",
+    "loading": "…",
+    "success": "✓ Desbloqueado — carregando o resto…",
+    "error": "Tente novamente",
+    "legal": "Ao assinar você concorda com a <link>política de privacidade</link>."
+  },
   "book": {
     "kicker": "Temporada",
     "chapter": "Capítulo"

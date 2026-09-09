@@ -15,6 +15,33 @@ export function extractTOC(markdown: string): Heading[] {
   return headings;
 }
 
+// Splits the raw markdown right before the (freeSections + 1)th H2 heading —
+// used for the registration wall (see components/blog/ArticlePaywallGate.tsx).
+// Everything before that boundary (intro paragraphs + the first `freeSections`
+// sections) is "free"; the rest is "gated" and simply never reaches the
+// client when the reader isn't subscribed, so there's nothing to inspect
+// around in devtools.
+export function splitMarkdownAtSection(markdown: string, freeSections: number): { free: string; gated: string } {
+  const lines = markdown.split('\n');
+  let h2Count = 0;
+  let cutIndex = lines.length;
+
+  for (let i = 0; i < lines.length; i++) {
+    if (/^## /.test(lines[i])) {
+      h2Count++;
+      if (h2Count === freeSections + 1) {
+        cutIndex = i;
+        break;
+      }
+    }
+  }
+
+  return {
+    free: lines.slice(0, cutIndex).join('\n').trim(),
+    gated: lines.slice(cutIndex).join('\n').trim(),
+  };
+}
+
 export function estimateReadTime(markdown: string): number {
   const words = markdown.trim().split(/\s+/).length;
   return Math.max(1, Math.ceil(words / 200));

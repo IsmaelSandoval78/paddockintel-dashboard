@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { draftMode } from 'next/headers';
+import { draftMode, cookies } from 'next/headers';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
@@ -8,8 +8,16 @@ import ShareButton from '@/components/ui/ShareButton';
 import ArticleHero from '@/components/blog/ArticleHero';
 import ArticleTOC from '@/components/blog/ArticleTOC';
 import NewsletterCard from '@/components/blog/NewsletterCard';
-import { extractTOC, markdownToHtml, estimateReadTime } from '@/lib/markdown';
+import ArticlePaywallGate from '@/components/blog/ArticlePaywallGate';
+import { extractTOC, markdownToHtml, estimateReadTime, splitMarkdownAtSection } from '@/lib/markdown';
 import { getArticleTagSlugs } from '@/lib/blog/tags';
+import { getCurrentAuthUser } from '@/lib/auth/getCurrentAuthUser';
+
+// Free sections before the registration wall cuts in — see
+// docs on ArticlePaywallGate. Matches EDITORIAL.md's five-section
+// structure: reader gets "What Happened" + "Why It Happened" free,
+// the wall sits right before "Economic Impact".
+const FREE_SECTIONS = 2;
 
 export const revalidate = 3600;
 
@@ -24,7 +32,7 @@ async function getArticle(locale: string, slug: string, isDraft: boolean) {
 
   let query = supabase
     .from('articles')
-    .select('id, title, meta_description, body_markdown, published_at, translation_group_id')
+    .select('id, title, meta_description, body_markdown, published_at, translation_group_id, paywalled')
     .eq('locale', locale)
     .eq('slug', slug);
 
@@ -87,12 +95,29 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
   const article = await getArticle(locale, slug, isDraft);
   if (!article) notFound();
 
-  const body        = article.body_markdown as string;
+  const fullBody    = article.body_markdown as string;
   const title       = article.title as string;
   const publishedAt = article.published_at as string;
-  const stats       = (article.stats as Stat[]) ?? [];
-  const faqItems    = (article.faq_items as FAQ[]) ?? [];
-  const sources     = (article.sources as Source[]) ?? [];
+  const allStats    = (article.stats as Stat[]) ?? [];
+  const allFaqItems = (article.faq_items as FAQ[]) ?? [];
+  const allSources  = (article.sources as Source[]) ?? [];
+
+  const cookieStore = await cookies();
+  const hasSubscribedCookie = cookieStore.get('pi_subscribed')?.value === '1';
+  const authUser = hasSubscribedCookie ? null : await getCurrentAuthUser();
+  const isSubscribed = hasSubscribedCookie || !!authUser;
+
+  // Draft-mode preview (reached via /api/draft?secret=...) is already
+  // trusted — never gate a piece Ismael is reviewing before it's even live.
+  const isGated = Boolean(article.paywalled) && !isSubscribed && !isDraft;
+  const body = isGated ? splitMarkdownAtSection(fullBody, FREE_SECTIONS).free : fullBody;
+
+  // Stat callouts, FAQ, and sources all draw from sections past the free
+  // preview — hold them back too, not just the body text, or the sidebar
+  // spoils the numbers the wall is supposed to gate.
+  const stats    = isGated ? [] : allStats;
+  const faqItems = isGated ? [] : allFaqItems;
+  const sources  = isGated ? [] : allSources;
 
   const tTags = await getTranslations('articleTags');
   const tagSlugs = (await getArticleTagSlugs(createClient(), [article.id as string])).get(article.id as string) ?? [];
@@ -100,7 +125,7 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
 
   const toc      = extractTOC(body);
   const html     = markdownToHtml(body);
-  const readTime = estimateReadTime(body);
+  const readTime = estimateReadTime(fullBody);
   const pageUrl  = localeUrl(locale, slug);
 
   const jsonLd: Record<string, unknown> = {
@@ -169,7 +194,7 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
           readTime={readTime}
           pageUrl={pageUrl}
           locale={locale}
-          featuredStat={stats[0]}
+          featuredStat={allStats[0]}
         />
 
         <div className="px-5 py-12 max-w-5xl mx-auto">
@@ -189,8 +214,9 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
                 dangerouslySetInnerHTML={{ __html: html }}
               />
 
-              {/* Newsletter card — after article body */}
-              <NewsletterCard />
+              {/* Registration wall (gated) or the normal newsletter card —
+                  never both, the wall already asks for an email itself */}
+              {isGated ? <ArticlePaywallGate /> : <NewsletterCard />}
 
               {/* FAQ */}
               {faqItems.length > 0 && (

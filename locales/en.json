@@ -670,6 +670,17 @@
     "kicker": "PaddockIntel Digest",
     "headline": "F1 economics weekly, in your inbox."
   },
+  "articlePaywall": {
+    "kicker": "Free, no catch",
+    "headline": "Keep reading — it's free",
+    "body": "The rest of this article is for subscribers. Drop your email, no payment, ever.",
+    "button": "Unlock article",
+    "placeholder": "your@email.com",
+    "loading": "…",
+    "success": "✓ Unlocked — loading the rest…",
+    "error": "Try again",
+    "legal": "By subscribing you agree to the <link>privacy policy</link>."
+  },
   "book": {
     "kicker": "Season",
     "chapter": "Chapter"

@@ -31,6 +31,7 @@ type Frontmatter = {
   translation_group_id?: string;
   status?: 'draft' | 'published';
   published_at?: string;
+  paywalled?: boolean;
   stats?: Stat[];
   faq?: FAQ[];
   sources?: Source[];
@@ -71,6 +72,7 @@ async function main() {
         cover_image_url: frontmatter.cover_image_url ?? null,
         body_markdown: body,
         status: frontmatter.status ?? 'draft',
+        paywalled: frontmatter.paywalled ?? false,
         ...(frontmatter.published_at !== undefined ? { published_at: frontmatter.published_at } : {}),
         ...(frontmatter.stats    !== undefined ? { stats:     frontmatter.stats }     : {}),
         ...(frontmatter.faq      !== undefined ? { faq_items: frontmatter.faq }       : {}),

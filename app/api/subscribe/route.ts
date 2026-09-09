@@ -31,13 +31,27 @@ export async function POST(req: Request) {
     locale: safeLocale,
   });
 
+  // Not httpOnly — same reasoning as the pi_box cookie (lib/follows), it's a
+  // UX flag, not a secret. One year is generous but this is opt-in and cheap
+  // to re-set; there's no session to expire. Read server-side in the article
+  // page to decide whether to render past the registration wall.
+  function withSubscribedCookie(res: NextResponse): NextResponse {
+    res.cookies.set('pi_subscribed', '1', {
+      httpOnly: false,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 365,
+    });
+    return res;
+  }
+
   if (error) {
     // 23505 = unique_violation — already subscribed is a success state for the user
     if (error.code === '23505') {
-      return NextResponse.json({ message: 'subscribed' }, { status: 200 });
+      return withSubscribedCookie(NextResponse.json({ message: 'subscribed' }, { status: 200 }));
     }
     return NextResponse.json({ error: 'Subscription failed' }, { status: 500 });
   }
 
-  return NextResponse.json({ message: 'subscribed' }, { status: 201 });
+  return withSubscribedCookie(NextResponse.json({ message: 'subscribed' }, { status: 201 }));
 }
