@@ -4,6 +4,7 @@ title: "Madrid GP 2026: Hosting Fee, Tickets & Spain's Two-Race Bet"
 locale: en
 meta_description: "Madrid's F1 debut runs Sept 11-13. The real €48M hosting fee, a PwC-verified €467M study, and why Spain now runs two Grands Prix, not one."
 status: published
+paywalled: true
 published_at: "2026-09-09"
 translation_group_id: "b1e6f4a2-9c3d-4f5e-8a7b-2d1c6e9f4a3b"
 tags: ["featured", "race-analysis", "economics", "europe"]

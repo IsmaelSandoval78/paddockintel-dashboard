@@ -4,6 +4,7 @@ title: "GP de Madrid 2026: Cuota, Entradas y la Apuesta de España"
 locale: es
 meta_description: "Madrid debuta en F1 del 11 al 13 de sep. La cuota de €48M, un estudio de PwC que verifica €467M, y por qué España corre dos Grandes Premios."
 status: published
+paywalled: true
 published_at: "2026-09-09"
 translation_group_id: "b1e6f4a2-9c3d-4f5e-8a7b-2d1c6e9f4a3b"
 tags: ["featured", "race-analysis", "economics", "europe"]
