@@ -4,6 +4,7 @@ title: "The Economics of F1's Junior Driver Pipeline"
 locale: en
 meta_description: "F1 academies spend millions developing junior drivers, but even Red Bull converts fewer than 1 in 5 signings into an F1 seat. The real numbers."
 status: published
+published_at: "2026-09-09"
 translation_group_id: "f9e72134-5027-4d0d-9261-e3b4e4a28feb"
 tags: ["economics", "driver-finance"]
 
