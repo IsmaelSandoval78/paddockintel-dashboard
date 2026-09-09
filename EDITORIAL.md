@@ -241,7 +241,16 @@ English is source of truth. ES and PT are parallel drafts — not machine transl
 - `meta_description`: rewrite for local search behavior (ES/LATAM searches differently than EN)
 - FAQ questions: write the question as someone from that market would type it
 
-**ES audience:** Spain + LatAm. Use neutral Spanish — avoid voseo or heavy regionalism.
+**ES audience:** Spain + LatAm. Use neutral Spanish (tuteo) — **never voseo** ("vos", "podés",
+"tenés", imperatives like "pensá"/"imaginate"/"acercate"). This has recurred more than once
+(an already-published article and 17 glossary term rows all had real voseo slip in during
+drafting) — Ismael has said directly he does not want it discussed as an open style question,
+it is a hard rule. Before marking any ES content `status: published`, grep the draft for
+voseo markers — verb endings `-ás`/`-és`/`-ís` (excluding non-verb words like "más",
+"después", "interés", "país", "estás"/"estés" which are shared with tuteo), plus "vos", "che",
+"dale" as a filler, and imperatives ending in an unaccented stressed vowel ("pensá", "reservá",
+"imaginate", "acercate", "pensalo"). Fix to tuteo (puedes, tienes, piensa, imagínate, acércate,
+piénsalo, tú) before publishing.
 **PT audience:** primarily Brazil. `pt-BR` date formatting is already wired.
 
 ---

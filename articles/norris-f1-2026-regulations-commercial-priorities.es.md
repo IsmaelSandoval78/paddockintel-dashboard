@@ -51,7 +51,7 @@ sources:
 
 Lando Norris, campeón mundial vigente de F1, dijo esta semana que es "una lástima" que la Fórmula 1 esté tan influenciada por decisiones comerciales — y nombró la decisión específica a la que se refiere. El reparto de aproximadamente 50-50 entre potencia de combustión y eléctrica del motor 2026 existe, dijo, "porque más equipos querían entrar y porque se gana más plata", no porque produzca mejores carreras.
 
-Es una versión más filosa de una queja que Norris viene construyendo durante toda la temporada. En febrero, antes de que los autos nuevos dieran una vuelta competitiva, había minimizado las quejas de otros pilotos sobre las reglas que venían: "Nos pagan una cantidad de dinero absurda por manejar, así que en el fondo no te podés quejar." Cinco meses y una temporada entera de carreras restringidas por manejo de energía después, Norris es quien nombra el trade-off comercial específico que cree que hizo el deporte — y dice que los pilotos no tuvieron voz cuando se tomó esa decisión.
+Es una versión más filosa de una queja que Norris viene construyendo durante toda la temporada. En febrero, antes de que los autos nuevos dieran una vuelta competitiva, había minimizado las quejas de otros pilotos sobre las reglas que venían: "Nos pagan una cantidad de dinero absurda por manejar, así que en el fondo no te puedes quejar." Cinco meses y una temporada entera de carreras restringidas por manejo de energía después, Norris es quien nombra el trade-off comercial específico que cree que hizo el deporte — y dice que los pilotos no tuvieron voz cuando se tomó esa decisión.
 
 ## Por Qué Pasó
 

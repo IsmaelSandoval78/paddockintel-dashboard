@@ -46,9 +46,9 @@ The catch: it only works if the fresh tyres are genuinely faster right away, and
         "es": {
             "term": "Undercut",
             "short_definition": "El undercut es una parada en boxes anticipada respecto a un rival: el piloto para antes, pone gomas nuevas, y usa ese agarre extra para meterse adelante cuando el rival finalmente también para.",
-            "body_markdown": """Es como robar una base en béisbol: hacés tu jugada temprano, mientras tu rival todavía está comprometido con su jugada actual. Para cuando reacciona, vos ya ganaste el terreno que necesitabas.
+            "body_markdown": """Es como robar una base en béisbol: haces tu jugada temprano, mientras tu rival todavía está comprometido con su jugada actual. Para cuando reacciona, tú ya ganaste el terreno que necesitabas.
 
-En términos de F1: imaginate dos pilotos corriendo cerca, ambos con gomas ya gastadas. El de atrás para primero. Por una vuelta o dos, va última posición del par, todavía en el pit lane y después reincorporándose atrás. Pero sus gomas son nuevas, y las gomas nuevas son *rápidas*. Mientras el piloto que sigue en pista administra gomas gastadas, el que paró mete una o dos vueltas muy rápidas.
+En términos de F1: imagínate dos pilotos corriendo cerca, ambos con gomas ya gastadas. El de atrás para primero. Por una vuelta o dos, va última posición del par, todavía en el pit lane y después reincorporándose atrás. Pero sus gomas son nuevas, y las gomas nuevas son *rápidas*. Mientras el piloto que sigue en pista administra gomas gastadas, el que paró mete una o dos vueltas muy rápidas.
 
 Para cuando el piloto de adelante finalmente hace su propia parada, la diferencia ya cambió. El auto que paró primero — el que hizo el "undercut" — sale de boxes adelante, sin haber pasado al otro auto en pista ni una sola vez.
 

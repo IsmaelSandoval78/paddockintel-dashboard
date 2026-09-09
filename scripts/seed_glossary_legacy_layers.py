@@ -46,7 +46,7 @@ It doesn't cap *everything* though — a team's chef can still have an unlimited
                 "es": {
                     "term": "Tope de Gastos (Cost Cap)",
                     "short_definition": "El tope de gastos de F1 es una regla que limita a cada equipo a gastar hasta una cifra fija por año en construir y desarrollar su auto de carrera — pensada para que los equipos más ricos no puedan simplemente gastar más que el resto.",
-                    "body_markdown": """Imaginate una competencia de cocina donde cada chef recibe exactamente el mismo presupuesto de compras para el plato que se juzga — la misma plata para ingredientes, sin excepciones. Un chef con un sponsor adinerado no puede comprar trufas mejores que los demás; el plato en sí tiene que ganarse por habilidad dentro de ese presupuesto compartido.
+                    "body_markdown": """Imagínate una competencia de cocina donde cada chef recibe exactamente el mismo presupuesto de compras para el plato que se juzga — la misma plata para ingredientes, sin excepciones. Un chef con un sponsor adinerado no puede comprar trufas mejores que los demás; el plato en sí tiene que ganarse por habilidad dentro de ese presupuesto compartido.
 
 Eso es el tope de gastos. Limita lo que un equipo puede gastar específicamente en rendimiento del auto — la aerodinámica, las piezas, la mayoría del personal de ingeniería — a la misma cifra en dólares para cada equipo, rico o pobre. Antes de esta regla, los equipos con más presupuesto podían simplemente desarrollar tres o cuatro veces más que el resto. Ahora, un equipo chico y uno gigante trabajan desde el mismo presupuesto de rendimiento, así que la diferencia entre ellos tiene que venir de ingeniería más inteligente, no de bolsillos más profundos.
 
@@ -98,7 +98,7 @@ It also doesn't last forever — like a lease, it has an expiry date, and every 
                 "es": {
                     "term": "Acuerdo de la Concordia (Concorde Agreement)",
                     "short_definition": "El Concorde Agreement es el contrato maestro de F1 entre la FIA, el titular de los derechos comerciales, y cada equipo — el reglamento privado que decide cómo funciona realmente el negocio de F1, confidencial y renovado cada varios años.",
-                    "body_markdown": """Pensalo como un acuerdo de sociedad entre socios comerciales que también son, en cierto modo, rivales — detalla cómo se reparten las ganancias, qué está obligado a hacer cada socio, y cómo se resuelven los desacuerdos, todo acordado en privado antes de que se pongan a competir de verdad.
+                    "body_markdown": """Piénsalo como un acuerdo de sociedad entre socios comerciales que también son, en cierto modo, rivales — detalla cómo se reparten las ganancias, qué está obligado a hacer cada socio, y cómo se resuelven los desacuerdos, todo acordado en privado antes de que se pongan a competir de verdad.
 
 Cada equipo de la parrilla tiene que firmarlo para poder correr. No está publicado en ningún lado donde los hinchas puedan leerlo — a diferencia del Reglamento Deportivo o Técnico, que son documentos públicos, los términos comerciales del Concorde Agreement siguen confidenciales entre quienes lo firmaron. Lo que se filtra públicamente (como la cifra del tope de gastos) es lo que las partes eligen compartir, no el documento completo.
 
@@ -150,7 +150,7 @@ It's not cheap: when Cadillac joined for 2026, it paid $450 million, split among
                 "es": {
                     "term": "Cuota Anti-Dilución (Anti-Dilution Fee)",
                     "short_definition": "La cuota anti-dilución es el pago de entrada que hace un equipo nuevo a los equipos existentes para sumarse a la parrilla de F1 — compensación por achicar la porción de cada uno en el premio en dinero compartido.",
-                    "body_markdown": """Imaginate diez amigos repartiendo una pizza en partes iguales. Si un onceavo amigo quiere una porción, lo justo no es que todos acepten en silencio una porción más chica — es que el recién llegado ponga suficiente plata para que los diez originales no salgan perdiendo.
+                    "body_markdown": """Imagínate diez amigos repartiendo una pizza en partes iguales. Si un onceavo amigo quiere una porción, lo justo no es que todos acepten en silencio una porción más chica — es que el recién llegado ponga suficiente plata para que los diez originales no salgan perdiendo.
 
 Eso es la cuota anti-dilución. El fondo de premio en dinero de F1 se reparte entre los equipos según su posición en el campeonato — agregá un onceavo equipo, y ese mismo fondo se reparte entre once en vez de diez, achicando la porción de todos aunque nada de su propio rendimiento haya cambiado. La cuota es el pago del recién llegado a los diez equipos existentes para compensar eso.
 
@@ -201,7 +201,7 @@ The pool is enormous — reported around $1.6 billion a year — split mostly by
                 "es": {
                     "term": "Premio en Dinero (Prize Money)",
                     "short_definition": "F1 paga a los equipos según dónde terminan en la clasificación de toda la temporada, no carrera por carrera — como una liga de fantasy que paga una sola vez al final de la temporada según la posición final, no un bono cada semana.",
-                    "body_markdown": """Si alguna vez jugaste en una liga de fantasy deportivo, sabés que el pago de verdad llega al final de la temporada según la posición final — no un chequecito cada semana que ganás. El premio en dinero de F1 funciona igual.
+                    "body_markdown": """Si alguna vez jugaste en una liga de fantasy deportivo, sabes que el pago de verdad llega al final de la temporada según la posición final — no un chequecito cada semana que ganas. El premio en dinero de F1 funciona igual.
 
 Un equipo puede ganar un Gran Premio el domingo y esa victoria puntual no dispara un pago ligado a ella. Lo que realmente determina la plata es la tabla del Campeonato de Constructores al final del año — terminar 2do en vez de 3ro vale plata real, hayan tenido o no una victoria de carrera en el medio.
 
@@ -252,8 +252,8 @@ It's why hosting fees vary so wildly: some races (state-backed events with touri
                 },
                 "es": {
                     "term": "Cuota de Sede (Hosting Fee)",
-                    "short_definition": "La cuota de sede es lo que un circuito le paga a F1 cada año solo por el derecho de tener una carrera ahí — como alquilar un salón de fiestas, pagás el alquiler fijo aunque vengan 50 invitados o 500.",
-                    "body_markdown": """Reservá un salón para un casamiento y pagás el alquiler tanto si la fiesta está a full como si está medio vacía, llueva o brille el sol — al salón le pagan por dar el lugar, punto, separado de cómo termine saliendo el evento en sí.
+                    "short_definition": "La cuota de sede es lo que un circuito le paga a F1 cada año solo por el derecho de tener una carrera ahí — como alquilar un salón de fiestas, pagas el alquiler fijo aunque vengan 50 invitados o 500.",
+                    "body_markdown": """Reserva un salón para un casamiento y pagas el alquiler tanto si la fiesta está a full como si está medio vacía, llueva o brille el sol — al salón le pagan por dar el lugar, punto, separado de cómo termine saliendo el evento en sí.
 
 Así funciona exactamente la cuota de sede de F1. Un circuito le paga a Formula One Management una cantidad fija, típicamente entre $15 y $55 millones al año, puramente por el derecho de poner un Gran Premio en el calendario. No importa si la carrera es un clásico o un embole, si las tribunas se agotan o quedan vacías — la cuota se debe de todos modos.
 
