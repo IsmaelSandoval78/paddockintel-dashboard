@@ -26,7 +26,7 @@ export default function LocaleSwitcher() {
 
   return (
     <div className="flex items-center gap-2">
-      {routing.locales.map((loc, i) => (
+      {routing.locales.filter((loc) => loc !== 'pt').map((loc, i) => (
         <span key={loc} className="flex items-center gap-2">
           {i > 0 && <span className="font-mono text-xs text-text-3">·</span>}
           <button

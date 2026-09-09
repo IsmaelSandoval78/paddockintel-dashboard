@@ -162,7 +162,7 @@ export default function MobileNav({
               </span>
             )}
             <div className="flex items-center gap-2 ml-auto">
-              {routing.locales.map((loc, i) => (
+              {routing.locales.filter((loc) => loc !== 'pt').map((loc, i) => (
                 <span key={loc} className="flex items-center gap-2">
                   {i > 0 && <span className="font-mono text-[11px] text-text-3">·</span>}
                   <button
