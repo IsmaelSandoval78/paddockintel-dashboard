@@ -72,6 +72,18 @@ nobody else does that, say so explicitly in the brief — that gap is the SEO op
 - [ ] Submit updated sitemap to Google Search Console immediately post-cutover, monitor
       Coverage report for a spike in errors over the following 2 weeks
 
+## Framework Hook & Deliver (Nivel 1 / Nivel 2)
+
+- Nivel 1 = ángulo de alto volumen de búsqueda (rumor, conflicto, fichaje) usado como
+  titular; Nivel 2 = pieza estructural de baja competencia (costo por punto, longevidad de
+  carrera, economía de circuitos) usada como profundidad.
+- Todo artículo Nivel 1 DEBE linkear a 1-2 piezas Nivel 2 existentes ("profundizá acá"). Si
+  no existe una pieza Nivel 2 relevante para linkear, el artículo Nivel 1 no se publica hasta
+  crearla o hasta encontrar una existente — hold the piece:
+  `[SEO-HOLD: sin pieza Nivel 2 relevante para linkear]`.
+- El titular puede usar el gancho dramático; el cierre del artículo SIEMPRE debe resolver con
+  el mecanismo económico, nunca al revés.
+
 ## When this advisor should block publication
 
 If any non-negotiable is unchecked, or if the primary keyword targets a query PaddockIntel

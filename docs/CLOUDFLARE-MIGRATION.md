@@ -6,6 +6,79 @@ nobody re-investigates something already settled.
 
 ---
 
+## 🚨 2026-09-09 — cutover rolled back ~64 min in: Workers Free plan CPU limit (error 1102)
+
+**Directly follows the entry right below this one** ("real cutover done (step 4)") — read
+that one first for what was actually cut over; this entry is what happened next, same
+incident window.
+
+**Active monitoring (the second half of step 4, explicitly planned) caught this — it did not
+go unnoticed.** Checks at ~0, ~21, and ~42 min post-cutover were all clean (200/308, `server:
+cloudflare`, real Supabase-backed content). The 4th scheduled check, at ~64 min, found:
+
+```
+HTTP/2 503
+content-type: text/plain; charset=UTF-8
+...
+error code: 1102
+```
+
+on `hub`/`www` home, `/drivers/`, `/constructors/`, `/weekly/`, `/es/`, `/pt/` — every route
+that does real work. `/api/health` (near-zero compute) kept returning `200` the whole time,
+and the apex `308` redirect (which never reaches app code) also kept working — both
+consistent with a **CPU-time** failure specifically, not a general Worker/network outage.
+
+**Root cause, confirmed against the real dashboard, not guessed:** `Workers & Pages →
+Workers plans` showed **Free — "Current plan"**. Free tier: **10ms CPU time per request**.
+Paid ($5/mo): up to 5 minutes. A Next.js SSR route doing real Supabase queries + React
+rendering can exceed 10ms of actual CPU depending on isolate/JIT/GC state — which explains
+why it passed for the first ~42 minutes (a freshly warmed isolate can do more inside the
+same CPU budget) and then started failing consistently, not why it was flaky from the start.
+This is not a one-off bug to patch; it's a real plan-tier mismatch for a data-heavy SSR app,
+independent of any code in this repo.
+
+**Rolled back immediately, mitigate-first** (matching the whole reason
+`docs/DNS-ROLLBACK-CLOUDFLARE-CUTOVER.md` was written in step 3 — this is exactly the
+scenario it was written for): removed all 3 Custom Domains from
+`paddockintel-dashboard` in Workers & Pages (which auto-removes the proxied A records
+Cloudflare created for them), then recreated the original 3 DNS records exactly per the
+rollback doc: `hub`/`www` → CNAME `d878f4083bbdeec6.vercel-dns-017.com`, DNS only; apex → A,
+DNS only. Did **not** touch the Worker itself, its secrets, or the cron — per the rollback
+doc's own "what NOT to touch" section.
+
+**One step required Ismael's manual input, not by choice:** the apex A record's IP value
+(re-verified live per the rollback doc's own warning — still `216.150.1.1` at the time)
+could not be typed into the Cloudflare form by this session — the permission classifier
+blocked writing that specific IP-shaped string into a browser form field. Stopped and asked
+rather than attempting a workaround, per the classifier's own instruction. Ismael entered it
+manually; verified immediately after.
+
+**Verified post-rollback, not assumed:** `dig` directly against Cloudflare's authoritative
+nameservers and against public resolvers (8.8.8.8, 1.1.1.1 — this machine's own local DNS
+cache still had a stale negative answer from the brief window the records didn't exist, a
+local-machine artifact, not a real propagation issue) all show the original values restored.
+`curl --resolve` (bypassing the stale local cache) confirms `server: Vercel`,
+`strict-transport-security` present, the apex `308`→`www` redirect intact, and real
+Supabase-backed content on `hub`/`www`/`/drivers/`/`/constructors/`/`/weekly/`/`/es/`/`/pt/`.
+
+**Incidental finding while verifying, unrelated to the incident itself:** `/api/health`
+(and presumably other API routes) 308-redirects `/api/health` → `/api/health/` on Vercel
+(`trailingSlash: true` applying to route handlers, not just pages) — something the earlier
+monitoring checks never surfaced because they checked the status code without following
+redirects. Not a bug, just an unfollowed-redirect blind spot in this session's own curl
+checks; the final JSON (`hasSupabaseUrl`/`hasAnonKey`/`hasServiceRoleKey`: all `true`) is
+correct once followed. Worth remembering if a future check reports a "failure" on an API
+route that's actually just an unfollowed 308.
+
+**Real decision now pending with Ismael, not made here:** upgrade the Cloudflare account to
+Workers Paid ($5/mo) and retry the cutover, or drop the Cloudflare migration entirely, or
+first reduce real per-request CPU cost (e.g. more aggressive caching so fewer requests ever
+hit a cold Supabase-querying path) before attempting cutover again on Free. Upgrading is a
+billing action on Ismael's account — not something this session did or will do without his
+explicit go-ahead.
+
+---
+
 ## ✅ 2026-09-08/09 — real cutover done (step 4): all 3 domains live on the Worker
 
 **Executed with Ismael's explicit go-ahead ("dale no tengo trafico ahora"), all 3 domains

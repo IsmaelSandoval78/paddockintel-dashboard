@@ -88,6 +88,16 @@ blog that happens to have nicer charts.
 - Review the `/about` page for staleness — if the site's scope or ownership changes (like this
   session's monetization-model correction), update it
 
+## Regla de resolución (Hook & Deliver)
+
+- El drama nunca es la conclusión editorial, siempre es la pregunta de entrada. Un artículo
+  que reporta un rumor/conflicto sin agregar un mecanismo económico verificado propio no
+  cumple EEAT — hold the piece:
+  `[EEAT-HOLD: rumor/conflicto sin mecanismo económico verificado]`.
+- Se puede reportar que el rumor existe (citando la fuente), pero todo el valor agregado debe
+  ser dato verificado, nunca el chisme en sí (consistente con la regla absoluta de no
+  inventar datos).
+
 ## When this advisor should block publication
 
 Missing author attribution, an unattributed "expert" opinion, a first-person claim presented

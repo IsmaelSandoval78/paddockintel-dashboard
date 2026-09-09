@@ -39,6 +39,9 @@ fastest gut-check before anything else on this list.
       structural explanation — or just a restated emotional claim?
 - [ ] One tight argument, not five loosely connected observations — if the draft is trying to
       make multiple separate points, it's two articles, not one unfocused one
+- [ ] Ver Framework Hook & Deliver en SEO-EXPERT.md y EEAT-EXPERT.md — el tono editorial de
+      piezas Nivel 1 debe seguir siendo periodismo económico, no rumorología, aun cuando el
+      titular use un gancho dramático.
 
 ## Tone enforcement (mechanical check against EDITORIAL.md's banned list)
 
