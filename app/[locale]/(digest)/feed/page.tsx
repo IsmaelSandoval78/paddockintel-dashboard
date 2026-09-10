@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations, getFormatter } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
+import { weeklyEntityCounts } from '@/lib/entityMentions';
 
 export const revalidate = 3600;
 
@@ -34,26 +35,6 @@ async function getItems(): Promise<FeedItem[]> {
     .in('issue_id', issueIds)
     .order('published_at', { ascending: false });
   return (data ?? []) as FeedItem[];
-}
-
-// How many distinct stories, in the trailing 7 days, mention each entity —
-// shared by mostMentioned() below and each item's significance score. Real
-// signal, not invented: digest_items has no source-count or vote field, but
-// entity_tags (populated by generate_digest_draft.py, see the migration
-// that added the column) gives an honest proxy for "how much else this week
-// touches the same story" — max over an item's own tags, not sum, so the
-// score answers "how hot is the hottest thing this story touches" rather
-// than rewarding tag-stuffing.
-function weeklyEntityCounts(items: FeedItem[]): Map<string, number> {
-  const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
-  const counts = new Map<string, number>();
-  for (const item of items) {
-    if (new Date(item.published_at).getTime() < cutoff) continue;
-    for (const entity of item.entity_tags) {
-      counts.set(entity, (counts.get(entity) ?? 0) + 1);
-    }
-  }
-  return counts;
 }
 
 function mostMentioned(counts: Map<string, number>): { entity: string; count: number }[] {

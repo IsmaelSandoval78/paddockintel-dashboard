@@ -710,6 +710,11 @@
       "accountTitle": "Com uma conta que você já tem",
       "accountSub": "Instantâneo — nada para confirmar."
     },
+    "mostCovered": {
+      "title": "Mais Coberto Esta Semana",
+      "stories": "{count, plural, one {# história} other {# histórias}} esta semana",
+      "seeAll": "Ver o feed completo"
+    },
     "promo": {
       "hub": "O Hub",
       "hubDescription": "Mapa interativo de circuitos, classificações e estatísticas de pilotos desde 1950.",

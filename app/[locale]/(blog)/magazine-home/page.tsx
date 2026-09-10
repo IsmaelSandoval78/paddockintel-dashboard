@@ -8,8 +8,16 @@ import FeaturedArticleCard from '@/components/blog/FeaturedArticleCard';
 import NewsletterCard from '@/components/blog/NewsletterCard';
 import StandingsPanel from '@/components/blog/StandingsPanel';
 import MoversPanel from '@/components/blog/MoversPanel';
+import MostCoveredPanel from '@/components/blog/MostCoveredPanel';
 import CircuitOfTheDay from '@/components/blog/CircuitOfTheDay';
-import { getFeaturedAndRecent, getDataDeskArticles, getStandings, getMovers, getCircuitOfTheDay } from './data';
+import {
+  getFeaturedAndRecent,
+  getDataDeskArticles,
+  getStandings,
+  getMovers,
+  getMostCovered,
+  getCircuitOfTheDay,
+} from './data';
 
 export const revalidate = 3600;
 
@@ -105,6 +113,7 @@ export default async function MagazineHomePage({
           getFeaturedAndRecent(locale),
           getStandings(),
           getMovers(),
+          getMostCovered(),
           getDataDeskArticles(locale),
           getCircuitOfTheDay(),
         ])
@@ -121,10 +130,11 @@ export default async function MagazineHomePage({
     return qs ? `${basePath}?${qs}` : basePath;
   };
 
-  const [featuredAndRecent, standings, movers, dataDeskArticles, circuit] = frontPageExtras ?? [
+  const [featuredAndRecent, standings, movers, mostCovered, dataDeskArticles, circuit] = frontPageExtras ?? [
     { featured: null, recent: [] },
     { drivers: [], constructors: [] },
     { raceName: '', driverRiser: null, driverFaller: null, constructorRiser: null, constructorFaller: null },
+    null,
     [],
     null,
   ];
@@ -206,6 +216,10 @@ export default async function MagazineHomePage({
 
         {/* This race's movers — real standings deltas, not a "trending" signal */}
         <MoversPanel movers={movers} />
+
+        {/* Most covered this week — real digest cross-mention count, no
+            week-over-week % (see getMostCovered() in ./data.ts for why) */}
+        <MostCoveredPanel entity={mostCovered} />
 
         {/* Newsletter invite */}
         {isFrontPage && <NewsletterCard />}

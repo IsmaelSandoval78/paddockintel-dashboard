@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { getArticleIdsForTagSlug, getArticleTagSlugs, type TagRef } from '@/lib/blog/tags';
+import { weeklyEntityCounts, topEntity, type EntityCount } from '@/lib/entityMentions';
 import { getTranslations } from 'next-intl/server';
 
 const FEATURED_TAG = 'featured';
@@ -338,6 +339,33 @@ export async function getMovers(): Promise<MoversResult> {
     constructorRiser: toConstructorMover(constructorRiserRaw),
     constructorFaller: toConstructorMover(constructorFallerRaw),
   };
+}
+
+// "Most Covered This Week" — third piece of the magazine-home redesign
+// discussion (AI Weekly's "Attention This Week"). No week-over-week %
+// riser/faller here on purpose: digest_items only has 42 rows total with
+// real gaps (months with zero items), so a week-over-week delta would be
+// computed from samples of 1-2 stories and produce misleading swings — see
+// docs/advisors/DATA-EXPERT.md's sample-size guidance. This is a plain
+// snapshot count instead: reuses the same weeklyEntityCounts() the Feed's
+// significance score and "most mentioned" tag cloud already use. Requires
+// count >= 2 (an entity mentioned by only one story isn't "most covered"
+// by any honest reading) — returns null and the panel doesn't render if no
+// entity clears that bar this week.
+export async function getMostCovered(): Promise<EntityCount | null> {
+  const supabase = createClient();
+  const { data: issues } = await supabase.from('digest_issues').select('id').eq('series', 'newsletter');
+  const issueIds = (issues ?? []).map((i) => i.id as string);
+  if (!issueIds.length) return null;
+
+  const { data } = await supabase
+    .from('digest_items')
+    .select('entity_tags, published_at')
+    .in('issue_id', issueIds);
+
+  const counts = weeklyEntityCounts((data ?? []) as { entity_tags: string[]; published_at: string }[]);
+  const top = topEntity(counts);
+  return top && top.count >= 2 ? top : null;
 }
 
 export type CircuitOfTheDay = {
