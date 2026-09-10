@@ -16,13 +16,14 @@ apilarse.
 
 | Paso | Estado real | Bloqueador real si lo hay |
 |---|---|---|
-| 1. Cloudflare | **CORTE REAL HECHO Y REVERTIDO 8-9 sep — de vuelta 100% en Vercel, verificado.** El corte funcionó ~64 min hasta que el monitoreo activo (que sí estaba corriendo, como estaba planeado) encontró 503 reales (`error code: 1102`) en todas las rutas con datos. Causa raíz real: la cuenta de Cloudflare está en el plan **Free** (10ms CPU/request) — insuficiente para SSR con Supabase real; el plan Paid ($5/mes) da 5 min. Rollback ejecutado con el plan ya escrito (`docs/DNS-ROLLBACK-CLOUDFLARE-CUTOVER.md`), verificado con `dig`/`curl` reales post-rollback. Ver `docs/CLOUDFLARE-MIGRATION.md` | **Decisión real pendiente con Ismael, no tomada:** ¿upgrade a Workers Paid y reintentar, o abandonar la migración a Cloudflare, o primero bajar el costo real de CPU por request (más caching) antes de reintentar? Ninguna opción ejecutada todavía |
+| 1. Cloudflare | **CORTE REAL COMPLETO Y ESTABLE 9-10 sep — los 3 dominios sirviendo desde el Worker de Cloudflare, plan Paid.** Intento anterior (8-9 sep) reveló el límite real de CPU del plan Free (10ms/request, error 1102) tras ~64 min; revertido con evidencia, documentado en `docs/CLOUDFLARE-MIGRATION.md`. Reintentado 9-10 sep con canario (`hub` solo) en Free primero (para tener el dato real), luego Ismael upgradeó a **Workers Paid** ($5/mes) — confirmado activo en el dashboard real. Con Paid confirmado, se sumaron `paddockintel.com`/`www` al Worker (mismo patrón que `hub`). Verificado con `dig`/`curl` reales: los 3 dominios en 200/308, `server: cloudflare`, HSTS, redirect apex→www, datos reales de Supabase. Monitoreo de salud corriendo cada ~25-30 min | Ninguno bloqueante hoy — pendiente no urgente: automatizar el redeploy a Cloudflare (sigue siendo 100% manual, a diferencia de Vercel) |
 | 2. Blog/estructura | Maduro — tags relacionales, race_id, glosario con capas, `/about` conectado | Ninguno bloqueante |
-| 3. Newsletter | Pipeline automatizado real (`generate_digest_draft.py`), Vol.06 publicado. **Corrección 9 sep: "gap vol-03/vol-04" no era real** — esas semanas se re-clasificaron como `recap-01`/`recap-02` a propósito (ver issues #1/#2 en GitHub), la numeración viva del newsletter no tiene hueco. **Serie Recap pausada 9 sep, foco en contenido nuevo** — ver sección "Recaps retroactivos — pausados" más abajo | Ninguno bloqueante |
+| 3. Newsletter | Pipeline automatizado real (`generate_digest_draft.py`), Vol.06 publicado. **Corrección 9 sep: "gap vol-03/vol-04" no era real** — esas semanas se re-clasificaron como `recap-01`/`recap-02` a propósito (ver issues #1/#2 en GitHub), la numeración viva del newsletter no tiene hueco. **Serie Recap pausada 9 sep, foco en contenido nuevo** — ver sección "Recaps retroactivos — pausados" más abajo. **10 sep: `CRON_SECRET` desactualizado (66 días) bloqueaba el cron diario del digest en Vercel — encontrado, rotado y sincronizado; y `/api/subscribe` ahora manda un email de bienvenida real en la primera suscripción** — ver sección "Email de bienvenida + fix de CRON_SECRET" más abajo | Ninguno bloqueante |
 | 4. Who's Who | 19/34 voces con pick real. **Linkeado del nav 5 sep** — ruta promovida de `/whos-who-preview` (noindex) a `/whos-who` real, indexable, con metadata/i18n propios | 3 cuentas curadas sin servir (Piola/Slater/Davidson) |
 | 5. Feed | MVP construido, reusa `digest_items`, localizado. **Linkeado del nav 5 sep** | Ninguno bloqueante |
 | 6. Cuentas de usuario | **Completo de punta a punta — código + verificación real, confirmado con clic real en producción el 8-9 sep 2026.** Backend (Supabase Auth, schema + RLS, sesión compartida `paddockintel.com`/`hub.paddockintel.com`) y UI real de login (`AuthWidget.tsx`, dropdown desktop + mobile, Google + magic link) ambos verificados end-to-end. Critique Gate: **5/5**. **Deuda de Mi Box resuelta 8 sep** — ver sección "Reconciliación Mi Box ↔ cuentas" más abajo | Ninguno bloqueante |
 | 7. Vertical de datos puros | Decidido 24 ago, cero código, confirmado vivo hoy | Cero métricas definidas todavía |
+| 8. Registration wall / paywall opt-in | **Construido y verificado en vivo 9 sep 2026, vía Codespaces + confirmado hoy.** Gate gratis (solo email, reusa `/api/subscribe`) por artículo, opt-in — `articles.paywalled` default `false`, los 315+ artículos existentes quedan intactos. Corte antes del 3er H2. 2 artículos gateados hoy (Raikkonen, Madrid GP), verificado por mí en vivo: el HTML servido a un visitante anónimo corta justo después de "Why It Happened", "Economic Impact"/"The Framework"/"Verdict" están genuinamente ausentes (no ocultos con CSS), el gate real (`ArticlePaywallGate`) renderiza con su copy. Ver sección "Registration wall" más abajo | El artículo de Madrid GP usa la plantilla race-weekend (no las 5 secciones de EDITORIAL.md) — el corte ahí tapa un ángulo distinto al de Raikkonen, vale la pena mirarlo si esto se vuelve el default para piezas de fin de semana de carrera |
 
 **Hallazgos de auditoría de docs, 4 sep 2026 (aplicados o pendientes):**
 - ✅ Corregido: `README.md` decía que las migraciones van por Supabase CLI — nunca fue
@@ -1778,3 +1779,117 @@ re-publicarlas como `recap-01`/`recap-02` en su lugar (issues #1/#2 de GitHub,
 cerrados con esa explicación exacta). La numeración viva del newsletter
 (`vol-01`/`vol-02`/`vol-05`/`vol-06`) no tiene ningún hueco sin llenar — los slugs
 `vol-03`/`vol-04` simplemente no existen a propósito, no fue negligencia.
+
+## Registration wall / paywall opt-in — construido vía Codespaces, verificado hoy (9-10 sep 2026)
+
+**Construido en una sesión de Codespaces el 9 sep (commits `3eb1e64`, `7b63e04`, `698dbf0`,
+`7efe5fa`), no reflejado en este roadmap hasta ahora — encontrado y documentado recién al
+hacer `git pull` y revisar los commits reales, no de memoria.**
+
+**Qué es:** un muro gratis, no un paywall real — el lector deja su email (reusa el flow
+existente de `/api/subscribe`, sin cuenta nueva) para seguir leyendo. Opt-in por artículo vía
+`articles.paywalled` (columna nueva, default `false`) — los 315+ artículos existentes quedan
+intactos, nada se gatea salvo que un artículo lo pida explícitamente en su frontmatter.
+
+**Cómo funciona (por el propio código, no solo el mensaje del commit):**
+- `lib/markdown.ts`: `splitMarkdownAtSection()` corta el markdown crudo antes del 3er H2 —
+  la mitad gateada nunca se manda al cliente, no es un blur de CSS que se pueda inspeccionar.
+- `POST /api/subscribe` ahora también setea una cookie `pi_subscribed` (1 año, mismo patrón
+  no-httpOnly que `pi_box`).
+- La página del artículo (RSC) lee esa cookie server-side, o trata a un usuario logueado
+  (`getCurrentAuthUser()`) como ya suscripto — cualquiera de las dos desbloquea el artículo
+  completo, el sidebar de stats, FAQ y fuentes (también retenidos, no solo el cuerpo).
+- El preview de draft (`/api/draft`, `DRAFT_SECRET`) siempre bypasea el gate.
+
+**Verificado por mí en vivo hoy, no solo confiado del commit:** confirmé que la columna
+`articles.paywalled` existe de verdad en Supabase (la migración sí corrió, contra lo que el
+propio commit `3eb1e64` decía como pendiente) y que 4 slugs están en `true` (Raikkonen y
+Madrid GP, EN+ES). Con un request anónimo real a `/robin-raikkonen-red-bull-junior-team-signing/`
+en producción: el HTML servido corta exactamente después del párrafo final de "Why It
+Happened", el gate real (`ArticlePaywallGate`, copy "Keep reading — it's free" / "Unlock
+article") aparece ahí mismo, y "Economic Impact"/"The Framework"/"Verdict" están genuinamente
+ausentes del HTML — no ocultos, ausentes.
+
+**Nota real del propio autor del commit, sin resolver:** el artículo de Madrid GP usa la
+plantilla race-weekend-economics (Economic Engine / Tickets / ángulo / Prize Money), no la
+estructura de 5 secciones de EDITORIAL.md — el corte ahí deja libres los números de hosting-fee
+y el estudio de PwC, y gatea el ángulo "España corre dos carreras" y el boilerplate de
+standings en su lugar. Tradeoff distinto al de Raikkonen, vale la pena revisarlo si esto se
+vuelve el default para piezas de fin de semana de carrera.
+
+**Fix relacionado, mismo día — sign-out no limpiaba la cookie de sesión:** la cookie de
+sesión (`Domain=.paddockintel.com`) es httpOnly a propósito; `signOut()` desde el browser
+revoca el token contra la API de Auth pero nunca puede tocar la cookie en sí, así que el JWT
+todavía válido dejaba al usuario con pinta de logueado hasta que expirara solo (~1h). Fix:
+nuevo `POST /api/auth/signout` que llama a `signOut()` a través de `createAuthServerClient()`
+dentro de un Route Handler (contexto mutable, a diferencia de un render de Server Component),
+produciendo un `Set-Cookie` real con el mismo dominio/path. **Verificado solo por revisión de
+código, no con un clic real** — la lógica es idéntica al patrón ya probado en
+`/api/auth/callback/route.ts` (que sí seteamos y confirmamos en producción esta sesión para
+la reconciliación de Mi Box), pero una sesión de login real vía Google OAuth no es algo que
+pueda simular yo mismo. El propio commit `7efe5fa` ya decía esto explícitamente ("please test
+a real sign-out after this deploys") — sigue siendo cierto, nadie lo probó todavía con una
+cuenta real.
+
+## Email de bienvenida + fix de CRON_SECRET (10 sep 2026)
+
+**Contexto real que arrancó esto:** una suscriptora real ("una amiga" de Ismael) se
+registró vía el registration wall y nunca recibió ningún email. Investigado con
+evidencia, no asumido — dos hallazgos separados, no uno solo:
+
+**Hallazgo 1 — no era un bug, era un gap de diseño real:** nunca existió lógica de
+email de bienvenida/confirmación en todo el codebase. El único uso de Resend en el
+proyecto era el cron diario del digest (`app/api/digest/send/route.ts`) — suscribirse
+nunca disparó ningún email, para nadie, nunca. Confirmado por grep sobre el repo antes
+de escribir código nuevo.
+
+**Hallazgo 2 — separado, un bug real de infraestructura:** probando `/api/digest/send`
+a mano para descartar que el cron general funcionara, devolvió `401 Unauthorized`.
+Causa real: `CRON_SECRET` en Vercel llevaba **66 días sin rotarse** (contradice una nota
+anterior de este mismo doc que decía "recientemente regenerado" — la nota estaba mal,
+no el código). Corregido: secret nuevo generado y sincronizado en las 3 ubicaciones que
+tienen que coincidir (`wrangler secret put` en el Worker de Cloudflare, `vercel env
+add` en Production+Preview, y `.env.local` local) — verificado con un `POST` real a
+`/api/digest/send` que pasó de 401 a `{"sent":["vol-07-week-2026-09-09"]}`, confirmado
+también con el `sent_at` real actualizándose en Supabase. **Bug real encontrado en el
+camino:** `vercel env pull` no refresca valores tipo "Secret" (son write-only, no se
+pueden leer de vuelta) — dejaba el valor viejo en `.env.local` sin avisar, a diferencia
+de otros secrets que sí quedan como `[SENSITIVE]`. Se corrigió escribiendo el valor
+nuevo a mano en `.env.local` antes de sincronizar Cloudflare/Vercel, para no dejar una
+copia local vieja que confunda a una sesión futura.
+
+**Construido para el gap real (Hallazgo 1), con el gate de copy del proyecto seguido
+antes de escribir texto nuevo (`EDITORIAL.md` + los 4 advisors de `docs/advisors/`,
+la mayoría no aplica a copy transaccional salvo el principio general de confiabilidad
+de `EEAT-EXPERT.md`):**
+- `emails/WelcomeEmail.tsx` (nuevo) — mismo lenguaje visual que `DigestIssueEmail.tsx`
+  (el único otro email transaccional del proyecto), copy propia en EN/ES/PT (no
+  next-intl — los emails se renderizan server-side fuera del árbol de next-intl, mismo
+  patrón que el digest). ES verificado mecánicamente sin voseo (script de regex sobre
+  terminaciones `-ás/-és/-ís`, "vos", "che", "dale" de relleno). PT marcado
+  explícitamente en el propio código como borrador de primera pasada, no traducción
+  revisada por nativo — mismo criterio que ya se usó con el hero tagline en PT.
+- `app/api/subscribe/route.ts` reescrito: manda `WelcomeEmail` vía Resend solo en
+  suscripciones genuinamente nuevas (nunca en el branch de `23505`/ya-suscripto, para
+  no reenviar el email cada vez que alguien reenvía el mismo formulario). El envío está
+  en un `try/catch` que traga el error a propósito — una caída de Resend no puede
+  convertir una suscripción exitosa (el usuario ya está en `subscribers`) en un error
+  para el lector.
+- 3 previews renderizadas de verdad (EN/ES/PT, HTML real servido por un server local,
+  no descrito) y mostradas a Ismael antes de conectar nada — aprobadas ("me gusta como
+  se ve").
+
+**Verificado de punta a punta con un envío real, no solo con `tsc`/`eslint` limpios:**
+build de Cloudflare (`scripts/cloudflare-build.sh`) limpio, deploy real a producción vía
+un token de API de Cloudflare de un solo uso (mismo patrón ya establecido esta sesión:
+creado, usado una vez, revocado inmediatamente después). Fila real de
+`sandoval.ismael@gmail.com` en `subscribers` borrada temporalmente (guardando sus datos
+originales) para forzar el camino de "suscripción nueva" y no el de duplicado, luego un
+`POST` real a `https://paddockintel.com/api/subscribe` en producción → `201`, fila
+nueva confirmada en Supabase con timestamp real. Ismael confirmó la recepción real del
+email en su bandeja ("me gusta como se ve").
+
+**No implementado, evaluado como pregunta exploratoria y descartado por ahora:**
+agregar campos de nombre/apellido al formulario de suscripción — no vale la pena para
+un formulario de un solo campo cuyo único uso hoy es el email, y expandiría lo que la
+política de privacidad promete recolectar sin necesidad real todavía.
