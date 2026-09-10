@@ -540,10 +540,30 @@ first run succeeds:
   and masks them in logs, which is the intended compensating control; the
   90-day expiry is what bounds the exposure window instead.
 
-**Not verified by this session — no secrets exist yet, so no real run has
-happened.** First real signal will be the Actions tab after Ismael adds the
-secrets and either pushes an app-code change or triggers
-`workflow_dispatch` by hand.
+**Verified end-to-end, same day.** First real run (triggered by the push that
+added this workflow itself) failed at the `--rclone` step: `403 AccessDenied`
+listing `paddockintel-isr-cache` on R2. Root cause: the `R2_ACCESS_KEY_ID`/
+`R2_SECRET_ACCESS_KEY` pair in `.dev.vars` (reused for the new secrets) was
+created 2026-08-27 — **before** the 2026-09-04 discovery that `wrangler.jsonc`
+had the wrong account ID (`dbf60dad00f30c6d52b094b3ec552f73`) hardcoded the
+whole time. The token itself was created under that wrong account, so it
+never had real access to the bucket in the correct account
+(`551a6aba58a779d10acae0c5f0cde1e8`) — this went unnoticed locally because
+`opennextjs-cloudflare` builds the R2 S3 endpoint from `wrangler.jsonc`'s
+`account_id` (already fixed), not from `.dev.vars`' `CF_ACCOUNT_ID` (which
+was *also* still the stale wrong value until this session corrected it) — so
+only the endpoint was right, the credentials behind it weren't.
+
+**Fix:** Ismael generated a fresh R2 API Token in the Cloudflare dashboard,
+confirmed scoped to Object Read & Write on `paddockintel-isr-cache` only,
+under the correct account. Updated the `R2_ACCESS_KEY_ID`/
+`R2_SECRET_ACCESS_KEY` GitHub secrets (and `.dev.vars` locally) with the new
+values. Re-ran via `workflow_dispatch` → all steps green, confirmed with
+`curl -sI https://hub.paddockintel.com/` returning `200` immediately after.
+
+**Real 90-day rotation reminder, per `CYBERSECURITY-EXPERT.md`:** the new R2
+token and `CLOUDFLARE_API_TOKEN` were both created 2026-09-10 — rotate by
+~2026-12-09.
 
 ---
 
