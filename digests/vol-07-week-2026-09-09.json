@@ -1,0 +1,64 @@
+{
+  "slug": "vol-07-week-2026-09-09",
+  "published_at": "2026-09-09",
+  "status": "published",
+  "intro_synthesis": "The week around Monza doubled as a reminder that Formula 1's commercial architecture keeps getting renegotiated in parallel with the racing calendar. Hard Rock displacing Crypto.com as Miami's title sponsor and DAZN locking in Iberian broadcast rights through 2030 — timed almost exactly to Madrid's inaugural Grand Prix weekend — are both bets that F1's growth curve holds past 2026's regulatory reset, not just reactions to it. McLaren and Allwyn's new touring-event format, debuting in Athens in October, extends that same logic to markets where F1 doesn't race at all: monetizing fan attention independent of a physical Grand Prix weekend. Disney's extended licensing deal, folding Pixar's Cars into the program for the first time at Monza, points the same direction from a different angle — F1 treating its entertainment-brand relationships as long-term infrastructure rather than one-off activations timed to a single race weekend.",
+  "items": [
+    {
+      "source_name": "SportsMint Media",
+      "source_url": "https://sportsmintmedia.com/dazn-strengthens-iberian-motorsport-strategy-with-f1-extension-through-2030/",
+      "headline": "DAZN strengthens Iberian motorsport strategy with F1 extension through 2030",
+      "our_summary": "DAZN extended its Formula 1 broadcast rights across Spain, Portugal, and Andorra through the end of the 2030 season, covering every session across F1, F2, F3, F1 Academy, and Porsche Supercup. The timing is deliberate: it lands two days before Madrid's inaugural Grand Prix at the new MADRING circuit (Spain's F1 return after a 45-year gap) and ahead of Portugal rejoining the calendar at Portimao in 2027 — DAZN is locking in long-term rights to a region right as F1 physically expands into it, rather than waiting to renegotiate after demand is already proven. No fee was disclosed, but the combined addressable market cited (17.9 million people across Spain and Portugal) signals this is being sold internally as an audience-growth bet, not just a renewal.",
+      "entity_tags": ["DAZN", "Formula 1", "Madrid Grand Prix", "Portugal"],
+      "published_at": "2026-09-09"
+    },
+    {
+      "source_name": "Disney Experiences",
+      "source_url": "https://disneyexperiences.com/formula-1-cars-monza-lightning-mcqueen/",
+      "headline": "Disney and Formula 1 Bring Pixar's Cars to Monza with a Special Mercedes-AMG Safety Car Activation",
+      "our_summary": "F1 extended its licensing partnership with Disney through 2028 and folded Pixar's Cars franchise into it for the first time, marked by a Cars-liveried Mercedes-AMG Safety Car and a Lightning McQueen appearance at Monza timed to the film's 20th anniversary. It's a licensing play, not a sponsorship deal with disclosed cash terms — merchandise and character crossover appeal rather than a check from Disney — but the multi-year extension signals F1 sees more value in deepening one entertainment-brand relationship than chasing one-off activations. Pairing it with the safety car, one of the most consistently camera-visible assets in any broadcast, is a low-cost way to guarantee airtime for a licensing partner without touching a team's own livery.",
+      "entity_tags": ["Disney", "Pixar", "Formula 1", "Mercedes-AMG"],
+      "published_at": "2026-09-03"
+    },
+    {
+      "source_name": "The Race",
+      "source_url": "https://www.the-race.com/business/miami-gp-changes-title-sponsor/",
+      "headline": "Miami GP changes title sponsor",
+      "our_summary": "Hard Rock will replace Crypto.com as the Miami Grand Prix's title sponsor from 2027, renaming the race the Formula 1 Hard Rock Miami Grand Prix and expanding its existing Beach Club hospitality footprint with new viewing areas and live entertainment. Hard Rock has been part of the Miami weekend's infrastructure since the race launched, so this converts an existing hospitality relationship into the marquee sponsorship slot rather than bringing in an outside brand. Neither side disclosed contract value, continuing F1's pattern of keeping individual title-sponsor economics out of public deal announcements even as aggregate sponsorship figures get reported elsewhere.",
+      "entity_tags": ["Hard Rock", "Crypto.com", "Formula 1", "Miami Grand Prix"],
+      "published_at": "2026-09-02"
+    },
+    {
+      "source_name": "The Race",
+      "source_url": "https://www.the-race.com/extra/free-mclaren-f1-showrun-announced-for-athens/",
+      "headline": "Free McLaren F1 showrun announced for Athens",
+      "our_summary": "McLaren and lottery operator Allwyn will bring a free showrun event to Athens on October 3, running the team's 2025 title-winning car and Ayrton Senna's MP4/6 outside the Olympic Athletic Center — the first stop in what both partners describe as an ongoing global fan-event series. The structure matters more than the single event: it's a touring format built to reach Allwyn's own national-lottery markets rather than F1 host cities, letting a sponsor extract brand value from countries with no Grand Prix on the calendar. For McLaren, it's a way to monetize a championship-winning car and driver history outside race weekends, where the marginal cost of an appearance is low relative to what a lottery-scale sponsor is paying for the association.",
+      "entity_tags": ["McLaren", "Allwyn", "Formula 1"],
+      "published_at": "2026-09-02"
+    },
+    {
+      "source_name": "Formula1.com",
+      "source_url": "https://www.formula1.com/en/latest/article/audi-lodge-intention-to-appeal-over-tsunoda-decision-in-italian-gp.70YzooUbxrwZnGgt98pqRk",
+      "headline": "Audi lodges intention to appeal Tsunoda's Italian GP non-penalty",
+      "our_summary": "Stewards ruled that the extra formation lap triggered by Tsunoda's grid positioning at Monza came from the Race Director's judgment call, not a driver infringement, and issued no penalty under Article B5.9.4 — the rule that would have sent him to a pit-lane start. Audi is appealing because Gabriel Bortoleto finished 11th, one position and one championship point behind Tsunoda's 10th. The dispute is entirely about that single point, not a broader stewarding grievance.",
+      "entity_tags": ["Audi", "Yuki Tsunoda", "Gabriel Bortoleto", "FIA stewards"],
+      "published_at": "2026-09-07"
+    },
+    {
+      "source_name": "Motorsport.com",
+      "source_url": "https://www.motorsport.com/f1/news/max-verstappen-scathing-verdict-f1-2026-unnatural-easy/10854022/",
+      "headline": "Verstappen: F1 2026's rules are 'unnatural' — Tsunoda and Lawson's instant pace is his evidence",
+      "our_summary": "Verstappen's argument: energy-management rules under the 2026 power-unit regulations have compressed the skill gap between drivers. His exhibit is Liam Lawson and Yuki Tsunoda, both thrown into unfamiliar seats mid-season after Isack Hadjar's wrist injury and immediately competitive — Lawson took P7 at Zandvoort, Tsunoda scored a point at Monza. 'These cars are numb to your driver inputs,' Verstappen said, framing quick adaptation as proof the regulations reward energy management over the commitment and precision that used to separate drivers.",
+      "entity_tags": ["Max Verstappen", "F1 2026 regulations", "Yuki Tsunoda", "Liam Lawson"],
+      "published_at": "2026-09-10"
+    },
+    {
+      "source_name": "Motorsport.com",
+      "source_url": "https://www.motorsport.com/f1/news/mclaren-drops-upside-down-h-wing-concept-for-f1-spanish-gp/10854102/",
+      "headline": "McLaren parks its H-wing for the Madrid Spanish GP, banking the resource on Baku instead",
+      "our_summary": "McLaren's rotating rear wing — 180 degrees between Corner and Straight mode, debuted in competition at Monza — won't run at the inaugural Madrid Grand Prix. The team is allocating production resources to the circuits where the drag reduction is worth the most lap time; Madrid's high-downforce MADRING layout isn't one of them, so McLaren reverts to its Zandvoort-spec wing there and re-introduces the H-wing at Baku. A concrete example of how teams now ration upgrade production across a calendar rather than running a single spec everywhere.",
+      "entity_tags": ["McLaren", "H-wing", "Madrid Grand Prix", "aerodynamics"],
+      "published_at": "2026-09-10"
+    }
+  ]
+}
