@@ -22,10 +22,10 @@ export default function NavLinks({ isMagazine }: { isMagazine: boolean }) {
     return (
       <div className="flex items-center gap-6 flex-1">
         <Link
-          href="/glossary"
+          href="/"
           className="font-sans text-[13px] font-medium no-underline text-text-2 hover:text-text-1 transition-colors duration-150"
         >
-          {t('glossary')}
+          {t('home')}
         </Link>
         <Link
           href="/feed"
@@ -44,6 +44,12 @@ export default function NavLinks({ isMagazine }: { isMagazine: boolean }) {
           className="font-sans text-[13px] font-medium no-underline text-text-2 hover:text-text-1 transition-colors duration-150"
         >
           {t('whosWho')}
+        </Link>
+        <Link
+          href="/glossary"
+          className="font-sans text-[13px] font-medium no-underline text-text-2 hover:text-text-1 transition-colors duration-150"
+        >
+          {t('glossary')}
         </Link>
         <a
           href="https://hub.paddockintel.com"

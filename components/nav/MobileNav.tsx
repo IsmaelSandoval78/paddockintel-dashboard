@@ -72,11 +72,11 @@ export default function MobileNav({
           {isMagazine ? (
             <>
               <Link
-                href="/glossary"
+                href="/"
                 onClick={() => setOpen(false)}
                 className="flex items-center h-12 px-5 border-b border-border font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 bg-bg"
               >
-                {t('glossary')}
+                {t('home')}
               </Link>
               <Link
                 href="/feed"
@@ -98,6 +98,13 @@ export default function MobileNav({
                 className="flex items-center h-12 px-5 border-b border-border font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 bg-bg"
               >
                 {t('whosWho')}
+              </Link>
+              <Link
+                href="/glossary"
+                onClick={() => setOpen(false)}
+                className="flex items-center h-12 px-5 border-b border-border font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 bg-bg"
+              >
+                {t('glossary')}
               </Link>
               <a
                 href="https://hub.paddockintel.com"
