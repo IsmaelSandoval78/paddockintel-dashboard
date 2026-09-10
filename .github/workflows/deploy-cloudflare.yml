@@ -1,0 +1,68 @@
+name: Deploy to Cloudflare
+
+# Builds and deploys the Worker that serves hub.paddockintel.com /
+# paddockintel.com / www.paddockintel.com. Runs `scripts/cloudflare-build.sh`
+# (strips server secrets from the bundled Worker before packaging — see that
+# script's header) then `opennextjs-cloudflare deploy --rclone` (the R2
+# incremental-cache population needs --rclone, see docs/CLOUDFLARE-MIGRATION.md
+# "2026-08-27 — R2 population hang RESOLVED via --rclone").
+#
+# Skips docs/content-only pushes on purpose (paths-ignore below) — a README or
+# article change doesn't need a new Worker.
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "docs/**"
+      - "articles/**"
+      - "digests/**"
+      - "**/*.md"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-cloudflare
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Write build-time env (consumed by scripts/cloudflare-build.sh, never logged)
+        run: |
+          cat > .env.local <<EOF
+          NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
+          CRON_SECRET=${{ secrets.CRON_SECRET }}
+          DRAFT_SECRET=${{ secrets.DRAFT_SECRET }}
+          EOF
+
+      - name: Build for Cloudflare (secrets stripped before packaging)
+        run: bash scripts/cloudflare-build.sh
+
+      - name: Deploy Worker (--rclone populates the R2 incremental cache)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: npx opennextjs-cloudflare deploy --rclone
+
+      - name: Remove build-time env file
+        if: always()
+        run: rm -f .env.local .env.local.cloudflare-build-bak

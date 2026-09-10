@@ -494,7 +494,56 @@ deploy (assets, worker upload, triggers) completed normally afterward —
 **Pending if the deploy is ever automated (e.g. GitHub Actions):**
 `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, and `CF_ACCOUNT_ID` currently only
 exist in the local `.dev.vars` (this Codespace). A CI pipeline will need them
-as CI secrets — they won't carry over automatically.
+as CI secrets — they won't carry over automatically. **Done 2026-09-10, see
+below.**
+
+---
+
+## 🤖 2026-09-10 — Cloudflare deploy automated via GitHub Actions
+
+**Closes the "pending if automated" note directly above, and the roadmap's
+long-standing "automatizar el redeploy a Cloudflare (sigue siendo 100%
+manual)" item.** New workflow: `.github/workflows/deploy-cloudflare.yml`.
+
+**What it does:** on every push to `main` that isn't docs/content-only
+(`paths-ignore`: `docs/**`, `articles/**`, `digests/**`, `**/*.md` — a blog
+post or roadmap edit shouldn't trigger a new Worker build), writes the
+build-time env vars from GitHub Secrets into `.env.local`, runs the existing
+`scripts/cloudflare-build.sh` unmodified (the secret-stripping/verification
+logic it already has applies exactly the same in CI as it did locally), then
+`opennextjs-cloudflare deploy --rclone`. Also has `workflow_dispatch` for a
+manual re-run without a new commit. `concurrency: cancel-in-progress: false`
+— a second push queues behind an in-flight deploy rather than interrupting a
+`wrangler deploy` mid-upload.
+
+**Secrets it needs, not yet created — this session could not create them**
+(no GitHub secrets-admin access from this environment; `gh secret list`
+returned `403: Resource not accessible by integration`). Ismael needs to add
+these as repo secrets (Settings → Secrets and variables → Actions) before the
+first run succeeds:
+- `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` — **already exist**
+  (reused by `digest-draft.yml`/`post-race-loader.yml`), nothing to do.
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `RESEND_API_KEY`, `CRON_SECRET`,
+  `DRAFT_SECRET` — new, same values as `.env.local` locally.
+- `CF_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` — new, same
+  values as `.dev.vars` locally (the R2-scoped Account API Token from the
+  2026-08-27 `--rclone` fix above).
+- `CLOUDFLARE_API_TOKEN` — new token, not a reuse of any existing one.
+  Per `docs/advisors/CYBERSECURITY-EXPERT.md`'s non-negotiable ("scoped to
+  the minimum permission set needed... with an expiration set, 90 days, not
+  No expiration"): scope to **Workers Scripts:Edit** on this account only
+  (deploy needs to push the Worker script; `account_id` is already fixed in
+  `wrangler.jsonc`, so no broader account access is needed), 90-day TTL. This
+  is a deliberate departure from the "create, use, revoke immediately"
+  one-time-token pattern used for manual deploys so far — a CI secret has to
+  persist between runs by definition. GitHub encrypts repo secrets at rest
+  and masks them in logs, which is the intended compensating control; the
+  90-day expiry is what bounds the exposure window instead.
+
+**Not verified by this session — no secrets exist yet, so no real run has
+happened.** First real signal will be the Actions tab after Ismael adds the
+secrets and either pushes an app-code change or triggers
+`workflow_dispatch` by hand.
 
 ---
 
