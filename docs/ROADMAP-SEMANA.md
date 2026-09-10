@@ -1893,3 +1893,67 @@ email en su bandeja ("me gusta como se ve").
 agregar campos de nombre/apellido al formulario de suscripción — no vale la pena para
 un formulario de un solo campo cuyo único uso hoy es el email, y expandiría lo que la
 política de privacidad promete recolectar sin necesidad real todavía.
+
+## OpenSEO conectado — auditoría, fix de H1 duplicados, rank tracker armado (10 sep 2026)
+
+**MCP de OpenSEO verificado y funcionando** (`whoami`: cuenta `sandoval.ismael@gmail.com`,
+modo hosted, proyecto único `paddockintel.com` ya existente en la cuenta). 394 créditos al
+arrancar la sesión.
+
+**Auditoría real corrida sobre `hub.paddockintel.com`** (`run_site_audit`, 50 páginas,
+sin Lighthouse): 0 errores críticos. Hallazgos por severidad — 23× H1 duplicado (todas
+las páginas `/circuits/[slug]/`, un solo template), 10× thin content (`/constructors/`,
+`/drivers/`, `/compare/`, las 7 de `/records/*`), 7× title+meta description duplicados
+(`/`, `/circuits/`, `/compare/`, `/constructors/`, `/drivers/`, `/es/`, `/pt/` — todas
+comparten el mismo title/description genérico del hub), 8× meta description muy corta,
+2× respuesta lenta (`/records/` 2.5s, `/compare/` 1.7s), 1× salto de heading level
+(`/about/`).
+
+**Fix aplicado en el momento — los 23 H1 duplicados (commit pendiente):**
+causa real encontrada: cada página de circuito renderiza dos `<h1>{nombre}</h1>` —
+uno en `CircuitOverview.tsx:48` (bloque Vintage Editorial nuevo, primero en el DOM) y
+otro en `CircuitHero.tsx:283` (hero kinetic legacy dentro de `CircuitDetailExperience`,
+segundo en el DOM). Corregido bajando el segundo a `<h2>` (`components/circuits/kinetic/
+CircuitHero.tsx`) — `nameRef` ya estaba tipado `HTMLHeadingElement`, sin impacto en
+SplitText/GSAP ni en ningún selector CSS/JS que dependiera de la etiqueta `h1`
+específicamente (confirmado con grep, no hay ninguno). `tsc --noEmit` limpio. Corrige
+las 23 páginas de una sola vez porque `CircuitHero` es el componente compartido — no
+hace falta tocar cada circuito individualmente.
+
+**Nota aparte, no resuelta, marcada para decisión de Ismael:** el crawl encontró y
+auditó `https://hub.paddockintel.com/pt/` como página viva e indexable, con el mismo
+title/description que el resto del hub (uno de los 7 duplicados de arriba). Contradice
+lo que dice [[project_language_rollout]] sobre PT pospuesto y el commit `3fb0cc8`
+("drop Portuguese from the locale switcher") — si la ruta sigue accesible sin estar en
+el switcher, es contenido duplicado detectado activamente por el crawler. Pendiente:
+decidir `noindex` o redirect para `/pt/` mientras el rollout siga pospuesto.
+
+**Rank tracker armado, TODO — bloqueado por plan de OpenSEO:**
+`create_rank_tracker` sobre `hub.paddockintel.com` (modo manual, mobile, sin costo) +
+41 keywords cargadas vía `add_rank_tracking_keywords` (gratis, no corre check).
+Keywords elegidas con datos reales de `get_ranked_keywords` sobre `paddockintel.com`
+(scope domain) — no inventadas: son términos donde el dominio ya tiene alguna posición
+hoy (rank 6–77), todas del ángulo economía de F1 (salarios de ingenieros F1, net worth
+de pilotos, contrato Verstappen/Hamilton/Antonelli, Paddock Club pricing, Apple TV F1
+deal/precio). Se filtraron a mano keywords contaminantes de NASCAR/IndyCar que
+aparecían en el mismo resultado (Indy 500 payouts, Connor Zilisch salary — no son F1,
+no se cargaron).
+
+**Bloqueador real:** `run_rank_tracker` devolvió `"Upgrade to the paid plan to run rank
+checks"` — la cuenta hosted actual no puede correr checks en vivo pese a tener 354
+créditos disponibles (create/add no gastan crédito, correr el check sí, y eso es lo que
+está gateado por plan). Estimado del primer check completo: ~342 créditos (de 354
+disponibles) para las 41 keywords vía `estimate_rank_tracker_cost` — Ismael ya aprobó
+ese gasto antes de toparse con el gate de plan, así que no hace falta re-confirmar el
+monto cuando se resuelva el plan, solo correr `run_rank_tracker` de nuevo.
+
+**TODO real, sin bloquear nada más del roadmap:**
+1. Decidir si se hace upgrade del plan de OpenSEO (hosted) para poder correr rank
+   tracking en vivo — sin esto, el tracker armado con las 41 keywords queda sin usar.
+2. Una vez resuelto, correr `run_rank_tracker` (trackerId `db4e2c01-33c5-41f2-b810-
+   a20790254238`, proyecto `901d1773-1c45-4371-a40a-05efda182fa0`) para tener el
+   baseline real de posiciones.
+3. Commitear el fix de H1 (`components/circuits/kinetic/CircuitHero.tsx`) — aplicado en
+   el working tree, no commiteado todavía en esta sesión.
+4. Decidir `/pt/` (noindex vs redirect) mientras el rollout de portugués siga pospuesto
+   (ver nota arriba).

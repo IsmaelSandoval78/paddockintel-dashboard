@@ -6,6 +6,42 @@ nobody re-investigates something already settled.
 
 ---
 
+## ✅ 2026-09-09/10 — retried on Workers Paid, all 3 domains live and stable
+
+**Resolves the "real decision pending" from the entry right below this one.** Per the
+status table in `docs/ROADMAP-SEMANA.md` (§1, updated in commit `5bbbe79`): the cutover
+was retried starting with a `hub`-only canary on Free (to get a real data point), then
+Ismael upgraded the account to **Workers Paid** ($5/mo, 5 min CPU/request vs. Free's
+10ms — the exact root cause of the 2026-09-09 rollback below). With Paid confirmed
+active, `paddockintel.com`/`www` were added to the Worker the same way `hub` was.
+
+**This session did not do that work and has no first-hand record of the individual
+steps** (canary timing, dashboard screenshots, etc.) — the only source is the
+compressed roadmap table-row summary, which is thinner than this log's usual standard
+for an infra change this size (contrast with the detailed 2026-09-08/09 entry below).
+Flagging that gap rather than writing a narrative that wasn't actually observed here.
+
+**Independently verified live, this session, 2026-09-10 ~17:52 UTC** — `curl -I` against
+all three hosts:
+- `hub.paddockintel.com` → `200`, `server: cloudflare`, `x-opennext: 1`, real HTML
+  (locale `hreflang` alternates, `NEXT_LOCALE` cookie), HSTS present.
+- `www.paddockintel.com` → same, `200`, `server: cloudflare`, real content.
+- `paddockintel.com` (apex) → `308` → `https://www.paddockintel.com/`, `server:
+  cloudflare`.
+
+All three currently send `cache-control: private, no-cache, no-store, max-age=0,
+must-revalidate` — consistent with the fully-dynamic rendering this doc already
+explains elsewhere (the `cookies()` call added by the auth widget forces the Hub off
+ISR/static caching on every request, Cloudflare or Vercel alike).
+
+**Before treating this as fully closed:** re-check `Workers & Pages → Workers plans`
+shows **Paid — Current plan** on account `551a6aba58a779d10acae0c5f0cde1e8` directly in
+the dashboard (this session verified DNS/response headers, not the billing page
+itself), and confirm the active-monitoring cadence mentioned in the roadmap table
+(health checks every ~25-30 min) is still running or has been formally stood down.
+
+---
+
 ## 🚨 2026-09-09 — cutover rolled back ~64 min in: Workers Free plan CPU limit (error 1102)
 
 **Directly follows the entry right below this one** ("real cutover done (step 4)") — read
