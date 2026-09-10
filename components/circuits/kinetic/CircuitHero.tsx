@@ -280,7 +280,7 @@ export default function CircuitHero({
           {`${t('hero.label').toUpperCase()} · ${country.toUpperCase()}`}
         </p>
         <div className="kinetic-mask">
-          <h1
+          <h2
             ref={nameRef}
             className="uppercase leading-none tracking-[-0.03em] text-text-1 whitespace-nowrap text-[clamp(3rem,12vw,7rem)]"
             style={{
@@ -289,7 +289,7 @@ export default function CircuitHero({
             }}
           >
             {name}
-          </h1>
+          </h2>
         </div>
         <p className="font-mono text-[12px] text-text-2 mt-3">
           {location} · {country}
