@@ -882,6 +882,7 @@
     "description": "Every verified story from PaddockIntel's newsletter research, in one running feed — cited sources, our own analysis, no wire-service copy.",
     "mostMentioned": "Most mentioned this week",
     "noItems": "No stories yet.",
-    "readSource": "Read source →"
+    "readSource": "Read source →",
+    "scoreHint": "The number beside each story = how many other stories this week touch the same entity — a real signal, not a vote count."
   }
 }

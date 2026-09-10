@@ -36,7 +36,15 @@ async function getItems(): Promise<FeedItem[]> {
   return (data ?? []) as FeedItem[];
 }
 
-function mostMentioned(items: FeedItem[]): { entity: string; count: number }[] {
+// How many distinct stories, in the trailing 7 days, mention each entity —
+// shared by mostMentioned() below and each item's significance score. Real
+// signal, not invented: digest_items has no source-count or vote field, but
+// entity_tags (populated by generate_digest_draft.py, see the migration
+// that added the column) gives an honest proxy for "how much else this week
+// touches the same story" — max over an item's own tags, not sum, so the
+// score answers "how hot is the hottest thing this story touches" rather
+// than rewarding tag-stuffing.
+function weeklyEntityCounts(items: FeedItem[]): Map<string, number> {
   const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
   const counts = new Map<string, number>();
   for (const item of items) {
@@ -45,6 +53,10 @@ function mostMentioned(items: FeedItem[]): { entity: string; count: number }[] {
       counts.set(entity, (counts.get(entity) ?? 0) + 1);
     }
   }
+  return counts;
+}
+
+function mostMentioned(counts: Map<string, number>): { entity: string; count: number }[] {
   return Array.from(counts.entries())
     .map(([entity, count]) => ({ entity, count }))
     .filter((e) => e.count > 1)
@@ -52,11 +64,17 @@ function mostMentioned(items: FeedItem[]): { entity: string; count: number }[] {
     .slice(0, 8);
 }
 
+function significanceScore(item: FeedItem, counts: Map<string, number>): number {
+  if (item.entity_tags.length === 0) return 1;
+  return Math.max(1, ...item.entity_tags.map((tag) => counts.get(tag) ?? 1));
+}
+
 export default async function FeedPage() {
   const t = await getTranslations('feed');
   const format = await getFormatter();
   const items = await getItems();
-  const mentioned = mostMentioned(items);
+  const entityCounts = weeklyEntityCounts(items);
+  const mentioned = mostMentioned(entityCounts);
 
   return (
     <main className="bg-bg min-h-screen">
@@ -74,6 +92,7 @@ export default async function FeedPage() {
           {t('title')}
         </h1>
         <p className="font-prose text-text-2 leading-relaxed max-w-lg mt-3">{t('description')}</p>
+        <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 mt-4">{t('scoreHint')}</p>
 
         {mentioned.length > 0 && (
           <div className="mt-8 pt-6 border-t border-border-subtle">
@@ -101,14 +120,20 @@ export default async function FeedPage() {
           </p>
         ) : (
           <ol className="border-t border-border-subtle">
-            {items.map((item, i) => (
+            {items.map((item, i) => {
+              const score = significanceScore(item, entityCounts);
+              return (
               <li
                 key={item.id}
                 className={`border-b border-border-subtle ${i % 2 === 1 ? 'bg-surface-raised' : ''}`}
               >
                 <div className="px-5 py-6 flex gap-5 items-start">
-                  <span className="font-mono text-[11px] text-text-3 tabular-nums pt-0.5 w-5 shrink-0 select-none">
-                    {String(i + 1).padStart(2, '0')}
+                  <span
+                    className="font-mono text-[13px] tabular-nums pt-0.5 w-6 shrink-0 select-none font-medium"
+                    style={{ color: score > 1 ? 'var(--terracotta)' : 'var(--text-3)' }}
+                    title={t('scoreHint')}
+                  >
+                    {score}
                   </span>
 
                   <div className="flex-1 min-w-0">
@@ -165,7 +190,8 @@ export default async function FeedPage() {
                   </div>
                 </div>
               </li>
-            ))}
+              );
+            })}
           </ol>
         )}
       </div>

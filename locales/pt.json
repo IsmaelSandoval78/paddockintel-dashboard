@@ -873,6 +873,7 @@
     "description": "Cada história verificada da pesquisa do newsletter da PaddockIntel, em um único feed contínuo — fontes citadas, análise própria, sem copiar de agências.",
     "mostMentioned": "Mais mencionados esta semana",
     "noItems": "Ainda não há histórias.",
-    "readSource": "Ler fonte →"
+    "readSource": "Ler fonte →",
+    "scoreHint": "O número ao lado de cada história = quantas outras histórias desta semana tocam a mesma entidade — um sinal real, não uma contagem de votos."
   }
 }
