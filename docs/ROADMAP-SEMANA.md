@@ -17,7 +17,7 @@ apilarse.
 | Paso | Estado real | Bloqueador real si lo hay |
 |---|---|---|
 | 1. Cloudflare | **CORTE REAL COMPLETO Y ESTABLE 9-10 sep — los 3 dominios sirviendo desde el Worker de Cloudflare, plan Paid.** Intento anterior (8-9 sep) reveló el límite real de CPU del plan Free (10ms/request, error 1102) tras ~64 min; revertido con evidencia, documentado en `docs/CLOUDFLARE-MIGRATION.md`. Reintentado 9-10 sep con canario (`hub` solo) en Free primero (para tener el dato real), luego Ismael upgradeó a **Workers Paid** ($5/mes) — confirmado activo en el dashboard real. Con Paid confirmado, se sumaron `paddockintel.com`/`www` al Worker (mismo patrón que `hub`). Verificado con `dig`/`curl` reales: los 3 dominios en 200/308, `server: cloudflare`, HSTS, redirect apex→www, datos reales de Supabase. Monitoreo de salud corriendo cada ~25-30 min. **Redeploy automatizado 10 sep, verificado de punta a punta** (`.github/workflows/deploy-cloudflare.yml`, ver `docs/CLOUDFLARE-MIGRATION.md`). Primer intento falló (403 AccessDenied en R2 — el R2 API Token viejo se había creado el 27 ago bajo la cuenta ajena `dbf60dad...`, nunca tuvo permiso real sobre el bucket de la cuenta correcta); Ismael generó un token R2 nuevo scopeado a `paddockintel-isr-cache` en la cuenta correcta, actualizó los secrets, reintentó vía `workflow_dispatch` → corrida completa en verde, `hub.paddockintel.com` verificado 200 post-deploy | Ninguno bloqueante — pendiente no urgente: rotar `CLOUDFLARE_API_TOKEN` a los 90 días (fecha de creación 10 sep 2026, próxima rotación ~9 dic 2026) |
-| 2. Blog/estructura | Maduro — tags relacionales, race_id, glosario con capas, `/about` conectado. **10 sep: 3 piezas nuevas en `magazine-home`** inspiradas en aiweekly.co (signup combinado, score real del Feed, "Most Covered This Week") — ver sección propia más abajo | Ninguno bloqueante |
+| 2. Blog/estructura | Maduro — tags relacionales, race_id, glosario con capas, `/about` conectado. **10 sep: 5 piezas nuevas en `magazine-home`** inspiradas en aiweekly.co (signup combinado, score real del Feed, "Most Covered This Week", teaser "Learning F1", tag cloud "Track by team") — ver sección propia más abajo | Ninguno bloqueante |
 | 3. Newsletter | Pipeline automatizado real (`generate_digest_draft.py`), Vol.06 publicado. **Corrección 9 sep: "gap vol-03/vol-04" no era real** — esas semanas se re-clasificaron como `recap-01`/`recap-02` a propósito (ver issues #1/#2 en GitHub), la numeración viva del newsletter no tiene hueco. **Serie Recap pausada 9 sep, foco en contenido nuevo** — ver sección "Recaps retroactivos — pausados" más abajo. **10 sep: `CRON_SECRET` desactualizado (66 días) bloqueaba el cron diario del digest en Vercel — encontrado, rotado y sincronizado; y `/api/subscribe` ahora manda un email de bienvenida real en la primera suscripción** — ver sección "Email de bienvenida + fix de CRON_SECRET" más abajo | Ninguno bloqueante |
 | 4. Who's Who | 19/34 voces con pick real. **Linkeado del nav 5 sep** — ruta promovida de `/whos-who-preview` (noindex) a `/whos-who` real, indexable, con metadata/i18n propios | 3 cuentas curadas sin servir (Piola/Slater/Davidson) |
 | 5. Feed | MVP construido, reusa `digest_items`, localizado. **Linkeado del nav 5 sep** | Ninguno bloqueante |
@@ -1957,7 +1957,7 @@ monto cuando se resuelva el plan, solo correr `run_rank_tracker` de nuevo.
 4. Decidir `/pt/` (noindex vs redirect) mientras el rollout de portugués siga pospuesto
    (ver nota arriba).
 
-## Magazine-home: 3 piezas inspiradas en aiweekly.co (10 sep 2026)
+## Magazine-home: 5 piezas inspiradas en aiweekly.co (10 sep 2026)
 
 **Contexto:** Ismael mostró el layout real de aiweekly.co (hero de doble signup, Live
 Alerts con score, "Attention This Week", Editor's Blog, etc.) y preguntó si algo así era
@@ -2006,10 +2006,24 @@ renderizar (una "más cubierta" de una sola historia no es una afirmación hones
 de conteo extraída a `lib/entityMentions.ts`, compartida con el score de la Pieza 2 (antes
 duplicada).
 
+**Pieza 4 — "Learning F1" (teaser de glosario):** sin modelo de datos nuevo —
+`glossary_terms` ya tenía 69 filas EN publicadas (capas eli5/technical del paso 2). Muestra
+los 5 términos más recientes, dedupeados por slug (prefiere eli5, misma regla que ya usan
+las páginas de glosario) antes de recortar a 5 — para que un término con dos capas no le
+saque el lugar a un término distinto. Linkea a `/glossary`, no lo duplica.
+
+**Pieza 5 — "Track by team" (tag cloud):** reusa el sistema `tags`/`article_tags` del paso
+2, conteos reales sin problema de tamaño de muestra (son conteos simples, no deltas
+semana a semana como la Pieza 3) — hoy: Mercedes-AMG F1 81, Aston Martin 51, Red Bull
+Racing 47, Ferrari 39, McLaren 21, Cadillac F1 Team 21, Williams 3. Cero lógica de
+filtrado nueva — reusa el mecanismo `?tag=` que `ArticlePreviewCard`/`FeaturedArticleCard`
+ya conectan a esta misma página, así que cada chip funciona de punta a punta sin plomería
+adicional. Verificado clickeando `?tag=williams` real contra el dev server.
+
 **Verificado en los 3 locales contra el dev server real y contra producción después de
-cada deploy** (el workflow de Cloudflare automatizado corrió 3 veces esta sesión, una por
-pieza, las 3 en verde) — hoy el top real de "Most Covered" es "Madrid Grand Prix" con 2
-historias. `tsc`/`eslint` limpios en las 3 piezas.
+cada deploy** (el workflow de Cloudflare automatizado corrió 5 veces esta sesión, una por
+pieza, las 5 en verde) — hoy el top real de "Most Covered" es "Madrid Grand Prix" con 2
+historias. `tsc`/`eslint` limpios en las 5 piezas.
 
 **Commits:** `b514439` (pieza 1), `ebb88c5` (fix de voseo, separado), `760b229` (pieza 2),
-`9740aeb` (pieza 3).
+`9740aeb` (pieza 3), `3b75adb` (pieza 4), `c8c2ae7` (pieza 5).
