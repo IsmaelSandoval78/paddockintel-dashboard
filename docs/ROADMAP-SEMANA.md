@@ -17,7 +17,7 @@ apilarse.
 | Paso | Estado real | Bloqueador real si lo hay |
 |---|---|---|
 | 1. Cloudflare | **CORTE REAL COMPLETO Y ESTABLE 9-10 sep — los 3 dominios sirviendo desde el Worker de Cloudflare, plan Paid.** Intento anterior (8-9 sep) reveló el límite real de CPU del plan Free (10ms/request, error 1102) tras ~64 min; revertido con evidencia, documentado en `docs/CLOUDFLARE-MIGRATION.md`. Reintentado 9-10 sep con canario (`hub` solo) en Free primero (para tener el dato real), luego Ismael upgradeó a **Workers Paid** ($5/mes) — confirmado activo en el dashboard real. Con Paid confirmado, se sumaron `paddockintel.com`/`www` al Worker (mismo patrón que `hub`). Verificado con `dig`/`curl` reales: los 3 dominios en 200/308, `server: cloudflare`, HSTS, redirect apex→www, datos reales de Supabase. Monitoreo de salud corriendo cada ~25-30 min. **Redeploy automatizado 10 sep, verificado de punta a punta** (`.github/workflows/deploy-cloudflare.yml`, ver `docs/CLOUDFLARE-MIGRATION.md`). Primer intento falló (403 AccessDenied en R2 — el R2 API Token viejo se había creado el 27 ago bajo la cuenta ajena `dbf60dad...`, nunca tuvo permiso real sobre el bucket de la cuenta correcta); Ismael generó un token R2 nuevo scopeado a `paddockintel-isr-cache` en la cuenta correcta, actualizó los secrets, reintentó vía `workflow_dispatch` → corrida completa en verde, `hub.paddockintel.com` verificado 200 post-deploy | Ninguno bloqueante — pendiente no urgente: rotar `CLOUDFLARE_API_TOKEN` a los 90 días (fecha de creación 10 sep 2026, próxima rotación ~9 dic 2026) |
-| 2. Blog/estructura | Maduro — tags relacionales, race_id, glosario con capas, `/about` conectado | Ninguno bloqueante |
+| 2. Blog/estructura | Maduro — tags relacionales, race_id, glosario con capas, `/about` conectado. **10 sep: 3 piezas nuevas en `magazine-home`** inspiradas en aiweekly.co (signup combinado, score real del Feed, "Most Covered This Week") — ver sección propia más abajo | Ninguno bloqueante |
 | 3. Newsletter | Pipeline automatizado real (`generate_digest_draft.py`), Vol.06 publicado. **Corrección 9 sep: "gap vol-03/vol-04" no era real** — esas semanas se re-clasificaron como `recap-01`/`recap-02` a propósito (ver issues #1/#2 en GitHub), la numeración viva del newsletter no tiene hueco. **Serie Recap pausada 9 sep, foco en contenido nuevo** — ver sección "Recaps retroactivos — pausados" más abajo. **10 sep: `CRON_SECRET` desactualizado (66 días) bloqueaba el cron diario del digest en Vercel — encontrado, rotado y sincronizado; y `/api/subscribe` ahora manda un email de bienvenida real en la primera suscripción** — ver sección "Email de bienvenida + fix de CRON_SECRET" más abajo | Ninguno bloqueante |
 | 4. Who's Who | 19/34 voces con pick real. **Linkeado del nav 5 sep** — ruta promovida de `/whos-who-preview` (noindex) a `/whos-who` real, indexable, con metadata/i18n propios | 3 cuentas curadas sin servir (Piola/Slater/Davidson) |
 | 5. Feed | MVP construido, reusa `digest_items`, localizado. **Linkeado del nav 5 sep** | Ninguno bloqueante |
@@ -1953,7 +1953,63 @@ monto cuando se resuelva el plan, solo correr `run_rank_tracker` de nuevo.
 2. Una vez resuelto, correr `run_rank_tracker` (trackerId `db4e2c01-33c5-41f2-b810-
    a20790254238`, proyecto `901d1773-1c45-4371-a40a-05efda182fa0`) para tener el
    baseline real de posiciones.
-3. Commitear el fix de H1 (`components/circuits/kinetic/CircuitHero.tsx`) — aplicado en
-   el working tree, no commiteado todavía en esta sesión.
+3. ~~Commitear el fix de H1~~ — ✅ hecho, commit `dad786f` (10 sep 2026).
 4. Decidir `/pt/` (noindex vs redirect) mientras el rollout de portugués siga pospuesto
    (ver nota arriba).
+
+## Magazine-home: 3 piezas inspiradas en aiweekly.co (10 sep 2026)
+
+**Contexto:** Ismael mostró el layout real de aiweekly.co (hero de doble signup, Live
+Alerts con score, "Attention This Week", Editor's Blog, etc.) y preguntó si algo así era
+posible en PaddockIntel. Hallazgo clave antes de tocar nada: **no era el rediseño del Hub
+pausado** (ese es el kinetic-scroll de `hub.paddockintel.com`, otra superficie, otra
+decisión sin tomar — ver sección "Home / storytelling del hub" más abajo). `paddockintel.com`/
+`www` ya tiene su propia home real, `magazine-home` (`app/[locale]/(blog)/magazine-home/
+page.tsx`, rewriteada desde `/` por `middleware.ts`), y ya se parecía bastante más a la
+referencia que el Hub. Mapeo pieza por pieza contra lo que ya existía, decidido con Ismael
+qué construir de las piezas faltantes/a medias: signup combinado, score real de
+significancia, y "Most Covered This Week" (sin riser/faller %).
+
+**Pieza 1 — Signup combinado (`JoinTwoWays.tsx`):** reemplaza el `EmailCapture` solo-email
+del hero de `magazine-home` por un bloque de dos columnas — email (confirmación, reusa
+`EmailCapture` tal cual) + Google OAuth instantáneo (mismo `signInWithOAuth` que ya usa
+`AuthWidget`, con su propio handler chico en vez de reusar el dropdown de nav, que no está
+pensado para estar siempre abierto). GitHub no se ofrece — no está habilitado en Supabase
+Auth, no se inventó un provider nuevo.
+
+**Encontrado al pasar, corregido aparte:** un scan mecánico de voseo (regla dura, ver
+[[feedback_no_voseo_spanish]]) encontró 6 instancias reales que se habían escapado del
+barrido del 9 sep — `driverBox.empty` (Mi Box), el párrafo de datos de cuenta de la
+política de privacidad (4 instancias), y `auth.linkSent`/`error`/`legal`. Corregidas en un
+commit separado (`ebb88c5`) antes de agregar texto nuevo en español.
+
+**Pieza 2 — Score real en el Feed:** `digest_items` no tiene conteo de fuentes ni votos —
+en vez de inventar un número, se usó lo que ya era real: `entity_tags` (poblado por
+`generate_digest_draft.py`) + el conteo de menciones cruzadas a 7 días que el Feed ya
+calculaba para "most mentioned this week". El score de cada historia = el máximo (no la
+suma, para no premiar amontonar tags) de las cuentas semanales de sus propias entidades —
+reemplaza el índice secuencial 01/02/03 viejo. Verificado contra datos reales: la mayoría
+puntúa 1 (sin repetición esa semana), algunas 2 (ej. el H-wing de McLaren) — distribución
+real, no dramática, va a variar más con más volumen de digest.
+
+**Pieza 3 — "Most Covered This Week" (sin riser/faller %):** acá se encontró un problema
+real de fondo antes de construir nada — `digest_items` tiene 42 filas totales con huecos
+de meses reales (una sola historia en oct 2025, nada hasta ene 2026, recién con volumen
+real las últimas 4 semanas), y `articles` (323 publicados) también tiene huecos (nada
+entre 20 jul y 7 sep). Ninguna de las dos fuentes tiene la densidad de AI Weekly (11 años
+de cobertura diaria) para sostener un riser/faller % honesto — hacerlo hubiera dado deltas
+absurdos tipo "+500%" de muestras de 1-2 historias, exactamente lo que
+`docs/advisors/DATA-EXPERT.md` dice que hay que evitar. **Consultado con Ismael antes de
+construir, no asumido:** eligió la versión simple sin %. `getMostCovered()` es un
+snapshot — la entidad con más menciones cruzadas en 7 días, requiere `count >= 2` para
+renderizar (una "más cubierta" de una sola historia no es una afirmación honesta). Lógica
+de conteo extraída a `lib/entityMentions.ts`, compartida con el score de la Pieza 2 (antes
+duplicada).
+
+**Verificado en los 3 locales contra el dev server real y contra producción después de
+cada deploy** (el workflow de Cloudflare automatizado corrió 3 veces esta sesión, una por
+pieza, las 3 en verde) — hoy el top real de "Most Covered" es "Madrid Grand Prix" con 2
+historias. `tsc`/`eslint` limpios en las 3 piezas.
+
+**Commits:** `b514439` (pieza 1), `ebb88c5` (fix de voseo, separado), `760b229` (pieza 2),
+`9740aeb` (pieza 3).
