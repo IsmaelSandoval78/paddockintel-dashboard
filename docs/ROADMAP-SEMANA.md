@@ -2027,3 +2027,33 @@ historias. `tsc`/`eslint` limpios en las 5 piezas.
 
 **Commits:** `b514439` (pieza 1), `ebb88c5` (fix de voseo, separado), `760b229` (pieza 2),
 `9740aeb` (pieza 3), `3b75adb` (pieza 4), `c8c2ae7` (pieza 5).
+
+## Menú del magazine simplificado + "Who's Who" renombrado a "Voices" (10 sep 2026)
+
+**Pedido de Ismael, independiente de las 5 piezas de arriba:** sacar las 4 categorías
+(Economics/Operations/Regulations/Supply Chain) del menú de `paddockintel.com`/`www`, y
+cambiar "Who's Who" por un nombre más atractivo. Se ofrecieron 5 opciones (The Paddock,
+Voices, Paddock Pulse, Insiders, The Briefing) — eligió **Voices**.
+
+**Confirmado antes de borrar nada:** los 4 tags de categoría (`economic-intelligence`,
+`operational-strategy`, `regulations`, `supply-chain-operations`) no se usaban en ningún
+otro lugar del código — solo en `NavLinks.tsx`/`MobileNav.tsx`, así que se pudieron sacar
+las traducciones `nav.economics`/`operations`/`regulations`/`supplyChain` sin dejar claves
+muertas.
+
+**Hallazgo al armar el menú final:** `/weekly` (Weekly Digest) existía como página real
+pero nunca había estado en el menú — solo en una promo al pie de `magazine-home`. Se
+agregó. Menú final: **Glossary · Feed · Weekly Digest · Voices · Hub**.
+
+**Rename coherente, no solo el label del menú:** el propio kicker/H1 de la página
+`/whos-who` también decía "Who's Who" — se cambió a "Voices" ahí también (los 3 locales),
+para que el click desde el menú no aterrice en una página con el nombre viejo. La URL/ruta
+(`/whos-who`) y el nombre interno de la clave i18n (`whosWho`) se dejaron sin tocar a
+propósito — es solo el texto visible el que cambió, sin tocar SEO/links existentes.
+
+**Verificado contra el dev server real con `Host: www.paddockintel.com`** (el nav depende
+del hostname real, no de la ruta — `localhost` sin ese header cae al nav del Hub por
+default) — las 3 locales, desktop y mobile, y la página `/whos-who` mostrando "Voices" de
+punta a punta. Confirmado también en producción tras el deploy. `tsc`/`eslint` limpios.
+
+**Commit:** `c35f761`.
