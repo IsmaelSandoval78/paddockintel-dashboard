@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { getArticleIdsForTagSlug, getArticleTagSlugs, type TagRef } from '@/lib/blog/tags';
-import EmailCapture from '@/components/ui/EmailCapture';
+import JoinTwoWays from '@/components/blog/JoinTwoWays';
 import ArticlePreviewCard from '@/components/blog/ArticlePreviewCard';
 import FeaturedArticleCard from '@/components/blog/FeaturedArticleCard';
 import NewsletterCard from '@/components/blog/NewsletterCard';
@@ -148,7 +148,7 @@ export default async function MagazineHomePage({
         <p className="font-prose text-text-2 leading-relaxed max-w-lg mb-6">
           {t('description')}
         </p>
-        <EmailCapture className="max-w-sm" />
+        <JoinTwoWays className="max-w-xl" />
       </div>
 
       <div className="max-w-5xl mx-auto px-5">

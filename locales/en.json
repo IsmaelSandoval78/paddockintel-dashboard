@@ -704,6 +704,12 @@
     "headline": "The economics F1 doesn't publish.",
     "description": "Contracts, sponsorships, prize money — verified against 75 years of race data, not team press releases.",
     "noArticles": "No articles published yet.",
+    "join": {
+      "emailTitle": "With your email",
+      "emailSub": "A confirmation link, sent once.",
+      "accountTitle": "With an account you have",
+      "accountSub": "Instant — nothing to confirm."
+    },
     "promo": {
       "hub": "The Hub",
       "hubDescription": "Interactive circuit map, standings, and driver stats since 1950.",

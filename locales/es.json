@@ -704,6 +704,12 @@
     "headline": "La economía que la F1 no publica.",
     "description": "Contratos, patrocinios, premios en efectivo — verificados con 75 años de datos de carreras, no comunicados de los equipos.",
     "noArticles": "Aún no hay artículos publicados.",
+    "join": {
+      "emailTitle": "Con tu email",
+      "emailSub": "Un link de confirmación, una sola vez.",
+      "accountTitle": "Con una cuenta que ya tienes",
+      "accountSub": "Instantáneo — sin nada que confirmar."
+    },
     "promo": {
       "hub": "El Hub",
       "hubDescription": "Mapa interactivo de circuitos, standings y estadísticas de pilotos desde 1950.",
