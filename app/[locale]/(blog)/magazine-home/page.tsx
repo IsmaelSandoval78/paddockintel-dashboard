@@ -10,6 +10,7 @@ import StandingsPanel from '@/components/blog/StandingsPanel';
 import MoversPanel from '@/components/blog/MoversPanel';
 import MostCoveredPanel from '@/components/blog/MostCoveredPanel';
 import LearningPanel from '@/components/blog/LearningPanel';
+import TrackByTeamPanel from '@/components/blog/TrackByTeamPanel';
 import CircuitOfTheDay from '@/components/blog/CircuitOfTheDay';
 import {
   getFeaturedAndRecent,
@@ -18,6 +19,7 @@ import {
   getMovers,
   getMostCovered,
   getLearningTerms,
+  getTeamTags,
   getCircuitOfTheDay,
 } from './data';
 
@@ -118,6 +120,7 @@ export default async function MagazineHomePage({
           getMostCovered(),
           getDataDeskArticles(locale),
           getLearningTerms(locale),
+          getTeamTags(),
           getCircuitOfTheDay(),
         ])
       : Promise.resolve(null),
@@ -133,12 +136,13 @@ export default async function MagazineHomePage({
     return qs ? `${basePath}?${qs}` : basePath;
   };
 
-  const [featuredAndRecent, standings, movers, mostCovered, dataDeskArticles, learningTerms, circuit] =
+  const [featuredAndRecent, standings, movers, mostCovered, dataDeskArticles, learningTerms, teamTags, circuit] =
     frontPageExtras ?? [
       { featured: null, recent: [] },
       { drivers: [], constructors: [] },
       { raceName: '', driverRiser: null, driverFaller: null, constructorRiser: null, constructorFaller: null },
       null,
+      [],
       [],
       [],
       null,
@@ -248,6 +252,9 @@ export default async function MagazineHomePage({
 
         {/* Learning F1 — glossary teaser, real content already exists */}
         <LearningPanel terms={learningTerms} />
+
+        {/* Track by team — reuses the existing ?tag= filter, no new plumbing */}
+        <TrackByTeamPanel teams={teamTags} locale={locale} />
 
         {/* Circuit of the day (next race circuit) */}
         {circuit && <CircuitOfTheDay circuit={circuit} locale={locale} />}

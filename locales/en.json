@@ -719,6 +719,9 @@
       "title": "Learning F1",
       "seeAll": "All glossary terms"
     },
+    "trackByTeam": {
+      "title": "Track by team"
+    },
     "promo": {
       "hub": "The Hub",
       "hubDescription": "Interactive circuit map, standings, and driver stats since 1950.",

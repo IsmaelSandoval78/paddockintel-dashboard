@@ -409,6 +409,36 @@ export async function getLearningTerms(locale: string, limit = 5): Promise<Learn
     .map((r) => ({ slug: r.slug, term: r.term, short_definition: r.short_definition }));
 }
 
+// "Track by team" tag cloud — fifth piece of the magazine-home redesign
+// discussion (AI Weekly's "Track by company" list). Real counts from the
+// tags/article_tags system (paso 2), not invented — teams with zero tagged
+// articles just don't appear (today: Mercedes-AMG F1 81, Aston Martin 51,
+// Red Bull Racing 47, Ferrari 39, McLaren 21, Cadillac F1 Team 21,
+// Williams 3 — real spread, no sample-size concern like Attention This
+// Week had, since these are plain counts, not week-over-week deltas).
+export type TeamTagCount = { slug: string; name: string; count: number };
+
+export async function getTeamTags(): Promise<TeamTagCount[]> {
+  const supabase = createClient();
+  const { data: teamTags } = await supabase.from('tags').select('id, slug, name').eq('category', 'team');
+  const rows = teamTags ?? [];
+  if (!rows.length) return [];
+
+  const tagIds = rows.map((r) => r.id as string);
+  const { data: links } = await supabase.from('article_tags').select('tag_id').in('tag_id', tagIds);
+
+  const counts = new Map<string, number>();
+  for (const link of links ?? []) {
+    const id = link.tag_id as string;
+    counts.set(id, (counts.get(id) ?? 0) + 1);
+  }
+
+  return rows
+    .map((r) => ({ slug: r.slug as string, name: r.name as string, count: counts.get(r.id as string) ?? 0 }))
+    .filter((t) => t.count > 0)
+    .sort((a, b) => b.count - a.count);
+}
+
 export type CircuitOfTheDay = {
   circuit_ref: string;
   name: string;

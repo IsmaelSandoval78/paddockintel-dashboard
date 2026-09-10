@@ -719,6 +719,9 @@
       "title": "Aprende F1",
       "seeAll": "Todos los términos del glosario"
     },
+    "trackByTeam": {
+      "title": "Seguir por equipo"
+    },
     "promo": {
       "hub": "El Hub",
       "hubDescription": "Mapa interactivo de circuitos, standings y estadísticas de pilotos desde 1950.",
