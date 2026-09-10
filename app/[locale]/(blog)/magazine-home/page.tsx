@@ -9,6 +9,7 @@ import NewsletterCard from '@/components/blog/NewsletterCard';
 import StandingsPanel from '@/components/blog/StandingsPanel';
 import MoversPanel from '@/components/blog/MoversPanel';
 import MostCoveredPanel from '@/components/blog/MostCoveredPanel';
+import LearningPanel from '@/components/blog/LearningPanel';
 import CircuitOfTheDay from '@/components/blog/CircuitOfTheDay';
 import {
   getFeaturedAndRecent,
@@ -16,6 +17,7 @@ import {
   getStandings,
   getMovers,
   getMostCovered,
+  getLearningTerms,
   getCircuitOfTheDay,
 } from './data';
 
@@ -115,6 +117,7 @@ export default async function MagazineHomePage({
           getMovers(),
           getMostCovered(),
           getDataDeskArticles(locale),
+          getLearningTerms(locale),
           getCircuitOfTheDay(),
         ])
       : Promise.resolve(null),
@@ -130,14 +133,16 @@ export default async function MagazineHomePage({
     return qs ? `${basePath}?${qs}` : basePath;
   };
 
-  const [featuredAndRecent, standings, movers, mostCovered, dataDeskArticles, circuit] = frontPageExtras ?? [
-    { featured: null, recent: [] },
-    { drivers: [], constructors: [] },
-    { raceName: '', driverRiser: null, driverFaller: null, constructorRiser: null, constructorFaller: null },
-    null,
-    [],
-    null,
-  ];
+  const [featuredAndRecent, standings, movers, mostCovered, dataDeskArticles, learningTerms, circuit] =
+    frontPageExtras ?? [
+      { featured: null, recent: [] },
+      { drivers: [], constructors: [] },
+      { raceName: '', driverRiser: null, driverFaller: null, constructorRiser: null, constructorFaller: null },
+      null,
+      [],
+      [],
+      null,
+    ];
   const { featured, recent } = featuredAndRecent;
 
   // The archive grid below the curated modules excludes anything already
@@ -240,6 +245,9 @@ export default async function MagazineHomePage({
             </div>
           </section>
         )}
+
+        {/* Learning F1 — glossary teaser, real content already exists */}
+        <LearningPanel terms={learningTerms} />
 
         {/* Circuit of the day (next race circuit) */}
         {circuit && <CircuitOfTheDay circuit={circuit} locale={locale} />}

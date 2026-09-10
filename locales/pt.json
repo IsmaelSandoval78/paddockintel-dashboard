@@ -715,6 +715,10 @@
       "stories": "{count, plural, one {# história} other {# histórias}} esta semana",
       "seeAll": "Ver o feed completo"
     },
+    "learning": {
+      "title": "Aprenda F1",
+      "seeAll": "Todos os termos do glossário"
+    },
     "promo": {
       "hub": "O Hub",
       "hubDescription": "Mapa interativo de circuitos, classificações e estatísticas de pilotos desde 1950.",

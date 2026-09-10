@@ -368,6 +368,47 @@ export async function getMostCovered(): Promise<EntityCount | null> {
   return top && top.count >= 2 ? top : null;
 }
 
+// "Learning" teaser — fourth piece of the magazine-home redesign discussion
+// (AI Weekly's "Learning AI" module). Real content already exists
+// (glossary_terms, 69 published EN rows across eli5/technical depth layers,
+// see app/[locale]/(blog)/glossary/) — this just surfaces the 5 most
+// recently published terms, no new data model. A term can have both an
+// eli5 and a technical row for the same slug; dedupe by slug (prefer eli5,
+// same rule the glossary index/detail pages already use) before taking the
+// 5 most recent, not after — otherwise a term with two depths could crowd
+// out a distinct term from the teaser.
+export type LearningTerm = { slug: string; term: string; short_definition: string };
+
+export async function getLearningTerms(locale: string, limit = 5): Promise<LearningTerm[]> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from('glossary_terms')
+    .select('slug, term, short_definition, depth, published_at')
+    .eq('locale', locale)
+    .eq('status', 'published')
+    .in('depth', ['eli5', 'technical'])
+    .order('published_at', { ascending: false, nullsFirst: false });
+
+  const rows = (data ?? []) as Array<{
+    slug: string;
+    term: string;
+    short_definition: string;
+    depth: 'eli5' | 'technical' | 'fia';
+    published_at: string | null;
+  }>;
+
+  const bySlug = new Map<string, (typeof rows)[number]>();
+  for (const row of rows) {
+    const existing = bySlug.get(row.slug);
+    if (!existing || row.depth === 'eli5') bySlug.set(row.slug, row);
+  }
+
+  return Array.from(bySlug.values())
+    .sort((a, b) => (b.published_at ?? '').localeCompare(a.published_at ?? ''))
+    .slice(0, limit)
+    .map((r) => ({ slug: r.slug, term: r.term, short_definition: r.short_definition }));
+}
+
 export type CircuitOfTheDay = {
   circuit_ref: string;
   name: string;
