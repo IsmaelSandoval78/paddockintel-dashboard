@@ -631,6 +631,20 @@
       "round": "Rd",
       "race": "Race",
       "gapColumn": "Gap"
+    },
+    "sectionDataVertical": "Data Vertical",
+    "qualifyingPaceDelta": {
+      "title": "Qualifying Pace Delta",
+      "subLabel": "2026 Season",
+      "metaTitle": "Qualifying Pace Delta — 2026 Season",
+      "metaDescription": "Average % gap to pole time across every 2026 qualifying session, by driver — a season-to-date pace index, not an all-time record. Real data, methodology included.",
+      "unit": "Avg. Gap to Pole",
+      "cardKicker": "PaddockIntel 2026 Season Index",
+      "leader": "2026 Leader",
+      "sessions": "{count} {count, plural, one {session} other {sessions}}",
+      "empty": "No qualifying sessions recorded for the 2026 season yet.",
+      "methodologyTitle": "How we calculate this",
+      "methodologyBody": "For every qualifying session, we take each driver's best lap — Q3 if they reached it, otherwise Q2, otherwise Q1 — and measure the % gap to that session's pole time. We average that gap across every session a driver has set a time in this season. This is descriptive, not predictive: a season-to-date average, not a forecast of future form. Source: qualifying data loaded into Supabase after every race weekend (scripts/load_race.py, via FastF1)."
     }
   },
   "digest": {

@@ -631,6 +631,20 @@
       "round": "Ronda",
       "race": "Carrera",
       "gapColumn": "Brecha"
+    },
+    "sectionDataVertical": "Vertical de Datos",
+    "qualifyingPaceDelta": {
+      "title": "Delta de Ritmo en Clasificación",
+      "subLabel": "Temporada 2026",
+      "metaTitle": "Delta de Ritmo en Clasificación — Temporada 2026",
+      "metaDescription": "Brecha porcentual promedio a la pole en cada clasificación de 2026, por piloto — un índice de ritmo de la temporada en curso, no un récord histórico. Datos reales, con metodología incluida.",
+      "unit": "Brecha Promedio a la Pole",
+      "cardKicker": "Índice de Temporada PaddockIntel 2026",
+      "leader": "Líder 2026",
+      "sessions": "{count} {count, plural, one {sesión} other {sesiones}}",
+      "empty": "Todavía no hay clasificaciones registradas de la temporada 2026.",
+      "methodologyTitle": "Cómo lo calculamos",
+      "methodologyBody": "En cada clasificación, tomamos la mejor vuelta de cada piloto — Q3 si llegó, si no Q2, si no Q1 — y medimos la brecha porcentual respecto al tiempo de la pole de esa sesión. Promediamos esa brecha en todas las sesiones en las que el piloto marcó un tiempo esta temporada. Es un dato descriptivo, no predictivo: un promedio de lo ocurrido hasta la fecha, no un pronóstico. Fuente: datos de clasificación cargados en Supabase después de cada fin de semana de carrera (scripts/load_race.py, vía FastF1)."
     }
   },
   "digest": {

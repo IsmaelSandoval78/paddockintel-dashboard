@@ -631,6 +631,20 @@
       "round": "Rodada",
       "race": "Corrida",
       "gapColumn": "Diferença"
+    },
+    "sectionDataVertical": "Vertical de Dados",
+    "qualifyingPaceDelta": {
+      "title": "Delta de Ritmo na Classificação",
+      "subLabel": "Temporada 2026",
+      "metaTitle": "Delta de Ritmo na Classificação — Temporada 2026",
+      "metaDescription": "Diferença percentual média para a pole em cada classificação de 2026, por piloto — um índice de ritmo da temporada em andamento, não um recorde histórico. Dados reais, com metodologia incluída.",
+      "unit": "Diferença Média para a Pole",
+      "cardKicker": "Índice de Temporada PaddockIntel 2026",
+      "leader": "Líder 2026",
+      "sessions": "{count} {count, plural, one {sessão} other {sessões}}",
+      "empty": "Ainda não há classificações registradas da temporada 2026.",
+      "methodologyTitle": "Como calculamos isso",
+      "methodologyBody": "Em cada classificação, pegamos a melhor volta de cada piloto — Q3 se ele avançou, senão Q2, senão Q1 — e medimos a diferença percentual em relação ao tempo da pole daquela sessão. Calculamos a média dessa diferença em todas as sessões em que o piloto marcou um tempo nesta temporada. É um dado descritivo, não preditivo: uma média da temporada até o momento, não uma previsão. Fonte: dados de classificação carregados no Supabase após cada fim de semana de corrida (scripts/load_race.py, via FastF1)."
     }
   },
   "digest": {

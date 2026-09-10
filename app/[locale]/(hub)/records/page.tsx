@@ -15,6 +15,7 @@ import {
   formatAgeYears,
   formatGap,
 } from '@/lib/records';
+import { fetchQualifyingPace, formatPctGap } from '@/lib/qualifying-pace';
 import { RecordCard, type RecordCardRow } from '@/components/records/RecordCard';
 
 export const revalidate = 3600;
@@ -22,12 +23,14 @@ export const revalidate = 3600;
 type PageParams = Promise<{ locale: string }>;
 
 const SEASON_BATTLE_CATEGORY_COUNT = 1;
+const DATA_VERTICAL_CATEGORY_COUNT = 1;
 
 const TOTAL_CATEGORIES =
   RECORD_SLUGS.length +
   CONSTRUCTOR_RECORD_SLUGS.length +
   SPECIAL_RECORD_SLUGS.length +
-  SEASON_BATTLE_CATEGORY_COUNT;
+  SEASON_BATTLE_CATEGORY_COUNT +
+  DATA_VERTICAL_CATEGORY_COUNT;
 
 export async function generateMetadata({
   params,
@@ -61,17 +64,20 @@ export default async function RecordsPage({ params }: { params: PageParams }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'records' });
 
-  const [driverRecords, constructorRecords, { youngest, oldest }, circuitWins, seasonBattles] = await Promise.all([
-    fetchAllRecords(3),
-    fetchAllConstructorRecords(3),
-    fetchYoungestOldestWinners(3),
-    fetchCircuitWinRecord(3),
-    fetchClosestChampionships(3),
-  ]);
+  const [driverRecords, constructorRecords, { youngest, oldest }, circuitWins, seasonBattles, qualifyingPace] =
+    await Promise.all([
+      fetchAllRecords(3),
+      fetchAllConstructorRecords(3),
+      fetchYoungestOldestWinners(3),
+      fetchCircuitWinRecord(3),
+      fetchClosestChampionships(3),
+      fetchQualifyingPace(3),
+    ]);
 
   const youngestLeader = youngest[0];
   const oldestLeader = oldest[0];
   const circuitLeader = circuitWins[0];
+  const paceLeader = qualifyingPace[0];
 
   return (
     <main className="bg-bg">
@@ -298,6 +304,38 @@ export default async function RecordsPage({ params }: { params: PageParams }) {
             {t('fullRanking')} →
           </span>
         </Link>
+      </div>
+
+      {/* ── Data Vertical ────────────────────────────────────── */}
+      <SectionHeader
+        number="E"
+        label={t('sectionDataVertical')}
+        count={t('count', { count: DATA_VERTICAL_CATEGORY_COUNT })}
+      />
+      <div className="grid grid-cols-1 border-l border-border">
+        <RecordCard
+          index={0}
+          href="/records/qualifying-pace-delta"
+          categoryLabel={t('qualifyingPaceDelta.title')}
+          unitLabel={t('qualifyingPaceDelta.unit')}
+          fullRankingLabel={t('fullRanking')}
+          leader={
+            paceLeader
+              ? {
+                  key: String(paceLeader.driver_id),
+                  rank: paceLeader.rank,
+                  name: paceLeader.name,
+                  valueDisplay: formatPctGap(paceLeader.avgPctGap, locale),
+                }
+              : undefined
+          }
+          rest={qualifyingPace.slice(1).map((e) => ({
+            key: String(e.driver_id),
+            rank: e.rank,
+            name: e.name,
+            valueDisplay: formatPctGap(e.avgPctGap, locale),
+          }))}
+        />
       </div>
     </main>
   );
