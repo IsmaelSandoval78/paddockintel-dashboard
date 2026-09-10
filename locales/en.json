@@ -16,14 +16,11 @@
     "constructors": "Constructors",
     "compare": "Compare",
     "records": "Records",
-    "economics": "Economics",
-    "operations": "Operations",
-    "regulations": "Regulations",
-    "supplyChain": "Supply Chain",
     "magazine": "Magazine",
     "glossary": "Glossary",
     "feed": "Feed",
-    "whosWho": "Who's Who"
+    "weekly": "Weekly Digest",
+    "whosWho": "Voices"
   },
   "hub": {
     "title": "PaddockIntel",
@@ -876,8 +873,8 @@
     "accuracy": "Content is provided for informational purposes only. Financial figures — salaries, prize money, team valuations, sponsorship amounts — are estimates compiled from public reporting unless otherwise sourced; actual amounts may differ. Nothing on this site constitutes financial, investment, or professional advice."
   },
   "whosWho": {
-    "kicker": "Who's Who",
-    "title": "Who's Who",
+    "kicker": "Voices",
+    "title": "Voices",
     "description": "Curated reactions from real, credentialed F1 voices — chosen and verified by hand, not an algorithm.",
     "readOriginal": "Read the original post →",
     "categories": {

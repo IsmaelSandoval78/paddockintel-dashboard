@@ -19,15 +19,6 @@ const links: { key: NavKey; href: string }[] = [
   { key: 'records',      href: '/records' },
 ];
 
-type MagazineKey = 'economics' | 'operations' | 'regulations' | 'supplyChain';
-
-const magazineSections: { key: MagazineKey; tag: string }[] = [
-  { key: 'economics', tag: 'economic-intelligence' },
-  { key: 'operations', tag: 'operational-strategy' },
-  { key: 'regulations', tag: 'regulations' },
-  { key: 'supplyChain', tag: 'supply-chain-operations' },
-];
-
 export default function MobileNav({
   isMagazine,
   authUser,
@@ -80,16 +71,6 @@ export default function MobileNav({
         <div className="border-t border-border" style={{ borderRadius: 0 }}>
           {isMagazine ? (
             <>
-              {magazineSections.map(({ key, tag }) => (
-                <Link
-                  key={key}
-                  href={`/?tag=${tag}`}
-                  onClick={() => setOpen(false)}
-                  className="flex items-center h-12 px-5 border-b border-border font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 bg-bg"
-                >
-                  {t(key)}
-                </Link>
-              ))}
               <Link
                 href="/glossary"
                 onClick={() => setOpen(false)}
@@ -103,6 +84,13 @@ export default function MobileNav({
                 className="flex items-center h-12 px-5 border-b border-border font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 bg-bg"
               >
                 {t('feed')}
+              </Link>
+              <Link
+                href="/weekly"
+                onClick={() => setOpen(false)}
+                className="flex items-center h-12 px-5 border-b border-border font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 bg-bg"
+              >
+                {t('weekly')}
               </Link>
               <Link
                 href="/whos-who"
