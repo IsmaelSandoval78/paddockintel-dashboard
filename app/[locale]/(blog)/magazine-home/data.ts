@@ -341,6 +341,83 @@ export async function getMovers(): Promise<MoversResult> {
   };
 }
 
+export type RaceHighlightMover = {
+  driver_id: number;
+  forename: string;
+  surname: string;
+  constructor_ref: string;
+  grid: number;
+  finish: number;
+  delta: number;
+};
+
+export type RaceHighlights = {
+  raceName: string;
+  gainers: RaceHighlightMover[];
+  fallers: RaceHighlightMover[];
+  maxAbsDelta: number;
+};
+
+const EMPTY_RACE_HIGHLIGHTS: RaceHighlights = { raceName: '', gainers: [], fallers: [], maxAbsDelta: 0 };
+
+// Race-day grid->finish movement — a different story than getMovers() above,
+// which tracks *championship* position across races (deltas of ±1-3 in a
+// normal weekend). This is the single-race drama: a driver can gain or lose
+// dozens of places in one race (grid 0 is a pit-lane start, excluded — it
+// isn't a real grid position to diff against).
+export async function getRaceHighlights(limit = 3): Promise<RaceHighlights> {
+  const supabase = createClient();
+
+  const { data: raceIdRows } = await supabase
+    .from('driver_standings')
+    .select('race_id')
+    .order('race_id', { ascending: false })
+    .limit(1);
+  const currentRaceId = raceIdRows?.[0]?.race_id as number | undefined;
+  if (!currentRaceId) return EMPTY_RACE_HIGHLIGHTS;
+
+  const [raceRes, resultsRes] = await Promise.all([
+    supabase.from('races').select('name').eq('id', currentRaceId).single(),
+    supabase.from('results').select('driver_id, constructor_id, grid, position').eq('race_id', currentRaceId),
+  ]);
+
+  const rows = (resultsRes.data ?? []).filter(
+    (r) => r.grid !== null && (r.grid as number) > 0 && r.position !== null
+  ) as Array<{ driver_id: number; constructor_id: number; grid: number; position: number }>;
+  if (rows.length === 0) return EMPTY_RACE_HIGHLIGHTS;
+
+  const driverIds = rows.map((r) => r.driver_id);
+  const constructorIds = [...new Set(rows.map((r) => r.constructor_id))];
+  const [driversRes, constructorsRes] = await Promise.all([
+    supabase.from('drivers').select('id, forename, surname').in('id', driverIds),
+    supabase.from('constructors').select('id, constructor_ref').in('id', constructorIds),
+  ]);
+  const driverMap = new Map((driversRes.data ?? []).map((d) => [d.id as number, d]));
+  const constructorRefMap = new Map(
+    (constructorsRes.data ?? []).map((c) => [c.id as number, c.constructor_ref as string])
+  );
+
+  const movers: RaceHighlightMover[] = rows.flatMap((r) => {
+    const d = driverMap.get(r.driver_id);
+    if (!d) return [];
+    return [{
+      driver_id: r.driver_id,
+      forename: d.forename as string,
+      surname: d.surname as string,
+      constructor_ref: constructorRefMap.get(r.constructor_id) ?? '',
+      grid: r.grid,
+      finish: r.position,
+      delta: r.grid - r.position,
+    }];
+  });
+
+  const gainers = movers.filter((m) => m.delta > 0).sort((a, b) => b.delta - a.delta).slice(0, limit);
+  const fallers = movers.filter((m) => m.delta < 0).sort((a, b) => a.delta - b.delta).slice(0, limit);
+  const maxAbsDelta = Math.max(1, ...movers.map((m) => Math.abs(m.delta)));
+
+  return { raceName: (raceRes.data?.name as string) ?? '', gainers, fallers, maxAbsDelta };
+}
+
 // "Most Covered This Week" — third piece of the magazine-home redesign
 // discussion (AI Weekly's "Attention This Week"). No week-over-week %
 // riser/faller here on purpose: digest_items only has 42 rows total with

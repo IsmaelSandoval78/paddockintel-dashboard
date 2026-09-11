@@ -752,6 +752,9 @@
       "constructorRiser": "Biggest Riser · Constructors",
       "constructorFaller": "Biggest Fall · Constructors"
     },
+    "raceHighlights": {
+      "title": "Race Day Movers"
+    },
     "circuit": {
       "kicker": "Circuit Intelligence",
       "round": "Round {round}",

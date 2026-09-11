@@ -752,6 +752,9 @@
       "constructorRiser": "Mayor Subida · Constructores",
       "constructorFaller": "Mayor Caída · Constructores"
     },
+    "raceHighlights": {
+      "title": "Movimientos del Día de Carrera"
+    },
     "circuit": {
       "kicker": "Inteligencia del Circuito",
       "round": "Ronda {round}",

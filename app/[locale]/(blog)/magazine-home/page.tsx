@@ -7,7 +7,7 @@ import ArticlePreviewCard from '@/components/blog/ArticlePreviewCard';
 import FeaturedArticleCard from '@/components/blog/FeaturedArticleCard';
 import NewsletterCard from '@/components/blog/NewsletterCard';
 import StandingsPanel from '@/components/blog/StandingsPanel';
-import MoversPanel from '@/components/blog/MoversPanel';
+import RaceHighlightsPanel from '@/components/blog/RaceHighlightsPanel';
 import MostCoveredPanel from '@/components/blog/MostCoveredPanel';
 import LearningPanel from '@/components/blog/LearningPanel';
 import TrackByTeamPanel from '@/components/blog/TrackByTeamPanel';
@@ -16,7 +16,7 @@ import {
   getFeaturedAndRecent,
   getDataDeskArticles,
   getStandings,
-  getMovers,
+  getRaceHighlights,
   getMostCovered,
   getLearningTerms,
   getTeamTags,
@@ -116,7 +116,7 @@ export default async function MagazineHomePage({
       ? Promise.all([
           getFeaturedAndRecent(locale),
           getStandings(),
-          getMovers(),
+          getRaceHighlights(),
           getMostCovered(),
           getDataDeskArticles(locale),
           getLearningTerms(locale),
@@ -136,11 +136,11 @@ export default async function MagazineHomePage({
     return qs ? `${basePath}?${qs}` : basePath;
   };
 
-  const [featuredAndRecent, standings, movers, mostCovered, dataDeskArticles, learningTerms, teamTags, circuit] =
+  const [featuredAndRecent, standings, raceHighlights, mostCovered, dataDeskArticles, learningTerms, teamTags, circuit] =
     frontPageExtras ?? [
       { featured: null, recent: [] },
       { drivers: [], constructors: [] },
-      { raceName: '', driverRiser: null, driverFaller: null, constructorRiser: null, constructorFaller: null },
+      { raceName: '', gainers: [], fallers: [], maxAbsDelta: 0 },
       null,
       [],
       [],
@@ -156,18 +156,35 @@ export default async function MagazineHomePage({
 
   return (
     <main className="bg-bg min-h-screen">
-      {/* Hero */}
-      <div className="border-b border-border px-5 py-12 md:py-16 max-w-5xl mx-auto">
-        <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-text-2">
-          {t('kicker')}
-        </p>
-        <h1 className="font-display text-[clamp(2rem,6vw,3.5rem)] leading-[0.92] tracking-[-0.03em] text-text-1 mt-3 mb-5">
-          {t('headline')}
-        </h1>
-        <p className="font-prose text-text-2 leading-relaxed max-w-lg mb-6">
-          {t('description')}
-        </p>
-        <JoinTwoWays className="max-w-xl" />
+      {/* Hero + Featured, merged into one row — the featured story's payoff
+          sits right beside the masthead instead of a full screen below it. */}
+      <div className="border-b border-border max-w-5xl mx-auto lg:grid lg:grid-cols-2">
+        <div className="px-5 py-12 md:py-16 lg:border-r lg:border-border lg:pr-10">
+          <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-text-2">
+            {t('kicker')}
+          </p>
+          <h1 className="font-display text-[clamp(1.75rem,4vw,2.75rem)] leading-[0.94] tracking-[-0.03em] text-text-1 mt-3 mb-5">
+            {t('headline')}
+          </h1>
+          <p className="font-prose text-text-2 leading-relaxed max-w-lg mb-6">
+            {t('description')}
+          </p>
+          <JoinTwoWays className="max-w-xl" />
+        </div>
+        {featured && (
+          <div className="px-5 py-12 md:py-16 lg:pl-10">
+            <FeaturedArticleCard
+              slug={featured.slug as string}
+              title={featured.title as string}
+              metaDescription={featured.meta_description as string | null}
+              tags={featured.tags}
+              publishedAt={featured.published_at as string}
+              locale={locale}
+              featuredStat={((featured.stats as Stat[]) ?? [])[0]}
+              compact
+            />
+          </div>
+        )}
       </div>
 
       <div className="max-w-5xl mx-auto px-5">
@@ -184,21 +201,6 @@ export default async function MagazineHomePage({
               {t('filter.clear')} ×
             </a>
           </p>
-        )}
-
-        {/* Featured */}
-        {featured && (
-          <div className="pt-10 md:pt-14">
-            <FeaturedArticleCard
-              slug={featured.slug as string}
-              title={featured.title as string}
-              metaDescription={featured.meta_description as string | null}
-              tags={featured.tags}
-              publishedAt={featured.published_at as string}
-              locale={locale}
-              featuredStat={((featured.stats as Stat[]) ?? [])[0]}
-            />
-          </div>
         )}
 
         {/* Latest */}
@@ -218,13 +220,22 @@ export default async function MagazineHomePage({
           </section>
         )}
 
-        {/* Top 5 Drivers / Top 5 Constructors */}
-        {(standings.drivers.length > 0 || standings.constructors.length > 0) && (
-          <StandingsPanel drivers={standings.drivers} constructors={standings.constructors} />
+        {/* Race Day Movers (grid→finish, real single-race drama) beside
+            Standings (drivers/constructors) — two module-grid tiles instead
+            of two separate full-width bands. */}
+        {(raceHighlights.gainers.length > 0 ||
+          raceHighlights.fallers.length > 0 ||
+          standings.drivers.length > 0 ||
+          standings.constructors.length > 0) && (
+          <div className="border-t border-b border-border py-12 md:py-16">
+            <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-10 lg:gap-16">
+              <RaceHighlightsPanel highlights={raceHighlights} />
+              <div className="lg:border-l lg:border-border-subtle lg:pl-16">
+                <StandingsPanel drivers={standings.drivers} constructors={standings.constructors} compact />
+              </div>
+            </div>
+          </div>
         )}
-
-        {/* This race's movers — real standings deltas, not a "trending" signal */}
-        <MoversPanel movers={movers} />
 
         {/* Most covered this week — real digest cross-mention count, no
             week-over-week % (see getMostCovered() in ./data.ts for why) */}
