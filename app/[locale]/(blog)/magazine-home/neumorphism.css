@@ -1,0 +1,51 @@
+/* Neumorphism pilot — scoped entirely under .neu-home so it never touches
+   the Hub or article pages, which stay on the real Vintage Editorial system
+   (DESIGN.md). This works by overriding the same CSS custom properties
+   every component on this page already reads through Tailwind's `bg-bg`,
+   `text-text-1`, `border-border` etc. utilities — no component needed a
+   hardcoded color, so re-skinning is just redefining the tokens in scope.
+   See CLAUDE.md "Do Not" list: this pilot deliberately breaks the
+   no-shadows/no-gradients rule to test the aesthetic the user asked for. */
+
+.neu-home {
+  --bg: #E7E2D8;
+  --surface: #E7E2D8;
+  --surface-raised: #E7E2D8;
+  --surface-overlay: #E7E2D8;
+  --border: transparent;
+  --border-subtle: transparent;
+  --text-1: #3f3a2e;
+  --text-2: #756a54;
+  --text-3: #a89d86;
+  background: var(--bg);
+}
+
+.neu-home .neu-surface {
+  border-radius: 32px;
+  box-shadow: 12px 12px 26px rgba(150, 138, 110, 0.35), -12px -12px 26px rgba(255, 255, 255, 0.85);
+}
+
+.neu-home .neu-card {
+  border-radius: 24px;
+  box-shadow: 10px 10px 22px rgba(150, 138, 110, 0.3), -10px -10px 22px rgba(255, 255, 255, 0.8);
+}
+
+.neu-home .neu-row,
+.neu-home .neu-chip {
+  border-radius: 14px;
+  box-shadow: inset 4px 4px 10px rgba(150, 138, 110, 0.28), inset -4px -4px 10px rgba(255, 255, 255, 0.75);
+}
+
+/* NewsletterCard and CircuitOfTheDay are reused on article pages and the
+   Hub, so their files stay untouched — matched here by their existing,
+   unique class combinations instead of an added marker class. */
+.neu-home aside.border.border-border-subtle.bg-surface-raised {
+  border-radius: 28px;
+  box-shadow: 10px 10px 22px rgba(150, 138, 110, 0.3), -10px -10px 22px rgba(255, 255, 255, 0.8);
+}
+.neu-home section.border-b.border-border {
+  border-radius: 28px;
+  box-shadow: 10px 10px 22px rgba(150, 138, 110, 0.3), -10px -10px 22px rgba(255, 255, 255, 0.8);
+  padding-left: 28px;
+  padding-right: 28px;
+}

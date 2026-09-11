@@ -27,7 +27,7 @@ export default async function TrackByTeamPanel({
         <a
           key={team.slug}
           href={`${base}?tag=${encodeURIComponent(team.slug)}`}
-          className="font-mono text-[11px] uppercase tracking-[0.04em] border border-border-subtle rounded-sm px-2.5 py-1 text-text-1 hover:border-terracotta hover:text-terracotta transition-colors duration-150"
+          className="neu-chip font-mono text-[11px] uppercase tracking-[0.04em] border border-border-subtle rounded-sm px-2.5 py-1.5 text-text-1 hover:border-terracotta hover:text-terracotta transition-colors duration-150"
         >
           {team.name} <span className="text-text-3">×{team.count}</span>
         </a>

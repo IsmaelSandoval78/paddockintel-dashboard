@@ -56,7 +56,7 @@ export default async function StandingsPanel({ drivers, constructors, compact = 
             <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-2 mb-4">{t('drivers')}</p>
             <div className="flex flex-col gap-2.5">
               {drivers.map((d) => (
-                <div key={d.driver_id} className="flex items-center gap-2.5">
+                <div key={d.driver_id} className="neu-row flex items-center gap-2.5 py-2 px-3">
                   <span className="font-mono text-[11px] text-text-3 tabular-nums w-4 shrink-0">{d.position}</span>
                   <span className="w-2 h-2 shrink-0" style={{ backgroundColor: teamColor(d.constructor_ref) }} />
                   <span className="font-sans text-sm text-text-1 flex-1 min-w-0 truncate">{d.forename} {d.surname}</span>
@@ -69,7 +69,7 @@ export default async function StandingsPanel({ drivers, constructors, compact = 
             <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-2 mb-4">{t('constructors')}</p>
             <div className="flex flex-col gap-2.5">
               {constructors.map((c) => (
-                <div key={c.constructor_id} className="flex items-center gap-2.5">
+                <div key={c.constructor_id} className="neu-row flex items-center gap-2.5 py-2 px-3">
                   <span className="font-mono text-[11px] text-text-3 tabular-nums w-4 shrink-0">{c.position}</span>
                   <span className="w-2 h-2 shrink-0" style={{ backgroundColor: teamColor(c.constructor_ref) }} />
                   <span className="font-sans text-sm text-text-1 flex-1 min-w-0 truncate">{c.name}</span>

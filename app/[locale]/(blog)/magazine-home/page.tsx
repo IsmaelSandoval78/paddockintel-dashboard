@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+// Neumorphism pilot (2026-09-11) — scoped to this page only via the
+// `neu-home` class below, see the file's own header comment.
+import './neumorphism.css';
 import { createClient } from '@/lib/supabase/server';
 import { getArticleIdsForTagSlug, getArticleTagSlugs, type TagRef } from '@/lib/blog/tags';
 import JoinTwoWays from '@/components/blog/JoinTwoWays';
@@ -158,10 +161,10 @@ export default async function MagazineHomePage({
   const archiveArticles = isFrontPage ? articles.filter((a) => !shownSlugs.has(a.slug as string)) : articles;
 
   return (
-    <main className="bg-bg min-h-screen">
+    <main className="neu-home bg-bg min-h-screen">
       {/* Hero + Featured, merged into one row — the featured story's payoff
           sits right beside the masthead instead of a full screen below it. */}
-      <div className="border-b border-border max-w-5xl mx-auto lg:grid lg:grid-cols-2">
+      <div className="neu-surface border-b border-border max-w-5xl mx-auto lg:grid lg:grid-cols-2">
         <div className="px-5 py-12 md:py-16 lg:border-r lg:border-border lg:pr-10">
           <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-text-2">
             {t('kicker')}
@@ -230,7 +233,7 @@ export default async function MagazineHomePage({
           raceHighlights.fallers.length > 0 ||
           standings.drivers.length > 0 ||
           standings.constructors.length > 0) && (
-          <div className="border-t border-b border-border py-12 md:py-16">
+          <div className="neu-surface border-t border-b border-border py-12 md:py-16">
             <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-10 lg:gap-16">
               <RaceHighlightsPanel highlights={raceHighlights} />
               <div className="lg:border-l lg:border-border-subtle lg:pl-16">
@@ -249,7 +252,7 @@ export default async function MagazineHomePage({
 
         {/* The Data Desk — pure-data articles, section only renders once tagged content exists */}
         {dataDeskArticles.length > 0 && (
-          <section className="py-10 md:py-14 border-t border-border">
+          <section className="neu-surface py-10 md:py-14 border-t border-border">
             <h2
               className="font-display uppercase text-text-1 tracking-[-0.02em] mb-6"
               style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}
@@ -268,7 +271,7 @@ export default async function MagazineHomePage({
             existing ?tag= filter) — two module-grid tiles instead of two
             separate full-width bands. */}
         {(learningTerms.length > 0 || teamTags.length > 0) && (
-          <div className="border-t border-border py-10 md:py-14">
+          <div className="neu-surface border-t border-border py-10 md:py-14">
             <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-10 lg:gap-16">
               <LearningPanel terms={learningTerms} compact />
               <div className="lg:border-l lg:border-border-subtle lg:pl-16">
