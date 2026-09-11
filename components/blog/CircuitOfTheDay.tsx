@@ -9,56 +9,9 @@ function formatDate(iso: string, locale: string): string {
   });
 }
 
-export default async function CircuitOfTheDay({
-  circuit,
-  locale,
-  compact = false,
-}: {
-  circuit: CircuitOfTheDayData;
-  locale: string;
-  /** Narrow-column rendering for the home sidebar — name, location, and
-   * one headline stat only, no full stat grid or champions column. */
-  compact?: boolean;
-}) {
+export default async function CircuitOfTheDay({ circuit, locale }: { circuit: CircuitOfTheDayData; locale: string }) {
   const t = await getTranslations('magazine.circuit');
   const hubUrl = `https://hub.paddockintel.com/circuits/${circuit.circuit_ref}`;
-
-  if (compact) {
-    const headline = circuit.fastest_lap
-      ? `${t('lapRecord')}: ${circuit.fastest_lap.time} — ${circuit.fastest_lap.surname} (${circuit.fastest_lap.year})`
-      : circuit.first_year
-        ? `${t('since')} ${circuit.first_year} · ${circuit.total_races} ${t('races')}`
-        : null;
-    return (
-      <div>
-        <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-2 mb-3">
-          {t('kicker')} · {t('round', { round: circuit.round })}
-        </p>
-        <div className="flex items-center gap-3">
-          <div
-            className="w-14 h-14 rounded-full border border-border shrink-0 flex items-center justify-center"
-            style={{ backgroundColor: 'var(--navy)' }}
-          >
-            <span className="font-mono text-[7px] uppercase tracking-[0.03em] text-center leading-tight px-1" style={{ color: 'var(--text-on-accent)' }}>
-              {circuit.name}
-            </span>
-          </div>
-          <div className="min-w-0">
-            <p className="font-mono text-[12px] text-text-1">{circuit.location}, {circuit.country}</p>
-            {headline && <p className="font-mono text-[10px] text-text-3 mt-1 leading-snug">{headline}</p>}
-          </div>
-        </div>
-        <a
-          href={hubUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-block mt-3 font-mono text-[10px] uppercase tracking-[0.08em] text-text-2 hover:text-terracotta transition-colors duration-150"
-        >
-          {t('cta')} →
-        </a>
-      </div>
-    );
-  }
 
   const stats: { label: string; value: string }[] = [];
   if (circuit.first_year) {
