@@ -191,7 +191,7 @@ export default async function MagazineHomePage({
             the article flow as one full-width band after another; now they
             live in one fixed place instead. Sidebar only exists on the
             unfiltered front page, same gating as the widgets it contains. */}
-        <div className={isFrontPage ? 'lg:grid lg:grid-cols-[1fr_320px] lg:gap-14' : ''}>
+        <div className={isFrontPage ? 'min-[860px]:grid min-[860px]:grid-cols-[1fr_320px] min-[860px]:gap-14' : ''}>
           <div className="min-w-0">
             {/* Featured */}
             {featured && (
@@ -291,7 +291,7 @@ export default async function MagazineHomePage({
           </div>
 
           {isFrontPage && (
-            <aside className="lg:sticky lg:top-16 lg:self-start flex flex-col gap-8 pb-10 lg:pt-10 lg:pb-14 lg:border-l lg:border-border lg:pl-10">
+            <aside className="min-[860px]:sticky min-[860px]:top-16 min-[860px]:self-start flex flex-col gap-8 pb-10 min-[860px]:pt-10 min-[860px]:pb-14 min-[860px]:border-l min-[860px]:border-border min-[860px]:pl-10">
               {(standings.drivers.length > 0 || standings.constructors.length > 0) && (
                 <StandingsPanel drivers={standings.drivers} constructors={standings.constructors} compact />
               )}
