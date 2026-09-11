@@ -34,9 +34,9 @@ const PAGE_SIZE = 20;
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: 'PaddockIntel — The Economics F1 Doesn\'t Publish',
+    title: 'PaddockIntel — Follow the Facts, Not the Hype',
     description:
-      'Contracts, sponsorships, prize money — verified against 75 years of F1 race data, not team press releases.',
+      'Economics, data, and real F1 news — verified against 75 years of race history, not press releases.',
   };
 }
 
