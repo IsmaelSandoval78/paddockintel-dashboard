@@ -62,6 +62,22 @@ async function main() {
   const { frontmatter, body } = readArticle(path.resolve(filePath));
   const supabase = createClient();
 
+  // published_at has no DB default and EDITORIAL.md's own frontmatter template
+  // doesn't show the field — omitting it silently left new articles with a
+  // null published_at, which sorts last (nullsFirst: false everywhere it's
+  // queried) and makes a "published" article invisible on any listing/recent
+  // feed while still resolving at its direct URL. Default it to now() for a
+  // genuinely new row; never touch it on re-ingest of an existing article
+  // (that would silently bump its real publish date, a distinct problem this
+  // project has flagged before as a Ghost-slug integrity issue).
+  const { data: existing } = await supabase
+    .from('articles')
+    .select('id')
+    .eq('locale', frontmatter.locale)
+    .eq('slug', frontmatter.slug)
+    .maybeSingle();
+  const isNew = !existing;
+
   const { data: article, error } = await supabase
     .from('articles')
     .upsert(
@@ -75,7 +91,11 @@ async function main() {
         body_markdown: body,
         status: frontmatter.status ?? 'draft',
         paywalled: frontmatter.paywalled ?? false,
-        ...(frontmatter.published_at !== undefined ? { published_at: frontmatter.published_at } : {}),
+        ...(frontmatter.published_at !== undefined
+          ? { published_at: frontmatter.published_at }
+          : isNew
+            ? { published_at: new Date().toISOString() }
+            : {}),
         ...(frontmatter.stats    !== undefined ? { stats:     frontmatter.stats }     : {}),
         ...(frontmatter.faq      !== undefined ? { faq_items: frontmatter.faq }       : {}),
         ...(frontmatter.sources  !== undefined ? { sources:   frontmatter.sources }   : {}),

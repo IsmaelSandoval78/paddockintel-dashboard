@@ -8,6 +8,7 @@ tags:
   - driver-finance
 translation_group_id: "228c40df-9932-477c-a3d6-ea83a390290a"
 status: published
+published_at: "2026-09-11"
 
 stats:
   - value: "40M€"
