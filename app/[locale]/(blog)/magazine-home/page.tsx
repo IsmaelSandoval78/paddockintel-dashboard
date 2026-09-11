@@ -170,7 +170,7 @@ export default async function MagazineHomePage({
         <JoinTwoWays className="max-w-xl" />
       </div>
 
-      <div className="max-w-5xl mx-auto px-5">
+      <div className="max-w-6xl mx-auto px-5">
         {tag && (
           <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 mt-10 flex items-center gap-3">
             <span>
@@ -186,123 +186,122 @@ export default async function MagazineHomePage({
           </p>
         )}
 
-        {/* Featured */}
-        {featured && (
-          <div className="pt-10 md:pt-14">
-            <FeaturedArticleCard
-              slug={featured.slug as string}
-              title={featured.title as string}
-              metaDescription={featured.meta_description as string | null}
-              tags={featured.tags}
-              publishedAt={featured.published_at as string}
-              locale={locale}
-              featuredStat={((featured.stats as Stat[]) ?? [])[0]}
-            />
+        {/* Broadsheet split: a persistent reading column (articles only) next
+            to a data/discovery sidebar — the data widgets used to interrupt
+            the article flow as one full-width band after another; now they
+            live in one fixed place instead. Sidebar only exists on the
+            unfiltered front page, same gating as the widgets it contains. */}
+        <div className={isFrontPage ? 'lg:grid lg:grid-cols-[1fr_320px] lg:gap-14' : ''}>
+          <div className="min-w-0">
+            {/* Featured */}
+            {featured && (
+              <div className="pt-10 md:pt-14">
+                <FeaturedArticleCard
+                  slug={featured.slug as string}
+                  title={featured.title as string}
+                  metaDescription={featured.meta_description as string | null}
+                  tags={featured.tags}
+                  publishedAt={featured.published_at as string}
+                  locale={locale}
+                  featuredStat={((featured.stats as Stat[]) ?? [])[0]}
+                />
+              </div>
+            )}
+
+            {/* Latest */}
+            {recent.length > 0 && (
+              <section className="py-10 md:py-14">
+                <h2
+                  className="font-display uppercase text-text-1 tracking-[-0.02em] mb-6"
+                  style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}
+                >
+                  {t('recent')}
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  {recent.map((a) => (
+                    <ArticleCard key={a.slug} a={a} locale={locale} />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* The Data Desk — pure-data articles, section only renders once tagged content exists */}
+            {dataDeskArticles.length > 0 && (
+              <section className="py-10 md:py-14 border-t border-border">
+                <h2
+                  className="font-display uppercase text-text-1 tracking-[-0.02em] mb-6"
+                  style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}
+                >
+                  {t('dataDesk.title')}
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  {dataDeskArticles.map((a) => (
+                    <ArticleCard key={a.slug} a={a} locale={locale} />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Archive grid */}
+            <div className="py-10 md:py-14">
+              {archiveArticles.length === 0 ? (
+                <p className="font-mono text-[11px] text-text-3 uppercase tracking-[0.1em]">
+                  {t('noArticles')}
+                </p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {archiveArticles.map((a) => (
+                    <ArticleCard key={a.slug as string} a={a} locale={locale} />
+                  ))}
+                </div>
+              )}
+
+              {totalPages > 1 && (
+                <nav className="flex items-center justify-between mt-10 pt-5 border-t border-border">
+                  {page > 1 ? (
+                    <a
+                      href={pageHref(page - 1)}
+                      className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-150"
+                    >
+                      {t('pagination.newer')}
+                    </a>
+                  ) : (
+                    <span aria-hidden className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-3 opacity-40">
+                      {t('pagination.newer')}
+                    </span>
+                  )}
+                  <span className="font-mono text-[11px] tracking-[0.1em] text-text-3 tabular-nums">
+                    {t('pagination.page', { current: page, total: totalPages })}
+                  </span>
+                  {page < totalPages ? (
+                    <a
+                      href={pageHref(page + 1)}
+                      className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-150"
+                    >
+                      {t('pagination.older')}
+                    </a>
+                  ) : (
+                    <span aria-hidden className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-3 opacity-40">
+                      {t('pagination.older')}
+                    </span>
+                  )}
+                </nav>
+              )}
+            </div>
           </div>
-        )}
 
-        {/* Latest */}
-        {recent.length > 0 && (
-          <section className="py-10 md:py-14">
-            <h2
-              className="font-display uppercase text-text-1 tracking-[-0.02em] mb-6"
-              style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}
-            >
-              {t('recent')}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {recent.map((a) => (
-                <ArticleCard key={a.slug} a={a} locale={locale} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Top 5 Drivers / Top 5 Constructors */}
-        {(standings.drivers.length > 0 || standings.constructors.length > 0) && (
-          <StandingsPanel drivers={standings.drivers} constructors={standings.constructors} />
-        )}
-
-        {/* This race's movers — real standings deltas, not a "trending" signal */}
-        <MoversPanel movers={movers} />
-
-        {/* Most covered this week — real digest cross-mention count, no
-            week-over-week % (see getMostCovered() in ./data.ts for why) */}
-        <MostCoveredPanel entity={mostCovered} />
-
-        {/* Newsletter invite */}
-        {isFrontPage && <NewsletterCard />}
-
-        {/* The Data Desk — pure-data articles, section only renders once tagged content exists */}
-        {dataDeskArticles.length > 0 && (
-          <section className="py-10 md:py-14 border-t border-border">
-            <h2
-              className="font-display uppercase text-text-1 tracking-[-0.02em] mb-6"
-              style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}
-            >
-              {t('dataDesk.title')}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {dataDeskArticles.map((a) => (
-                <ArticleCard key={a.slug} a={a} locale={locale} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Learning F1 — glossary teaser, real content already exists */}
-        <LearningPanel terms={learningTerms} />
-
-        {/* Track by team — reuses the existing ?tag= filter, no new plumbing */}
-        <TrackByTeamPanel teams={teamTags} locale={locale} />
-
-        {/* Circuit of the day (next race circuit) */}
-        {circuit && <CircuitOfTheDay circuit={circuit} locale={locale} />}
-
-        {/* Archive grid */}
-        <div className="py-10 md:py-14">
-          {archiveArticles.length === 0 ? (
-            <p className="font-mono text-[11px] text-text-3 uppercase tracking-[0.1em]">
-              {t('noArticles')}
-            </p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {archiveArticles.map((a) => (
-                <ArticleCard key={a.slug as string} a={a} locale={locale} />
-              ))}
-            </div>
-          )}
-
-          {totalPages > 1 && (
-            <nav className="flex items-center justify-between mt-10 pt-5 border-t border-border">
-              {page > 1 ? (
-                <a
-                  href={pageHref(page - 1)}
-                  className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-150"
-                >
-                  {t('pagination.newer')}
-                </a>
-              ) : (
-                <span aria-hidden className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-3 opacity-40">
-                  {t('pagination.newer')}
-                </span>
+          {isFrontPage && (
+            <aside className="lg:sticky lg:top-16 lg:self-start flex flex-col gap-8 pb-10 lg:pt-10 lg:pb-14 lg:border-l lg:border-border lg:pl-10">
+              {(standings.drivers.length > 0 || standings.constructors.length > 0) && (
+                <StandingsPanel drivers={standings.drivers} constructors={standings.constructors} compact />
               )}
-              <span className="font-mono text-[11px] tracking-[0.1em] text-text-3 tabular-nums">
-                {t('pagination.page', { current: page, total: totalPages })}
-              </span>
-              {page < totalPages ? (
-                <a
-                  href={pageHref(page + 1)}
-                  className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-150"
-                >
-                  {t('pagination.older')}
-                </a>
-              ) : (
-                <span aria-hidden className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-3 opacity-40">
-                  {t('pagination.older')}
-                </span>
-              )}
-            </nav>
+              <MoversPanel movers={movers} compact />
+              <MostCoveredPanel entity={mostCovered} compact />
+              <LearningPanel terms={learningTerms} compact />
+              <TrackByTeamPanel teams={teamTags} locale={locale} compact />
+              {circuit && <CircuitOfTheDay circuit={circuit} locale={locale} compact />}
+              <NewsletterCard />
+            </aside>
           )}
         </div>
       </div>

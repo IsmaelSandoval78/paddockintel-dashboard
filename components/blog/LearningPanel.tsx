@@ -4,9 +4,43 @@ import type { LearningTerm } from '@/app/[locale]/(blog)/magazine-home/data';
 
 // Fourth piece of the magazine-home redesign discussion (AI Weekly's
 // "Learning AI" module) — teases the existing glossary, doesn't duplicate it.
-export default async function LearningPanel({ terms }: { terms: LearningTerm[] }) {
+export default async function LearningPanel({
+  terms,
+  compact = false,
+}: {
+  terms: LearningTerm[];
+  /** Narrow-column rendering for the home sidebar — term and definition
+   * always stacked, never the wide side-by-side row. */
+  compact?: boolean;
+}) {
   if (terms.length === 0) return null;
   const t = await getTranslations('magazine.learning');
+
+  if (compact) {
+    return (
+      <div>
+        <h2 className="font-display uppercase text-text-1 tracking-[-0.02em] mb-4 text-base">{t('title')}</h2>
+        <div className="flex flex-col divide-y divide-border-subtle border-t border-b border-border-subtle">
+          {terms.slice(0, 4).map((term) => (
+            <Link key={term.slug} href={`/glossary/${term.slug}`} className="group py-3 flex flex-col gap-0.5">
+              <span className="font-prose font-semibold text-text-1 text-[13px] group-hover:text-terracotta transition-colors duration-150">
+                {term.term}
+              </span>
+              <span className="font-prose text-[12px] text-text-2 leading-relaxed line-clamp-1">
+                {term.short_definition}
+              </span>
+            </Link>
+          ))}
+        </div>
+        <Link
+          href="/glossary"
+          className="inline-block font-mono text-[10px] uppercase tracking-[0.08em] text-text-2 hover:text-terracotta transition-colors duration-150 mt-4"
+        >
+          {t('seeAll')} →
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <section className="py-10 md:py-14 border-t border-border">

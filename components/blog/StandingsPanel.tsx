@@ -22,14 +22,72 @@ function teamColor(ref: string): string {
 interface StandingsPanelProps {
   drivers: Top5Driver[];
   constructors: Top5Constructor[];
+  /** Narrow-column rendering for the home sidebar — stacked, fixed sizes
+   * (not vw-based clamps), no section chrome. The wide variant stays the
+   * default since nothing depends on compact behavior implicitly. */
+  compact?: boolean;
 }
 
-export default async function StandingsPanel({ drivers, constructors }: StandingsPanelProps) {
+export default async function StandingsPanel({ drivers, constructors, compact = false }: StandingsPanelProps) {
   const t = await getTranslations('magazine.standings');
   if (drivers.length === 0 && constructors.length === 0) return null;
 
   const leaderDriverPts = drivers[0]?.points ?? 1;
   const leaderConstructorPts = constructors[0]?.points ?? 1;
+
+  if (compact) {
+    return (
+      <div>
+        <div className="flex items-baseline justify-between mb-4">
+          <h2 className="font-display uppercase text-text-1 tracking-[-0.02em] text-base">{t('title')}</h2>
+          <a
+            href="https://hub.paddockintel.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-2 hover:text-terracotta transition-colors duration-150 shrink-0"
+          >
+            {t('cta')} →
+          </a>
+        </div>
+        <div className="flex flex-col gap-5">
+          <div>
+            <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-2 mb-3">{t('drivers')}</p>
+            <div className="flex flex-col gap-2">
+              {drivers.map((d) => {
+                const color = teamColor(d.constructor_ref);
+                return (
+                  <div key={d.driver_id} className="flex items-center gap-2">
+                    <span className="font-mono text-[10px] text-text-3 tabular-nums w-3 shrink-0">{d.position}</span>
+                    <span className="w-1.5 h-1.5 shrink-0" style={{ backgroundColor: color }} />
+                    <span className="font-sans text-[13px] text-text-1 flex-1 min-w-0 truncate">
+                      {d.forename} {d.surname}
+                    </span>
+                    <span className="font-mono text-[11px] text-text-2 tabular-nums shrink-0">{d.points}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div>
+            <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-2 mb-3">{t('constructors')}</p>
+            <div className="flex flex-col gap-2">
+              {constructors.map((c) => {
+                const color = teamColor(c.constructor_ref);
+                return (
+                  <div key={c.constructor_id} className="flex items-center gap-2">
+                    <span className="font-mono text-[10px] text-text-3 tabular-nums w-3 shrink-0">{c.position}</span>
+                    <span className="w-1.5 h-1.5 shrink-0" style={{ backgroundColor: color }} />
+                    <span className="font-sans text-[13px] text-text-1 flex-1 min-w-0 truncate">{c.name}</span>
+                    <span className="font-mono text-[11px] text-text-2 tabular-nums shrink-0">{c.points}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <section className="border-t border-b border-border py-12 md:py-16">
