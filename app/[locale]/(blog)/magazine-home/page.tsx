@@ -291,7 +291,7 @@ export default async function MagazineHomePage({
           </div>
 
           {isFrontPage && (
-            <aside className="min-[860px]:sticky min-[860px]:top-16 min-[860px]:self-start flex flex-col gap-8 pb-10 min-[860px]:pt-10 min-[860px]:pb-14 min-[860px]:border-l min-[860px]:border-border min-[860px]:pl-10">
+            <aside className="min-[860px]:sticky min-[860px]:top-16 min-[860px]:self-start min-[860px]:max-h-[calc(100vh-5rem)] min-[860px]:overflow-y-auto flex flex-col gap-8 pb-10 min-[860px]:pt-10 min-[860px]:pb-14 min-[860px]:border-l min-[860px]:border-border min-[860px]:pl-10">
               {(standings.drivers.length > 0 || standings.constructors.length > 0) && (
                 <StandingsPanel drivers={standings.drivers} constructors={standings.constructors} compact />
               )}
