@@ -110,11 +110,15 @@ export default async function MagazineHomePage({
   // treatment — a filtered or paginated view is an archive, not a cover.
   const isFrontPage = page === 1 && !tag;
 
-  const [{ articles, total }, frontPageExtras] = await Promise.all([
+  const [{ articles, total }, featuredAndRecent, frontPageExtras] = await Promise.all([
     getArticles(locale, page, tag),
+    // Featured runs on every page/filter, not just the front page — the
+    // merged hero+featured row would otherwise leave an empty second column
+    // once a reader pages into the archive (the grid stayed 2 columns with
+    // nothing in the second one).
+    getFeaturedAndRecent(locale),
     isFrontPage
       ? Promise.all([
-          getFeaturedAndRecent(locale),
           getStandings(),
           getRaceHighlights(),
           getMostCovered(),
@@ -136,9 +140,8 @@ export default async function MagazineHomePage({
     return qs ? `${basePath}?${qs}` : basePath;
   };
 
-  const [featuredAndRecent, standings, raceHighlights, mostCovered, dataDeskArticles, learningTerms, teamTags, circuit] =
+  const [standings, raceHighlights, mostCovered, dataDeskArticles, learningTerms, teamTags, circuit] =
     frontPageExtras ?? [
-      { featured: null, recent: [] },
       { drivers: [], constructors: [] },
       { raceName: '', gainers: [], fallers: [], maxAbsDelta: 0 },
       null,
@@ -203,8 +206,8 @@ export default async function MagazineHomePage({
           </p>
         )}
 
-        {/* Latest */}
-        {recent.length > 0 && (
+        {/* Latest — front page only; an archive/tag page shouldn't repeat it */}
+        {isFrontPage && recent.length > 0 && (
           <section className="py-10 md:py-14">
             <h2
               className="font-display uppercase text-text-1 tracking-[-0.02em] mb-6"
