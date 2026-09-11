@@ -261,11 +261,19 @@ export default async function MagazineHomePage({
           </section>
         )}
 
-        {/* Learning F1 — glossary teaser, real content already exists */}
-        <LearningPanel terms={learningTerms} />
-
-        {/* Track by team — reuses the existing ?tag= filter, no new plumbing */}
-        <TrackByTeamPanel teams={teamTags} locale={locale} />
+        {/* Learning F1 (glossary teaser) beside Track by team (reuses the
+            existing ?tag= filter) — two module-grid tiles instead of two
+            separate full-width bands. */}
+        {(learningTerms.length > 0 || teamTags.length > 0) && (
+          <div className="border-t border-border py-10 md:py-14">
+            <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-10 lg:gap-16">
+              <LearningPanel terms={learningTerms} compact />
+              <div className="lg:border-l lg:border-border-subtle lg:pl-16">
+                <TrackByTeamPanel teams={teamTags} locale={locale} compact />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Circuit of the day (next race circuit) */}
         {circuit && <CircuitOfTheDay circuit={circuit} locale={locale} />}

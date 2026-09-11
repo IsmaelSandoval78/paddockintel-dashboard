@@ -4,18 +4,26 @@ import type { LearningTerm } from '@/app/[locale]/(blog)/magazine-home/data';
 
 // Fourth piece of the magazine-home redesign discussion (AI Weekly's
 // "Learning AI" module) — teases the existing glossary, doesn't duplicate it.
-export default async function LearningPanel({ terms }: { terms: LearningTerm[] }) {
+export default async function LearningPanel({
+  terms,
+  compact = false,
+}: {
+  terms: LearningTerm[];
+  /** Module-grid tile rendering — no outer section border/padding (the
+   * page-level row supplies those) and a fixed-size heading. */
+  compact?: boolean;
+}) {
   if (terms.length === 0) return null;
   const t = await getTranslations('magazine.learning');
 
-  return (
-    <section className="py-10 md:py-14 border-t border-border">
-      <h2
-        className="font-display uppercase text-text-1 tracking-[-0.02em] mb-6"
-        style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}
-      >
-        {t('title')}
-      </h2>
+  const heading = (
+    <h2 className={`font-display uppercase text-text-1 tracking-[-0.02em] mb-6 ${compact ? 'text-2xl' : ''}`} style={compact ? undefined : { fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}>
+      {t('title')}
+    </h2>
+  );
+
+  const body = (
+    <>
       <div className="flex flex-col divide-y divide-border-subtle border-t border-b border-border-subtle">
         {terms.map((term) => (
           <Link
@@ -38,6 +46,22 @@ export default async function LearningPanel({ terms }: { terms: LearningTerm[] }
       >
         {t('seeAll')} →
       </Link>
+    </>
+  );
+
+  if (compact) {
+    return (
+      <div>
+        {heading}
+        {body}
+      </div>
+    );
+  }
+
+  return (
+    <section className="py-10 md:py-14 border-t border-border">
+      {heading}
+      {body}
     </section>
   );
 }
