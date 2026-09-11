@@ -69,7 +69,7 @@ export default async function RaceHighlightsPanel({ highlights }: RaceHighlights
           {t('title')}
         </h2>
         {highlights.raceName && (
-          <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 shrink-0">
+          <span className="font-mono text-sm uppercase tracking-[0.06em] text-text-1 shrink-0">
             {highlights.raceName}
           </span>
         )}

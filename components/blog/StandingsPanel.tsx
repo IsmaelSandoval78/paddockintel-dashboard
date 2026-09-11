@@ -38,15 +38,15 @@ export default async function StandingsPanel({ drivers, constructors, compact = 
   if (compact) {
     return (
       <div>
-        <div className="flex items-baseline justify-between mb-6">
-          <h2 className="font-display uppercase text-text-1 tracking-[-0.02em]" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}>
+        <div className="mb-6">
+          <h2 className="font-display uppercase text-text-1 tracking-[-0.02em] text-2xl">
             {t('title')}
           </h2>
           <a
             href="https://hub.paddockintel.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-terracotta transition-colors duration-150 shrink-0"
+            className="inline-block mt-2 font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-terracotta transition-colors duration-150"
           >
             {t('cta')} →
           </a>
