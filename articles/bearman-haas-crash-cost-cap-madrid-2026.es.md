@@ -5,7 +5,7 @@ locale: es
 meta_description: "El choque de Bearman en FP3 le costó la clasificación en Madrid. Haas ya admitió que no llega al tope de $215M — la reparación golpea un presupuesto corto."
 status: published
 paywalled: false
-published_at: "2026-09-12"
+published_at: "2026-09-12T14:30:00+00:00"
 translation_group_id: "1acc964e-762e-4d81-b829-5ab3ac7858f0"
 tags: ["team-finance", "regulations", "race-weekend-economics"]
 

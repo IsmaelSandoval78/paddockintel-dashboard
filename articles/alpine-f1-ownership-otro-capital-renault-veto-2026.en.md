@@ -5,7 +5,7 @@ locale: en
 meta_description: "Otro Capital's Alpine lock-up expired Sept 8. The real fight is Renault's Article 39 veto — not the $3.2B valuation Briatore claims."
 status: published
 paywalled: false
-published_at: "2026-09-12"
+published_at: "2026-09-12T09:15:00+00:00"
 translation_group_id: "ce010d39-76a0-495c-a26e-645eac4fc366"
 tags: ["team-valuations", "team-finance", "economics"]
 

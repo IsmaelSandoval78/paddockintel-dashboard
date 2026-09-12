@@ -5,7 +5,7 @@ locale: es
 meta_description: "Ben Sulayem quiere a BYD y Geely en la F1, pero en sus términos. Esos términos: una cuota de entrada que subió de $200M al $450M de Cadillac — y sigue."
 status: published
 paywalled: false
-published_at: "2026-09-12"
+published_at: "2026-09-12T11:00:00+00:00"
 translation_group_id: "0e1dafc5-6c93-46f9-a382-16b2132dba69"
 tags: ["regulations", "team-finance", "economics"]
 

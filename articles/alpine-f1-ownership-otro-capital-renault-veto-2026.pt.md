@@ -5,7 +5,7 @@ locale: pt
 meta_description: "O lock-up da Otro Capital na Alpine venceu em 8 de setembro. A briga real é o veto do Artigo 39 da Renault — não a avaliação de US$ 3,2 bi de Briatore."
 status: published
 paywalled: false
-published_at: "2026-09-12"
+published_at: "2026-09-12T09:15:00+00:00"
 translation_group_id: "ce010d39-76a0-495c-a26e-645eac4fc366"
 tags: ["team-valuations", "team-finance", "economics"]
 

@@ -5,7 +5,7 @@ locale: en
 meta_description: "Norris beat Antonelli to Madrid pole by 0.011s — while McLaren has the smallest aero-testing allocation of any team in F1 this season."
 status: published
 paywalled: false
-published_at: "2026-09-12"
+published_at: "2026-09-12T18:00:00+00:00"
 translation_group_id: "83ab2775-04e5-4f10-a8b6-7994469db188"
 tags: ["mclaren", "race-analysis", "regulations"]
 

@@ -5,7 +5,7 @@ locale: es
 meta_description: "Norris le ganó la pole a Antonelli por 0.011s en Madrid — con McLaren teniendo la asignación de pruebas aerodinámicas más baja de toda la F1 esta temporada."
 status: published
 paywalled: false
-published_at: "2026-09-12"
+published_at: "2026-09-12T18:00:00+00:00"
 translation_group_id: "83ab2775-04e5-4f10-a8b6-7994469db188"
 tags: ["mclaren", "race-analysis", "regulations"]
 

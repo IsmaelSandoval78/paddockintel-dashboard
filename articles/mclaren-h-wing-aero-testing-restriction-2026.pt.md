@@ -5,7 +5,7 @@ locale: pt
 meta_description: "A McLaren guardou sua asa H rotativa em Madri para usar em Baku — resultado direto do limite de testes aerodinâmicos que pune o campeão vigente."
 status: published
 paywalled: false
-published_at: "2026-09-12"
+published_at: "2026-09-12T09:00:00+00:00"
 translation_group_id: "0e1edd2e-eabc-4b2d-a4a6-bc87eb5d6781"
 tags: ["mclaren", "regulations", "operational-strategy"]
 

@@ -5,7 +5,7 @@ locale: en
 meta_description: "Bearman's FP3 crash cost him Madrid qualifying. Haas already can't hit F1's $215M cap — the repair comes out of a budget that's already short."
 status: published
 paywalled: false
-published_at: "2026-09-12"
+published_at: "2026-09-12T14:30:00+00:00"
 translation_group_id: "1acc964e-762e-4d81-b829-5ab3ac7858f0"
 tags: ["team-finance", "regulations", "race-weekend-economics"]
 

@@ -5,7 +5,7 @@ locale: en
 meta_description: "Ben Sulayem wants BYD and Geely in on F1's terms. Those terms: an entry fee that's already climbed from $200M to Cadillac's $450M — and rising."
 status: published
 paywalled: false
-published_at: "2026-09-12"
+published_at: "2026-09-12T11:00:00+00:00"
 translation_group_id: "0e1dafc5-6c93-46f9-a382-16b2132dba69"
 tags: ["regulations", "team-finance", "economics"]
 

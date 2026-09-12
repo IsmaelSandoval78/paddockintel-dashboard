@@ -5,7 +5,7 @@ locale: es
 meta_description: "DAZN aseguró los derechos de F1 en España, Portugal y Andorra hasta 2030 durante el debut de Madrid — antes de que se termine de medir la demanda real."
 status: published
 paywalled: false
-published_at: "2026-09-12"
+published_at: "2026-09-12T11:15:00+00:00"
 translation_group_id: "9584f25a-8e3e-406e-b259-cbee51ffb62d"
 tags: ["economics", "europe", "motorsport-business"]
 

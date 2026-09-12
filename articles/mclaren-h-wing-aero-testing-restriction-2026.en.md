@@ -5,7 +5,7 @@ locale: en
 meta_description: "McLaren skipped its rotating H-wing at Madrid to save it for Baku — a direct result of F1's aero testing cap punishing the reigning champion."
 status: published
 paywalled: false
-published_at: "2026-09-12"
+published_at: "2026-09-12T09:00:00+00:00"
 translation_group_id: "0e1edd2e-eabc-4b2d-a4a6-bc87eb5d6781"
 tags: ["mclaren", "regulations", "operational-strategy"]
 

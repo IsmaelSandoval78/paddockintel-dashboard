@@ -5,7 +5,7 @@ locale: es
 meta_description: "McLaren guardó su ala H rotativa en Madrid para usarla en Bakú — resultado directo del límite de pruebas aerodinámicas que castiga al campeón vigente."
 status: published
 paywalled: false
-published_at: "2026-09-12"
+published_at: "2026-09-12T09:00:00+00:00"
 translation_group_id: "0e1edd2e-eabc-4b2d-a4a6-bc87eb5d6781"
 tags: ["mclaren", "regulations", "operational-strategy"]
 

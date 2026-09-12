@@ -5,7 +5,7 @@ locale: pt
 meta_description: "A batida de Bearman no TL3 custou a classificação em Madri. A Haas já admitiu que não chega ao teto de US$ 215M — o conserto pesa num orçamento curto."
 status: published
 paywalled: false
-published_at: "2026-09-12"
+published_at: "2026-09-12T14:30:00+00:00"
 translation_group_id: "1acc964e-762e-4d81-b829-5ab3ac7858f0"
 tags: ["team-finance", "regulations", "race-weekend-economics"]
 

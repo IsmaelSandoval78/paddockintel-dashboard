@@ -5,7 +5,7 @@ locale: en
 meta_description: "DAZN locked in F1 rights in Spain, Portugal and Andorra through 2030 during Madrid's debut weekend — before either market's F1 demand is fully priced."
 status: published
 paywalled: false
-published_at: "2026-09-12"
+published_at: "2026-09-12T11:15:00+00:00"
 translation_group_id: "9584f25a-8e3e-406e-b259-cbee51ffb62d"
 tags: ["economics", "europe", "motorsport-business"]
 
