@@ -82,6 +82,15 @@ export function markdownToHtml(markdown: string): string {
       continue;
     }
 
+    const img = line.match(/^!\[(.*?)\]\((.+?)\)$/);
+    if (img) {
+      const [, alt, src] = img;
+      if (src.startsWith('/') || src.startsWith('https://')) {
+        out.push(`<figure><img src="${src}" alt="${alt.replace(/"/g, '&quot;')}" loading="lazy" /></figure>`);
+      }
+      i++; continue;
+    }
+
     if (line.match(/^[•\-] /)) {
       const items: string[] = [];
       while (i < lines.length && lines[i].match(/^[•\-] /)) {
