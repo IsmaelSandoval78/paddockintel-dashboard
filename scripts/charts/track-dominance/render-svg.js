@@ -20,6 +20,13 @@
 // counts. Always pass the real codes explicitly.
 
 const fs = require('fs');
+// Resolved from the repo root's node_modules — sharp ships there already as
+// a transitive dep of next/image (see docs/DEPENDENCY-SECURITY.md), not
+// added specifically for this script. Only used to rasterize the two SVGs
+// to PNG for contexts that reject SVG (schema.org `image`/`publisher.logo`
+// want JPEG/PNG/WebP per Google's own Article structured-data guidance,
+// and og:image previews are more reliably rendered as PNG too).
+const sharp = require('sharp');
 const d = require('./dominance-data.json');
 const corners = require('./corners.json');
 const dc = require('./delta-curve.json');
@@ -113,6 +120,18 @@ const trackSvg = `<svg viewBox="${vbX} ${vbY} ${vbW} ${vbH}" xmlns="http://www.w
 fs.writeFileSync('track-map.svg', trackSvg);
 console.log(`wrote track-map.svg — ${nameA} faster in ${winsA}/${segments.length}, ${nameB} in ${winsB}/${segments.length}`);
 
+// PNG export, real aspect ratio preserved (no forced crop) — width 1200 to
+// clear Google's recommended minimum for Top Stories/Discover article images.
+const pngWidth = 1200;
+const svgAspect = vbH / vbW;
+sharp(Buffer.from(trackSvg), { density: 300 })
+  .resize({ width: pngWidth, height: Math.round(pngWidth * svgAspect) })
+  .flatten({ background: '#EDE3D0' }) // PNG has no alpha channel to fall back on like the SVG's implicit transparency
+  .png()
+  .toFile('track-map.png')
+  .then(() => console.log('wrote track-map.png'))
+  .catch((err) => console.error('track-map.png FAILED — ', err.message));
+
 // ---- Gap-over-distance chart ----
 const grid = dc.grid, delta = dc.delta, n = grid.length;
 const W = 1200, H = 260, padL = 60, padR = 20, padT = 20, padB = 40;
@@ -170,3 +189,11 @@ const gapSvg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" 
 
 fs.writeFileSync('gap-chart.svg', gapSvg);
 console.log('wrote gap-chart.svg');
+
+sharp(Buffer.from(gapSvg), { density: 300 })
+  .resize({ width: pngWidth, height: Math.round(pngWidth * (H / W)) })
+  .flatten({ background: '#EDE3D0' })
+  .png()
+  .toFile('gap-chart.png')
+  .then(() => console.log('wrote gap-chart.png'))
+  .catch((err) => console.error('gap-chart.png FAILED — ', err.message));

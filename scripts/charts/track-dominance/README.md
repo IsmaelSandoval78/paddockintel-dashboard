@@ -20,8 +20,21 @@ node render-svg.js ANT LEC Antonelli Leclerc 90 flipX
 ```
 
 `extract-telemetry.py` writes three JSON files; `render-svg.js` reads them
-and writes `track-map.svg` + `gap-chart.svg`. Copy those into
-`public/charts/<slug>-track-dominance.svg` and `<slug>-gap-over-distance.svg`.
+and writes `track-map.svg` + `gap-chart.svg`, **plus a PNG rasterization of
+each** (`track-map.png`, `gap-chart.png` — via `sharp`, resolved from the
+repo root's `node_modules`, not a dependency added for this script). Copy
+the SVGs into `public/charts/<slug>-track-dominance.svg` and
+`<slug>-gap-over-distance.svg` for the in-article embed (crisp, scalable,
+tiny). Copy `track-map.png` (usually the more visually distinctive of the
+two) into the same folder and set it as the article's `cover_image_url`
+frontmatter field — schema.org's `image`/`publisher.logo` and social
+previews want JPEG/PNG/WebP, not SVG, so the SVG alone won't satisfy
+Google's Article structured-data image requirement (Top Stories/Discover
+eligibility) even though it renders fine embedded in the page body.
+Without this, the article's schema `image` silently falls back to the
+site-wide generic card (`app/opengraph-image.tsx`) instead of the real,
+unique chart — a real piece with real data deserves its own image there,
+not the brand placeholder.
 
 ## Two real bugs found building the first one — read before reusing this
 
@@ -114,5 +127,11 @@ Track Dominance Map — <Session> <Year>, <Circuit>: <Driver A> vs <Driver B>
    before writing any caption about who was ahead
 4. Copy track-map.svg / gap-chart.svg into public/charts/<slug>-*.svg
 5. Embed via ![alt](/charts/...) + an italic caption paragraph, in both
-   locale .md files, re-ingest, verify on the live page before calling it done
+   locale .md files
+6. Copy track-map.png into public/charts/<slug>-track-dominance.png, set it
+   as `cover_image_url: "/charts/<slug>-track-dominance.png"` in each
+   locale's frontmatter
+7. Re-ingest, verify on the live page (chart renders) AND in the page's
+   NewsArticle JSON-LD (`image` points at the PNG, not the generic
+   opengraph-image fallback) before calling it done
 ```
