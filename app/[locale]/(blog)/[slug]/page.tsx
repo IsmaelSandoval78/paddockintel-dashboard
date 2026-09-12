@@ -82,10 +82,15 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
     }
   }
 
+  const ogImage =
+    (article.cover_image_url as string | null) ?? `https://paddockintel.com/api/og/article/${locale}/${slug}`;
+
   return {
     title: `${article.title as string} — PaddockIntel`,
     description: (article.meta_description as string) ?? undefined,
     alternates: Object.keys(alternates).length ? { languages: alternates } : undefined,
+    openGraph: { images: [ogImage] },
+    twitter: { card: 'summary_large_image', images: [ogImage] },
   };
 }
 
@@ -133,7 +138,7 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
     '@type': 'NewsArticle',
     headline: title,
     datePublished: publishedAt,
-    image: (article.cover_image_url as string | null) ?? 'https://hub.paddockintel.com/opengraph-image',
+    image: (article.cover_image_url as string | null) ?? `https://paddockintel.com/api/og/article/${locale}/${slug}`,
     author: { '@type': 'Person', name: 'Ismael Sandoval', url: 'https://hub.paddockintel.com/about' },
     publisher: {
       '@type': 'Organization',
