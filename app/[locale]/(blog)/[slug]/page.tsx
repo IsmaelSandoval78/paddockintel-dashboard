@@ -32,7 +32,7 @@ async function getArticle(locale: string, slug: string, isDraft: boolean) {
 
   let query = supabase
     .from('articles')
-    .select('id, title, meta_description, body_markdown, published_at, translation_group_id, paywalled')
+    .select('id, title, meta_description, body_markdown, published_at, translation_group_id, paywalled, cover_image_url')
     .eq('locale', locale)
     .eq('slug', slug);
 
@@ -133,8 +133,14 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
     '@type': 'NewsArticle',
     headline: title,
     datePublished: publishedAt,
+    image: (article.cover_image_url as string | null) ?? 'https://hub.paddockintel.com/opengraph-image',
     author: { '@type': 'Person', name: 'Ismael Sandoval', url: 'https://hub.paddockintel.com/about' },
-    publisher: { '@type': 'Organization', name: 'PaddockIntel', url: 'https://hub.paddockintel.com' },
+    publisher: {
+      '@type': 'Organization',
+      name: 'PaddockIntel',
+      url: 'https://hub.paddockintel.com',
+      logo: { '@type': 'ImageObject', url: 'https://hub.paddockintel.com/opengraph-image' },
+    },
     url: pageUrl,
     ...(article.meta_description ? { description: article.meta_description as string } : {}),
   };
