@@ -72,5 +72,11 @@ export default function middleware(request: NextRequest) {
 
 export const config = {
   runtime: 'experimental-edge',
-  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)']
+  // icon/apple-icon/opengraph-image/twitter-image are Next.js's special
+  // metadata-route files (app/icon.tsx etc.) — they resolve to URLs with no
+  // file extension, same as any real page, so without this exclusion the
+  // catch-all below sends them through next-intl's locale routing and it
+  // 404s them (confirmed: /icon redirected to /icon/ and 404'd until this
+  // was added).
+  matcher: ['/((?!api|_next|_vercel|icon|apple-icon|opengraph-image|twitter-image|.*\\..*).*)']
 };
