@@ -28,7 +28,7 @@ function MoverBar({ mover, maxAbsDelta }: { mover: RaceHighlightMover; maxAbsDel
   const color = up ? 'var(--green)' : 'var(--terracotta)';
 
   return (
-    <div className="neu-row grid grid-cols-[1fr_auto] items-center gap-4 py-2 px-3 mb-2 border-b border-border-subtle last:border-b-0 last:mb-0">
+    <div className="grid grid-cols-[1fr_auto] items-center gap-4 py-2 border-b border-border-subtle last:border-b-0">
       <div>
         <div className="flex items-center gap-2 mb-1.5">
           <span className="w-2 h-2 shrink-0" style={{ backgroundColor: teamColor(mover.constructor_ref) }} />

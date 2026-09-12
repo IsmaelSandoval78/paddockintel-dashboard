@@ -38,7 +38,7 @@ export default function ArticlePreviewCard({
   const tagHref = `${locale === 'en' ? '/' : `/${locale}/`}?tag=${encodeURIComponent(tag?.slug ?? '')}`;
 
   return (
-    <article className="neu-card border border-border p-6 flex flex-col h-full">
+    <article className="border border-border p-6 flex flex-col h-full">
       <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-text-2 mb-3">
         {tag && (
           <a href={tagHref} className="hover:text-terracotta transition-colors duration-150">

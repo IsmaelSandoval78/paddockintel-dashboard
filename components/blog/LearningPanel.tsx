@@ -24,12 +24,12 @@ export default async function LearningPanel({
 
   const body = (
     <>
-      <div className="flex flex-col gap-2 border-t border-b border-border-subtle py-2">
+      <div className="flex flex-col divide-y divide-border-subtle border-t border-b border-border-subtle">
         {terms.map((term) => (
           <Link
             key={term.slug}
             href={`/glossary/${term.slug}`}
-            className="neu-row group py-3 px-3 flex flex-col md:flex-row md:items-baseline gap-1 md:gap-6"
+            className="group py-4 flex flex-col md:flex-row md:items-baseline gap-1 md:gap-6"
           >
             <span className="font-prose font-semibold text-text-1 group-hover:text-terracotta transition-colors duration-150 md:w-56 shrink-0">
               {term.term}
