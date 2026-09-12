@@ -893,9 +893,15 @@
     "kicker": "PaddockIntel Feed",
     "title": "F1 News Today",
     "description": "Every verified story from PaddockIntel's newsletter research, in one running feed — cited sources, our own analysis, no wire-service copy.",
+    "editedBy": "Edited by Ismael Sandoval",
+    "about": "About →",
     "mostMentioned": "Most mentioned this week",
     "noItems": "No stories yet.",
-    "readSource": "Read source →",
+    "originallyReportedBy": "Originally reported by {source}",
+    "readOriginal": "Read the original article →",
+    "editorsNote": "Editor's note",
+    "editorsTake": "Editor's take",
+    "ourBrief": "Our full brief →",
     "scoreHint": "The number beside each story = how many other stories this week touch the same entity — a real signal, not a vote count."
   }
 }

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, getFormatter } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { weeklyEntityCounts } from '@/lib/entityMentions';
+import { Link } from '@/lib/i18n/navigation';
 
 export const revalidate = 3600;
 
@@ -13,6 +14,9 @@ type FeedItem = {
   our_summary: string;
   entity_tags: string[];
   published_at: string;
+  editor_note: string | null;
+  editor_take: string | null;
+  internal_link_slug: string | null;
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -31,7 +35,9 @@ async function getItems(): Promise<FeedItem[]> {
 
   const { data } = await supabase
     .from('digest_items')
-    .select('id, source_name, source_url, headline, our_summary, entity_tags, published_at')
+    .select(
+      'id, source_name, source_url, headline, our_summary, entity_tags, published_at, editor_note, editor_take, internal_link_slug'
+    )
     .in('issue_id', issueIds)
     .order('published_at', { ascending: false });
   return (data ?? []) as FeedItem[];
@@ -73,6 +79,15 @@ export default async function FeedPage() {
           {t('title')}
         </h1>
         <p className="font-prose text-text-2 leading-relaxed max-w-lg mt-3">{t('description')}</p>
+
+        <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 mt-4">
+          {t('editedBy')}
+          <span className="text-text-3"> · </span>
+          <Link href="/about" className="hover:text-terracotta transition-colors duration-150">
+            {t('about')}
+          </Link>
+        </p>
+
         <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 mt-4">{t('scoreHint')}</p>
 
         {mentioned.length > 0 && (
@@ -145,6 +160,33 @@ export default async function FeedPage() {
                       {item.our_summary}
                     </p>
 
+                    {item.editor_note && (
+                      <p
+                        className="text-text-2 leading-relaxed mt-3"
+                        style={{ fontFamily: 'var(--pi-sans)', fontSize: '0.875rem', lineHeight: '1.65' }}
+                      >
+                        <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-1 mr-1.5">
+                          {t('editorsNote')}:
+                        </span>
+                        {item.editor_note}
+                      </p>
+                    )}
+
+                    {item.editor_take && (
+                      <p
+                        className="text-text-2 leading-relaxed mt-3"
+                        style={{ fontFamily: 'var(--pi-sans)', fontSize: '0.875rem', lineHeight: '1.65' }}
+                      >
+                        <span
+                          className="font-mono text-[10px] uppercase tracking-[0.08em] mr-1.5"
+                          style={{ color: 'var(--terracotta)' }}
+                        >
+                          {t('editorsTake')}:
+                        </span>
+                        {item.editor_take}
+                      </p>
+                    )}
+
                     <div className="flex items-center justify-between mt-3 flex-wrap gap-2">
                       {item.entity_tags.length > 0 && (
                         <div className="flex flex-wrap gap-1.5">
@@ -158,16 +200,30 @@ export default async function FeedPage() {
                           ))}
                         </div>
                       )}
-                      <a
-                        href={item.source_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-mono text-[10px] uppercase tracking-[0.1em] hover:underline ml-auto"
+                      <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 ml-auto">
+                        {t('originallyReportedBy', { source: item.source_name })}
+                        <span> · </span>
+                        <a
+                          href={item.source_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:underline"
+                          style={{ color: 'var(--terracotta)' }}
+                        >
+                          {t('readOriginal')}
+                        </a>
+                      </p>
+                    </div>
+
+                    {item.internal_link_slug && (
+                      <Link
+                        href={`/${item.internal_link_slug}`}
+                        className="block font-mono text-[10px] uppercase tracking-[0.1em] hover:underline mt-2 text-right"
                         style={{ color: 'var(--terracotta)' }}
                       >
-                        {t('readSource')}
-                      </a>
-                    </div>
+                        {t('ourBrief')}
+                      </Link>
+                    )}
                   </div>
                 </div>
               </li>

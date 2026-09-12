@@ -884,9 +884,15 @@
     "kicker": "PaddockIntel Feed",
     "title": "Notícias de F1 Hoje",
     "description": "Cada história verificada da pesquisa do newsletter da PaddockIntel, em um único feed contínuo — fontes citadas, análise própria, sem copiar de agências.",
+    "editedBy": "Editado por Ismael Sandoval",
+    "about": "Sobre →",
     "mostMentioned": "Mais mencionados esta semana",
     "noItems": "Ainda não há histórias.",
-    "readSource": "Ler fonte →",
+    "originallyReportedBy": "Reportado originalmente por {source}",
+    "readOriginal": "Ler o artigo original →",
+    "editorsNote": "Nota do editor",
+    "editorsTake": "Análise do editor",
+    "ourBrief": "Nossa nota completa →",
     "scoreHint": "O número ao lado de cada história = quantas outras histórias desta semana tocam a mesma entidade — um sinal real, não uma contagem de votos."
   }
 }
