@@ -4,7 +4,7 @@
 
 ## Stack
 
-Next.js 16 (App Router, Turbopack) · TypeScript · Tailwind v4 · Supabase (Postgres + Ergast dataset) · Vercel · next-intl (EN/ES/PT)
+Next.js 16 (App Router, Turbopack) · TypeScript · Tailwind v4 · Supabase (Postgres + Ergast dataset) · Cloudflare Workers (OpenNext) · next-intl (EN/ES/PT)
 
 ## Getting started
 
@@ -35,7 +35,15 @@ don't skip the file (it's the only record of what changed and why).
 
 ## Deploy
 
-Currently auto-deploys to **Vercel** on push to `main`. A migration to Cloudflare
-Workers (OpenNext adapter) is decided and technically ready (see
-`docs/CLOUDFLARE-MIGRATION.md`) but the production domain has **not** cut over yet —
-confirm current status in `docs/ROADMAP-SEMANA.md` before assuming either platform.
+Production runs on **Cloudflare Workers** (OpenNext adapter) — `hub.paddockintel.com`,
+`paddockintel.com`, and `www.paddockintel.com` cut over 2026-09-09/10 and have been
+stable since (see `docs/CLOUDFLARE-MIGRATION.md`). Pushing to `main` triggers
+`.github/workflows/deploy-cloudflare.yml`, which runs `opennextjs-cloudflare deploy
+--rclone` — it skips docs/articles/digest-only pushes (`paths-ignore`) since those
+don't touch the Worker's code.
+
+**Vercel is not decorative — don't disconnect it.** It still auto-deploys on push and
+runs the daily digest cron (`vercel.json` → `/api/digest/send`), in parallel with an
+equivalent cron trigger on the Cloudflare Worker (`wrangler.jsonc`). Both are
+idempotent (guarded by `sent_at IS NULL`), so having both running doesn't double-send
+— but removing Vercel without replacing that cron path first would break the digest.
