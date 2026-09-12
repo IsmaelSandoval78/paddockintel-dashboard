@@ -7,7 +7,7 @@ status: published
 paywalled: false
 published_at: "2026-09-12T18:00:00+00:00"
 translation_group_id: "83ab2775-04e5-4f10-a8b6-7994469db188"
-tags: ["mclaren", "race-analysis", "regulations"]
+tags: ["mclaren", "race-analysis", "regulations", "featured"]
 
 stats:
   - value: "0.011s"
