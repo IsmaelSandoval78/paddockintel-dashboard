@@ -5,6 +5,7 @@ locale: es
 meta_description: "Norris le ganó la pole a Antonelli por 0.011s en Madrid — con McLaren teniendo la asignación de pruebas aerodinámicas más baja de toda la F1 esta temporada."
 status: published
 paywalled: false
+cover_image_url: "https://hub.paddockintel.com/charts/madrid-quali-2026-norris-antonelli-track-dominance.png"
 published_at: "2026-09-12T18:00:00+00:00"
 translation_group_id: "83ab2775-04e5-4f10-a8b6-7994469db188"
 tags: ["mclaren", "race-analysis", "regulations", "featured"]
@@ -41,6 +42,24 @@ sources:
 Lando Norris consiguió la pole position del Gran Premio de España 2026 con un 1:31.824, superando a Kimi Antonelli por apenas 0.011 segundos —su tercera pole de la temporada y la 19ª de su carrera. "Estoy en shock, un poco sorprendido de estar acá ahora, pero por Dios que fue probablemente una de las mejores vueltas que hice en mi carrera," dijo Norris después.
 
 Max Verstappen clasificó tercero, a 0.140s de la pole. Ferrari se quedó con el cuarto y quinto puesto con Lewis Hamilton y Charles Leclerc. George Russell apenas pudo ser sexto con Mercedes, y Oscar Piastri metió al segundo McLaren en el séptimo lugar —dos autos del equipo entre los primeros siete en un circuito que nadie en la parrilla había corrido antes.
+
+![Mapa de dominancia de pista: vueltas de clasificación de Norris vs Antonelli, Madring, coloreado según quién fue más rápido en cada tramo de pista, con marcadores reales de zonas de frenada](/charts/madrid-quali-2026-norris-antonelli-track-dominance.png)
+
+*Norris (papaya, 1:31.824) vs Antonelli (verde azulado, 1:31.835) —Norris más rápido en 20 de los 32 segmentos de pista, Antonelli en 12. Los puntos numerados son zonas de frenada reales detectadas por telemetría, no números oficiales de curva.*
+
+![Diferencia de tiempo acumulada entre Norris y Antonelli a lo largo de sus vueltas de clasificación, Madring](/charts/madrid-quali-2026-norris-antonelli-gap-over-distance.png)
+
+*Norris abrió hasta 0.38 segundos de ventaja en la mitad de la vuelta —el último sector de Antonelli recuperó casi todo, dejando el margen en apenas 0.011 segundos en la meta.*
+
+La misma división aparece entre los dos Mercedes. Russell le ganó a Antonelli en más tramos de la vuelta en ritmo puro, pero no le alcanzó para cerrar la diferencia que lo dejó tercero en la tabla de tiempos en vez de segundo.
+
+![Mapa de dominancia de pista: vueltas de clasificación de Antonelli vs Russell, Madring, coloreado según quién fue más rápido en cada tramo de pista, con marcadores reales de zonas de frenada](/charts/madrid-quali-2026-antonelli-russell-track-dominance.png)
+
+*Antonelli (verde azulado, 1:31.835) vs Russell (azul marino, 1:32.149) —Russell más rápido en 19 de los 32 segmentos de pista, Antonelli en 13. Los puntos numerados son zonas de frenada reales detectadas por telemetría, no números oficiales de curva.*
+
+![Diferencia de tiempo acumulada entre Antonelli y Russell a lo largo de sus vueltas de clasificación, Madring](/charts/madrid-quali-2026-antonelli-russell-gap-over-distance.png)
+
+*Antonelli abrió una ventaja de hasta 0.39 segundos y sostuvo casi toda, terminando 0.314 segundos por delante de su compañero pese a que Russell ganó más segmentos en ritmo puro.*
 
 ## Por Qué Pasó
 

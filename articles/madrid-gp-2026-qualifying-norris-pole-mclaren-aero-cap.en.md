@@ -5,6 +5,7 @@ locale: en
 meta_description: "Norris beat Antonelli to Madrid pole by 0.011s — while McLaren has the smallest aero-testing allocation of any team in F1 this season."
 status: published
 paywalled: false
+cover_image_url: "https://hub.paddockintel.com/charts/madrid-quali-2026-norris-antonelli-track-dominance.png"
 published_at: "2026-09-12T18:00:00+00:00"
 translation_group_id: "83ab2775-04e5-4f10-a8b6-7994469db188"
 tags: ["mclaren", "race-analysis", "regulations", "featured"]
@@ -41,6 +42,24 @@ sources:
 Lando Norris took pole position for the 2026 Spanish Grand Prix with a 1:31.824, beating Kimi Antonelli by just 0.011 seconds — his third pole of the season and the 19th of his career. "I'm shocked, I'm a little bit surprised to be here now, but my god it was probably one of the best laps I've done ever in my career," Norris said afterward.
 
 Max Verstappen qualified third, 0.140s off pole. Ferrari locked out fourth and fifth with Lewis Hamilton and Charles Leclerc. George Russell could only manage sixth for Mercedes, and Oscar Piastri put the second McLaren seventh — giving the team two cars in the top seven on a circuit nobody on the grid has raced before.
+
+![Track dominance map: Norris vs Antonelli fastest qualifying laps, Madring, colored by which driver was faster through each stretch of track, with real braking-zone markers](/charts/madrid-quali-2026-norris-antonelli-track-dominance.png)
+
+*Norris (papaya, 1:31.824) vs Antonelli (teal, 1:31.835) — Norris faster through 20 of 32 track segments, Antonelli through 12. Numbered points are real braking zones detected from car telemetry, not official corner numbers.*
+
+![Cumulative time gap between Norris and Antonelli over the course of their qualifying laps, Madring](/charts/madrid-quali-2026-norris-antonelli-gap-over-distance.png)
+
+*Norris opened as much as 0.38 seconds through the middle of the lap — Antonelli's final sector clawed back nearly all of it, with the margin down to just 0.011 seconds at the line.*
+
+The same split shows up between the two Mercedes. Russell actually beat Antonelli through more of the lap on raw pace, but it wasn't enough to close the gap that put him third on the timesheet instead of second.
+
+![Track dominance map: Antonelli vs Russell fastest qualifying laps, Madring, colored by which driver was faster through each stretch of track, with real braking-zone markers](/charts/madrid-quali-2026-antonelli-russell-track-dominance.png)
+
+*Antonelli (teal, 1:31.835) vs Russell (navy, 1:32.149) — Russell faster through 19 of 32 track segments, Antonelli through 13. Numbered points are real braking zones detected from car telemetry, not official corner numbers.*
+
+![Cumulative time gap between Antonelli and Russell over the course of their qualifying laps, Madring](/charts/madrid-quali-2026-antonelli-russell-gap-over-distance.png)
+
+*Antonelli built a lead of up to 0.39 seconds and held nearly all of it, finishing 0.314 seconds clear of his teammate despite Russell winning more segments on raw pace.*
 
 ## Why It Happened
 
