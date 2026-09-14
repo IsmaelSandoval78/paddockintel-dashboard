@@ -21,6 +21,9 @@ type DigestItem = {
   our_summary: string;
   entity_tags?: string[];
   published_at?: string;
+  editor_note?: string | null;
+  editor_take?: string | null;
+  internal_link_slug?: string | null;
 };
 
 type DigestIssue = {
@@ -66,7 +69,12 @@ async function main() {
   console.log(`Issue upserted: ${issue.slug} (id: ${issueId})`);
 
   // Delete existing items for this issue (full replace on re-ingest)
-  await supabase.from('digest_items').delete().eq('issue_id', issueId);
+  const { error: deleteErr } = await supabase.from('digest_items').delete().eq('issue_id', issueId);
+
+  if (deleteErr) {
+    console.error('Delete of existing items failed, aborting before insert to avoid duplicates:', deleteErr.message);
+    process.exit(1);
+  }
 
   // Insert items
   const rows = issue.items.map((item) => ({
@@ -77,6 +85,9 @@ async function main() {
     our_summary: item.our_summary,
     entity_tags: item.entity_tags ?? [],
     published_at: item.published_at ?? issue.published_at,
+    editor_note: item.editor_note ?? null,
+    editor_take: item.editor_take ?? null,
+    internal_link_slug: item.internal_link_slug ?? null,
   }));
 
   const { error: itemsErr } = await supabase.from('digest_items').insert(rows);
