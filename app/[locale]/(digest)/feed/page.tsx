@@ -29,7 +29,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 async function getItems(): Promise<FeedItem[]> {
   const supabase = createClient();
-  const { data: issues } = await supabase.from('digest_issues').select('id').eq('series', 'newsletter');
+  const { data: issues } = await supabase
+    .from('digest_issues')
+    .select('id')
+    .eq('series', 'newsletter')
+    .eq('status', 'published');
   const issueIds = (issues ?? []).map((i) => i.id as string);
   if (issueIds.length === 0) return [];
 
