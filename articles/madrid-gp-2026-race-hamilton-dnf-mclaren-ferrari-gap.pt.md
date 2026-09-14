@@ -7,7 +7,7 @@ status: published
 paywalled: false
 published_at: "2026-09-13T20:00:00+00:00"
 translation_group_id: "72c1d37c-bfce-4cf0-b32d-89623140a787"
-tags: ["ferrari", "mclaren", "race-analysis"]
+tags: ["ferrari", "mclaren", "race-analysis", "featured"]
 
 stats:
   - value: "101"
