@@ -58,7 +58,14 @@ export default function FeaturedArticleCard({
         <Link href={`/${slug}`} className="group block">
           {imageUrl && (
             <div className="relative aspect-square w-full overflow-hidden border border-border">
-              <Image src={imageUrl} alt="" fill sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover" />
+              {/* unoptimized: this project's only next/image usage today, and its
+                  source is a dynamic route handler (the OG card), not a static
+                  asset — the Next.js image optimizer's own upstream fetch to that
+                  route 404s on this Cloudflare/OpenNext deploy ("upstream response
+                  is invalid"), confirmed against production, even though the route
+                  itself serves a real PNG when hit directly. The route already
+                  outputs a fixed 1200x630 size, so there's nothing to optimize. */}
+              <Image src={imageUrl} alt="" fill unoptimized sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover" />
             </div>
           )}
 
