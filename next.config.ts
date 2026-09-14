@@ -5,6 +5,9 @@ const withNextIntl = createNextIntlPlugin('./lib/i18n/request.ts');
 
 const nextConfig: NextConfig = {
   trailingSlash: true,
+  // Lets the dev server accept requests forwarded through GitHub Codespaces'
+  // preview domain, which is a different origin than localhost.
+  allowedDevOrigins: ['*.app.github.dev'],
   images: {
     remotePatterns: [
       {
