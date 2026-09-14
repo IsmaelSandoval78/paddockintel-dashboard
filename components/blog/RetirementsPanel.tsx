@@ -62,7 +62,12 @@ export default async function RetirementsPanel({ retirements }: RetirementsPanel
                 </span>
               </div>
               <span className="font-mono text-[11px] text-text-3 tabular-nums shrink-0">
-                {t('lap', { lap: r.lap })} · {r.status}
+                {/* lap 0 means the loader didn't record a real lap count for this
+                    race (confirmed: every driver in it shows laps=0, not just
+                    retirees) -- showing it would read as "retired before lap 1",
+                    which is never true. Status alone is still real, shown either way. */}
+                {r.lap > 0 ? `${t('lap', { lap: r.lap })} · ` : ''}
+                {r.status}
               </span>
             </div>
           ))}
