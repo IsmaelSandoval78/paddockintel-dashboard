@@ -8,6 +8,8 @@ import FeaturedArticleCard from '@/components/blog/FeaturedArticleCard';
 import NewsletterCard from '@/components/blog/NewsletterCard';
 import StandingsPanel from '@/components/blog/StandingsPanel';
 import RaceHighlightsPanel from '@/components/blog/RaceHighlightsPanel';
+import RaceDayFastestPanel from '@/components/blog/RaceDayFastestPanel';
+import RetirementsPanel from '@/components/blog/RetirementsPanel';
 import MostCoveredPanel from '@/components/blog/MostCoveredPanel';
 import LearningPanel from '@/components/blog/LearningPanel';
 import TrackByTeamPanel from '@/components/blog/TrackByTeamPanel';
@@ -143,7 +145,7 @@ export default async function MagazineHomePage({
   const [standings, raceHighlights, mostCovered, dataDeskArticles, learningTerms, teamTags, circuit] =
     frontPageExtras ?? [
       { drivers: [], constructors: [] },
-      { raceName: '', gainers: [], fallers: [], maxAbsDelta: 0 },
+      { raceName: '', gainers: [], fallers: [], maxAbsDelta: 0, fastestLap: null, fastestPit: null, retirements: [] },
       null,
       [],
       [],
@@ -245,11 +247,21 @@ export default async function MagazineHomePage({
           </section>
         )}
 
-        {/* Race Day Movers (grid→finish, real single-race drama) — Standings
-            now lives up in Band 3, beside the Featured square. */}
-        {(raceHighlights.gainers.length > 0 || raceHighlights.fallers.length > 0) && (
+        {/* Last race, in full: fastest lap + fastest pit up top (narrower,
+            centered — they're two facts, not two full columns), Race Day
+            Movers and Retirements below as the two full-width columns.
+            Standings lives up in Band 3, beside the Featured square. */}
+        {(raceHighlights.gainers.length > 0 ||
+          raceHighlights.fallers.length > 0 ||
+          raceHighlights.fastestLap ||
+          raceHighlights.fastestPit ||
+          raceHighlights.retirements.length > 0) && (
           <div className="border-t border-b border-border py-12 md:py-16">
-            <RaceHighlightsPanel highlights={raceHighlights} />
+            <RaceDayFastestPanel fastestLap={raceHighlights.fastestLap} fastestPit={raceHighlights.fastestPit} />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 mt-12 pt-12 border-t border-border-subtle">
+              <RaceHighlightsPanel highlights={raceHighlights} />
+              <RetirementsPanel retirements={raceHighlights.retirements} />
+            </div>
           </div>
         )}
 

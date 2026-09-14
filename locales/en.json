@@ -755,6 +755,15 @@
     "raceHighlights": {
       "title": "Race Day Movers"
     },
+    "fastestFacts": {
+      "lap": "Fastest Lap",
+      "pit": "Fastest Pit Stop"
+    },
+    "retirements": {
+      "title": "Retirements",
+      "none": "Clean race — everyone finished.",
+      "lap": "Lap {lap}"
+    },
     "circuit": {
       "kicker": "Circuit Intelligence",
       "round": "Round {round}",

@@ -755,6 +755,15 @@
     "raceHighlights": {
       "title": "Movimientos del Día de Carrera"
     },
+    "fastestFacts": {
+      "lap": "Vuelta Más Rápida",
+      "pit": "Parada en Pits Más Rápida"
+    },
+    "retirements": {
+      "title": "Abandonos",
+      "none": "Carrera limpia — todos terminaron.",
+      "lap": "Vuelta {lap}"
+    },
     "circuit": {
       "kicker": "Inteligencia del Circuito",
       "round": "Ronda {round}",

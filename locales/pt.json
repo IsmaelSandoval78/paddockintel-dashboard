@@ -755,6 +755,15 @@
     "raceHighlights": {
       "title": "Movimentos do Dia de Corrida"
     },
+    "fastestFacts": {
+      "lap": "Volta Mais Rápida",
+      "pit": "Pit Stop Mais Rápido"
+    },
+    "retirements": {
+      "title": "Abandonos",
+      "none": "Corrida limpa — todos terminaram.",
+      "lap": "Volta {lap}"
+    },
     "circuit": {
       "kicker": "Inteligência do Circuito",
       "round": "Rodada {round}",
