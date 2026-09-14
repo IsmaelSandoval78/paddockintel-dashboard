@@ -34,13 +34,14 @@ interface HomeExperienceProps {
   formGuideData: HomeFormGuideData;
   seasonShapeData: HomeSeasonShapeData;
   championshipGapData: HomeChampionshipGapData;
+  leaderPodiumsSeason: number;
   round: number;
   year: number;
 }
 
 export default function HomeExperience({
   nextRace, lastRace, topDrivers, streaksData,
-  formGuideData, seasonShapeData, championshipGapData,
+  formGuideData, seasonShapeData, championshipGapData, leaderPodiumsSeason,
   round, year,
 }: HomeExperienceProps) {
   // motionOk = no reduced-motion preference. isMobile = coarse pointer.
@@ -111,7 +112,16 @@ export default function HomeExperience({
     <main className="bg-bg">
 
       {leader && (
-        <Hero leader={leader} round={round} year={year} motionOk={motionOk} isMobile={isMobile} />
+        <Hero
+          leader={leader}
+          round={round}
+          year={year}
+          motionOk={motionOk}
+          isMobile={isMobile}
+          gapToP2={championshipGapData.driver}
+          seasonPodiums={leaderPodiumsSeason}
+          seasonRaces={seasonShapeData.totalRaces}
+        />
       )}
 
       <MiBoxStrip />

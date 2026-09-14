@@ -33,6 +33,7 @@ async function getHomeData(): Promise<{
   formGuideData: import('@/lib/types').HomeFormGuideData;
   seasonShapeData: import('@/lib/types').HomeSeasonShapeData;
   championshipGapData: import('@/lib/types').HomeChampionshipGapData;
+  leaderPodiumsSeason: number;
 }> {
   const supabase = createClient();
   const today = new Date().toISOString().slice(0, 10);
@@ -476,6 +477,17 @@ async function getHomeData(): Promise<{
       },
     ];
   });
+
+  // Leader's season podium count — reuses podiums2026Res (already fetched for the
+  // season-wide podium set), scoped to the current championship leader only. Deliberately
+  // not reusing HomeDriverRow.podiums here: that field is career-wide (driver_stats),
+  // same scope as win_rate's documented "career wins / career races" — a season claim
+  // needs a season-scoped count, not the career one.
+  const leaderId = topDrivers[0]?.driver_id ?? null;
+  const leaderPodiumsSeason =
+    leaderId !== null
+      ? podium2026DriverIds.filter((id) => id === leaderId).length
+      : 0;
 
   // ── Assemble next race ───────────────────────────────────────────
   const lastWinnerConstructorId = lastWinnerResult?.constructor_id ?? null;
@@ -927,6 +939,7 @@ async function getHomeData(): Promise<{
     formGuideData,
     seasonShapeData,
     championshipGapData,
+    leaderPodiumsSeason,
   };
 }
 
@@ -935,7 +948,7 @@ async function getHomeData(): Promise<{
 export default async function HomePage() {
   const {
     nextRace, topDrivers, lastRaceData, currentRound, currentYear,
-    streaksData, formGuideData, seasonShapeData, championshipGapData,
+    streaksData, formGuideData, seasonShapeData, championshipGapData, leaderPodiumsSeason,
   } = await getHomeData();
 
   return (
@@ -947,6 +960,7 @@ export default async function HomePage() {
       formGuideData={formGuideData}
       seasonShapeData={seasonShapeData}
       championshipGapData={championshipGapData}
+      leaderPodiumsSeason={leaderPodiumsSeason}
       round={currentRound ?? 0}
       year={currentYear ?? 2026}
     />

@@ -7,7 +7,7 @@ import { gsap } from 'gsap';
 import { SplitText } from 'gsap/SplitText';
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 import { teamColor } from './teamColors';
-import type { HomeDriverRow } from '@/lib/types';
+import type { HomeDriverRow, HomeChampionshipGapData } from '@/lib/types';
 
 gsap.registerPlugin(SplitText, ScrambleTextPlugin);
 
@@ -19,9 +19,14 @@ interface HeroProps {
   year: number;
   motionOk: boolean;
   isMobile: boolean;
+  gapToP2: HomeChampionshipGapData['driver'];
+  seasonPodiums: number;
+  seasonRaces: number;
 }
 
-export default function Hero({ leader, round, year, motionOk, isMobile }: HeroProps) {
+export default function Hero({
+  leader, round, year, motionOk, isMobile, gapToP2, seasonPodiums, seasonRaces,
+}: HeroProps) {
   const t = useTranslations('hub');
   const rootRef      = useRef<HTMLElement>(null);
   const metaRef      = useRef<HTMLParagraphElement>(null);
@@ -33,6 +38,7 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
   const ptsRef       = useRef<HTMLSpanElement>(null);
   const winsRef      = useRef<HTMLSpanElement>(null);
   const polesRef     = useRef<HTMLSpanElement>(null);
+  const gapRef       = useRef<HTMLSpanElement>(null);
   const cueRef       = useRef<HTMLDivElement>(null);
 
   const color = teamColor(leader.constructor_ref);
@@ -87,11 +93,12 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
           { y: 28, autoAlpha: 0 },
           { y: 0, autoAlpha: 1, duration: 0.7, ease: 'power3.out', delay: 0.55 },
         );
-        const nums = { pts: 0, wins: 0, poles: 0 };
+        const nums = { pts: 0, wins: 0, poles: 0, gap: 0 };
         gsap.to(nums, {
           pts:   leader.points,
           wins:  leader.wins,
           poles: leader.poles_2026,
+          gap:   gapToP2?.gap ?? 0,
           duration: 1.8,
           ease: 'expo.out',
           delay: 0.6,
@@ -99,6 +106,7 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
             if (ptsRef.current)   ptsRef.current.textContent   = String(Math.round(nums.pts));
             if (winsRef.current)  winsRef.current.textContent  = String(Math.round(nums.wins));
             if (polesRef.current) polesRef.current.textContent = String(Math.round(nums.poles));
+            if (gapRef.current && gapToP2) gapRef.current.textContent = '+' + String(Math.round(nums.gap));
           },
         });
 
@@ -301,13 +309,39 @@ export default function Hero({ leader, round, year, motionOk, isMobile }: HeroPr
                 </span>
               </div>
 
-              <div className="ml-auto hidden md:flex flex-col items-end gap-1 pb-1">
+              <div className="ml-auto hidden md:flex flex-col items-end gap-2 pb-1">
                 <span
                   className="font-mono text-[9px] uppercase tracking-[0.16em] px-2 py-1 leading-none"
                   style={{ background: color, color: 'var(--bg)' }}
                 >
                   P1 · CHAMPIONSHIP LEADER
                 </span>
+
+                {gapToP2 && (
+                  <div className="text-right">
+                    <span
+                      ref={gapRef}
+                      className="tabular-nums leading-none block"
+                      style={{
+                        fontFamily:    'var(--pi-display)',
+                        fontSize:      'clamp(22px, 3vw, 40px)',
+                        letterSpacing: '-0.02em',
+                        color:         color,
+                      }}
+                    >
+                      +{gapToP2.gap}
+                    </span>
+                    <span className="font-mono text-[8px] text-text-3 uppercase tracking-[0.16em] block mt-1">
+                      PTS GAP · {gapToP2.p2.surname}
+                    </span>
+                  </div>
+                )}
+
+                {seasonRaces > 0 && (
+                  <span className="font-mono text-[9px] text-text-2 uppercase tracking-[0.12em]">
+                    {seasonPodiums}/{seasonRaces} PODIUMS THIS SEASON
+                  </span>
+                )}
               </div>
             </div>
           </div>
