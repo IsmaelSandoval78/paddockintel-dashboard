@@ -14,6 +14,13 @@ import { createClient } from '@/lib/supabase/server';
 // handler's URL is exactly what we write here -- no surprises.
 
 export const size = { width: 1200, height: 630 };
+// Same card, taller canvas -- for the magazine-home Featured square, which
+// wraps this in an aspect-square box. Reusing the 1200x630 size there
+// center-crops the sides off (confirmed against production: it cut the "1"
+// off "101" and the "4" off "54"), because the layout spreads to the full
+// landscape width. The OG/social-share size above must stay 1200x630 -- that
+// ratio is what Twitter/Facebook/schema.org expect for a link unfurl.
+const squareSize = { width: 1200, height: 1200 };
 
 type Stat = { value: string; label: string; unit?: string };
 
@@ -49,10 +56,12 @@ function BrandCard() {
 }
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ locale: string; slug: string }> }
 ) {
   const { locale, slug } = await params;
+  const isSquare = new URL(request.url).searchParams.get('square') === '1';
+  const activeSize = isSquare ? squareSize : size;
   const supabase = createClient();
   const { data } = await supabase
     .from('articles')
@@ -67,7 +76,7 @@ export async function GET(
   const second = stats[1];
 
   if (!hero) {
-    return new ImageResponse(<BrandCard />, { ...size });
+    return new ImageResponse(<BrandCard />, { ...activeSize });
   }
 
   // Two stats side by side is the default whenever the article has both —
@@ -107,7 +116,7 @@ export async function GET(
           </div>
         </div>
       ),
-      { ...size }
+      { ...activeSize }
     );
   }
 
@@ -144,6 +153,6 @@ export async function GET(
         ) : null}
       </div>
     ),
-    { ...size }
+    { ...activeSize }
   );
 }
