@@ -18,7 +18,7 @@ apilarse.
 |---|---|---|
 | 1. Cloudflare | **CORTE REAL COMPLETO Y ESTABLE 9-10 sep — los 3 dominios sirviendo desde el Worker de Cloudflare, plan Paid.** Intento anterior (8-9 sep) reveló el límite real de CPU del plan Free (10ms/request, error 1102) tras ~64 min; revertido con evidencia, documentado en `docs/CLOUDFLARE-MIGRATION.md`. Reintentado 9-10 sep con canario (`hub` solo) en Free primero (para tener el dato real), luego Ismael upgradeó a **Workers Paid** ($5/mes) — confirmado activo en el dashboard real. Con Paid confirmado, se sumaron `paddockintel.com`/`www` al Worker (mismo patrón que `hub`). Verificado con `dig`/`curl` reales: los 3 dominios en 200/308, `server: cloudflare`, HSTS, redirect apex→www, datos reales de Supabase. Monitoreo de salud corriendo cada ~25-30 min. **Redeploy automatizado 10 sep, verificado de punta a punta** (`.github/workflows/deploy-cloudflare.yml`, ver `docs/CLOUDFLARE-MIGRATION.md`). Primer intento falló (403 AccessDenied en R2 — el R2 API Token viejo se había creado el 27 ago bajo la cuenta ajena `dbf60dad...`, nunca tuvo permiso real sobre el bucket de la cuenta correcta); Ismael generó un token R2 nuevo scopeado a `paddockintel-isr-cache` en la cuenta correcta, actualizó los secrets, reintentó vía `workflow_dispatch` → corrida completa en verde, `hub.paddockintel.com` verificado 200 post-deploy | Ninguno bloqueante — pendiente no urgente: rotar `CLOUDFLARE_API_TOKEN` a los 90 días (fecha de creación 10 sep 2026, próxima rotación ~9 dic 2026) |
 | 2. Blog/estructura | Maduro — tags relacionales, race_id, glosario con capas, `/about` conectado. **10 sep: 5 piezas nuevas en `magazine-home`** inspiradas en aiweekly.co (signup combinado, score real del Feed, "Most Covered This Week", teaser "Learning F1", tag cloud "Track by team") — ver sección propia más abajo | Ninguno bloqueante |
-| 3. Newsletter | Pipeline automatizado real (`generate_digest_draft.py`), Vol.06 publicado. **Corrección 9 sep: "gap vol-03/vol-04" no era real** — esas semanas se re-clasificaron como `recap-01`/`recap-02` a propósito (ver issues #1/#2 en GitHub), la numeración viva del newsletter no tiene hueco. **Serie Recap pausada 9 sep, foco en contenido nuevo** — ver sección "Recaps retroactivos — pausados" más abajo. **10 sep: `CRON_SECRET` desactualizado (66 días) bloqueaba el cron diario del digest en Vercel — encontrado, rotado y sincronizado; y `/api/subscribe` ahora manda un email de bienvenida real en la primera suscripción** — ver sección "Email de bienvenida + fix de CRON_SECRET" más abajo | Ninguno bloqueante |
+| 3. Newsletter | Pipeline automatizado real (`generate_digest_draft.py`), Vol.06 publicado. **Corrección 9 sep: "gap vol-03/vol-04" no era real** — esas semanas se re-clasificaron como `recap-01`/`recap-02` a propósito (ver issues #1/#2 en GitHub), la numeración viva del newsletter no tiene hueco. **Serie Recap pausada 9 sep, foco en contenido nuevo** — ver sección "Recaps retroactivos — pausados" más abajo. **10 sep: `CRON_SECRET` desactualizado (66 días) bloqueaba el cron diario del digest en Vercel — encontrado, rotado y sincronizado; y `/api/subscribe` ahora manda un email de bienvenida real en la primera suscripción** — ver sección "Email de bienvenida + fix de CRON_SECRET" más abajo. **14 sep: cadencia decidida — economics Lun/Mié/Vie + data jueves (1x/semana), y gap real encontrado en `/feed` (sin filtro `status`, a diferencia de `/weekly`)** — ver sección "Cadencia del Digest" al final del documento, nada de esto implementado todavía | Pendiente implementar: series `economics`/`data` en `digest_issues`, fix del filtro `status` en `/feed` |
 | 4. Who's Who | 19/34 voces con pick real. **Linkeado del nav 5 sep** — ruta promovida de `/whos-who-preview` (noindex) a `/whos-who` real, indexable, con metadata/i18n propios | 3 cuentas curadas sin servir (Piola/Slater/Davidson) |
 | 5. Feed | MVP construido, reusa `digest_items`, localizado. **Linkeado del nav 5 sep** | Ninguno bloqueante |
 | 6. Cuentas de usuario | **Completo de punta a punta — código + verificación real, confirmado con clic real en producción el 8-9 sep 2026.** Backend (Supabase Auth, schema + RLS, sesión compartida `paddockintel.com`/`hub.paddockintel.com`) y UI real de login (`AuthWidget.tsx`, dropdown desktop + mobile, Google + magic link) ambos verificados end-to-end. Critique Gate: **5/5**. **Deuda de Mi Box resuelta 8 sep** — ver sección "Reconciliación Mi Box ↔ cuentas" más abajo | Ninguno bloqueante |
@@ -2057,3 +2057,59 @@ default) — las 3 locales, desktop y mobile, y la página `/whos-who` mostrando
 punta a punta. Confirmado también en producción tras el deploy. `tsc`/`eslint` limpios.
 
 **Commit:** `c35f761`.
+
+## Cadencia del Digest: economics Lun/Mié/Vie + data jueves (decidido 14 sep 2026)
+
+**Estado: decidido con Ismael, cero código todavía.** Contexto: sesión de curación manual
+del `/feed` (4 noticias reales del fin de semana del Madring — Motorsport.com, verificadas
+con WebSearch/WebFetch, no inventadas) llevó a aclarar la diferencia real entre `/feed` y
+`/weekly`, y de ahí a la pregunta de si separar el newsletter por vertical.
+
+**Diferencia real entre `/feed` y `/weekly` (aclarada esta sesión, no era obvia):** ambas
+leen la misma tabla (`digest_items`/`digest_issues`, `series='newsletter'`). `/feed` es el
+wire corrido — todos los items de todos los issues, sin filtrar por `status`. `/weekly` es
+la edición armada — un `digest_issue` por fila, sí filtra `.eq('status', 'published')`, y
+cada uno linkea a `/weekly/[issue-slug]` con el `intro_synthesis` que ata los items de esa
+semana.
+
+**Gap real encontrado al aclarar esto, no bloqueante pero real:** `/feed`
+(`app/[locale]/(digest)/feed/page.tsx`) no tiene `.eq('status', 'published')` en su query —
+a diferencia de `/weekly`. Cualquier `digest_issue` ingestado con `status: 'draft'` va a
+aparecer igual en `/feed` (el `draft` solo bloquea el cron de email y la página del issue
+semanal, no el feed corrido). Pendiente de decidir si se corrige antes de ingestar
+contenido nuevo o si se acepta el comportamiento actual.
+
+**Decisión de producto (Ismael, no propuesta por Claude):** separar el newsletter semanal
+por vertical en vez de un solo issue mixto:
+- **Economics** — el vertical existente (Vol.01-08), sigue Lunes/Miércoles/Viernes.
+- **Data** — vertical nuevo (ver paso 7, Qualifying Pace Delta), un solo issue semanal, **jueves**.
+
+**Por qué 1x/semana para data y no la misma cadencia que economics:** evaluado explícitamente
+el trade-off de contenido — EDITORIAL.md exige que la curación de cada issue sea manual (nunca
+automatizada del todo, es donde se diluye el EEAT), y DATA-EXPERT.md exige metodología pública
+por cada métrica nueva antes de citarla. 3x/semana × 2 verticales = 6 issues verificados a mano
+por semana no es sostenible todavía con un solo vertical de data recién arrancado (una sola
+métrica en producción, Qualifying Pace Delta). 1x/semana para data da margen para acumular
+volumen real sin forzar contenido de relleno.
+
+**Nada de esto implementado todavía.** Pendiente real antes de la primera edición de data:
+- Agregar `economics`/`data` como valores válidos de `digest_issues.series` (hoy solo
+  `newsletter`/`recap` existen en código — no hay constraint de DB confirmado, revisar antes
+  de asumir que cualquier string pasa).
+- `generate_digest_draft.py` soporta hoy `--series recap` explícito; falta el mismo tipo de
+  flag para generar un issue de `data` (Jueves) vs. el default de `economics` (Lun/Mié/Vie).
+- Decidir si `/weekly` necesita una vista/filtro por vertical o si conviven en la misma lista
+  con una etiqueta visual.
+- El cron de email (`app/api/digest/send`) manda lo que esté `published` — confirmar que no
+  hace falta lógica nueva ahí, solo issues nuevos con `series` distinto.
+- Corregir el gap de `status` en `/feed` (arriba) — decisión pendiente de si se hace antes o
+  junto con esto.
+
+**Digest de items del feed, misma sesión:** 4 items redactados a mano para
+`digests/vol-08-week-2026-09-14.json` (Madring: cambios de trazado prometidos, Honda
+reemplaza al jefe de motores de Aston Martin, "who slept worst" de Sainz reformulado con el
+riesgo real de su rol de embajador pago, y la defensa de Red Bull de la orden a Verstappen) —
+`status: "draft"`, todavía sin ingestar a Supabase (pendiente de que Ismael confirme, dado el
+gap de `/feed` arriba). `scripts/ingest-digest.ts` estaba desalineado con el schema desde la
+migración de Editor's Note/Take (`20260911210000`) — no escribía `editor_note`/`editor_take`/
+`internal_link_slug` — corregido en esta sesión para que el script sí los escriba.
