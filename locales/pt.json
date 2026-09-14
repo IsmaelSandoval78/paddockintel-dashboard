@@ -753,7 +753,8 @@
       "constructorFaller": "Maior Queda · Construtores"
     },
     "raceHighlights": {
-      "title": "Movimentos do Dia de Corrida"
+      "title": "Movimentos do Dia de Corrida",
+      "lastRace": "Última Corrida"
     },
     "fastestFacts": {
       "lap": "Volta Mais Rápida",

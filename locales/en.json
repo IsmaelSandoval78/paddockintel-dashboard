@@ -753,7 +753,8 @@
       "constructorFaller": "Biggest Fall · Constructors"
     },
     "raceHighlights": {
-      "title": "Race Day Movers"
+      "title": "Race Day Movers",
+      "lastRace": "Last Race"
     },
     "fastestFacts": {
       "lap": "Fastest Lap",

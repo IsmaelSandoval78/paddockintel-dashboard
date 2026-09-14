@@ -61,19 +61,12 @@ export default async function RaceHighlightsPanel({ highlights }: RaceHighlights
 
   return (
     <div>
-      <div className="flex items-baseline justify-between mb-6">
-        <h2
-          className="font-display uppercase text-text-1 tracking-[-0.02em]"
-          style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}
-        >
-          {t('title')}
-        </h2>
-        {highlights.raceName && (
-          <span className="font-mono text-sm uppercase tracking-[0.06em] text-text-1 shrink-0">
-            {highlights.raceName}
-          </span>
-        )}
-      </div>
+      <h2
+        className="font-display uppercase text-text-1 tracking-[-0.02em] mb-6"
+        style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}
+      >
+        {t('title')}
+      </h2>
       <div>
         {highlights.gainers.map((m) => (
           <MoverBar key={`g-${m.driver_id}`} mover={m} maxAbsDelta={highlights.maxAbsDelta} />

@@ -257,6 +257,19 @@ export default async function MagazineHomePage({
           raceHighlights.fastestPit ||
           raceHighlights.retirements.length > 0) && (
           <div className="border-t border-b border-border py-12 md:py-16">
+            {raceHighlights.raceName && (
+              <div className="text-center mb-10">
+                <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-text-2 mb-2">
+                  {t('raceHighlights.lastRace')}
+                </p>
+                <h2
+                  className="font-display uppercase text-text-1 tracking-[-0.02em]"
+                  style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}
+                >
+                  {raceHighlights.raceName}
+                </h2>
+              </div>
+            )}
             <RaceDayFastestPanel fastestLap={raceHighlights.fastestLap} fastestPit={raceHighlights.fastestPit} />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 mt-12 pt-12 border-t border-border-subtle">
               <RaceHighlightsPanel highlights={raceHighlights} />

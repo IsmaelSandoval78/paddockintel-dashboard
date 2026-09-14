@@ -396,7 +396,7 @@ export async function getRaceHighlights(limit = 3): Promise<RaceHighlights> {
     supabase.from('races').select('name').eq('id', currentRaceId).single(),
     supabase
       .from('results')
-      .select('driver_id, constructor_id, grid, position, position_text, laps, rank, fastest_lap_time, status_id')
+      .select('driver_id, constructor_id, grid, position, laps, rank, fastest_lap_time, status_id')
       .eq('race_id', currentRaceId),
     supabase
       .from('pit_stops')
@@ -414,7 +414,6 @@ export async function getRaceHighlights(limit = 3): Promise<RaceHighlights> {
     constructor_id: number;
     grid: number | null;
     position: number | null;
-    position_text: string;
     laps: number | null;
     rank: number | null;
     fastest_lap_time: string | null;
@@ -476,8 +475,20 @@ export async function getRaceHighlights(limit = 3): Promise<RaceHighlights> {
         }
       : null;
 
+  // position_text is NOT 'R' for a retirement in this dataset -- a driver
+  // who retires after covering enough distance still gets classified with a
+  // numeric position (confirmed against the Spanish GP: Sainz/Pérez/Stroll/
+  // Hamilton all show numeric position_text with status 'Retired'). The
+  // real signal is status: anything but "Finished" or "+N Lap(s)" (lapped,
+  // still classified as finishing) is a genuine retirement -- matches
+  // DATA-EXPERT.md's warning that status_id, not position_text, is what
+  // actually distinguishes a DNF here.
+  const LAPPED_STATUS_RE = /^\+\d+ Laps?$/;
   const retirements = allResults
-    .filter((r) => r.position_text === 'R')
+    .filter((r) => {
+      const statusText = statusMap.get(r.status_id) ?? '';
+      return statusText !== 'Finished' && !LAPPED_STATUS_RE.test(statusText);
+    })
     .flatMap((r) => {
       const d = driverMap.get(r.driver_id);
       if (!d) return [];
