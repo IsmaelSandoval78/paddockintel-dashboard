@@ -1,0 +1,173 @@
+{
+  "slug": "vol-08-week-2026-09-11",
+  "published_at": "2026-09-11",
+  "status": "draft",
+  "intro_synthesis": "This week's stories turn on who actually controls Formula 1's money and reputation, not who's fastest on track. Otro Capital's lock-up on its Alpine stake finally expired, exposing a 4x return in just over three years and reopening the question of who Renault will let buy in. Madrid's debut Grand Prix showed the split-screen economics of a new market — €20,000 rental listings and a €467 million growth estimate sitting on top of a €48M-a-year hosting fee the promoter, not the landlord, actually pays — and drew criticism sharp enough that organisers promised FIA-recommended layout changes before the fee's second year is even banked. Honda swapping its power-unit technical lead mid-season, and a brand ambassador's scoreless weekend at the exact circuit he's paid to promote, are the same logic playing out in personnel and sponsorship terms instead of ownership stakes. The FIA's posture toward BYD (\"come back with a serious offer\"), its hedge on a shortened 2026 calendar, and Red Bull's cost-benefit math on Verstappen's position swap all point the same direction: growth and risk get allocated on F1's terms, with the cost landing on whoever signed the contract, not on Liberty Media or the FIA.",
+  "items": [
+    {
+      "source_name": "ESPN",
+      "source_url": "https://www.espn.com/racing/f1/story/_/id/49932658/madring-f1-debut-left-everyone-dissatisfied-even-spanish-gp-top-three-kimi-antonelli-max-verstappen-lando-norris",
+      "headline": "Madring's Debut Left Even the Podium Unimpressed",
+      "our_summary": "All three podium finishers had reason to feel the result didn't reflect the day: Antonelli said Norris deserved the win, and ESPN reports the paddock had been wary the new circuit's layout would make overtaking difficult — which is largely how the race played out. The result stood; the reception to how it got there didn't match it.",
+      "entity_tags": ["Madring", "Kimi Antonelli", "Max Verstappen", "Lando Norris"],
+      "published_at": "2026-09-13T17:00:00+00:00",
+      "editor_note": "A circuit that produces a hard-to-pass race isn't just a Sunday complaint — it's a design question F1 and IFEMA Madrid now have nine more years to answer.",
+      "editor_take": "Madrid signed a 10-year, roughly €48M-a-year hosting deal on the promise of a marquee new venue — a debut race even the winner wasn't happy with is exactly the kind of early review that shapes whether that fee looks justified three or four years in.",
+      "internal_link_slug": "madrid-gp-2026-economic-impact"
+    },
+    {
+      "source_name": "Crash.net",
+      "source_url": "https://www.crash.net/f1/news/1104683/1/racing-gods-were-us-toto-wolff-concedes-fortunate-madrid-f1-win",
+      "headline": "Wolff: 'The Race God Was With Us' in Madrid",
+      "our_summary": "Mercedes team principal Toto Wolff credited timing, not pace, for Antonelli's win: \"Today, the race god was with us, and we were able to literally pull him in when the VSC came out.\" It's an unusually direct admission from a team boss that a result their own driver won wasn't fully earned on merit.",
+      "entity_tags": ["Toto Wolff", "Mercedes", "Kimi Antonelli"],
+      "published_at": "2026-09-13T15:00:00+00:00",
+      "editor_note": "Team principals rarely concede a win was lucky in public — Wolff naming it directly is the more interesting story than the win itself.",
+      "editor_take": "Mercedes doesn't need to pretend every win is deserved with an 81-point drivers' lead over Russell already banked — the honesty costs them nothing this deep into a season they're already winning.",
+      "internal_link_slug": "madrid-gp-2026-race-hamilton-dnf-mclaren-ferrari-gap"
+    },
+    {
+      "source_name": "Formula1.com",
+      "source_url": "https://www.formula1.com/en/latest/article/spain-lowdown-all-the-key-moments-as-antonelli-wins-again-after-norris-denied-by-vsc.6SviC74tjh4ndbhnkBmKAR",
+      "headline": "Antonelli Wins Madrid as a Late VSC Costs Norris the Race",
+      "our_summary": "Norris built more than a five-second lead before a Virtual Safety Car for Lance Stroll's stopped car let Antonelli, Verstappen, and Russell pit cheaply. Norris was one corner from the pit entry when the VSC ended, forcing a green-flag stop and a slow 7-second tire change that dropped him to fifth before he recovered to third. Antonelli won by 4.3 seconds — his eighth win of the season — and admitted afterward: \"I think today it's good to win, but it doesn't feel as good, because I think Lando today deserved the win.\"",
+      "entity_tags": ["Kimi Antonelli", "Lando Norris", "Mercedes", "McLaren", "Lance Stroll"],
+      "published_at": "2026-09-13T14:00:00+00:00",
+      "editor_note": "Our own race-day piece framed this win as the expected outcome of Antonelli's season-long dominance — the deciding factor was actually pit-stop timing under a VSC neither driver controlled, which the winner himself said should have gone the other way.",
+      "editor_take": "The luck at the front doesn't change the constructors' math underneath it: McLaren scored with both cars regardless of who took the win, and that's still what moved its gap to Ferrari.",
+      "internal_link_slug": "madrid-gp-2026-race-hamilton-dnf-mclaren-ferrari-gap"
+    },
+    {
+      "source_name": "Sky Sports",
+      "source_url": "https://www.skysports.com/f1/news/12433/13583901/charles-leclerc-takes-blame-for-lewis-hamilton-clash-at-monza-after-pair-hold-talks-ahead-of-spanish-grand-prix-in-madrid",
+      "headline": "Charles Leclerc Takes Blame for Lewis Hamilton Clash at Monza After Pair Hold Talks Ahead of Spanish Grand Prix in Madrid",
+      "our_summary": "Leclerc and Hamilton talked through the Monza incident before Madrid and Leclerc accepted responsibility — the fastest, cheapest way for Ferrari to close a distraction before a new-market race weekend already carrying its own costs (an estimated 40-50 million euro hosting fee, per PaddockIntel's earlier reporting). Whether that peace holds past one press conference is the real test; Madrid FP1's near-miss complaints suggest it might not.",
+      "entity_tags": ["Charles Leclerc", "Lewis Hamilton", "Ferrari", "Madrid Grand Prix"],
+      "published_at": "2026-09-11T00:00:00+00:00",
+      "editor_note": "Madrid's hosting fee is confirmed at €48M a year on a 10-year deal — not the ~€40-50M range this story estimates.",
+      "editor_take": "One press conference doesn't undo a season where neither Ferrari driver can afford to give Mercedes free points — the real test is whether that holds once cars are back on track.",
+      "internal_link_slug": "madrid-gp-2026-economic-impact"
+    },
+    {
+      "source_name": "Crash.net",
+      "source_url": "https://www.crash.net/f1/news/1104213/1/nasty-lewis-hamilton-branded-dangerous-f1-rivals-after-madrid-near-misses",
+      "headline": "\"Nasty\" Lewis Hamilton Branded \"Dangerous\" by F1 Rivals After Madrid Near-Misses",
+      "our_summary": "Leclerc, Lindblad, Sainz, and Hulkenberg all complained about blocking incidents from Hamilton in Madrid FP1 — Hulkenberg called it \"just nasty\" — while Hamilton still finished the session P4. Coming three days after the Monza clash with his own teammate, it is a second data point on the same question: whether Ferrari's title-fight math can survive Hamilton's reputation with the rest of the grid, not just with Leclerc.",
+      "entity_tags": ["Lewis Hamilton", "Charles Leclerc", "Arvid Lindblad", "Carlos Sainz", "Nico Hulkenberg", "Ferrari"],
+      "published_at": "2026-09-11T00:00:00+00:00",
+      "editor_note": "Four separate complaints landed in one free-practice session — worth naming as a small sample, not a pattern yet.",
+      "editor_take": "Whether this becomes a stewarding pattern, and therefore a points or prize-money question, isn't something one FP1 session can tell us.",
+      "internal_link_slug": null
+    },
+    {
+      "source_name": "The Race",
+      "source_url": "https://www.the-race.com/formula-1/byd-has-to-make-serious-offer-to-become-f1s-12th-team/",
+      "headline": "Chinese manufacturer has to make 'serious offer' to join F1",
+      "our_summary": "Ben Sulayem confirmed direct talks with both BYD and Geely over a possible 12th entry, but drew a hard line on terms: any newcomer joins under F1's existing conditions, not the other way around — a pointed response after BYD reportedly declined to simply buy an existing team outright. The timing detail matters more than the headline: he's pointing manufacturers toward F1's 2031 V8 transition as the logical entry window, which pushes any real decision years past this news cycle and leaves the current cost-cap and prize-money split untouched in the meantime.",
+      "entity_tags": ["BYD", "Geely", "Mohammed Ben Sulayem", "FIA"],
+      "published_at": "2026-09-11T00:00:00+00:00",
+      "editor_note": "The real line here is F1's terms, not the fact that talks are happening at all.",
+      "editor_take": "Pointing to F1's 2031 V8 transition as the entry window keeps the current cost cap and prize-money split untouched for five more seasons — worth tracking whether that's a real roadmap or a way to defer a harder negotiation.",
+      "internal_link_slug": "byd-geely-f1-entry-fee-anti-dilution-2026"
+    },
+    {
+      "source_name": "PlanetF1",
+      "source_url": "https://www.planetf1.com/news/martin-brundle-held-fia-stewards-talks-after-rosberg-disagreement",
+      "headline": "Martin Brundle Held FIA Stewards Talks After Rosberg Disagreement",
+      "our_summary": "Brundle stood by his read of the Hamilton-Leclerc Turn 1 clash at Monza even after Nico Rosberg insisted Leclerc was \"100%\" at fault on air, and confirmed with FIA stewards that no further action was taken — first-lap incidents get more leeway under the regs. The real story is what did not happen: no penalty, no points swing, in a season where every position still separates real prize money between constructors.",
+      "entity_tags": ["Lewis Hamilton", "Charles Leclerc", "Martin Brundle", "Nico Rosberg", "FIA", "Ferrari"],
+      "published_at": "2026-09-11T00:00:00+00:00",
+      "editor_note": "First-lap incidents get more regulatory leeway — that's the rule actually being applied here, not a stewarding controversy.",
+      "editor_take": "The story is the absence of a penalty, in a season where every grid position still separates real prize money between constructors.",
+      "internal_link_slug": "audi-tsunoda-appeal-italian-gp-2026"
+    },
+    {
+      "source_name": "Motorsport.com",
+      "source_url": "https://www.motorsport.com/f1/news/ferrari-too-late-to-prioritise-lewis-hamilton-in-f1-title-fight-says-jolyon-palmer/10854528/",
+      "headline": "Ferrari \"Too Late\" to Prioritise Lewis Hamilton in F1 Title Fight, Says Jolyon Palmer",
+      "our_summary": "Palmer's argument: Ferrari missed its window to back Hamilton's title bid, and the Monza collision is the proof — two drivers racing each other instead of cooperating when the team was well-placed. That is a real cost, not a hypothetical one: Mercedes already leads the constructors' championship by 122 points (468 to 346), and every point Ferrari drops to internal battles instead of Mercedes is one it does not get back.",
+      "entity_tags": ["Ferrari", "Lewis Hamilton", "Charles Leclerc", "Jolyon Palmer", "Mercedes-AMG F1"],
+      "published_at": "2026-09-11T00:00:00+00:00",
+      "editor_note": "The 122-point gap is Motorsport.com's reported figure for this story, not independently re-verified against our own standings query.",
+      "editor_take": "The mechanism holds regardless of the exact margin: every point Ferrari drops to an internal battle is a point it doesn't take from Mercedes.",
+      "internal_link_slug": "audi-tsunoda-appeal-italian-gp-2026"
+    },
+    {
+      "source_name": "Euronews",
+      "source_url": "https://www.euronews.com/business/2026/09/10/formula-1-sends-madrid-holiday-rents-soaring-up-to-20000-near-circuit",
+      "headline": "Formula 1 sends Madrid holiday rents soaring: Up to €20,000 near circuit",
+      "our_summary": "Short-term rents in Valdebebas, where Madring sits, have hit €20,000 for a few days — roughly 1,000% over the district's normal weekly rate — and hotel rates citywide are running 147% above the prior week's average. Organizers are framing the weekend as €467 million and 8,850 jobs for the regional economy, a PwC-commissioned figure that does the standard work of justifying a hosting fee reportedly in the €40-50 million range. The gap between those two numbers — a windfall for landlords and hoteliers, a fixed cost for the promoter — is the real economics of a new-market Grand Prix.",
+      "entity_tags": ["Madring", "Madrid Grand Prix", "Spanish Grand Prix", "PwC"],
+      "published_at": "2026-09-10T00:00:00+00:00",
+      "editor_note": "Our own Madrid GP breakdown verifies the promoter's side of this: a €48M-a-year hosting fee on a 10-year deal.",
+      "editor_take": "The gap between that fixed promoter cost and the landlord/hotelier windfall is the real economics of a new-market Grand Prix — the PwC €467M/8,850-jobs figure is built to justify the fee, not to describe it.",
+      "internal_link_slug": "madrid-gp-2026-economic-impact"
+    },
+    {
+      "source_name": "PlanetF1",
+      "source_url": "https://www.planetf1.com/news/otro-capital-alpine-24-percent-stake-key-date",
+      "headline": "Alpine's Ownership Picture Could Be About To Change After Key Date Passes",
+      "our_summary": "Otro Capital's three-year lock-up on its 24% Alpine stake expired September 8, clearing the way for a sale without Renault's consent. The math is what makes it a story: $200 million in June 2023 against a $3.2 billion valuation Flavio Briatore floated in August puts the position at roughly 4x in 39 months, and a $720 million asking price was reportedly already on the table with Mercedes in May. Renault still holds veto rights over specific buyers under Article 39 — the real fight isn't whether Otro Capital sells, it's who it's allowed to sell to.",
+      "entity_tags": ["Alpine", "Otro Capital", "Renault", "Flavio Briatore", "Mercedes", "Christian Horner"],
+      "published_at": "2026-09-10T00:00:00+00:00",
+      "editor_note": "The $3.2B total-company valuation is Briatore's own figure, flagged as such — not independently confirmed.",
+      "editor_take": "The real fight isn't whether Otro Capital sells, it's who Renault's Article 39 veto lets it sell to.",
+      "internal_link_slug": "alpine-f1-ownership-otro-capital-renault-veto-2026"
+    },
+    {
+      "source_name": "PlanetF1",
+      "source_url": "https://www.planetf1.com/news/fia-president-f1-2026-calendar-update",
+      "headline": "FIA President gives F1 2026 calendar update amid uncertainty",
+      "our_summary": "With the Saudi Arabian round already cancelled and Bahrain moved to Malaysia, Domenicali says a call on whether Qatar and Abu Dhabi survive won't come before mid-September, citing the Middle East conflict rather than a scheduling dispute. Ben Sulayem's fallback — ending the season in Europe, with Imola floated as a stand-in — would be the first calendar contraction of the current era rather than an expansion, a real signal for how promoters and broadcasters price geopolitical risk into multi-year hosting contracts going forward.",
+      "entity_tags": ["Mohammed Ben Sulayem", "Stefano Domenicali", "Qatar Grand Prix", "Abu Dhabi Grand Prix", "Imola"],
+      "published_at": "2026-09-10T00:00:00+00:00",
+      "editor_note": "Domenicali cites the Middle East conflict, not a scheduling dispute, as the reason for the delay.",
+      "editor_take": "A European-finish fallback would be the first calendar contraction of the current era, not an expansion — a real signal for how promoters price geopolitical risk into multi-year hosting contracts.",
+      "internal_link_slug": null
+    },
+    {
+      "source_name": "Motorsport.com",
+      "source_url": "https://www.motorsport.com/f1/news/spanish-gp-promises-madring-f1-track-changes-following-criticism/10855761/",
+      "headline": "Spanish GP promises Madring track changes following F1 criticism",
+      "our_summary": "Madring's debut produced a genuinely tight qualifying fight but a near-static race — Verstappen said he couldn't identify a single overtaking opportunity, and Norris singled out Turns 18-19 as pointless, both defending and braking into the same corner. Event managing director Luis Garcia Abad confirmed the FIA has already handed Madrid a specific list of layout changes and that the track will be reprofiled before 2027. That's a fast admission for a circuit three days into what both sides signed as a 10-year hosting deal.",
+      "entity_tags": ["Madring", "Spanish Grand Prix", "FIA", "Lando Norris", "Max Verstappen"],
+      "published_at": "2026-09-14T00:00:00+00:00",
+      "editor_note": "The changes apply to the 2027 race, not a mid-contract retrofit — Madring keeps its current layout for now. Madrid GP replaced the traditional Barcelona-Catalunya calendar slot this year, with Spain now running two Grands Prix in 2026 (see our Madrid GP economics piece).",
+      "editor_take": "Committing to a redesign this fast is a tell: Madrid's organisers are more worried about the race's reputation than the redesign bill. A hosting fee this size only pays off if fans and broadcasters are still watching past the novelty year — a boring debut is exactly the story a brand-new venue can least afford to let stick.",
+      "internal_link_slug": "madrid-gp-2026-economic-impact"
+    },
+    {
+      "source_name": "Motorsport.com",
+      "source_url": "https://www.motorsport.com/f1/news/aston-martin-partner-honda-replaces-f1-power-unit-boss/10855750/",
+      "headline": "Aston Martin partner Honda replaces F1 power unit boss",
+      "our_summary": "Honda is replacing Tetsushi Kakuda, who has led its Aston Martin-bound power unit project, with deputy Yoichiro Fukao effective October 1 — mid-season, not at a program checkpoint. Honda calls it a 'planned transition,' but it lands after Aston Martin took just 3 points through the opening stretch of the 2026 rules reset, and after FIA president Mohammed Ben Sulayem, Lawrence Stroll, and Fernando Alonso reportedly discussed extra support for Honda's program at this same race weekend.",
+      "entity_tags": ["Honda", "Aston Martin", "Tetsushi Kakuda", "Yoichiro Fukao", "Lawrence Stroll"],
+      "published_at": "2026-09-14T00:00:00+00:00",
+      "editor_note": "Honda already received additional development assistance beyond standard protocols in May 2026 — this leadership change is the second intervention in Honda's return season, not the first.",
+      "editor_take": "A factory manufacturer swapping its technical lead mid-season, right after its team's owner and lead driver were in the room discussing extra help, reads less like routine succession than Honda moving before Stroll's and Alonso's patience does. Stroll didn't rebrand the team around Honda's name to finish 10th.",
+      "internal_link_slug": "fernando-alonso-f1-future-2027-salary-negotiation"
+    },
+    {
+      "source_name": "Motorsport.com",
+      "source_url": "https://www.motorsport.com/f1/news/who-slept-worst-last-night-carlos-sainz/10855717/",
+      "headline": "Who slept worst last night: Carlos Sainz",
+      "our_summary": "Sainz retired from Sunday's race after front-tyre contact with Tsunoda damaged his floor, then picked up a five-second penalty for a separate clash with Alonso — a scoreless weekend at the exact circuit where Williams has him signed as Madring's official brand ambassador. His own line afterward: 'Hopefully this is the last year I'm fighting for P16.'",
+      "entity_tags": ["Carlos Sainz", "Williams", "Madring"],
+      "published_at": "2026-09-14T00:00:00+00:00",
+      "editor_note": "Sainz's ambassador role predates this season's form and is a commercial deal, not a performance guarantee — he doesn't control circuit design or Madring's layout.",
+      "editor_take": "The layout isn't Sainz's fault, but a brand-ambassador contract is bought precisely to put a driver's name next to a venue's. This week that pairing read 'retired, P16 pace, no overtaking' in the same 48 hours the track itself drew its harshest reviews — which is the actual commercial risk in tying a sponsorship to a driver whose on-track form he doesn't control either.",
+      "internal_link_slug": null
+    },
+    {
+      "source_name": "Motorsport.com",
+      "source_url": "https://www.motorsport.com/f1/news/red-bull-defends-decision-to-force-max-verstappen-to-give-back-two-positions/10855489/",
+      "headline": "Red Bull defends decision to force Max Verstappen to give back two positions",
+      "our_summary": "Verstappen finished second at Madring, but team principal Laurent Mekies said he couldn't have won anyway — Red Bull ordered him to hand back two positions on lap 4 after he cut a corner defending third from Hamilton and emerged ahead of Antonelli in the process. Mekies's stated reasoning: stewards almost never restore a position, they fine the driver 5-10 seconds instead, and Red Bull judged eating the position loss immediately was cheaper than risking that penalty later.",
+      "entity_tags": ["Red Bull", "Max Verstappen", "Laurent Mekies", "Lewis Hamilton", "Kimi Antonelli"],
+      "published_at": "2026-09-13T00:00:00+00:00",
+      "editor_note": "Verstappen initially resisted the instruction on the radio before complying on lap 4; the incident itself was never referred to stewards.",
+      "editor_take": "That's a real-time cost-benefit call, not a fairness gesture — Red Bull priced a possible time penalty against a guaranteed position swap and took the smaller, certain loss. Hamilton retired with brake failure minutes later, and Antonelli, the driver Red Bull chose to let back ahead, went on to win — so the position Red Bull gave up early is now sitting at the top of the championship table.",
+      "internal_link_slug": "madrid-gp-2026-race-hamilton-dnf-mclaren-ferrari-gap"
+    }
+  ]
+}
