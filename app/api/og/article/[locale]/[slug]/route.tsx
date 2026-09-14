@@ -90,6 +90,7 @@ export async function GET(
           style={{
             width: '100%',
             height: '100%',
+            position: 'relative',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -98,9 +99,6 @@ export async function GET(
             fontFamily: 'sans-serif',
           }}
         >
-          <div style={{ display: 'flex', fontWeight: 700, fontSize: 24, letterSpacing: '0.16em', color: GHOST, marginBottom: 44 }}>
-            PADDOCKINTEL
-          </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 100, padding: '0 80px' }}>
             {[hero, second].map((s, i) => (
               <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', maxWidth: 460 }}>
@@ -114,6 +112,9 @@ export async function GET(
               </div>
             ))}
           </div>
+          <div style={{ display: 'flex', position: 'absolute', bottom: 40, right: 48, fontWeight: 700, fontSize: 22, letterSpacing: '0.14em', color: GHOST }}>
+            PADDOCKINTEL.COM
+          </div>
         </div>
       ),
       { ...activeSize }
@@ -126,6 +127,7 @@ export async function GET(
         style={{
           width: '100%',
           height: '100%',
+          position: 'relative',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -136,10 +138,7 @@ export async function GET(
           textAlign: 'center',
         }}
       >
-        <div style={{ display: 'flex', fontWeight: 700, fontSize: 26, letterSpacing: '0.16em', color: GHOST }}>
-          PADDOCKINTEL
-        </div>
-        <div style={{ display: 'flex', marginTop: 36, fontWeight: 900, fontSize: 240, letterSpacing: '-0.03em', color: TERRACOTTA, lineHeight: 1 }}>
+        <div style={{ display: 'flex', fontWeight: 900, fontSize: 240, letterSpacing: '-0.03em', color: TERRACOTTA, lineHeight: 1 }}>
           {hero.value}
         </div>
         <div style={{ display: 'flex', width: 220, borderTop: `2px solid ${INK}`, marginTop: 32, marginBottom: 32 }} />
@@ -151,6 +150,9 @@ export async function GET(
             {hero.unit}
           </div>
         ) : null}
+        <div style={{ display: 'flex', position: 'absolute', bottom: 40, right: 48, fontWeight: 700, fontSize: 22, letterSpacing: '0.14em', color: GHOST }}>
+          PADDOCKINTEL.COM
+        </div>
       </div>
     ),
     { ...activeSize }
