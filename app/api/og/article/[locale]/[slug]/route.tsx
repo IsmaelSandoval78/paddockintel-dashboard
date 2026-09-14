@@ -64,9 +64,51 @@ export async function GET(
 
   const stats = (data?.stats as Stat[] | null) ?? [];
   const hero = stats[0];
+  const second = stats[1];
 
   if (!hero) {
     return new ImageResponse(<BrandCard />, { ...size });
+  }
+
+  // Two stats side by side is the default whenever the article has both —
+  // one number reads as an isolated fact, two next to each other read as
+  // the actual comparison the article is making (chosen over the older
+  // single-number layout after reviewing both against a real article).
+  if (second) {
+    return new ImageResponse(
+      (
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: KRAFT,
+            fontFamily: 'sans-serif',
+          }}
+        >
+          <div style={{ display: 'flex', fontWeight: 700, fontSize: 24, letterSpacing: '0.16em', color: GHOST, marginBottom: 44 }}>
+            PADDOCKINTEL
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 100, padding: '0 80px' }}>
+            {[hero, second].map((s, i) => (
+              <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', maxWidth: 460 }}>
+                <div style={{ display: 'flex', fontWeight: 900, fontSize: 150, letterSpacing: '-0.03em', color: TERRACOTTA, lineHeight: 1 }}>
+                  {s.value}
+                </div>
+                <div style={{ display: 'flex', width: 140, borderTop: `2px solid ${INK}`, marginTop: 20, marginBottom: 20 }} />
+                <div style={{ display: 'flex', fontWeight: 700, fontSize: 22, color: INK, textAlign: 'center' }}>
+                  {s.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ),
+      { ...size }
+    );
   }
 
   return new ImageResponse(
