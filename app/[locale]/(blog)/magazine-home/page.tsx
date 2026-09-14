@@ -152,6 +152,14 @@ export default async function MagazineHomePage({
     ];
   const { featured, recent } = featuredAndRecent;
 
+  // Root-relative on purpose (not the absolute https://paddockintel.com/... form
+  // [slug]/page.tsx uses for its schema.org `image`) — next/image only needs
+  // remotePatterns for a different host, and this route lives in this same app.
+  const featuredImageUrl = featured
+    ? ((featured as { cover_image_url?: string | null }).cover_image_url ??
+        `/api/og/article/${locale}/${featured.slug}`)
+    : undefined;
+
   // The archive grid below the curated modules excludes anything already
   // shown as featured/recent, so page 1 never repeats the same article twice.
   const shownSlugs = new Set([featured?.slug, ...recent.map((a) => a.slug)].filter(Boolean));
@@ -159,23 +167,32 @@ export default async function MagazineHomePage({
 
   return (
     <main className="bg-bg min-h-screen">
-      {/* Hero + Featured, merged into one row — the featured story's payoff
-          sits right beside the masthead instead of a full screen below it. */}
-      <div className="border-b border-border max-w-5xl mx-auto lg:grid lg:grid-cols-2">
-        <div className="px-5 py-12 md:py-16 lg:border-r lg:border-border lg:pr-10">
+      {/* Band 1 — masthead line: headline + description, centered, kraft base. */}
+      <div className="border-b border-border bg-bg">
+        <div className="max-w-3xl mx-auto px-5 py-14 md:py-20 text-center">
           <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-text-2">
             {t('kicker')}
           </p>
-          <h1 className="font-display text-[clamp(1.75rem,4vw,2.75rem)] leading-[0.94] tracking-[-0.03em] text-text-1 mt-3 mb-5">
+          <h1 className="font-display text-[clamp(1.75rem,4vw,2.75rem)] leading-[0.94] tracking-[-0.03em] text-text-1 mt-3 mb-4">
             {t('headline')}
           </h1>
-          <p className="font-prose text-text-2 leading-relaxed max-w-lg mb-6">
+          <p className="font-prose text-text-2 leading-relaxed">
             {t('description')}
           </p>
-          <JoinTwoWays className="max-w-xl" />
         </div>
-        {featured && (
-          <div className="px-5 py-12 md:py-16 lg:pl-10">
+      </div>
+
+      {/* Band 2 — join line: subscribe or sign in, centered, darker kraft. */}
+      <div className="border-b border-border bg-surface-raised">
+        <div className="max-w-xl mx-auto px-5 py-10 md:py-14">
+          <JoinTwoWays />
+        </div>
+      </div>
+
+      {/* Band 3 — the cover: big square Featured story, Standings beside it. */}
+      {featured && (
+        <div className="border-b border-border bg-bg">
+          <div className="max-w-5xl mx-auto px-5 py-12 md:py-16 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
             <FeaturedArticleCard
               slug={featured.slug as string}
               title={featured.title as string}
@@ -184,11 +201,13 @@ export default async function MagazineHomePage({
               publishedAt={featured.published_at as string}
               locale={locale}
               featuredStat={((featured.stats as Stat[]) ?? [])[0]}
-              compact
+              imageUrl={featuredImageUrl}
+              square
             />
+            <StandingsPanel drivers={standings.drivers} constructors={standings.constructors} compact />
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="max-w-5xl mx-auto px-5">
         {tag && (
@@ -223,20 +242,11 @@ export default async function MagazineHomePage({
           </section>
         )}
 
-        {/* Race Day Movers (grid→finish, real single-race drama) beside
-            Standings (drivers/constructors) — two module-grid tiles instead
-            of two separate full-width bands. */}
-        {(raceHighlights.gainers.length > 0 ||
-          raceHighlights.fallers.length > 0 ||
-          standings.drivers.length > 0 ||
-          standings.constructors.length > 0) && (
+        {/* Race Day Movers (grid→finish, real single-race drama) — Standings
+            now lives up in Band 3, beside the Featured square. */}
+        {(raceHighlights.gainers.length > 0 || raceHighlights.fallers.length > 0) && (
           <div className="border-t border-b border-border py-12 md:py-16">
-            <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-10 lg:gap-16">
-              <RaceHighlightsPanel highlights={raceHighlights} />
-              <div className="lg:border-l lg:border-border-subtle lg:pl-16">
-                <StandingsPanel drivers={standings.drivers} constructors={standings.constructors} compact />
-              </div>
-            </div>
+            <RaceHighlightsPanel highlights={raceHighlights} />
           </div>
         )}
 

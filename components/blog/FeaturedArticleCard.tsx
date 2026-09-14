@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { Link } from '@/lib/i18n/navigation';
 import ShareButton from '@/components/ui/ShareButton';
 import type { TagRef } from '@/lib/blog/tags';
@@ -15,6 +16,14 @@ interface FeaturedArticleCardProps {
   /** Half-width rendering for the merged hero+featured row — fixed, smaller
    * type and the stat stacked above the headline instead of a side column. */
   compact?: boolean;
+  /** Image-led rendering for the front-page "big square" module — the
+   * article's own cover_image_url if it has one, otherwise the same
+   * auto-generated hero-number OG card every article already has
+   * (/api/og/article/[locale]/[slug]). Image sits above the text, never
+   * behind it — DESIGN.md bans gradient scrims, so overlaying text on a
+   * photo isn't an option here. */
+  square?: boolean;
+  imageUrl?: string;
 }
 
 function formatDate(iso: string, locale: string): string {
@@ -35,11 +44,49 @@ export default function FeaturedArticleCard({
   locale,
   featuredStat,
   compact = false,
+  square = false,
+  imageUrl,
 }: FeaturedArticleCardProps) {
   const tag = tags[0];
   const date = publishedAt ? formatDate(publishedAt, locale) : '';
   const pageUrl = locale === 'en' ? `/${slug}` : `/${locale}/${slug}`;
   const tagHref = `${locale === 'en' ? '/' : `/${locale}/`}?tag=${encodeURIComponent(tag?.slug ?? '')}`;
+
+  if (square) {
+    return (
+      <article>
+        <Link href={`/${slug}`} className="group block">
+          {imageUrl && (
+            <div className="relative aspect-square w-full overflow-hidden border border-border">
+              <Image src={imageUrl} alt="" fill sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover" />
+            </div>
+          )}
+
+          <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-text-2 mt-5 mb-3">
+            {tag && tag.label.toUpperCase()}
+            {tag && date && ' · '}
+            {date.toUpperCase()}
+          </p>
+
+          <h2
+            className="uppercase text-text-1 leading-[0.95] tracking-[-0.02em] group-hover:text-terracotta transition-colors duration-150"
+            style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.6rem, 3vw, 2.25rem)' }}
+          >
+            {title}
+          </h2>
+          {metaDescription && (
+            <p className="font-prose text-sm text-text-2 leading-relaxed mt-3">
+              {metaDescription}
+            </p>
+          )}
+        </Link>
+
+        <div className="mt-4">
+          <ShareButton url={pageUrl} title={title} />
+        </div>
+      </article>
+    );
+  }
 
   if (compact) {
     return (

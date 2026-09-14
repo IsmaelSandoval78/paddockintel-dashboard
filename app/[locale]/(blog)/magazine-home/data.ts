@@ -14,9 +14,10 @@ type ArticleRow = {
   tags: TagRef[];
   published_at: string | null;
   stats: unknown;
+  cover_image_url: string | null;
 };
 
-const ARTICLE_SELECT = 'id, slug, title, meta_description, published_at, stats';
+const ARTICLE_SELECT = 'id, slug, title, meta_description, published_at, stats, cover_image_url';
 
 async function attachTags(rows: Omit<ArticleRow, 'tags'>[]): Promise<ArticleRow[]> {
   if (!rows.length) return [];

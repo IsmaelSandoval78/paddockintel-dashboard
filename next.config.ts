@@ -12,6 +12,11 @@ const nextConfig: NextConfig = {
         hostname: 'paddockintel.com',
         pathname: '/content/images/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'hub.paddockintel.com',
+        pathname: '/charts/**',
+      },
     ],
   },
 };
