@@ -38,11 +38,22 @@ function localize(item: FeedItem, locale: string) {
   };
 }
 
-export async function generateMetadata(): Promise<Metadata> {
+const FEED_URLS = {
+  en: 'https://paddockintel.com/feed/',
+  es: 'https://paddockintel.com/es/feed/',
+};
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
   const t = await getTranslations('feed');
+  const canonical = locale === 'es' ? FEED_URLS.es : FEED_URLS.en;
   return {
     title: `${t('title')} — PaddockIntel`,
     description: t('description'),
+    alternates: {
+      canonical,
+      languages: { ...FEED_URLS, 'x-default': FEED_URLS.en },
+    },
   };
 }
 
@@ -86,8 +97,60 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
   const items = await getItems();
   const entityCounts = weeklyEntityCounts(items);
   const mentioned = mostMentioned(entityCounts);
+  const feedUrl = locale === 'es' ? FEED_URLS.es : FEED_URLS.en;
+
+  // No individual URL per item yet (that's the bigger fix, tracked separately) --
+  // each NewsArticle points back at the Feed page via mainEntityOfPage and a
+  // same-page #item-<id> anchor, still enough for Google to attribute headline,
+  // author, date and source per story instead of treating the page as one blob.
+  const itemListJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: t('title'),
+    url: feedUrl,
+    itemListElement: items.map((item, i) => {
+      const text = localize(item, locale);
+      return {
+        '@type': 'ListItem',
+        position: i + 1,
+        item: {
+          '@type': 'NewsArticle',
+          headline: text.headline,
+          description: text.our_summary,
+          datePublished: item.published_at,
+          url: `${feedUrl}#item-${item.id}`,
+          mainEntityOfPage: feedUrl,
+          isBasedOn: item.source_url,
+          author: { '@type': 'Person', name: 'Ismael Sandoval', url: 'https://hub.paddockintel.com/about' },
+          publisher: {
+            '@type': 'Organization',
+            name: 'PaddockIntel',
+            url: 'https://hub.paddockintel.com',
+            logo: { '@type': 'ImageObject', url: 'https://hub.paddockintel.com/opengraph-image' },
+          },
+        },
+      };
+    }),
+  };
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: locale === 'en' ? 'https://hub.paddockintel.com/' : `https://hub.paddockintel.com/${locale}/`,
+      },
+      { '@type': 'ListItem', position: 2, name: t('title') },
+    ],
+  };
 
   return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
     <main className="bg-bg min-h-screen">
       <div className="h-12 border-b border-border flex items-center px-5">
         <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-2">
@@ -146,6 +209,7 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
               return (
               <li
                 key={item.id}
+                id={`item-${item.id}`}
                 className={`border-b border-border-subtle ${i % 2 === 1 ? 'bg-surface-raised' : ''}`}
               >
                 <div className="px-5 py-6 flex gap-5 items-start">
@@ -258,5 +322,6 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
         )}
       </div>
     </main>
+    </>
   );
 }
