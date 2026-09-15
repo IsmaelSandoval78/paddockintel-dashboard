@@ -191,7 +191,17 @@ export default async function FeedPage() {
                       </p>
                     )}
 
-                    <div className="flex items-center justify-between mt-3 flex-wrap gap-2">
+                    {item.internal_link_slug && (
+                      <Link
+                        href={`/${item.internal_link_slug}`}
+                        className="block font-mono text-[10px] uppercase tracking-[0.1em] hover:underline mt-3 text-right"
+                        style={{ color: 'var(--terracotta)' }}
+                      >
+                        {t('ourBrief')}
+                      </Link>
+                    )}
+
+                    <div className="flex items-center justify-between mt-2 flex-wrap gap-2">
                       {item.entity_tags.length > 0 && (
                         <div className="flex flex-wrap gap-1.5">
                           {item.entity_tags.map((tag) => (
@@ -218,16 +228,6 @@ export default async function FeedPage() {
                         </a>
                       </p>
                     </div>
-
-                    {item.internal_link_slug && (
-                      <Link
-                        href={`/${item.internal_link_slug}`}
-                        className="block font-mono text-[10px] uppercase tracking-[0.1em] hover:underline mt-2 text-right"
-                        style={{ color: 'var(--terracotta)' }}
-                      >
-                        {t('ourBrief')}
-                      </Link>
-                    )}
                   </div>
                 </div>
               </li>
