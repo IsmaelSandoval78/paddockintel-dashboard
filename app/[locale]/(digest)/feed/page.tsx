@@ -141,7 +141,7 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: locale === 'en' ? 'https://hub.paddockintel.com/' : `https://hub.paddockintel.com/${locale}/`,
+        item: locale === 'en' ? 'https://paddockintel.com/' : `https://paddockintel.com/${locale}/`,
       },
       { '@type': 'ListItem', position: 2, name: t('title') },
     ],
