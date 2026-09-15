@@ -97,6 +97,34 @@ Six slides, hook-and-payoff order, one visual system throughout:
 5. **Second storyline** — pivot without losing momentum
 6. **CTA** — lands on the economic/stakes angle, links to the full article
 
+### The evolving-motif technique (do this on every carousel from here on)
+
+Validated 2026-09-14 on the Honda/Fukao leadership carousel — this is now the standard, not a
+one-off. The difference between a carousel that's "just six stat cards" and one that reads as a
+single visual story is one motif, not six icons:
+
+1. **Pick one visual symbol tied to the story's actual mechanism, not a generic icon set.**
+   For the Honda piece it was a signal/waveform line — because the real story was a vibrating
+   engine. It appeared steady (hook), split in two (the leadership handoff), turned into an
+   actual jagged waveform (the RA626H problem), calmed slightly (the quote), stopped in an
+   hourglass (development time lost), and resolved into a forward arrow (the CTA). The icon
+   isn't decoration — it's a second, wordless telling of the same arc. Find this motif *in the
+   story's own subject matter* (an engine problem → vibration; a VSC-decided race → a pit-lane
+   timing line; a budget story → a bar filling/draining) before defaulting to something generic.
+2. **Use a real side-by-side comparison layout for any handoff/before-after beat**, instead of a
+   single stat card, whenever the article already has two comparable entities with real data —
+   two people, two teams, two seasons. Pull the actual bios/numbers for both sides; don't waste
+   the slide on only one half of a comparison the article already makes.
+3. **Tag interpretation visibly.** Any slide making PaddockIntel's own analytical claim (not a
+   sourced fact) gets a small, explicit label in-frame — e.g. `PADDOCKINTEL ANALYSIS — NOT
+   [SOURCE]'S STATEMENT` — instead of relying on tone or caption context alone. This is the
+   `EEAT-EXPERT.md` distinction between sourced fact and PaddockIntel's own inference, made
+   visible in the image itself, not just implied.
+4. **Gate PNG export on real fonts being loaded** (`document.fonts.ready`) before enabling any
+   "Generate PNG" button. Exporting before Archivo Black/Lora/JetBrains Mono finish loading
+   silently captures a fallback system font — a bug that only shows up in the final PNG, not
+   while looking at the live page.
+
 ---
 
 ## Caption checklist
@@ -117,6 +145,13 @@ Six slides, hook-and-payoff order, one visual system throughout:
 - [ ] Visual system matches the five formats above — no one-off styling
 - [ ] Caption has real keywords, not hashtag stuffing
 - [ ] If it's a carousel: 4–8 slides, one consistent visual system, ends on a CTA
+- [ ] If it's a carousel: one evolving motif tied to the story's actual mechanism runs through
+      all 6 slides — not six unrelated icons
+- [ ] If the carousel has a handoff/before-after beat with two comparable entities: built as a
+      real side-by-side with both sides' actual data, not a single stat card
+- [ ] Any slide stating PaddockIntel's own analysis (not a sourced fact) carries a visible
+      "PaddockIntel analysis" tag in-frame
 - [ ] If the post corrects earlier PaddockIntel coverage: use the Correction Split format, don't
       silently reframe
-- [ ] Exported at 1080×1080 (square) or the correct aspect ratio for Reels/Stories
+- [ ] Exported at 1080×1080 (square) or the correct aspect ratio for Reels/Stories — PNG export
+      gated on fonts actually being loaded (`document.fonts.ready`), not fired immediately
