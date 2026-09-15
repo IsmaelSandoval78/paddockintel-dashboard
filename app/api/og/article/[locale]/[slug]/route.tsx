@@ -49,7 +49,7 @@ function BrandCard() {
         <span style={{ color: INK }}>I</span>
       </div>
       <div style={{ display: 'flex', marginTop: 24, fontWeight: 700, fontSize: 44, letterSpacing: '0.08em', color: INK }}>
-        PADDOCKINTEL
+        PADDOCKINTEL.COM
       </div>
     </div>
   );

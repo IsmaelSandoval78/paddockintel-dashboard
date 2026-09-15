@@ -16,12 +16,12 @@ interface FeaturedArticleCardProps {
   /** Half-width rendering for the merged hero+featured row — fixed, smaller
    * type and the stat stacked above the headline instead of a side column. */
   compact?: boolean;
-  /** Image-led rendering for the front-page "big square" module — the
-   * article's own cover_image_url if it has one, otherwise the same
-   * auto-generated hero-number OG card every article already has
-   * (/api/og/article/[locale]/[slug]). Image sits above the text, never
-   * behind it — DESIGN.md bans gradient scrims, so overlaying text on a
-   * photo isn't an option here. */
+  /** Image-led rendering for the front-page "big square" module. Only
+   * renders an image when the article has a real cover_image_url — no
+   * fallback to the auto-generated OG card, which was slow enough
+   * (server-rendered per request) to hurt this module's LCP. Image sits
+   * above the text, never behind it — DESIGN.md bans gradient scrims, so
+   * overlaying text on a photo isn't an option here. */
   square?: boolean;
   imageUrl?: string;
 }

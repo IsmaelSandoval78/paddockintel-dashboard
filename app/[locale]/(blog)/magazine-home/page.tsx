@@ -154,15 +154,13 @@ export default async function MagazineHomePage({
     ];
   const { featured, recent } = featuredAndRecent;
 
-  // Root-relative on purpose (not the absolute https://paddockintel.com/... form
-  // [slug]/page.tsx uses for its schema.org `image`) — next/image only needs
-  // remotePatterns for a different host, and this route lives in this same app.
-  // ?square=1 asks the route for a 1200x1200 canvas instead of the 1200x630
-  // OG/social-share size — the square Featured box was center-cropping the
-  // landscape version and cutting the stat numbers off at the edges.
+  // No fallback to the auto-generated /api/og/ card here on purpose — that route
+  // renders server-side on every request (uncached), which blew LCP out to
+  // 3-5s on this module since it's the page's biggest visual element. Only a
+  // real cover_image_url renders an image now; FeaturedArticleCard already
+  // handles the no-image case cleanly.
   const featuredImageUrl = featured
-    ? ((featured as { cover_image_url?: string | null }).cover_image_url ??
-        `/api/og/article/${locale}/${featured.slug}?square=1`)
+    ? (featured as { cover_image_url?: string | null }).cover_image_url ?? undefined
     : undefined;
 
   // The archive grid below the curated modules excludes anything already
