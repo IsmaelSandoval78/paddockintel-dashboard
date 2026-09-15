@@ -698,9 +698,8 @@
     "chapter": "Capítulo"
   },
   "magazine": {
-    "kicker": "PaddockIntel",
     "headline": "Os fatos, não o alarde.",
-    "description": "Economia, dados e notícias reais de F1 — verificados contra 75 anos de história das corridas, não comunicados de imprensa.",
+    "description": "Números reais. História real. Zero spin.",
     "noArticles": "Nenhum artigo publicado ainda.",
     "join": {
       "emailTitle": "Com seu email",

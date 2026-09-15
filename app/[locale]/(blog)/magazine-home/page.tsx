@@ -173,10 +173,7 @@ export default async function MagazineHomePage({
       {/* Band 1 — masthead line: headline + description, centered, kraft base. */}
       <div className="border-b border-border bg-bg">
         <div className="max-w-3xl mx-auto px-5 py-14 md:py-20 text-center">
-          <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-text-2">
-            {t('kicker')}
-          </p>
-          <h1 className="font-display text-[clamp(1.75rem,4vw,2.75rem)] leading-[0.94] tracking-[-0.03em] text-text-1 mt-3 mb-4">
+          <h1 className="font-display text-[clamp(1.75rem,4vw,2.75rem)] leading-[0.94] tracking-[-0.03em] text-text-1 mb-4">
             {t('headline')}
           </h1>
           <p className="font-prose text-text-2 leading-relaxed">
