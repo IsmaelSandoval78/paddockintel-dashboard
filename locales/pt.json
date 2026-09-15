@@ -828,6 +828,11 @@
       "revenue": "Receita",
       "sponsorship": "Patrocínio"
     },
+    "depth": {
+      "eli5": "Simples",
+      "technical": "Técnico",
+      "fia": "Regulamento FIA"
+    },
     "relatedTerms": "Termos Relacionados",
     "sources": "Fontes",
     "backToGlossary": "Glossário"
