@@ -11,13 +11,32 @@ type FeedItem = {
   source_name: string;
   source_url: string;
   headline: string;
+  headline_es: string | null;
   our_summary: string;
+  our_summary_es: string | null;
   entity_tags: string[];
   published_at: string;
   editor_note: string | null;
+  editor_note_es: string | null;
   editor_take: string | null;
+  editor_take_es: string | null;
   internal_link_slug: string | null;
 };
+
+// Feed content lives on one row per story (see the digest_items _es columns
+// migration) rather than a locale-paired row per Blog articles -- pick the
+// Spanish text when present, fall back to English rather than showing blank.
+function localize(item: FeedItem, locale: string) {
+  if (locale !== 'es') {
+    return { headline: item.headline, our_summary: item.our_summary, editor_note: item.editor_note, editor_take: item.editor_take };
+  }
+  return {
+    headline: item.headline_es ?? item.headline,
+    our_summary: item.our_summary_es ?? item.our_summary,
+    editor_note: item.editor_note_es ?? item.editor_note,
+    editor_take: item.editor_take_es ?? item.editor_take,
+  };
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('feed');
@@ -40,7 +59,7 @@ async function getItems(): Promise<FeedItem[]> {
   const { data } = await supabase
     .from('digest_items')
     .select(
-      'id, source_name, source_url, headline, our_summary, entity_tags, published_at, editor_note, editor_take, internal_link_slug'
+      'id, source_name, source_url, headline, headline_es, our_summary, our_summary_es, entity_tags, published_at, editor_note, editor_note_es, editor_take, editor_take_es, internal_link_slug'
     )
     .in('issue_id', issueIds)
     .order('published_at', { ascending: false });
@@ -60,7 +79,8 @@ function significanceScore(item: FeedItem, counts: Map<string, number>): number 
   return Math.max(1, ...item.entity_tags.map((tag) => counts.get(tag) ?? 1));
 }
 
-export default async function FeedPage() {
+export default async function FeedPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   const t = await getTranslations('feed');
   const format = await getFormatter();
   const items = await getItems();
@@ -122,6 +142,7 @@ export default async function FeedPage() {
           <ol className="border-t border-border-subtle">
             {items.map((item, i) => {
               const score = significanceScore(item, entityCounts);
+              const text = localize(item, locale);
               return (
               <li
                 key={item.id}
@@ -154,17 +175,17 @@ export default async function FeedPage() {
                       className="block font-prose font-semibold text-text-1 leading-snug mb-2 hover:text-terracotta transition-colors duration-150"
                       style={{ fontSize: '0.9375rem' }}
                     >
-                      {item.headline}
+                      {text.headline}
                     </a>
 
                     <p
                       className="text-text-2 leading-relaxed"
                       style={{ fontFamily: 'var(--pi-sans)', fontSize: '0.875rem', lineHeight: '1.65' }}
                     >
-                      {item.our_summary}
+                      {text.our_summary}
                     </p>
 
-                    {item.editor_note && (
+                    {text.editor_note && (
                       <p
                         className="text-text-2 leading-relaxed mt-3"
                         style={{ fontFamily: 'var(--pi-sans)', fontSize: '0.875rem', lineHeight: '1.65' }}
@@ -172,11 +193,11 @@ export default async function FeedPage() {
                         <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-1 mr-1.5">
                           {t('editorsNote')}:
                         </span>
-                        {item.editor_note}
+                        {text.editor_note}
                       </p>
                     )}
 
-                    {item.editor_take && (
+                    {text.editor_take && (
                       <p
                         className="text-text-2 leading-relaxed mt-3"
                         style={{ fontFamily: 'var(--pi-sans)', fontSize: '0.875rem', lineHeight: '1.65' }}
@@ -187,7 +208,7 @@ export default async function FeedPage() {
                         >
                           {t('editorsTake')}:
                         </span>
-                        {item.editor_take}
+                        {text.editor_take}
                       </p>
                     )}
 
