@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
 import { isMagazineHost } from '@/lib/siteMode';
 import NavLinks from './NavLinks';
+import SearchBar from './SearchBar';
 import LocaleSwitcher from './LocaleSwitcher';
 import MobileNav from './MobileNav';
 import MiBoxIndicator from './MiBoxIndicator';
@@ -47,6 +48,7 @@ export default async function Navbar({ authUser }: { authUser: AuthUser | null }
         <NavLinks isMagazine={isMagazine} />
 
         <div className="flex items-center gap-5 shrink-0">
+          {isMagazine && <SearchBar />}
           {!isMagazine && (
             <>
               <span className="font-mono text-xs text-text-3 tracking-[0.04em]">

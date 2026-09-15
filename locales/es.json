@@ -23,6 +23,12 @@
     "whosWho": "Voces",
     "home": "Inicio"
   },
+  "search": {
+    "placeholder": "Buscar artículos...",
+    "ariaLabel": "Buscar artículos",
+    "searching": "Buscando...",
+    "noResults": "Sin resultados"
+  },
   "hub": {
     "title": "PaddockIntel",
     "tagline": "Entender la Fórmula 1. No solo mirarla.",

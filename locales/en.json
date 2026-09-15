@@ -23,6 +23,12 @@
     "whosWho": "Voices",
     "home": "Home"
   },
+  "search": {
+    "placeholder": "Search articles...",
+    "ariaLabel": "Search articles",
+    "searching": "Searching...",
+    "noResults": "No results"
+  },
   "hub": {
     "title": "PaddockIntel",
     "tagline": "Understand the sport. Not just watch it.",

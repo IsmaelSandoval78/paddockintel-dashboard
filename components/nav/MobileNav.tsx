@@ -7,6 +7,7 @@ import { useLocale } from 'next-intl';
 import { routing } from '@/lib/i18n/routing';
 import { getAlternateLocaleHref, goToAlternateLocale } from '@/lib/i18n/switchLocale';
 import AuthWidget, { type AuthUser } from './AuthWidget';
+import SearchBar from './SearchBar';
 
 type NavKey = 'hub' | 'circuits' | 'drivers' | 'constructors' | 'compare' | 'records';
 
@@ -71,6 +72,9 @@ export default function MobileNav({
         <div className="border-t border-border" style={{ borderRadius: 0 }}>
           {isMagazine ? (
             <>
+              <div className="px-5 py-3 border-b border-border bg-bg">
+                <SearchBar className="max-w-none" />
+              </div>
               <Link
                 href="/"
                 onClick={() => setOpen(false)}
