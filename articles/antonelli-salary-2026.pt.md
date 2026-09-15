@@ -60,6 +60,10 @@ sources:
     url: "https://paddockintel.com/madrid-gp-2026-race-hamilton-dnf-mclaren-ferrari-gap/?ref=paddockintel.com"
   - name: "PaddockIntel — Quanto ganham os pilotos de F1 em 2026? Grade salarial completa"
     url: "/pt/how-much-do-f1-drivers-make-2026/"
+  - name: "PaddockIntel — Verstappen à Mercedes em 2026: por que ficou na Red Bull"
+    url: "/pt/max-verstappen-mercedes-2026/"
+  - name: "PaddockIntel — Patrimônio de Max Verstappen 2026"
+    url: "/pt/max-verstappen-net-worth-2026/"
   - name: "PaddockIntel Hub — Classificação de pilotos 2026 ao vivo"
     url: "https://hub.paddockintel.com/pt/drivers/"
 ---
@@ -82,7 +86,7 @@ Vários veículos reportam que a Mercedes o garantiu até 2029, embora a equipe 
 
 ## Impacto econômico
 
-A forma mais clara de avaliar quanto Antonelli vale agora não é o próprio contrato dele — é o que a Red Bull acabou de pagar para não perder um piloto que ele supera por 147 pontos. O contrato de Verstappen com a Red Bull tinha uma cláusula de saída que se ativou quando ele entrou na pausa de verão fora do top dois do campeonato, 110 pontos atrás de Antonelli. A Red Bull respondeu em agosto com um novo contrato até 2030, reportado pelo jornalista de negócios da F1 Marc Limacher em cerca de €92 milhões anuais de base — ante os US$70 milhões anteriores de Verstappen — com bônus por desempenho que poderiam levar o pagamento total acima de €115 milhões. Nem a Red Bull nem Verstappen confirmaram os números, mas a formula1.com confirmou a extensão em si.
+A forma mais clara de avaliar quanto Antonelli vale agora não é o próprio contrato dele — é o que a Red Bull acabou de pagar para não perder um piloto que ele supera por 147 pontos. O contrato de Verstappen com a Red Bull tinha uma cláusula de saída que se ativou quando ele entrou na pausa de verão fora do top dois do campeonato, 110 pontos atrás de Antonelli. A Red Bull respondeu em agosto com [um novo contrato até 2030](/pt/max-verstappen-mercedes-2026/), reportado pelo jornalista de negócios da F1 Marc Limacher em cerca de €92 milhões anuais de base — ante os US$70 milhões anteriores de Verstappen — com bônus por desempenho que poderiam levar o pagamento total acima de €115 milhões. Nem a Red Bull nem Verstappen confirmaram os números, mas a formula1.com confirmou a extensão em si.
 
 Comparado com os US$2 milhões reportados de Antonelli: a Red Bull acabou de pagar um acréscimo de mais de US$37M por ano, em cima de um salário já elevado, para reter um piloto que está 147 pontos e seis vitórias atrás de quem ganha uma fração disso. Não é um comentário sobre o talento de Verstappen — é o que uma cláusula de saída custa a uma equipe quando o resultado de um rival faz a vaga parecer, de repente, substituível. O contrato de Antonelli não tem cláusula equivalente. A Mercedes não precisa igualar o valor de mercado de ninguém até decidir fazê-lo.
 

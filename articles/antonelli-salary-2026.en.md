@@ -60,6 +60,10 @@ sources:
     url: "/madrid-gp-2026-race-hamilton-dnf-mclaren-ferrari-gap/"
   - name: "PaddockIntel — How Much Do F1 Drivers Make in 2026? Full Salary Grid"
     url: "/how-much-do-f1-drivers-make-2026/"
+  - name: "PaddockIntel — Max Verstappen to Mercedes 2026: Why He Stayed at Red Bull"
+    url: "/max-verstappen-mercedes-2026/"
+  - name: "PaddockIntel — Max Verstappen Net Worth 2026"
+    url: "/max-verstappen-net-worth-2026/"
   - name: "PaddockIntel Hub — Live 2026 Drivers' Standings"
     url: "https://hub.paddockintel.com/drivers/"
 ---
@@ -82,7 +86,7 @@ That's a deliberate structure, and it's the same one Red Bull used on a young Ma
 
 ## Economic Impact
 
-The clearest way to price what Antonelli is worth right now isn't his own contract — it's what Red Bull just paid to avoid losing a driver he's beating by 147 points. Verstappen's Red Bull deal contained an exit clause that activated when he entered the summer break outside the championship's top two, 110 points behind Antonelli. Red Bull responded in August with a new contract through 2030, reported by F1 business journalist Marc Limacher at roughly €92 million a year in base salary — up from Verstappen's previous $70 million — with performance bonuses potentially pushing total pay past €115 million. Red Bull and Verstappen haven't confirmed the figures, but formula1.com has confirmed the extension itself.
+The clearest way to price what Antonelli is worth right now isn't his own contract — it's what Red Bull just paid to avoid losing a driver he's beating by 147 points. Verstappen's Red Bull deal contained an exit clause that activated when he entered the summer break outside the championship's top two, 110 points behind Antonelli. Red Bull responded in August with [a new contract through 2030](/max-verstappen-mercedes-2026/), reported by F1 business journalist Marc Limacher at roughly €92 million a year in base salary — up from Verstappen's previous $70 million — with performance bonuses potentially pushing total pay past €115 million. Red Bull and Verstappen haven't confirmed the figures, but formula1.com has confirmed the extension itself.
 
 Read that against Antonelli's reported $2 million: Red Bull just paid an incremental $37M+ a year, on top of an already elite salary, to retain a driver currently 147 points and six wins behind the guy earning a fraction of it. That's not a comment on Verstappen's talent — it's what an exit clause costs a team when a rival driver's results make the seat look suddenly replaceable. Antonelli's contract has no equivalent clause. Mercedes doesn't have to match anyone's market rate until it chooses to.
 
