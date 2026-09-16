@@ -12,6 +12,7 @@ import { getFollowedRefs } from '@/lib/follows/actions';
 import { AuthProvider } from '@/lib/auth/AuthContext';
 import Navbar from '@/components/nav/Navbar';
 import Footer from '@/components/nav/Footer';
+import PwaRegister from '@/components/PwaRegister';
 import '../globals.css';
 
 const display = Archivo_Black({
@@ -100,6 +101,7 @@ export default async function LocaleLayout({
             <Footer />
           </AuthProvider>
         </NextIntlClientProvider>
+        <PwaRegister />
       </body>
     </html>
   );
