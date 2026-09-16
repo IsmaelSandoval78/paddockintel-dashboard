@@ -66,7 +66,7 @@ export default function TrackDominancePanel({
         <select
           value={driverA}
           onChange={(e) => setDriverA(e.target.value)}
-          className="font-mono text-[11px] uppercase tracking-[0.08em] bg-surface border border-border px-3 py-1.5 outline-none cursor-pointer appearance-none"
+          className="font-mono text-[11px] uppercase tracking-[0.08em] bg-surface border border-border px-3 py-1.5 outline-none cursor-pointer appearance-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-terracotta focus-visible:outline-offset-2"
           style={{ color: driverA ? 'var(--terracotta)' : 'var(--text-3)', minWidth: '14ch' }}
         >
           <option value="">{t('driverA').toUpperCase()}</option>
@@ -82,7 +82,7 @@ export default function TrackDominancePanel({
         <select
           value={driverB}
           onChange={(e) => setDriverB(e.target.value)}
-          className="font-mono text-[11px] uppercase tracking-[0.08em] bg-surface border border-border px-3 py-1.5 outline-none cursor-pointer appearance-none"
+          className="font-mono text-[11px] uppercase tracking-[0.08em] bg-surface border border-border px-3 py-1.5 outline-none cursor-pointer appearance-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-terracotta focus-visible:outline-offset-2"
           style={{ color: driverB ? 'var(--team-redbull)' : 'var(--text-3)', minWidth: '14ch' }}
         >
           <option value="">{t('driverB').toUpperCase()}</option>

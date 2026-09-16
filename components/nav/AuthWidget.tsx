@@ -169,7 +169,7 @@ export default function AuthWidget({
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t('emailPlaceholder')}
                   required
-                  className="flex-1 bg-bg px-2 py-1.5 font-mono text-[12px] text-text-1 placeholder:text-text-3 outline-none min-w-0"
+                  className="flex-1 bg-bg px-2 py-1.5 font-mono text-[12px] text-text-1 placeholder:text-text-3 outline-none min-w-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-terracotta focus-visible:-outline-offset-2"
                 />
                 <button
                   type="submit"

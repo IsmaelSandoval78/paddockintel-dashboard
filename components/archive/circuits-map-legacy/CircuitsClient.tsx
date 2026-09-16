@@ -183,7 +183,7 @@ export default function CircuitsClient({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t('search.placeholder')}
-          className="font-mono text-[11px] text-text-2 bg-transparent border-0 p-0 focus:outline-none placeholder:text-text-3 w-full max-w-[280px]"
+          className="font-mono text-[11px] text-text-2 bg-transparent border-0 p-0 focus:outline-none placeholder:text-text-3 w-full max-w-[280px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-terracotta focus-visible:outline-offset-2"
         />
         {search.trim() && (
           <div className="absolute left-5 top-full w-[300px] max-h-[260px] overflow-y-auto bg-surface-overlay border border-border">

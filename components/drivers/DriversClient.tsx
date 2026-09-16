@@ -314,7 +314,7 @@ export default function DriversClient({
             <select
               value={nationality}
               onChange={(e) => { setNationality(e.target.value); }}
-              className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 bg-transparent border-0 p-0 cursor-pointer focus:outline-none shrink-0"
+              className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 bg-transparent border-0 p-0 cursor-pointer focus:outline-none shrink-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-terracotta focus-visible:outline-offset-2"
             >
               <option value="all">{t('filter.allNationalities')}</option>
               {nationalities.map((nat) => (
@@ -327,7 +327,7 @@ export default function DriversClient({
               value={search}
               onChange={(e) => { setSearch(e.target.value); }}
               placeholder={t('search.placeholder')}
-              className="font-mono text-[11px] text-text-2 bg-transparent border-0 p-0 focus:outline-none placeholder:text-text-3 min-w-[120px]"
+              className="font-mono text-[11px] text-text-2 bg-transparent border-0 p-0 focus:outline-none placeholder:text-text-3 min-w-[120px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-terracotta focus-visible:outline-offset-2"
             />
           </div>
         </div>

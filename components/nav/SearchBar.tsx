@@ -71,7 +71,7 @@ export default function SearchBar({ className = 'max-w-[220px]' }: { className?:
           onFocus={() => setOpen(true)}
           placeholder={t('placeholder')}
           aria-label={t('ariaLabel')}
-          className="w-full bg-transparent border-0 outline-none py-1.5 font-sans text-[13px] text-text-1 placeholder:text-text-3"
+          className="w-full bg-transparent border-0 outline-none py-1.5 font-sans text-[13px] text-text-1 placeholder:text-text-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-terracotta focus-visible:outline-offset-2"
         />
       </div>
 

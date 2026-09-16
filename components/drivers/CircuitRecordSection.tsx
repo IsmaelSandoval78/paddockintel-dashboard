@@ -353,7 +353,7 @@ export default function CircuitRecordSection({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search circuit..."
-          className="font-mono text-[11px] text-text-2 bg-transparent border-0 p-0 focus:outline-none placeholder:text-text-3 w-full"
+          className="font-mono text-[11px] text-text-2 bg-transparent border-0 p-0 focus:outline-none placeholder:text-text-3 w-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-terracotta focus-visible:outline-offset-2"
         />
       </div>
 
