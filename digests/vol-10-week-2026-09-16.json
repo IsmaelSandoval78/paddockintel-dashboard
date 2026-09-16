@@ -1,8 +1,8 @@
 {
   "slug": "vol-10-week-2026-09-16",
   "published_at": "2026-09-16",
-  "status": "draft",
-  "intro_synthesis": "The Spanish Grand Prix didn't end Sunday — it kept producing storylines all week: two Spaniards colliding while one weighs retirement, and a Red Bull driver shuffle that hasn't stopped moving since Hadjar's wrist injury.",
+  "status": "published",
+  "intro_synthesis": "The Spanish Grand Prix didn't end Sunday — it's still producing storylines a week later, from Hamilton's title hopes going up in smoke on Lap 7 to Mercedes turning a coin-flip VSC into a win and a 71-year record. Two Spaniards collided while one weighs retirement, a Red Bull driver shuffle hasn't stopped moving since Hadjar's wrist injury, and the data underneath both McLaren's and Cadillac's storylines says something sharper than the headlines do.",
   "items": [
     {
       "source_name": "Formula1.com",
@@ -13,7 +13,30 @@
       "published_at": "2026-09-13",
       "editor_note": "Both drivers are Spanish, so read the radio anger with that in mind — this is two countrymen fighting over track position, not team politics. The wing damage from Turn 5 barely factored into how Sainz's race actually ended.",
       "editor_take": "The résumé gap between them is enormous — two championships and 32 career wins for Alonso against zero titles and four wins for Sainz. 2026 doesn't reflect that gap. Alonso sits 19th in the standings with 3 points from 14 races and has already gone unclassified three times this season; Sainz sits 16th with 6 points and has finished every race he's started, Sunday included, despite floor damage that made a top-16 finish impossible before Turn 5 ever happened. Right now, on the timing sheet, the less decorated Spaniard is having the better season — that's the actual story, not the five-second penalty.",
-      "internal_link_slug": "fernando-alonso-f1-future-2027-salary-negotiation"
+      "internal_link_slug": "fernando-alonso-f1-future-2027-salary-negotiation",
+      "slug": "sainz-penalty-alonso-turn-5-spanish-gp-2026",
+      "meta_description": "Sainz's 5-second penalty for squeezing Alonso barely mattered — Lap 1 floor damage had already capped his race. Both Spaniards' 2026 numbers.",
+      "meta_description_es": "La penalización de 5 segundos a Sainz por Alonso apenas importó — el piso ya limitaba su carrera desde la vuelta 1. Los números de ambos.",
+      "stats": [
+        { "value": "32", "label": "CAREER WINS — ALONSO", "label_es": "VICTORIAS DE CARRERA — ALONSO", "unit": null, "unit_es": null },
+        { "value": "4", "label": "CAREER WINS — SAINZ", "label_es": "VICTORIAS DE CARRERA — SAINZ", "unit": null, "unit_es": null },
+        { "value": "3", "label": "2026 POINTS — ALONSO (P19)", "label_es": "PUNTOS 2026 — ALONSO (P19)", "unit": null, "unit_es": null },
+        { "value": "6", "label": "2026 POINTS — SAINZ (P16)", "label_es": "PUNTOS 2026 — SAINZ (P16)", "unit": null, "unit_es": null }
+      ],
+      "faq": [
+        {
+          "q": "Why was Carlos Sainz penalized at the 2026 Spanish Grand Prix?",
+          "a": "Sainz received a five-second penalty for squeezing Fernando Alonso at Turn 5, breaking Alonso's front wing. It didn't change his finish — his race was already compromised by floor damage from a Lap 1 incident with Yuki Tsunoda.",
+          "q_es": "¿Por qué penalizaron a Carlos Sainz en el Gran Premio de España 2026?",
+          "a_es": "Sainz recibió una penalización de cinco segundos por cerrarle el paso a Fernando Alonso en la curva 5, rompiéndole el alerón delantero. No cambió su resultado — su carrera ya estaba comprometida por el daño en el piso de un incidente con Yuki Tsunoda en la vuelta 1."
+        },
+        {
+          "q": "Who has more F1 wins, Fernando Alonso or Carlos Sainz?",
+          "a": "Alonso has 32 career wins and two championships across 442 starts. Sainz has 4 career wins and no championships across 246 starts. In the 2026 season itself, Sainz (6 points, P16) is outscoring Alonso (3 points, P19).",
+          "q_es": "¿Quién tiene más victorias en la F1, Fernando Alonso o Carlos Sainz?",
+          "a_es": "Alonso tiene 32 victorias de carrera y dos campeonatos en 442 largadas. Sainz tiene 4 victorias de carrera y ningún campeonato en 246 largadas. En la temporada 2026 puntual, Sainz (6 puntos, P16) está por delante de Alonso (3 puntos, P19)."
+        }
+      ]
     },
     {
       "source_name": "Sky Sports",
@@ -24,7 +47,30 @@
       "published_at": "2026-09-16",
       "editor_note": "Krack's and Ben Sulayem's public pleading isn't neutral — neither Aston Martin nor the FIA benefits from a two-time champion walking away mid-negotiation, so the urgency is itself a data point about who needs this deal more.",
       "editor_take": "Alonso's reported €40M ask for 2027-28 assumed a driver still worth building a season around. Three points from 14 races is the weakest return of his 25-year career, championships included. The FIA president lobbying him personally proves he still has leverage as a name — but the number that actually gets negotiated has to answer for this season, not just the reputation.",
-      "internal_link_slug": "fernando-alonso-f1-future-2027-salary-negotiation"
+      "internal_link_slug": "fernando-alonso-f1-future-2027-salary-negotiation",
+      "slug": "fernando-alonso-retirement-decision-aston-martin-2027",
+      "meta_description": "Alonso has scored in just 2 of 14 races this season. Aston Martin and the FIA are both trying to talk a two-time champion out of retiring anyway.",
+      "meta_description_es": "Alonso sumó puntos en solo 2 de 14 carreras esta temporada. Aston Martin y la FIA igual intentan convencer a un bicampeón de que no se retire.",
+      "stats": [
+        { "value": "3", "label": "2026 POINTS — P19", "label_es": "PUNTOS 2026 — P19", "unit": null, "unit_es": null },
+        { "value": "2", "label": "RACES SCORED OF 14", "label_es": "CARRERAS PUNTUADAS DE 14", "unit": null, "unit_es": null },
+        { "value": "32", "label": "CAREER WINS", "label_es": "VICTORIAS DE CARRERA", "unit": null, "unit_es": null },
+        { "value": "2", "label": "CAREER CHAMPIONSHIPS", "label_es": "CAMPEONATOS DE CARRERA", "unit": null, "unit_es": null }
+      ],
+      "faq": [
+        {
+          "q": "Is Fernando Alonso retiring from F1?",
+          "a": "He hasn't decided. Alonso says the call depends on whether 2027's new rules fix the racing, and an announcement is 'not coming soon.' Aston Martin and the FIA are both publicly lobbying him to stay.",
+          "q_es": "¿Se retira Fernando Alonso de la F1?",
+          "a_es": "Todavía no lo decidió. Alonso dice que la decisión depende de si las nuevas reglas de 2027 arreglan la competencia, y que un anuncio 'no llega pronto'. Aston Martin y la FIA lo están presionando públicamente para que se quede."
+        },
+        {
+          "q": "How many championships has Fernando Alonso won?",
+          "a": "Two, in 2005 and 2006 with Renault. He has 32 career race wins across 442 starts — but only 3 points from 14 races in the 2026 season, his weakest points return in 25 years in F1.",
+          "q_es": "¿Cuántos campeonatos ganó Fernando Alonso?",
+          "a_es": "Dos, en 2005 y 2006 con Renault. Tiene 32 victorias de carrera en 442 largadas — pero solo 3 puntos en 14 carreras en la temporada 2026, su peor cosecha de puntos en 25 años en la F1."
+        }
+      ]
     },
     {
       "source_name": "PlanetF1",
@@ -34,8 +80,31 @@
       "entity_tags": ["Liam Lawson", "Isack Hadjar", "Red Bull", "Racing Bulls"],
       "published_at": "2026-09-15",
       "editor_note": "The stakes are asymmetric — this isn't really a form contest playing out in public.",
-      "editor_take": "Before the wrist injury, Hadjar was outscoring Lawson by nearly 30 points over the same 11 rounds — 68 to 40 — while both were driving for Racing Bulls-level cars. Since being promoted, Lawson has taken 14 points from Red Bull's notoriously harder second seat in three starts. Red Bull's dilemma isn't really about who's driving better. It's whether three good races in the harder car outweigh eleven decent ones in the easier one.",
-      "internal_link_slug": null
+      "editor_take": "Before the wrist injury, Hadjar was outscoring Lawson by 25 points over the same 11 rounds — 68 to 43 — while both were driving for Racing Bulls-level cars. Since being promoted, Lawson has taken 14 points from Red Bull's notoriously harder second seat in three starts, closing the gap to 11. Red Bull's dilemma isn't really about who's driving better. It's whether three good races in the harder car outweigh eleven decent ones in the easier one.",
+      "internal_link_slug": null,
+      "slug": "red-bull-lawson-hadjar-seat-decision-baku-2026",
+      "meta_description": "Hadjar led Lawson by 25 points before his injury. Three races later, Lawson has cut that to 11 — Red Bull still won't say who starts Baku.",
+      "meta_description_es": "Hadjar le sacaba 25 puntos a Lawson antes de la lesión. Tres carreras después bajó a 11 — Red Bull no decide quién arranca en Bakú.",
+      "stats": [
+        { "value": "68", "label": "HADJAR 2026 POINTS (P8)", "label_es": "PUNTOS 2026 DE HADJAR (P8)", "unit": null, "unit_es": null },
+        { "value": "57", "label": "LAWSON 2026 POINTS (P9)", "label_es": "PUNTOS 2026 DE LAWSON (P9)", "unit": null, "unit_es": null },
+        { "value": "14", "label": "LAWSON POINTS SINCE PROMOTION", "label_es": "PUNTOS DE LAWSON DESDE EL ASCENSO", "unit": "3 races", "unit_es": "3 carreras" },
+        { "value": "0", "label": "LAWSON CAREER PODIUMS", "label_es": "PODIOS DE CARRERA DE LAWSON", "unit": null, "unit_es": null }
+      ],
+      "faq": [
+        {
+          "q": "Why is Red Bull delaying the decision on Liam Lawson's seat?",
+          "a": "Red Bull is waiting on Isack Hadjar's recovery from a fractured wrist before deciding whether Lawson stays in the main team for Baku or reverts to Racing Bulls — a call the team says won't come until race week.",
+          "q_es": "¿Por qué Red Bull demora la decisión sobre el asiento de Liam Lawson?",
+          "a_es": "Red Bull espera la recuperación de Isack Hadjar de una fractura de muñeca antes de decidir si Lawson sigue en el equipo principal para Bakú o vuelve a Racing Bulls — una decisión que, según el equipo, no llegará hasta la semana de carrera."
+        },
+        {
+          "q": "Is Liam Lawson outscoring Isack Hadjar in 2026?",
+          "a": "Not overall — Hadjar leads 68 points to 57. But since being promoted to Red Bull's harder seat for three races, Lawson has taken 14 points, cutting what was a 25-point gap down to 11.",
+          "q_es": "¿Lawson está superando a Hadjar en puntos en 2026?",
+          "a_es": "En total no — Hadjar lidera 68 a 57. Pero desde su ascenso al asiento más difícil de Red Bull, en tres carreras Lawson sumó 14 puntos, recortando lo que era una diferencia de 25 puntos a solo 11."
+        }
+      ]
     },
     {
       "source_name": "Motorsport.com",
@@ -46,7 +115,258 @@
       "published_at": "2026-09-16",
       "editor_note": "This isn't a rivalry story — it's a career-arc one. The demotion is Tsunoda's own account, not a conflict with another driver, so the data should stand in for the pain, not manufacture a fight that isn't there.",
       "editor_take": "Three races back at Racing Bulls have brought Tsunoda one point — 11th, 10th, 14th — from a driver with 117 F1 starts, zero wins, zero podiums, and a career-best of P4. That's not the return of a stand-in auditioning to keep the seat past 2026; it reads like someone treading water until the next opportunity. An IndyCar seat being discussed the same week as his F1 comeback isn't a coincidence — it's the more honest signal of where he thinks his future is.",
-      "internal_link_slug": "audi-tsunoda-appeal-italian-gp-2026"
+      "internal_link_slug": "audi-tsunoda-appeal-italian-gp-2026",
+      "slug": "yuki-tsunoda-red-bull-reserve-indycar-rumor-2026",
+      "meta_description": "Tsunoda scored one point in three races back from Red Bull reserve duty. The same week, IndyCar talks with Meyer Shank Racing surfaced for 2027.",
+      "meta_description_es": "Tsunoda sumó un punto en tres carreras desde que volvió de la reserva. La misma semana surgió el rumor de IndyCar con Meyer Shank Racing.",
+      "stats": [
+        { "value": "117", "label": "CAREER STARTS", "label_es": "CARRERAS EN F1", "unit": null, "unit_es": null },
+        { "value": "0", "label": "CAREER WINS", "label_es": "VICTORIAS DE CARRERA", "unit": null, "unit_es": null },
+        { "value": "0", "label": "CAREER PODIUMS", "label_es": "PODIOS DE CARRERA", "unit": null, "unit_es": null },
+        { "value": "1", "label": "2026 POINTS — P20", "label_es": "PUNTOS 2026 — P20", "unit": null, "unit_es": null }
+      ],
+      "faq": [
+        {
+          "q": "Is Yuki Tsunoda leaving F1 for IndyCar?",
+          "a": "Nothing is confirmed. Motorsport.com reports he's in talks with Meyer Shank Racing for a 2027 IndyCar seat, though co-owner Mike Shank downplayed it, saying the team is 'talking to everybody in every form of motorsport.'",
+          "q_es": "¿Yuki Tsunoda se va de la F1 a IndyCar?",
+          "a_es": "Nada está confirmado. Motorsport.com reporta que está en conversaciones con Meyer Shank Racing por un asiento en IndyCar para 2027, aunque el co-dueño Mike Shank le bajó el tono, diciendo que el equipo está 'hablando con todos en todas las categorías del automovilismo'."
+        },
+        {
+          "q": "How has Yuki Tsunoda performed since returning to Racing Bulls?",
+          "a": "One point across three races (11th, 10th, 14th) since Isack Hadjar's wrist injury reopened a seat. Across 117 career F1 starts, Tsunoda has zero wins and zero podiums.",
+          "q_es": "¿Cómo le fue a Yuki Tsunoda desde que volvió a Racing Bulls?",
+          "a_es": "Un punto en tres carreras (11°, 10° y 14°) desde que la lesión de muñeca de Isack Hadjar liberó un asiento. En 117 largadas de carrera en la F1, Tsunoda tiene cero victorias y cero podios."
+        }
+      ]
+    },
+    {
+      "source_name": "RacingNews365",
+      "source_url": "https://racingnews365.com/how-lewis-hamilton-title-chances-went-completely-up-in-smoke",
+      "headline": "A Brake Failure at Lap 7 Turned Hamilton's Title Math Brutal",
+      "our_summary": "Lewis Hamilton's Ferrari suffered a brake failure seven laps into the Spanish Grand Prix — the pedal 'stepping and going long' under braking before he clipped a wall and lost the ability to stop the car. Team principal Fred Vasseur confirmed Ferrari has opened a formal investigation; the exact cause wasn't yet known. The retirement — Hamilton's first DNF of the season — dropped him to third in the standings, 101 points behind championship leader Kimi Antonelli with eight rounds remaining.",
+      "entity_tags": ["Lewis Hamilton", "Ferrari", "Kimi Antonelli", "Mercedes"],
+      "published_at": "2026-09-15",
+      "editor_note": "Ferrari hasn't published a root cause yet — until the investigation closes, 'brake failure' describes the symptom Hamilton reported over team radio, not a confirmed mechanical diagnosis.",
+      "editor_take": "101 points across eight rounds means Antonelli needs to average roughly 13 points per race worse than Hamilton to keep the title mathematically open before Abu Dhabi — a gap this large, this late, is not a comeback script, it's an insurance calculation for next season. Hamilton's own results log backs that read: this was his only retirement in 14 races, the rest a run of five podiums and one win — the car and driver were competitive everywhere except the one lap that mattered most.",
+      "internal_link_slug": "madrid-gp-2026-race-hamilton-dnf-mclaren-ferrari-gap",
+      "headline_es": "Una falla de frenos en la vuelta 7 dejó la matemática del título de Hamilton en terreno brutal",
+      "our_summary_es": "El Ferrari de Lewis Hamilton sufrió una falla de frenos siete vueltas después de la largada del Gran Premio de España — el pedal se fue 'largo' bajo frenada antes de que rozara un muro y perdiera la capacidad de detener el auto. El jefe de equipo Fred Vasseur confirmó que Ferrari abrió una investigación formal; la causa exacta todavía no se conoce. El abandono — el primero de Hamilton en la temporada — lo dejó tercero en el campeonato, a 101 puntos del líder Kimi Antonelli con ocho fechas por disputarse.",
+      "editor_note_es": "Ferrari todavía no publicó una causa raíz. Hasta que cierre la investigación, 'falla de frenos' describe el síntoma que Hamilton reportó por radio, no un diagnóstico mecánico confirmado.",
+      "editor_take_es": "101 puntos en ocho fechas significan que Antonelli necesitaría promediar unos 13 puntos por carrera peor que Hamilton para que el título siga matemáticamente abierto antes de Abu Dabi — una brecha así de grande, así de tarde, no es guion de remontada, es cálculo de seguro para la temporada que viene. El propio historial de resultados de Hamilton lo confirma: este fue su único abandono en 14 carreras, el resto una racha de cinco podios y una victoria — el auto y el piloto fueron competitivos en todo menos en la vuelta que más importaba.",
+      "slug": "hamilton-brake-failure-madrid-title-gap-2026",
+      "meta_description": "Hamilton's brake failure at Madrid dropped him 101 points behind Antonelli with 8 rounds left — his only DNF in 14 races this season.",
+      "meta_description_es": "La falla de frenos de Hamilton en Madrid lo dejó a 101 puntos de Antonelli con 8 fechas por delante — su único abandono en la temporada.",
+      "stats": [
+        { "value": "101", "label": "POINTS BEHIND ANTONELLI", "label_es": "PUNTOS DETRÁS DE ANTONELLI", "unit": null, "unit_es": null },
+        { "value": "1", "label": "RETIREMENTS THIS SEASON", "label_es": "ABANDONOS ESTA TEMPORADA", "unit": "of 14 races", "unit_es": "de 14 carreras" },
+        { "value": "7", "label": "CAREER CHAMPIONSHIPS", "label_es": "CAMPEONATOS DE CARRERA", "unit": null, "unit_es": null },
+        { "value": "106", "label": "CAREER WINS", "label_es": "VICTORIAS DE CARRERA", "unit": null, "unit_es": null }
+      ],
+      "faq": [
+        {
+          "q": "Why did Lewis Hamilton retire from the 2026 Spanish Grand Prix?",
+          "a": "His Ferrari suffered a brake failure seven laps in — the pedal went long under braking and he clipped a wall. Ferrari opened a formal investigation; the exact cause hasn't been confirmed.",
+          "q_es": "¿Por qué se retiró Lewis Hamilton del Gran Premio de España 2026?",
+          "a_es": "Su Ferrari sufrió una falla de frenos a las siete vueltas — el pedal se fue largo bajo frenada y rozó un muro. Ferrari abrió una investigación formal; la causa exacta todavía no está confirmada."
+        },
+        {
+          "q": "Can Lewis Hamilton still win the 2026 F1 championship?",
+          "a": "Mathematically it's not eliminated, but a 101-point deficit to leader Kimi Antonelli with 8 rounds remaining is close to insurmountable. It was Hamilton's only retirement of the season — the rest of his results include five podiums and a win.",
+          "q_es": "¿Lewis Hamilton todavía puede ganar el campeonato de F1 2026?",
+          "a_es": "Matemáticamente no está eliminado, pero una diferencia de 101 puntos con el líder Kimi Antonelli y 8 fechas por delante es casi insalvable. Fue su único abandono de la temporada — el resto de sus resultados incluye cinco podios y una victoria."
+        }
+      ]
+    },
+    {
+      "source_name": "PlanetF1",
+      "source_url": "https://www.planetf1.com/news/oscar-piastri-mclaren-problem-andrea-stella",
+      "headline": "Piastri Isn't Losing to Reliability — He's Losing to Norris by 68 Points With the Same Number of DNFs",
+      "our_summary": "McLaren team principal Andrea Stella says Oscar Piastri's issue is that he's 'driving and thinking' instead of driving on instinct — 'when you drive and think, things get slowed down... you are slower as a driver in terms of deciding what to do, and ultimately slower in terms of lap times.' Stella wants the team to get Piastri 'more in tune' with the MCL40 before the season ends.",
+      "entity_tags": ["Oscar Piastri", "McLaren", "Lando Norris", "Andrea Stella"],
+      "published_at": "2026-09-16",
+      "editor_note": "Stella's framing is about instinct versus deliberation, not about a car problem — worth noting because it puts the fix on the driver's side, not an upgrade.",
+      "editor_take": "Piastri and Norris have identical reliability records this season: three non-finishes apiece, including sharing the same power unit failure at the Chinese Grand Prix. Outside that overlapping DNF, Piastri was withdrawn from an accident in Australia and retired in Hungary; Norris retired from a gearbox failure in Canada and from Monaco. Same number of non-scoring weekends, same shared failure — and still a 68-point gap (186 to 118) once both cars are actually classified. That's not an attrition story. It's a pace-and-decision-making one, and it matches exactly what Stella is describing.",
+      "internal_link_slug": null,
+      "headline_es": "Piastri no pierde por confiabilidad — pierde por 68 puntos frente a Norris con la misma cantidad de abandonos",
+      "our_summary_es": "El jefe de equipo de McLaren, Andrea Stella, dice que el problema de Oscar Piastri es que está 'manejando y pensando' en lugar de manejar por instinto — 'cuando manejas y piensas, todo se vuelve más lento... eres más lento como piloto para decidir qué hacer, y en definitiva más lento en los tiempos de vuelta.' Stella quiere que el equipo logre que Piastri esté 'más sincronizado' con el MCL40 antes de que termine la temporada.",
+      "editor_note_es": "El planteo de Stella es sobre instinto versus deliberación, no sobre un problema del auto — vale la pena notarlo porque pone la solución del lado del piloto, no de una actualización.",
+      "editor_take_es": "Piastri y Norris tienen historiales de confiabilidad idénticos esta temporada: tres abandonos cada uno, incluida la misma falla de unidad de potencia compartida en el Gran Premio de China. Fuera de ese abandono compartido, Piastri fue retirado por un accidente en Australia y abandonó en Hungría; Norris abandonó por una falla de caja de cambios en Canadá y en Mónaco. Mismo número de fines de semana sin puntuar, misma falla compartida — y aun así una diferencia de 68 puntos (186 a 118) cuando ambos autos terminan clasificados. Esa no es una historia de confiabilidad. Es una de ritmo y toma de decisiones, y coincide exactamente con lo que describe Stella.",
+      "slug": "piastri-mclaren-thinking-problem-norris-gap-2026",
+      "meta_description": "Piastri and Norris share the same number of DNFs this season, including one identical failure. The 68-point gap isn't about reliability.",
+      "meta_description_es": "Piastri y Norris tuvieron los mismos abandonos esta temporada, incluida una falla idéntica. Los 68 puntos de diferencia no son por confiabilidad.",
+      "stats": [
+        { "value": "68", "label": "POINTS BEHIND NORRIS", "label_es": "PUNTOS DETRÁS DE NORRIS", "unit": null, "unit_es": null },
+        { "value": "3", "label": "NON-FINISHES — PIASTRI", "label_es": "ABANDONOS — PIASTRI", "unit": "of 14 races", "unit_es": "de 14 carreras" },
+        { "value": "3", "label": "NON-FINISHES — NORRIS", "label_es": "ABANDONOS — NORRIS", "unit": "of 14 races", "unit_es": "de 14 carreras" },
+        { "value": "0", "label": "PIASTRI 2026 WINS", "label_es": "VICTORIAS 2026 DE PIASTRI", "unit": null, "unit_es": null }
+      ],
+      "faq": [
+        {
+          "q": "Why is Oscar Piastri struggling compared to Lando Norris in 2026?",
+          "a": "McLaren team principal Andrea Stella says Piastri is 'driving and thinking' instead of driving on instinct, slowing his decision-making and lap times. The team wants him better in tune with the MCL40 before the season ends.",
+          "q_es": "¿Por qué le está costando a Oscar Piastri frente a Lando Norris en 2026?",
+          "a_es": "El jefe de equipo de McLaren, Andrea Stella, dice que Piastri está 'manejando y pensando' en lugar de manejar por instinto, lo que le frena la toma de decisiones y los tiempos de vuelta. El equipo quiere que esté más sincronizado con el MCL40 antes de que termine la temporada."
+        },
+        {
+          "q": "Is Oscar Piastri's points gap to Norris about reliability?",
+          "a": "No — both drivers have had exactly three non-finishes this season, including sharing the same power unit failure at the Chinese Grand Prix. The 68-point gap (186 to 118) comes from races both cars actually finished.",
+          "q_es": "¿La diferencia de puntos de Piastri con Norris es por confiabilidad?",
+          "a_es": "No — ambos pilotos tuvieron exactamente tres abandonos esta temporada, incluida la misma falla de unidad de potencia en el Gran Premio de China. La diferencia de 68 puntos (186 a 118) viene de las carreras que ambos autos sí terminaron."
+        }
+      ]
+    },
+    {
+      "source_name": "Motorsport.com",
+      "source_url": "https://www.motorsport.com/f1/news/how-kimi-antonelli-and-mercedes-made-their-own-luck-in-madrid/10856347/",
+      "headline": "Mercedes Turned a Coin-Flip VSC Into a Win — and a 71-Year Wins Record",
+      "our_summary": "Kimi Antonelli won the Spanish Grand Prix after Mercedes turned a virtual safety car — triggered by Lance Stroll's retirement — into pit-stop track position. Race engineer Peter Bonnington had already warned Antonelli a VSC was 'likely' before it was called; telemetry shows Antonelli slowed 29 km/h through Turn 19 on the prior lap, nearly double what the regulations required, deliberately buying time to react, while Max Verstappen, running just behind, was 15 km/h faster through the same corner and lost the position. 'We're talking about three seconds,' team principal Toto Wolff said of the decision chain from strategist to race engineer to driver. RaceFans notes it was also the 251st win for a Mercedes-built power unit in constructors' championship history — level with Ferrari, a manufacturer that has raced continuously since 1950 against Mercedes' broken run (absent from 1955 until its 1990s return via McLaren).",
+      "entity_tags": ["Kimi Antonelli", "Mercedes", "Max Verstappen", "Toto Wolff"],
+      "published_at": "2026-09-16",
+      "editor_note": "The VSC call worked because Mercedes' internal process was faster than the sport's own safety-car protocol, not because of luck at the moment it was deployed — the 'own luck' framing in the coverage undersells how much of this was drilled preparation.",
+      "editor_take": "The win extends Antonelli's championship lead to 292 points against Russell's 211 — an 81-point gap with eight rounds left, mathematically larger than the gap from second to third (Hamilton on 191, 20 further back). Mercedes has now won 10 of this season's 14 races as a constructor, more than double Ferrari's 2. The engine-wins record RaceFans flags is a historical footnote, but the underlying story is the same one: Mercedes is currently the only team executing at a level where strategy and raw pace compound instead of trading off.",
+      "internal_link_slug": "kimi-antonelli-mercedes-economic-case",
+      "headline_es": "Mercedes convirtió un VSC de moneda al aire en una victoria — y un récord de 71 años",
+      "our_summary_es": "Kimi Antonelli ganó el Gran Premio de España después de que Mercedes convirtiera un safety car virtual — provocado por el abandono de Lance Stroll — en posición de pista gracias a la parada en boxes. El ingeniero de carrera Peter Bonnington ya había advertido a Antonelli que un VSC era 'probable' antes de que se activara; la telemetría muestra que Antonelli redujo 29 km/h en la curva 19 en la vuelta anterior, casi el doble de lo que exigía el reglamento, para ganar tiempo deliberadamente, mientras Max Verstappen, justo detrás, fue 15 km/h más rápido en la misma curva y perdió la posición. 'Estamos hablando de tres segundos', dijo el jefe de equipo Toto Wolff sobre la cadena de decisión entre el estratega, el ingeniero de carrera y el piloto. RaceFans señala que también fue la victoria número 251 para un motor Mercedes en la historia del campeonato de constructores — igualando a Ferrari, un fabricante que corrió de forma continua desde 1950 frente al historial interrumpido de Mercedes (ausente entre 1955 y su regreso en los años 90 vía McLaren).",
+      "editor_note_es": "La jugada del VSC funcionó porque el proceso interno de Mercedes fue más rápido que el propio protocolo del safety car, no por suerte en el momento en que se activó — el encuadre de 'su propia suerte' en la cobertura minimiza cuánto de esto fue preparación ensayada.",
+      "editor_take_es": "La victoria extiende el liderazgo de Antonelli en el campeonato a 292 puntos frente a los 211 de Russell — una diferencia de 81 puntos con ocho fechas por delante, matemáticamente mayor que la que separa el segundo del tercer puesto (Hamilton con 191, 20 puntos más atrás). Mercedes ya ganó 10 de las 14 carreras de la temporada como constructor, más del doble que las 2 de Ferrari. El récord de victorias por motor que señala RaceFans es una nota histórica, pero la historia de fondo es la misma: Mercedes es hoy el único equipo que ejecuta a un nivel donde la estrategia y el ritmo puro se suman en lugar de compensarse.",
+      "slug": "antonelli-mercedes-vsc-win-engine-record-madrid-2026",
+      "meta_description": "Antonelli's Madrid win, built on a 3-second VSC call, extends his lead to 81 points and ties Mercedes with Ferrari's all-time engine win record.",
+      "meta_description_es": "La victoria de Antonelli en Madrid, con una jugada de VSC de 3 segundos, extiende su ventaja a 81 puntos e iguala el récord histórico de Ferrari.",
+      "stats": [
+        { "value": "292", "label": "ANTONELLI 2026 POINTS (P1)", "label_es": "PUNTOS 2026 DE ANTONELLI (P1)", "unit": null, "unit_es": null },
+        { "value": "81", "label": "LEAD OVER RUSSELL", "label_es": "VENTAJA SOBRE RUSSELL", "unit": null, "unit_es": null },
+        { "value": "10", "label": "MERCEDES CONSTRUCTOR WINS 2026", "label_es": "VICTORIAS DE MERCEDES 2026", "unit": "of 14 races", "unit_es": "de 14 carreras" },
+        { "value": "251", "label": "ALL-TIME MERCEDES-ENGINE WINS", "label_es": "VICTORIAS HISTÓRICAS CON MOTOR MERCEDES", "unit": "level with Ferrari", "unit_es": "iguala a Ferrari" }
+      ],
+      "faq": [
+        {
+          "q": "How did Kimi Antonelli win the 2026 Spanish Grand Prix?",
+          "a": "Mercedes converted a virtual safety car, triggered by Lance Stroll's retirement, into pit-stop track position — Antonelli had already slowed to prepare, and the team's call from strategist to engineer to driver took about three seconds.",
+          "q_es": "¿Cómo ganó Kimi Antonelli el Gran Premio de España 2026?",
+          "a_es": "Mercedes convirtió un safety car virtual, provocado por el abandono de Lance Stroll, en posición de pista gracias a la parada en boxes — Antonelli ya había reducido la velocidad para prepararse, y la decisión del equipo, del estratega al ingeniero y al piloto, tardó unos tres segundos."
+        },
+        {
+          "q": "How big is Antonelli's championship lead after Madrid?",
+          "a": "292 points to George Russell's 211 — an 81-point gap with eight rounds left, larger than the gap between second and third place (Russell to Hamilton's 191).",
+          "q_es": "¿Qué tan grande es la ventaja de Antonelli en el campeonato después de Madrid?",
+          "a_es": "292 puntos contra los 211 de George Russell — una diferencia de 81 puntos con ocho fechas por delante, mayor que la que separa el segundo del tercer puesto (Russell contra los 191 de Hamilton)."
+        }
+      ]
+    },
+    {
+      "source_name": "Crash.net",
+      "source_url": "https://www.crash.net/motogp/news/1104724/1/charles-leclerc-set-baku-f1-grid-penalty-despite-positive-ferrari-engine-news",
+      "headline": "Leclerc Will Start Baku From the Back — Ferrari Says the Engine He Crashed at Monza Wasn't the Problem",
+      "our_summary": "Charles Leclerc will take a fresh power unit at Baku, triggering an automatic grid penalty under F1's component-allocation rules — the exact number of places wasn't specified in Ferrari's announcement. The team confirms the reasoning is tactical as much as forced: Baku's long pit straight makes it one of the better circuits on the calendar to recover from the back of the grid. Separately, Ferrari says the power unit Leclerc crashed at Monza escaped terminal damage after evaluation — it had been withdrawn as a precaution, not written off, and remains part of his season allocation. At Madrid, running a different unit after the Monza crash, Leclerc had less power than teammate Lewis Hamilton.",
+      "entity_tags": ["Charles Leclerc", "Ferrari"],
+      "published_at": "2026-09-15",
+      "editor_note": "Ferrari hasn't confirmed the exact grid-place penalty; treat the grid penalty itself as confirmed and the specific number as unconfirmed until published.",
+      "editor_take": "Leclerc sits fifth in the drivers' standings on 167 points — 19 behind fourth-placed Norris, 22 ahead of sixth-placed Verstappen. Ferrari is trading a few grid positions now, at a track built for overtaking, rather than risk carrying the same power unit into a circuit with less passing opportunity later on the calendar and losing far more there.",
+      "internal_link_slug": null,
+      "headline_es": "Leclerc largará desde el fondo en Bakú — Ferrari dice que el motor que rompió en Monza no era el problema",
+      "our_summary_es": "Charles Leclerc usará una unidad de potencia nueva en Bakú, lo que activa una penalización automática en la grilla según las reglas de asignación de componentes de la F1 — el anuncio de Ferrari no especificó la cantidad exacta de puestos. El equipo confirma que la decisión es tanto táctica como forzada: la larga recta de boxes de Bakú lo convierte en uno de los mejores circuitos del calendario para remontar desde el fondo. Por separado, Ferrari dice que la unidad de potencia que Leclerc rompió en Monza no sufrió daño terminal tras la evaluación — había sido retirada como precaución, no dada de baja, y sigue formando parte de su asignación para la temporada. En Madrid, con una unidad distinta tras el choque de Monza, Leclerc tuvo menos potencia que su compañero Lewis Hamilton.",
+      "editor_note_es": "Ferrari no confirmó la cantidad exacta de puestos de penalización; hay que tratar la penalización en la grilla como confirmada y el número específico como no confirmado hasta que se publique.",
+      "editor_take_es": "Leclerc está quinto en el campeonato de pilotos con 167 puntos — 19 por detrás del cuarto, Norris, y 22 por delante del sexto, Verstappen. Ferrari está sacrificando algunas posiciones de largada ahora, en un circuito construido para adelantar, en lugar de arriesgarse a llevar la misma unidad de potencia a un trazado con menos oportunidades de sobrepaso más adelante en el calendario y perder mucho más ahí.",
+      "slug": "leclerc-baku-grid-penalty-ferrari-engine-2026",
+      "meta_description": "Leclerc takes a grid penalty at Baku's overtaking-friendly straight rather than risk it later. He sits fifth, sandwiched by 19 and 22 points.",
+      "meta_description_es": "Leclerc acepta la penalización en Bakú, circuito con adelantamientos, para no arriesgarse después. Está quinto, entre 19 y 22 puntos.",
+      "stats": [
+        { "value": "167", "label": "2026 POINTS — P5", "label_es": "PUNTOS 2026 — P5", "unit": null, "unit_es": null },
+        { "value": "19", "label": "POINTS BEHIND NORRIS (P4)", "label_es": "PUNTOS DETRÁS DE NORRIS (P4)", "unit": null, "unit_es": null },
+        { "value": "22", "label": "POINTS AHEAD OF VERSTAPPEN (P6)", "label_es": "PUNTOS SOBRE VERSTAPPEN (P6)", "unit": null, "unit_es": null },
+        { "value": "1", "label": "2026 WINS", "label_es": "VICTORIAS 2026", "unit": null, "unit_es": null }
+      ],
+      "faq": [
+        {
+          "q": "Why is Charles Leclerc taking a grid penalty at the Baku Grand Prix?",
+          "a": "He's fitting a fresh power unit, which triggers an automatic grid penalty under F1's component rules. Ferrari chose Baku deliberately — its long pit straight is one of the better places on the calendar to recover positions.",
+          "q_es": "¿Por qué Charles Leclerc tiene penalización en la grilla del Gran Premio de Bakú?",
+          "a_es": "Va a usar una unidad de potencia nueva, lo que activa una penalización automática según las reglas de componentes de la F1. Ferrari eligió Bakú a propósito — su larga recta de boxes es uno de los mejores lugares del calendario para remontar posiciones."
+        },
+        {
+          "q": "Did Charles Leclerc's Monza crash damage his engine for the rest of the season?",
+          "a": "No — Ferrari confirmed the power unit he crashed at Monza escaped terminal damage and remains in his season allocation, though he ran a different, less powerful unit at Madrid in the meantime.",
+          "q_es": "¿El choque de Charles Leclerc en Monza dañó su motor para el resto de la temporada?",
+          "a_es": "No — Ferrari confirmó que la unidad de potencia que rompió en Monza no sufrió daño terminal y sigue en su asignación de temporada, aunque mientras tanto usó una unidad distinta y con menos potencia en Madrid."
+        }
+      ]
+    },
+    {
+      "source_name": "Motorsport.com",
+      "source_url": "https://www.motorsport.com/f1/news/was-cadillac-faster-than-williams-in-madring-f1-race/10856327/",
+      "headline": "Cadillac Out-Paced Williams for a Stint in Madrid — the Season Standings Still Say Otherwise",
+      "our_summary": "Telemetry from Madrid shows Sergio Pérez's Cadillac was 0.403s per lap slower than Alexander Albon's Williams on medium tires in the first stint, then 0.351s faster on hards in the second — both cars ran the same strategy, pitting under the virtual safety car, making the split comparison valid, though sample sizes were small (11 and 8 laps). Pérez called it 'pretty much the same pace as Albon all the way through,' while teammate Valtteri Bottas cautioned that 'as the race progresses, the deg gets worse' for Cadillac specifically. Bottas finished last with brake issues. Separately, team principal Marcin Budkowski told a frustrated Pérez that development has shifted toward the 2027 car — standard practice, he said, once a season's competitive ceiling is reached — asking him to 'control the expectations a little bit.'",
+      "entity_tags": ["Cadillac", "Williams", "Sergio Pérez", "Alexander Albon"],
+      "published_at": "2026-09-16",
+      "editor_note": "A two-stint tire comparison from one race weekend is a data point, not a trend — treat the 'faster than Williams' framing as circuit- and compound-specific until it repeats somewhere else on the calendar.",
+      "editor_take": "Season to date, the standings haven't moved: Williams has 11 points, Cadillac has zero — an 11-point gap across 14 races, even before Baku happens. One stint of competitive hard-tire pace against a season log of zero points is exactly the sample-size problem it looks like: real, worth tracking, but not yet evidence Cadillac has caught the field. Budkowski all but conceded that directly by pointing Pérez toward 2027 rather than defending 2026's results.",
+      "internal_link_slug": "american-f1-grid-ford-cadillac-wolff-business-model",
+      "headline_es": "Cadillac superó el ritmo de Williams durante un tramo en Madrid — la tabla de la temporada todavía dice lo contrario",
+      "our_summary_es": "La telemetría de Madrid muestra que el Cadillac de Sergio Pérez fue 0,403 segundos por vuelta más lento que el Williams de Alexander Albon con neumáticos medios en el primer stint, y luego 0,351 segundos más rápido con duros en el segundo — ambos autos siguieron la misma estrategia, entrando a boxes bajo el safety car virtual, lo que hace válida la comparación, aunque las muestras fueron chicas (11 y 8 vueltas). Pérez lo describió como 'prácticamente el mismo ritmo que Albon todo el tiempo', mientras que su compañero Valtteri Bottas advirtió que 'a medida que avanza la carrera, la degradación empeora' específicamente para Cadillac. Bottas terminó último con problemas de frenos. Por separado, el jefe de equipo Marcin Budkowski le dijo a un Pérez frustrado que el desarrollo ya se movió hacia el auto de 2027 — práctica estándar, según él, una vez que se alcanza el techo competitivo de una temporada — y le pidió 'controlar un poco las expectativas'.",
+      "editor_note_es": "Una comparación de neumáticos en dos stints de un solo fin de semana es un dato puntual, no una tendencia — hay que tratar el encuadre de 'más rápido que Williams' como específico del circuito y del compuesto hasta que se repita en algún otro punto del calendario.",
+      "editor_take_es": "En lo que va de la temporada, la tabla no se movió: Williams tiene 11 puntos, Cadillac tiene cero — una diferencia de 11 puntos en 14 carreras, incluso antes de que se corra Bakú. Un stint de ritmo competitivo con neumático duro frente a un registro de temporada en cero puntos es exactamente el problema de muestra chica que parece ser: real, algo para seguir, pero todavía no evidencia de que Cadillac alcanzó al resto. Budkowski prácticamente lo reconoció al orientar a Pérez hacia 2027 en lugar de defender los resultados de 2026.",
+      "slug": "cadillac-williams-pace-madrid-season-standings-2026",
+      "meta_description": "Cadillac out-paced Williams on hard tires for one stint in Madrid. The season standings still read 11-0 in Williams' favor after 14 races.",
+      "meta_description_es": "Cadillac superó a Williams en ritmo con duros durante un stint en Madrid. La tabla de temporada sigue 11-0 a favor de Williams tras 14 carreras.",
+      "stats": [
+        { "value": "11", "label": "WILLIAMS 2026 POINTS (P9)", "label_es": "PUNTOS 2026 DE WILLIAMS (P9)", "unit": null, "unit_es": null },
+        { "value": "0", "label": "CADILLAC 2026 POINTS (P11)", "label_es": "PUNTOS 2026 DE CADILLAC (P11)", "unit": null, "unit_es": null },
+        { "value": "0.351", "label": "CADILLAC PACE EDGE, STINT 2", "label_es": "VENTAJA DE RITMO DE CADILLAC, STINT 2", "unit": "sec/lap on hards", "unit_es": "seg/vuelta con duros" },
+        { "value": "0.403", "label": "WILLIAMS PACE EDGE, STINT 1", "label_es": "VENTAJA DE RITMO DE WILLIAMS, STINT 1", "unit": "sec/lap on mediums", "unit_es": "seg/vuelta con medios" }
+      ],
+      "faq": [
+        {
+          "q": "Is Cadillac faster than Williams in F1 2026?",
+          "a": "In one stint at Madrid, on hard tires, yes — Sergio Pérez was 0.351s per lap quicker than Alexander Albon. Across the season, though, Williams has 11 points to Cadillac's zero through 14 races.",
+          "q_es": "¿Cadillac es más rápido que Williams en la F1 2026?",
+          "a_es": "En un stint en Madrid, con neumáticos duros, sí — Sergio Pérez fue 0,351 segundos por vuelta más rápido que Alexander Albon. En la temporada completa, sin embargo, Williams tiene 11 puntos contra los cero de Cadillac en 14 carreras."
+        },
+        {
+          "q": "Has Cadillac scored any points in its debut F1 season?",
+          "a": "Not yet — the team sits 11th and last in the constructors' standings with zero points, and has shifted development focus toward its 2027 car rather than chasing 2026 results.",
+          "q_es": "¿Cadillac sumó puntos en su temporada debut en la F1?",
+          "a_es": "Todavía no — el equipo está 11° y último en el campeonato de constructores con cero puntos, y ya movió el foco de desarrollo hacia el auto de 2027 en lugar de perseguir resultados en 2026."
+        }
+      ]
+    },
+    {
+      "source_name": "RacingNews365",
+      "source_url": "https://racingnews365.com/isack-hadjar-lengthy-injury-absence-defended-as-liam-lawson-again-waits",
+      "headline": "Hadjar's Wrist Recovery Draws Skepticism — Red Bull and Rosberg Both Push Back",
+      "our_summary": "Isack Hadjar has missed three consecutive races with a wrist fracture from a summer boxing session, and questions about the length of his absence prompted defenses from two directions. Nico Rosberg argued driving with a wrist injury is 'really horrible' given the braking and G-forces involved, pointing to Lance Stroll's 2023 return two weeks after fracturing both wrists as evidence of how much a driver can push through — not a benchmark for how fast recovery should go. Red Bull team principal Laurent Mekies said 'there is nothing wrong with Isack's recovery,' calling it 'fundamentally a normal time' for this injury type, and that Hadjar will be evaluated roughly a week before Baku, including simulator work, before any return decision.",
+      "entity_tags": ["Isack Hadjar", "Red Bull", "Liam Lawson", "Nico Rosberg"],
+      "published_at": "2026-09-16",
+      "editor_note": "No party involved has disputed the medical facts of the injury — the 'defended' framing in the coverage is about the pace of recovery being questioned publicly, not about anyone doubting the injury is real.",
+      "editor_take": "Hadjar was 68 points and eighth in the standings when the injury happened after round 11 — Lawson was then at 43 through the same 11 rounds, a 25-point gap. Three races later, Lawson has closed that to 11 points driving the harder Red Bull seat, not the easier Racing Bulls car Hadjar was originally scoring from. If Hadjar returns at Baku with the gap still in single digits, the injury will have cost him a lead, not just races — that's the real pressure behind 'why is this taking so long,' more than any medical dispute.",
+      "internal_link_slug": null,
+      "headline_es": "La recuperación de la muñeca de Hadjar genera dudas — Red Bull y Rosberg salen a responder",
+      "our_summary_es": "Isack Hadjar se perdió tres carreras consecutivas por una fractura de muñeca sufrida en una sesión de boxeo durante el receso de verano, y las preguntas sobre la duración de su ausencia motivaron respuestas desde dos frentes. Nico Rosberg argumentó que manejar con una lesión de muñeca es 'realmente horrible' por las fuerzas de frenado y las fuerzas G involucradas, y señaló el regreso de Lance Stroll en 2023 — dos semanas después de fracturarse ambas muñecas — como evidencia de cuánto puede forzar un piloto, no como referencia de qué tan rápido debería ser una recuperación. El jefe de equipo de Red Bull, Laurent Mekies, dijo que 'no hay nada malo con la recuperación de Isack', calificándola de 'fundamentalmente un tiempo normal' para este tipo de lesión, y que Hadjar será evaluado aproximadamente una semana antes de Bakú, con trabajo en el simulador incluido, antes de cualquier decisión sobre su regreso.",
+      "editor_note_es": "Ninguna de las partes involucradas discutió los hechos médicos de la lesión — el encuadre de 'defendida' en la cobertura se refiere a que el ritmo de recuperación se cuestiona públicamente, no a que alguien dude de que la lesión sea real.",
+      "editor_take_es": "Hadjar tenía 68 puntos y era octavo en el campeonato cuando ocurrió la lesión tras la fecha 11 — Lawson tenía entonces 43 puntos en las mismas 11 fechas, una diferencia de 25. Tres carreras después, Lawson redujo esa diferencia a 11 puntos manejando el asiento más difícil de Red Bull, no el Racing Bulls más accesible desde el que Hadjar sumaba originalmente. Si Hadjar regresa en Bakú con esa diferencia todavía en un dígito, la lesión le habrá costado una ventaja, no solo carreras — esa es la presión real detrás de 'por qué está tardando tanto', más que cualquier disputa médica.",
+      "slug": "hadjar-wrist-recovery-red-bull-rosberg-2026",
+      "meta_description": "Hadjar's wrist-injury lead over Lawson shrank from 25 points to 11 in three missed races. Red Bull says the recovery timeline is normal.",
+      "meta_description_es": "La ventaja de Hadjar sobre Lawson bajó de 25 a 11 puntos en tres carreras que perdió por la lesión. Red Bull dice que la recuperación es normal.",
+      "stats": [
+        { "value": "68", "label": "HADJAR 2026 POINTS (P8)", "label_es": "PUNTOS 2026 DE HADJAR (P8)", "unit": null, "unit_es": null },
+        { "value": "3", "label": "RACES MISSED", "label_es": "CARRERAS PERDIDAS", "unit": null, "unit_es": null },
+        { "value": "25", "label": "POINTS LEAD BEFORE INJURY", "label_es": "VENTAJA DE PUNTOS ANTES DE LA LESIÓN", "unit": "over Lawson, round 11", "unit_es": "sobre Lawson, fecha 11" },
+        { "value": "11", "label": "POINTS LEAD NOW", "label_es": "VENTAJA DE PUNTOS AHORA", "unit": "over Lawson, round 14", "unit_es": "sobre Lawson, fecha 14" }
+      ],
+      "faq": [
+        {
+          "q": "How long has Isack Hadjar been out with a wrist injury?",
+          "a": "Three consecutive races (the Netherlands, Italian and Spanish Grands Prix) after fracturing his wrist in a summer boxing session. Red Bull says he'll be evaluated roughly a week before Baku, including simulator work, before any return decision.",
+          "q_es": "¿Cuánto tiempo lleva Isack Hadjar afuera por la lesión de muñeca?",
+          "a_es": "Tres carreras consecutivas (los Grandes Premios de Países Bajos, Italia y España) tras fracturarse la muñeca en una sesión de boxeo durante el receso de verano. Red Bull dice que será evaluado aproximadamente una semana antes de Bakú, con trabajo en el simulador incluido, antes de cualquier decisión sobre su regreso."
+        },
+        {
+          "q": "Is Isack Hadjar losing his championship position to Liam Lawson?",
+          "a": "Not yet, but the gap is shrinking. Hadjar led Lawson by 25 points when the injury happened after round 11; three races later, driving Red Bull's seat in Hadjar's place, Lawson has cut that to 11.",
+          "q_es": "¿Isack Hadjar está perdiendo su posición en el campeonato frente a Liam Lawson?",
+          "a_es": "Todavía no, pero la diferencia se achica. Hadjar le sacaba 25 puntos a Lawson cuando ocurrió la lesión tras la fecha 11; tres carreras después, manejando el asiento de Red Bull en lugar de Hadjar, Lawson redujo eso a 11."
+        }
+      ]
     }
   ]
 }
