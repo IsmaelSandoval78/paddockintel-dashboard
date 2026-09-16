@@ -8,6 +8,7 @@ export const revalidate = 3600;
 
 type FeedItem = {
   id: string;
+  slug: string | null;
   source_name: string;
   source_url: string;
   headline: string;
@@ -70,7 +71,7 @@ async function getItems(): Promise<FeedItem[]> {
   const { data } = await supabase
     .from('digest_items')
     .select(
-      'id, source_name, source_url, headline, headline_es, our_summary, our_summary_es, entity_tags, published_at, editor_note, editor_note_es, editor_take, editor_take_es, internal_link_slug'
+      'id, slug, source_name, source_url, headline, headline_es, our_summary, our_summary_es, entity_tags, published_at, editor_note, editor_note_es, editor_take, editor_take_es, internal_link_slug'
     )
     .in('issue_id', issueIds)
     .order('published_at', { ascending: false });
@@ -99,10 +100,10 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
   const mentioned = mostMentioned(entityCounts);
   const feedUrl = locale === 'es' ? FEED_URLS.es : FEED_URLS.en;
 
-  // No individual URL per item yet (that's the bigger fix, tracked separately) --
-  // each NewsArticle points back at the Feed page via mainEntityOfPage and a
-  // same-page #item-<id> anchor, still enough for Google to attribute headline,
-  // author, date and source per story instead of treating the page as one blob.
+  // Items with a slug get their own page (app/[locale]/(digest)/feed/[slug]/page.tsx) and
+  // a real, independently indexable URL -- Google can rank and rich-snippet that story on
+  // its own instead of only ever seeing it folded into this one aggregate page. Items not
+  // yet backfilled with a slug fall back to the old same-page anchor.
   const itemListJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
@@ -110,6 +111,7 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
     url: feedUrl,
     itemListElement: items.map((item, i) => {
       const text = localize(item, locale);
+      const itemUrl = item.slug ? `${feedUrl}${item.slug}/` : `${feedUrl}#item-${item.id}`;
       return {
         '@type': 'ListItem',
         position: i + 1,
@@ -118,8 +120,8 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
           headline: text.headline,
           description: text.our_summary,
           datePublished: item.published_at,
-          url: `${feedUrl}#item-${item.id}`,
-          mainEntityOfPage: feedUrl,
+          url: itemUrl,
+          ...(item.slug ? {} : { mainEntityOfPage: feedUrl }),
           isBasedOn: item.source_url,
           author: { '@type': 'Person', name: 'Ismael Sandoval', url: 'https://hub.paddockintel.com/about' },
           publisher: {
@@ -232,15 +234,25 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
                       </span>
                     </div>
 
-                    <a
-                      href={item.source_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block font-prose font-semibold text-text-1 leading-snug mb-2 hover:text-terracotta transition-colors duration-150"
-                      style={{ fontSize: '0.9375rem' }}
-                    >
-                      {text.headline}
-                    </a>
+                    {item.slug ? (
+                      <Link
+                        href={`/feed/${item.slug}`}
+                        className="block font-prose font-semibold text-text-1 leading-snug mb-2 hover:text-terracotta transition-colors duration-150"
+                        style={{ fontSize: '0.9375rem' }}
+                      >
+                        {text.headline}
+                      </Link>
+                    ) : (
+                      <a
+                        href={item.source_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block font-prose font-semibold text-text-1 leading-snug mb-2 hover:text-terracotta transition-colors duration-150"
+                        style={{ fontSize: '0.9375rem' }}
+                      >
+                        {text.headline}
+                      </a>
+                    )}
 
                     <p
                       className="text-text-2 leading-relaxed"

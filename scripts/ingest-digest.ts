@@ -14,6 +14,9 @@ loadEnvLocal();
 
 import { createClient } from '../lib/supabase/server';
 
+type Stat = { value: string; label: string; label_es?: string | null; unit?: string | null; unit_es?: string | null };
+type Faq = { q: string; a: string; q_es?: string | null; a_es?: string | null };
+
 type DigestItem = {
   source_name: string;
   source_url: string;
@@ -28,6 +31,11 @@ type DigestItem = {
   our_summary_es?: string | null;
   editor_note_es?: string | null;
   editor_take_es?: string | null;
+  slug?: string | null;
+  stats?: Stat[] | null;
+  faq?: Faq[] | null;
+  meta_description?: string | null;
+  meta_description_es?: string | null;
 };
 
 type DigestIssue = {
@@ -96,6 +104,11 @@ async function main() {
     our_summary_es: item.our_summary_es ?? null,
     editor_note_es: item.editor_note_es ?? null,
     editor_take_es: item.editor_take_es ?? null,
+    slug: item.slug ?? null,
+    stats: item.stats ?? null,
+    faq: item.faq ?? null,
+    meta_description: item.meta_description ?? null,
+    meta_description_es: item.meta_description_es ?? null,
   }));
 
   const { error: itemsErr } = await supabase.from('digest_items').insert(rows);

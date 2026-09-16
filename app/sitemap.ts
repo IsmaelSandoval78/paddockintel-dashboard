@@ -42,6 +42,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .eq('series', 'recap')
       .order('published_at', { ascending: false });
 
+    // Feed items with a slug get their own indexable page
+    // (app/[locale]/(digest)/feed/[slug]/page.tsx) -- items not yet backfilled
+    // with a slug are left out here, they still only live inside /feed/.
+    const { data: feedItems } = await supabase
+      .from('digest_items')
+      .select('slug, published_at, digest_issues!inner(status, series)')
+      .eq('digest_issues.status', 'published')
+      .eq('digest_issues.series', 'newsletter')
+      .not('slug', 'is', null);
+
     // EN/ES only, matching the site-wide PT scope-down — see the shell-page
     // fix above this one. glossary_terms has no 'status' column value other
     // than 'published' in practice but the filter is kept explicit anyway.
@@ -91,6 +101,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     }));
 
+    // EN + ES for each item, same slug both locales -- one row per story,
+    // not a locale-paired row like articles (see 20260915180000).
+    const feedItemRoutes: MetadataRoute.Sitemap = (feedItems ?? []).flatMap((f) => [
+      {
+        url: `${MAGAZINE_BASE}/feed/${f.slug as string}/`,
+        lastModified: f.published_at ? new Date(f.published_at as string) : new Date(),
+        changeFrequency: 'monthly' as const,
+        priority: 0.6,
+      },
+      {
+        url: `${MAGAZINE_BASE}/es/feed/${f.slug as string}/`,
+        lastModified: f.published_at ? new Date(f.published_at as string) : new Date(),
+        changeFrequency: 'monthly' as const,
+        priority: 0.55,
+      },
+    ]);
+
     // URL segment per depth — 'eli5' has none (it's the base /glossary/[slug]
     // URL), matching app/[locale]/(blog)/glossary/[slug]/[depth]/page.tsx's
     // URL_DEPTH map exactly (note: 'fia-regulation' in the URL, not 'fia').
@@ -106,7 +133,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     }));
 
-    return [...staticRoutes, ...articleRoutes, ...issueRoutes, ...recapRoutes, ...glossaryRoutes];
+    return [...staticRoutes, ...articleRoutes, ...issueRoutes, ...recapRoutes, ...feedItemRoutes, ...glossaryRoutes];
   }
 
   const recordSlugs = [
