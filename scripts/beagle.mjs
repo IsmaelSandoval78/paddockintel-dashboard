@@ -83,10 +83,14 @@ async function fetchFeed({ name, url }) {
   }
 }
 
+function readEnvVar(env, name) {
+  return env.match(new RegExp(`${name}=(.*)`))[1].trim().replace(/^"(.*)"$/, '$1');
+}
+
 async function loadEntityDictionary() {
   const env = fs.readFileSync('.env.local', 'utf-8');
-  const supaUrl = env.match(/NEXT_PUBLIC_SUPABASE_URL=(.*)/)[1].trim();
-  const key = env.match(/SUPABASE_SERVICE_ROLE_KEY=(.*)/)[1].trim();
+  const supaUrl = readEnvVar(env, 'NEXT_PUBLIC_SUPABASE_URL');
+  const key = readEnvVar(env, 'SUPABASE_SERVICE_ROLE_KEY');
   const sb = createClient(supaUrl, key);
 
   const { data: races } = await sb.from('races').select('id').eq('year', 2026);
