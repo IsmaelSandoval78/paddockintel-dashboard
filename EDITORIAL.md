@@ -71,6 +71,58 @@ If yes → publish. If it sounds like a fan forum post → rewrite the angle.
 
 ---
 
+## The Feed ("News Today") — A Different Gate
+
+The Feed is not the Blog. It reuses the same infrastructure (`digest_items`), but it has its own
+scope — decided 2026-09-15, refined 2026-09-16. Read this section before curating or writing any
+Feed item; it does not replace "The Line" above, which still governs full Blog articles.
+
+**Scope — open, not economics-gated.** The Feed covers any real, well-covered F1 story: driver
+conflicts, race incidents, penalties, team disputes, technical rows — without forcing an economic
+angle onto every item the way the Blog does. Forcing that angle onto every Feed item was killing
+real, well-sourced stories that didn't happen to have a dollar figure attached. If a story *does*
+turn out to carry real economic depth, that's the signal it earns a full Blog article — not a
+reason to leave it out of the Feed.
+
+**The drama rule.** Driver-vs-driver conflict is allowed, often the entry point — but it never
+runs as a plain re-report of the argument. Every drama item gets PaddockIntel's own analytical
+layer on top: pull the drivers' actual competitive record — championships, race wins, points,
+head-to-head, DNF rate — and frame the conflict through that data. That's exactly what the
+`editor_note` / `editor_take` fields on `digest_items` (EN + ES, migrations `20260911210000` and
+`20260915180000`) are for: the analyst's data-backed brief riding on top of the wire item, not
+just a link to the source.
+
+*Example:* Alonso and Sainz argue over an incident. The Feed item doesn't just summarize the
+argument — the `editor_note`/`editor_take` adds who's the actual champion between them, who has
+more career race wins, who has the worse DNF record this season. Same drama every outlet is
+covering; only PaddockIntel brings the data. That's the SEO/EEAT wedge — a distinctive,
+numbers-first take on a trending story, not a generic aggregator blurb.
+
+**Explicit exclusion.** Personal-life content — weddings, engagements, relationships — stays out
+of the Feed regardless of how much coverage it gets. Not on-track, not competitive, not our lane.
+On-track/competitive conflict (penalties, contract disputes, team orders, sporting incidents) is
+always in scope.
+
+See `docs/ROADMAP-SEMANA.md` (entries "Adición 15 sep 2026" and "16 sep 2026") for the fuller
+decision history and rationale.
+
+---
+
+## Newsletter Cadence
+
+Two sends a week — **not** the "economics Mon/Wed/Fri + data Thursday" cadence noted 2026-09-14
+in `docs/ROADMAP-SEMANA.md`. That entry is superseded as of 2026-09-16.
+
+- **Monday** — mandatory every week a race happened that weekend. The race-weekend
+  recap/economics issue.
+- **Tuesday** — only on weeks with no race. Replaces the Monday slot; it's still one economics
+  issue that week, just a day later — not an extra send.
+- **Thursday** — "The Data." Every week, no exception. Built from PaddockIntel's own proprietary
+  metrics (Track Dominance, Qualifying Pace Delta, and whatever else is in production) — this
+  vertical gets its own fixed day because it doesn't share a slot with the economics recap.
+
+---
+
 ## Voice Principles
 
 **Directional, not neutral.** PaddockIntel has a point of view. "The data suggests X" is weaker than

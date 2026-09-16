@@ -2060,6 +2060,12 @@ punta a punta. Confirmado también en producción tras el deploy. `tsc`/`eslint`
 
 ## Cadencia del Digest: economics Lun/Mié/Vie + data jueves (decidido 14 sep 2026)
 
+**SUPERADO 16 sep 2026 — ver "Cadencia real del Newsletter (corrección 16 sep 2026)" al final del
+documento y la sección "Newsletter Cadence" en `EDITORIAL.md`.** La cadencia real no es 3x/semana
+para economics; es 1x/semana (lunes si hubo carrera ese fin de semana, martes si no) + jueves para
+data. Queda el análisis de abajo como contexto histórico de por qué se separó por vertical, pero
+la frecuencia de economics que dice está corregida.
+
 **Estado: decidido con Ismael, cero código todavía.** Contexto: sesión de curación manual
 del `/feed` (4 noticias reales del fin de semana del Madring — Motorsport.com, verificadas
 con WebSearch/WebFetch, no inventadas) llevó a aclarar la diferencia real entre `/feed` y
@@ -2124,3 +2130,35 @@ riesgo real de su rol de embajador pago, y la defensa de Red Bull de la orden a 
 gap de `/feed` arriba). `scripts/ingest-digest.ts` estaba desalineado con el schema desde la
 migración de Editor's Note/Take (`20260911210000`) — no escribía `editor_note`/`editor_take`/
 `internal_link_slug` — corregido en esta sesión para que el script sí los escriba.
+
+## Cadencia real del Newsletter (corrección 16 sep 2026)
+
+**Decidido con Ismael, cero código todavía.** Corrige la cadencia de arriba (14 sep): no es
+Lunes/Miércoles/Viernes para economics — es un solo issue economics por semana:
+
+- **Lunes** — obligatorio, toda semana en la que hubo carrera ese fin de semana. Recap/economics
+  post-carrera.
+- **Martes** — solo en semanas sin carrera. Reemplaza el slot del lunes, no se suma — sigue
+  siendo un solo issue economics esa semana, un día más tarde.
+- **Jueves** — "The Data", todas las semanas sin excepción. Contenido: Track Dominance y las
+  demás métricas propias en producción (Qualifying Pace Delta, etc.).
+
+Documentado también en `EDITORIAL.md` §"Newsletter Cadence" — esa es la referencia canónica a
+leer antes de generar cualquier issue; esta sección queda como historial de la corrección.
+
+## Regla de "drama" en el Feed — refinamiento del 15 sep (escrito 16 sep 2026)
+
+La decisión del 15 sep ("Feed más abierto") no especificaba cómo manejar drama entre pilotos.
+Aclarado hoy con Ismael: el drama de pista/competitivo (discusiones entre pilotos, incidentes,
+sanciones, team orders) sí entra al Feed, pero siempre con la capa analítica propia encima —
+usando los campos `editor_note`/`editor_take` que ya existen en `digest_items` (migraciones
+`20260911210000` y `20260915180000`, EN+ES) para traer datos reales: quién es campeón, quién
+tiene más victorias, quién tiene más DNFs, head-to-head, etc. Ejemplo dado por Ismael: Alonso y
+Sainz discuten por algo — el item no es solo el resumen de la discusión, es esa discusión más el
+dato de quién de los dos es campeón y quién tiene mejor récord.
+
+**Exclusión explícita:** vida personal — bodas, noviazgos, relaciones — queda fuera del Feed sin
+importar cuánta cobertura tenga. No es competitivo, no es nuestra cancha.
+
+Documentado también en `EDITORIAL.md` §"The Feed (News Today) — A Different Gate" — esa es la
+referencia canónica a leer antes de curar o redactar cualquier item del Feed.
