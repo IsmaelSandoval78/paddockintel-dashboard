@@ -147,6 +147,25 @@ body {
   display: block;
 }
 
+/* Skip-to-content link — off-screen until keyboard focus */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0.75rem;
+  z-index: 100;
+  padding: 0.5rem 1rem;
+  background: var(--bg);
+  color: var(--text-1);
+  border: 1px solid var(--border);
+  font-family: var(--pi-mono, monospace);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.skip-link:focus {
+  top: 0.75rem;
+}
+
 /* Live data indicator */
 @keyframes pulse-red {
   0%, 100% { opacity: 1; transform: scale(1); }

@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { headers } from 'next/headers';
 import { Archivo_Black, DM_Serif_Display, Inter, JetBrains_Mono, Lora } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/lib/i18n/routing';
 import { siteModeForHost } from '@/lib/siteMode';
@@ -76,6 +76,7 @@ export default async function LocaleLayout({
   }
 
   const messages = await getMessages();
+  const t = await getTranslations('nav');
   const host = (await headers()).get('host') ?? '';
   const siteMode = siteModeForHost(host);
 
@@ -94,10 +95,15 @@ export default async function LocaleLayout({
       className={`${display.variable} ${serif.variable} ${sans.variable} ${mono.variable} ${prose.variable}`}
     >
       <body>
+        <a href="#main-content" className="skip-link">
+          {t('skipToContent')}
+        </a>
         <NextIntlClientProvider messages={messages}>
           <AuthProvider value={{ user: authUser, initialFollows }}>
             <Navbar authUser={authUser} />
-            {children}
+            <div id="main-content" tabIndex={-1} className="outline-none">
+              {children}
+            </div>
             <Footer />
           </AuthProvider>
         </NextIntlClientProvider>

@@ -21,7 +21,8 @@
     "feed": "Feed",
     "weekly": "Digest Semanal",
     "whosWho": "Voces",
-    "home": "Inicio"
+    "home": "Inicio",
+    "skipToContent": "Saltar al contenido"
   },
   "notFound": {
     "eyebrow": "Señal Perdida",

@@ -21,7 +21,8 @@
     "feed": "Feed",
     "weekly": "Weekly Digest",
     "whosWho": "Voices",
-    "home": "Home"
+    "home": "Home",
+    "skipToContent": "Skip to content"
   },
   "notFound": {
     "eyebrow": "Signal Lost",
