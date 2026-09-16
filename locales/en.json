@@ -23,6 +23,12 @@
     "whosWho": "Voices",
     "home": "Home"
   },
+  "notFound": {
+    "eyebrow": "Signal Lost",
+    "label": "Did Not Finish",
+    "body": "This page retired before the checkered flag. It isn't on this track.",
+    "cta": "Back to the paddock"
+  },
   "search": {
     "placeholder": "Search articles...",
     "ariaLabel": "Search articles",

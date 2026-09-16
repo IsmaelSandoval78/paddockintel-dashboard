@@ -23,6 +23,12 @@
     "whosWho": "Vozes",
     "home": "Início"
   },
+  "notFound": {
+    "eyebrow": "Sinal Perdido",
+    "label": "Não Terminou a Corrida",
+    "body": "Esta página abandonou antes da bandeirada. Não está neste circuito.",
+    "cta": "Voltar para o paddock"
+  },
   "search": {
     "placeholder": "Buscar artigos...",
     "ariaLabel": "Buscar artigos",

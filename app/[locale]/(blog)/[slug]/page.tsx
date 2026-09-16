@@ -72,7 +72,10 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
   const { locale, slug } = await params;
   const { isEnabled: isDraft } = await draftMode();
   const article = await getArticle(locale, slug, isDraft);
-  if (!article) return { title: 'Article — PaddockIntel' };
+  if (!article) {
+    const t = await getTranslations({ locale, namespace: 'notFound' });
+    return { title: `${t('label')} — PaddockIntel`, robots: { index: false, follow: true } };
+  }
 
   const alternates: Record<string, string> = {};
   if (article.translation_group_id) {
