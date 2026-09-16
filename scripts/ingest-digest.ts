@@ -24,6 +24,10 @@ type DigestItem = {
   editor_note?: string | null;
   editor_take?: string | null;
   internal_link_slug?: string | null;
+  headline_es?: string | null;
+  our_summary_es?: string | null;
+  editor_note_es?: string | null;
+  editor_take_es?: string | null;
 };
 
 type DigestIssue = {
@@ -88,6 +92,10 @@ async function main() {
     editor_note: item.editor_note ?? null,
     editor_take: item.editor_take ?? null,
     internal_link_slug: item.internal_link_slug ?? null,
+    headline_es: item.headline_es ?? null,
+    our_summary_es: item.our_summary_es ?? null,
+    editor_note_es: item.editor_note_es ?? null,
+    editor_take_es: item.editor_take_es ?? null,
   }));
 
   const { error: itemsErr } = await supabase.from('digest_items').insert(rows);
