@@ -29,6 +29,13 @@
     "body": "This page retired before the checkered flag. It isn't on this track.",
     "cta": "Back to the paddock"
   },
+  "error": {
+    "eyebrow": "System Fault",
+    "label": "Mechanical Retirement",
+    "body": "Something broke on our end mid-lap.",
+    "retry": "Try again",
+    "cta": "Back to the paddock"
+  },
   "search": {
     "placeholder": "Search articles...",
     "ariaLabel": "Search articles",

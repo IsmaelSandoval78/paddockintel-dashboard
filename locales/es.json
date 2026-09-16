@@ -29,6 +29,13 @@
     "body": "Esta página se retiró antes de la bandera a cuadros. No está en este circuito.",
     "cta": "Volver al paddock"
   },
+  "error": {
+    "eyebrow": "Falla del Sistema",
+    "label": "Abandono Mecánico",
+    "body": "Algo se rompió de nuestro lado a mitad de vuelta.",
+    "retry": "Intentar de nuevo",
+    "cta": "Volver al paddock"
+  },
   "search": {
     "placeholder": "Buscar artículos...",
     "ariaLabel": "Buscar artículos",
