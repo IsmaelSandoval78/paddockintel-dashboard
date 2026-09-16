@@ -1,0 +1,52 @@
+{
+  "slug": "vol-10-week-2026-09-16",
+  "published_at": "2026-09-16",
+  "status": "draft",
+  "intro_synthesis": "The Spanish Grand Prix didn't end Sunday — it kept producing storylines all week: two Spaniards colliding while one weighs retirement, and a Red Bull driver shuffle that hasn't stopped moving since Hadjar's wrist injury.",
+  "items": [
+    {
+      "source_name": "Formula1.com",
+      "source_url": "https://www.formula1.com/en/latest/article/how-sainzs-home-race-in-madrid-unravelled-as-williams-struggle.31dSI72gYFXpOTfpr37Jp0",
+      "headline": "Sainz Penalized for Squeezing Alonso — But His Race Was Already Lost",
+      "our_summary": "Carlos Sainz picked up a five-second penalty for squeezing fellow Spaniard Fernando Alonso into Turn 5 at the Spanish Grand Prix, breaking Alonso's front wing and prompting an angry radio message from the Aston Martin driver. Sainz called it 'the nature of that corner' — 'there's only space for one' — and argued he couldn't watch Alonso's position while holding his own line. The penalty barely mattered to the result: Sainz's race was effectively over from Lap 1, when contact with Yuki Tsunoda at Turn 1 damaged his floor and cost him the rear downforce he needed for the rest of the afternoon. Williams retired the car after 43 laps; Sainz admitted 'even with a perfect race, we wouldn't have finished higher than 16th.'",
+      "entity_tags": ["Carlos Sainz", "Fernando Alonso", "Williams", "Aston Martin"],
+      "published_at": "2026-09-13",
+      "editor_note": "Both drivers are Spanish, so read the radio anger with that in mind — this is two countrymen fighting over track position, not team politics. The wing damage from Turn 5 barely factored into how Sainz's race actually ended.",
+      "editor_take": "The résumé gap between them is enormous — two championships and 32 career wins for Alonso against zero titles and four wins for Sainz. 2026 doesn't reflect that gap. Alonso sits 19th in the standings with 3 points from 14 races and has already gone unclassified three times this season; Sainz sits 16th with 6 points and has finished every race he's started, Sunday included, despite floor damage that made a top-16 finish impossible before Turn 5 ever happened. Right now, on the timing sheet, the less decorated Spaniard is having the better season — that's the actual story, not the five-second penalty.",
+      "internal_link_slug": "fernando-alonso-f1-future-2027-salary-negotiation"
+    },
+    {
+      "source_name": "Sky Sports",
+      "source_url": "https://www.skysports.com/f1/news/12433/13586010/fernando-alonso-whats-the-latest-on-aston-martin-drivers-future-as-he-weighs-up-retirement-or-new-contract-to-stay-in-f1-in-2027",
+      "headline": "Aston Martin and the FIA Are Both Trying to Talk Alonso Out of Retiring",
+      "our_summary": "Fernando Alonso has scored points in just two of Aston Martin's 14 races this season as he weighs retirement against a new deal for 2027. Team principal Mike Krack called the prospect of losing him \"so dramatic I do not even want to talk about it,\" while FIA president Mohammed Ben Sulayem says he plans to personally lobby Alonso to stay, arguing a champion shouldn't end his career on a season this bad. Alonso says the call hinges on whether 2027's new rules (cutting electric power output from roughly 50% to 42%) fix the racing, and that an announcement is 'not coming soon.' At 45, turning 46 next summer, he'd be the oldest driver on the grid since Graham Hill in 1975 if he continues.",
+      "entity_tags": ["Fernando Alonso", "Aston Martin", "FIA"],
+      "published_at": "2026-09-16",
+      "editor_note": "Krack's and Ben Sulayem's public pleading isn't neutral — neither Aston Martin nor the FIA benefits from a two-time champion walking away mid-negotiation, so the urgency is itself a data point about who needs this deal more.",
+      "editor_take": "Alonso's reported €40M ask for 2027-28 assumed a driver still worth building a season around. Three points from 14 races is the weakest return of his 25-year career, championships included. The FIA president lobbying him personally proves he still has leverage as a name — but the number that actually gets negotiated has to answer for this season, not just the reputation.",
+      "internal_link_slug": "fernando-alonso-f1-future-2027-salary-negotiation"
+    },
+    {
+      "source_name": "PlanetF1",
+      "source_url": "https://www.planetf1.com/news/liam-lawson-late-red-bull-racing-decision-baku",
+      "headline": "Red Bull Won't Decide Lawson's Seat Until Baku Race Week",
+      "our_summary": "Red Bull says the call on whether Liam Lawson keeps racing for the main team at the Azerbaijan GP or reverts to Racing Bulls won't come until 'probably all the way up to Wednesday or Thursday for Baku,' pending Isack Hadjar's recovery from a fractured wrist. Lawson, promoted after Hadjar's injury, says the uncertainty makes preparation difficult since he has to stay ready for two very different cars. He's scored points in two of his three races since the move up — 6th in the Netherlands, 14th at Monza, 6th in Spain.",
+      "entity_tags": ["Liam Lawson", "Isack Hadjar", "Red Bull", "Racing Bulls"],
+      "published_at": "2026-09-15",
+      "editor_note": "The stakes are asymmetric — this isn't really a form contest playing out in public.",
+      "editor_take": "Before the wrist injury, Hadjar was outscoring Lawson by nearly 30 points over the same 11 rounds — 68 to 40 — while both were driving for Racing Bulls-level cars. Since being promoted, Lawson has taken 14 points from Red Bull's notoriously harder second seat in three starts. Red Bull's dilemma isn't really about who's driving better. It's whether three good races in the harder car outweigh eleven decent ones in the easier one.",
+      "internal_link_slug": null
+    },
+    {
+      "source_name": "Motorsport.com",
+      "source_url": "https://www.motorsport.com/f1/news/im-not-enjoying-life-how-yuki-tunodas-red-bull-f1-stint-exhausted-him/10856377/",
+      "headline": "Tsunoda's Return From Red Bull Reserve Duty Comes With an IndyCar Rumor Attached",
+      "our_summary": "Yuki Tsunoda says he 'wasn't really enjoying life' during the stretch after Red Bull demoted him to reserve/test duty for 2026, replaced in the senior seat by Isack Hadjar. He got back on the grid at Racing Bulls from the Dutch Grand Prix (round 12) once Hadjar's wrist fracture triggered a reshuffle — Liam Lawson moved up to Red Bull, and Tsunoda filled the seat Lawson left behind. Separately, Motorsport.com's IndyCar desk reports he's already in talks with Meyer Shank Racing for the #66 Honda entry in 2027, though co-owner Mike Shank downplayed it: 'We have not decided anything yet. We are talking to everybody in every form of motorsport.'",
+      "entity_tags": ["Yuki Tsunoda", "Red Bull", "Racing Bulls", "IndyCar"],
+      "published_at": "2026-09-16",
+      "editor_note": "This isn't a rivalry story — it's a career-arc one. The demotion is Tsunoda's own account, not a conflict with another driver, so the data should stand in for the pain, not manufacture a fight that isn't there.",
+      "editor_take": "Three races back at Racing Bulls have brought Tsunoda one point — 11th, 10th, 14th — from a driver with 117 F1 starts, zero wins, zero podiums, and a career-best of P4. That's not the return of a stand-in auditioning to keep the seat past 2026; it reads like someone treading water until the next opportunity. An IndyCar seat being discussed the same week as his F1 comeback isn't a coincidence — it's the more honest signal of where he thinks his future is.",
+      "internal_link_slug": "audi-tsunoda-appeal-italian-gp-2026"
+    }
+  ]
+}
