@@ -2105,6 +2105,17 @@ volumen real sin forzar contenido de relleno.
 - Corregir el gap de `status` en `/feed` (arriba) — decisión pendiente de si se hace antes o
   junto con esto.
 
+**Adición 15 sep 2026 (decidida verbalmente en Codespaces, no escrita hasta ahora):** `/feed`
+va a ser **más abierto/general** en tema — noticias reales de F1, drama de pilotos,
+incidentes de carrera, conflictos de equipo, cualquier cosa cubierta por varias fuentes —
+sin forzar un ángulo de economía/data en cada item. La profundidad de economía/data (el
+diferenciador real del sitio) queda reservada para **artículos completos del blog**, no
+para el feed. Motivo: forzar el ángulo económico en cada item del feed estaba llevando a
+descartar historias reales y bien cubiertas solo porque no tenían una cifra de plata
+enganchada (ej. un conflicto de pilotos por una sanción). Si una noticia sí tiene
+profundidad económica real, esa es la señal de que amerita un artículo completo, no solo
+un blurb del feed con un link editorial.
+
 **Digest de items del feed, misma sesión:** 4 items redactados a mano para
 `digests/vol-08-week-2026-09-14.json` (Madring: cambios de trazado prometidos, Honda
 reemplaza al jefe de motores de Aston Martin, "who slept worst" de Sainz reformulado con el
