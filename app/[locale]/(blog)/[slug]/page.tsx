@@ -10,7 +10,7 @@ import ArticleTOC from '@/components/blog/ArticleTOC';
 import NewsletterCard from '@/components/blog/NewsletterCard';
 import ArticlePaywallGate from '@/components/blog/ArticlePaywallGate';
 import { extractTOC, markdownToHtml, estimateReadTime, splitMarkdownAtSection } from '@/lib/markdown';
-import { getArticleTagSlugs } from '@/lib/blog/tags';
+import { getArticleTagSlugs, getRelatedArticles } from '@/lib/blog/tags';
 import { getCurrentAuthUser } from '@/lib/auth/getCurrentAuthUser';
 
 // Free sections before the registration wall cuts in — see
@@ -130,6 +130,7 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
   const tTags = await getTranslations('articleTags');
   const tagSlugs = (await getArticleTagSlugs(createClient(), [article.id as string])).get(article.id as string) ?? [];
   const tags = tagSlugs.map((slug) => tTags(slug));
+  const relatedArticles = await getRelatedArticles(createClient(), article.id as string, locale, 3);
 
   const toc      = extractTOC(body);
   const html     = markdownToHtml(body);
@@ -293,6 +294,29 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
                 </p>
                 <ShareButton url={pageUrl} title={title} />
               </div>
+
+              {/* Related coverage — same-tag articles first, backfilled with
+                  the most recent others so this is never empty */}
+              {relatedArticles.length > 0 && (
+                <section className="mt-12 pt-8 border-t border-border">
+                  <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-2 mb-5">
+                    Keep Reading
+                  </p>
+                  <div className="grid gap-4 sm:grid-cols-3">
+                    {relatedArticles.map((rel) => (
+                      <Link
+                        key={rel.slug}
+                        href={`/${rel.slug}`}
+                        className="block border border-border-subtle p-4 hover:border-terracotta transition-colors duration-150 group"
+                      >
+                        <p className="font-prose text-sm text-text-1 leading-snug group-hover:text-terracotta transition-colors duration-150">
+                          {rel.title}
+                        </p>
+                      </Link>
+                    ))}
+                  </div>
+                </section>
+              )}
             </div>
 
             {/* Right sidebar — sticky TOC (desktop) + stat callouts */}
