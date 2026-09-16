@@ -931,6 +931,8 @@
     "editorsNote": "Nota del editor",
     "editorsTake": "Análisis del editor",
     "ourBrief": "Nuestra nota completa →",
+    "readBrief": "Nota completa →",
+    "leadLabel": "Historia Principal",
     "scoreHint": "El número junto a cada historia = cuántas otras historias de esta semana tocan la misma entidad — una señal real, no un conteo de votos.",
     "itemPage": {
       "theNumbers": "Los Números",

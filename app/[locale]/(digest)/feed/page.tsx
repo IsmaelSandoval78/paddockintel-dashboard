@@ -6,6 +6,8 @@ import { Link } from '@/lib/i18n/navigation';
 
 export const revalidate = 3600;
 
+type Stat = { value: string; label: string; label_es?: string | null; unit?: string | null; unit_es?: string | null };
+
 type FeedItem = {
   id: string;
   slug: string | null;
@@ -22,20 +24,22 @@ type FeedItem = {
   editor_take: string | null;
   editor_take_es: string | null;
   internal_link_slug: string | null;
+  stats: Stat[] | null;
 };
 
 // Feed content lives on one row per story (see the digest_items _es columns
 // migration) rather than a locale-paired row per Blog articles -- pick the
 // Spanish text when present, fall back to English rather than showing blank.
 function localize(item: FeedItem, locale: string) {
-  if (locale !== 'es') {
-    return { headline: item.headline, our_summary: item.our_summary, editor_note: item.editor_note, editor_take: item.editor_take };
-  }
+  const isEs = locale === 'es';
   return {
-    headline: item.headline_es ?? item.headline,
-    our_summary: item.our_summary_es ?? item.our_summary,
-    editor_note: item.editor_note_es ?? item.editor_note,
-    editor_take: item.editor_take_es ?? item.editor_take,
+    headline: isEs ? item.headline_es ?? item.headline : item.headline,
+    our_summary: isEs ? item.our_summary_es ?? item.our_summary : item.our_summary,
+    editor_note: isEs ? item.editor_note_es ?? item.editor_note : item.editor_note,
+    editor_take: isEs ? item.editor_take_es ?? item.editor_take : item.editor_take,
+    featuredStat: item.stats?.[0]
+      ? { value: item.stats[0].value, label: isEs ? item.stats[0].label_es ?? item.stats[0].label : item.stats[0].label }
+      : null,
   };
 }
 
@@ -71,7 +75,7 @@ async function getItems(): Promise<FeedItem[]> {
   const { data } = await supabase
     .from('digest_items')
     .select(
-      'id, slug, source_name, source_url, headline, headline_es, our_summary, our_summary_es, entity_tags, published_at, editor_note, editor_note_es, editor_take, editor_take_es, internal_link_slug'
+      'id, slug, source_name, source_url, headline, headline_es, our_summary, our_summary_es, entity_tags, published_at, editor_note, editor_note_es, editor_take, editor_take_es, internal_link_slug, stats'
     )
     .in('issue_id', issueIds)
     .order('published_at', { ascending: false });
@@ -99,6 +103,19 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
   const entityCounts = weeklyEntityCounts(items);
   const mentioned = mostMentioned(entityCounts);
   const feedUrl = locale === 'es' ? FEED_URLS.es : FEED_URLS.en;
+
+  // Lead + runner-up: the two highest-significance stories (by shared-entity score,
+  // tie-broken by recency since `items` is already published_at desc). Everything
+  // else keeps its original recency order in the grid below.
+  const byScoreDesc = [...items].sort((a, b) => {
+    const diff = significanceScore(b, entityCounts) - significanceScore(a, entityCounts);
+    if (diff !== 0) return diff;
+    return new Date(b.published_at).getTime() - new Date(a.published_at).getTime();
+  });
+  const lead = byScoreDesc[0] ?? null;
+  const runnerUp = byScoreDesc[1] ?? null;
+  const featuredIds = new Set([lead?.id, runnerUp?.id].filter(Boolean));
+  const rest = items.filter((item) => !featuredIds.has(item.id));
 
   // Items with a slug get their own page (app/[locale]/(digest)/feed/[slug]/page.tsx) and
   // a real, independently indexable URL -- Google can rank and rich-snippet that story on
@@ -160,7 +177,7 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
         </p>
       </div>
 
-      <div className="max-w-4xl mx-auto px-5 py-10 md:py-14">
+      <div className="max-w-6xl mx-auto px-5 py-10 md:py-14">
         <h1
           className="uppercase leading-none tracking-[-0.02em] text-text-1"
           style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.8rem, 5vw, 3rem)' }}
@@ -198,142 +215,143 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
         )}
       </div>
 
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto px-5 pb-16">
         {items.length === 0 ? (
-          <p className="px-5 py-12 font-mono text-[11px] text-text-3 uppercase tracking-[0.1em] border-t border-border-subtle">
+          <p className="py-12 font-mono text-[11px] text-text-3 uppercase tracking-[0.1em] border-t border-border-subtle">
             {t('noItems')}
           </p>
         ) : (
-          <ol className="border-t border-border-subtle">
-            {items.map((item, i) => {
-              const score = significanceScore(item, entityCounts);
-              const text = localize(item, locale);
-              return (
-              <li
-                key={item.id}
-                id={`item-${item.id}`}
-                className={`border-b border-border-subtle ${i % 2 === 1 ? 'bg-surface-raised' : ''}`}
-              >
-                <div className="px-5 py-6 flex gap-5 items-start">
-                  <span
-                    className="font-mono text-[13px] tabular-nums pt-0.5 w-6 shrink-0 select-none font-medium"
-                    style={{ color: score > 1 ? 'var(--terracotta)' : 'var(--text-3)' }}
-                    title={t('scoreHint')}
-                  >
-                    {score}
-                  </span>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-2 flex-wrap">
-                      <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2">
-                        {item.source_name}
-                      </span>
-                      <span className="text-text-3">·</span>
-                      <span className="font-mono text-[10px] text-text-3">
-                        {format.dateTime(new Date(item.published_at), { month: 'short', day: 'numeric' })}
-                      </span>
-                    </div>
-
-                    {item.slug ? (
-                      <Link
-                        href={`/feed/${item.slug}`}
-                        className="block font-prose font-semibold text-text-1 leading-snug mb-2 hover:text-terracotta transition-colors duration-150"
-                        style={{ fontSize: '0.9375rem' }}
-                      >
-                        {text.headline}
-                      </Link>
-                    ) : (
-                      <a
-                        href={item.source_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block font-prose font-semibold text-text-1 leading-snug mb-2 hover:text-terracotta transition-colors duration-150"
-                        style={{ fontSize: '0.9375rem' }}
-                      >
-                        {text.headline}
-                      </a>
-                    )}
-
-                    <p
-                      className="text-text-2 leading-relaxed"
-                      style={{ fontFamily: 'var(--pi-sans)', fontSize: '0.875rem', lineHeight: '1.65' }}
-                    >
-                      {text.our_summary}
-                    </p>
-
-                    {text.editor_note && (
-                      <p
-                        className="text-text-2 leading-relaxed mt-3"
-                        style={{ fontFamily: 'var(--pi-sans)', fontSize: '0.875rem', lineHeight: '1.65' }}
-                      >
-                        <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-1 mr-1.5">
-                          {t('editorsNote')}:
-                        </span>
-                        {text.editor_note}
-                      </p>
-                    )}
-
-                    {text.editor_take && (
-                      <p
-                        className="text-text-2 leading-relaxed mt-3"
-                        style={{ fontFamily: 'var(--pi-sans)', fontSize: '0.875rem', lineHeight: '1.65' }}
-                      >
-                        <span
-                          className="font-mono text-[10px] uppercase tracking-[0.08em] mr-1.5"
-                          style={{ color: 'var(--terracotta)' }}
-                        >
-                          {t('editorsTake')}:
-                        </span>
-                        {text.editor_take}
-                      </p>
-                    )}
-
-                    {item.internal_link_slug && (
-                      <Link
-                        href={`/${item.internal_link_slug}`}
-                        className="block font-mono text-[10px] uppercase tracking-[0.1em] hover:underline mt-3 text-right"
-                        style={{ color: 'var(--terracotta)' }}
-                      >
-                        {t('ourBrief')}
-                      </Link>
-                    )}
-
-                    <div className="flex items-center justify-between mt-2 flex-wrap gap-2">
-                      {item.entity_tags.length > 0 && (
-                        <div className="flex flex-wrap gap-1.5">
-                          {item.entity_tags.map((tag) => (
-                            <span
-                              key={tag}
-                              className="font-mono text-[9px] uppercase tracking-[0.04em] text-text-3"
-                            >
-                              #{tag.replace(/\s+/g, '')}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                      <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 ml-auto">
-                        {t('originallyReportedBy', { source: item.source_name })}
-                        <span> · </span>
-                        <a
-                          href={item.source_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="hover:underline"
-                          style={{ color: 'var(--terracotta)' }}
-                        >
-                          {t('readOriginal')}
-                        </a>
-                      </p>
-                    </div>
-                  </div>
+          <>
+            {/* Lead + runner-up row -- the two highest-significance stories get the
+                visual weight; picked by score (see significanceScore), tie-broken by
+                recency. Grid rows below stay uniform height via line-clamp, not
+                free-floating masonry, so reading order never gets ambiguous. */}
+            {lead && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5 border-t border-border-subtle pt-6 mb-4 lg:mb-5">
+                <div className="lg:col-span-2">
+                  <FeedCard item={lead} text={localize(lead, locale)} score={significanceScore(lead, entityCounts)} format={format} t={t} variant="lead" />
                 </div>
-              </li>
-              );
-            })}
-          </ol>
+                {runnerUp && (
+                  <div className="lg:col-span-1">
+                    <FeedCard item={runnerUp} text={localize(runnerUp, locale)} score={significanceScore(runnerUp, entityCounts)} format={format} t={t} variant="runnerUp" />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {rest.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
+                {rest.map((item) => (
+                  <FeedCard
+                    key={item.id}
+                    item={item}
+                    text={localize(item, locale)}
+                    score={significanceScore(item, entityCounts)}
+                    format={format}
+                    t={t}
+                    variant="grid"
+                  />
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     </main>
     </>
+  );
+}
+
+type LocalizedText = ReturnType<typeof localize>;
+type Formatter = Awaited<ReturnType<typeof getFormatter>>;
+type FeedT = Awaited<ReturnType<typeof getTranslations>>;
+
+function FeedCard({
+  item,
+  text,
+  score,
+  format,
+  t,
+  variant,
+}: {
+  item: FeedItem;
+  text: LocalizedText;
+  score: number;
+  format: Formatter;
+  t: FeedT;
+  variant: 'lead' | 'runnerUp' | 'grid';
+}) {
+  const headlineClamp = variant === 'lead' ? '' : 'line-clamp-2';
+  const summaryClamp = variant === 'lead' ? 'line-clamp-4' : variant === 'runnerUp' ? 'line-clamp-3' : 'line-clamp-2';
+  const headlineSize = variant === 'lead' ? 'clamp(1.25rem, 2.4vw, 1.625rem)' : '0.9375rem';
+
+  const headlineEl = (
+    <span className={`block font-prose font-semibold text-text-1 leading-snug ${headlineClamp}`} style={{ fontSize: headlineSize }}>
+      {text.headline}
+    </span>
+  );
+
+  return (
+    <article
+      className={`h-full flex flex-col border rounded-sm p-4 lg:p-5 transition-colors duration-150 ${
+        variant === 'lead' ? 'border-border bg-surface-raised' : 'border-border-subtle hover:border-terracotta'
+      }`}
+    >
+      <div className="flex items-center justify-between gap-2 mb-2.5">
+        <div className="flex items-center gap-2 flex-wrap min-w-0">
+          <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 truncate">{item.source_name}</span>
+          <span className="text-text-3 shrink-0">·</span>
+          <span className="font-mono text-[10px] text-text-3 shrink-0">
+            {format.dateTime(new Date(item.published_at), { month: 'short', day: 'numeric' })}
+          </span>
+        </div>
+        <span
+          className="font-mono text-[11px] tabular-nums shrink-0 font-medium"
+          style={{ color: score > 1 ? 'var(--terracotta)' : 'var(--text-3)' }}
+          title={t('scoreHint')}
+        >
+          {score}
+        </span>
+      </div>
+
+      {variant === 'lead' && (
+        <p className="font-mono text-[10px] uppercase tracking-[0.12em] mb-1.5" style={{ color: 'var(--terracotta)' }}>
+          {t('leadLabel')}
+        </p>
+      )}
+
+      {item.slug ? (
+        <Link href={`/feed/${item.slug}`} className="mb-2 hover:text-terracotta transition-colors duration-150">
+          {headlineEl}
+        </Link>
+      ) : (
+        <a href={item.source_url} target="_blank" rel="noopener noreferrer" className="mb-2 hover:text-terracotta transition-colors duration-150">
+          {headlineEl}
+        </a>
+      )}
+
+      <p
+        className={`text-text-2 leading-relaxed mt-1.5 ${summaryClamp}`}
+        style={{ fontFamily: 'var(--pi-sans)', fontSize: '0.8125rem', lineHeight: '1.6' }}
+      >
+        {text.our_summary}
+      </p>
+
+      <div className="mt-auto pt-3 flex items-end justify-between gap-3">
+        {text.featuredStat ? (
+          <div className="min-w-0">
+            <p className="font-display tabular-nums text-text-1 leading-none" style={{ fontSize: variant === 'lead' ? '2rem' : '1.375rem' }}>
+              {text.featuredStat.value}
+            </p>
+            <p className="font-mono text-[9px] uppercase tracking-[0.08em] text-text-2 mt-1 truncate">{text.featuredStat.label}</p>
+          </div>
+        ) : (
+          <span />
+        )}
+        <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-3 shrink-0">
+          {item.slug ? t('readBrief') : t('readOriginal')}
+        </span>
+      </div>
+    </article>
   );
 }

@@ -931,6 +931,8 @@
     "editorsNote": "Editor's note",
     "editorsTake": "Editor's take",
     "ourBrief": "Our full brief →",
+    "readBrief": "Full brief →",
+    "leadLabel": "Top Story",
     "scoreHint": "The number beside each story = how many other stories this week touch the same entity — a real signal, not a vote count.",
     "itemPage": {
       "theNumbers": "The Numbers",
