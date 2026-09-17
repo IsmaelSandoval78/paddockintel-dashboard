@@ -593,7 +593,7 @@ export async function getAttentionThisWeek(locale: string): Promise<AttentionThi
       .select('article_id, tags(slug, category)')
       .in('article_id', [...articleIdBySlug.values()]);
     const topicSlugByArticleId = new Map<string, string>();
-    for (const row of (tagRows ?? []) as { article_id: string; tags: { slug: string; category: string } | null }[]) {
+    for (const row of (tagRows ?? []) as unknown as { article_id: string; tags: { slug: string; category: string } | null }[]) {
       if (row.tags?.category === 'topic' && !topicSlugByArticleId.has(row.article_id)) {
         topicSlugByArticleId.set(row.article_id, row.tags.slug);
       }
