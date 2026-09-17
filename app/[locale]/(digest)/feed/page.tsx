@@ -140,12 +140,12 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
           url: itemUrl,
           ...(item.slug ? {} : { mainEntityOfPage: feedUrl }),
           isBasedOn: item.source_url,
-          author: { '@type': 'Person', name: 'Ismael Sandoval', url: 'https://hub.paddockintel.com/about' },
+          author: { '@type': 'Person', name: 'Ismael Sandoval', url: 'https://paddockintel.com/about' },
           publisher: {
             '@type': 'Organization',
             name: 'PaddockIntel',
-            url: 'https://hub.paddockintel.com',
-            logo: { '@type': 'ImageObject', url: 'https://hub.paddockintel.com/opengraph-image' },
+            url: 'https://paddockintel.com',
+            logo: { '@type': 'ImageObject', url: 'https://paddockintel.com/opengraph-image' },
           },
         },
       };
