@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { Link } from '@/lib/i18n/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { getArticleIdsForTagSlug, getArticleTagSlugs, type TagRef } from '@/lib/blog/tags';
 import JoinTwoWays from '@/components/blog/JoinTwoWays';
@@ -12,7 +13,6 @@ import RaceDayFastestPanel from '@/components/blog/RaceDayFastestPanel';
 import RetirementsPanel from '@/components/blog/RetirementsPanel';
 import MostCoveredPanel from '@/components/blog/MostCoveredPanel';
 import LearningPanel from '@/components/blog/LearningPanel';
-import TrackByTeamPanel from '@/components/blog/TrackByTeamPanel';
 import CircuitOfTheDay from '@/components/blog/CircuitOfTheDay';
 import {
   getFeaturedAndRecent,
@@ -21,7 +21,6 @@ import {
   getRaceHighlights,
   getMostCovered,
   getLearningTerms,
-  getTeamTags,
   getCircuitOfTheDay,
 } from './data';
 
@@ -126,7 +125,6 @@ export default async function MagazineHomePage({
           getMostCovered(),
           getDataDeskArticles(locale),
           getLearningTerms(locale),
-          getTeamTags(),
           getCircuitOfTheDay(),
         ])
       : Promise.resolve(null),
@@ -142,12 +140,11 @@ export default async function MagazineHomePage({
     return qs ? `${basePath}?${qs}` : basePath;
   };
 
-  const [standings, raceHighlights, mostCovered, dataDeskArticles, learningTerms, teamTags, circuit] =
+  const [standings, raceHighlights, mostCovered, dataDeskArticles, learningTerms, circuit] =
     frontPageExtras ?? [
       { drivers: [], constructors: [] },
       { raceName: '', gainers: [], fallers: [], maxAbsDelta: 0, fastestLap: null, fastestPit: null, retirements: [] },
       null,
-      [],
       [],
       [],
       null,
@@ -298,42 +295,40 @@ export default async function MagazineHomePage({
           </section>
         )}
 
-        {/* Learning F1 (glossary teaser), Track by team (reuses the existing
-            ?tag= filter), and Latest (heading + link only — the full grid
-            used to live above the fold; now it's just a pointer down to the
-            archive grid) — three module-grid tiles in one band. */}
+        {/* Learning F1 (glossary teaser) beside Latest (last 6 stories, as a
+            compact list — not a card grid, which the full-width Archive
+            grid below already does) — two module-grid tiles in one band. */}
         {(() => {
           const showLatest = isFrontPage && recent.length > 0;
-          if (learningTerms.length === 0 && teamTags.length === 0 && !showLatest) return null;
-
-          let seenFirst = false;
-          const colClass = () => {
-            const cls = seenFirst ? 'lg:border-l lg:border-border-subtle lg:pl-16' : '';
-            seenFirst = true;
-            return cls;
-          };
+          if (learningTerms.length === 0 && !showLatest) return null;
 
           return (
             <div className="border-t border-border py-10 md:py-14">
-              <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr_0.9fr] gap-10 lg:gap-16">
-                {learningTerms.length > 0 && (
-                  <div className={colClass()}>
-                    <LearningPanel terms={learningTerms} compact />
-                  </div>
-                )}
-                {teamTags.length > 0 && (
-                  <div className={colClass()}>
-                    <TrackByTeamPanel teams={teamTags} locale={locale} compact />
-                  </div>
-                )}
+              <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-10 lg:gap-16">
+                {learningTerms.length > 0 && <LearningPanel terms={learningTerms} compact />}
                 {showLatest && (
-                  <div className={colClass()}>
+                  <div className={learningTerms.length > 0 ? 'lg:border-l lg:border-border-subtle lg:pl-16' : ''}>
                     <h2 className="font-display uppercase text-text-1 tracking-[-0.02em] mb-6 text-2xl">
                       {t('recent')}
                     </h2>
+                    <div className="flex flex-col divide-y divide-border-subtle border-t border-b border-border-subtle">
+                      {recent.map((a) => (
+                        <Link key={a.slug} href={`/${a.slug}`} className="group py-3 flex flex-col gap-1">
+                          <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-3">
+                            {new Date(a.published_at as string).toLocaleDateString(locale === 'pt' ? 'pt-BR' : locale, {
+                              month: 'short',
+                              day: 'numeric',
+                            })}
+                          </span>
+                          <span className="font-prose font-semibold text-text-1 group-hover:text-terracotta transition-colors duration-150 line-clamp-2">
+                            {a.title as string}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
                     <a
                       href="#archive"
-                      className="inline-block font-mono text-[11px] uppercase tracking-[0.08em] text-text-2 hover:text-terracotta transition-colors duration-150"
+                      className="inline-block font-mono text-[11px] uppercase tracking-[0.08em] text-text-2 hover:text-terracotta transition-colors duration-150 mt-5"
                     >
                       {t('recentCta')} →
                     </a>

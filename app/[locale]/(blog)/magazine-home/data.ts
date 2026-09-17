@@ -55,7 +55,7 @@ export async function getFeaturedAndRecent(locale: string) {
     .eq('locale', locale)
     .eq('status', 'published')
     .order('published_at', { ascending: false, nullsFirst: false })
-    .limit(4);
+    .limit(7);
   const latest = (latestRows as Omit<ArticleRow, 'tags'>[] | null) ?? [];
 
   // No editorial pick for this locale yet (e.g. a translation hasn't landed)
@@ -63,7 +63,7 @@ export async function getFeaturedAndRecent(locale: string) {
   // a lead story.
   if (!featured) featured = latest[0] ?? null;
 
-  const recentRaw = latest.filter((a) => a.slug !== featured?.slug).slice(0, 3);
+  const recentRaw = latest.filter((a) => a.slug !== featured?.slug).slice(0, 6);
 
   const [[featuredTagged], recent] = await Promise.all([
     attachTags(featured ? [featured] : []),
