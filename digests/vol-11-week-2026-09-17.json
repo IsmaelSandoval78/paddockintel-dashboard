@@ -1,0 +1,143 @@
+{
+  "slug": "vol-11-week-2026-09-17",
+  "published_at": "2026-09-17",
+  "status": "draft",
+  "intro_synthesis": "Four stories this week, four different explanations for why things happen the way they do in F1. A four-time champion raced 100 amateurs at a go-kart track for reasons that have nothing to do with competition. Alpine bet on a technical chief whose last job ended mid-slump, not mid-dominance. Ferrari keeps proving Nico Rosberg's oldest complaint about them right — Sunday's pace was never the problem, the radio was. And Yuki Tsunoda gave the clearest exit interview F1 has heard in years: he spent 2025 trying to drive like a teammate he isn't.",
+  "items": [
+    {
+      "source_name": "RACER",
+      "source_url": "https://racer.com/2026/09/17/verstappen-overtakes-100-karting-rivals-in-14-laps",
+      "headline": "Why a $70M-a-Year Champion Spent His Week Off Racing 100 Amateurs at Karting",
+      "our_summary": "\"Max vs 100\" put Max Verstappen at the back of a 101-driver kart grid at Silverstone against Red Bull athletes from other sports, streamers, content creators, and fans, live globally on Disney+ and ESPN — a \"first-of-its-kind\" event, in Disney's own framing, produced by Whisper with live race data and on-screen insights built for a broadcast audience, not a competition jury. Verstappen passed 64 karts on the opening lap alone and needed 14 laps total to reach the front. His own explanation was nostalgia: \"a nice opportunity to go back to basics and revisit how I got into the sport in the first place,\" recalling the karting years, age four to fifteen, that his father Jos spent driving him across Europe to race.",
+      "entity_tags": ["Max Verstappen", "Red Bull"],
+      "published_at": "2026-09-17",
+      "editor_note": "Verstappen's nostalgia quote explains how he felt about it, not why it happened. The event's actual mechanics — a Disney+/ESPN global simulcast built around his personal origin story — point to a different answer than \"he wanted to.\"",
+      "editor_take": "Verstappen's Red Bull base salary is estimated at $70 million for 2026, per RacingNews365 — already the highest on the grid before bonuses. A karting exhibition doesn't move a number that size, and it isn't meant to: nothing about Sunday required him to prove anything he hadn't already proven four championships over. What it does is give Red Bull and Disney+ a globally-streamed hour of content built entirely around his personal brand, on a weekend with no Grand Prix to sell instead. That's the same commercial logic PaddockIntel has tracked in Disney's broader F1 sponsorship strategy — the driver isn't the product being raced, he's the product being watched.",
+      "internal_link_slug": "disney-f1-fuel-the-magic-sponsorship-strategy",
+      "slug": "max-verstappen-100-karting-disney-red-bull-content-economics",
+      "meta_description": "Max vs 100 wasn't a competitive test for a $70M-a-year champion — it was Disney+, ESPN, and Red Bull turning his karting origin story into a global stream.",
+      "meta_description_es": "Max vs 100 no fue una prueba competitiva para un campeón de $70M al año — fue Disney+, ESPN y Red Bull convirtiendo su historia en el karting en contenido global.",
+      "stats": [
+        { "value": "101", "label": "DRIVERS ON THE GRID", "label_es": "PILOTOS EN LA GRILLA", "unit": null, "unit_es": null },
+        { "value": "14", "label": "LAPS TO REACH THE FRONT", "label_es": "VUELTAS PARA LLEGAR AL FRENTE", "unit": null, "unit_es": null },
+        { "value": "64", "label": "KARTS PASSED ON LAP 1 ALONE", "label_es": "KARTS SUPERADOS SOLO EN LA VUELTA 1", "unit": null, "unit_es": null },
+        { "value": "70", "label": "2026 BASE SALARY", "label_es": "SALARIO BASE 2026", "unit": "$M", "unit_es": "$M" }
+      ],
+      "faq": [
+        {
+          "q": "Why did Max Verstappen race against 100 amateurs at Silverstone?",
+          "a": "\"Max vs 100\" was a live global event co-produced by Disney+, ESPN, and Red Bull, not a competitive necessity. Verstappen called it a chance to \"go back to basics\" and revisit his karting years, but the event functioned as subscription-platform content built around his personal brand.",
+          "q_es": "¿Por qué corrió Max Verstappen contra 100 aficionados en Silverstone?",
+          "a_es": "\"Max vs 100\" fue un evento global en vivo coproducido por Disney+, ESPN y Red Bull, no una necesidad competitiva. Verstappen lo definió como una vuelta a sus raíces en el karting, pero el evento funcionó como contenido para una plataforma de suscripción construido alrededor de su marca personal."
+        },
+        {
+          "q": "How much does Max Verstappen earn in F1, and did the karting event add to that?",
+          "a": "His Red Bull base salary is estimated at $70 million for 2026, per RacingNews365 — already the highest on the grid. The karting event's value to Red Bull and Disney+ is commercial reach and content, not a payment that moves Verstappen's own number.",
+          "q_es": "¿Cuánto gana Max Verstappen en la F1, y el evento de karting sumó a eso?",
+          "a_es": "Su salario base en Red Bull se estima en $70 millones para 2026, según RacingNews365 — ya el más alto de la parrilla. El valor del evento de karting para Red Bull y Disney+ es alcance comercial y contenido, no un pago que mueva el número de Verstappen."
+        }
+      ]
+    },
+    {
+      "source_name": "The Race",
+      "source_url": "https://www.the-race.com/formula-1/alpine-hires-ex-mercedes-f1-tech-chief/",
+      "headline": "Alpine Hires the Technical Chief Whose Last Job Ended Mid-Slump",
+      "our_summary": "Alpine has appointed Mike Elliott as Chief Technical Officer, putting him in charge of technical and engineering functions at Enstone with a brief focused on future regulations rather than the current car — that stays with executive technical director David Sanchez. It's a homecoming: Elliott was a principal aerodynamicist at the same factory under its Renault/Lotus badge from 2008 to 2012, fourteen years before this appointment. In between, he ran Mercedes' technical department through the 2022 rules reset, first as technical director, then as CTO from early 2023 until his departure that same year.",
+      "entity_tags": ["Mike Elliott", "Alpine", "Mercedes"],
+      "published_at": "2026-09-17",
+      "editor_note": "Elliott's Mercedes tenure covered the team's roughest patch since the hybrid era began — the zero-sidepod concept that cost them two full seasons of competitiveness. Alpine is hiring the architect of that era, not the one before it, whatever the framing.",
+      "editor_take": "Alpine sits fifth in the 2026 constructors' championship with 77 points, 150 behind fourth-placed Red Bull and 426 behind a Mercedes team that just posted its tenth win of the season. Elliott's mandate is explicitly forward-looking — future rules, not the current car — which reads less like a fix for 2026 and more like Alpine accepting this season is already lost and buying technical leadership for the regulation cycle after next.",
+      "internal_link_slug": "alpine-f1-ownership-otro-capital-renault-veto-2026",
+      "slug": "mike-elliott-alpine-cto-mercedes-2026",
+      "meta_description": "Alpine hired Mike Elliott as CTO for future regulations, not the current car. He last ran Mercedes' technical department through its worst slump since 2014.",
+      "meta_description_es": "Alpine contrató a Mike Elliott como CTO para las reglas futuras, no para el auto actual. Su último cargo fue liderar a Mercedes en su peor bache desde 2014.",
+      "stats": [
+        { "value": "77", "label": "ALPINE 2026 POINTS (P5)", "label_es": "PUNTOS 2026 DE ALPINE (P5)", "unit": null, "unit_es": null },
+        { "value": "150", "label": "POINTS BEHIND P4 (RED BULL)", "label_es": "PUNTOS DETRÁS DEL P4 (RED BULL)", "unit": null, "unit_es": null },
+        { "value": "503", "label": "MERCEDES 2026 POINTS (P1)", "label_es": "PUNTOS 2026 DE MERCEDES (P1)", "unit": null, "unit_es": null },
+        { "value": "14", "label": "YEARS SINCE ELLIOTT LAST WORKED AT ENSTONE", "label_es": "AÑOS DESDE QUE ELLIOTT TRABAJÓ EN ENSTONE", "unit": null, "unit_es": null }
+      ],
+      "faq": [
+        {
+          "q": "What is Mike Elliott's new role at Alpine?",
+          "a": "Chief Technical Officer, overseeing technical and engineering functions at Alpine's Enstone factory with a focus on future regulations. Day-to-day development of the current car stays with executive technical director David Sanchez.",
+          "q_es": "¿Cuál es el nuevo cargo de Mike Elliott en Alpine?",
+          "a_es": "Director Técnico (CTO), a cargo de las funciones técnicas y de ingeniería en la fábrica de Alpine en Enstone, enfocado en las reglas futuras. El desarrollo del auto actual sigue en manos del director técnico ejecutivo, David Sanchez."
+        },
+        {
+          "q": "Where did Mike Elliott work before Alpine?",
+          "a": "He ran Mercedes' technical department through the 2022 rules reset, as technical director and then chief technical officer from early 2023 until leaving mid-2023. Before that, he was a principal aerodynamicist at the same Enstone factory under its Renault/Lotus name from 2008 to 2012.",
+          "q_es": "¿Dónde trabajó Mike Elliott antes de Alpine?",
+          "a_es": "Lideró el departamento técnico de Mercedes durante el cambio de reglamento de 2022, primero como director técnico y luego como CTO desde inicios de 2023 hasta su salida ese mismo año. Antes, fue aerodinamicista principal en la misma fábrica de Enstone bajo el nombre Renault/Lotus, entre 2008 y 2012."
+        }
+      ]
+    },
+    {
+      "source_name": "PlanetF1",
+      "source_url": "https://www.planetf1.com/news/charles-leclerc-ferrari-nico-rosberg-spanish-grand-prix",
+      "headline": "Ferrari's Real Problem Isn't Pace — It's What They Do With It",
+      "our_summary": "Charles Leclerc led the Spanish Grand Prix for 35 laps before finishing fourth, 24 seconds behind eventual third-place Lando Norris. Ferrari told him around lap 40 it was holding a safety-car gap to leader Norris; no safety car came, and with seven laps left the team called Leclerc in for fresh soft tires anyway, dropping him out of the podium places. Nico Rosberg pinned the result on the same weakness he's flagged before: \"the Achilles heel is still in the strategy area, communications area, that's always been a weakness.\" Team principal Fred Vasseur defended the call, pointing to a qualifying deficit and the track's limited overtaking as the real constraint.",
+      "entity_tags": ["Ferrari", "Charles Leclerc", "Nico Rosberg", "Fred Vasseur"],
+      "published_at": "2026-09-17",
+      "editor_note": "Rosberg is a broadcaster now, not a rival, but he drove for a Mercedes team that beat Ferrari on strategy for most of the 2010s — read the diagnosis with that history in mind. The underlying numbers are Ferrari's own timing sheet, not his opinion.",
+      "editor_take": "Ferrari sits second in the 2026 constructors' standings with 358 points, 145 behind Mercedes. Leclerc's Spanish GP is the shape of that gap in miniature: he started fifth, led more laps than anyone else on track, and still lost the podium to a call the team never fully explained. Vasseur's qualifying-deficit defense doesn't address why a driver already leading the race needed defending in the first place.",
+      "internal_link_slug": null,
+      "slug": "ferrari-strategy-communication-weakness-spanish-gp-2026",
+      "meta_description": "Leclerc led 35 laps at the Spanish GP and still finished fourth. Ferrari's pace wasn't the problem — the strategy call with 7 laps left was.",
+      "meta_description_es": "Leclerc lideró 35 vueltas en el GP de España y aun así terminó cuarto. El ritmo de Ferrari no fue el problema — la estrategia a 7 vueltas del final sí.",
+      "stats": [
+        { "value": "35", "label": "LAPS LED BY LECLERC", "label_es": "VUELTAS LIDERADAS POR LECLERC", "unit": null, "unit_es": null },
+        { "value": "4", "label": "FINISHING POSITION (FROM P5 GRID)", "label_es": "POSICIÓN FINAL (LARGÓ P5)", "unit": null, "unit_es": null },
+        { "value": "24", "label": "SECONDS BEHIND EVENTUAL P3", "label_es": "SEGUNDOS DETRÁS DEL P3 FINAL", "unit": null, "unit_es": null },
+        { "value": "145", "label": "FERRARI POINTS BEHIND MERCEDES (2026)", "label_es": "PUNTOS DE FERRARI DETRÁS DE MERCEDES (2026)", "unit": null, "unit_es": null }
+      ],
+      "faq": [
+        {
+          "q": "Why did Ferrari lose the podium despite Charles Leclerc leading the Spanish GP?",
+          "a": "Ferrari told Leclerc it was holding a safety-car gap to the leader; when no safety car appeared, the team called him in for fresh tires with seven laps remaining anyway, dropping him from the lead to fourth, 24 seconds behind the driver who took third.",
+          "q_es": "¿Por qué Ferrari perdió el podio a pesar de que Leclerc lideraba el GP de España?",
+          "a_es": "Ferrari le informó a Leclerc que mantenía un margen de auto de seguridad respecto al líder; cuando no apareció ningún auto de seguridad, el equipo igual lo llamó a boxes por neumáticos nuevos a siete vueltas del final, y cayó del liderato al cuarto puesto, a 24 segundos del tercero."
+        },
+        {
+          "q": "What did Nico Rosberg say was Ferrari's weakness?",
+          "a": "Strategy and communication — a recurring criticism he's made of the team before, arguing Ferrari has competitive race pace but fails to execute around it.",
+          "q_es": "¿Qué dijo Nico Rosberg que era la debilidad de Ferrari?",
+          "a_es": "Estrategia y comunicación — una crítica que ya le había hecho antes al equipo, argumentando que Ferrari tiene ritmo de carrera competitivo pero falla en ejecutarlo."
+        }
+      ]
+    },
+    {
+      "source_name": "Autosport",
+      "source_url": "https://www.autosport.com/f1/news/tsunoda-on-poor-f1-2025/10856471/",
+      "headline": "Tsunoda Explains the Year He Tried to Drive Like Verstappen",
+      "our_summary": "Yuki Tsunoda says he spent much of his 2025 season at Red Bull chasing a setup philosophy built for a driver with a different style than his own. \"I didn't know what kind of car I was driving. I still don't understand what was the issue,\" he said, describing how he adopted Max Verstappen's sharper, more sensitive setup preferences \"even knowing that sometimes...Max's [setup] in theory makes the car worse\" for his own smoother inputs. Red Bull told him in Qatar, the penultimate round, that he wouldn't continue as a race driver in 2026, moving him to reserve duty. Tsunoda says the news landed as relief rather than devastation after what he called a \"so stressful\" year.",
+      "entity_tags": ["Yuki Tsunoda", "Max Verstappen", "Red Bull", "Racing Bulls"],
+      "published_at": "2026-09-17",
+      "editor_note": "This is Tsunoda's own retrospective theory, offered with a season's distance from the car — worth reading as his explanation, not an independently verified engineering diagnosis.",
+      "editor_take": "Tsunoda's full 2025 season produced 33 points and 17th in the standings — but the split matters more than the total. He scored 0 in his first two races, still at Racing Bulls, then 21 points across the 22 rounds he spent in Red Bull's car after the round-2 promotion, with zero podiums. A season split almost evenly by races that produced points in one car and nothing in the other is consistent with his own account: the problem wasn't effort, it was never finding a setup that suited him.",
+      "internal_link_slug": "yuki-tsunoda-fire-red-bull-san-francisco-showrun-cost",
+      "slug": "tsunoda-red-bull-2025-struggles-verstappen-setup",
+      "meta_description": "Tsunoda scored 21 points in 22 races at Red Bull in 2025 — after trying to copy Verstappen's setup despite a different driving style.",
+      "meta_description_es": "Tsunoda sumó 21 puntos en 22 carreras con Red Bull en 2025 — tras intentar copiar el setup de Verstappen pese a tener un estilo distinto.",
+      "stats": [
+        { "value": "33", "label": "2025 SEASON POINTS (P17)", "label_es": "PUNTOS TEMPORADA 2025 (P17)", "unit": null, "unit_es": null },
+        { "value": "21", "label": "POINTS SCORED AT RED BULL (RD 3–24)", "label_es": "PUNTOS CON RED BULL (FECHAS 3–24)", "unit": null, "unit_es": null },
+        { "value": "0", "label": "PODIUMS IN THE RED BULL SEAT", "label_es": "PODIOS EN EL ASIENTO DE RED BULL", "unit": null, "unit_es": null }
+      ],
+      "faq": [
+        {
+          "q": "Why was Yuki Tsunoda moved to a reserve role for 2026?",
+          "a": "After a difficult 2025 season with Red Bull — 21 of his 33 points came from the 22 races he drove for the main team, with zero podiums — Red Bull told him in Qatar he wouldn't continue as a race driver, moving him to reserve duty for 2026.",
+          "q_es": "¿Por qué pasó Yuki Tsunoda a un rol de reserva para 2026?",
+          "a_es": "Tras una temporada 2025 difícil con Red Bull — 21 de sus 33 puntos llegaron en las 22 carreras que corrió para el equipo principal, sin podios — Red Bull le informó en Qatar que no continuaría como piloto titular, y pasó a ser reserva para 2026."
+        },
+        {
+          "q": "Why did Tsunoda struggle to adapt to the Red Bull car in 2025?",
+          "a": "He says he tried to replicate Max Verstappen's setup preferences despite having a smoother driving style than Verstappen's sharper, more sensitive inputs, and never found a setup that suited his own approach.",
+          "q_es": "¿Por qué le costó a Tsunoda adaptarse al auto de Red Bull en 2025?",
+          "a_es": "Dice que intentó replicar las preferencias de setup de Max Verstappen a pesar de tener un estilo de manejo más suave que los ajustes más agresivos y sensibles de Verstappen, y nunca encontró una puesta a punto que se adaptara a su propio estilo."
+        }
+      ]
+    }
+  ]
+}
