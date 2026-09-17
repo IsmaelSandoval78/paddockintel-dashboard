@@ -8,7 +8,7 @@ export default function NewsletterCard() {
   const t = useTranslations('newsletter');
   const locale = useLocale();
   const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error' | 'errorInvalid'>('idle');
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -20,7 +20,7 @@ export default function NewsletterCard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, locale }),
       });
-      setStatus(res.ok ? 'success' : 'error');
+      setStatus(res.ok ? 'success' : res.status === 400 ? 'errorInvalid' : 'error');
     } catch {
       setStatus('error');
     }
@@ -59,8 +59,10 @@ export default function NewsletterCard() {
         </form>
       )}
 
-      {status === 'error' && (
-        <p className="font-mono text-[11px] text-terracotta mt-2">{t('error')}</p>
+      {(status === 'error' || status === 'errorInvalid') && (
+        <p className="font-mono text-[11px] text-terracotta mt-2">
+          {status === 'errorInvalid' ? t('errorInvalid') : t('error')}
+        </p>
       )}
 
       <p className="font-mono text-[10px] text-text-3 mt-3">

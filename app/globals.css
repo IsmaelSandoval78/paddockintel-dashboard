@@ -29,7 +29,13 @@
   /* Text — ink hierarchy */
   --text-1:          #2B2620;
   --text-2:          #6B5F4E;
-  --text-3:          #A69A82;
+  /* Was #A69A82 (2.18:1 on --bg — fails WCAG AA even at the 3:1 large-text
+     bar). Darkened to the lightest tone that clears 4.5:1 on this kraft
+     background (4.57:1) — there's very little room between "passes AA" and
+     --text-2 itself on this substrate, so the tertiary tier now reads close
+     to secondary. Reserve --text-3 for genuinely decorative/non-essential
+     marks; anything conveying real information belongs on --text-2. */
+  --text-3:          #716444;
 
   /* Accent — terracotta (DESIGN.md v3.0.0, replaces racing red) */
   --terracotta:      #C1502E;
@@ -124,7 +130,11 @@
 body {
   background: var(--bg);
   color: var(--text-1);
-  font-family: var(--pi-sans, Inter, -apple-system, BlinkMacSystemFont, sans-serif);
+  /* DESIGN.md v3.0.0: Lora carries everything that isn't a number; Inter is
+     retired as a UI font. This default only applies to unclassed text —
+     explicit font-sans usages (nav chrome, search) are an intentional,
+     component-level exception, not this fallback. */
+  font-family: var(--pi-prose, Georgia, "Times New Roman", serif);
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
   -webkit-font-smoothing: antialiased;

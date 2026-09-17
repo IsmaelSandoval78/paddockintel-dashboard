@@ -600,6 +600,11 @@
     "share": "Share →",
     "download": "Download PNG"
   },
+  "shareButton": {
+    "label": "Share",
+    "copyLink": "Copy link",
+    "copied": "Copied"
+  },
   "records": {
     "title": "Records",
     "allTime": "All time",
@@ -697,7 +702,8 @@
     "placeholder": "your@email.com",
     "loading": "…",
     "success": "✓ Subscribed",
-    "error": "Try again",
+    "error": "Something went wrong on our end. Please try again in a moment.",
+    "errorInvalid": "That doesn't look like a valid email address.",
     "legal": "By subscribing you agree to the <link>privacy policy</link>.",
     "kicker": "PaddockIntel Digest",
     "headline": "F1 economics weekly, in your inbox."

@@ -64,15 +64,20 @@ export default function ArticlePreviewCard({
       </Link>
 
       <div className="flex items-end justify-between gap-4 mt-6 pt-4 border-t border-border-subtle">
+        {/* Deliberately smaller than the Featured card's hero-number scale:
+            this renders identically on every archive-grid card, so it reads
+            as a compact data point (a fact worth noting), not a repeated
+            hero moment. The true hero-number treatment stays reserved for
+            FeaturedArticleCard. */}
         {featuredStat ? (
           <div>
             <p
-              className="tabular-nums leading-none tracking-[-0.03em]"
-              style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', color: 'var(--terracotta)' }}
+              className="tabular-nums leading-none tracking-[-0.02em] text-terracotta"
+              style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.1rem, 1.8vw, 1.35rem)' }}
             >
               {featuredStat.value}
             </p>
-            <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-2 mt-1.5">
+            <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-2 mt-1">
               {featuredStat.label}
             </p>
           </div>

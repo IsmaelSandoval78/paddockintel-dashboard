@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 type ShareButtonProps = {
   url: string;
@@ -15,6 +16,7 @@ function resolveUrl(url: string): string {
 }
 
 export default function ShareButton({ url, title, className }: ShareButtonProps) {
+  const t = useTranslations('shareButton');
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -55,7 +57,7 @@ export default function ShareButton({ url, title, className }: ShareButtonProps)
     <div ref={rootRef} className={`relative inline-block ${className ?? ''}`}>
       <button
         onClick={handleClick}
-        aria-label="Share"
+        aria-label={t('label')}
         className="w-9 h-9 flex items-center justify-center rounded-none border border-border-subtle text-text-1 hover:text-terracotta hover:border-terracotta transition-colors duration-150"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -77,7 +79,7 @@ export default function ShareButton({ url, title, className }: ShareButtonProps)
             onClick={handleCopy}
             className="block w-full text-left px-3 py-2 font-mono text-[11px] tracking-[0.06em] uppercase text-text-1 hover:text-terracotta hover:bg-surface-raised transition-colors duration-150 border-b border-border-subtle"
           >
-            {copied ? 'Copied' : 'Copy link'}
+            {copied ? t('copied') : t('copyLink')}
           </button>
           <a
             href={`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`}

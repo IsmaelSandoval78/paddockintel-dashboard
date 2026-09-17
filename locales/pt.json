@@ -600,6 +600,11 @@
     "share": "Compartilhar →",
     "download": "Baixar PNG"
   },
+  "shareButton": {
+    "label": "Compartilhar",
+    "copyLink": "Copiar link",
+    "copied": "Copiado"
+  },
   "records": {
     "title": "Recordes",
     "allTime": "Histórico",
@@ -697,7 +702,8 @@
     "placeholder": "seu@email.com",
     "loading": "…",
     "success": "✓ Assinado",
-    "error": "Tente novamente",
+    "error": "Algo deu errado do nosso lado. Tente novamente em instantes.",
+    "errorInvalid": "Esse e-mail não parece válido.",
     "legal": "Ao assinar você concorda com a <link>política de privacidade</link>.",
     "kicker": "PaddockIntel Digest",
     "headline": "Economia da F1 toda semana, na sua caixa de entrada."

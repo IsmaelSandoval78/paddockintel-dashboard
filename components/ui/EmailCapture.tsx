@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/lib/i18n/navigation';
 
-type Status = 'idle' | 'loading' | 'success' | 'error';
+type Status = 'idle' | 'loading' | 'success' | 'error' | 'errorInvalid';
 
 export default function EmailCapture({ className }: { className?: string }) {
   const locale = useLocale();
@@ -22,7 +22,7 @@ export default function EmailCapture({ className }: { className?: string }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, locale }),
       });
-      setStatus(res.ok ? 'success' : 'error');
+      setStatus(res.ok ? 'success' : res.status === 400 ? 'errorInvalid' : 'error');
     } catch {
       setStatus('error');
     }
@@ -55,8 +55,10 @@ export default function EmailCapture({ className }: { className?: string }) {
           {status === 'loading' ? t('loading') : t('button')}
         </button>
       </div>
-      {status === 'error' && (
-        <p className="mt-1 font-mono text-[10px] text-terracotta">{t('error')}</p>
+      {(status === 'error' || status === 'errorInvalid') && (
+        <p className="mt-1 font-mono text-[10px] text-terracotta">
+          {status === 'errorInvalid' ? t('errorInvalid') : t('error')}
+        </p>
       )}
       <p className="font-mono text-[10px] text-text-3 mt-2">
         {t.rich('legal', {
