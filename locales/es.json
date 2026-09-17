@@ -732,6 +732,18 @@
       "stories": "{count, plural, one {# historia} other {# historias}} esta semana",
       "seeAll": "Ver el feed completo"
     },
+    "attention": {
+      "title": "Atención Esta Semana",
+      "subtitle": "Del Feed — lo que dice la cobertura de esta semana.",
+      "fastestRiser": "Mayor Subida",
+      "mostCovered": "Más Cubierto",
+      "biggestFall": "Mayor Caída",
+      "dominantTheme": "Tema Dominante",
+      "vsLastWeek": "{count} vs {prevCount} historias registradas",
+      "storiesThisWeek": "{count, plural, one {# historia registrada} other {# historias registradas}} esta semana",
+      "ofStoriesThisWeek": "{count} de {total} historias registradas esta semana",
+      "seeAll": "Ver el feed completo"
+    },
     "learning": {
       "title": "Aprende F1",
       "seeAll": "Todos los términos del glosario"

@@ -11,7 +11,7 @@ import StandingsPanel from '@/components/blog/StandingsPanel';
 import RaceHighlightsPanel from '@/components/blog/RaceHighlightsPanel';
 import RaceDayFastestPanel from '@/components/blog/RaceDayFastestPanel';
 import RetirementsPanel from '@/components/blog/RetirementsPanel';
-import MostCoveredPanel from '@/components/blog/MostCoveredPanel';
+import AttentionThisWeekPanel from '@/components/blog/AttentionThisWeekPanel';
 import LearningPanel from '@/components/blog/LearningPanel';
 import CircuitOfTheDay from '@/components/blog/CircuitOfTheDay';
 import {
@@ -19,7 +19,7 @@ import {
   getDataDeskArticles,
   getStandings,
   getRaceHighlights,
-  getMostCovered,
+  getAttentionThisWeek,
   getLearningTerms,
   getCircuitOfTheDay,
 } from './data';
@@ -122,7 +122,7 @@ export default async function MagazineHomePage({
       ? Promise.all([
           getStandings(),
           getRaceHighlights(),
-          getMostCovered(),
+          getAttentionThisWeek(locale),
           getDataDeskArticles(locale),
           getLearningTerms(locale),
           getCircuitOfTheDay(),
@@ -140,11 +140,11 @@ export default async function MagazineHomePage({
     return qs ? `${basePath}?${qs}` : basePath;
   };
 
-  const [standings, raceHighlights, mostCovered, dataDeskArticles, learningTerms, circuit] =
+  const [standings, raceHighlights, attention, dataDeskArticles, learningTerms, circuit] =
     frontPageExtras ?? [
       { drivers: [], constructors: [] },
       { raceName: '', gainers: [], fallers: [], maxAbsDelta: 0, fastestLap: null, fastestPit: null, retirements: [] },
-      null,
+      { mostCovered: null, fastestRiser: null, biggestFall: null, dominantTheme: null },
       [],
       [],
       null,
@@ -271,9 +271,10 @@ export default async function MagazineHomePage({
           );
         })()}
 
-        {/* Most covered this week — real digest cross-mention count, no
-            week-over-week % (see getMostCovered() in ./data.ts for why) */}
-        <MostCoveredPanel entity={mostCovered} />
+        {/* Attention this week — fastest riser / most covered / biggest
+            fall / dominant theme, each independently gated by sample size
+            (see getAttentionThisWeek() in ./data.ts) */}
+        <AttentionThisWeekPanel attention={attention} />
 
         {/* Newsletter invite */}
         {isFrontPage && <NewsletterCard />}

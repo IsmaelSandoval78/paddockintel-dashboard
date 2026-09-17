@@ -5,16 +5,25 @@
 
 export type EntityCount = { entity: string; count: number };
 
-export function weeklyEntityCounts(items: { entity_tags: string[]; published_at: string }[]): Map<string, number> {
-  const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
+/** Entity mention counts for items published in [startMs, endMs). */
+export function entityCountsInWindow(
+  items: { entity_tags: string[]; published_at: string }[],
+  startMs: number,
+  endMs: number
+): Map<string, number> {
   const counts = new Map<string, number>();
   for (const item of items) {
-    if (new Date(item.published_at).getTime() < cutoff) continue;
+    const t = new Date(item.published_at).getTime();
+    if (t < startMs || t >= endMs) continue;
     for (const entity of item.entity_tags) {
       counts.set(entity, (counts.get(entity) ?? 0) + 1);
     }
   }
   return counts;
+}
+
+export function weeklyEntityCounts(items: { entity_tags: string[]; published_at: string }[]): Map<string, number> {
+  return entityCountsInWindow(items, Date.now() - 7 * 24 * 60 * 60 * 1000, Date.now());
 }
 
 export function topEntity(counts: Map<string, number>): EntityCount | null {

@@ -732,6 +732,18 @@
       "stories": "{count, plural, one {# story} other {# stories}} this week",
       "seeAll": "See the full feed"
     },
+    "attention": {
+      "title": "Attention This Week",
+      "subtitle": "From the Feed — what this week's coverage says.",
+      "fastestRiser": "Fastest Riser",
+      "mostCovered": "Most Covered",
+      "biggestFall": "Biggest Fall",
+      "dominantTheme": "Dominant Theme",
+      "vsLastWeek": "{count} vs {prevCount} tracked stories",
+      "storiesThisWeek": "{count, plural, one {# tracked story} other {# tracked stories}} this week",
+      "ofStoriesThisWeek": "{count} of {total} tracked stories this week",
+      "seeAll": "See the full feed"
+    },
     "learning": {
       "title": "Learning F1",
       "seeAll": "All glossary terms"

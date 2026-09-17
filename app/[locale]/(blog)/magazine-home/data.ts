@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { getArticleIdsForTagSlug, getArticleTagSlugs, type TagRef } from '@/lib/blog/tags';
-import { weeklyEntityCounts, topEntity, type EntityCount } from '@/lib/entityMentions';
+import { entityCountsInWindow, topEntity, type EntityCount } from '@/lib/entityMentions';
 import { getTranslations } from 'next-intl/server';
 
 const FEATURED_TAG = 'featured';
@@ -513,31 +513,107 @@ export async function getRaceHighlights(limit = 3): Promise<RaceHighlights> {
   };
 }
 
-// "Most Covered This Week" — third piece of the magazine-home redesign
-// discussion (AI Weekly's "Attention This Week"). No week-over-week %
-// riser/faller here on purpose: digest_items only has 42 rows total with
-// real gaps (months with zero items), so a week-over-week delta would be
-// computed from samples of 1-2 stories and produce misleading swings — see
-// docs/advisors/DATA-EXPERT.md's sample-size guidance. This is a plain
-// snapshot count instead: reuses the same weeklyEntityCounts() the Feed's
-// significance score and "most mentioned" tag cloud already use. Requires
-// count >= 2 (an entity mentioned by only one story isn't "most covered"
-// by any honest reading) — returns null and the panel doesn't render if no
-// entity clears that bar this week.
-export async function getMostCovered(): Promise<EntityCount | null> {
+// "Attention This Week" — third piece of the magazine-home redesign
+// discussion (AI Weekly's own "Attention This Week" module). Originally
+// shipped as a plain "Most Covered" snapshot with no week-over-week delta,
+// because digest_items only had 42 rows total with real gaps (months with
+// zero items) — a delta then would've been computed from samples of 1-2
+// stories, misleading per docs/advisors/DATA-EXPERT.md. The dataset has
+// since grown (81 rows, ~36/week) enough to support real riser/faller
+// deltas, gated the same cautious way: MIN_SAMPLE requires BOTH weeks to
+// clear the bar before a % change is shown at all, so a 0→1 or 1→3 swing
+// still can't produce a headline number.
+const MIN_SAMPLE = 2;
+const MIN_THEME_SAMPLE = 3;
+
+export type AttentionChange = { entity: string; count: number; prevCount: number; pctChange: number };
+export type AttentionTheme = { slug: string; label: string; count: number; total: number };
+export type AttentionThisWeek = {
+  mostCovered: EntityCount | null;
+  fastestRiser: AttentionChange | null;
+  biggestFall: AttentionChange | null;
+  dominantTheme: AttentionTheme | null;
+};
+
+export async function getAttentionThisWeek(locale: string): Promise<AttentionThisWeek> {
+  const empty: AttentionThisWeek = { mostCovered: null, fastestRiser: null, biggestFall: null, dominantTheme: null };
   const supabase = createClient();
   const { data: issues } = await supabase.from('digest_issues').select('id').eq('series', 'newsletter');
   const issueIds = (issues ?? []).map((i) => i.id as string);
-  if (!issueIds.length) return null;
+  if (!issueIds.length) return empty;
 
   const { data } = await supabase
     .from('digest_items')
-    .select('entity_tags, published_at')
+    .select('entity_tags, published_at, internal_link_slug')
     .in('issue_id', issueIds);
+  const items = (data ?? []) as {
+    entity_tags: string[];
+    published_at: string;
+    internal_link_slug: string | null;
+  }[];
 
-  const counts = weeklyEntityCounts((data ?? []) as { entity_tags: string[]; published_at: string }[]);
-  const top = topEntity(counts);
-  return top && top.count >= 2 ? top : null;
+  const now = Date.now();
+  const day = 24 * 60 * 60 * 1000;
+  const thisWeek = entityCountsInWindow(items, now - 7 * day, now);
+  const lastWeek = entityCountsInWindow(items, now - 14 * day, now - 7 * day);
+
+  const topThisWeek = topEntity(thisWeek);
+  const mostCovered = topThisWeek && topThisWeek.count >= MIN_SAMPLE ? topThisWeek : null;
+
+  const changes: AttentionChange[] = [];
+  for (const entity of new Set([...thisWeek.keys(), ...lastWeek.keys()])) {
+    const count = thisWeek.get(entity) ?? 0;
+    const prevCount = lastWeek.get(entity) ?? 0;
+    if (Math.min(count, prevCount) < MIN_SAMPLE) continue;
+    changes.push({ entity, count, prevCount, pctChange: Math.round(((count - prevCount) / prevCount) * 100) });
+  }
+  const fastestRiser =
+    changes.filter((c) => c.pctChange > 0).sort((a, b) => b.pctChange - a.pctChange)[0] ?? null;
+  const biggestFall =
+    changes.filter((c) => c.pctChange < 0).sort((a, b) => a.pctChange - b.pctChange)[0] ?? null;
+
+  // Dominant theme: digest_items don't carry a topic/category of their own,
+  // but many link to a full article via internal_link_slug, and articles
+  // do carry canonical topic tags (economics, regulations, driver-finance,
+  // ...). Reusing that as a proxy — count how many of this week's items
+  // link to an article under each topic. A digest item without a link, or
+  // whose linked article has no topic tag, just doesn't count toward any
+  // theme (no invented fallback).
+  const thisWeekItems = items.filter((i) => new Date(i.published_at).getTime() >= now - 7 * day);
+  const thisWeekTotal = thisWeekItems.length;
+  const linkedSlugs = [...new Set(thisWeekItems.map((i) => i.internal_link_slug).filter((s): s is string => !!s))];
+
+  let dominantTheme: AttentionTheme | null = null;
+  if (linkedSlugs.length) {
+    const { data: articleRows } = await supabase.from('articles').select('id, slug').in('slug', linkedSlugs);
+    const articleIdBySlug = new Map((articleRows ?? []).map((a) => [a.slug as string, a.id as string]));
+
+    const { data: tagRows } = await supabase
+      .from('article_tags')
+      .select('article_id, tags(slug, category)')
+      .in('article_id', [...articleIdBySlug.values()]);
+    const topicSlugByArticleId = new Map<string, string>();
+    for (const row of (tagRows ?? []) as { article_id: string; tags: { slug: string; category: string } | null }[]) {
+      if (row.tags?.category === 'topic' && !topicSlugByArticleId.has(row.article_id)) {
+        topicSlugByArticleId.set(row.article_id, row.tags.slug);
+      }
+    }
+
+    const topicCounts = new Map<string, number>();
+    for (const item of thisWeekItems) {
+      const articleId = item.internal_link_slug ? articleIdBySlug.get(item.internal_link_slug) : undefined;
+      const topicSlug = articleId ? topicSlugByArticleId.get(articleId) : undefined;
+      if (topicSlug) topicCounts.set(topicSlug, (topicCounts.get(topicSlug) ?? 0) + 1);
+    }
+
+    const topTopic = [...topicCounts.entries()].sort((a, b) => b[1] - a[1])[0];
+    if (topTopic && topTopic[1] >= MIN_THEME_SAMPLE) {
+      const tTags = await getTranslations({ locale, namespace: 'articleTags' });
+      dominantTheme = { slug: topTopic[0], label: tTags(topTopic[0]), count: topTopic[1], total: thisWeekTotal };
+    }
+  }
+
+  return { mostCovered, fastestRiser, biggestFall, dominantTheme };
 }
 
 // "Learning" teaser — fourth piece of the magazine-home redesign discussion
