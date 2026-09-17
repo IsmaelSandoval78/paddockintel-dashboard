@@ -225,23 +225,6 @@ export default async function MagazineHomePage({
           </p>
         )}
 
-        {/* Latest — front page only; an archive/tag page shouldn't repeat it */}
-        {isFrontPage && recent.length > 0 && (
-          <section className="py-10 md:py-14">
-            <h2
-              className="font-display uppercase text-text-1 tracking-[-0.02em] mb-6"
-              style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}
-            >
-              {t('recent')}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {recent.map((a) => (
-                <ArticleCard key={a.slug} a={a} locale={locale} />
-              ))}
-            </div>
-          </section>
-        )}
-
         {/* Last race + Next race, side by side in one band: everything each
             side already had, just unified instead of separated across the
             page (Option B). Standings lives up in Band 3, beside the
@@ -315,22 +298,54 @@ export default async function MagazineHomePage({
           </section>
         )}
 
-        {/* Learning F1 (glossary teaser) beside Track by team (reuses the
-            existing ?tag= filter) — two module-grid tiles instead of two
-            separate full-width bands. */}
-        {(learningTerms.length > 0 || teamTags.length > 0) && (
-          <div className="border-t border-border py-10 md:py-14">
-            <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-10 lg:gap-16">
-              <LearningPanel terms={learningTerms} compact />
-              <div className="lg:border-l lg:border-border-subtle lg:pl-16">
-                <TrackByTeamPanel teams={teamTags} locale={locale} compact />
+        {/* Learning F1 (glossary teaser), Track by team (reuses the existing
+            ?tag= filter), and Latest (heading + link only — the full grid
+            used to live above the fold; now it's just a pointer down to the
+            archive grid) — three module-grid tiles in one band. */}
+        {(() => {
+          const showLatest = isFrontPage && recent.length > 0;
+          if (learningTerms.length === 0 && teamTags.length === 0 && !showLatest) return null;
+
+          let seenFirst = false;
+          const colClass = () => {
+            const cls = seenFirst ? 'lg:border-l lg:border-border-subtle lg:pl-16' : '';
+            seenFirst = true;
+            return cls;
+          };
+
+          return (
+            <div className="border-t border-border py-10 md:py-14">
+              <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr_0.9fr] gap-10 lg:gap-16">
+                {learningTerms.length > 0 && (
+                  <div className={colClass()}>
+                    <LearningPanel terms={learningTerms} compact />
+                  </div>
+                )}
+                {teamTags.length > 0 && (
+                  <div className={colClass()}>
+                    <TrackByTeamPanel teams={teamTags} locale={locale} compact />
+                  </div>
+                )}
+                {showLatest && (
+                  <div className={colClass()}>
+                    <h2 className="font-display uppercase text-text-1 tracking-[-0.02em] mb-6 text-2xl">
+                      {t('recent')}
+                    </h2>
+                    <a
+                      href="#archive"
+                      className="inline-block font-mono text-[11px] uppercase tracking-[0.08em] text-text-2 hover:text-terracotta transition-colors duration-150"
+                    >
+                      {t('recentCta')} →
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Archive grid */}
-        <div className="py-10 md:py-14">
+        <div id="archive" className="py-10 md:py-14 scroll-mt-20">
           {archiveArticles.length === 0 ? (
             <p className="font-mono text-[11px] text-text-3 uppercase tracking-[0.1em]">
               {t('noArticles')}
