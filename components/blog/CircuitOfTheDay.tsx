@@ -9,9 +9,23 @@ function formatDate(iso: string, locale: string): string {
   });
 }
 
+function formatSessionDay(iso: string, locale: string): string {
+  const date = new Date(`${iso.slice(0, 10)}T12:00:00`);
+  return date.toLocaleDateString(locale === 'pt' ? 'pt-BR' : locale, { weekday: 'short' });
+}
+
 export default async function CircuitOfTheDay({ circuit, locale }: { circuit: CircuitOfTheDayData; locale: string }) {
   const t = await getTranslations('magazine.circuit');
   const hubUrl = `https://hub.paddockintel.com/circuits/${circuit.circuit_ref}`;
+
+  const sessionLabels: Record<string, string> = {
+    fp1: 'FP1',
+    fp2: 'FP2',
+    fp3: 'FP3',
+    sprint: t('sessionSprint'),
+    qualifying: t('sessionQualifying'),
+    race: t('sessionRace'),
+  };
 
   const stats: { label: string; value: string }[] = [];
   if (circuit.first_year) {
@@ -42,47 +56,71 @@ export default async function CircuitOfTheDay({ circuit, locale }: { circuit: Ci
   }
 
   return (
-    <section className="py-12 md:py-16 border-b border-border">
-      <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-text-2 mb-4">
-        {t('kicker')} · {t('round', { round: circuit.round })} · {formatDate(circuit.race_date, locale)}
-      </p>
+    <div>
+      <div className="text-center mb-10">
+        <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-text-2 mb-2">
+          {t('kicker')} · {t('round', { round: circuit.round })} · {formatDate(circuit.race_date, locale)}
+        </p>
+        <h2
+          className="font-display uppercase text-text-1 tracking-[-0.02em]"
+          style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}
+        >
+          {circuit.name}
+        </h2>
+        <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-text-2 mt-1">
+          {circuit.location}, {circuit.country}
+        </p>
+      </div>
 
-      <h2
-        className="uppercase text-text-1 leading-[0.9] tracking-[-0.03em] mb-2"
-        style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
-      >
-        {circuit.name}
-      </h2>
-      <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-text-2 mb-8">
-        {circuit.location}, {circuit.country}
-      </p>
+      <div className="text-center mb-10">
+        <p
+          className="tabular-nums leading-none"
+          style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.6rem, 2.6vw, 2.1rem)', color: 'var(--terracotta)' }}
+        >
+          {t('daysUntil', { days: Math.max(circuit.days_until, 0) })}
+        </p>
+      </div>
 
-      {(circuit.champions.length > 0 || stats.length > 0) && (
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 lg:gap-16">
-          {stats.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
-              {stats.map((s) => (
-                <div key={s.label}>
-                  <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-2 mb-1">{s.label}</p>
-                  <p className="font-sans text-text-1 tabular-nums">{s.value}</p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {circuit.champions.length > 0 && (
-            <div className="lg:pl-8 lg:border-l lg:border-border-subtle lg:min-w-[220px]">
-              <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-2 mb-3">{t('lastWinners')}</p>
-              <div className="flex flex-col gap-1.5">
-                {circuit.champions.map((c) => (
-                  <div key={c.year} className="flex items-baseline gap-3">
-                    <span className="font-mono text-[11px] text-text-3 tabular-nums w-10 shrink-0">{c.year}</span>
-                    <span className="font-sans text-sm text-text-1">{c.forename} {c.surname}</span>
-                  </div>
-                ))}
+      {circuit.sessions.length > 0 && (
+        <div className="mb-10">
+          <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-2 mb-3 text-center">
+            {t('schedule')}
+          </p>
+          <div className="flex flex-col gap-2 max-w-sm mx-auto">
+            {circuit.sessions.map((s) => (
+              <div key={s.key} className="flex items-baseline justify-between border-b border-border-subtle pb-2">
+                <span className="font-sans text-sm text-text-1">{sessionLabels[s.key]}</span>
+                <span className="font-mono text-[11px] text-text-2 tabular-nums">
+                  {formatSessionDay(s.date, locale)} · {s.time.slice(0, 5)}
+                </span>
               </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {stats.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5 pt-10 border-t border-border-subtle">
+          {stats.map((s) => (
+            <div key={s.label}>
+              <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-2 mb-1">{s.label}</p>
+              <p className="font-sans text-text-1 tabular-nums">{s.value}</p>
             </div>
-          )}
+          ))}
+        </div>
+      )}
+
+      {circuit.champions.length > 0 && (
+        <div className={stats.length > 0 ? 'mt-10 pt-10 border-t border-border-subtle' : 'pt-10 border-t border-border-subtle'}>
+          <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-2 mb-3">{t('lastWinners')}</p>
+          <div className="flex flex-col gap-1.5">
+            {circuit.champions.map((c) => (
+              <div key={c.year} className="flex items-baseline gap-3">
+                <span className="font-mono text-[11px] text-text-3 tabular-nums w-10 shrink-0">{c.year}</span>
+                <span className="font-sans text-sm text-text-1">{c.forename} {c.surname}</span>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -94,6 +132,6 @@ export default async function CircuitOfTheDay({ circuit, locale }: { circuit: Ci
       >
         {t('cta')} →
       </a>
-    </section>
+    </div>
   );
 }

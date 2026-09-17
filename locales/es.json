@@ -785,8 +785,13 @@
       "lap": "Vuelta {lap}"
     },
     "circuit": {
-      "kicker": "Inteligencia del Circuito",
+      "kicker": "Próxima Carrera",
       "round": "Ronda {round}",
+      "daysUntil": "{days, plural, =0 {Día de carrera} one {Mañana} other {Faltan # días}}",
+      "schedule": "Horario de Sesiones",
+      "sessionQualifying": "Clasificación",
+      "sessionSprint": "Sprint",
+      "sessionRace": "Carrera",
       "since": "Corriendo desde",
       "races": "carreras",
       "raceLaps": "Distancia de carrera",

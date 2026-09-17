@@ -242,36 +242,54 @@ export default async function MagazineHomePage({
           </section>
         )}
 
-        {/* Last race, in full: fastest lap + fastest pit up top (narrower,
-            centered — they're two facts, not two full columns), Race Day
-            Movers and Retirements below as the two full-width columns.
-            Standings lives up in Band 3, beside the Featured square. */}
-        {(raceHighlights.gainers.length > 0 ||
-          raceHighlights.fallers.length > 0 ||
-          raceHighlights.fastestLap ||
-          raceHighlights.fastestPit ||
-          raceHighlights.retirements.length > 0) && (
-          <div className="border-t border-b border-border py-12 md:py-16">
-            {raceHighlights.raceName && (
-              <div className="text-center mb-10">
-                <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-text-2 mb-2">
-                  {t('raceHighlights.lastRace')}
-                </p>
-                <h2
-                  className="font-display uppercase text-text-1 tracking-[-0.02em]"
-                  style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}
-                >
-                  {raceHighlights.raceName}
-                </h2>
+        {/* Last race + Next race, side by side in one band: everything each
+            side already had, just unified instead of separated across the
+            page (Option B). Standings lives up in Band 3, beside the
+            Featured square. */}
+        {(() => {
+          const hasLastRace =
+            raceHighlights.gainers.length > 0 ||
+            raceHighlights.fallers.length > 0 ||
+            !!raceHighlights.fastestLap ||
+            !!raceHighlights.fastestPit ||
+            raceHighlights.retirements.length > 0;
+          if (!hasLastRace && !circuit) return null;
+
+          return (
+            <div className="border-t border-b border-border py-12 md:py-16">
+              <div className={`grid grid-cols-1 gap-12 lg:gap-16 ${hasLastRace && circuit ? 'lg:grid-cols-2' : ''}`}>
+                {hasLastRace && (
+                  <div>
+                    {raceHighlights.raceName && (
+                      <div className="text-center mb-10">
+                        <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-text-2 mb-2">
+                          {t('raceHighlights.lastRace')}
+                        </p>
+                        <h2
+                          className="font-display uppercase text-text-1 tracking-[-0.02em]"
+                          style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}
+                        >
+                          {raceHighlights.raceName}
+                        </h2>
+                      </div>
+                    )}
+                    <RaceDayFastestPanel fastestLap={raceHighlights.fastestLap} fastestPit={raceHighlights.fastestPit} />
+                    <div className="flex flex-col gap-10 mt-10 pt-10 border-t border-border-subtle">
+                      <RaceHighlightsPanel highlights={raceHighlights} />
+                      <RetirementsPanel retirements={raceHighlights.retirements} />
+                    </div>
+                  </div>
+                )}
+
+                {circuit && (
+                  <div className={hasLastRace ? 'lg:border-l lg:border-border-subtle lg:pl-16' : ''}>
+                    <CircuitOfTheDay circuit={circuit} locale={locale} />
+                  </div>
+                )}
               </div>
-            )}
-            <RaceDayFastestPanel fastestLap={raceHighlights.fastestLap} fastestPit={raceHighlights.fastestPit} />
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 mt-12 pt-12 border-t border-border-subtle">
-              <RaceHighlightsPanel highlights={raceHighlights} />
-              <RetirementsPanel retirements={raceHighlights.retirements} />
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Most covered this week — real digest cross-mention count, no
             week-over-week % (see getMostCovered() in ./data.ts for why) */}
@@ -310,9 +328,6 @@ export default async function MagazineHomePage({
             </div>
           </div>
         )}
-
-        {/* Circuit of the day (next race circuit) */}
-        {circuit && <CircuitOfTheDay circuit={circuit} locale={locale} />}
 
         {/* Archive grid */}
         <div className="py-10 md:py-14">

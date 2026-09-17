@@ -785,8 +785,13 @@
       "lap": "Lap {lap}"
     },
     "circuit": {
-      "kicker": "Circuit Intelligence",
+      "kicker": "Next Race",
       "round": "Round {round}",
+      "daysUntil": "{days, plural, =0 {Race day} =1 {Tomorrow} other {# days to go}}",
+      "schedule": "Session Schedule",
+      "sessionQualifying": "Qualifying",
+      "sessionSprint": "Sprint",
+      "sessionRace": "Race",
       "since": "Racing since",
       "races": "races",
       "raceLaps": "Race distance",

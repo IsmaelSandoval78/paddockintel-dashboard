@@ -611,6 +611,9 @@ export async function getTeamTags(): Promise<TeamTagCount[]> {
     .sort((a, b) => b.count - a.count);
 }
 
+export type SessionKey = 'fp1' | 'fp2' | 'fp3' | 'sprint' | 'qualifying' | 'race';
+export type RaceSession = { key: SessionKey; date: string; time: string };
+
 export type CircuitOfTheDay = {
   circuit_ref: string;
   name: string;
@@ -618,6 +621,9 @@ export type CircuitOfTheDay = {
   country: string;
   race_name: string;
   race_date: string;
+  race_time: string | null;
+  days_until: number;
+  sessions: RaceSession[];
   round: number;
   first_year: number | null;
   total_races: number;
@@ -636,12 +642,31 @@ export async function getCircuitOfTheDay(): Promise<CircuitOfTheDay | null> {
 
   const { data: nextRace } = await supabase
     .from('races')
-    .select('id, round, name, date, circuit_id')
+    .select(
+      'id, round, name, date, time, circuit_id, fp1_date, fp1_time, fp2_date, fp2_time, fp3_date, fp3_time, quali_date, quali_time, sprint_date, sprint_time'
+    )
     .gt('date', today)
     .order('date', { ascending: true })
     .limit(1)
     .single();
   if (!nextRace) return null;
+
+  const daysUntil = Math.ceil(
+    (new Date(nextRace.date as string).getTime() - new Date(today).getTime()) / 86_400_000
+  );
+
+  const sessions: RaceSession[] = (
+    [
+      { key: 'fp1', date: nextRace.fp1_date as string | null, time: nextRace.fp1_time as string | null },
+      { key: 'fp2', date: nextRace.fp2_date as string | null, time: nextRace.fp2_time as string | null },
+      { key: 'fp3', date: nextRace.fp3_date as string | null, time: nextRace.fp3_time as string | null },
+      { key: 'sprint', date: nextRace.sprint_date as string | null, time: nextRace.sprint_time as string | null },
+      { key: 'qualifying', date: nextRace.quali_date as string | null, time: nextRace.quali_time as string | null },
+      { key: 'race', date: nextRace.date as string | null, time: nextRace.time as string | null },
+    ] as { key: SessionKey; date: string | null; time: string | null }[]
+  )
+    .filter((s): s is { key: SessionKey; date: string; time: string } => !!s.date && !!s.time)
+    .sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`));
 
   const circuitId = nextRace.circuit_id as number;
   const [circuitRes, racesAtCircuitRes] = await Promise.all([
@@ -663,6 +688,9 @@ export async function getCircuitOfTheDay(): Promise<CircuitOfTheDay | null> {
       country: circuitRes.data.country as string,
       race_name: nextRace.name as string,
       race_date: nextRace.date as string,
+      race_time: nextRace.time as string | null,
+      days_until: daysUntil,
+      sessions,
       round: nextRace.round as number,
       first_year: null,
       total_races: 0,
@@ -794,6 +822,9 @@ export async function getCircuitOfTheDay(): Promise<CircuitOfTheDay | null> {
     country: circuitRes.data.country as string,
     race_name: nextRace.name as string,
     race_date: nextRace.date as string,
+    race_time: nextRace.time as string | null,
+    days_until: daysUntil,
+    sessions,
     round: nextRace.round as number,
     first_year: years.length ? Math.min(...years) : null,
     total_races: races.length,
