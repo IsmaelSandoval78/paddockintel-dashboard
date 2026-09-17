@@ -718,3 +718,230 @@ export function drawConstructorCard(
     drawPortrait(ctx, w, h, pad, ref, opts);
   }
 }
+
+// ─── Article scorecard (Magazine share cards) — live theme, DESIGN.md v3.0.0 ──
+//
+// Reads --bg/--text-1/--text-2/--text-3/--terracotta live off :root rather
+// than hardcoding hex, unlike RECORD_COLORS/COLORS above — those two predate
+// this token set and are frozen to their own eras (v0.3.0 Blueprint and the
+// reverted dark Data Mode, respectively; see CLAUDE.md's open question on
+// scorecard theming). This is the first scorecard drawn against the current
+// live kraft/terracotta system, confirmed with the user before building.
+
+const ARTICLE_FALLBACK_COLORS = {
+  bg:         '#EDE3D0',
+  text1:      '#2B2620',
+  text2:      '#6B5F4E',
+  text3:      '#716444',
+  terracotta: '#C1502E',
+};
+
+function liveColors() {
+  if (typeof document === 'undefined') return ARTICLE_FALLBACK_COLORS;
+  const cs = getComputedStyle(document.documentElement);
+  const read = (name: string, fallback: string) => cs.getPropertyValue(name).trim() || fallback;
+  return {
+    bg:         read('--bg', ARTICLE_FALLBACK_COLORS.bg),
+    text1:      read('--text-1', ARTICLE_FALLBACK_COLORS.text1),
+    text2:      read('--text-2', ARTICLE_FALLBACK_COLORS.text2),
+    text3:      read('--text-3', ARTICLE_FALLBACK_COLORS.text3),
+    terracotta: read('--terracotta', ARTICLE_FALLBACK_COLORS.terracotta),
+  };
+}
+
+function articleFontFamilies() {
+  return {
+    display: cssFontFamily('--pi-display', '"Archivo Black", sans-serif'),
+    prose:   cssFontFamily('--pi-prose', 'Lora, Georgia, serif'),
+    mono:    cssFontFamily('--pi-mono', '"JetBrains Mono", monospace'),
+    // The navbar wordmark is a deliberate font-sans exception (DESIGN.md:
+    // "propose it explicitly" for plain UI sans) — matched here so the
+    // watermark reads as the same logo, not a mismatched substitute.
+    sans:    cssFontFamily('--pi-sans', 'Inter, sans-serif'),
+  };
+}
+
+export async function loadArticleCardFonts(): Promise<void> {
+  const { display, prose, mono, sans } = articleFontFamilies();
+  try {
+    await Promise.all([
+      document.fonts.load(`400 96px ${display}`),
+      document.fonts.load(`400 24px ${prose}`),
+      document.fonts.load(`400 20px ${mono}`),
+      document.fonts.load(`700 20px ${sans}`),
+    ]);
+  } catch {
+    // Canvas falls back to system fonts if unavailable
+  }
+}
+
+export interface ScorecardArticleData {
+  kicker: string;     // canonical tag label, e.g. "SPONSORSHIPS"
+  title: string;      // headline, as published (mixed case)
+  statValue: string;  // the article's own featuredStat — never invented here
+  statLabel: string;
+  date: string;       // pre-formatted, locale-aware
+  path: string;       // watermark line, e.g. "paddockintel.com/<slug>"
+}
+
+function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
+  const words = text.split(' ');
+  const lines: string[] = [];
+  let current = '';
+  for (const word of words) {
+    const test = current ? `${current} ${word}` : word;
+    if (current && ctx.measureText(test).width > maxWidth) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = test;
+    }
+  }
+  if (current) lines.push(current);
+  return lines;
+}
+
+// Headlines vary far more in length than a driver surname, so this shrinks
+// AND wraps together rather than just shrinking to fit one line.
+function fitHeadline(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  family: string,
+  maxSize: number,
+  maxWidth: number,
+  maxLines: number,
+): { size: number; lines: string[] } {
+  let size = maxSize;
+  for (let i = 0; i < 24; i++) {
+    ctx.font = `400 ${size}px ${family}`;
+    const lines = wrapText(ctx, text, maxWidth);
+    if (lines.length <= maxLines || size <= 18) return { size, lines };
+    size *= 0.93;
+  }
+  ctx.font = `400 ${size}px ${family}`;
+  return { size, lines: wrapText(ctx, text, maxWidth) };
+}
+
+function drawArticleWordmark(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  size: number,
+  fonts: { sans: string },
+  colors: ReturnType<typeof liveColors>,
+): void {
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.font = `700 ${size}px ${fonts.sans}`;
+  ctx.fillStyle = colors.text1;
+  ctx.fillText('PADDOCK', x, y);
+  const wPaddock = ctx.measureText('PADDOCK').width;
+  ctx.fillStyle = colors.terracotta;
+  ctx.fillText('·', x + wPaddock, y);
+  const wDot = ctx.measureText('·').width;
+  ctx.fillStyle = colors.text1;
+  ctx.fillText('INTEL', x + wPaddock + wDot, y);
+}
+
+function drawArticleChrome(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  ref: number,
+  colors: ReturnType<typeof liveColors>,
+): void {
+  ctx.fillStyle = colors.bg;
+  ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = colors.terracotta;
+  ctx.fillRect(0, h - Math.round(ref * 0.0055), w, Math.round(ref * 0.0055));
+}
+
+export function drawArticleCard(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  data: ScorecardArticleData,
+): void {
+  const ref = Math.min(w, h);
+  const pad = ref * 0.07;
+  const colors = liveColors();
+  const fonts = articleFontFamilies();
+
+  drawArticleChrome(ctx, w, h, ref, colors);
+
+  const kicker = data.kicker.toUpperCase();
+  const footerLine = `${data.path}  ·  ${data.date}`;
+
+  if (w > h) {
+    // ── Landscape 16:9 — kicker + headline + stat, left; watermark, bottom ──
+    const contentW = w - pad * 2;
+
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+    ctx.font = `400 ${ref * 0.019}px ${fonts.mono}`;
+    ctx.fillStyle = colors.text2;
+    ctx.fillText(kicker, pad, h * 0.20);
+
+    const { size: titleSize, lines: titleLines } = fitHeadline(
+      ctx, data.title, fonts.display, ref * 0.075, contentW, 3
+    );
+    ctx.font = `400 ${titleSize}px ${fonts.display}`;
+    ctx.fillStyle = colors.text1;
+    let ty = h * 0.20 + titleSize * 1.15;
+    for (const line of titleLines) {
+      ctx.fillText(line, pad, ty);
+      ty += titleSize * 1.15;
+    }
+
+    const heroSize = ref * 0.135;
+    ctx.font = `400 ${heroSize}px ${fonts.display}`;
+    ctx.fillStyle = colors.terracotta;
+    const heroY = Math.max(ty + heroSize * 0.5, h * 0.74);
+    ctx.fillText(data.statValue, pad, heroY);
+
+    ctx.font = `400 ${ref * 0.018}px ${fonts.mono}`;
+    ctx.fillStyle = colors.text2;
+    ctx.fillText(data.statLabel.toUpperCase(), pad, heroY + ref * 0.032);
+
+    drawArticleWordmark(ctx, pad, h - pad * 0.62, ref * 0.022, fonts, colors);
+    ctx.font = `400 ${ref * 0.015}px ${fonts.mono}`;
+    ctx.fillStyle = colors.text3;
+    ctx.textAlign = 'right';
+    ctx.fillText(footerLine, w - pad, h - pad * 0.55);
+  } else {
+    // ── Portrait 1:1 / 9:16 — stacked ──
+    const contentW = w - pad * 2;
+
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+    ctx.font = `400 ${ref * 0.019}px ${fonts.mono}`;
+    ctx.fillStyle = colors.text2;
+    ctx.fillText(kicker, pad, h * 0.16);
+
+    const { size: titleSize, lines: titleLines } = fitHeadline(
+      ctx, data.title, fonts.display, ref * 0.082, contentW, h > w * 1.3 ? 6 : 4
+    );
+    ctx.font = `400 ${titleSize}px ${fonts.display}`;
+    ctx.fillStyle = colors.text1;
+    let ty = h * 0.16 + titleSize * 1.2;
+    for (const line of titleLines) {
+      ctx.fillText(line, pad, ty);
+      ty += titleSize * 1.2;
+    }
+
+    const heroSize = ref * 0.16;
+    ctx.font = `400 ${heroSize}px ${fonts.display}`;
+    ctx.fillStyle = colors.terracotta;
+    const heroY = ty + heroSize * 0.75;
+    ctx.fillText(data.statValue, pad, heroY);
+
+    ctx.font = `400 ${ref * 0.02}px ${fonts.mono}`;
+    ctx.fillStyle = colors.text2;
+    ctx.fillText(data.statLabel.toUpperCase(), pad, heroY + ref * 0.036);
+
+    drawArticleWordmark(ctx, pad, h - pad * 0.75, ref * 0.024, fonts, colors);
+    ctx.font = `400 ${ref * 0.016}px ${fonts.mono}`;
+    ctx.fillStyle = colors.text3;
+    ctx.fillText(footerLine, pad, h - pad * 0.42);
+  }
+}

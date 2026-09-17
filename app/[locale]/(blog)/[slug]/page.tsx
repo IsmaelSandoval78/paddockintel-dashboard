@@ -5,6 +5,7 @@ import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
 import ShareButton from '@/components/ui/ShareButton';
+import { ArticleScorecardButton } from '@/components/scorecards/ArticleScorecard';
 import ArticleHero from '@/components/blog/ArticleHero';
 import ArticleTOC from '@/components/blog/ArticleTOC';
 import NewsletterCard from '@/components/blog/NewsletterCard';
@@ -136,6 +137,25 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
   const html     = markdownToHtml(body);
   const readTime = estimateReadTime(fullBody);
   const pageUrl  = localeUrl(locale, slug);
+
+  // Only offered when there's a real, ungated stat to feature — a stat card
+  // with nothing to show isn't worth the modal, and using `stats` (not
+  // `allStats`) means a gated article never lets a reader share the exact
+  // number the paywall is holding back.
+  const cardStat = stats[0];
+  const articleCardData = cardStat
+    ? {
+        kicker: tags[0] ?? 'PaddockIntel',
+        title,
+        statValue: cardStat.value,
+        statLabel: cardStat.label,
+        date: new Date(`${publishedAt.slice(0, 10)}T12:00:00`).toLocaleDateString(
+          locale === 'pt' ? 'pt-BR' : locale,
+          { month: 'short', day: 'numeric', year: 'numeric' }
+        ),
+        path: pageUrl.replace(/^https?:\/\//, '').replace(/\/$/, ''),
+      }
+    : null;
 
   const jsonLd: Record<string, unknown> = {
     '@context': 'https://schema.org',
@@ -292,7 +312,10 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
                   </Link>
                   {' '}· PaddockIntel
                 </p>
-                <ShareButton url={pageUrl} title={title} />
+                <div className="flex items-center gap-2">
+                  {articleCardData && <ArticleScorecardButton data={articleCardData} />}
+                  <ShareButton url={pageUrl} title={title} />
+                </div>
               </div>
 
               {/* Related coverage — same-tag articles first, backfilled with

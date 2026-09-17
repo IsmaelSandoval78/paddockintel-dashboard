@@ -598,7 +598,8 @@
   },
   "scorecard": {
     "share": "Compartilhar →",
-    "download": "Baixar PNG"
+    "download": "Baixar PNG",
+    "cardLabel": "Criar imagem para compartilhar"
   },
   "shareButton": {
     "label": "Compartilhar",
