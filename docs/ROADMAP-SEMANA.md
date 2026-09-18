@@ -2162,3 +2162,18 @@ importar cuánta cobertura tenga. No es competitivo, no es nuestra cancha.
 
 Documentado también en `EDITORIAL.md` §"The Feed (News Today) — A Different Gate" — esa es la
 referencia canónica a leer antes de curar o redactar cualquier item del Feed.
+
+## Vercel desconectado — Cloudflare es el único deploy real (18 sep 2026)
+
+**Estado: cerrado.** Vercel venía "corriendo en paralelo" desde la migración a Cloudflare
+(ver Paso 1 más arriba) como red de seguridad para el rollback — pero el rollback nunca hizo
+falta, y el integration de Vercel con GitHub empezó a fallar el preview de cada PR con
+`Missing Supabase environment variables on the server` (la env var `SUPABASE_SERVICE_ROLE_KEY`
+del scope Preview de Vercel quedó desactualizada/sin configurar, no se mantuvo en sync desde
+el cutover real). Confirmado que no bloqueaba nada real: `deploy-cloudflare.yml` es el único
+workflow que efectivamente sirve producción, dispara solo en push a `main`, nunca en PRs — el
+check de Vercel era ruido, no un gate real.
+
+Ismael desconectó el repo del proyecto de Vercel (Vercel → Settings → Git → Disconnect) el 18
+de septiembre. Cloudflare queda como el único camino de deploy real, sin ambigüedad. Pendiente
+de confirmación: la próxima PR real no debería mostrar ya el check de Vercel.
