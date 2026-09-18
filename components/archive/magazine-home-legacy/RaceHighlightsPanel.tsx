@@ -1,3 +1,7 @@
+// UNUSED as of 2026-09-18 — the "Last race + Next race" band it lived in was cut from
+// magazine-home in favor of components/blog/RaceSnapshotPanel.tsx's compact Band B strip
+// (winner + fastest lap + next-race countdown only, no grid movers).
+
 import { getTranslations } from 'next-intl/server';
 import type { RaceHighlights, RaceHighlightMover } from '@/app/[locale]/(blog)/magazine-home/data';
 

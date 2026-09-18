@@ -455,6 +455,7 @@ export type RaceHighlights = {
   gainers: RaceHighlightMover[];
   fallers: RaceHighlightMover[];
   maxAbsDelta: number;
+  winner: { forename: string; surname: string; constructor_name: string } | null;
   fastestLap: { forename: string; surname: string; time: string } | null;
   fastestPit: { forename: string; surname: string; constructor_name: string; duration: string } | null;
   retirements: Array<{ forename: string; surname: string; constructor_name: string; constructor_ref: string; lap: number; status: string }>;
@@ -465,6 +466,7 @@ const EMPTY_RACE_HIGHLIGHTS: RaceHighlights = {
   gainers: [],
   fallers: [],
   maxAbsDelta: 0,
+  winner: null,
   fastestLap: null,
   fastestPit: null,
   retirements: [],
@@ -551,6 +553,17 @@ export async function getRaceHighlights(limit = 3): Promise<RaceHighlights> {
   const fallers = movers.filter((m) => m.delta < 0).sort((a, b) => a.delta - b.delta).slice(0, limit);
   const maxAbsDelta = Math.max(1, ...movers.map((m) => Math.abs(m.delta)));
 
+  const winnerRow = allResults.find((r) => r.position === 1);
+  const winnerDriver = winnerRow ? driverMap.get(winnerRow.driver_id) : undefined;
+  const winner =
+    winnerRow && winnerDriver
+      ? {
+          forename: winnerDriver.forename as string,
+          surname: winnerDriver.surname as string,
+          constructor_name: constructorMap.get(winnerRow.constructor_id)?.name ?? '',
+        }
+      : null;
+
   const flRow = allResults.find(
     (r) => r.rank === 1 && r.fastest_lap_time && r.fastest_lap_time !== '\\N' && r.fastest_lap_time.trim() !== ''
   );
@@ -605,6 +618,7 @@ export async function getRaceHighlights(limit = 3): Promise<RaceHighlights> {
     gainers,
     fallers,
     maxAbsDelta,
+    winner,
     fastestLap,
     fastestPit,
     retirements,

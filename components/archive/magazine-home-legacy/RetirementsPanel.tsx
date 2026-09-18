@@ -1,3 +1,6 @@
+// UNUSED as of 2026-09-18 — the "Last race + Next race" band it lived in was cut from
+// magazine-home in favor of components/blog/RaceSnapshotPanel.tsx's compact Band B strip.
+
 import { getTranslations } from 'next-intl/server';
 
 const TEAM_COLORS: Record<string, string> = {

@@ -806,7 +806,8 @@
     },
     "raceHighlights": {
       "title": "Movimientos del Día de Carrera",
-      "lastRace": "Última Carrera"
+      "lastRace": "Última Carrera",
+      "winner": "Ganador"
     },
     "fastestFacts": {
       "lap": "Vuelta Más Rápida",

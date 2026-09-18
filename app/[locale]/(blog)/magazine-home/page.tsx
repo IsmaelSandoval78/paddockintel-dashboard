@@ -8,12 +8,9 @@ import JoinTwoWays from '@/components/blog/JoinTwoWays';
 import ArticlePreviewCard from '@/components/blog/ArticlePreviewCard';
 import NewsletterCard from '@/components/blog/NewsletterCard';
 import StandingsPanel from '@/components/blog/StandingsPanel';
-import RaceHighlightsPanel from '@/components/blog/RaceHighlightsPanel';
-import RaceDayFastestPanel from '@/components/blog/RaceDayFastestPanel';
-import RetirementsPanel from '@/components/blog/RetirementsPanel';
+import RaceSnapshotPanel from '@/components/blog/RaceSnapshotPanel';
 import AttentionThisWeekPanel from '@/components/blog/AttentionThisWeekPanel';
 import LearningPanel from '@/components/blog/LearningPanel';
-import CircuitOfTheDay from '@/components/blog/CircuitOfTheDay';
 import FeedTeaserPanel from '@/components/blog/FeedTeaserPanel';
 import LatestIssuePanel from '@/components/blog/LatestIssuePanel';
 import {
@@ -152,7 +149,7 @@ export default async function MagazineHomePage({
   const [standings, raceHighlights, attention, dataDeskArticles, learningTerms, circuit, feedTeaserAll, latestIssue, beagleCounts, digestCounts] =
     frontPageExtras ?? [
       { drivers: [], constructors: [] },
-      { raceName: '', gainers: [], fallers: [], maxAbsDelta: 0, fastestLap: null, fastestPit: null, retirements: [] },
+      { raceName: '', gainers: [], fallers: [], maxAbsDelta: 0, winner: null, fastestLap: null, fastestPit: null, retirements: [] },
       { mostCovered: null, fastestRiser: null, biggestFall: null, dominantTheme: null },
       [],
       [],
@@ -163,6 +160,14 @@ export default async function MagazineHomePage({
       new Map<string, number>(),
     ];
   const { featured, recent } = featuredAndRecent;
+
+  // Compact Last Race / Next Race snapshot for Band B (2026-09-18 redesign) --
+  // just the winner + fastest lap, and a countdown, no movers/retirements/full
+  // circuit history (that lived in its own band lower on the page before).
+  const lastRaceSnapshot = raceHighlights.raceName
+    ? { raceName: raceHighlights.raceName, winner: raceHighlights.winner, fastestLap: raceHighlights.fastestLap }
+    : null;
+  const nextRaceSnapshot = circuit ? { name: circuit.name, daysUntil: circuit.days_until } : null;
 
   // Feed teaser split into two non-overlapping slices (Option 1 of the magazine-home
   // redesign discussion): first 6 get the Band B badge treatment, the next 4 feed Band D's
@@ -208,7 +213,10 @@ export default async function MagazineHomePage({
           restraint (Critique Gate) rather than the old square-image treatment. */}
       {featured && (
         <div className="border-b border-border bg-bg">
-          <div className="max-w-5xl mx-auto px-5 py-12 md:py-16 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+          <div className="max-w-5xl mx-auto px-5 pt-12 md:pt-16">
+            <RaceSnapshotPanel lastRace={lastRaceSnapshot} nextRace={nextRaceSnapshot} />
+          </div>
+          <div className="max-w-5xl mx-auto px-5 pb-12 md:pb-16 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
             <div>
               <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-2 mb-2">
                 {t('featuredKicker')}
@@ -275,55 +283,6 @@ export default async function MagazineHomePage({
             </a>
           </p>
         )}
-
-        {/* Last race + Next race, side by side in one band: everything each
-            side already had, just unified instead of separated across the
-            page (Option B). Standings has its own full-width band above
-            (Band C). */}
-        {(() => {
-          const hasLastRace =
-            raceHighlights.gainers.length > 0 ||
-            raceHighlights.fallers.length > 0 ||
-            !!raceHighlights.fastestLap ||
-            !!raceHighlights.fastestPit ||
-            raceHighlights.retirements.length > 0;
-          if (!hasLastRace && !circuit) return null;
-
-          return (
-            <div className="border-t border-b border-border py-12 md:py-16">
-              <div className={`grid grid-cols-1 gap-12 lg:gap-16 ${hasLastRace && circuit ? 'lg:grid-cols-2' : ''}`}>
-                {hasLastRace && (
-                  <div>
-                    {raceHighlights.raceName && (
-                      <div className="text-center mb-10">
-                        <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-text-2 mb-2">
-                          {t('raceHighlights.lastRace')}
-                        </p>
-                        <h2
-                          className="font-display uppercase text-text-1 tracking-[-0.02em]"
-                          style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}
-                        >
-                          {raceHighlights.raceName}
-                        </h2>
-                      </div>
-                    )}
-                    <RaceDayFastestPanel fastestLap={raceHighlights.fastestLap} fastestPit={raceHighlights.fastestPit} />
-                    <div className="flex flex-col gap-10 mt-10 pt-10 border-t border-border-subtle">
-                      <RaceHighlightsPanel highlights={raceHighlights} />
-                      <RetirementsPanel retirements={raceHighlights.retirements} />
-                    </div>
-                  </div>
-                )}
-
-                {circuit && (
-                  <div className={hasLastRace ? 'lg:border-l lg:border-border-subtle lg:pl-16' : ''}>
-                    <CircuitOfTheDay circuit={circuit} locale={locale} />
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })()}
 
         {/* Attention this week — fastest riser / most covered / biggest
             fall / dominant theme, each independently gated by sample size
