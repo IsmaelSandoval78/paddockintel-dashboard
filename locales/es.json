@@ -777,12 +777,25 @@
       "clear": "Quitar"
     },
     "recent": "Lo último",
+    "featuredKicker": "Destacado",
     "recentCta": "Todos los artículos",
     "standings": {
       "title": "Clasificación",
       "cta": "Clasificación completa en el Hub",
       "drivers": "Pilotos",
-      "constructors": "Constructores"
+      "constructors": "Constructores",
+      "leader": "Líder"
+    },
+    "feed": {
+      "title": "Feed",
+      "seeAll": "Ver el feed completo"
+    },
+    "latestIssue": {
+      "title": "Última edición",
+      "readFull": "Leer la edición completa"
+    },
+    "f1News": {
+      "title": "Noticias F1"
     },
     "movers": {
       "title": "Movimientos de la Carrera",

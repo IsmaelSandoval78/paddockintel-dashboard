@@ -777,12 +777,25 @@
       "clear": "Clear"
     },
     "recent": "Latest",
+    "featuredKicker": "Featured",
     "recentCta": "All articles",
     "standings": {
       "title": "Standings",
       "cta": "Full standings on the Hub",
       "drivers": "Drivers",
-      "constructors": "Constructors"
+      "constructors": "Constructors",
+      "leader": "Leader"
+    },
+    "feed": {
+      "title": "Feed",
+      "seeAll": "See the full feed"
+    },
+    "latestIssue": {
+      "title": "Latest Issue",
+      "readFull": "Read the full issue"
+    },
+    "f1News": {
+      "title": "F1 News"
     },
     "movers": {
       "title": "This Race's Movers",

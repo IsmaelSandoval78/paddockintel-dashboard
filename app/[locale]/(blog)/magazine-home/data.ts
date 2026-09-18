@@ -89,6 +89,80 @@ export async function getDataDeskArticles(locale: string) {
   return attachTags((data as Omit<ArticleRow, 'tags'>[] | null) ?? []);
 }
 
+// Feed teaser -- Option 1 of the magazine-home redesign discussion (Featured/Latest column
+// + a compact Feed column, badges shared with app/[locale]/(digest)/feed/page.tsx via
+// lib/entityMentions.ts's significanceScore + lib/beagleCounts.ts's raw-pool boost). Same
+// source table as the full /feed page, just capped and split into two non-overlapping
+// slices by the caller (top N for the Feed column, the next slice for Band D's "F1 News")
+// so the two bands never repeat the same story.
+export type FeedTeaserItem = {
+  id: string;
+  slug: string | null;
+  source_name: string;
+  headline: string;
+  published_at: string;
+  entity_tags: string[];
+};
+
+export async function getFeedTeaser(locale: string, limit = 12): Promise<FeedTeaserItem[]> {
+  const supabase = createClient();
+  const { data: issues } = await supabase
+    .from('digest_issues')
+    .select('id')
+    .eq('series', 'newsletter')
+    .eq('status', 'published');
+  const issueIds = (issues ?? []).map((i) => i.id as string);
+  if (!issueIds.length) return [];
+
+  const { data } = await supabase
+    .from('digest_items')
+    .select('id, slug, source_name, headline, headline_es, published_at, entity_tags')
+    .in('issue_id', issueIds)
+    .order('published_at', { ascending: false })
+    .limit(limit);
+
+  return ((data ?? []) as Array<{
+    id: string;
+    slug: string | null;
+    source_name: string;
+    headline: string;
+    headline_es: string | null;
+    published_at: string;
+    entity_tags: string[];
+  }>).map((r) => ({
+    id: r.id,
+    slug: r.slug,
+    source_name: r.source_name,
+    headline: locale === 'es' ? r.headline_es ?? r.headline : r.headline,
+    published_at: r.published_at,
+    entity_tags: r.entity_tags,
+  }));
+}
+
+// Latest Issue summary -- Band D's left column. intro_synthesis has no _es column (unlike
+// digest_items) -- the weekly synthesis is written once in English, same as
+// DigestIssueEmail already assumes; not a gap introduced here.
+export type LatestIssueSummary = { slug: string; introSynthesis: string; publishedAt: string } | null;
+
+export async function getLatestIssueSummary(): Promise<LatestIssueSummary> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from('digest_issues')
+    .select('slug, intro_synthesis, published_at')
+    .eq('series', 'newsletter')
+    .eq('status', 'published')
+    .order('published_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  if (!data) return null;
+  return {
+    slug: data.slug as string,
+    introSynthesis: data.intro_synthesis as string,
+    publishedAt: data.published_at as string,
+  };
+}
+
 export type Top5Driver = {
   driver_id: number;
   forename: string;

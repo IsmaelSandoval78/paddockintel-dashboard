@@ -121,8 +121,16 @@ export default async function StandingsPanel({ drivers, constructors, compact = 
                     <span className="font-mono text-[11px] text-text-3 shrink-0 hidden sm:inline">
                       {d.constructor_name}
                     </span>
-                    <span className="tabular-nums text-base shrink-0" style={{ fontFamily: 'var(--pi-display)' }}>
-                      {d.points}
+                    <span className="flex flex-col items-end shrink-0">
+                      <span className="tabular-nums text-base leading-none" style={{ fontFamily: 'var(--pi-display)' }}>
+                        {d.points}
+                      </span>
+                      <span
+                        className="font-mono text-[9px] tabular-nums tracking-[0.04em] mt-1"
+                        style={{ color: d.position === 1 ? 'var(--text-2)' : 'var(--terracotta)' }}
+                      >
+                        {d.position === 1 ? t('leader') : `−${leaderDriverPts - d.points}`}
+                      </span>
                     </span>
                   </div>
                   <div className="h-[2px] ml-[28px] bg-border-subtle">
@@ -152,8 +160,16 @@ export default async function StandingsPanel({ drivers, constructors, compact = 
                     <span className="font-sans text-sm text-text-1 flex-1 min-w-0 truncate">
                       {c.name}
                     </span>
-                    <span className="tabular-nums text-base shrink-0" style={{ fontFamily: 'var(--pi-display)' }}>
-                      {c.points}
+                    <span className="flex flex-col items-end shrink-0">
+                      <span className="tabular-nums text-base leading-none" style={{ fontFamily: 'var(--pi-display)' }}>
+                        {c.points}
+                      </span>
+                      <span
+                        className="font-mono text-[9px] tabular-nums tracking-[0.04em] mt-1"
+                        style={{ color: c.position === 1 ? 'var(--text-2)' : 'var(--terracotta)' }}
+                      >
+                        {c.position === 1 ? t('leader') : `−${leaderConstructorPts - c.points}`}
+                      </span>
                     </span>
                   </div>
                   <div className="h-[2px] ml-[28px] bg-border-subtle">

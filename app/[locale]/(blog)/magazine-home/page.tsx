@@ -3,9 +3,10 @@ import { getTranslations } from 'next-intl/server';
 import { Link } from '@/lib/i18n/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { getArticleIdsForTagSlug, getArticleTagSlugs, type TagRef } from '@/lib/blog/tags';
+import { weeklyEntityCounts } from '@/lib/entityMentions';
+import { getBeagleEntityCounts, mergeEntityCounts } from '@/lib/beagleCounts';
 import JoinTwoWays from '@/components/blog/JoinTwoWays';
 import ArticlePreviewCard from '@/components/blog/ArticlePreviewCard';
-import FeaturedArticleCard from '@/components/blog/FeaturedArticleCard';
 import NewsletterCard from '@/components/blog/NewsletterCard';
 import StandingsPanel from '@/components/blog/StandingsPanel';
 import RaceHighlightsPanel from '@/components/blog/RaceHighlightsPanel';
@@ -14,6 +15,8 @@ import RetirementsPanel from '@/components/blog/RetirementsPanel';
 import AttentionThisWeekPanel from '@/components/blog/AttentionThisWeekPanel';
 import LearningPanel from '@/components/blog/LearningPanel';
 import CircuitOfTheDay from '@/components/blog/CircuitOfTheDay';
+import FeedTeaserPanel from '@/components/blog/FeedTeaserPanel';
+import LatestIssuePanel from '@/components/blog/LatestIssuePanel';
 import {
   getFeaturedAndRecent,
   getDataDeskArticles,
@@ -22,6 +25,8 @@ import {
   getAttentionThisWeek,
   getLearningTerms,
   getCircuitOfTheDay,
+  getFeedTeaser,
+  getLatestIssueSummary,
 } from './data';
 
 export const revalidate = 3600;
@@ -126,6 +131,9 @@ export default async function MagazineHomePage({
           getDataDeskArticles(locale),
           getLearningTerms(locale),
           getCircuitOfTheDay(),
+          getFeedTeaser(locale, 10),
+          getLatestIssueSummary(),
+          getBeagleEntityCounts(createClient()),
         ])
       : Promise.resolve(null),
   ]);
@@ -140,7 +148,7 @@ export default async function MagazineHomePage({
     return qs ? `${basePath}?${qs}` : basePath;
   };
 
-  const [standings, raceHighlights, attention, dataDeskArticles, learningTerms, circuit] =
+  const [standings, raceHighlights, attention, dataDeskArticles, learningTerms, circuit, feedTeaserAll, latestIssue, beagleCounts] =
     frontPageExtras ?? [
       { drivers: [], constructors: [] },
       { raceName: '', gainers: [], fallers: [], maxAbsDelta: 0, fastestLap: null, fastestPit: null, retirements: [] },
@@ -148,17 +156,20 @@ export default async function MagazineHomePage({
       [],
       [],
       null,
+      [],
+      null,
+      new Map<string, number>(),
     ];
   const { featured, recent } = featuredAndRecent;
 
-  // No fallback to the auto-generated /api/og/ card here on purpose — that route
-  // renders server-side on every request (uncached), which blew LCP out to
-  // 3-5s on this module since it's the page's biggest visual element. Only a
-  // real cover_image_url renders an image now; FeaturedArticleCard already
-  // handles the no-image case cleanly.
-  const featuredImageUrl = featured
-    ? (featured as { cover_image_url?: string | null }).cover_image_url ?? undefined
-    : undefined;
+  // Feed teaser split into two non-overlapping slices (Option 1 of the magazine-home
+  // redesign discussion): first 6 get the Band B badge treatment, the next 4 feed Band D's
+  // "F1 News" column — never the same story twice on one page. Entity counts merge the
+  // curated digest_items signal with the wider beagle_items raw-pool signal (see
+  // lib/beagleCounts.ts) so the significance badge matches what /feed itself now shows.
+  const feedScores = mergeEntityCounts(weeklyEntityCounts(feedTeaserAll), beagleCounts);
+  const feedTeaser = feedTeaserAll.slice(0, 6);
+  const f1News = feedTeaserAll.slice(6, 10);
 
   // The archive grid below the curated modules excludes anything already
   // shown as featured/recent, so page 1 never repeats the same article twice.
@@ -186,22 +197,60 @@ export default async function MagazineHomePage({
         </div>
       </div>
 
-      {/* Band 3 — the cover: big square Featured story, Standings beside it. */}
+      {/* Band B (Option 1 of the magazine-home redesign discussion) — Featured story + 3
+          Latest on the left, a Feed teaser with the shared significance badge on the
+          right. Text-first on purpose, no cover image — matches the approved mockup's
+          restraint (Critique Gate) rather than the old square-image treatment. */}
       {featured && (
         <div className="border-b border-border bg-bg">
           <div className="max-w-5xl mx-auto px-5 py-12 md:py-16 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
-            <FeaturedArticleCard
-              slug={featured.slug as string}
-              title={featured.title as string}
-              metaDescription={featured.meta_description as string | null}
-              tags={featured.tags}
-              publishedAt={featured.published_at as string}
-              locale={locale}
-              featuredStat={((featured.stats as Stat[]) ?? [])[0]}
-              imageUrl={featuredImageUrl}
-              square
-            />
-            <StandingsPanel drivers={standings.drivers} constructors={standings.constructors} compact />
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-2 mb-2">
+                {t('featuredKicker')}
+              </p>
+              <h2 className="font-display text-text-1 tracking-[-0.02em] leading-[1.02] text-2xl md:text-[1.75rem] mb-3">
+                <Link href={`/${featured.slug}`} className="hover:text-terracotta transition-colors duration-150">
+                  {featured.title as string}
+                </Link>
+              </h2>
+              {featured.meta_description && (
+                <p className="font-prose text-sm text-text-2 leading-relaxed max-w-[48ch] mb-8">
+                  {featured.meta_description as string}
+                </p>
+              )}
+              {recent.length > 0 && (
+                <>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-2 mb-1">
+                    {t('recent')}
+                  </p>
+                  <div className="flex flex-col divide-y divide-border-subtle border-t border-b border-border-subtle">
+                    {recent.slice(0, 3).map((a) => (
+                      <Link key={a.slug} href={`/${a.slug}`} className="group py-3 flex flex-col gap-1">
+                        <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-3">
+                          {new Date(a.published_at as string).toLocaleDateString(locale === 'pt' ? 'pt-BR' : locale, {
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </span>
+                        <span className="font-prose font-semibold text-text-1 group-hover:text-terracotta transition-colors duration-150 line-clamp-2">
+                          {a.title as string}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+            <FeedTeaserPanel items={feedTeaser} scores={feedScores} title={t('feed.title')} />
+          </div>
+        </div>
+      )}
+
+      {/* Band C — Championship Standings, full width, with gap-to-leader. */}
+      {(standings.drivers.length > 0 || standings.constructors.length > 0) && (
+        <div className="border-b border-border bg-bg">
+          <div className="max-w-5xl mx-auto px-5">
+            <StandingsPanel drivers={standings.drivers} constructors={standings.constructors} />
           </div>
         </div>
       )}
@@ -224,8 +273,8 @@ export default async function MagazineHomePage({
 
         {/* Last race + Next race, side by side in one band: everything each
             side already had, just unified instead of separated across the
-            page (Option B). Standings lives up in Band 3, beside the
-            Featured square. */}
+            page (Option B). Standings has its own full-width band above
+            (Band C). */}
         {(() => {
           const hasLastRace =
             raceHighlights.gainers.length > 0 ||
@@ -296,43 +345,25 @@ export default async function MagazineHomePage({
           </section>
         )}
 
-        {/* Learning F1 (glossary teaser) beside Latest (last 6 stories, as a
-            compact list — not a card grid, which the full-width Archive
-            grid below already does) — two module-grid tiles in one band. */}
+        {/* Band D (Option 1 of the magazine-home redesign discussion) — Latest Issue
+            summary, F1 News (the Feed teaser's second slice), and Learning F1, three
+            module-grid tiles in one band. Any column can be independently empty; the
+            whole band hides only if all three are. */}
         {(() => {
-          const showLatest = isFrontPage && recent.length > 0;
-          if (learningTerms.length === 0 && !showLatest) return null;
+          if (!latestIssue && f1News.length === 0 && learningTerms.length === 0) return null;
 
           return (
             <div className="border-t border-border py-10 md:py-14">
-              <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-10 lg:gap-16">
-                {learningTerms.length > 0 && <LearningPanel terms={learningTerms} compact />}
-                {showLatest && (
-                  <div className={learningTerms.length > 0 ? 'lg:border-l lg:border-border-subtle lg:pl-16' : ''}>
-                    <h2 className="font-display uppercase text-text-1 tracking-[-0.02em] mb-6 text-2xl">
-                      {t('recent')}
-                    </h2>
-                    <div className="flex flex-col divide-y divide-border-subtle border-t border-b border-border-subtle">
-                      {recent.map((a) => (
-                        <Link key={a.slug} href={`/${a.slug}`} className="group py-3 flex flex-col gap-1">
-                          <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-3">
-                            {new Date(a.published_at as string).toLocaleDateString(locale === 'pt' ? 'pt-BR' : locale, {
-                              month: 'short',
-                              day: 'numeric',
-                            })}
-                          </span>
-                          <span className="font-prose font-semibold text-text-1 group-hover:text-terracotta transition-colors duration-150 line-clamp-2">
-                            {a.title as string}
-                          </span>
-                        </Link>
-                      ))}
-                    </div>
-                    <a
-                      href="#archive"
-                      className="inline-block font-mono text-[11px] uppercase tracking-[0.08em] text-text-2 hover:text-terracotta transition-colors duration-150 mt-5"
-                    >
-                      {t('recentCta')} →
-                    </a>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-12">
+                {latestIssue && <LatestIssuePanel issue={latestIssue} />}
+                {f1News.length > 0 && (
+                  <div className={latestIssue ? 'lg:border-l lg:border-border-subtle lg:pl-12' : ''}>
+                    <FeedTeaserPanel items={f1News} scores={feedScores} title={t('f1News.title')} showBadge={false} />
+                  </div>
+                )}
+                {learningTerms.length > 0 && (
+                  <div className={latestIssue || f1News.length > 0 ? 'lg:border-l lg:border-border-subtle lg:pl-12' : ''}>
+                    <LearningPanel terms={learningTerms} compact />
                   </div>
                 )}
               </div>
