@@ -2,7 +2,7 @@
   "slug": "vol-11-week-2026-09-17",
   "published_at": "2026-09-17T00:00:00+00:00",
   "status": "published",
-  "intro_synthesis": "Seven stories this week, several with the same shape: what a team says happened versus what actually decided the result. A four-time champion raced 100 amateurs at a go-kart track for reasons that have nothing to do with competition. Alpine bet on a technical chief whose last job ended mid-slump, not mid-dominance. Ferrari keeps proving Nico Rosberg's oldest complaint about them right — Sunday's pace was never the problem, the radio was. Rosberg's other idea this week goes after that same race's other flashpoint: the virtual safety car that handed Kimi Antonelli a win and cost Lando Norris one. Red Bull is applying the same recovery-first logic to Isack Hadjar's wrist that decided its strategy calls all season. Ferrari's other headline was pure economics — its first Japanese sponsor in telecom and e-commerce. And Yuki Tsunoda gave the clearest exit interview F1 has heard in years: he spent 2025 trying to drive like a teammate he isn't.",
+  "intro_synthesis": "Eight stories this week, several with the same shape: what a team says happened versus what actually decided the result. A four-time champion raced 100 amateurs at a go-kart track for reasons that have nothing to do with competition. Alpine bet on a technical chief whose last job ended mid-slump, not mid-dominance. Ferrari keeps proving Nico Rosberg's oldest complaint about them right — Sunday's pace was never the problem, the radio was. Rosberg's other idea this week goes after that same race's other flashpoint: the virtual safety car that handed Kimi Antonelli a win and cost Lando Norris one. Red Bull is applying the same recovery-first logic to Isack Hadjar's wrist that decided its strategy calls all season. Ferrari's other headline was pure economics — its first Japanese sponsor in telecom and e-commerce. F1 itself made the week's biggest structural move, confirming a 2027 calendar that hands Monaco a Sprint weekend for the first time ever and drops Zandvoort entirely. And Yuki Tsunoda gave the clearest exit interview F1 has heard in years: he spent 2025 trying to drive like a teammate he isn't.",
   "items": [
     {
       "source_name": "The Race",
@@ -195,6 +195,34 @@
       ],
       "meta_description": "Hadjar has missed 3 straight races with a wrist injury. Red Bull's own boss says he returns 'close to 100 per cent' or not at all — Baku status unclear.",
       "meta_description_es": "Hadjar se perdió 3 carreras seguidas por una lesión de muñeca. El propio jefe de Red Bull dice que vuelve 'cerca del 100%' o no vuelve — Bakú sigue en duda."
+    },
+    {
+      "source_name": "Formula1.com",
+      "source_url": "https://www.formula1.com/en/latest/article/whats-new-with-the-f1-sprint-in-2027.6UiqFIVYRoMSgPvAA8yiiZ",
+      "headline": "F1's 2027 Calendar Gives Monaco Its First-Ever Sprint — and Drops Zandvoort Entirely",
+      "our_summary": "F1 confirmed its 2027 calendar: 24 races, opening in Bahrain and closing in Abu Dhabi, with Sprint weekends nearly doubling from 6 to 10 — Bahrain, Australia, Japan, Canada, Monaco, Silverstone, Monza, Brazil, Qatar, and Abu Dhabi. Monaco's is the headline addition: a Sprint weekend for the first time in the race's history, with Sprint Qualifying on Friday, the Sprint itself replacing Saturday-morning FP3, and Grand Prix qualifying later that same Saturday. Portugal (Portimao) and Turkey (Istanbul Park) both return after dropping off the schedule in 2021; Zandvoort's Dutch Grand Prix does not, with no return currently planned. The Spanish and Belgian Grands Prix move to alternating years starting in 2027, and F1 is extending the summer break from four weeks to five. \"We are thrilled to welcome Portugal and Turkey to the championship and to expand Sprint racing to 10 events,\" F1 president Stefano Domenicali said, \"giving our fans even more intensity, drama, and the wheel-to-wheel action that make our sport so special.\"",
+      "published_at": "2026-09-17T21:00:00+00:00",
+      "entity_tags": ["Formula 1", "Monaco Grand Prix", "Stefano Domenicali", "Bahrain", "Zandvoort"],
+      "editor_note": "The Spain/Belgium alternating-year deal is a direct sequel to Madrid's own \"two-race bet\" — Spain effectively gave up a guaranteed annual date to share the slot, the same trade-off Madrid's hosting fee piece already covered from the other side.",
+      "editor_take": "Ten Sprint weekends out of 24 races is 42% of the calendar run under the shortened format, up from 25% in 2026 — the clearest sign yet of where F1 thinks its growth is, since every added Sprint is also a second qualifying session, a second grid, and a second set of broadcast rights to sell inside the same race weekend. Monaco accepting one, after being the calendar's most tradition-bound holdout for decades, says more about the format's leverage over legacy venues than any Sprint result will this year.",
+      "internal_link_slug": "madrid-gp-2026-economic-impact",
+      "headline_es": null,
+      "our_summary_es": null,
+      "editor_note_es": null,
+      "editor_take_es": null,
+      "slug": "f1-2027-calendar-monaco-sprint-zandvoort-dropped",
+      "stats": [
+        { "value": "24", "label": "RACES ON THE 2027 CALENDAR", "label_es": "CARRERAS EN EL CALENDARIO 2027", "unit": null, "unit_es": null },
+        { "value": "10", "label": "SPRINT WEEKENDS (UP FROM 6 IN 2026)", "label_es": "FINES DE SEMANA SPRINT (ANTES 6 EN 2026)", "unit": null, "unit_es": null },
+        { "value": "1", "label": "MONACO'S FIRST-EVER SPRINT WEEKEND", "label_es": "PRIMER FIN DE SEMANA SPRINT DE LA HISTORIA DE MÓNACO", "unit": null, "unit_es": null },
+        { "value": "5", "label": "WEEK SUMMER BREAK (UP FROM 4)", "label_es": "SEMANAS DE RECESO DE VERANO (ANTES 4)", "unit": null, "unit_es": null }
+      ],
+      "faq": [
+        { "q": "How many Sprint races will F1 hold in 2027?", "a": "10, up from 6 in 2026 — at Bahrain, Australia, Japan, Canada, Monaco, Great Britain, Italy, Brazil, Qatar, and Abu Dhabi. Monaco's is a first for the venue.", "q_es": "¿Cuántas carreras Sprint tendrá la F1 en 2027?", "a_es": "10, frente a 6 en 2026 — en Baréin, Australia, Japón, Canadá, Mónaco, Gran Bretaña, Italia, Brasil, Catar y Abu Dabi. La de Mónaco es la primera en la historia del circuito." },
+        { "q": "What races are new or returning on the 2027 F1 calendar, and what's dropped off?", "a": "Portugal (Portimao) and Turkey (Istanbul Park) both return after being absent since 2021. The Dutch Grand Prix at Zandvoort drops off the schedule, with no return currently planned, and the Spanish and Belgian Grands Prix move to alternating years.", "q_es": "¿Qué carreras son nuevas o regresan al calendario 2027 de F1, y cuál se cae?", "a_es": "Portugal (Portimao) y Turquía (Istanbul Park) regresan tras estar ausentes desde 2021. El Gran Premio de Países Bajos en Zandvoort sale del calendario, sin regreso planeado por ahora, y los Grandes Premios de España y Bélgica pasan a alternar años." }
+      ],
+      "meta_description": "F1's 2027 calendar: 24 races, 10 Sprints (up from 6), Monaco's first-ever Sprint weekend, Portugal and Turkey return, Zandvoort drops off.",
+      "meta_description_es": "Calendario 2027 de F1: 24 carreras, 10 Sprints (antes 6), el primer Sprint de la historia de Mónaco, regresan Portugal y Turquía, Zandvoort se cae."
     }
   ]
 }
