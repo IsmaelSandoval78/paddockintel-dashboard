@@ -134,7 +134,7 @@ All data lives in Supabase. Never use mock data — always query real tables.
 
 `DESIGN.md` is the single source of truth for all visual tokens (colors, typography, spacing, motion). Do not duplicate values here — they drift out of sync. Read `DESIGN.md` before touching any styling.
 
-**Current system: DESIGN.md v3.0.0 "Vintage Editorial"** — one unified visual language across Hub, Circuits, Drivers, Constructors, Blog, Digest, and Book (no more per-surface "modes"). Kraft-paper substrate, terracotta accent, `--radius-sm`/`--radius-md` (no longer zero-radius). Decided 2026-08-24, not yet applied to `globals.css`. Full design history (Swiss Industrial Print, Data Mode, Story Mode — all superseded) lives in `docs/archive/CONCEPT-V2.md` §13; this file does not restate it.
+**Current system: DESIGN.md v3.0.0 "Vintage Editorial"** — one unified visual language across Hub, Circuits, Drivers, Constructors, Blog, Digest, and Book (no more per-surface "modes"). Kraft-paper substrate, terracotta accent, `--radius-sm`/`--radius-md` (no longer zero-radius). Decided 2026-08-24, applied to `globals.css` (confirmed: `--bg: #EDE3D0`, `--terracotta: #C1502E`, `--radius-sm`/`--radius-md` all present). Full design history (Swiss Industrial Print, Data Mode, Story Mode — all superseded) lives in `docs/archive/CONCEPT-V2.md` §13; this file does not restate it.
 
 - Tailwind v4 utility classes only — no inline styles, no CSS modules unless absolutely necessary
 - Use CSS variables from `globals.css` — never hardcode hex values that exist as tokens

@@ -42,7 +42,10 @@
   ],
 
   "triggers": {
-    "crons": ["0 9 * * *"]
+    // "0 9 * * *"    — daily digest send (app/api/digest/send)
+    // "0 */4 * * *"  — beagle raw-pool refresh (app/api/cron/refresh-beagle), see
+    //                  custom-worker.ts's scheduled handler for how these are told apart
+    "crons": ["0 9 * * *", "0 */4 * * *"]
   }
 
   // Deliberately omitted — D1 tag cache (NEXT_TAG_CACHE_D1): the codebase has
