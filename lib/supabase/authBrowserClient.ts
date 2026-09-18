@@ -4,7 +4,7 @@ import { createBrowserClient } from '@supabase/ssr';
 import { authBrowserCookieOptions } from './authCookieOptions';
 
 // The client-side counterpart to lib/supabase/authServerClient.ts. Plain
-// `@supabase/supabase-js` (see lib/supabase/client.ts, currently unused)
+// `@supabase/supabase-js` (see lib/archive/supabase-client.ts, unused, archived 2026-09-18)
 // stores a session in localStorage by default — createBrowserClient instead
 // writes the session into cookies the server can read back.
 //

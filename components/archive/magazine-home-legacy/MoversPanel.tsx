@@ -1,3 +1,6 @@
+// UNUSED as of 2026-09-18 — cut during magazine-home's redesign iterations; superseded
+// by the Championship Standings band's own gap-to-leader (components/blog/StandingsPanel.tsx).
+
 import { getTranslations } from 'next-intl/server';
 import type { Mover, MoversResult } from '@/app/[locale]/(blog)/magazine-home/data';
 

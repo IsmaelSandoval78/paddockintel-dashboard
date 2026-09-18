@@ -1,3 +1,7 @@
+// UNUSED as of 2026-09-18 — replaced by the "kinetic" Hub
+// (components/home/kinetic/HomeExperience.tsx). Only consumer was HubClient.tsx,
+// moved here alongside it.
+
 'use client';
 
 import { useTranslations } from 'next-intl';

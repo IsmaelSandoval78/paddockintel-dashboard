@@ -1,3 +1,6 @@
+// UNUSED as of 2026-09-18 — replaced by magazine-home's Option 1 redesign, Band B's
+// text-first Featured treatment (no cover image, see app/[locale]/(blog)/magazine-home/page.tsx).
+
 import Image from 'next/image';
 import { Link } from '@/lib/i18n/navigation';
 import ShareButton from '@/components/ui/ShareButton';
