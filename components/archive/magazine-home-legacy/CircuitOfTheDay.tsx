@@ -1,3 +1,9 @@
+// UNUSED as of 2026-09-18 — the full expanded circuit history (sessions, champions, lap
+// records) was cut from magazine-home in favor of components/blog/RaceSnapshotPanel.tsx's
+// compact next-race countdown (name + days to go only). getCircuitOfTheDay() in
+// app/[locale]/(blog)/magazine-home/data.ts is still used for that countdown data — only
+// this full display component became unused.
+
 import { getTranslations } from 'next-intl/server';
 import type { CircuitOfTheDay as CircuitOfTheDayData } from '@/app/[locale]/(blog)/magazine-home/data';
 

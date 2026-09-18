@@ -1,3 +1,6 @@
+// UNUSED as of 2026-09-18 — replaced by components/blog/RaceSnapshotPanel.tsx's compact
+// Band B treatment (winner + fastest lap only, no fastest pit stop).
+
 import { getTranslations } from 'next-intl/server';
 
 interface RaceDayFastestPanelProps {

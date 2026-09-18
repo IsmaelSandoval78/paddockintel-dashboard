@@ -806,7 +806,8 @@
     },
     "raceHighlights": {
       "title": "Race Day Movers",
-      "lastRace": "Last Race"
+      "lastRace": "Last Race",
+      "winner": "Winner"
     },
     "fastestFacts": {
       "lap": "Fastest Lap",
