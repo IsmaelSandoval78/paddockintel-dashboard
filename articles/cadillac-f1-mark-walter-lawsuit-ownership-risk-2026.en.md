@@ -3,11 +3,11 @@ slug: "cadillac-f1-mark-walter-lawsuit-ownership-risk-2026"
 title: "Cadillac F1 Owner's $17B Fraud Suit: The Real Risk"
 locale: en
 meta_description: "Mark Walter's TWG Global holds a stake in Cadillac F1. He faces a $17B fraud suit — unrelated to racing, but not irrelevant to the team's future."
-status: draft
+status: published
 paywalled: false
 published_at: "2026-09-18T18:30:00+00:00"
 translation_group_id: "1dc7eec0-3b23-4aec-b7bf-05c20a9453c9"
-tags: ["team-finance", "team-valuations", "regulations"]
+tags: ["featured", "team-finance", "team-valuations", "regulations"]
 
 stats:
   - value: "$17B"

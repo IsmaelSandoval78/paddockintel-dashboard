@@ -3,11 +3,11 @@ slug: "cadillac-f1-mark-walter-demanda-riesgo-propiedad-2026"
 title: "El dueño de Cadillac F1 enfrenta una demanda de $17.000M"
 locale: es
 meta_description: "TWG Global, de Mark Walter, tiene parte de Cadillac F1. Enfrenta una demanda por fraude de $17.000M — no es de pista, pero sí importa."
-status: draft
+status: published
 paywalled: false
 published_at: "2026-09-18T18:30:00+00:00"
 translation_group_id: "1dc7eec0-3b23-4aec-b7bf-05c20a9453c9"
-tags: ["team-finance", "team-valuations", "regulations"]
+tags: ["featured", "team-finance", "team-valuations", "regulations"]
 
 stats:
   - value: "$17.000M"

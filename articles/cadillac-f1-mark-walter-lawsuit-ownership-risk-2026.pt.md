@@ -3,11 +3,11 @@ slug: "cadillac-f1-mark-walter-processo-risco-propriedade-2026"
 title: "Dono da Cadillac F1 enfrenta processo de US$ 17 bi"
 locale: pt
 meta_description: "A TWG Global, de Mark Walter, tem participação na Cadillac F1 e enfrenta um processo de US$ 17 bi por fraude — fora da pista, mas relevante."
-status: draft
+status: published
 paywalled: false
 published_at: "2026-09-18T18:30:00+00:00"
 translation_group_id: "1dc7eec0-3b23-4aec-b7bf-05c20a9453c9"
-tags: ["team-finance", "team-valuations", "regulations"]
+tags: ["featured", "team-finance", "team-valuations", "regulations"]
 
 stats:
   - value: "US$ 17 bi"
