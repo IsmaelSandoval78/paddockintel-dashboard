@@ -1,0 +1,21 @@
+name: Refresh Beagle (manual)
+
+# On-demand trigger for app/api/cron/refresh-beagle -- the real cadence is the
+# Cloudflare cron in wrangler.jsonc (every 4h, wired in custom-worker.ts). This exists
+# for a manual refresh (e.g. right before curating a digest) without waiting for the
+# next tick. Idempotent (ON CONFLICT (link) DO NOTHING in the route), so running this
+# alongside the automatic cron is harmless.
+on:
+  workflow_dispatch: {}
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Call refresh-beagle
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -sS -f -X GET "https://hub.paddockintel.com/api/cron/refresh-beagle" \
+            -H "Authorization: Bearer $CRON_SECRET"
