@@ -24,21 +24,27 @@ interface MinimalExecutionContext {
   passThroughOnException(): void;
 }
 
+interface MinimalScheduledController {
+  cron: string;
+}
+
 export default {
   fetch: handler.fetch,
 
-  async scheduled(_controller: unknown, env: Env, ctx: MinimalExecutionContext) {
-    // Reuses the existing /api/digest/send route handler (same auth check,
-    // same sent_at-based idempotency) instead of duplicating its logic here.
+  // Two Cron Triggers share this one handler (see wrangler.jsonc) -- `controller.cron`
+  // says which schedule fired, same idea as the digest route's Bearer auth: reuse the
+  // existing route handler instead of duplicating its logic here.
+  async scheduled(controller: MinimalScheduledController, env: Env, ctx: MinimalExecutionContext) {
+    const path = controller.cron === '0 */4 * * *' ? '/api/cron/refresh-beagle' : '/api/digest/send';
     const response = await handler.fetch(
-      new Request('https://internal/api/digest/send', {
+      new Request(`https://internal${path}`, {
         headers: { Authorization: `Bearer ${env.CRON_SECRET}` },
       }),
       env,
       ctx
     );
     if (!response.ok) {
-      console.error(`digest send cron failed: ${response.status} ${await response.text()}`);
+      console.error(`${path} cron failed: ${response.status} ${await response.text()}`);
     }
   },
 };
