@@ -29,12 +29,12 @@ export default async function LearningPanel({
           <Link
             key={term.slug}
             href={`/glossary/${term.slug}`}
-            className="group py-4 flex flex-col md:flex-row md:items-baseline gap-1 md:gap-6"
+            className="group py-4 flex flex-col gap-1"
           >
-            <span className="font-prose font-semibold text-text-1 group-hover:text-terracotta transition-colors duration-150 md:w-56 shrink-0">
+            <span className="font-prose font-semibold text-text-1 group-hover:text-terracotta transition-colors duration-150">
               {term.term}
             </span>
-            <span className="font-prose text-sm text-text-2 leading-relaxed line-clamp-1">
+            <span className="font-prose text-sm text-text-2 leading-relaxed line-clamp-2">
               {term.short_definition}
             </span>
           </Link>
