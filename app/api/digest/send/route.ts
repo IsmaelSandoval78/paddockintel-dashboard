@@ -4,8 +4,16 @@ import { render } from '@react-email/render';
 import { createClient } from '@/lib/supabase/server';
 import DigestIssueEmail from '@/emails/DigestIssueEmail';
 
-// Called by Vercel Cron (daily). Finds published issues with sent_at IS NULL
+// Called by the Cloudflare cron (daily). Finds published issues with sent_at IS NULL
 // and sends a batch email to all subscribers, then stamps sent_at.
+//
+// status='published' alone means "visible on /feed and magazine-home" -- it does NOT mean
+// "ready to email." Gating on published_at here too lets an issue go live on the site ahead
+// of its actual send date (e.g. Feed items added mid-week for a Tuesday-cadence newsletter)
+// without the very next daily cron tick blasting it out early. Confirmed 2026-09-18: before
+// this gate, status=published + sent_at IS NULL was the only send condition, so publishing
+// an issue for site visibility and scheduling its email were the same action -- a real gap
+// once the Feed started getting curated more often than the twice-weekly send cadence.
 export async function GET(req: Request) {
   const resend = new Resend(process.env.RESEND_API_KEY);
   const FROM = process.env.RESEND_FROM_EMAIL ?? 'info@paddockintel.com';
@@ -22,7 +30,8 @@ export async function GET(req: Request) {
     .select('id, slug, published_at, intro_synthesis')
     .eq('status', 'published')
     .eq('series', 'newsletter')
-    .is('sent_at', null);
+    .is('sent_at', null)
+    .lte('published_at', new Date().toISOString());
 
   if (!issues?.length) {
     return NextResponse.json({ message: 'no issues to send' });
