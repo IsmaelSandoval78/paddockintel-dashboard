@@ -1,9 +1,14 @@
+// UNUSED as of 2026-09-18 — replaced by the "kinetic" Hub
+// (components/home/kinetic/HomeExperience.tsx, wired from app/[locale]/(hub)/page.tsx).
+// Pre-kinetic Hub client (map + side panel); moved together with MapClientWrapper/
+// CircuitPanel as one unit since they only ever imported each other.
+
 'use client';
 
 import { useState, useEffect, type ReactNode } from 'react';
 import type { Circuit, CircuitInfo } from '@/lib/types';
-import MapClientWrapper from '@/components/map/MapClientWrapper';
-import CircuitPanel from '@/components/panels/CircuitPanel';
+import MapClientWrapper from '@/components/archive/hub-legacy/MapClientWrapper';
+import CircuitPanel from '@/components/archive/hub-legacy/CircuitPanel';
 
 const FADE_MS = 150;
 const CIRCUIT_PARAM = 'c';

@@ -1,3 +1,6 @@
+// UNUSED as of 2026-09-18 — replaced by components/home/kinetic/* (see
+// app/[locale]/(hub)/page.tsx). Pre-kinetic Home dashboard card.
+
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';

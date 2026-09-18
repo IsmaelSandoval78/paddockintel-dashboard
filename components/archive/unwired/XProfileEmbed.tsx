@@ -1,3 +1,6 @@
+// UNUSED as of 2026-09-18 — built for Who's Who (X/Twitter profile embeds) but never
+// wired into any page.
+
 'use client';
 
 import { useEffect } from 'react';

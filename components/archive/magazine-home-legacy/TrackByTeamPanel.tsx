@@ -1,3 +1,6 @@
+// UNUSED as of 2026-09-18 — cut when "Track by Team" was dropped from magazine-home
+// (see docs/ROADMAP-SEMANA.md, "drop Track by Team, show 6 stories in Latest").
+
 import { getTranslations } from 'next-intl/server';
 import type { TeamTagCount } from '@/app/[locale]/(blog)/magazine-home/data';
 

@@ -1,3 +1,5 @@
+// UNUSED as of 2026-09-18 — built but never wired into any page.
+
 import type { ReactNode } from 'react';
 
 type BentoGridProps = {
