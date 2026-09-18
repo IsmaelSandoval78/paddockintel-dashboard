@@ -17,9 +17,5 @@ jobs:
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
-          curl -sS -i -X GET "https://hub.paddockintel.com/api/cron/refresh-beagle" \
-            -H "Authorization: Bearer $CRON_SECRET" \
-            -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36" \
-            -o response.txt -w "\nHTTP_STATUS:%{http_code}\n"
-          echo "--- response body/headers ---"
-          cat response.txt
+          curl -sS -f -X GET "https://hub.paddockintel.com/api/cron/refresh-beagle" \
+            -H "Authorization: Bearer $CRON_SECRET"
