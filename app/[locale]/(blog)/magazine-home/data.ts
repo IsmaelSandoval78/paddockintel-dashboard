@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { getArticleIdsForTagSlug, getArticleTagSlugs, type TagRef } from '@/lib/blog/tags';
-import { entityCountsInWindow, topEntity, type EntityCount } from '@/lib/entityMentions';
+import { entityCountsInWindow, weeklyEntityCounts, topEntity, type EntityCount } from '@/lib/entityMentions';
 import { getTranslations } from 'next-intl/server';
 
 const FEATURED_TAG = 'featured';
@@ -137,6 +137,30 @@ export async function getFeedTeaser(locale: string, limit = 12): Promise<FeedTea
     published_at: r.published_at,
     entity_tags: r.entity_tags,
   }));
+}
+
+// Entity counts for the significance badge -- deliberately a SEPARATE, unbounded fetch from
+// getFeedTeaser's display list. Counting only within the capped teaser (e.g. 10 items) would
+// undercount any entity whose other mentions fall outside that cap, so a story could show a
+// smaller badge on magazine-home than the exact same story shows on /feed (real bug, caught
+// 2026-09-18: /feed's own getItems() has no limit, ours did). Mirrors /feed's fetch shape
+// exactly -- only entity_tags/published_at, none of the display fields.
+export async function getDigestEntityCounts(): Promise<Map<string, number>> {
+  const supabase = createClient();
+  const { data: issues } = await supabase
+    .from('digest_issues')
+    .select('id')
+    .eq('series', 'newsletter')
+    .eq('status', 'published');
+  const issueIds = (issues ?? []).map((i) => i.id as string);
+  if (!issueIds.length) return new Map();
+
+  const { data } = await supabase
+    .from('digest_items')
+    .select('entity_tags, published_at')
+    .in('issue_id', issueIds);
+
+  return weeklyEntityCounts((data ?? []) as { entity_tags: string[]; published_at: string }[]);
 }
 
 // Latest Issue summary -- Band D's left column. intro_synthesis has no _es column (unlike

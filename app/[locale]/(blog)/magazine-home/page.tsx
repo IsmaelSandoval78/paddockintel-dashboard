@@ -3,7 +3,6 @@ import { getTranslations } from 'next-intl/server';
 import { Link } from '@/lib/i18n/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { getArticleIdsForTagSlug, getArticleTagSlugs, type TagRef } from '@/lib/blog/tags';
-import { weeklyEntityCounts } from '@/lib/entityMentions';
 import { getBeagleEntityCounts, mergeEntityCounts } from '@/lib/beagleCounts';
 import JoinTwoWays from '@/components/blog/JoinTwoWays';
 import ArticlePreviewCard from '@/components/blog/ArticlePreviewCard';
@@ -26,6 +25,7 @@ import {
   getLearningTerms,
   getCircuitOfTheDay,
   getFeedTeaser,
+  getDigestEntityCounts,
   getLatestIssueSummary,
 } from './data';
 
@@ -134,6 +134,7 @@ export default async function MagazineHomePage({
           getFeedTeaser(locale, 10),
           getLatestIssueSummary(),
           getBeagleEntityCounts(createClient()),
+          getDigestEntityCounts(),
         ])
       : Promise.resolve(null),
   ]);
@@ -148,7 +149,7 @@ export default async function MagazineHomePage({
     return qs ? `${basePath}?${qs}` : basePath;
   };
 
-  const [standings, raceHighlights, attention, dataDeskArticles, learningTerms, circuit, feedTeaserAll, latestIssue, beagleCounts] =
+  const [standings, raceHighlights, attention, dataDeskArticles, learningTerms, circuit, feedTeaserAll, latestIssue, beagleCounts, digestCounts] =
     frontPageExtras ?? [
       { drivers: [], constructors: [] },
       { raceName: '', gainers: [], fallers: [], maxAbsDelta: 0, fastestLap: null, fastestPit: null, retirements: [] },
@@ -159,15 +160,19 @@ export default async function MagazineHomePage({
       [],
       null,
       new Map<string, number>(),
+      new Map<string, number>(),
     ];
   const { featured, recent } = featuredAndRecent;
 
   // Feed teaser split into two non-overlapping slices (Option 1 of the magazine-home
   // redesign discussion): first 6 get the Band B badge treatment, the next 4 feed Band D's
-  // "F1 News" column — never the same story twice on one page. Entity counts merge the
-  // curated digest_items signal with the wider beagle_items raw-pool signal (see
-  // lib/beagleCounts.ts) so the significance badge matches what /feed itself now shows.
-  const feedScores = mergeEntityCounts(weeklyEntityCounts(feedTeaserAll), beagleCounts);
+  // "F1 News" column — never the same story twice on one page. Entity counts come from
+  // getDigestEntityCounts() (the FULL published digest_items set, unbounded), not from the
+  // capped feedTeaserAll -- counting only within the display cap undercounts any entity
+  // whose other mentions fall outside it, which is exactly the bug that made magazine-home's
+  // badges read lower than the same stories' badges on /feed. Merged with the wider
+  // beagle_items raw-pool signal (see lib/beagleCounts.ts) so both surfaces score identically.
+  const feedScores = mergeEntityCounts(digestCounts, beagleCounts);
   const feedTeaser = feedTeaserAll.slice(0, 6);
   const f1News = feedTeaserAll.slice(6, 10);
 
