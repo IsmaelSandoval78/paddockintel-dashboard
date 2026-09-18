@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { getTranslations, getFormatter } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
-import { weeklyEntityCounts } from '@/lib/entityMentions';
+import { weeklyEntityCounts, significanceScore } from '@/lib/entityMentions';
+import { getBeagleEntityCounts, mergeEntityCounts } from '@/lib/beagleCounts';
 import { Link } from '@/lib/i18n/navigation';
 
 export const revalidate = 3600;
@@ -90,17 +91,12 @@ function mostMentioned(counts: Map<string, number>): { entity: string; count: nu
     .slice(0, 8);
 }
 
-function significanceScore(item: FeedItem, counts: Map<string, number>): number {
-  if (item.entity_tags.length === 0) return 1;
-  return Math.max(1, ...item.entity_tags.map((tag) => counts.get(tag) ?? 1));
-}
-
 export default async function FeedPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations('feed');
   const format = await getFormatter();
-  const items = await getItems();
-  const entityCounts = weeklyEntityCounts(items);
+  const [items, beagleCounts] = await Promise.all([getItems(), getBeagleEntityCounts(createClient())]);
+  const entityCounts = mergeEntityCounts(weeklyEntityCounts(items), beagleCounts);
   const mentioned = mostMentioned(entityCounts);
   const feedUrl = locale === 'es' ? FEED_URLS.es : FEED_URLS.en;
 

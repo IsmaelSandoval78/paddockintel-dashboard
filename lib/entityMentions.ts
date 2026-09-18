@@ -31,3 +31,11 @@ export function topEntity(counts: Map<string, number>): EntityCount | null {
   const top = sorted[0];
   return top ? { entity: top[0], count: top[1] } : null;
 }
+
+/** An item's significance = the highest count among its own entity_tags in `counts` --
+ * shared by app/[locale]/(digest)/feed/page.tsx's per-card badge and magazine-home's
+ * Feed teaser, so both surfaces score the same item identically. */
+export function significanceScore(item: { entity_tags: string[] }, counts: Map<string, number>): number {
+  if (item.entity_tags.length === 0) return 1;
+  return Math.max(1, ...item.entity_tags.map((tag) => counts.get(tag) ?? 1));
+}
