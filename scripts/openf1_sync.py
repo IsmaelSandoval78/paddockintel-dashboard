@@ -272,8 +272,10 @@ def main() -> None:
                 pit_resp.raise_for_status()
                 pit_data = pit_resp.json()
 
+                # pit_stops has no id column (see load_race.py's insert) — match/update by
+                # the (race_id, driver_id, lap) composite instead.
                 existing_pits_res = (
-                    sb.table("pit_stops").select("id, driver_id, lap, stop").eq("race_id", race_id).execute()
+                    sb.table("pit_stops").select("driver_id, lap, stop").eq("race_id", race_id).execute()
                 )
                 existing_by_driver: dict[int, list[dict]] = {}
                 for r in existing_pits_res.data or []:
@@ -302,14 +304,18 @@ def main() -> None:
                         if i >= len(ours):
                             break
                         stop_ms = int(round(float(p["stop_duration"]) * 1000))
-                        updates.append({"id": ours[i]["id"], "stop_duration_ms": stop_ms})
+                        updates.append({
+                            "driver_id": driver["id"],
+                            "lap": ours[i]["lap"],
+                            "stop_duration_ms": stop_ms,
+                        })
 
                 print(f"  {len(updates)} pit stops matched with stationary time")
                 if not dry_run:
                     for u in updates:
                         sb.table("pit_stops").update(
                             {"stop_duration_ms": u["stop_duration_ms"]}
-                        ).eq("id", u["id"]).execute()
+                        ).eq("race_id", race_id).eq("driver_id", u["driver_id"]).eq("lap", u["lap"]).execute()
                     if updates:
                         print(f"  ✓ {len(updates)} pit_stops.stop_duration_ms updated")
                 else:
