@@ -1,0 +1,44 @@
+name: OpenF1 telemetry sync (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      year:
+        description: "Season year"
+        required: true
+        type: number
+      round:
+        description: "Round number"
+        required: true
+        type: number
+      session_key:
+        description: "OpenF1 session_key override (leave blank to auto-match by circuit)"
+        required: false
+        type: string
+      dry_run:
+        description: "Dry run (no writes)"
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r scripts/requirements-data.txt
+      - name: Run OpenF1 sync
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          python scripts/openf1_sync.py \
+            --year "${{ inputs.year }}" \
+            --round "${{ inputs.round }}" \
+            ${{ inputs.session_key != '' && format('--session-key {0}', inputs.session_key) || '' }} \
+            ${{ inputs.dry_run == 'true' && '--dry-run' || '' }}
