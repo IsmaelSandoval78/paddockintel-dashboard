@@ -131,7 +131,7 @@
           "copy": "Every result leaves a trace. Follow the line back through every era of Formula 1, from today's championship to the first starting grid.",
           "title": "The past is still racing",
           "support": "{seasons} seasons · every driver · every constructor · every circuit",
-          "cta": "Open the records"
+          "cta": "Enter the archive"
         },
         "exploreChapter": {
           "eyebrow": "Choose your line",
@@ -145,6 +145,69 @@
             "rivalries": { "title": "Rivalries", "copy": "Put two careers side by side and find the difference." }
           }
         }
+      }
+    }
+  },
+  "archive": {
+    "metaTitle": "The Living Archive",
+    "metaDescription": "Explore every Formula 1 season from 1950 to today through an interactive timeline.",
+    "eyebrow": "The Living Archive · Formula 1 World Championship",
+    "seasonCount": "{count} seasons connected",
+    "intro": "History is not a list of dates. It is a chain reaction: ideas become advantages, advantages become dynasties, and every era leaves something for the next one to break.",
+    "instruction": "Choose any year to open its signal",
+    "promise": "Every season. One continuous story.",
+    "begin": "Begin in 1950",
+    "eraNavigation": "Archive eras",
+    "season": "Season",
+    "live": "Live season",
+    "awaitingData": "Awaiting data",
+    "seasonFocus": {
+      "title": "Season file",
+      "liveTitle": "Championship in progress",
+      "races": "Races completed",
+      "winners": "Different winners",
+      "driverChampion": "World champion",
+      "driverLeader": "Championship leader",
+      "constructorChampion": "Constructors' champion",
+      "constructorLeader": "Constructors' leader",
+      "notAwarded": "Championship not yet awarded"
+    },
+    "eras": {
+      "founding": {
+        "title": "The Founding Decade",
+        "copy": "Front-engined machines, open roads and the first names written into the World Championship. Formula 1 begins by defining what a champion looks like."
+      },
+      "rearEngine": {
+        "title": "Rear-Engine Revolution",
+        "copy": "The engine moves behind the driver and the balance of power moves with it. British engineering turns a radical idea into the new standard."
+      },
+      "aero": {
+        "title": "The Aero Age",
+        "copy": "Wings, sponsors and mechanical experimentation transform the silhouette of the car. Speed becomes a problem of controlling the air."
+      },
+      "turbo": {
+        "title": "Turbo Power",
+        "copy": "Ground effect and turbocharged engines push performance into violent new territory. Qualifying becomes an exercise in controlled excess."
+      },
+      "electronic": {
+        "title": "Electronic Frontiers",
+        "copy": "Naturally aspirated engines return while active suspension, telemetry and electronic control redraw the limits of the possible."
+      },
+      "v10v8": {
+        "title": "V10 to V8",
+        "copy": "A decade of relentless development moves from screaming V10s to tightly regulated V8s, with empires rising and falling between them."
+      },
+      "blown": {
+        "title": "The Blown Era",
+        "copy": "Exhaust gases become aerodynamic tools and marginal gains become championships. Four seasons turn precision into dominance."
+      },
+      "hybrid": {
+        "title": "Hybrid Revolution",
+        "copy": "Energy recovery changes the meaning of power. Efficiency, software and a new technical order produce one of the sport's defining dynasties."
+      },
+      "groundEffect": {
+        "title": "Ground Effect Reborn",
+        "copy": "The floor becomes the central aerodynamic weapon again. A new generation of cars resets the field while the archive continues to write itself."
       }
     }
   },

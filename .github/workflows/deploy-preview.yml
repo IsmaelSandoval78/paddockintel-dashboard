@@ -2,7 +2,7 @@ name: Deploy PR Preview
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, feat/living-archive-pr1]
     types: [opened, synchronize, reopened]
   workflow_dispatch: {}
 

@@ -210,6 +210,22 @@ export interface ChampionYear {
   in_progress?: boolean;
 }
 
+export interface ArchiveEntitySummary {
+  id: number;
+  ref: string;
+  name: string;
+}
+
+export interface ArchiveSeasonSummary {
+  year: number;
+  raceCount: number;
+  completedRaces: number;
+  uniqueWinners: number;
+  championDriver: ArchiveEntitySummary | null;
+  championConstructor: ArchiveEntitySummary | null;
+  inProgress: boolean;
+}
+
 export interface DriverDetail {
   driver_id: number;
   driver_ref: string;

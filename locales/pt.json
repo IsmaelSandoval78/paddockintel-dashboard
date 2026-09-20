@@ -131,7 +131,7 @@
           "copy": "Cada resultado deixa um rastro. Siga a linha por todas as eras da Fórmula 1, do campeonato atual até o primeiro grid de largada.",
           "title": "O passado ainda corre",
           "support": "{seasons} temporadas · cada piloto · cada construtor · cada circuito",
-          "cta": "Abrir os recordes"
+          "cta": "Entrar no arquivo"
         },
         "exploreChapter": {
           "eyebrow": "Escolha sua linha",
@@ -145,6 +145,69 @@
             "rivalries": { "title": "Rivalidades", "copy": "Coloque duas carreiras lado a lado e encontre a diferença." }
           }
         }
+      }
+    }
+  },
+  "archive": {
+    "metaTitle": "O Arquivo Vivo",
+    "metaDescription": "Explore cada temporada da Fórmula 1 desde 1950 até hoje através de uma linha do tempo interativa.",
+    "eyebrow": "O Arquivo Vivo · Campeonato Mundial de Fórmula 1",
+    "seasonCount": "{count} temporadas conectadas",
+    "intro": "A história não é uma lista de datas. É uma reação em cadeia: ideias viram vantagens, vantagens viram dinastias e cada era deixa algo para a próxima quebrar.",
+    "instruction": "Escolha qualquer ano para abrir seu sinal",
+    "promise": "Cada temporada. Uma história contínua.",
+    "begin": "Começar em 1950",
+    "eraNavigation": "Eras do arquivo",
+    "season": "Temporada",
+    "live": "Temporada ao vivo",
+    "awaitingData": "Aguardando dados",
+    "seasonFocus": {
+      "title": "Arquivo da temporada",
+      "liveTitle": "Campeonato em andamento",
+      "races": "Corridas concluídas",
+      "winners": "Vencedores diferentes",
+      "driverChampion": "Campeão mundial",
+      "driverLeader": "Líder do campeonato",
+      "constructorChampion": "Campeão de construtores",
+      "constructorLeader": "Líder de construtores",
+      "notAwarded": "Campeonato ainda não concedido"
+    },
+    "eras": {
+      "founding": {
+        "title": "A Década Fundadora",
+        "copy": "Máquinas com motor dianteiro, estradas abertas e os primeiros nomes inscritos no Mundial. A Fórmula 1 começa definindo a imagem de um campeão."
+      },
+      "rearEngine": {
+        "title": "Revolução do Motor Traseiro",
+        "copy": "O motor vai para trás do piloto e o equilíbrio de poder muda com ele. A engenharia britânica transforma uma ideia radical no novo padrão."
+      },
+      "aero": {
+        "title": "A Era Aerodinâmica",
+        "copy": "Asas, patrocinadores e experimentação mecânica transformam a silhueta do carro. Velocidade passa a ser uma questão de controlar o ar."
+      },
+      "turbo": {
+        "title": "Potência Turbo",
+        "copy": "O efeito solo e os motores turbo levam o desempenho a um território brutalmente novo. A classificação vira um exercício de excesso controlado."
+      },
+      "electronic": {
+        "title": "Fronteiras Eletrônicas",
+        "copy": "Os motores aspirados retornam enquanto suspensão ativa, telemetria e controle eletrônico redesenham os limites do possível."
+      },
+      "v10v8": {
+        "title": "De V10 a V8",
+        "copy": "Uma década de desenvolvimento implacável passa dos estridentes V10 aos V8 regulados, com impérios surgindo e caindo entre eles."
+      },
+      "blown": {
+        "title": "A Era do Escape Soprado",
+        "copy": "Os gases de escape viram ferramentas aerodinâmicas e ganhos marginais viram campeonatos. Quatro temporadas transformam precisão em domínio."
+      },
+      "hybrid": {
+        "title": "Revolução Híbrida",
+        "copy": "A recuperação de energia muda o significado de potência. Eficiência, software e uma nova ordem técnica produzem uma dinastia histórica."
+      },
+      "groundEffect": {
+        "title": "O Efeito Solo Renasce",
+        "copy": "O assoalho volta a ser a arma aerodinâmica central. Uma nova geração de carros reinicia a disputa enquanto o arquivo continua sendo escrito."
       }
     }
   },

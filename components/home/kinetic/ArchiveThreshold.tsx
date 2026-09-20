@@ -87,7 +87,7 @@ export default function ArchiveThreshold({ year, motionOk }: { year: number; mot
           </p>
         </div>
         <Link
-          href="/records"
+          href="/archive"
           data-cursor
           className="group inline-flex items-center justify-between gap-8 border border-border-on-accent px-5 py-4 font-mono text-[10px] uppercase tracking-[0.14em] transition-colors hover:border-terracotta hover:bg-terracotta"
         >
