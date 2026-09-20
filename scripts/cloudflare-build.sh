@@ -75,11 +75,15 @@ npx opennextjs-cloudflare build --skipNextBuild
 echo "== Verifying next-env.mjs doesn't contain the real secret =="
 if [ -f .env.local.cloudflare-build-bak ]; then
   SVC_KEY=$(grep '^SUPABASE_SERVICE_ROLE_KEY=' .env.local.cloudflare-build-bak | cut -d'=' -f2- || true)
-  if [ -n "$SVC_KEY" ] && grep -qF "$SVC_KEY" .open-next/cloudflare/next-env.mjs 2>/dev/null; then
+  ANON_KEY=$(grep '^NEXT_PUBLIC_SUPABASE_ANON_KEY=' .env.local.cloudflare-build-bak | cut -d'=' -f2- || true)
+  if [ -n "$SVC_KEY" ] && [ "$SVC_KEY" = "$ANON_KEY" ]; then
+    echo "OK: preview uses the restricted public anon key in the server-key slot."
+  elif [ -n "$SVC_KEY" ] && grep -qF "$SVC_KEY" .open-next/cloudflare/next-env.mjs 2>/dev/null; then
     echo "FAIL: the real secret is still in next-env.mjs — do not deploy this build." >&2
     exit 1
+  else
+    echo "OK: SUPABASE_SERVICE_ROLE_KEY not found in next-env.mjs."
   fi
-  echo "OK: SUPABASE_SERVICE_ROLE_KEY not found in next-env.mjs."
 fi
 
 CLEAN_FINISH=true
