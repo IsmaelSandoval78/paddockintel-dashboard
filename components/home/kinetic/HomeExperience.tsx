@@ -14,6 +14,11 @@ import SeasonShapeSection from './SeasonShapeSection';
 import ChampionshipGapSection from './ChampionshipGapSection';
 import KineticFooter from './KineticFooter';
 import MiBoxStrip from './MiBoxStrip';
+import ChapterNavigator from './ChapterNavigator';
+import ChapterPrelude from './ChapterPrelude';
+import ArchiveThreshold from './ArchiveThreshold';
+import ExploreChapter from './ExploreChapter';
+import { useTranslations } from 'next-intl';
 import type {
   HomeNextRace,
   HomeDriverRow,
@@ -44,6 +49,7 @@ export default function HomeExperience({
   formGuideData, seasonShapeData, championshipGapData, leaderPodiumsSeason,
   round, year,
 }: HomeExperienceProps) {
+  const t = useTranslations('hub.home.livingArchive');
   // motionOk = no reduced-motion preference. isMobile = coarse pointer.
   // Resolved on mount; SSR renders the static editorial fallback.
   const [env, setEnv] = useState<{ motionOk: boolean; isMobile: boolean } | null>(null);
@@ -111,36 +117,62 @@ export default function HomeExperience({
   return (
     <main className="bg-bg">
 
-      {leader && (
-        <Hero
-          leader={leader}
-          round={round}
-          year={year}
+      <ChapterNavigator />
+
+      <div id="lights-out" data-archive-chapter className="scroll-mt-20">
+        {leader && (
+          <Hero
+            leader={leader}
+            round={round}
+            year={year}
+            motionOk={motionOk}
+            isMobile={isMobile}
+            gapToP2={championshipGapData.driver}
+            seasonPodiums={leaderPodiumsSeason}
+            seasonRaces={seasonShapeData.totalRaces}
+          />
+        )}
+
+        <MiBoxStrip />
+      </div>
+
+      <div id="last-chapter" data-archive-chapter className="scroll-mt-20">
+        <LastRaceChapter race={lastRace} motionOk={motionOk} />
+      </div>
+
+      <div id="next-on-calendar" data-archive-chapter className="scroll-mt-20">
+        <NextRaceChapter race={nextRace} motionOk={motionOk} />
+      </div>
+
+      <div id="season-in-motion" data-archive-chapter className="scroll-mt-20">
+        <ChapterPrelude
+          number="04"
+          eyebrow={t('season.eyebrow')}
+          title={t('season.title')}
+          copy={t('season.copy')}
           motionOk={motionOk}
-          isMobile={isMobile}
-          gapToP2={championshipGapData.driver}
-          seasonPodiums={leaderPodiumsSeason}
-          seasonRaces={seasonShapeData.totalRaces}
         />
-      )}
 
-      <MiBoxStrip />
+        <Ticker drivers={topDrivers} motionOk={motionOk} />
 
-      <Ticker drivers={topDrivers} motionOk={motionOk} />
+        <TheGrid drivers={topDrivers} motionOk={motionOk} />
 
-      <LastRaceChapter race={lastRace} motionOk={motionOk} />
+        <StreaksSection data={streaksData} motionOk={motionOk} />
 
-      <NextRaceChapter race={nextRace} motionOk={motionOk} />
+        <FormGuideSection data={formGuideData} motionOk={motionOk} />
 
-      <TheGrid drivers={topDrivers} motionOk={motionOk} />
+        <SeasonShapeSection data={seasonShapeData} motionOk={motionOk} />
 
-      <StreaksSection data={streaksData} motionOk={motionOk} />
+        <ChampionshipGapSection data={championshipGapData} motionOk={motionOk} />
+      </div>
 
-      <FormGuideSection data={formGuideData} motionOk={motionOk} />
+      <div id="enter-the-archive" data-archive-chapter className="scroll-mt-20">
+        <ArchiveThreshold year={year} motionOk={motionOk} />
+      </div>
 
-      <SeasonShapeSection data={seasonShapeData} motionOk={motionOk} />
-
-      <ChampionshipGapSection data={championshipGapData} motionOk={motionOk} />
+      <div id="explore-the-archive" data-archive-chapter className="scroll-mt-20">
+        <ExploreChapter />
+      </div>
 
       <KineticFooter motionOk={motionOk} />
 

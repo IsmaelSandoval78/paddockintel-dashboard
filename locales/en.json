@@ -108,7 +108,44 @@
       "csDrivers": "Drivers' Championship",
       "csConstructors": "Constructors' Championship",
       "csGap": "Gap",
-      "csPts": "pts"
+      "csPts": "pts",
+      "livingArchive": {
+        "navigatorLabel": "Living Archive chapters",
+        "chapters": {
+          "lightsOut": "Lights Out",
+          "lastChapter": "The Last Chapter",
+          "nextCalendar": "Next on the Calendar",
+          "seasonMotion": "Season in Motion",
+          "enterArchive": "Enter the Archive",
+          "explore": "Explore"
+        },
+        "season": {
+          "eyebrow": "Live championship",
+          "title": "Season in Motion",
+          "copy": "The championship is not a table. It is momentum: gaps opening, streaks building and pressure changing hands every weekend."
+        },
+        "archive": {
+          "eyebrow": "Enter the archive",
+          "range": "{year} → 1950",
+          "origin": "World Championship origin",
+          "copy": "Every result leaves a trace. Follow the line back through every era of Formula 1, from today's championship to the first starting grid.",
+          "title": "The past is still racing",
+          "support": "{seasons} seasons · every driver · every constructor · every circuit",
+          "cta": "Open the records"
+        },
+        "exploreChapter": {
+          "eyebrow": "Choose your line",
+          "title": "Explore",
+          "copy": "Start with a name, a machine, a place or a record. Every path opens another part of Formula 1 history.",
+          "destinations": {
+            "drivers": { "title": "Drivers", "copy": "Careers, seasons and the numbers behind every helmet." },
+            "constructors": { "title": "Constructors", "copy": "The teams that shaped the grid across generations." },
+            "circuits": { "title": "Circuits", "copy": "The geography, layouts and histories of Formula 1." },
+            "records": { "title": "Records", "copy": "The benchmarks that define greatness and longevity." },
+            "rivalries": { "title": "Rivalries", "copy": "Put two careers side by side and find the difference." }
+          }
+        }
+      }
     }
   },
   "panel": {
