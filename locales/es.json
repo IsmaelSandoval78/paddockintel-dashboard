@@ -108,7 +108,44 @@
       "csDrivers": "Campeonato de Pilotos",
       "csConstructors": "Campeonato de Constructores",
       "csGap": "Diferencia",
-      "csPts": "pts"
+      "csPts": "pts",
+      "livingArchive": {
+        "navigatorLabel": "Capítulos del Archivo Vivo",
+        "chapters": {
+          "lightsOut": "Lights Out",
+          "lastChapter": "El Último Capítulo",
+          "nextCalendar": "Próximo en el Calendario",
+          "seasonMotion": "Temporada en Movimiento",
+          "enterArchive": "Entra al Archivo",
+          "explore": "Explora"
+        },
+        "season": {
+          "eyebrow": "Campeonato en vivo",
+          "title": "Temporada en Movimiento",
+          "copy": "El campeonato no es una tabla. Es impulso: diferencias que crecen, rachas que se construyen y presión que cambia de manos cada fin de semana."
+        },
+        "archive": {
+          "eyebrow": "Entra al archivo",
+          "range": "{year} → 1950",
+          "origin": "Origen del Mundial",
+          "copy": "Cada resultado deja una huella. Sigue la línea a través de todas las eras de la Fórmula 1, desde el campeonato actual hasta la primera parrilla.",
+          "title": "El pasado sigue corriendo",
+          "support": "{seasons} temporadas · cada piloto · cada constructor · cada circuito",
+          "cta": "Abrir los récords"
+        },
+        "exploreChapter": {
+          "eyebrow": "Elige tu trazada",
+          "title": "Explora",
+          "copy": "Empieza por un nombre, una máquina, un lugar o un récord. Cada camino abre otra parte de la historia de la Fórmula 1.",
+          "destinations": {
+            "drivers": { "title": "Pilotos", "copy": "Trayectorias, temporadas y los números detrás de cada casco." },
+            "constructors": { "title": "Constructores", "copy": "Los equipos que transformaron la parrilla generación tras generación." },
+            "circuits": { "title": "Circuitos", "copy": "La geografía, los trazados y las historias de la Fórmula 1." },
+            "records": { "title": "Récords", "copy": "Las marcas que definen la grandeza y la longevidad." },
+            "rivalries": { "title": "Rivalidades", "copy": "Pon dos trayectorias lado a lado y encuentra la diferencia." }
+          }
+        }
+      }
     }
   },
   "panel": {

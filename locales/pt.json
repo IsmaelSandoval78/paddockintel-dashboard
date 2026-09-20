@@ -108,7 +108,44 @@
       "csDrivers": "Campeonato de Pilotos",
       "csConstructors": "Campeonato de Construtores",
       "csGap": "Diferença",
-      "csPts": "pts"
+      "csPts": "pts",
+      "livingArchive": {
+        "navigatorLabel": "Capítulos do Arquivo Vivo",
+        "chapters": {
+          "lightsOut": "Lights Out",
+          "lastChapter": "O Último Capítulo",
+          "nextCalendar": "Próxima no Calendário",
+          "seasonMotion": "Temporada em Movimento",
+          "enterArchive": "Entre no Arquivo",
+          "explore": "Explore"
+        },
+        "season": {
+          "eyebrow": "Campeonato ao vivo",
+          "title": "Temporada em Movimento",
+          "copy": "O campeonato não é uma tabela. É impulso: diferenças crescendo, sequências sendo construídas e pressão mudando de mãos a cada fim de semana."
+        },
+        "archive": {
+          "eyebrow": "Entre no arquivo",
+          "range": "{year} → 1950",
+          "origin": "Origem do Mundial",
+          "copy": "Cada resultado deixa um rastro. Siga a linha por todas as eras da Fórmula 1, do campeonato atual até o primeiro grid de largada.",
+          "title": "O passado ainda corre",
+          "support": "{seasons} temporadas · cada piloto · cada construtor · cada circuito",
+          "cta": "Abrir os recordes"
+        },
+        "exploreChapter": {
+          "eyebrow": "Escolha sua linha",
+          "title": "Explore",
+          "copy": "Comece por um nome, uma máquina, um lugar ou um recorde. Cada caminho abre outra parte da história da Fórmula 1.",
+          "destinations": {
+            "drivers": { "title": "Pilotos", "copy": "Carreiras, temporadas e os números por trás de cada capacete." },
+            "constructors": { "title": "Construtores", "copy": "As equipes que moldaram o grid ao longo das gerações." },
+            "circuits": { "title": "Circuitos", "copy": "A geografia, os traçados e as histórias da Fórmula 1." },
+            "records": { "title": "Recordes", "copy": "As marcas que definem grandeza e longevidade." },
+            "rivalries": { "title": "Rivalidades", "copy": "Coloque duas carreiras lado a lado e encontre a diferença." }
+          }
+        }
+      }
     }
   },
   "panel": {
