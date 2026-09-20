@@ -46,6 +46,44 @@
     // "0 */4 * * *"  — beagle raw-pool refresh (app/api/cron/refresh-beagle), see
     //                  custom-worker.ts's scheduled handler for how these are told apart
     "crons": ["0 9 * * *", "0 */4 * * *"]
+  },
+
+  // Isolated review deployment. `wrangler --env preview` creates the separate
+  // `paddockintel-dashboard-preview` Worker and never inherits production
+  // bindings, custom domains, secrets, or cron triggers.
+  "env": {
+    "preview": {
+      "workers_dev": true,
+      "services": [
+        {
+          "binding": "WORKER_SELF_REFERENCE",
+          "service": "paddockintel-dashboard-preview"
+        }
+      ],
+      "r2_buckets": [
+        {
+          "binding": "NEXT_INC_CACHE_R2_BUCKET",
+          "bucket_name": "paddockintel-isr-cache-preview"
+        }
+      ],
+      "durable_objects": {
+        "bindings": [
+          {
+            "name": "NEXT_CACHE_DO_QUEUE",
+            "class_name": "DOQueueHandler"
+          }
+        ]
+      },
+      "migrations": [
+        {
+          "tag": "v1",
+          "new_sqlite_classes": ["DOQueueHandler"]
+        }
+      ],
+      "triggers": {
+        "crons": []
+      }
+    }
   }
 
   // Deliberately omitted — D1 tag cache (NEXT_TAG_CACHE_D1): the codebase has

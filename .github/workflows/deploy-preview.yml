@@ -1,0 +1,82 @@
+name: Deploy PR Preview
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-cloudflare-preview
+  cancel-in-progress: true
+
+jobs:
+  deploy-preview:
+    # Repository secrets are intentionally unavailable to forked pull requests.
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: cloudflare-preview
+      url: ${{ steps.deploy.outputs.url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Write build-time environment
+        run: |
+          cat > .env.local <<EOF
+          NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          # Preview is public: deliberately use the restricted public anon key
+          # in the server-key slot. Never expose the production service-role key.
+          SUPABASE_SERVICE_ROLE_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          EOF
+
+      - name: Build for Cloudflare
+        run: bash scripts/cloudflare-build.sh
+
+      - name: Ensure isolated preview cache exists
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+        run: |
+          if ! npx wrangler r2 bucket info paddockintel-isr-cache-preview >/dev/null 2>&1; then
+            npx wrangler r2 bucket create paddockintel-isr-cache-preview
+          fi
+
+      - name: Deploy isolated preview Worker
+        id: deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: |
+          npx opennextjs-cloudflare deploy --env preview --rclone | tee deploy.log
+          PREVIEW_URL=$(grep -Eo 'https://[^[:space:]]+\.workers\.dev' deploy.log | tail -1)
+          test -n "$PREVIEW_URL"
+          echo "url=$PREVIEW_URL" >> "$GITHUB_OUTPUT"
+
+      - name: Set restricted preview runtime key
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        run: |
+          printf '%s' "$SUPABASE_ANON_KEY" | npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY --env preview
+
+      - name: Remove build-time environment
+        if: always()
+        run: rm -f .env.local .env.local.cloudflare-build-bak
