@@ -15,6 +15,11 @@ on:
         description: "OpenF1 session_key override (leave blank to auto-match by circuit)"
         required: false
         type: string
+      session_name:
+        description: "OpenF1 session_name to auto-match (Race, Qualifying, Practice 1, Sprint, ...)"
+        required: false
+        type: string
+        default: "Race"
       dry_run:
         description: "Dry run (no writes)"
         required: false
@@ -46,5 +51,6 @@ jobs:
             --year "${{ inputs.year }}" \
             --round "${{ inputs.round }}" \
             ${{ inputs.session_key != '' && format('--session-key {0}', inputs.session_key) || '' }} \
+            --session-name "${{ inputs.session_name }}" \
             ${{ inputs.dry_run && '--dry-run' || '' }} \
             ${{ inputs.diagnose_laps && '--diagnose-laps' || '' }}
