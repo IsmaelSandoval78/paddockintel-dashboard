@@ -116,6 +116,11 @@ def main() -> None:
                          help="skip OpenF1 REST calls (weather, race control, stop_duration, overtakes)")
     parser.add_argument("--skip-fastf1", action="store_true",
                          help="skip FastF1 tire stint extraction")
+    parser.add_argument("--quali-session-key", type=int, default=None,
+                         help="OpenF1 session_key override for the Qualifying mini-sector ingest — "
+                              "skips auto-match. Independent of --session-key/--session-name.")
+    parser.add_argument("--skip-quali-sectors", action="store_true",
+                         help="skip qualifying_sectors ingestion (mini-sector pace/color data)")
     parser.add_argument("--dry-run", action="store_true", help="Print what would be written, write nothing")
     parser.add_argument("--diagnose-laps", action="store_true",
                          help="Fetch OpenF1 /laps for the matched session and report sector-data "
@@ -409,6 +414,69 @@ def main() -> None:
             print(f"  ERROR: OpenF1 request failed — {exc}")
         except Exception as exc:
             print(f"  ERROR: OpenF1 section failed — {exc}")
+
+    # ── OpenF1 Qualifying: mini-sector pace/color data ──────────────────
+    # Always targets a Qualifying session regardless of --session-name above: the mini-sector
+    # segments field was verified reliable only for Qualifying (fastest lap reads mostly
+    # green/purple, slowest mostly yellow) — the same field on a Race session does not behave
+    # this way (OpenF1's own docs: "segments are not available during races"), so this section
+    # never reads from the Race session matched above.
+    if not args.skip_quali_sectors:
+        print("\n── OpenF1: qualifying mini-sectors ───────────────────")
+        try:
+            quali_session_key = args.quali_session_key
+            if quali_session_key is None:
+                quali_session_key, ambiguous = find_openf1_session(year, circuit, "Qualifying")
+                if quali_session_key is not None:
+                    print(f"  matched OpenF1 session_key={quali_session_key} (Qualifying)")
+                elif ambiguous:
+                    print(f"  WARN: {len(ambiguous)} ambiguous OpenF1 Qualifying matches — "
+                          f"pass --quali-session-key to disambiguate:")
+                    for c in ambiguous:
+                        print(f"    session_key={c['session_key']}  {c.get('location')}  "
+                              f"{c.get('country_name')}  {c.get('date_start')}")
+                else:
+                    print(f"  WARN: no OpenF1 Qualifying session match for {race_name} {year} — "
+                          f"skipping (pass --quali-session-key to override)")
+
+            if quali_session_key is not None:
+                laps_resp = requests.get(f"{OPENF1_BASE}/laps", params={"session_key": quali_session_key}, timeout=30)
+                laps_resp.raise_for_status()
+                laps_data = laps_resp.json()
+
+                sector_rows: list[dict] = []
+                for lap in laps_data:
+                    driver = resolve_driver(number=lap.get("driver_number"))
+                    lap_number = safe_int(lap.get("lap_number"), None)
+                    if not driver or lap_number is None:
+                        continue
+                    for sec in (1, 2, 3):
+                        duration = lap.get(f"duration_sector_{sec}")
+                        segments = lap.get(f"segments_sector_{sec}")
+                        if duration is None and not segments:
+                            continue
+                        sector_rows.append({
+                            "race_id": race_id,
+                            "driver_id": driver["id"],
+                            "lap_number": lap_number,
+                            "sector": sec,
+                            "duration_seconds": safe_float(duration),
+                            "segments": segments,
+                        })
+
+                print(f"  {len(sector_rows)} sector rows from {len(laps_data)} qualifying laps")
+                if not dry_run and sector_rows:
+                    sb.table("qualifying_sectors").delete().eq("race_id", race_id).execute()
+                    for i in range(0, len(sector_rows), 500):
+                        sb.table("qualifying_sectors").insert(sector_rows[i:i + 500]).execute()
+                    print(f"  ✓ {len(sector_rows)} qualifying_sectors rows inserted")
+                elif dry_run:
+                    print(f"  [dry-run] would insert {len(sector_rows)} qualifying_sectors rows")
+
+        except requests.exceptions.RequestException as exc:
+            print(f"  ERROR: OpenF1 Qualifying request failed — {exc}")
+        except Exception as exc:
+            print(f"  ERROR: Qualifying sector section failed — {exc}")
 
     print("\nDone.")
 
