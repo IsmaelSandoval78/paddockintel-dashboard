@@ -46,5 +46,5 @@ jobs:
             --year "${{ inputs.year }}" \
             --round "${{ inputs.round }}" \
             ${{ inputs.session_key != '' && format('--session-key {0}', inputs.session_key) || '' }} \
-            ${{ inputs.dry_run == 'true' && '--dry-run' || '' }} \
-            ${{ inputs.diagnose_laps == 'true' && '--diagnose-laps' || '' }}
+            ${{ inputs.dry_run && '--dry-run' || '' }} \
+            ${{ inputs.diagnose_laps && '--diagnose-laps' || '' }}
