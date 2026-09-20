@@ -156,7 +156,20 @@ def main() -> None:
 
     drivers_res = sb.table("drivers").select("id, code, number, driver_ref").execute()
     drivers_by_code: dict[str, dict] = {r["code"]: r for r in drivers_res.data if r.get("code")}
-    drivers_by_number: dict[str, dict] = {str(r["number"]): r for r in drivers_res.data if r.get("number")}
+
+    # Car numbers are NOT unique across F1 history (permanent-number era started 2014, and
+    # even some post-2014 numbers were reused after a driver left, e.g. #12 = Nasr 2015-16
+    # AND Antonelli 2025- ; #5 = Vettel AND Bortoleto). A number->driver map built from the
+    # whole drivers table is ambiguous. Scope it to this race's actual entrants (from
+    # `results`, already correct per-race) so every number resolves to exactly one driver.
+    entrants_res = sb.table("results").select("driver_id").eq("race_id", race_id).execute()
+    entrant_ids = {r["driver_id"] for r in (entrants_res.data or [])}
+    drivers_by_id = {r["id"]: r for r in drivers_res.data}
+    drivers_by_number: dict[str, dict] = {}
+    for did in entrant_ids:
+        d = drivers_by_id.get(did)
+        if d and d.get("number"):
+            drivers_by_number[str(d["number"])] = d
 
     def resolve_driver(code: str | None = None, number=None) -> dict | None:
         if code and code in drivers_by_code:
