@@ -71,10 +71,10 @@ def safe_float(val):
         return None
 
 
-def find_openf1_session(year: int, circuit: dict) -> tuple[int | None, list[dict]]:
+def find_openf1_session(year: int, circuit: dict, session_name: str = "Race") -> tuple[int | None, list[dict]]:
     """Match our race's circuit to an OpenF1 session_key. Returns (session_key or
     None, candidates) — candidates is non-empty only when the match was ambiguous."""
-    resp = requests.get(f"{OPENF1_BASE}/sessions", params={"year": year, "session_name": "Race"}, timeout=30)
+    resp = requests.get(f"{OPENF1_BASE}/sessions", params={"year": year, "session_name": session_name}, timeout=30)
     resp.raise_for_status()
     sessions = resp.json()
 
@@ -109,6 +109,9 @@ def main() -> None:
     parser.add_argument("--round", type=int, required=True, dest="round_num")
     parser.add_argument("--session-key", type=int, default=None,
                          help="OpenF1 session_key override — skips auto-match against circuits")
+    parser.add_argument("--session-name", default="Race",
+                         help="OpenF1 session_name to auto-match against (Race, Qualifying, Practice 1, "
+                              "Sprint, ...) — only used when --session-key is not given")
     parser.add_argument("--skip-openf1", action="store_true",
                          help="skip OpenF1 REST calls (weather, race control, stop_duration, overtakes)")
     parser.add_argument("--skip-fastf1", action="store_true",
@@ -206,9 +209,9 @@ def main() -> None:
         try:
             session_key = args.session_key
             if session_key is None:
-                session_key, ambiguous = find_openf1_session(year, circuit)
+                session_key, ambiguous = find_openf1_session(year, circuit, args.session_name)
                 if session_key is not None:
-                    print(f"  matched OpenF1 session_key={session_key}")
+                    print(f"  matched OpenF1 session_key={session_key} ({args.session_name})")
                 elif ambiguous:
                     print(f"  WARN: {len(ambiguous)} ambiguous OpenF1 session matches — "
                           f"pass --session-key to disambiguate:")
@@ -236,15 +239,38 @@ def main() -> None:
                 print(f"  duration_sector_2 populated: {has_d2}/{n}")
                 print(f"  duration_sector_3 populated: {has_d3}/{n}")
                 print(f"  segments_sector_1 populated: {has_seg1}/{n}")
+                # Decode per OpenF1's own docs (documentation/includes/_api_endpoints.md):
+                # 0=n/a, 2048=yellow, 2049=green, 2051=purple, 2064=pitlane, else=unknown.
+                CODE = {0: "n/a", 2048: "yellow", 2049: "green", 2050: "?", 2051: "purple",
+                        2052: "?", 2064: "pit", 2068: "?"}
+                def decode(seg): return [CODE.get(v, f"?{v}") for v in seg] if seg else None
+
                 sample = next((l for l in laps_data if l.get("segments_sector_1") is not None), None)
                 if sample:
-                    print(f"  sample lap: driver_number={sample.get('driver_number')} "
+                    print(f"\n  sample lap: driver_number={sample.get('driver_number')} "
                           f"lap_number={sample.get('lap_number')}")
                     print(f"    duration_sector_1/2/3 = {sample.get('duration_sector_1')}, "
                           f"{sample.get('duration_sector_2')}, {sample.get('duration_sector_3')}")
-                    print(f"    segments_sector_1 = {sample.get('segments_sector_1')}")
-                    print(f"    segments_sector_2 = {sample.get('segments_sector_2')}")
-                    print(f"    segments_sector_3 = {sample.get('segments_sector_3')}")
+                    print(f"    segments_sector_1 decoded = {decode(sample.get('segments_sector_1'))}")
+                    print(f"    segments_sector_2 decoded = {decode(sample.get('segments_sector_2'))}")
+                    print(f"    segments_sector_3 decoded = {decode(sample.get('segments_sector_3'))}")
+
+                # Sanity check: does the fastest lap of the session read mostly green/purple,
+                # and a clearly slow lap read mostly yellow? If not, the segments are unreliable here.
+                timed = [l for l in laps_data if l.get("lap_duration") and l.get("segments_sector_1")
+                         and not l.get("is_pit_out_lap")]
+                if timed:
+                    fastest = min(timed, key=lambda l: l["lap_duration"])
+                    slowest = max(timed, key=lambda l: l["lap_duration"])
+                    for label, lap in [("FASTEST", fastest), ("SLOWEST", slowest)]:
+                        all_seg = (lap.get("segments_sector_1") or []) + (lap.get("segments_sector_2") or []) \
+                            + (lap.get("segments_sector_3") or [])
+                        counts = {}
+                        for v in all_seg:
+                            c = CODE.get(v, f"?{v}")
+                            counts[c] = counts.get(c, 0) + 1
+                        print(f"\n  {label} lap: driver={lap.get('driver_number')} lap={lap.get('lap_number')} "
+                              f"duration={lap['lap_duration']}s — segment color counts: {counts}")
                 return
 
             if session_key is not None:
