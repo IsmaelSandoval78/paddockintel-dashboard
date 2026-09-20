@@ -1,0 +1,32 @@
+name: Beagle news radar (manual)
+
+# Runs scripts/beagle.mjs — an editorial radar over ~15 F1 RSS feeds, cross-referenced
+# against the current season's real drivers/constructors. Read-only: never writes to
+# Supabase. Output is a plain report in the job log; picking what goes to the Feed vs.
+# the Featured slot is still a human (or Claude, reading the log) call.
+on:
+  workflow_dispatch:
+    inputs:
+      hours:
+        description: "Lookback window in hours"
+        required: false
+        type: string
+        default: "48"
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Run beagle
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          echo "NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL" > .env.local
+          echo "SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY" >> .env.local
+          node scripts/beagle.mjs "${{ inputs.hours }}"
