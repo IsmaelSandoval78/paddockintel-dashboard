@@ -114,6 +114,10 @@ def main() -> None:
     parser.add_argument("--skip-fastf1", action="store_true",
                          help="skip FastF1 tire stint extraction")
     parser.add_argument("--dry-run", action="store_true", help="Print what would be written, write nothing")
+    parser.add_argument("--diagnose-laps", action="store_true",
+                         help="Fetch OpenF1 /laps for the matched session and report sector-data "
+                              "coverage (duration_sector_1/2/3, segments_sector_1/2/3), then exit. "
+                              "Read-only — writes nothing to Supabase.")
     args = parser.parse_args()
     dry_run = args.dry_run
     year, round_num = args.year, args.round_num
@@ -214,6 +218,34 @@ def main() -> None:
                 else:
                     print(f"  WARN: no OpenF1 session match for {race_name} {year} — "
                           f"skipping (pass --session-key to override)")
+
+            if args.diagnose_laps:
+                if session_key is None:
+                    print("  ERROR: no session_key to diagnose")
+                    return
+                laps_resp = requests.get(f"{OPENF1_BASE}/laps", params={"session_key": session_key}, timeout=30)
+                laps_resp.raise_for_status()
+                laps_data = laps_resp.json()
+                n = len(laps_data)
+                has_d1 = sum(1 for l in laps_data if l.get("duration_sector_1") is not None)
+                has_d2 = sum(1 for l in laps_data if l.get("duration_sector_2") is not None)
+                has_d3 = sum(1 for l in laps_data if l.get("duration_sector_3") is not None)
+                has_seg1 = sum(1 for l in laps_data if l.get("segments_sector_1") is not None)
+                print(f"\n  /laps rows for session_key={session_key}: {n}")
+                print(f"  duration_sector_1 populated: {has_d1}/{n}")
+                print(f"  duration_sector_2 populated: {has_d2}/{n}")
+                print(f"  duration_sector_3 populated: {has_d3}/{n}")
+                print(f"  segments_sector_1 populated: {has_seg1}/{n}")
+                sample = next((l for l in laps_data if l.get("segments_sector_1") is not None), None)
+                if sample:
+                    print(f"  sample lap: driver_number={sample.get('driver_number')} "
+                          f"lap_number={sample.get('lap_number')}")
+                    print(f"    duration_sector_1/2/3 = {sample.get('duration_sector_1')}, "
+                          f"{sample.get('duration_sector_2')}, {sample.get('duration_sector_3')}")
+                    print(f"    segments_sector_1 = {sample.get('segments_sector_1')}")
+                    print(f"    segments_sector_2 = {sample.get('segments_sector_2')}")
+                    print(f"    segments_sector_3 = {sample.get('segments_sector_3')}")
+                return
 
             if session_key is not None:
                 # ── Weather ───────────────────────────────────────────

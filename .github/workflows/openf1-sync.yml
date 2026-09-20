@@ -20,6 +20,11 @@ on:
         required: false
         type: boolean
         default: false
+      diagnose_laps:
+        description: "Only report OpenF1 /laps sector-data coverage, write nothing"
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   sync:
@@ -41,4 +46,5 @@ jobs:
             --year "${{ inputs.year }}" \
             --round "${{ inputs.round }}" \
             ${{ inputs.session_key != '' && format('--session-key {0}', inputs.session_key) || '' }} \
-            ${{ inputs.dry_run == 'true' && '--dry-run' || '' }}
+            ${{ inputs.dry_run == 'true' && '--dry-run' || '' }} \
+            ${{ inputs.diagnose_laps == 'true' && '--diagnose-laps' || '' }}
