@@ -1,256 +1,284 @@
-# PaddockIntel DESIGN.md v3.0.0 — Vintage Editorial (single system)
+# PaddockIntel DESIGN.md v4.0.0 — Hypermodern (single system)
 
-> Replaces v0.3.0 "Swiss Industrial Print" and the v2.0.0 "Data Mode / Story Mode" two-register
-> system (built Aug 11–23 2026, reverted Aug 23 2026 — see `docs/archive/CONCEPT-V2.md` §13.11 for that
-> history). This is not a patch on top of either — it is a full replacement. If any other repo
-> doc still describes Data Mode, Story Mode, or `#F4F4F0`/`--red: #E61919` as current, that doc
-> is stale; this file wins.
+> Replaces v3.0.0 "Vintage Editorial" (kraft paper `#EDE3D0`, terracotta `#C1502E`,
+> Archivo Black + Lora, radius-sm/md at 2-4px). That system, and everything before it
+> (v0.3.0 "Swiss Industrial Print", v2.0.0 "Data Mode"/"Story Mode"), is now archived —
+> see `docs/archive/CONCEPT-V2.md` §13 for the full lineage. This is a full replacement,
+> not a patch: color, type, shape, and motion all change.
 >
-> Decided 2026-08-24, in a Claude.ai planning session (not yet applied to code). Before writing
-> any component against these tokens, confirm `globals.css` has actually been updated — until
-> then, the live site still runs on the old v0.3.0 tokens.
+> Decided 2026-09-21, product decision by the founder (Ismael), explicitly overriding the
+> v3.0.0 "light is the differentiator, dark mode not offered" and "no gradients,
+> glassmorphism, or shadows" rules. If any other repo doc still asserts those rules as
+> current, that doc is stale relative to this one.
+>
+> **Rollout status:** tokens in `globals.css` are global and cascade site-wide the moment
+> they change (same mechanism that made the v0.3.0 → Data Mode → Vintage Editorial
+> transitions "free" across most of the codebase — see the migration note below). The
+> *bespoke* bento-grid/glass-panel component treatment described here has been fully
+> applied to `magazine-home` only, as a flagship demo. Hub, Circuits, Drivers,
+> Constructors, and the article/digest reading surfaces inherit the new color tokens
+> automatically but have not had an individual layout pass yet — expect them to look
+> "new palette, old layout" until a follow-up pass touches each one directly.
 
-## Identity (unchanged)
+## Identity
 
-PaddockIntel is the **Wikipedia visual de la Fórmula 1**: autoridad de datos verificables +
-storytelling que hace sentir al lector "el que entiende el juego por dentro" — nunca el drama
-manufacturado de los medios genéricos de F1.
+PaddockIntel is F1 economic and performance intelligence for people who have seen every
+other F1 data product and know what boring looks like. The old identity line — "Wikipedia
+visual de la Fórmula 1" — was earned through print-poster restraint. The new line: **a
+control room, not a magazine.** Precision instrument, not editorial artifact. The bar is
+Linear's issue tracker and Stripe's dashboard — software that makes you feel like the
+tool itself is competent before you've read a single number.
 
-## One system, not two
+## Named references (commit to these, don't blend vaguely)
 
-There is no Data Mode, no Story Mode, no per-surface skin decision. Hub, Circuits, Drivers,
-Constructors, Blog, Digest, and Book all share one `:root` and one visual language:
-**Vintage Editorial** — a warm, poster-style, illustrated-data aesthetic, reference: 2011 Japan
-Earthquake & Tsunami-style infographic (single-subject illustration + hero numbers + ranked
-stat blocks + bar/pie breakdowns, on a kraft-paper substrate).
+- **Linear** — near-black canvas, a single confident violet-indigo accent, ultra-thin
+  low-alpha white borders, generous internal padding, instant/no-bounce micro-interactions.
+- **Stripe (dashboard, not marketing site)** — soft radial gradient washes behind hero
+  content, glass panels that separate content from background without a hard line, dense
+  data that still reads as calm because of spacing, not despite the data.
+- **Vercel** — pure-black-adjacent surfaces, monospace for anything that is a value
+  (not just a hint of it), restraint on where color appears so the accent still reads as
+  a signal, not wallpaper.
 
-This replaces the old rule "each surface has an assigned mode" entirely — there is nothing to
-assign anymore.
+This is a **Committed** color strategy (one saturated accent, ~15-25% of surface via
+glass/gradient washes, not a full-palette or drenched approach) on a **near-black**
+substrate. Not Restrained (that was v3.0.0) — the whole point of this pass is that
+restraint alone was reading as flat.
 
 ## Tokens
 
 ```css
-/* Substrate */
---bg              #EDE3D0   /* kraft paper base, with subtle dot-noise texture — see Texture */
---surface         #EDE3D0
---surface-raised  #E4D9C2   /* section alternates, cells — slightly darker kraft */
+/* Substrate — near-black, not pure #000 (pure black kills the glass/blur effect, which
+   needs a hair of value to separate panel from canvas) */
+--bg              #08090C
+--surface          #0D0F13   /* base panel fill, no blur */
+--surface-raised   #14161B   /* nested tile inside a panel */
+
+/* Glass — the actual "hypermodern" surface. Use on real content panels (bento tiles,
+   the join card, the newsletter card), not on every div — glass on glass reads as mud. */
+--glass-bg         rgba(255, 255, 255, 0.03)
+--glass-border      rgba(255, 255, 255, 0.09)
+--glass-blur        20px
 
 /* Borders */
---border          #2B2620   /* full-weight divider, near-black-brown, never pure #000 */
---border-subtle   #C9BC9F   /* ghost hairlines, dashed rules */
+--border           rgba(255, 255, 255, 0.10)
+--border-subtle    rgba(255, 255, 255, 0.06)
 
 /* Text hierarchy */
---text-1          #2B2620   /* primary — near-black-brown */
---text-2          #6B5F4E   /* secondary — metadata, mono labels */
---text-3          #A69A82   /* tertiary — ghosts, placeholders */
+--text-1           #F5F6F7   /* primary — near-white, not pure white */
+--text-2           #9AA1AC   /* secondary — metadata, mono labels */
+--text-3           #5C6370   /* tertiary — ghosts, placeholders */
 
-/* Accent */
---terracotta      #C1502E   /* primary accent — replaces old --red. Same discipline: links,
-                                active states, key callouts, hero numbers. NEVER a large fill. */
---terracotta-dim  #F2DDD3   /* terracotta wash for hover states */
---navy            #2B3A4A   /* secondary — illustrated map/diagram backgrounds, dark blocks */
---mustard         #D9A441   /* tertiary — secondary bar/chart series, never primary emphasis */
---gold            #C9A84C   /* achievements/championships, unchanged from v0.3.0 */
---gold-dim        #F5E8CC
---green           #22C55E   /* positive deltas, unchanged from v0.3.0 */
---green-dim       #E8F5EE
+/* Accent — indigo-violet, replaces terracotta as the single primary accent.
+   NEVER a large flat fill — carries links, active states, hero numbers, and the
+   gradient-mesh wash, same discipline the old terracotta rule had. */
+--accent           #6366F1
+--accent-dim       rgba(99, 102, 241, 0.14)   /* wash / hover fill, not a solid tint */
+--accent-2         #22D3EE   /* secondary accent — cyan, gradient-mesh companion color and
+                                 secondary bar/chart series. Never primary emphasis. */
 
-/* Motion */
---ease            cubic-bezier(0.16, 1, 0.3, 1)
---fast            100ms
---base            150ms
+/* --terracotta / --terracotta-dim stay defined, pointed at the same values as --accent
+   /--accent-dim — a compatibility alias, not a coincidence. ~100 files across Hub,
+   Circuits, Drivers, Constructors, and the scorecard/records components still reference
+   `text-terracotta`/`bg-terracotta`/`var(--terracotta)` and were out of scope for this
+   pass (DESIGN.md + magazine-home only, see Rollout status above). They inherit the new
+   accent color automatically through this alias, same "cascade for free" mechanic as
+   every other token in this file — but the class/variable name itself is still the old
+   one there. New v4.0.0 work (magazine-home, shared Navbar/Footer) uses --accent
+   directly. Retiring the --terracotta name everywhere is real follow-up work, tracked,
+   not done here — a mechanical repo-wide rename across ~100 files is its own PR. */
+--terracotta       var(--accent)
+--terracotta-dim   var(--accent-dim)
 
-/* Shape */
---radius-sm       2px       /* cards, stat blocks — a small radius now, not zero. See Shape. */
---radius-md       4px       /* illustrated map containers, circular diagram frames */
+/* Semantic */
+--green            #34D399   /* lightened from v3.0.0's #22C55E for AA contrast on #08090C */
+--green-dim        rgba(52, 211, 153, 0.14)
+--gold             #E8C468   /* lightened from v3.0.0 for dark-bg contrast */
+--gold-dim         rgba(232, 196, 104, 0.14)
+
+/* Legacy names kept for cascade compatibility where still referenced by un-migrated
+   surfaces (Hub stat bands, Constructors detail page) — values updated to sit inside the
+   new dark palette, not deleted. Don't reach for these in new v4.0.0 work; use --accent
+   /--surface-raised instead. */
+--navy             #1B2333
+--mustard          #D9A441
+
+/* On-accent text — for content sitting on a solid --accent-colored fill (rare — the
+   accent almost never fills a whole panel, but e.g. a filled CTA button does). */
+--text-on-accent      #FAFAFA
+--text-2-on-accent    rgba(250, 250, 250, 0.7)
+--border-on-accent    rgba(250, 250, 250, 0.35)
+
+/* Team colors — brightened for dark substrate (v3.0.0's were darkened for a light one;
+   the same hues now need to hold up against near-black instead) */
+--team-mercedes    #1FD6C4
+--team-mclaren     #FF8C1A
+--team-redbull     #4A7FE0
+--team-ferrari     #FF3333
+--team-alpine      #E85CA8
+--team-aston       #3FA98A
+--team-haas        #9CA1A6
+--team-williams    #4FA6E0
+--team-sauber      #4ADE4A
+--team-rb          #6B8FE8
+
+/* Motion — snappier than v3.0.0's 150ms base; Linear-style interactions read as instant */
+--ease             cubic-bezier(0.16, 1, 0.3, 1)
+--instant          80ms
+--fast             120ms
+--base             180ms
 ```
 
-### On-accent text — for dark/navy panels
+### Migration note
 
-The tokens above all assume content sits on the light kraft substrate. Some components
-(a stat band on `--navy`, a highlighted callout) put content *inside* a dark panel instead —
-`--text-1`/`--text-2`/`--border-subtle` don't have workable contrast there. Three tokens cover
-that case:
+This is a hex-value change plus a shape-rule change (see Shape below), not a structural
+rewrite of components that already read from CSS variables — `bg-bg`, `text-text-1`,
+`border-border`, etc. cascade automatically the moment `globals.css` changes, the same
+mechanism that made the v0.3.0 → Data Mode → Vintage Editorial transitions free across
+most of the codebase. Any un-migrated page (Hub, Circuits, Drivers, Constructors,
+`.prose-article`) will look "new palette, correct semantics, old layout" immediately —
+that's expected, not broken, until it gets its own bento/glass pass. Audit for hardcoded
+hex before assuming a component "just works" — the Constructors detail page's `TEAM_HEX`
+map and `FollowButton` idle-color props were already-known hardcoded-hex debt under
+v3.0.0 and remain so here.
 
-```css
---text-on-accent      #FAFAF7   /* primary text/icons on a dark or accent-colored panel
-                                    (--navy, --terracotta) — e.g. the Ticker on --terracotta */
---text-2-on-accent    #A7ADB2   /* secondary/muted text on a dark panel — e.g. a stat band's
-                                    label under a hero number */
---border-on-accent    #7E878F   /* hairline dividers inside a dark panel */
-```
-
-**Both `-on-accent` tokens are derived from `--text-on-accent`, never from `--text-2`/
-`--border-subtle`.** Blending two already-dark colors together stays dark no matter the ratio —
-`--text-2` (`#6B5F4E`) blended 60% over `--navy` (`#2B3A4A`) measures **1.44:1** contrast,
-effectively illegible. Starting from a light color and dialing the opacity down is the only way
-to land in a legible range: `--text-2-on-accent` is `--text-on-accent` blended 60% over `--navy`
-(5.13:1, passes WCAG AA), `--border-on-accent` is the same at 40% (3.18:1, fine for a
-non-text hairline). If a future dark panel needs its own on-accent text/border color, compute it
-the same way — don't reach for `--text-2`/`--border-subtle` as the blend source. Added
-2026-08-24, fixing a hardcoded-hex regression on the Constructors detail page's stat bands — see
-"Known technical debt" below.
-
-**Migration note:** this is a hex-value change plus a shape-rule change (see Shape below), not
-a structural rewrite. Any component already reading from CSS variables (`var(--bg)`,
-`var(--red)`, etc.) updates automatically once `globals.css` changes — the same mechanism that
-made both the Data Mode rollout and its revert "cascade for free" across most of the codebase
-(`docs/archive/CONCEPT-V2.md` §13.5, §13.11). Audit for hardcoded hex first (Constructors detail page is
-the known offender, still Phase 2 — see below).
+**`--terracotta` is now an alias for `--accent`, not renamed.** ~100 files still reference
+`text-terracotta`/`bg-terracotta`/`var(--terracotta)` (Hub, Circuits, Drivers,
+Constructors, scorecards, records). Rather than a mechanical repo-wide rename in this PR
+(out of scope — see Rollout status above), `--terracotta`/`--terracotta-dim` are defined
+as direct aliases of `--accent`/`--accent-dim`, so every un-migrated surface picks up the
+new violet accent automatically without a rename. New v4.0.0 code (magazine-home, shared
+Navbar/Footer) writes `--accent` directly. The rename itself — dropping the `-terracotta`
+name everywhere — is real, tracked follow-up work, not done here.
 
 ## Typography
 
 | Role | Font | Usage |
 |---|---|---|
-| Display/headlines | Archivo Black | Hero numbers, section titles, short callout lines — never full paragraphs |
-| Body/prose | Lora | **Now used everywhere**, not just Blog/Book — this is a real change from v0.3.0/v2, where Lora was long-form-only and Hub used Inter for UI. Vintage Editorial's editorial-poster identity calls for prose everywhere it appears, even short captions |
-| Data/numbers | JetBrains Mono | Stats, timestamps, lap times, source lines — unchanged invariant, still applies everywhere |
+| UI / display | Inter (`--pi-sans`) | Everything — headlines, body, labels, buttons. Single-family system, weight/size carries the contrast, matching how Linear itself uses just Inter across the whole product. |
+| Data/numbers | JetBrains Mono (`--pi-mono`) | Stats, timestamps, lap times, source lines, IDs — unchanged invariant from every prior system. Still the tell that a value is real data, not copy. |
 
-Inter is retired as a UI font under this system — Lora replaces it for anything that isn't a
-number. If a specific component (form inputs, buttons) genuinely needs a plain UI sans for
-legibility at small sizes, propose it explicitly rather than defaulting back to Inter.
+Archivo Black, DM Serif Display, and Lora (`--pi-display`/`--pi-serif`/`--pi-prose`) stay
+loaded and defined — un-migrated surfaces (Hub, article body via `.prose-article`,
+Constructors) still use them until their own pass. Do not introduce new usages of any of
+the three in v4.0.0 work; Inter carries display weight now (see Scale below).
 
-## Texture
+### Scale
 
-Every surface carries a **subtle dot-noise texture** over the kraft base (see the two circuit
-mockups from the 2026-08-24 session for the reference implementation — `radial-gradient` dots,
-~1px, low opacity, 3px grid). This is load-bearing to the "poster on paper" identity — a flat
-`#EDE3D0` fill without texture reads as a generic warm background, not as Vintage Editorial.
-
-```css
-background-image: radial-gradient(#00000006 1px, transparent 1px);
-background-size: 3px 3px;
-```
+Modular, fluid `clamp()`, ratio ≥1.25 between steps (flat 1.1× scales read as
+uncommitted). Hero headline ceiling: `clamp()` max ≤ 6rem — this is a control room, not a
+billboard. Letter-spacing floor on display text: ≥ -0.04em.
 
 ## Shape
 
-**Not zero-radius anymore.** The old "radius-cero universal, no exceptions" rule from v0.3.0 is
-retired under this system:
-- Stat blocks, cards: `--radius-sm` (2px) — barely-there rounding, still reads as "print," not
-  soft/app-like
-- Illustrated map/diagram circular containers: full circle (`border-radius: 50%`) — this is a
-  deliberate illustration choice (the "epicenter map" pattern), not a UI card
-- Buttons/small controls: `--radius-sm`
-- No component should read as `rounded-2xl`/pill-shaped/glassmorphic — the ceiling is "print
-  poster," not "consumer app"
+**Not 2-4px anymore.** Hypermodern reads as considered, not sharp:
+
+- `--radius-sm`  8px  — buttons, small controls, pills
+- `--radius-md`  14px — bento tiles, cards, the join/newsletter panels
+- `--radius-lg`  20px — hero panels, the featured-story tile
+
+No component should read as fully sharp-cornered "print poster" anymore — that was the
+v3.0.0 rule, inverted. Circular containers (`rounded-full`) stay available for avatars/
+badges, same as before.
+
+## Glass & blur
+
+The signature move of this system. Use `backdrop-filter: blur(var(--glass-blur))
+saturate(150%)` on a panel that sits over the gradient-mesh background or over other
+content (a sticky nav, a bento tile), paired with `--glass-bg` and a 1px `--glass-border`.
+
+```css
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+}
+```
+
+**Discipline, same as the old terracotta rule:** glass panels separate real content from
+the canvas. They are not a decorative wrapper applied to everything — a glass panel
+nested inside another glass panel reads as mud (this is the one absolute ban in this
+system, same spirit as the old "never a large terracotta fill"). One layer of glass per
+visual depth level.
+
+## Gradient mesh
+
+Soft, low-opacity radial washes of `--accent` and `--accent-2` behind hero content —
+the Stripe-dashboard signature. Never used as a background for body text directly; always
+behind a glass panel or on truly empty canvas space.
+
+```css
+.mesh-glow {
+  background:
+    radial-gradient(ellipse 800px 500px at 20% -10%, rgba(99, 102, 241, 0.18), transparent 60%),
+    radial-gradient(ellipse 600px 400px at 100% 0%, rgba(34, 211, 238, 0.12), transparent 55%);
+}
+```
+
+This replaces the v3.0.0 dot-noise kraft texture entirely — there is no equivalent
+"paper grain" in this system; the canvas is flat `--bg` except where a mesh-glow is
+deliberately placed (hero zones, not every section).
 
 ## Signature elements
 
-**Hero numbers.** A dominant Archivo Black figure (a lap record, a win count, a red-flag
-duration) in `--terracotta`, paired with a muted JetBrains Mono label underneath. This is the
-single most repeated pattern in the system — see both circuit mockups.
+**Bento grid.** Asymmetric grid of glass tiles, varying spans (a 2x2 hero tile next to
+1x1 stat tiles), not a uniform card grid — the tell that separates "bento" from "just a
+card grid" is that tile sizes carry meaning (the most important thing gets the biggest
+tile), not a repeated identical unit. `grid-template-columns: repeat(auto-fit,
+minmax(240px, 1fr))` as the breakpoint-free base, explicit `col-span`/`row-span` for the
+hero tile.
 
-**Illustrated single-subject diagrams.** Replace flat schematic maps with an illustrated,
-single-subject treatment: a circuit becomes a navy circle containing a simplified ghost
-trace of the track with concentric rings marking a point of interest (an incident, a record
-corner) — directly modeled on the earthquake-epicenter pattern from the reference infographic.
-This applies to circuits now, and should be the default pattern for any single-subject visual
-going forward (a driver's career arc, a constructor's dominant era) — propose the specific
-illustration per case, don't force the exact epicenter-rings motif where it doesn't fit.
+**Hero numbers.** Unchanged in spirit from v3.0.0 — a dominant number in `--accent`,
+paired with a muted JetBrains Mono label. Now sits inside a glass tile instead of a
+bordered box, and can be considerably larger given the extra room dark backgrounds give
+a saturated color before it looks like a warning.
 
-**Poster-style bar/pie breakdowns.** Ranked or comparative data renders as flat-color bar
-charts (terracotta primary series, mustard secondary) or simple two-tone pie/donut breakdowns
-— not tables, not the old JetBrains-Mono-dense ranked-row pattern. Never pie charts with more
-than 3 segments (readability ceiling from the reference style).
+**Hover micro-interactions.** Every interactive glass tile gets a deliberate hover state:
+border brightens from `--glass-border` toward `--accent`-tinted, a subtle
+`translateY(-2px)` lift, background lightens a couple percent. Duration `--fast` (120ms),
+`--ease`. No bounce, no scale-up (scale reads as a button, not a content tile).
 
-**Stat block grids.** 3-up (sometimes 2-up) grids of Archivo Black number + JetBrains Mono
-label, divided by hairlines, inside a bordered container — the direct equivalent of the
-earthquake infographic's icon+number blocks (quake distance, aftershock count, etc.).
+**Source line.** Unchanged requirement from every prior system — every data-driven block
+still ends with a muted JetBrains Mono source citation. The visual treatment changes
+(sits inside the glass tile now, not below a bordered box) but the editorial policy is
+untouched.
 
-**Source line.** Every data-driven block ends with a JetBrains Mono, muted-color source
-citation (`SOURCE: SUPABASE (table) · VERIFIED AGAINST X`) — this is the Vintage Editorial
-execution of the project's existing "every number has a source" line (see `docs/archive/CONCEPT-V2.md`
-§11), now a required visual element, not just an editorial policy.
+## Motion
 
-## Track dominance rule — unchanged
-
-Flat/non-isometric by default. Subtype A (real crossover, e.g. Suzuka bridge) gets pillars +
-shadow. Subtype B (severe elevation without crossing, e.g. Spa Eau Rouge-Raidillon, COTA T1)
-gets ascending terraces, never an invented bridge. This rule is orthogonal to the visual system
-change — it governs geometric accuracy, not palette, and survives untouched.
+- Page-load: content already visible by default (per the shared Karpathy/accessibility
+  rule — no gating visibility on a class-triggered transition); a subtle stagger on the
+  bento grid's tiles is legitimate first-load polish, not required.
+- Hover/interaction motion is the primary motion budget in this system — Linear and
+  Stripe both under-animate on load and over-deliver on interaction feedback. Match that:
+  restrained entrance, decisive hover/focus states.
+- `prefers-reduced-motion: reduce` — same requirement as every prior system: static
+  fallback renders a complete, usable page, hover lift/translate becomes an instant
+  border/background change with no transform.
 
 ## What this replaces, explicitly
 
-- v0.3.0 Swiss Industrial Print (`#F4F4F0`, zero-radius, JetBrains-Mono-dense ranked lists) —
-  retired as the live system, though its "every number sourced, ranked not pie-charted" DNA
-  carries forward into the new poster-style bar patterns
-- v2.0.0 Data Mode (`#0B1220` dark navy) — already reverted before this document; this
-  supersedes it a second time, for clarity, so no future session resurrects it by accident
-- v2.0.0 Story Mode (planned but never built warm palette for Blog/Book only) — absorbed into
-  this system, now applying everywhere instead of two surfaces
-- The aiweekly.co-as-visual-skin plan (dense, mono, low-motion) — superseded same day it was
-  proposed; see `DECISIONS-2026-08-24-radical-pivot.md` §2 for the full history. Its
-  information-architecture ideas (ranked attention dashboard, numbered issues) survive,
-  re-skinned into this system
+- v3.0.0 "Vintage Editorial" (`#EDE3D0` kraft, terracotta, Archivo Black + Lora
+  everywhere, 2-4px radius, dot-noise texture, "no gradients/glassmorphism/shadows") —
+  retired as the live system for `magazine-home`; still the literal token values other
+  un-migrated surfaces render with until their own pass, per the Rollout status note above.
+- v0.3.0 "Swiss Industrial Print" and v2.0.0 "Data Mode"/"Story Mode" — already archived
+  before v3.0.0 superseded them; noted here only so no future session resurrects either
+  by accident.
 
 ## Known technical debt this system inherits
 
-Constructors detail page (`app/[locale]/(hub)/constructors/[slug]/page.tsx`) still has
-`font-serif` outside the type system and no `'use client'`/motion — this was already Phase 2
-debt under the old system (`docs/archive/CONCEPT-V2.md` §7) and remains Phase 2 debt under this
-one. Do not attempt to patch it token-by-token; rebuild it against these tokens using
-`DriverDetailExperience.tsx` as structural reference, same recommendation as before.
+Everything listed as debt under v3.0.0 (Constructors detail page's `font-serif`/hardcoded
+hex, the circuit-detail duplicate-key React warnings) is unchanged and unresolved by this
+token swap — a color/shape system change doesn't touch component logic. See
+`docs/archive/CONCEPT-V2.md` for the full history if any of that needs picking back up.
 
-**Partial exception, 2026-08-24:** the stat-band/Rivalry/Pit Wall hardcoded hex (introduced by
-the Aug 24 "Rivalry, Pit Wall, Circuit Domination" rebuild, plus one older stat band from the
-page's original June build) was patched to real tokens, including two new ones —
-`--border-on-accent`/`--text-2-on-accent`, see "On-accent text" above — as a scoped regression
-fix, not a rebuild. Two zones were deliberately left out of that fix, still hardcoded, still
-open:
-- **Hero's own dark stat band** (races/wins/championships block, right ~40% of the hero,
-  roughly L727–753) — a third, separate dark-panel instance using `#0A0A0A` (not `--navy`) as
-  its background, with its own `#2A2A2A`/`#F4F4F0`/`#6B6B6B` internal text/border colors. Same
-  fix pattern as the stat bands above would apply (`--navy` or a dedicated darker token, plus
-  `--border-on-accent`/`--text-2-on-accent`) — just confirm first whether `#0A0A0A` should stay
-  a distinct near-black or also become `--navy`, since unlike the other two panels this one was
-  never touched by the Aug 24 rebuild.
-- **`TEAM_HEX`** (the team-color swatch map, ~L37–58) and the **`FollowButton` idle-color
-  props** (`idleBorderColor`/`idleTextColor`, ~L720–722) — unrelated hardcoded-hex debt, not
-  part of the Aug 24 regression.
+## Open questions carried forward
 
-**Circuit detail — "duplicate key" React warning, found 2026-08-24, not fixed.** Several lists
-in the existing (untouched) circuit detail experience key their rows on a bare race year —
-`year` alone, not `year + something else` — which breaks for any circuit that hosted more than
-one race in the same calendar year. This is real, not hypothetical: Silverstone 2020 had both
-the British Grand Prix and the 70th Anniversary Grand Prix, so `/circuits/silverstone` throws
-4 "Encountered two children with the same key" console warnings today. Confirmed the new
-`CircuitOverview.tsx` overview block (prepended above this experience the same day) isn't the
-source — Zandvoort, which has no 2020 race at all, renders through the identical untouched
-components with zero console errors, isolating this to the pre-existing code below.
-Known offending call sites, all keyed on a bare year:
-- `CircuitHero.tsx:552` — `lastWinners.map(...)`, `key={w.year}`
-- `CircuitDetailExperience.tsx:300` — decade-dominance `decadeWinners.map(...)`, `key={w.year}`
-- `CircuitDetailExperience.tsx:392` — `recentPoles.map(...)`, `key={pole.year}`
-- `LapRecordArc.tsx:204` and `:235` — two parallel `.map()` calls over `lapEntries`, both
-  `key={c.year}`
-`CircuitTimeline.tsx:109` already uses a composite key (`` `${w.year}-${w.surname}` ``) and is
-not affected — that's the fix pattern to copy into the five call sites above (year + surname,
-or year + race round, whichever is available and guaranteed unique per row) whenever someone
-next touches these files.
-
-## Future enhancements (deferred, not blocking)
-
-**Circuits index (`app/[locale]/(hub)/circuits/page.tsx`), 2026-08-24.** The Vintage Editorial
-rebuild (featured circuit + compact 2026-calendar list + a plain-text historical-circuits
-section for SEO reachability) replaced the old interactive world map
-(`components/circuits/CircuitsClient.tsx`, `components/map/CircuitMapSVG.tsx`,
-`components/circuits/CircuitLeftPanel.tsx` — all three left in place, marked `UNUSED` with a
-pointer to this note and to git log, not deleted). None of the following block shipping the
-new index; they're real interaction the old page had that the new one doesn't yet:
-- Interactive world map (d3-geo) for browsing circuits by geography
-- Region filter (Europe/Americas/Asia-Pacific/Africa-Middle East/Oceania) with crossfade
-- Live text search across all circuits, with fly-to-on-select
-- Quick-look preview panel (slide-in desktop / bottom sheet mobile) without leaving the index
-- GSAP entrance motion (title SplitText, filter stagger, track DrawSVG)
-
-If any of these come back, they'd need a Vintage Editorial pass too (kraft/navy/terracotta
-tokens, not the old Swiss Industrial `--red`/zero-radius look CircuitMapSVG.tsx still uses).
-
-## Motion pieces (Remotion) — re-evaluate, not yet decided
-
-The old "Blueprint" export standard (`#F4F4F0`, hard lines, no glow, technical grid) was
-explicitly *independent* of the live site's mode so exports wouldn't need to match a dark
-dashboard. Now that the live site itself is warm/illustrated, it's an open question whether
-exports should adopt Vintage Editorial too (for visual consistency with the live site) or keep
-the colder Blueprint look (for a deliberate "measurement tool" contrast). Not decided — flag
-this explicitly before touching any Remotion composition.
+**Scorecards (shareable PNGs)** and **Remotion motion exports** still explicitly say
+"light background always" / flag the Blueprint-vs-live-site question as undecided under
+v3.0.0. That question is now sharper, not resolved: a dark hypermodern site makes the
+"should exports match the live site" argument stronger than it was under kraft-paper
+Vintage Editorial, but this hasn't been decided and both surfaces are out of scope for
+this pass. Flag before touching either.

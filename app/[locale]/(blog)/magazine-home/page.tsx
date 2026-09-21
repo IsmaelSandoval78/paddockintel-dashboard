@@ -109,16 +109,12 @@ export default async function MagazineHomePage({
   // a known canonical tag (stale/bookmarked link, tampered param, etc.)
   const tagLabel = tag ? (tArticleTags.has(tag) ? tArticleTags(tag) : tag) : undefined;
 
-  // Front-page state only (page 1, unfiltered) gets the full editorial
-  // treatment — a filtered or paginated view is an archive, not a cover.
+  // Front-page state only (page 1, unfiltered) gets the full bento treatment — a
+  // filtered or paginated view is an archive, not a cover.
   const isFrontPage = page === 1 && !tag;
 
   const [{ articles, total }, featuredAndRecent, frontPageExtras] = await Promise.all([
     getArticles(locale, page, tag),
-    // Featured runs on every page/filter, not just the front page — the
-    // merged hero+featured row would otherwise leave an empty second column
-    // once a reader pages into the archive (the grid stayed 2 columns with
-    // nothing in the second one).
     getFeaturedAndRecent(locale),
     isFrontPage
       ? Promise.all([
@@ -160,23 +156,16 @@ export default async function MagazineHomePage({
       new Map<string, number>(),
     ];
   const { featured, recent } = featuredAndRecent;
+  const featuredStat = ((featured?.stats as Stat[] | undefined) ?? [])[0];
 
-  // Compact Last Race / Next Race snapshot for Band B (2026-09-18 redesign) --
-  // just the winner + fastest lap, and a countdown, no movers/retirements/full
-  // circuit history (that lived in its own band lower on the page before).
   const lastRaceSnapshot = raceHighlights.raceName
     ? { raceName: raceHighlights.raceName, winner: raceHighlights.winner, fastestLap: raceHighlights.fastestLap }
     : null;
   const nextRaceSnapshot = circuit ? { name: circuit.name, daysUntil: circuit.days_until } : null;
+  const hasRaceSnapshot = Boolean(lastRaceSnapshot || nextRaceSnapshot);
 
-  // Feed teaser split into two non-overlapping slices (Option 1 of the magazine-home
-  // redesign discussion): first 6 get the Band B badge treatment, the next 4 feed Band D's
-  // "F1 News" column — never the same story twice on one page. Entity counts come from
-  // getDigestEntityCounts() (the FULL published digest_items set, unbounded), not from the
-  // capped feedTeaserAll -- counting only within the display cap undercounts any entity
-  // whose other mentions fall outside it, which is exactly the bug that made magazine-home's
-  // badges read lower than the same stories' badges on /feed. Merged with the wider
-  // beagle_items raw-pool signal (see lib/beagleCounts.ts) so both surfaces score identically.
+  // Feed teaser split into two non-overlapping slices: first 6 get the hero bento tile,
+  // the next 4 feed the lower "F1 News" tile — never the same story twice on one page.
   const feedScores = mergeEntityCounts(digestCounts, beagleCounts);
   const feedTeaser = feedTeaserAll.slice(0, 6);
   const f1News = feedTeaserAll.slice(6, 10);
@@ -188,91 +177,103 @@ export default async function MagazineHomePage({
 
   return (
     <main className="bg-bg min-h-screen">
-      {/* Band 1 — masthead line: headline + description, centered, kraft base. */}
-      <div className="border-b border-border bg-bg">
-        <div className="max-w-3xl mx-auto px-5 py-14 md:py-20 text-center">
-          <h1 className="font-display text-[clamp(1.75rem,4vw,2.75rem)] leading-[0.94] tracking-[-0.03em] text-text-1 mb-4">
-            {t('headline')}
-          </h1>
-          <p className="font-prose text-text-2 leading-relaxed">
-            {t('description')}
-          </p>
-        </div>
-      </div>
-
-      {/* Band 2 — join line: subscribe or sign in, centered, darker kraft. */}
-      <div className="border-b border-border bg-surface-raised">
-        <div className="max-w-xl mx-auto px-5 py-10 md:py-14">
-          <JoinTwoWays />
-        </div>
-      </div>
-
-      {/* Band B (Option 1 of the magazine-home redesign discussion) — Featured story + 3
-          Latest on the left, a Feed teaser with the shared significance badge on the
-          right. Text-first on purpose, no cover image — matches the approved mockup's
-          restraint (Critique Gate) rather than the old square-image treatment. */}
-      {featured && (
-        <div className="border-b border-border bg-bg">
-          <div className="max-w-5xl mx-auto px-5 pt-12 md:pt-16">
-            <RaceSnapshotPanel lastRace={lastRaceSnapshot} nextRace={nextRaceSnapshot} />
+      {/* Hero — mesh-glow wash, generous vertical rhythm, masthead + join CTAs */}
+      <div className="relative overflow-hidden border-b border-border-subtle">
+        <div className="mesh-glow absolute inset-0 pointer-events-none" aria-hidden />
+        <div className="relative max-w-5xl mx-auto px-5 pt-20 pb-14 md:pt-28 md:pb-20">
+          <div className="max-w-2xl">
+            <h1
+              className="font-sans font-bold text-text-1 mb-5"
+              style={{ fontSize: 'clamp(2.25rem, 5.5vw, 4rem)', letterSpacing: '-0.03em', lineHeight: 1.02 }}
+            >
+              {t('headline')}
+            </h1>
+            <p className="font-sans text-text-2 text-lg leading-relaxed max-w-[52ch]">
+              {t('description')}
+            </p>
           </div>
-          <div className="max-w-5xl mx-auto px-5 pb-12 md:pb-16 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
-            <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-2 mb-2">
-                {t('featuredKicker')}
-              </p>
-              <h2 className="font-display text-text-1 tracking-[-0.02em] leading-[1.02] text-2xl md:text-[1.75rem] mb-3">
-                <Link href={`/${featured.slug}`} className="hover:text-terracotta transition-colors duration-150">
-                  {featured.title as string}
-                </Link>
-              </h2>
-              {featured.meta_description && (
-                <p className="font-prose text-sm text-text-2 leading-relaxed max-w-[48ch] mb-8">
-                  {featured.meta_description as string}
+          <div className="mt-12 max-w-2xl">
+            <JoinTwoWays />
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-5xl mx-auto px-5 py-14 md:py-20">
+        {/* Hero bento — Featured story (large tile) + Feed teaser + Race snapshot,
+            asymmetric spans so the featured story is unmistakably the one thing to
+            read first, not a grid cell identical to its neighbors. */}
+        {featured && (
+          <div className="grid grid-cols-1 lg:grid-cols-4 lg:grid-rows-2 gap-4 mb-4" style={{ gridAutoRows: '1fr' }}>
+            <Link
+              href={`/${featured.slug}`}
+              className="glass-panel glass-panel-interactive relative overflow-hidden p-8 md:p-10 flex flex-col justify-between lg:col-span-2 lg:row-span-2"
+            >
+              <div className="mesh-glow absolute inset-0 pointer-events-none opacity-60" aria-hidden />
+              <div className="relative">
+                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent mb-4">
+                  {t('featuredKicker')}
                 </p>
-              )}
-              {recent.length > 0 && (
-                <>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-2 mb-1">
-                    {t('recent')}
+                <h2
+                  className="font-sans font-bold text-text-1 tracking-[-0.02em] leading-[1.05] mb-4"
+                  style={{ fontSize: 'clamp(1.5rem, 3vw, 2.25rem)' }}
+                >
+                  {featured.title as string}
+                </h2>
+                {featured.meta_description && (
+                  <p className="font-sans text-text-2 leading-relaxed max-w-[52ch]">
+                    {featured.meta_description as string}
                   </p>
-                  <div className="flex flex-col divide-y divide-border-subtle border-t border-b border-border-subtle">
-                    {recent.slice(0, 3).map((a) => (
-                      <Link key={a.slug} href={`/${a.slug}`} className="group py-3 flex flex-col gap-1">
-                        <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-3">
-                          {new Date(a.published_at as string).toLocaleDateString(locale === 'pt' ? 'pt-BR' : locale, {
-                            month: 'short',
-                            day: 'numeric',
-                          })}
-                        </span>
-                        <span className="font-prose font-semibold text-text-1 group-hover:text-terracotta transition-colors duration-150 line-clamp-2">
-                          {a.title as string}
-                        </span>
-                      </Link>
+                )}
+              </div>
+              <div className="relative mt-10 flex items-end justify-between gap-6">
+                {featuredStat ? (
+                  <div>
+                    <p className="font-sans font-bold tabular-nums leading-none tracking-[-0.02em] text-accent" style={{ fontSize: 'clamp(2.25rem, 5vw, 3.5rem)' }}>
+                      {featuredStat.value}
+                    </p>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-2 mt-2">
+                      {featuredStat.label}
+                    </p>
+                  </div>
+                ) : (
+                  <div />
+                )}
+                {recent.length > 0 && (
+                  <div className="hidden sm:flex flex-col gap-1.5 text-right">
+                    <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-3">{t('recent')}</p>
+                    {recent.slice(0, 2).map((a) => (
+                      <span key={a.slug} className="font-sans text-xs text-text-2 line-clamp-1 max-w-[22ch]">
+                        {a.title as string}
+                      </span>
                     ))}
                   </div>
-                </>
-              )}
-            </div>
-            <FeedTeaserPanel items={feedTeaser} scores={feedScores} title={t('feed.title')} />
-          </div>
-        </div>
-      )}
+                )}
+              </div>
+            </Link>
 
-      {/* Band C — Championship Standings, full width, with gap-to-leader. */}
-      {(standings.drivers.length > 0 || standings.constructors.length > 0) && (
-        <div className="border-b border-border bg-bg">
-          <div className="max-w-5xl mx-auto px-5">
+            <div className="glass-panel p-6 lg:col-span-2 lg:row-span-1">
+              <FeedTeaserPanel items={feedTeaser} scores={feedScores} title={t('feed.title')} />
+            </div>
+
+            {hasRaceSnapshot && (
+              <div className="glass-panel p-6 lg:col-span-2 lg:row-span-1">
+                <RaceSnapshotPanel lastRace={lastRaceSnapshot} nextRace={nextRaceSnapshot} />
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Standings — full-width tile, own internal 2-column split */}
+        {(standings.drivers.length > 0 || standings.constructors.length > 0) && (
+          <div className="mb-4">
             <StandingsPanel drivers={standings.drivers} constructors={standings.constructors} />
           </div>
-        </div>
-      )}
+        )}
 
-      <div className="max-w-5xl mx-auto px-5">
         {tag && (
-          <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 mt-10 flex items-center gap-3">
+          <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 mt-6 mb-6 flex items-center gap-3">
             <span>
-              {t('filter.label')} <span className="text-terracotta">{tagLabel}</span>
+              {t('filter.label')} <span className="text-accent">{tagLabel}</span>
             </span>
             <a
               href={basePath}
@@ -284,24 +285,25 @@ export default async function MagazineHomePage({
           </p>
         )}
 
-        {/* Attention this week — fastest riser / most covered / biggest
-            fall / dominant theme, each independently gated by sample size
+        {/* Attention this week — own tile, each row independently gated by sample size
             (see getAttentionThisWeek() in ./data.ts) */}
-        <AttentionThisWeekPanel attention={attention} />
+        <div className="mb-4">
+          <AttentionThisWeekPanel attention={attention} />
+        </div>
 
-        {/* Newsletter invite */}
+        {/* Newsletter invite — full-width, its own mesh-glow moment */}
         {isFrontPage && <NewsletterCard />}
 
         {/* The Data Desk — pure-data articles, section only renders once tagged content exists */}
         {dataDeskArticles.length > 0 && (
-          <section className="py-10 md:py-14 border-t border-border">
+          <section className="py-10 md:py-14">
             <h2
-              className="font-display uppercase text-text-1 tracking-[-0.02em] mb-6"
-              style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}
+              className="font-sans font-semibold text-text-1 tracking-[-0.01em] mb-6"
+              style={{ fontSize: 'clamp(1.35rem, 2.6vw, 1.75rem)' }}
             >
               {t('dataDesk.title')}
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {dataDeskArticles.map((a) => (
                 <ArticleCard key={a.slug} a={a} locale={locale} />
               ))}
@@ -309,28 +311,28 @@ export default async function MagazineHomePage({
           </section>
         )}
 
-        {/* Band D (Option 1 of the magazine-home redesign discussion) — Latest Issue
-            summary, F1 News (the Feed teaser's second slice), and Learning F1, three
-            module-grid tiles in one band. Any column can be independently empty; the
-            whole band hides only if all three are. */}
+        {/* Latest Issue / F1 News / Learning — three equal bento tiles. Any can be
+            independently empty; the whole row hides only if all three are. */}
         {(() => {
           if (!latestIssue && f1News.length === 0 && learningTerms.length === 0) return null;
 
           return (
-            <div className="border-t border-border py-10 md:py-14">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-12">
-                {latestIssue && <LatestIssuePanel issue={latestIssue} />}
-                {f1News.length > 0 && (
-                  <div className={latestIssue ? 'lg:border-l lg:border-border-subtle lg:pl-12' : ''}>
-                    <FeedTeaserPanel items={f1News} scores={feedScores} title={t('f1News.title')} showBadge={false} />
-                  </div>
-                )}
-                {learningTerms.length > 0 && (
-                  <div className={latestIssue || f1News.length > 0 ? 'lg:border-l lg:border-border-subtle lg:pl-12' : ''}>
-                    <LearningPanel terms={learningTerms} compact />
-                  </div>
-                )}
-              </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 py-6">
+              {latestIssue && (
+                <div className="glass-panel glass-panel-interactive p-6">
+                  <LatestIssuePanel issue={latestIssue} />
+                </div>
+              )}
+              {f1News.length > 0 && (
+                <div className="glass-panel p-6">
+                  <FeedTeaserPanel items={f1News} scores={feedScores} title={t('f1News.title')} showBadge={false} />
+                </div>
+              )}
+              {learningTerms.length > 0 && (
+                <div className="glass-panel glass-panel-interactive p-6">
+                  <LearningPanel terms={learningTerms} compact />
+                </div>
+              )}
             </div>
           );
         })()}
@@ -342,7 +344,7 @@ export default async function MagazineHomePage({
               {t('noArticles')}
             </p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {archiveArticles.map((a) => (
                 <ArticleCard key={a.slug as string} a={a} locale={locale} />
               ))}
@@ -350,7 +352,7 @@ export default async function MagazineHomePage({
           )}
 
           {totalPages > 1 && (
-            <nav className="flex items-center justify-between mt-10 pt-5 border-t border-border">
+            <nav className="flex items-center justify-between mt-10 pt-5 border-t border-border-subtle">
               {page > 1 ? (
                 <a
                   href={pageHref(page - 1)}
@@ -383,17 +385,14 @@ export default async function MagazineHomePage({
         </div>
       </div>
 
-      {/* Cross-promo: Weekly Digest / The Book — Hub already got its CTA in the standings section above */}
-      <div className="max-w-5xl mx-auto px-5 py-12 md:py-16 border-t border-border">
-        <div className="grid grid-cols-1 md:grid-cols-2 divide-y divide-border-subtle md:divide-y-0 md:divide-x">
-          <a
-            href={locale === 'en' ? '/weekly' : `/${locale}/weekly`}
-            className="group py-5 first:pt-0 md:py-0 md:pr-8 md:first:pl-0"
-          >
-            <h2 className="font-prose font-semibold text-text-1 group-hover:text-terracotta transition-colors duration-150">
+      {/* Cross-promo: Weekly Digest / The Book */}
+      <div className="max-w-5xl mx-auto px-5 pb-16 md:pb-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <a href={locale === 'en' ? '/weekly' : `/${locale}/weekly`} className="glass-panel glass-panel-interactive group p-6">
+            <h2 className="font-sans font-semibold text-text-1 group-hover:text-accent transition-colors duration-150">
               {t('promo.digest')}
             </h2>
-            <p className="font-prose text-sm text-text-2 leading-relaxed mt-2">
+            <p className="font-sans text-sm text-text-2 leading-relaxed mt-2">
               {t('promo.digestDescription')}
             </p>
             <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 mt-4">
@@ -401,9 +400,9 @@ export default async function MagazineHomePage({
             </p>
           </a>
 
-          <div className="py-5 pb-0 md:py-0 md:pl-8 opacity-50">
-            <h2 className="font-prose font-semibold text-text-1">{t('promo.book')}</h2>
-            <p className="font-prose text-sm text-text-2 leading-relaxed mt-2">
+          <div className="glass-panel p-6 opacity-50">
+            <h2 className="font-sans font-semibold text-text-1">{t('promo.book')}</h2>
+            <p className="font-sans text-sm text-text-2 leading-relaxed mt-2">
               {t('promo.bookDescription')}
             </p>
           </div>

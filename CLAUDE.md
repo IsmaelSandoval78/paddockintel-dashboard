@@ -134,7 +134,7 @@ All data lives in Supabase. Never use mock data — always query real tables.
 
 `DESIGN.md` is the single source of truth for all visual tokens (colors, typography, spacing, motion). Do not duplicate values here — they drift out of sync. Read `DESIGN.md` before touching any styling.
 
-**Current system: DESIGN.md v3.0.0 "Vintage Editorial"** — one unified visual language across Hub, Circuits, Drivers, Constructors, Blog, Digest, and Book (no more per-surface "modes"). Kraft-paper substrate, terracotta accent, `--radius-sm`/`--radius-md` (no longer zero-radius). Decided 2026-08-24, applied to `globals.css` (confirmed: `--bg: #EDE3D0`, `--terracotta: #C1502E`, `--radius-sm`/`--radius-md` all present). Full design history (Swiss Industrial Print, Data Mode, Story Mode — all superseded) lives in `docs/archive/CONCEPT-V2.md` §13; this file does not restate it.
+**Current system: DESIGN.md v4.0.0 "Hypermodern"** — near-black substrate, indigo-violet accent (`--accent`, `#6366F1`), glass/backdrop-blur panels, gradient-mesh washes, bento-grid layouts, `--radius-sm`/`--radius-md`/`--radius-lg` at 8/14/20px. Decided 2026-09-21 (founder product decision, explicitly supersedes v3.0.0 "Vintage Editorial"'s light-substrate/no-glassmorphism rules — see DESIGN.md's own header note). Applied in full to `globals.css` tokens (cascades site-wide) and to `magazine-home` as the flagship bespoke implementation; Hub/Circuits/Drivers/Constructors/article surfaces inherit the new tokens automatically but haven't had their own bento/glass layout pass yet — see DESIGN.md's "Rollout status" note before assuming a given page has been fully migrated. Full design history (Swiss Industrial Print, Data Mode, Story Mode, Vintage Editorial — all superseded) lives in `docs/archive/CONCEPT-V2.md` §13 and in DESIGN.md's own header; this file does not restate it.
 
 - Tailwind v4 utility classes only — no inline styles, no CSS modules unless absolutely necessary
 - Use CSS variables from `globals.css` — never hardcode hex values that exist as tokens
@@ -170,7 +170,7 @@ All data lives in Supabase. Never use mock data — always query real tables.
 - Generated client-side as canvas/PNG
 - Always include paddockintel.com watermark + logo
 - Aspect ratios: 1:1 (Instagram), 9:16 (Stories/TikTok), 16:9 (X/Twitter)
-- Light background always — never a dark scorecard, matches the live site's light-substrate identity. **Open question, not yet decided:** whether that means the old Blueprint `#F4F4F0` (kept deliberately cold/distinct from the site) or the new kraft-paper `--bg: #EDE3D0` from DESIGN.md v3.0.0 (visual consistency with the live site) — this is the same undecided question DESIGN.md flags under "Motion pieces (Remotion)". Do not resolve it without asking; flag it if you touch scorecard generation before it's decided.
+- Light background always — never a dark scorecard. This predates DESIGN.md v4.0.0's dark hypermodern substrate and was never revisited when that system shipped (2026-09-21). **Open question, sharper now than before, still not decided:** with the live site itself now dark, "light scorecard" is no longer "matches the live site" — it's a deliberate departure. Whether scorecards should follow the site dark for consistency, or stay light on purpose (the old Blueprint `#F4F4F0` reasoning: a deliberately distinct "measurement tool" register), is unresolved — see DESIGN.md's "Open questions carried forward". Do not resolve it without asking; flag it if you touch scorecard generation before it's decided.
 
 ---
 
@@ -205,7 +205,7 @@ Minimum to ship: **4 on all five**. If any score < 4, iterate before moving on.
 - Do not invent circuit records, lap times, or historical data — query Supabase
 - Do not use inline styles or hardcoded hex values — use CSS variables from globals.css
 - Do not reintroduce Leaflet or a 3D globe — the map is a flat SVG using a d3-geo Natural Earth projection
-- Do not use `rounded-3xl`, gradients, glassmorphism, or shadows on data surfaces — shape is `--radius-sm`/`--radius-md` only per DESIGN.md v3.0.0 (Vintage Editorial), not zero-radius anymore; illustrated circular containers (`rounded-full`) are the one deliberate exception, not a UI card pattern
+- Do not use `rounded-3xl` or hard drop-shadows on data surfaces — shape is `--radius-sm`/`--radius-md`/`--radius-lg` (8/14/20px) per DESIGN.md v4.0.0 (Hypermodern); illustrated circular containers (`rounded-full`) stay available for avatars/badges. **This bullet is the inverse of the old v3.0.0 rule** — gradients, glassmorphism (`.glass-panel`, `backdrop-blur`), and gradient-mesh washes (`.mesh-glow`) are now the system's signature elements, not banned. The one real ban carried forward: no glass panel nested inside another glass panel (reads as mud) — one layer of glass per visual depth level. Gradient *text* (`background-clip: text` on a gradient) stays banned regardless of system version; that's a general anti-slop rule, not a DESIGN.md version rule.
 - Two-tone pie/donut breakdowns are allowed (max 3 segments) per DESIGN.md v3.0.0 — prefer ranked lists otherwise
 ## Skills
 Before starting any task, read `.claude/skills/paddockintel/SKILL.md` (loaded automatically as the

@@ -8,86 +8,92 @@
   --breakpoint-xl:  1280px;
   --breakpoint-2xl: 1536px;
 
-  /* Shape — Vintage Editorial (DESIGN.md v3.0.0). Defined in @theme (not :root) so Tailwind's
-     rounded-sm/rounded-md utilities pick these up directly, in addition to being usable as
-     var(--radius-sm)/var(--radius-md) anywhere else. */
-  --radius-sm: 2px;
-  --radius-md: 4px;
+  /* Shape — Hypermodern (DESIGN.md v4.0.0). Defined in @theme (not :root) so Tailwind's
+     rounded-sm/rounded-md/rounded-lg utilities pick these up directly, in addition to
+     being usable as var(--radius-sm)/var(--radius-md)/var(--radius-lg) anywhere else. */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
 }
 
 :root {
-  /* Backgrounds — Vintage Editorial kraft paper substrate (DESIGN.md v3.0.0) */
-  --bg:              #EDE3D0;
-  --surface:         #EDE3D0;
-  --surface-raised:  #E4D9C2;
-  --surface-overlay: #E4D9C2;
+  /* Backgrounds — Hypermodern near-black substrate (DESIGN.md v4.0.0) */
+  --bg:              #08090C;
+  --surface:         #0D0F13;
+  --surface-raised:  #14161B;
+  --surface-overlay: #14161B;
 
-  /* Borders — ink weight */
-  --border:          #2B2620;
-  --border-subtle:   #C9BC9F;
+  /* Glass — the signature surface of this system. See DESIGN.md "Glass & blur". */
+  --glass-bg:        rgba(255, 255, 255, 0.03);
+  --glass-border:    rgba(255, 255, 255, 0.09);
+  --glass-blur:      20px;
 
-  /* Text — ink hierarchy */
-  --text-1:          #2B2620;
-  --text-2:          #6B5F4E;
-  /* Was #A69A82 (2.18:1 on --bg — fails WCAG AA even at the 3:1 large-text
-     bar). Darkened to the lightest tone that clears 4.5:1 on this kraft
-     background (4.57:1) — there's very little room between "passes AA" and
-     --text-2 itself on this substrate, so the tertiary tier now reads close
-     to secondary. Reserve --text-3 for genuinely decorative/non-essential
-     marks; anything conveying real information belongs on --text-2. */
-  --text-3:          #716444;
+  /* Borders */
+  --border:          rgba(255, 255, 255, 0.10);
+  --border-subtle:   rgba(255, 255, 255, 0.06);
 
-  /* Accent — terracotta (DESIGN.md v3.0.0, replaces racing red) */
-  --terracotta:      #C1502E;
-  --terracotta-dim:  #F2DDD3;
-  --navy:            #2B3A4A;
+  /* Text — near-white hierarchy */
+  --text-1:          #F5F6F7;
+  --text-2:          #9AA1AC;
+  --text-3:          #5C6370;
+
+  /* Accent — indigo-violet (DESIGN.md v4.0.0, replaces terracotta as the single primary
+     accent). NEVER a large flat fill. */
+  --accent:          #6366F1;
+  --accent-dim:      rgba(99, 102, 241, 0.14);
+  --accent-2:        #22D3EE;
+
+  /* --terracotta/--terracotta-dim: compatibility alias, not a separate color. ~100 files
+     across Hub/Circuits/Drivers/Constructors/scorecards still reference the old name —
+     out of scope for this pass (DESIGN.md + magazine-home only). They inherit the new
+     accent automatically through this alias; the name-level rename is tracked follow-up
+     work. New v4.0.0 code uses --accent directly. See DESIGN.md's migration note. */
+  --terracotta:      var(--accent);
+  --terracotta-dim:  var(--accent-dim);
+
+  --navy:            #1B2333;   /* legacy name, value updated for the dark palette */
   --mustard:         #D9A441;
-  --gold:            #C9A84C;
-  --gold-dim:        #F5E8CC;
-  --text-on-accent:  #FAFAF7;
+  --gold:            #E8C468;
+  --gold-dim:        rgba(232, 196, 104, 0.14);
+  --text-on-accent:  #FAFAFA;
 
-  /* On-accent text/border — for content sitting inside a dark/navy panel (e.g. a stat band
-     on --navy), where the light-substrate --text-1/--text-2/--border-subtle tokens don't
-     have enough contrast. Both derive from --text-on-accent (near-white) blended toward
-     --navy, NOT from --text-2 — blending two already-dark tones together stays dark no
-     matter the ratio (a --text-2-over-navy attempt measured 1.44:1 contrast, effectively
-     illegible). Starting from a light color and reducing it is the only way to land in a
-     legible range. 2026-08-24. */
-  --border-on-accent:  #7E878F;  /* text-on-accent @ 40% over navy — contrast 3.18:1 */
-  --text-2-on-accent:  #A7ADB2;  /* text-on-accent @ 60% over navy — contrast 5.13:1, passes WCAG AA */
+  /* On-accent text/border — for content sitting on a solid --accent fill (a filled CTA
+     button, mainly — the accent almost never fills a whole panel in this system). */
+  --border-on-accent:  rgba(250, 250, 250, 0.35);
+  --text-2-on-accent:  rgba(250, 250, 250, 0.7);
 
   /* Semantic */
-  --green:           #22C55E;
-  --green-dim:       #E8F5EE;
+  --green:           #34D399;
+  --green-dim:       rgba(52, 211, 153, 0.14);
 
-  /* Constructor colors — darkened for light substrate */
-  --team-mercedes:   #00A99D;
-  --team-mclaren:    #E57700;
-  --team-redbull:    #2A5DB0;
-  --team-ferrari:    #D40000;
-  --team-alpine:     #C04080;
-  --team-aston:      #2D7A65;
-  --team-haas:       #6A6E70;
-  --team-williams:   #2A7CB0;
-  --team-sauber:     #259825;
-  --team-rb:         #3A5EC4;
+  /* Constructor colors — brightened for the dark substrate (v3.0.0's were darkened for a
+     light one; the same hues now need to hold up against near-black instead) */
+  --team-mercedes:   #1FD6C4;
+  --team-mclaren:    #FF8C1A;
+  --team-redbull:    #4A7FE0;
+  --team-ferrari:    #FF3333;
+  --team-alpine:     #E85CA8;
+  --team-aston:      #3FA98A;
+  --team-haas:       #9CA1A6;
+  --team-williams:   #4FA6E0;
+  --team-sauber:     #4ADE4A;
+  --team-rb:         #6B8FE8;
 
-  /* Data-viz accent (Delta Ribbon, track dominance lines) — reserved, never a CTA.
-     Out of scope for the v3.0.0 token pass — revisit with Circuits/Delta Ribbon specifically. */
-  --teal:            #0E9488;
+  /* Data-viz accent (Delta Ribbon, track dominance lines) — reserved, never a CTA. */
+  --teal:            #22D3EE;
 
-  /* Motion */
+  /* Motion — snappier than v3.0.0; Linear-style interactions read as instant. */
   --ease:            cubic-bezier(0.16, 1, 0.3, 1);
-  --fast:            100ms;
-  --base:            150ms;
+  --instant:         80ms;
+  --fast:            120ms;
+  --base:            180ms;
 }
 
-/* Data Mode's dark navy override (DESIGN.md v2.0.0, [data-mode="data"]) was reverted
-   2026-08-23 — the user decided against the dark redesign, Hub/Digest go back to the single
-   light system above. The [data-mode="data"]/[data-mode="story"] attribute set on <html> by
-   lib/siteMode.ts is now inert (both resolve to the same :root palette) — left in place since
-   it's harmless, not deleted, in case a non-dark distinct Data Mode register is revisited
-   later. See docs/archive/CONCEPT-V2.md §13 and DESIGN.md for the full note. */
+/* Data Mode's dark navy override (DESIGN.md v2.0.0, [data-mode="data"]) predates this
+   system and is unrelated to it — the [data-mode="data"]/[data-mode="story"] attribute
+   set on <html> by lib/siteMode.ts is still inert (resolves to the same :root palette as
+   everything else). Left in place, not deleted. See docs/archive/CONCEPT-V2.md §13 and
+   DESIGN.md for the full lineage. */
 
 @theme inline {
   /* Colors */
@@ -100,6 +106,9 @@
   --color-text-1:          var(--text-1);
   --color-text-2:          var(--text-2);
   --color-text-3:          var(--text-3);
+  --color-accent:          var(--accent);
+  --color-accent-dim:      var(--accent-dim);
+  --color-accent-2:        var(--accent-2);
   --color-terracotta:      var(--terracotta);
   --color-terracotta-dim:  var(--terracotta-dim);
   --color-navy:            var(--navy);
@@ -112,13 +121,15 @@
   --color-green:           var(--green);
   --color-green-dim:       var(--green-dim);
   --color-teal:            var(--teal);
+  --color-glass-bg:        var(--glass-bg);
+  --color-glass-border:    var(--glass-border);
 
   /* Fonts — variables injected by next/font on <html> */
-  --font-display: var(--pi-display);  /* Archivo Black — kinetic display */
+  --font-display: var(--pi-display);  /* Archivo Black — legacy display, un-migrated surfaces only */
   --font-serif: var(--pi-serif);
-  --font-sans:  var(--pi-sans);
+  --font-sans:  var(--pi-sans);       /* Inter — v4.0.0's single UI/display family */
   --font-mono:  var(--pi-mono);
-  --font-prose: var(--pi-prose);      /* Lora — Blog/Book long-form body text */
+  --font-prose: var(--pi-prose);      /* Lora — legacy long-form body, un-migrated surfaces only */
 }
 
 *,
@@ -345,4 +356,52 @@ body {
 }
 @media (pointer: fine) {
   .article-bg-grid { background-attachment: fixed; }
+}
+
+/* ── Hypermodern (DESIGN.md v4.0.0) — glass, mesh, bento ──────────── */
+
+/* The signature surface: separates real content from the canvas without a hard line.
+   One layer per depth level — a glass panel nested inside another reads as mud. */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+}
+
+/* Interactive variant — every hoverable bento tile gets this, not a bespoke hover per
+   component. Border brightens toward the accent, a 2px lift, no scale (scale reads as a
+   button, not a content tile). Instant/no-bounce, per DESIGN.md's motion rules. */
+.glass-panel-interactive {
+  transition:
+    border-color var(--fast) var(--ease),
+    background-color var(--fast) var(--ease),
+    transform var(--fast) var(--ease);
+}
+.glass-panel-interactive:hover,
+.glass-panel-interactive:focus-visible {
+  border-color: rgba(99, 102, 241, 0.35);
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-2px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .glass-panel-interactive { transition: border-color var(--instant) linear, background-color var(--instant) linear; }
+  .glass-panel-interactive:hover,
+  .glass-panel-interactive:focus-visible { transform: none; }
+}
+
+/* Soft radial gradient wash — the Stripe-dashboard hero signature. Behind glass panels or
+   on empty canvas only, never directly behind body text. */
+.mesh-glow {
+  background:
+    radial-gradient(ellipse 800px 500px at 20% -10%, rgba(99, 102, 241, 0.18), transparent 60%),
+    radial-gradient(ellipse 600px 400px at 100% 0%, rgba(34, 211, 238, 0.12), transparent 55%);
+}
+
+/* Breakpoint-free bento base — explicit col-span/row-span on individual tiles (Tailwind
+   utility classes) carries the asymmetry; this just sets the fitted column count. */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }

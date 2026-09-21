@@ -38,10 +38,10 @@ export default function ArticlePreviewCard({
   const tagHref = `${locale === 'en' ? '/' : `/${locale}/`}?tag=${encodeURIComponent(tag?.slug ?? '')}`;
 
   return (
-    <article className="border border-border p-6 flex flex-col h-full">
+    <article className="glass-panel glass-panel-interactive p-6 flex flex-col h-full">
       <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-text-2 mb-3">
         {tag && (
-          <a href={tagHref} className="hover:text-terracotta transition-colors duration-150">
+          <a href={tagHref} className="hover:text-accent transition-colors duration-150">
             {tag.label.toUpperCase()}
           </a>
         )}
@@ -50,31 +50,24 @@ export default function ArticlePreviewCard({
       </p>
 
       <Link href={`/${slug}`} className="group flex-1">
-        <h2
-          className="uppercase text-text-1 leading-[0.95] tracking-[-0.02em] group-hover:text-terracotta transition-colors duration-150"
-          style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.4rem, 3.5vw, 2rem)' }}
-        >
+        <h2 className="font-sans font-semibold text-text-1 leading-[1.15] tracking-[-0.01em] group-hover:text-accent transition-colors duration-150 text-xl md:text-[1.375rem]">
           {title}
         </h2>
         {metaDescription && (
-          <p className="font-prose text-sm text-text-2 leading-relaxed mt-3 line-clamp-2">
+          <p className="font-sans text-sm text-text-2 leading-relaxed mt-3 line-clamp-2">
             {metaDescription}
           </p>
         )}
       </Link>
 
       <div className="flex items-end justify-between gap-4 mt-6 pt-4 border-t border-border-subtle">
-        {/* Deliberately smaller than the Featured card's hero-number scale:
+        {/* Deliberately smaller than the Featured tile's hero-number scale:
             this renders identically on every archive-grid card, so it reads
             as a compact data point (a fact worth noting), not a repeated
-            hero moment. The true hero-number treatment stays reserved for
-            FeaturedArticleCard. */}
+            hero moment. */}
         {featuredStat ? (
           <div>
-            <p
-              className="tabular-nums leading-none tracking-[-0.02em] text-terracotta"
-              style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.1rem, 1.8vw, 1.35rem)' }}
-            >
+            <p className="font-sans font-bold tabular-nums leading-none tracking-[-0.02em] text-accent text-xl md:text-2xl">
               {featuredStat.value}
             </p>
             <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-2 mt-1">

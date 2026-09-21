@@ -9,32 +9,32 @@ export default async function LearningPanel({
   compact = false,
 }: {
   terms: LearningTerm[];
-  /** Module-grid tile rendering — no outer section border/padding (the
-   * page-level row supplies those) and a fixed-size heading. */
+  /** Bento-tile rendering — no outer glass panel/padding (the parent tile
+   * supplies those) and a fixed-size heading. */
   compact?: boolean;
 }) {
   if (terms.length === 0) return null;
   const t = await getTranslations('magazine.learning');
 
   const heading = (
-    <h2 className={`font-display uppercase text-text-1 tracking-[-0.02em] mb-6 ${compact ? 'text-2xl' : ''}`} style={compact ? undefined : { fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}>
+    <h2 className={`font-sans font-semibold text-text-1 tracking-[-0.01em] mb-6 ${compact ? 'text-lg' : ''}`} style={compact ? undefined : { fontSize: 'clamp(1.35rem, 2.6vw, 1.75rem)' }}>
       {t('title')}
     </h2>
   );
 
   const body = (
     <>
-      <div className="flex flex-col divide-y divide-border-subtle border-t border-b border-border-subtle">
+      <div className="flex flex-col divide-y divide-border-subtle">
         {terms.map((term) => (
           <Link
             key={term.slug}
             href={`/glossary/${term.slug}`}
             className="group py-4 flex flex-col gap-1"
           >
-            <span className="font-prose font-semibold text-text-1 group-hover:text-terracotta transition-colors duration-150">
+            <span className="font-sans font-semibold text-text-1 group-hover:text-accent transition-colors duration-150">
               {term.term}
             </span>
-            <span className="font-prose text-sm text-text-2 leading-relaxed line-clamp-2">
+            <span className="font-sans text-sm text-text-2 leading-relaxed line-clamp-2">
               {term.short_definition}
             </span>
           </Link>
@@ -42,7 +42,7 @@ export default async function LearningPanel({
       </div>
       <Link
         href="/glossary"
-        className="inline-block font-mono text-[11px] uppercase tracking-[0.08em] text-text-2 hover:text-terracotta transition-colors duration-150 mt-5"
+        className="inline-block font-mono text-[11px] uppercase tracking-[0.08em] text-text-2 hover:text-accent transition-colors duration-150 mt-5"
       >
         {t('seeAll')} →
       </Link>
@@ -51,7 +51,7 @@ export default async function LearningPanel({
 
   if (compact) {
     return (
-      <div>
+      <div className="h-full flex flex-col">
         {heading}
         {body}
       </div>
@@ -59,7 +59,7 @@ export default async function LearningPanel({
   }
 
   return (
-    <section className="py-10 md:py-14 border-t border-border">
+    <section className="glass-panel p-8">
       {heading}
       {body}
     </section>
