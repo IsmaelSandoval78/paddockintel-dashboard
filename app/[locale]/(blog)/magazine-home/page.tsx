@@ -233,7 +233,7 @@ export default async function MagazineHomePage({
         {featured && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
             <div className="soft-card-lg soft-card-interactive lg:col-span-2 p-7 md:p-9 grid grid-cols-1 sm:grid-cols-[1.3fr_1fr] gap-6">
-              <Link href={`/${featured.slug}`} className="flex flex-col justify-between min-w-0">
+              <Link href={`/${featured.slug}`} className="flex flex-col justify-center min-w-0">
                 <div>
                   <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent mb-3">
                     {t('featuredKicker')}
@@ -260,14 +260,14 @@ export default async function MagazineHomePage({
               </Link>
 
               {recent.length > 0 && (
-                <div className="sm:border-l sm:border-border-subtle sm:pl-6 flex flex-col min-w-0">
+                <div className="sm:border-l sm:border-border-subtle sm:pl-6 flex flex-col justify-center min-w-0">
                   <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-3 mb-1">{t('recent')}</p>
                   <div className="flex flex-col divide-y divide-border-subtle">
-                    {recent.slice(0, 3).map((a) => (
+                    {recent.slice(0, 5).map((a) => (
                       <Link
                         key={a.slug}
                         href={`/${a.slug}`}
-                        className="py-2.5 font-sans text-sm font-semibold text-text-1 hover:text-accent transition-colors duration-150 line-clamp-2"
+                        className="py-3 font-sans text-sm font-semibold text-text-1 hover:text-accent transition-colors duration-150 line-clamp-2"
                       >
                         {a.title as string}
                       </Link>
