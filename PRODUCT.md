@@ -21,7 +21,7 @@ The hub is the only light-substrate F1 property. Where competitors go dark and l
 ## Anti-references
 
 - **F1.com / ESPN broadcast UI**: Dark mode sports media aesthetic, saturated red, broadcast typography, hero metrics with gradient accents, heavy gradients everywhere. Anything that looks like a live timing screen or a TV lower-third.
-- **SaaS dashboard (cold)**: Inter on everything, blue-grey palette, identical card grids with icon + heading + body, metric tiles, no editorial voice. Feels like it was designed by committee.
+- **SaaS dashboard (cold)**: blue-grey palette, identical card grids with icon + heading + body, metric tiles, no editorial voice. Feels like it was designed by committee. **Note (2026-09-21, DESIGN.md v5.0.0):** Inter is now this system's own UI/body font too — the "Inter on everything" half of this anti-reference is retired; what's still banned is the *cold, blue-grey, no-voice* execution, not the typeface. The warmth (cream substrate, teal+orange, a hero number and an editorial kicker on every tile) is what keeps this from reading as generic dashboard.
 - **Pitwall / Ergast data dump**: Raw data with no hierarchy, dense tables without curation, UX that prioritises completeness over experience. A tool for engineers, not fans.
 - **Awwwards agency experimental**: Effects for effects' sake, illegible data under layers of motion, scroll-hijacks that obscure rather than reveal. Motion without informational purpose does not ship here.
 
@@ -29,14 +29,14 @@ The hub is the only light-substrate F1 property. Where competitors go dark and l
 
 1. **Motion maps to meaning** — Every animation references an F1 concept (lights out, flying lap, gap closing, g-force). If you cannot name the F1 reference, cut the animation.
 2. **Editorial, not dashboard** — Data surfaces earn their place by telling a story. A standings table is not a table; it is a chapter. Hierarchy and restraint over completeness.
-3. **Light is the differentiator** — A warm light substrate is a deliberate brand position — currently kraft paper `#EDE3D0` under DESIGN.md v3.0.0 "Vintage Editorial" (was `#F4F4F0` under the earlier v0.3.0 system; see `DESIGN.md` for the current token, don't hardcode either value here). Dark mode is not offered. The spectacle is motion and typography, not darkness.
+3. **Light is the differentiator** — A warm light substrate is a deliberate brand position — currently warm cream `#EDE7E3` under DESIGN.md v5.0.0 "Warm Studio" (was kraft paper `#EDE3D0` under v3.0.0, `#F4F4F0` under the earlier v0.3.0 system; see `DESIGN.md` for the current token, don't hardcode any of these values here). Dark mode is not offered — confirmed a second time on 2026-09-21, after a dark "Hypermodern" direction was built out fully in a PR and closed without merging in favor of staying light. The spectacle is motion and typography, not darkness.
 4. **Specificity over genericism** — Unmistakably F1. Circuit coordinates in JetBrains Mono, team colors darkened for the light substrate, lap times parsed carefully. Nothing interchangeable with another sport.
 5. **Restraint compounds** — Every element earns its place. Nothing decorative. The aggregate of invisible correctness creates interfaces people trust without knowing why.
 
 ## Accessibility & Inclusion
 
 Target: WCAG AA minimum.
-- Body text contrast ≥ 4.5:1 against `--bg` (`#F4F4F0`)
+- Body text contrast ≥ 4.5:1 against `--bg` (currently `#EDE7E3` under DESIGN.md v5.0.0 — verify against the live token, this file doesn't restate it to avoid drift)
 - Large text ≥ 3:1
 - Keyboard navigation complete across all interactive surfaces
 - `prefers-reduced-motion`: GSAP teardown via `matchMedia`, static fallback renders a complete, usable page — no blank sections, no hidden content

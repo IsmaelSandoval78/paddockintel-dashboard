@@ -27,32 +27,28 @@ export default function NewsletterCard() {
   }
 
   return (
-    <aside className="my-10 border border-border-subtle bg-surface-raised px-6 py-6">
-      <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-text-3 mb-2">
-        {t('kicker')}
-      </p>
-      <p className="font-display text-[clamp(1rem,2.2vw,1.3rem)] uppercase text-text-1 tracking-[-0.02em] leading-tight mb-4">
+    <aside className="my-10 soft-card p-8">
+      <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent mb-2">{t('kicker')}</p>
+      <p className="font-sans font-semibold text-text-1 tracking-[-0.01em] leading-tight mb-4" style={{ fontSize: 'clamp(1.1rem, 2.2vw, 1.4rem)' }}>
         {t('headline')}
       </p>
 
       {status === 'success' ? (
-        <p className="font-mono text-[12px] text-green">
-          {t('success')}
-        </p>
+        <p className="font-mono text-[12px] text-green">{t('success')}</p>
       ) : (
-        <form onSubmit={handleSubmit} className="flex gap-0">
+        <form onSubmit={handleSubmit} className="flex gap-2 max-w-md">
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={t('placeholder')}
             required
-            className="flex-1 min-w-0 h-9 px-3 font-mono text-[12px] text-text-1 bg-bg border border-border-subtle border-r-0 placeholder:text-text-3 focus:outline-none focus:border-text-1 transition-colors duration-150"
+            className="flex-1 min-w-0 h-10 px-3.5 rounded-sm font-sans text-[13px] text-text-1 bg-surface-raised border border-border placeholder:text-text-3 focus:outline-none focus:border-accent transition-colors duration-150"
           />
           <button
             type="submit"
             disabled={status === 'loading'}
-            className="h-9 px-4 font-mono text-[11px] uppercase tracking-[0.1em] text-bg bg-text-1 border border-text-1 hover:bg-terracotta hover:border-terracotta transition-colors duration-150 disabled:opacity-50 shrink-0"
+            className="h-10 px-5 rounded-sm font-sans text-[13px] font-semibold text-text-on-accent bg-accent-2 hover:opacity-90 transition-opacity duration-150 disabled:opacity-50 shrink-0"
           >
             {status === 'loading' ? t('loading') : t('button')}
           </button>
@@ -60,7 +56,7 @@ export default function NewsletterCard() {
       )}
 
       {(status === 'error' || status === 'errorInvalid') && (
-        <p className="font-mono text-[11px] text-terracotta mt-2">
+        <p className="font-mono text-[11px] text-accent-2 mt-2">
           {status === 'errorInvalid' ? t('errorInvalid') : t('error')}
         </p>
       )}
