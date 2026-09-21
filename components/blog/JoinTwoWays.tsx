@@ -13,7 +13,7 @@ import EmailCapture from '@/components/ui/EmailCapture';
 // AuthWidget directly: that component is built as a nav dropdown trigger,
 // not an always-open inline block, and the two use sites don't share enough
 // to justify extracting a shared button yet.
-export default function JoinTwoWays({ className }: { className?: string }) {
+export default function JoinTwoWays({ className, compact }: { className?: string; compact?: boolean }) {
   const t = useTranslations('magazine.join');
   const tAuth = useTranslations('auth');
   const [status, setStatus] = useState<'idle' | 'sending' | 'error'>('idle');
@@ -29,6 +29,31 @@ export default function JoinTwoWays({ className }: { className?: string }) {
       },
     });
     if (error) setStatus('error');
+  }
+
+  // Compact mode — hero-bar placement: both join paths shrink to inline pill
+  // controls next to the headline, no cards, no legal text (still linked from
+  // the sitewide footer). The full card layout below stays the default for
+  // any other placement.
+  if (compact) {
+    return (
+      <div className={`relative flex items-center gap-2 shrink-0 ${className ?? ''}`}>
+        <EmailCapture compact />
+        <button
+          type="button"
+          onClick={handleGoogle}
+          disabled={status === 'sending'}
+          className="soft-card h-9 px-4 font-sans text-[11px] font-semibold text-text-1 hover:text-accent transition-colors duration-150 disabled:opacity-50 whitespace-nowrap"
+        >
+          {status === 'sending' ? tAuth('sending') : tAuth('google')}
+        </button>
+        {status === 'error' && (
+          <p className="absolute top-full right-0 mt-1 font-mono text-[10px] text-accent-2 whitespace-nowrap">
+            {tAuth('error')}
+          </p>
+        )}
+      </div>
+    );
   }
 
   return (

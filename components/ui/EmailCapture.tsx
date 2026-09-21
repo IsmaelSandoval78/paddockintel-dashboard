@@ -6,7 +6,7 @@ import { Link } from '@/lib/i18n/navigation';
 
 type Status = 'idle' | 'loading' | 'success' | 'error' | 'errorInvalid';
 
-export default function EmailCapture({ className }: { className?: string }) {
+export default function EmailCapture({ className, compact }: { className?: string; compact?: boolean }) {
   const locale = useLocale();
   const t = useTranslations('newsletter');
   const [email, setEmail] = useState('');
@@ -33,6 +33,35 @@ export default function EmailCapture({ className }: { className?: string }) {
       <p className={`font-mono text-[11px] uppercase tracking-[0.1em] text-text-1 ${className ?? ''}`}>
         {t('success')}
       </p>
+    );
+  }
+
+  if (compact) {
+    return (
+      <div className={`relative ${className ?? ''}`}>
+        <form onSubmit={handleSubmit} className="soft-card flex items-center h-9 pl-4 pr-1.5 gap-2">
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder={t('placeholder')}
+            required
+            className="w-28 sm:w-40 bg-transparent font-mono text-[11px] text-text-1 placeholder:text-text-3 outline-none min-w-0"
+          />
+          <button
+            type="submit"
+            disabled={status === 'loading'}
+            className="rounded-sm bg-accent text-text-on-accent px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.08em] hover:opacity-90 transition-opacity duration-150 disabled:opacity-50 shrink-0 whitespace-nowrap"
+          >
+            {status === 'loading' ? t('loading') : t('button')}
+          </button>
+        </form>
+        {(status === 'error' || status === 'errorInvalid') && (
+          <p className="absolute top-full left-0 mt-1 font-mono text-[10px] text-accent-2 whitespace-nowrap">
+            {status === 'errorInvalid' ? t('errorInvalid') : t('error')}
+          </p>
+        )}
+      </div>
     );
   }
 

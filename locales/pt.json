@@ -835,10 +835,14 @@
       "mostWins": "Mais vitórias",
       "topConstructor": "Construtor dominante",
       "lastWinners": "Últimos 5 vencedores",
+      "recentWinners": "Vencedores recentes aqui",
       "cta": "Inteligência completa do circuito no Hub"
     },
     "dataDesk": {
       "title": "O Data Desk"
+    },
+    "archive": {
+      "rest": "Mais do arquivo"
     }
   },
   "articleTags": {

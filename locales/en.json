@@ -835,10 +835,14 @@
       "mostWins": "Most wins",
       "topConstructor": "Top constructor",
       "lastWinners": "Last 5 winners",
+      "recentWinners": "Recent winners here",
       "cta": "Full circuit intelligence on the Hub"
     },
     "dataDesk": {
       "title": "The Data Desk"
+    },
+    "archive": {
+      "rest": "More from the archive"
     }
   },
   "articleTags": {

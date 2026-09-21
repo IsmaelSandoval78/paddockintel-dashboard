@@ -12,13 +12,13 @@ export default async function AttentionThisWeekPanel({ attention }: { attention:
   const t = await getTranslations('magazine.attention');
 
   return (
-    <section className="soft-card p-8">
+    <section className="soft-card p-6">
       <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-2 mb-1">{t('title')}</p>
-      <p className="font-sans text-sm text-text-2 mb-6">{t('subtitle')}</p>
+      <p className="font-sans text-xs text-text-2 mb-4">{t('subtitle')}</p>
 
       <div className="flex flex-col divide-y divide-border-subtle">
         {fastestRiser && (
-          <div className="flex items-baseline justify-between gap-6 py-4">
+          <div className="flex items-baseline justify-between gap-4 py-2.5">
             <div>
               <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-2 mb-1">{t('fastestRiser')}</p>
               <p className="font-sans font-semibold text-text-1">{fastestRiser.entity}</p>
@@ -30,7 +30,7 @@ export default async function AttentionThisWeekPanel({ attention }: { attention:
         )}
 
         {mostCovered && (
-          <div className="flex items-baseline justify-between gap-6 py-4">
+          <div className="flex items-baseline justify-between gap-4 py-2.5">
             <div>
               <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-2 mb-1">{t('mostCovered')}</p>
               <p className="font-sans font-semibold text-text-1">{mostCovered.entity}</p>
@@ -42,7 +42,7 @@ export default async function AttentionThisWeekPanel({ attention }: { attention:
         )}
 
         {biggestFall && (
-          <div className="flex items-baseline justify-between gap-6 py-4">
+          <div className="flex items-baseline justify-between gap-4 py-2.5">
             <div>
               <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-2 mb-1">{t('biggestFall')}</p>
               <p className="font-sans font-semibold text-text-1">{biggestFall.entity}</p>
@@ -54,7 +54,7 @@ export default async function AttentionThisWeekPanel({ attention }: { attention:
         )}
 
         {dominantTheme && (
-          <div className="flex items-baseline justify-between gap-6 py-4">
+          <div className="flex items-baseline justify-between gap-4 py-2.5">
             <div>
               <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-2 mb-1">{t('dominantTheme')}</p>
               <p className="font-sans font-semibold text-text-1">{dominantTheme.label}</p>
@@ -68,7 +68,7 @@ export default async function AttentionThisWeekPanel({ attention }: { attention:
 
       <Link
         href="/feed"
-        className="inline-block font-mono text-[11px] uppercase tracking-[0.08em] text-text-2 hover:text-accent transition-colors duration-150 mt-5"
+        className="inline-block font-mono text-[11px] uppercase tracking-[0.08em] text-text-2 hover:text-accent transition-colors duration-150 mt-4"
       >
         {t('seeAll')} →
       </Link>

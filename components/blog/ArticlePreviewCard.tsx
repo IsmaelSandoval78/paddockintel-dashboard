@@ -14,7 +14,7 @@ interface ArticlePreviewCardProps {
   featuredStat?: Stat;
 }
 
-function formatDate(iso: string, locale: string): string {
+export function formatDate(iso: string, locale: string): string {
   const date = new Date(`${iso.slice(0, 10)}T12:00:00`);
   return date.toLocaleDateString(locale === 'pt' ? 'pt-BR' : locale, {
     year: 'numeric',

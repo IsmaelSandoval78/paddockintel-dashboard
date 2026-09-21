@@ -5,14 +5,13 @@ import { createClient } from '@/lib/supabase/server';
 import { getArticleIdsForTagSlug, getArticleTagSlugs, type TagRef } from '@/lib/blog/tags';
 import { getBeagleEntityCounts, mergeEntityCounts } from '@/lib/beagleCounts';
 import JoinTwoWays from '@/components/blog/JoinTwoWays';
-import ArticlePreviewCard from '@/components/blog/ArticlePreviewCard';
+import ArticlePreviewCard, { formatDate } from '@/components/blog/ArticlePreviewCard';
 import NewsletterCard from '@/components/blog/NewsletterCard';
 import StandingsPanel from '@/components/blog/StandingsPanel';
 import RaceSnapshotPanel from '@/components/blog/RaceSnapshotPanel';
 import AttentionThisWeekPanel from '@/components/blog/AttentionThisWeekPanel';
 import LearningPanel from '@/components/blog/LearningPanel';
 import FeedTeaserPanel from '@/components/blog/FeedTeaserPanel';
-import LatestIssuePanel from '@/components/blog/LatestIssuePanel';
 import {
   getFeaturedAndRecent,
   getDataDeskArticles,
@@ -23,7 +22,6 @@ import {
   getCircuitOfTheDay,
   getFeedTeaser,
   getDigestEntityCounts,
-  getLatestIssueSummary,
 } from './data';
 
 export const revalidate = 3600;
@@ -91,6 +89,41 @@ function ArticleCard({ a, locale }: { a: NonNullable<Awaited<ReturnType<typeof g
   );
 }
 
+// Dense fallback for the rest of the archive, once it grows past the first few
+// cards — a text row (kicker · title · stat · date) instead of full card chrome,
+// so the section scales without turning into a wall of identical tiles.
+function ArticleListRow({ a, locale }: { a: NonNullable<Awaited<ReturnType<typeof getArticles>>['articles']>[number]; locale: string }) {
+  const stats = (a.stats as Stat[]) ?? [];
+  const stat = stats[0];
+  const tag = a.tags[0];
+  const publishedAt = a.published_at as string;
+  const date = publishedAt ? formatDate(publishedAt, locale) : '';
+  const tagHref = `${locale === 'en' ? '/' : `/${locale}/`}?tag=${encodeURIComponent(tag?.slug ?? '')}`;
+
+  return (
+    <div className="flex items-center gap-4 py-3">
+      {tag && (
+        <a
+          href={tagHref}
+          className="hidden sm:block w-36 shrink-0 font-mono text-[10px] uppercase tracking-[0.12em] text-text-2 hover:text-accent transition-colors duration-150 truncate"
+        >
+          {tag.label.toUpperCase()}
+        </a>
+      )}
+      <Link
+        href={`/${a.slug}`}
+        className="flex-1 min-w-0 font-sans text-sm font-semibold text-text-1 hover:text-accent transition-colors duration-150 truncate"
+      >
+        {a.title as string}
+      </Link>
+      {stat && (
+        <span className="shrink-0 font-mono text-xs font-bold text-accent-2 tabular-nums">{stat.value}</span>
+      )}
+      <span className="hidden md:block shrink-0 font-mono text-[10px] text-text-3">{date.toUpperCase()}</span>
+    </div>
+  );
+}
+
 export default async function MagazineHomePage({
   params,
   searchParams,
@@ -125,7 +158,6 @@ export default async function MagazineHomePage({
           getLearningTerms(locale),
           getCircuitOfTheDay(),
           getFeedTeaser(locale, 10),
-          getLatestIssueSummary(),
           getBeagleEntityCounts(createClient()),
           getDigestEntityCounts(),
         ])
@@ -142,7 +174,7 @@ export default async function MagazineHomePage({
     return qs ? `${basePath}?${qs}` : basePath;
   };
 
-  const [standings, raceHighlights, attention, dataDeskArticles, learningTerms, circuit, feedTeaserAll, latestIssue, beagleCounts, digestCounts] =
+  const [standings, raceHighlights, attention, dataDeskArticles, learningTerms, circuit, feedTeaserAll, beagleCounts, digestCounts] =
     frontPageExtras ?? [
       { drivers: [], constructors: [] },
       { raceName: '', gainers: [], fallers: [], maxAbsDelta: 0, winner: null, fastestLap: null, fastestPit: null, retirements: [] },
@@ -151,7 +183,6 @@ export default async function MagazineHomePage({
       [],
       null,
       [],
-      null,
       new Map<string, number>(),
       new Map<string, number>(),
     ];
@@ -161,7 +192,9 @@ export default async function MagazineHomePage({
   const lastRaceSnapshot = raceHighlights.raceName
     ? { raceName: raceHighlights.raceName, winner: raceHighlights.winner, fastestLap: raceHighlights.fastestLap }
     : null;
-  const nextRaceSnapshot = circuit ? { name: circuit.name, daysUntil: circuit.days_until } : null;
+  const nextRaceSnapshot = circuit
+    ? { name: circuit.name, daysUntil: circuit.days_until, lapRecord: circuit.fastest_lap, champions: circuit.champions }
+    : null;
   const hasRaceSnapshot = Boolean(lastRaceSnapshot || nextRaceSnapshot);
 
   // Feed teaser split into two non-overlapping slices: first 6 get the hero bento tile,
@@ -177,22 +210,20 @@ export default async function MagazineHomePage({
 
   return (
     <main className="bg-bg min-h-screen font-sans">
-      {/* Masthead — centered, warm cream, no card treatment (this is canvas, not content) */}
+      {/* Hero bar — headline + subhead and both join paths in one fixed-height
+          row, instead of two stacked full-width bands. Trades the old large
+          brand moment for more vertical room before Featured. */}
       <div className="border-b border-border-subtle">
-        <div className="max-w-2xl mx-auto px-5 py-16 md:py-20 text-center">
-          <h1 className="font-sans font-bold text-text-1 mb-4" style={{ fontSize: 'clamp(1.75rem,4.5vw,2.75rem)', letterSpacing: '-0.03em', lineHeight: 1.05 }}>
-            {t('headline')}
-          </h1>
-          <p className="font-sans text-text-2 text-lg leading-relaxed">
-            {t('description')}
-          </p>
-        </div>
-      </div>
-
-      {/* Join — two soft cards side by side */}
-      <div className="border-b border-border-subtle bg-surface-raised/40">
-        <div className="max-w-xl mx-auto px-5 py-10 md:py-14">
-          <JoinTwoWays />
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-4 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-baseline gap-3 flex-wrap min-w-0">
+            <h1 className="font-sans font-bold text-text-1 text-lg md:text-xl tracking-[-0.01em] shrink-0">
+              {t('headline')}
+            </h1>
+            <p className="hidden sm:block font-sans text-text-2 text-sm truncate">
+              {t('description')}
+            </p>
+          </div>
+          <JoinTwoWays compact />
         </div>
       </div>
 
@@ -201,48 +232,50 @@ export default async function MagazineHomePage({
             grid per the approved layout: not full-bleed, not the old 1024px column. */}
         {featured && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-            <Link
-              href={`/${featured.slug}`}
-              className="soft-card-lg soft-card-interactive lg:col-span-2 p-7 md:p-9 flex flex-col justify-between"
-            >
-              <div>
-                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent mb-3">
-                  {t('featuredKicker')}
-                </p>
-                <h2 className="font-sans font-bold text-text-1 tracking-[-0.02em] leading-[1.1] mb-3" style={{ fontSize: 'clamp(1.4rem, 2.8vw, 2rem)' }}>
-                  {featured.title as string}
-                </h2>
-                {featured.meta_description && (
-                  <p className="font-sans text-text-2 leading-relaxed max-w-[54ch]">
-                    {featured.meta_description as string}
+            <div className="soft-card-lg soft-card-interactive lg:col-span-2 p-7 md:p-9 grid grid-cols-1 sm:grid-cols-[1.3fr_1fr] gap-6">
+              <Link href={`/${featured.slug}`} className="flex flex-col justify-between min-w-0">
+                <div>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent mb-3">
+                    {t('featuredKicker')}
                   </p>
-                )}
-              </div>
-              <div className="mt-8 flex items-end justify-between gap-6">
-                {featuredStat ? (
-                  <div>
-                    <p className="font-sans font-extrabold tabular-nums leading-none tracking-[-0.02em] text-accent-2" style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}>
+                  <h2 className="font-sans font-bold text-text-1 tracking-[-0.02em] leading-[1.15] mb-3" style={{ fontSize: 'clamp(1.3rem, 2.4vw, 1.75rem)' }}>
+                    {featured.title as string}
+                  </h2>
+                  {featured.meta_description && (
+                    <p className="font-sans text-sm text-text-2 leading-relaxed max-w-[46ch]">
+                      {featured.meta_description as string}
+                    </p>
+                  )}
+                </div>
+                {featuredStat && (
+                  <div className="mt-6">
+                    <p className="font-sans font-extrabold tabular-nums leading-none tracking-[-0.02em] text-accent-2" style={{ fontSize: 'clamp(1.75rem, 3.4vw, 2.5rem)' }}>
                       {featuredStat.value}
                     </p>
                     <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-2 mt-2">
                       {featuredStat.label}
                     </p>
                   </div>
-                ) : (
-                  <div />
                 )}
-                {recent.length > 0 && (
-                  <div className="hidden sm:flex flex-col gap-1.5 text-right">
-                    <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-3">{t('recent')}</p>
-                    {recent.slice(0, 2).map((a) => (
-                      <span key={a.slug} className="font-sans text-xs text-text-2 line-clamp-1 max-w-[24ch]">
+              </Link>
+
+              {recent.length > 0 && (
+                <div className="sm:border-l sm:border-border-subtle sm:pl-6 flex flex-col min-w-0">
+                  <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-3 mb-1">{t('recent')}</p>
+                  <div className="flex flex-col divide-y divide-border-subtle">
+                    {recent.slice(0, 3).map((a) => (
+                      <Link
+                        key={a.slug}
+                        href={`/${a.slug}`}
+                        className="py-2.5 font-sans text-sm font-semibold text-text-1 hover:text-accent transition-colors duration-150 line-clamp-2"
+                      >
                         {a.title as string}
-                      </span>
+                      </Link>
                     ))}
                   </div>
-                )}
-              </div>
-            </Link>
+                </div>
+              )}
+            </div>
 
             <div className="soft-card p-6">
               <FeedTeaserPanel items={feedTeaser} scores={feedScores} title={t('feed.title')} />
@@ -250,20 +283,12 @@ export default async function MagazineHomePage({
           </div>
         )}
 
-        {/* Second row — last race / next race + standings summary tile (colored fill,
-            not white — this is the "one number that matters most" per DESIGN.md) */}
+        {/* Second row — last race + next race, now with circuit history (lap
+            record, recent winners) instead of the standings summary that used
+            to sit beside it; full standings get their own section below. */}
         {hasRaceSnapshot && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-            <div className="soft-card p-6 lg:col-span-2">
-              <RaceSnapshotPanel lastRace={lastRaceSnapshot} nextRace={nextRaceSnapshot} />
-            </div>
-            <div className="accent-tile p-6 flex flex-col justify-center">
-              <p className="font-mono text-[9px] uppercase tracking-[0.1em] text-accent mb-2">{t('standings.title')}</p>
-              {standings.drivers[0] && (
-                <p className="font-sans text-lg font-bold text-text-1">{standings.drivers[0].forename} {standings.drivers[0].surname}</p>
-              )}
-              <p className="font-mono text-[11px] text-text-2 mt-1">{t('standings.leader')}</p>
-            </div>
+          <div className="soft-card p-6 mb-4">
+            <RaceSnapshotPanel lastRace={lastRaceSnapshot} nextRace={nextRaceSnapshot} />
           </div>
         )}
 
@@ -289,11 +314,6 @@ export default async function MagazineHomePage({
           </p>
         )}
 
-        {/* Attention this week */}
-        <div className="mb-4">
-          <AttentionThisWeekPanel attention={attention} />
-        </div>
-
         {/* Newsletter invite */}
         {isFrontPage && <NewsletterCard />}
 
@@ -311,17 +331,18 @@ export default async function MagazineHomePage({
           </section>
         )}
 
-        {/* Latest Issue / F1 News / Learning — three equal soft-card tiles */}
+        {/* Attention This Week / F1 News / Learning — three equal soft-card
+            tiles. Attention This Week replaces the old Latest Issue slot here
+            (moved out of its own full-width band above). */}
         {(() => {
-          if (!latestIssue && f1News.length === 0 && learningTerms.length === 0) return null;
+          const hasAttention = Boolean(
+            attention.mostCovered || attention.fastestRiser || attention.biggestFall || attention.dominantTheme
+          );
+          if (!hasAttention && f1News.length === 0 && learningTerms.length === 0) return null;
 
           return (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 py-6">
-              {latestIssue && (
-                <div className="soft-card soft-card-interactive p-6">
-                  <LatestIssuePanel issue={latestIssue} />
-                </div>
-              )}
+              {hasAttention && <AttentionThisWeekPanel attention={attention} />}
               {f1News.length > 0 && (
                 <div className="soft-card p-6">
                   <FeedTeaserPanel items={f1News} scores={feedScores} title={t('f1News.title')} showBadge={false} />
@@ -336,18 +357,34 @@ export default async function MagazineHomePage({
           );
         })()}
 
-        {/* Archive grid */}
+        {/* Archive grid — the newest few keep full card treatment; the rest
+            falls to a dense text row so the section scales without becoming a
+            wall of identical tiles as it grows. */}
         <div id="archive" className="py-10 md:py-14 scroll-mt-20">
           {archiveArticles.length === 0 ? (
             <p className="font-mono text-[11px] text-text-3 uppercase tracking-[0.1em]">
               {t('noArticles')}
             </p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {archiveArticles.map((a) => (
-                <ArticleCard key={a.slug as string} a={a} locale={locale} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {archiveArticles.slice(0, 3).map((a) => (
+                  <ArticleCard key={a.slug as string} a={a} locale={locale} />
+                ))}
+              </div>
+              {archiveArticles.length > 3 && (
+                <div className="mt-8">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 pt-6 mb-2 border-t border-border-subtle">
+                    {t('archive.rest')}
+                  </p>
+                  <div className="flex flex-col divide-y divide-border-subtle">
+                    {archiveArticles.slice(3).map((a) => (
+                      <ArticleListRow key={a.slug as string} a={a} locale={locale} />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
           {totalPages > 1 && (
