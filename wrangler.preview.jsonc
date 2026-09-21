@@ -1,0 +1,61 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Preview deploy target — separate Worker + R2 bucket from production
+  // (wrangler.jsonc). Both cloud resources already existed in the account
+  // before this file did; this just wires the repo's CI to actually deploy
+  // to them, which nothing did before.
+  //
+  // Deliberately NOT a copy-paste of wrangler.jsonc: no `triggers.crons`
+  // block. Production's crons run the real daily digest send
+  // (app/api/digest/send) and the beagle raw-pool refresh — a preview
+  // deploy must never schedule either, or a design/content branch preview
+  // could email real subscribers or write to the raw-pool table. If a
+  // future preview ever needs to test cron-triggered code, do it by hitting
+  // the route directly (e.g. a signed manual request), not by giving this
+  // Worker its own cron schedule.
+  "name": "paddockintel-dashboard-preview",
+  "account_id": "551a6aba58a779d10acae0c5f0cde1e8",
+  "main": "custom-worker.ts",
+  "compatibility_date": "2026-08-25",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+
+  // No custom domain — this Worker is reached at its free
+  // <name>.<subdomain>.workers.dev URL, so previewing a branch never
+  // touches DNS.
+  "workers_dev": true,
+
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "paddockintel-dashboard-preview"
+    }
+  ],
+
+  "r2_buckets": [
+    {
+      "binding": "NEXT_INC_CACHE_R2_BUCKET",
+      "bucket_name": "paddockintel-isr-cache-preview"
+    }
+  ],
+
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "NEXT_CACHE_DO_QUEUE",
+        "class_name": "DOQueueHandler"
+      }
+    ]
+  },
+
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["DOQueueHandler"]
+    }
+  ]
+}
