@@ -50,13 +50,20 @@ jobs:
       - name: Build for Cloudflare (secrets stripped before packaging)
         run: bash scripts/cloudflare-build.sh
 
-      - name: Deploy preview Worker (--rclone populates the preview R2 incremental cache)
+      - name: Deploy preview Worker
+        # No --rclone here (unlike prod's deploy-cloudflare.yml): the existing
+        # R2_ACCESS_KEY_ID/R2_SECRET_ACCESS_KEY token is scoped to production's
+        # paddockintel-isr-cache bucket only (confirmed via a 403 AccessDenied
+        # against paddockintel-isr-cache-preview, 2026-09-21) — correct behavior
+        # for a minimally-scoped token per docs/advisors/CYBERSECURITY-EXPERT.md,
+        # not a bug to route around by widening it. --rclone only eagerly
+        # pre-populates the incremental cache; without it the Worker still runs
+        # fine and populates its own cache on demand as routes render, which is
+        # fine for a preview whose job is visual review, not cache-warm perf.
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-        run: npx opennextjs-cloudflare deploy --rclone --config wrangler.preview.jsonc
+        run: npx opennextjs-cloudflare deploy --config wrangler.preview.jsonc
 
       - name: Set preview Worker runtime secrets (idempotent — same values every run, never printed)
         env:
