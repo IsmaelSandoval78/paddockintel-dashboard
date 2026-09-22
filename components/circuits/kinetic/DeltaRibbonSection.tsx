@@ -74,6 +74,9 @@ export default function DeltaRibbonSection({
     if (!trackPathData || samples.length === 0) return;
     const allPercents = [...samples.map((s) => s.percent), ...markerEvents.map((e) => e.path_percent)];
     const points = getPointsAtPercents(trackPathData.path, allPercents);
+    // getPointAtLength needs a mounted path, so this measurement can't move into render or
+    // a useMemo without breaking SSR -- an effect is the only place it can run.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTrackPoints(points.slice(0, samples.length));
     setEventPoints(points.slice(samples.length));
   // eslint-disable-next-line react-hooks/exhaustive-deps
