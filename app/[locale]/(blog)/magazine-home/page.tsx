@@ -411,21 +411,15 @@ export default async function MagazineHomePage({
         </div>
       </div>
 
-      {/* Cross-promo: Weekly Digest / The Book */}
+      {/* Cross-promo: Weekly Digest */}
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 pb-16 md:pb-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <a href={locale === 'en' ? '/weekly' : `/${locale}/weekly`} className="soft-card soft-card-interactive group p-6">
-            <h2 className="font-sans font-semibold text-text-1 group-hover:text-accent transition-colors duration-150">
-              {t('promo.digest')}
-            </h2>
-            <p className="font-sans text-sm text-text-2 leading-relaxed mt-2">{t('promo.digestDescription')}</p>
-            <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 mt-4">{t('promo.goTo')}</p>
-          </a>
-          <div className="soft-card p-6 opacity-60">
-            <h2 className="font-sans font-semibold text-text-1">{t('promo.book')}</h2>
-            <p className="font-sans text-sm text-text-2 leading-relaxed mt-2">{t('promo.bookDescription')}</p>
-          </div>
-        </div>
+        <a href={locale === 'en' ? '/weekly' : `/${locale}/weekly`} className="soft-card soft-card-interactive group block max-w-md p-6">
+          <h2 className="font-sans font-semibold text-text-1 group-hover:text-accent transition-colors duration-150">
+            {t('promo.digest')}
+          </h2>
+          <p className="font-sans text-sm text-text-2 leading-relaxed mt-2">{t('promo.digestDescription')}</p>
+          <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 mt-4">{t('promo.goTo')}</p>
+        </a>
       </div>
     </main>
   );
