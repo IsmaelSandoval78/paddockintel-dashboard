@@ -248,6 +248,9 @@ export default function CircuitHero({
         const pt = pathEl.getPointAtLength((c.path_percent! / 100) * totalLen);
         return { x: pt.x, y: pt.y };
       });
+      // Measured off an offscreen SVG clone via getPointAtLength, which needs a real
+      // element -- so this can't be derived during render without breaking SSR.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMarkerPoints(points);
     }
     document.body.removeChild(svgEl);

@@ -49,7 +49,11 @@ interface Props {
 export default function CircuitMapSVG({ circuits, onSelect, targetRegion, selectedId }: Props) {
   const [geoData, setGeoData] = useState<Map<string, GeoData>>(new Map());
   const [activeRegion, setActiveRegion] = useState(targetRegion);
-  const [animating, setAnimating] = useState(false);
+
+  // Derived, not state: the crossfade is running for exactly as long as the requested
+  // region hasn't been committed yet. Holding it in state duplicated that fact and meant
+  // fading out one render late -- a frame of the outgoing map at full opacity.
+  const animating = targetRegion !== activeRegion;
 
   // Load TopoJSON once, pre-render paths for every region
   useEffect(() => {
@@ -71,14 +75,11 @@ export default function CircuitMapSVG({ circuits, onSelect, targetRegion, select
     });
   }, []);
 
-  // Crossfade on region change
+  // Commit the new region once the fade-out has had its 180ms, matching the opacity
+  // transition below.
   useEffect(() => {
     if (targetRegion === activeRegion) return;
-    setAnimating(true);
-    const t = setTimeout(() => {
-      setActiveRegion(targetRegion);
-      setAnimating(false);
-    }, 180);
+    const t = setTimeout(() => setActiveRegion(targetRegion), 180);
     return () => clearTimeout(t);
   }, [targetRegion]); // eslint-disable-line react-hooks/exhaustive-deps
 

@@ -27,10 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      # fetch-depth: 0 so the lint step can diff against the base branch.
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -43,22 +40,15 @@ jobs:
       - name: Type-check
         run: npx tsc --noEmit
 
-      # Scoped to files this PR touches on purpose. `npm run lint` over the whole repo
-      # reports 38 pre-existing errors and 151 warnings on main (mostly require() imports
-      # in scripts/charts), so a repo-wide gate would fail every PR on inherited debt.
-      # New and modified code still has to come back clean.
-      - name: Lint changed files
-        env:
-          BASE_REF: ${{ github.base_ref || 'main' }}
-        run: |
-          files=$(git diff --name-only --diff-filter=ACMR "origin/$BASE_REF...HEAD" \
-            -- '*.ts' '*.tsx' '*.js' '*.mjs' '*.cjs')
-          if [ -z "$files" ]; then
-            echo "No JS/TS files changed against $BASE_REF — nothing to lint."
-            exit 0
-          fi
-          echo "Linting:"; echo "$files" | sed 's/^/  /'
-          npx eslint $files
+      # Repo-wide, because main now has zero lint errors. This used to lint only the files a
+      # PR touched: a whole-repo gate would have failed every PR on 38 inherited errors.
+      # Those are fixed, so the gate can cover everything and keep it that way -- a repo-wide
+      # error count of zero is only cheap to hold while it is already zero.
+      #
+      # Warnings stay non-blocking (eslint exits 0 on warnings alone). There are still 151,
+      # and turning them into failures is a separate decision from keeping errors at zero.
+      - name: Lint
+        run: npx eslint .
 
       - name: Check whether build secrets are available
         id: build_secrets
