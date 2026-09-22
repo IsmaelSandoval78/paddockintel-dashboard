@@ -835,10 +835,14 @@
       "mostWins": "Mais vitórias",
       "topConstructor": "Construtor dominante",
       "lastWinners": "Últimos 5 vencedores",
+      "recentWinners": "Vencedores recentes aqui",
       "cta": "Inteligência completa do circuito no Hub"
     },
     "dataDesk": {
       "title": "O Data Desk"
+    },
+    "archive": {
+      "rest": "Mais do arquivo"
     }
   },
   "articleTags": {
@@ -966,6 +970,9 @@
     "editorsNote": "Nota do editor",
     "editorsTake": "Análise do editor",
     "ourBrief": "Nossa nota completa →",
+    "today": "Hoje",
+    "yesterday": "Ontem",
+    "storyCount": "{count, plural, one {# história} other {# histórias}}",
     "scoreHint": "O número ao lado de cada história = quantas outras histórias desta semana tocam a mesma entidade — um sinal real, não uma contagem de votos."
   }
 }

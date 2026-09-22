@@ -835,10 +835,14 @@
       "mostWins": "Most wins",
       "topConstructor": "Top constructor",
       "lastWinners": "Last 5 winners",
+      "recentWinners": "Recent winners here",
       "cta": "Full circuit intelligence on the Hub"
     },
     "dataDesk": {
       "title": "The Data Desk"
+    },
+    "archive": {
+      "rest": "More from the archive"
     }
   },
   "articleTags": {
@@ -972,6 +976,9 @@
     "ourBrief": "Our full brief →",
     "readBrief": "Full brief →",
     "leadLabel": "Top Story",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "storyCount": "{count, plural, one {# story} other {# stories}}",
     "scoreHint": "The number beside each story = how many other stories this week touch the same entity — a real signal, not a vote count.",
     "itemPage": {
       "theNumbers": "The Numbers",

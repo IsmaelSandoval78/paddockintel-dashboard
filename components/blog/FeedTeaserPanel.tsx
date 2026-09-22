@@ -28,31 +28,31 @@ export default async function FeedTeaserPanel({
   const format = await getFormatter();
 
   return (
-    <div>
+    <div className="flex flex-col h-full">
       <div className="flex items-baseline justify-between gap-3 mb-1">
         <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-2">{title}</p>
         <Link
           href="/feed"
-          className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-2 hover:text-terracotta transition-colors duration-150 shrink-0"
+          className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-2 hover:text-accent transition-colors duration-150 shrink-0"
         >
           {tMagazine('feed.seeAll')} →
         </Link>
       </div>
       {showBadge && <p className="font-mono text-[9px] text-text-3 leading-relaxed mb-4 max-w-[38ch]">{t('scoreHint')}</p>}
 
-      <div className={`flex flex-col divide-y divide-border-subtle border-t border-b border-border-subtle ${showBadge ? 'mt-4' : 'mt-4'}`}>
+      <div className="flex flex-col divide-y divide-border-subtle mt-4 flex-1 overflow-y-auto">
         {items.map((item) => {
           const score = significanceScore(item, scores);
           const body = (
             <>
               <div className="flex items-baseline justify-between gap-3">
-                <span className="font-prose font-semibold text-text-1 leading-snug line-clamp-2 flex-1 min-w-0">
+                <span className="font-sans font-medium text-text-1 leading-snug line-clamp-2 flex-1 min-w-0">
                   {item.headline}
                 </span>
                 {showBadge && (
                   <span
                     className="font-mono text-[11px] tabular-nums shrink-0 font-medium"
-                    style={{ color: score > 1 ? 'var(--terracotta)' : 'var(--text-3)' }}
+                    style={{ color: score > 1 ? 'var(--accent)' : 'var(--text-3)' }}
                     title={t('scoreHint')}
                   >
                     {score}
@@ -67,7 +67,7 @@ export default async function FeedTeaserPanel({
           return (
             <div key={item.id} className="py-3">
               {item.slug ? (
-                <Link href={`/feed/${item.slug}`} className="group block hover:text-terracotta transition-colors duration-150">
+                <Link href={`/feed/${item.slug}`} className="group block hover:text-accent transition-colors duration-150">
                   {body}
                 </Link>
               ) : (

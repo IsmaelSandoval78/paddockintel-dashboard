@@ -8,59 +8,62 @@
   --breakpoint-xl:  1280px;
   --breakpoint-2xl: 1536px;
 
-  /* Shape — Vintage Editorial (DESIGN.md v3.0.0). Defined in @theme (not :root) so Tailwind's
-     rounded-sm/rounded-md utilities pick these up directly, in addition to being usable as
-     var(--radius-sm)/var(--radius-md) anywhere else. */
-  --radius-sm: 2px;
-  --radius-md: 4px;
+  /* Shape — Warm Studio (DESIGN.md v5.0.0). Defined in @theme (not :root) so Tailwind's
+     rounded-sm/rounded-md/rounded-lg utilities pick these up directly, in addition to
+     being usable as var(--radius-sm)/var(--radius-md)/var(--radius-lg) anywhere else. */
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
 }
 
 :root {
-  /* Backgrounds — Vintage Editorial kraft paper substrate (DESIGN.md v3.0.0) */
-  --bg:              #EDE3D0;
-  --surface:         #EDE3D0;
-  --surface-raised:  #E4D9C2;
-  --surface-overlay: #E4D9C2;
+  /* Backgrounds — Warm Studio (DESIGN.md v5.0.0). Warm cream, not gray/lavender — the
+     founder's own palette pick kept the hue close to the old kraft-paper #EDE3D0 on
+     purpose. */
+  --bg:              #EDE7E3;
+  --surface:         #FFFFFF;
+  --surface-raised:  #E4DED9;
+  --surface-overlay: #E4DED9;
 
-  /* Borders — ink weight */
-  --border:          #2B2620;
-  --border-subtle:   #C9BC9F;
+  /* Borders — soft, warm-neutral */
+  --border:          #DFD8D2;
+  --border-subtle:   #E7E1DB;
 
-  /* Text — ink hierarchy */
-  --text-1:          #2B2620;
-  --text-2:          #6B5F4E;
-  /* Was #A69A82 (2.18:1 on --bg — fails WCAG AA even at the 3:1 large-text
-     bar). Darkened to the lightest tone that clears 4.5:1 on this kraft
-     background (4.57:1) — there's very little room between "passes AA" and
-     --text-2 itself on this substrate, so the tertiary tier now reads close
-     to secondary. Reserve --text-3 for genuinely decorative/non-essential
-     marks; anything conveying real information belongs on --text-2. */
-  --text-3:          #716444;
+  /* Text hierarchy */
+  --text-1:          #12303A;
+  --text-2:          #6E7C7E;
+  --text-3:          #9CACAF;
 
-  /* Accent — terracotta (DESIGN.md v3.0.0, replaces racing red) */
-  --terracotta:      #C1502E;
-  --terracotta-dim:  #F2DDD3;
-  --navy:            #2B3A4A;
-  --mustard:         #D9A441;
+  /* Accent — two, used deliberately (never both on the same element — see DESIGN.md
+     "Signature elements"). --accent (teal) carries kickers/tags/the standings tile fill;
+     --accent-2 (orange) is reserved for hero numbers and primary CTAs only. */
+  --accent:          #1A6B78;
+  --accent-dim:      #DDEEF0;
+  --accent-2:        #F2A03D;
+
+  /* --terracotta/--terracotta-dim: compatibility alias for the ~100 files across Hub/
+     Circuits/Drivers/Constructors/scorecards still on the old name — out of scope for
+     this pass (DESIGN.md + magazine-home only). They inherit the new teal accent
+     automatically through this alias; new v5.0.0 code uses --accent directly. */
+  --terracotta:      var(--accent);
+  --terracotta-dim:  var(--accent-dim);
+
+  --navy:            #1A3A42;   /* legacy name, value updated to sit inside this palette */
+  --mustard:         var(--accent-2);
   --gold:            #C9A84C;
   --gold-dim:        #F5E8CC;
   --text-on-accent:  #FAFAF7;
 
-  /* On-accent text/border — for content sitting inside a dark/navy panel (e.g. a stat band
-     on --navy), where the light-substrate --text-1/--text-2/--border-subtle tokens don't
-     have enough contrast. Both derive from --text-on-accent (near-white) blended toward
-     --navy, NOT from --text-2 — blending two already-dark tones together stays dark no
-     matter the ratio (a --text-2-over-navy attempt measured 1.44:1 contrast, effectively
-     illegible). Starting from a light color and reducing it is the only way to land in a
-     legible range. 2026-08-24. */
-  --border-on-accent:  #7E878F;  /* text-on-accent @ 40% over navy — contrast 3.18:1 */
-  --text-2-on-accent:  #A7ADB2;  /* text-on-accent @ 60% over navy — contrast 5.13:1, passes WCAG AA */
+  /* On-accent text/border — for content sitting inside a solid --accent-colored panel
+     (rare in this system — see "Accent tile" in DESIGN.md). */
+  --border-on-accent:  #7E878F;
+  --text-2-on-accent:  #A7ADB2;
 
   /* Semantic */
-  --green:           #22C55E;
-  --green-dim:       #E8F5EE;
+  --green:           #2F7D5C;
+  --green-dim:       #E6F2EC;
 
-  /* Constructor colors — darkened for light substrate */
+  /* Constructor colors — unchanged from v3.0.0, already tuned for a light substrate */
   --team-mercedes:   #00A99D;
   --team-mclaren:    #E57700;
   --team-redbull:    #2A5DB0;
@@ -72,22 +75,27 @@
   --team-sauber:     #259825;
   --team-rb:         #3A5EC4;
 
-  /* Data-viz accent (Delta Ribbon, track dominance lines) — reserved, never a CTA.
-     Out of scope for the v3.0.0 token pass — revisit with Circuits/Delta Ribbon specifically. */
-  --teal:            #0E9488;
+  /* Data-viz accent (Delta Ribbon, track dominance lines) — reserved, never a CTA. */
+  --teal:            var(--accent);
+
+  /* Shadow — soft, tinted toward --accent's hue, never plain neutral gray/black. See
+     DESIGN.md "Shadow" for the discipline (one separation mechanism per tile: shadow OR
+     --accent-dim fill, never both). */
+  --shadow-card:     0 10px 30px -14px rgba(20, 60, 70, 0.12);
+  --shadow-card-lg:  0 14px 34px -14px rgba(20, 60, 70, 0.15);
 
   /* Motion */
   --ease:            cubic-bezier(0.16, 1, 0.3, 1);
-  --fast:            100ms;
-  --base:            150ms;
+  --fast:            120ms;
+  --base:            180ms;
 }
 
-/* Data Mode's dark navy override (DESIGN.md v2.0.0, [data-mode="data"]) was reverted
-   2026-08-23 — the user decided against the dark redesign, Hub/Digest go back to the single
-   light system above. The [data-mode="data"]/[data-mode="story"] attribute set on <html> by
-   lib/siteMode.ts is now inert (both resolve to the same :root palette) — left in place since
-   it's harmless, not deleted, in case a non-dark distinct Data Mode register is revisited
-   later. See docs/archive/CONCEPT-V2.md §13 and DESIGN.md for the full note. */
+/* Data Mode's dark navy override (DESIGN.md v2.0.0, [data-mode="data"]) and the closed-
+   without-merging dark "Hypermodern" direction (PR #27, 2026-09-21) are both unrelated to
+   this system — the [data-mode="data"]/[data-mode="story"] attribute set on <html> by
+   lib/siteMode.ts is still inert (resolves to the same :root palette as everything else).
+   Left in place, not deleted. See docs/archive/CONCEPT-V2.md §13 and DESIGN.md for the
+   full lineage. */
 
 @theme inline {
   /* Colors */
@@ -100,6 +108,9 @@
   --color-text-1:          var(--text-1);
   --color-text-2:          var(--text-2);
   --color-text-3:          var(--text-3);
+  --color-accent:          var(--accent);
+  --color-accent-dim:      var(--accent-dim);
+  --color-accent-2:        var(--accent-2);
   --color-terracotta:      var(--terracotta);
   --color-terracotta-dim:  var(--terracotta-dim);
   --color-navy:            var(--navy);
@@ -114,11 +125,11 @@
   --color-teal:            var(--teal);
 
   /* Fonts — variables injected by next/font on <html> */
-  --font-display: var(--pi-display);  /* Archivo Black — kinetic display */
+  --font-display: var(--pi-sans);     /* Warm Studio (v5.0.0): Inter carries display too, not Archivo Black */
   --font-serif: var(--pi-serif);
   --font-sans:  var(--pi-sans);
   --font-mono:  var(--pi-mono);
-  --font-prose: var(--pi-prose);      /* Lora — Blog/Book long-form body text */
+  --font-prose: var(--pi-prose);      /* legacy — un-migrated surfaces only, see DESIGN.md Typography */
 }
 
 *,
@@ -345,4 +356,39 @@ body {
 }
 @media (pointer: fine) {
   .article-bg-grid { background-attachment: fixed; }
+}
+
+/* ── Warm Studio (DESIGN.md v5.0.0) — soft card system ─────────────── */
+
+/* The default content surface: white fill, soft accent-tinted shadow, large radius.
+   See DESIGN.md "Signature elements" — never stack this with an --accent-dim fill on the
+   same tile (pick one separation mechanism, not both). */
+.soft-card {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow var(--fast) var(--ease);
+}
+.soft-card-interactive:hover,
+.soft-card-interactive:focus-visible {
+  box-shadow: var(--shadow-card-lg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .soft-card-interactive { transition: none; }
+}
+
+/* The Featured/hero tile only — larger radius, larger shadow. */
+.soft-card-lg {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card-lg);
+  transition: box-shadow var(--fast) var(--ease);
+}
+
+/* Solid --accent-dim fill instead of white — reserve for the one or two tiles per page
+   that are genuinely "the number that matters most" (e.g. Standings). No shadow: the
+   color fill is already the separation from the canvas. */
+.accent-tile {
+  background: var(--accent-dim);
+  border-radius: var(--radius-md);
 }

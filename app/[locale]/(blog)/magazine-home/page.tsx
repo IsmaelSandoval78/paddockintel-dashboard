@@ -5,14 +5,13 @@ import { createClient } from '@/lib/supabase/server';
 import { getArticleIdsForTagSlug, getArticleTagSlugs, type TagRef } from '@/lib/blog/tags';
 import { getBeagleEntityCounts, mergeEntityCounts } from '@/lib/beagleCounts';
 import JoinTwoWays from '@/components/blog/JoinTwoWays';
-import ArticlePreviewCard from '@/components/blog/ArticlePreviewCard';
+import ArticlePreviewCard, { formatDate } from '@/components/blog/ArticlePreviewCard';
 import NewsletterCard from '@/components/blog/NewsletterCard';
 import StandingsPanel from '@/components/blog/StandingsPanel';
 import RaceSnapshotPanel from '@/components/blog/RaceSnapshotPanel';
 import AttentionThisWeekPanel from '@/components/blog/AttentionThisWeekPanel';
 import LearningPanel from '@/components/blog/LearningPanel';
 import FeedTeaserPanel from '@/components/blog/FeedTeaserPanel';
-import LatestIssuePanel from '@/components/blog/LatestIssuePanel';
 import {
   getFeaturedAndRecent,
   getDataDeskArticles,
@@ -23,7 +22,6 @@ import {
   getCircuitOfTheDay,
   getFeedTeaser,
   getDigestEntityCounts,
-  getLatestIssueSummary,
 } from './data';
 
 export const revalidate = 3600;
@@ -91,6 +89,41 @@ function ArticleCard({ a, locale }: { a: NonNullable<Awaited<ReturnType<typeof g
   );
 }
 
+// Dense fallback for the rest of the archive, once it grows past the first few
+// cards — a text row (kicker · title · stat · date) instead of full card chrome,
+// so the section scales without turning into a wall of identical tiles.
+function ArticleListRow({ a, locale }: { a: NonNullable<Awaited<ReturnType<typeof getArticles>>['articles']>[number]; locale: string }) {
+  const stats = (a.stats as Stat[]) ?? [];
+  const stat = stats[0];
+  const tag = a.tags[0];
+  const publishedAt = a.published_at as string;
+  const date = publishedAt ? formatDate(publishedAt, locale) : '';
+  const tagHref = `${locale === 'en' ? '/' : `/${locale}/`}?tag=${encodeURIComponent(tag?.slug ?? '')}`;
+
+  return (
+    <div className="flex items-center gap-4 py-3">
+      {tag && (
+        <a
+          href={tagHref}
+          className="hidden sm:block w-36 shrink-0 font-mono text-[10px] uppercase tracking-[0.12em] text-text-2 hover:text-accent transition-colors duration-150 truncate"
+        >
+          {tag.label.toUpperCase()}
+        </a>
+      )}
+      <Link
+        href={`/${a.slug}`}
+        className="flex-1 min-w-0 font-sans text-sm font-semibold text-text-1 hover:text-accent transition-colors duration-150 truncate"
+      >
+        {a.title as string}
+      </Link>
+      {stat && (
+        <span className="shrink-0 font-mono text-xs font-bold text-accent-2 tabular-nums">{stat.value}</span>
+      )}
+      <span className="hidden md:block shrink-0 font-mono text-[10px] text-text-3">{date.toUpperCase()}</span>
+    </div>
+  );
+}
+
 export default async function MagazineHomePage({
   params,
   searchParams,
@@ -109,16 +142,12 @@ export default async function MagazineHomePage({
   // a known canonical tag (stale/bookmarked link, tampered param, etc.)
   const tagLabel = tag ? (tArticleTags.has(tag) ? tArticleTags(tag) : tag) : undefined;
 
-  // Front-page state only (page 1, unfiltered) gets the full editorial
-  // treatment — a filtered or paginated view is an archive, not a cover.
+  // Front-page state only (page 1, unfiltered) gets the full bento treatment — a
+  // filtered or paginated view is an archive, not a cover.
   const isFrontPage = page === 1 && !tag;
 
   const [{ articles, total }, featuredAndRecent, frontPageExtras] = await Promise.all([
     getArticles(locale, page, tag),
-    // Featured runs on every page/filter, not just the front page — the
-    // merged hero+featured row would otherwise leave an empty second column
-    // once a reader pages into the archive (the grid stayed 2 columns with
-    // nothing in the second one).
     getFeaturedAndRecent(locale),
     isFrontPage
       ? Promise.all([
@@ -129,7 +158,6 @@ export default async function MagazineHomePage({
           getLearningTerms(locale),
           getCircuitOfTheDay(),
           getFeedTeaser(locale, 10),
-          getLatestIssueSummary(),
           getBeagleEntityCounts(createClient()),
           getDigestEntityCounts(),
         ])
@@ -146,7 +174,7 @@ export default async function MagazineHomePage({
     return qs ? `${basePath}?${qs}` : basePath;
   };
 
-  const [standings, raceHighlights, attention, dataDeskArticles, learningTerms, circuit, feedTeaserAll, latestIssue, beagleCounts, digestCounts] =
+  const [standings, raceHighlights, attention, dataDeskArticles, learningTerms, circuit, feedTeaserAll, beagleCounts, digestCounts] =
     frontPageExtras ?? [
       { drivers: [], constructors: [] },
       { raceName: '', gainers: [], fallers: [], maxAbsDelta: 0, winner: null, fastestLap: null, fastestPit: null, retirements: [] },
@@ -155,28 +183,22 @@ export default async function MagazineHomePage({
       [],
       null,
       [],
-      null,
       new Map<string, number>(),
       new Map<string, number>(),
     ];
   const { featured, recent } = featuredAndRecent;
+  const featuredStat = ((featured?.stats as Stat[] | undefined) ?? [])[0];
 
-  // Compact Last Race / Next Race snapshot for Band B (2026-09-18 redesign) --
-  // just the winner + fastest lap, and a countdown, no movers/retirements/full
-  // circuit history (that lived in its own band lower on the page before).
   const lastRaceSnapshot = raceHighlights.raceName
     ? { raceName: raceHighlights.raceName, winner: raceHighlights.winner, fastestLap: raceHighlights.fastestLap }
     : null;
-  const nextRaceSnapshot = circuit ? { name: circuit.name, daysUntil: circuit.days_until } : null;
+  const nextRaceSnapshot = circuit
+    ? { name: circuit.name, daysUntil: circuit.days_until, lapRecord: circuit.fastest_lap, champions: circuit.champions }
+    : null;
+  const hasRaceSnapshot = Boolean(lastRaceSnapshot || nextRaceSnapshot);
 
-  // Feed teaser split into two non-overlapping slices (Option 1 of the magazine-home
-  // redesign discussion): first 6 get the Band B badge treatment, the next 4 feed Band D's
-  // "F1 News" column — never the same story twice on one page. Entity counts come from
-  // getDigestEntityCounts() (the FULL published digest_items set, unbounded), not from the
-  // capped feedTeaserAll -- counting only within the display cap undercounts any entity
-  // whose other mentions fall outside it, which is exactly the bug that made magazine-home's
-  // badges read lower than the same stories' badges on /feed. Merged with the wider
-  // beagle_items raw-pool signal (see lib/beagleCounts.ts) so both surfaces score identically.
+  // Feed teaser split into two non-overlapping slices: first 6 get the hero bento tile,
+  // the next 4 feed the lower "F1 News" tile — never the same story twice on one page.
   const feedScores = mergeEntityCounts(digestCounts, beagleCounts);
   const feedTeaser = feedTeaserAll.slice(0, 6);
   const f1News = feedTeaserAll.slice(6, 10);
@@ -187,92 +209,100 @@ export default async function MagazineHomePage({
   const archiveArticles = isFrontPage ? articles.filter((a) => !shownSlugs.has(a.slug as string)) : articles;
 
   return (
-    <main className="bg-bg min-h-screen">
-      {/* Band 1 — masthead line: headline + description, centered, kraft base. */}
-      <div className="border-b border-border bg-bg">
-        <div className="max-w-3xl mx-auto px-5 py-14 md:py-20 text-center">
-          <h1 className="font-display text-[clamp(1.75rem,4vw,2.75rem)] leading-[0.94] tracking-[-0.03em] text-text-1 mb-4">
-            {t('headline')}
-          </h1>
-          <p className="font-prose text-text-2 leading-relaxed">
-            {t('description')}
-          </p>
-        </div>
-      </div>
-
-      {/* Band 2 — join line: subscribe or sign in, centered, darker kraft. */}
-      <div className="border-b border-border bg-surface-raised">
-        <div className="max-w-xl mx-auto px-5 py-10 md:py-14">
-          <JoinTwoWays />
-        </div>
-      </div>
-
-      {/* Band B (Option 1 of the magazine-home redesign discussion) — Featured story + 3
-          Latest on the left, a Feed teaser with the shared significance badge on the
-          right. Text-first on purpose, no cover image — matches the approved mockup's
-          restraint (Critique Gate) rather than the old square-image treatment. */}
-      {featured && (
-        <div className="border-b border-border bg-bg">
-          <div className="max-w-5xl mx-auto px-5 pt-12 md:pt-16">
-            <RaceSnapshotPanel lastRace={lastRaceSnapshot} nextRace={nextRaceSnapshot} />
+    <main className="bg-bg min-h-screen font-sans">
+      {/* Hero bar — headline + subhead and both join paths in one fixed-height
+          row, instead of two stacked full-width bands. Trades the old large
+          brand moment for more vertical room before Featured. */}
+      <div className="border-b border-border-subtle">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-4 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-baseline gap-3 flex-wrap min-w-0">
+            <h1 className="font-sans font-bold text-text-1 text-lg md:text-xl tracking-[-0.01em] shrink-0">
+              {t('headline')}
+            </h1>
+            <p className="hidden sm:block font-sans text-text-2 text-sm truncate">
+              {t('description')}
+            </p>
           </div>
-          <div className="max-w-5xl mx-auto px-5 pb-12 md:pb-16 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
-            <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-2 mb-2">
-                {t('featuredKicker')}
-              </p>
-              <h2 className="font-display text-text-1 tracking-[-0.02em] leading-[1.02] text-2xl md:text-[1.75rem] mb-3">
-                <Link href={`/${featured.slug}`} className="hover:text-terracotta transition-colors duration-150">
-                  {featured.title as string}
-                </Link>
-              </h2>
-              {featured.meta_description && (
-                <p className="font-prose text-sm text-text-2 leading-relaxed max-w-[48ch] mb-8">
-                  {featured.meta_description as string}
-                </p>
-              )}
-              {recent.length > 0 && (
-                <>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-2 mb-1">
-                    {t('recent')}
+          <JoinTwoWays compact />
+        </div>
+      </div>
+
+      <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-14 md:py-20">
+        {/* Hero bento — Featured (spans 2 of 3 columns) + Feed teaser, wide-contained
+            grid per the approved layout: not full-bleed, not the old 1024px column. */}
+        {featured && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+            <div className="soft-card-lg soft-card-interactive lg:col-span-2 p-7 md:p-9 grid grid-cols-1 sm:grid-cols-[1.3fr_1fr] gap-6">
+              <Link href={`/${featured.slug}`} className="flex flex-col justify-center min-w-0">
+                <div>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent mb-3">
+                    {t('featuredKicker')}
                   </p>
-                  <div className="flex flex-col divide-y divide-border-subtle border-t border-b border-border-subtle">
-                    {recent.slice(0, 3).map((a) => (
-                      <Link key={a.slug} href={`/${a.slug}`} className="group py-3 flex flex-col gap-1">
-                        <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-3">
-                          {new Date(a.published_at as string).toLocaleDateString(locale === 'pt' ? 'pt-BR' : locale, {
-                            month: 'short',
-                            day: 'numeric',
-                          })}
-                        </span>
-                        <span className="font-prose font-semibold text-text-1 group-hover:text-terracotta transition-colors duration-150 line-clamp-2">
-                          {a.title as string}
-                        </span>
+                  <h2 className="font-sans font-bold text-text-1 tracking-[-0.02em] leading-[1.15] mb-3" style={{ fontSize: 'clamp(1.3rem, 2.4vw, 1.75rem)' }}>
+                    {featured.title as string}
+                  </h2>
+                  {featured.meta_description && (
+                    <p className="font-sans text-sm text-text-2 leading-relaxed max-w-[46ch]">
+                      {featured.meta_description as string}
+                    </p>
+                  )}
+                </div>
+                {featuredStat && (
+                  <div className="mt-6">
+                    <p className="font-sans font-extrabold tabular-nums leading-none tracking-[-0.02em] text-accent-2" style={{ fontSize: 'clamp(1.75rem, 3.4vw, 2.5rem)' }}>
+                      {featuredStat.value}
+                    </p>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-2 mt-2">
+                      {featuredStat.label}
+                    </p>
+                  </div>
+                )}
+              </Link>
+
+              {recent.length > 0 && (
+                <div className="sm:border-l sm:border-border-subtle sm:pl-6 flex flex-col justify-center min-w-0">
+                  <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-3 mb-1">{t('recent')}</p>
+                  <div className="flex flex-col divide-y divide-border-subtle">
+                    {recent.slice(0, 5).map((a) => (
+                      <Link
+                        key={a.slug}
+                        href={`/${a.slug}`}
+                        className="py-3 font-sans text-sm font-semibold text-text-1 hover:text-accent transition-colors duration-150 line-clamp-2"
+                      >
+                        {a.title as string}
                       </Link>
                     ))}
                   </div>
-                </>
+                </div>
               )}
             </div>
-            <FeedTeaserPanel items={feedTeaser} scores={feedScores} title={t('feed.title')} />
-          </div>
-        </div>
-      )}
 
-      {/* Band C — Championship Standings, full width, with gap-to-leader. */}
-      {(standings.drivers.length > 0 || standings.constructors.length > 0) && (
-        <div className="border-b border-border bg-bg">
-          <div className="max-w-5xl mx-auto px-5">
+            <div className="soft-card p-6">
+              <FeedTeaserPanel items={feedTeaser} scores={feedScores} title={t('feed.title')} />
+            </div>
+          </div>
+        )}
+
+        {/* Second row — last race + next race, now with circuit history (lap
+            record, recent winners) instead of the standings summary that used
+            to sit beside it; full standings get their own section below. */}
+        {hasRaceSnapshot && (
+          <div className="soft-card p-6 mb-4">
+            <RaceSnapshotPanel lastRace={lastRaceSnapshot} nextRace={nextRaceSnapshot} />
+          </div>
+        )}
+
+        {/* Standings — full detail, own soft card */}
+        {(standings.drivers.length > 0 || standings.constructors.length > 0) && (
+          <div className="mb-4">
             <StandingsPanel drivers={standings.drivers} constructors={standings.constructors} />
           </div>
-        </div>
-      )}
+        )}
 
-      <div className="max-w-5xl mx-auto px-5">
         {tag && (
-          <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 mt-10 flex items-center gap-3">
+          <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 mt-6 mb-6 flex items-center gap-3">
             <span>
-              {t('filter.label')} <span className="text-terracotta">{tagLabel}</span>
+              {t('filter.label')} <span className="text-accent">{tagLabel}</span>
             </span>
             <a
               href={basePath}
@@ -284,24 +314,16 @@ export default async function MagazineHomePage({
           </p>
         )}
 
-        {/* Attention this week — fastest riser / most covered / biggest
-            fall / dominant theme, each independently gated by sample size
-            (see getAttentionThisWeek() in ./data.ts) */}
-        <AttentionThisWeekPanel attention={attention} />
-
         {/* Newsletter invite */}
         {isFrontPage && <NewsletterCard />}
 
-        {/* The Data Desk — pure-data articles, section only renders once tagged content exists */}
+        {/* The Data Desk */}
         {dataDeskArticles.length > 0 && (
-          <section className="py-10 md:py-14 border-t border-border">
-            <h2
-              className="font-display uppercase text-text-1 tracking-[-0.02em] mb-6"
-              style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}
-            >
+          <section className="py-10 md:py-14">
+            <h2 className="font-sans font-semibold text-text-1 tracking-[-0.01em] mb-6" style={{ fontSize: 'clamp(1.35rem, 2.6vw, 1.75rem)' }}>
               {t('dataDesk.title')}
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {dataDeskArticles.map((a) => (
                 <ArticleCard key={a.slug} a={a} locale={locale} />
               ))}
@@ -309,105 +331,95 @@ export default async function MagazineHomePage({
           </section>
         )}
 
-        {/* Band D (Option 1 of the magazine-home redesign discussion) — Latest Issue
-            summary, F1 News (the Feed teaser's second slice), and Learning F1, three
-            module-grid tiles in one band. Any column can be independently empty; the
-            whole band hides only if all three are. */}
+        {/* Attention This Week / F1 News / Learning — three equal soft-card
+            tiles. Attention This Week replaces the old Latest Issue slot here
+            (moved out of its own full-width band above). */}
         {(() => {
-          if (!latestIssue && f1News.length === 0 && learningTerms.length === 0) return null;
+          const hasAttention = Boolean(
+            attention.mostCovered || attention.fastestRiser || attention.biggestFall || attention.dominantTheme
+          );
+          if (!hasAttention && f1News.length === 0 && learningTerms.length === 0) return null;
 
           return (
-            <div className="border-t border-border py-10 md:py-14">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-12">
-                {latestIssue && <LatestIssuePanel issue={latestIssue} />}
-                {f1News.length > 0 && (
-                  <div className={latestIssue ? 'lg:border-l lg:border-border-subtle lg:pl-12' : ''}>
-                    <FeedTeaserPanel items={f1News} scores={feedScores} title={t('f1News.title')} showBadge={false} />
-                  </div>
-                )}
-                {learningTerms.length > 0 && (
-                  <div className={latestIssue || f1News.length > 0 ? 'lg:border-l lg:border-border-subtle lg:pl-12' : ''}>
-                    <LearningPanel terms={learningTerms} compact />
-                  </div>
-                )}
-              </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 py-6">
+              {hasAttention && <AttentionThisWeekPanel attention={attention} />}
+              {f1News.length > 0 && (
+                <div className="soft-card p-6">
+                  <FeedTeaserPanel items={f1News} scores={feedScores} title={t('f1News.title')} showBadge={false} />
+                </div>
+              )}
+              {learningTerms.length > 0 && (
+                <div className="soft-card soft-card-interactive p-6">
+                  <LearningPanel terms={learningTerms} compact />
+                </div>
+              )}
             </div>
           );
         })()}
 
-        {/* Archive grid */}
+        {/* Archive grid — the newest few keep full card treatment; the rest
+            falls to a dense text row so the section scales without becoming a
+            wall of identical tiles as it grows. */}
         <div id="archive" className="py-10 md:py-14 scroll-mt-20">
           {archiveArticles.length === 0 ? (
             <p className="font-mono text-[11px] text-text-3 uppercase tracking-[0.1em]">
               {t('noArticles')}
             </p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {archiveArticles.map((a) => (
-                <ArticleCard key={a.slug as string} a={a} locale={locale} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {archiveArticles.slice(0, 3).map((a) => (
+                  <ArticleCard key={a.slug as string} a={a} locale={locale} />
+                ))}
+              </div>
+              {archiveArticles.length > 3 && (
+                <div className="mt-8">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 pt-6 mb-2 border-t border-border-subtle">
+                    {t('archive.rest')}
+                  </p>
+                  <div className="flex flex-col divide-y divide-border-subtle">
+                    {archiveArticles.slice(3).map((a) => (
+                      <ArticleListRow key={a.slug as string} a={a} locale={locale} />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
           {totalPages > 1 && (
-            <nav className="flex items-center justify-between mt-10 pt-5 border-t border-border">
+            <nav className="flex items-center justify-between mt-10 pt-5 border-t border-border-subtle">
               {page > 1 ? (
-                <a
-                  href={pageHref(page - 1)}
-                  className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-150"
-                >
+                <a href={pageHref(page - 1)} className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-150">
                   {t('pagination.newer')}
                 </a>
               ) : (
-                <span aria-hidden className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-3 opacity-40">
-                  {t('pagination.newer')}
-                </span>
+                <span aria-hidden className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-3 opacity-40">{t('pagination.newer')}</span>
               )}
               <span className="font-mono text-[11px] tracking-[0.1em] text-text-3 tabular-nums">
                 {t('pagination.page', { current: page, total: totalPages })}
               </span>
               {page < totalPages ? (
-                <a
-                  href={pageHref(page + 1)}
-                  className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-150"
-                >
+                <a href={pageHref(page + 1)} className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-150">
                   {t('pagination.older')}
                 </a>
               ) : (
-                <span aria-hidden className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-3 opacity-40">
-                  {t('pagination.older')}
-                </span>
+                <span aria-hidden className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-3 opacity-40">{t('pagination.older')}</span>
               )}
             </nav>
           )}
         </div>
       </div>
 
-      {/* Cross-promo: Weekly Digest / The Book — Hub already got its CTA in the standings section above */}
-      <div className="max-w-5xl mx-auto px-5 py-12 md:py-16 border-t border-border">
-        <div className="grid grid-cols-1 md:grid-cols-2 divide-y divide-border-subtle md:divide-y-0 md:divide-x">
-          <a
-            href={locale === 'en' ? '/weekly' : `/${locale}/weekly`}
-            className="group py-5 first:pt-0 md:py-0 md:pr-8 md:first:pl-0"
-          >
-            <h2 className="font-prose font-semibold text-text-1 group-hover:text-terracotta transition-colors duration-150">
-              {t('promo.digest')}
-            </h2>
-            <p className="font-prose text-sm text-text-2 leading-relaxed mt-2">
-              {t('promo.digestDescription')}
-            </p>
-            <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 mt-4">
-              {t('promo.goTo')}
-            </p>
-          </a>
-
-          <div className="py-5 pb-0 md:py-0 md:pl-8 opacity-50">
-            <h2 className="font-prose font-semibold text-text-1">{t('promo.book')}</h2>
-            <p className="font-prose text-sm text-text-2 leading-relaxed mt-2">
-              {t('promo.bookDescription')}
-            </p>
-          </div>
-        </div>
+      {/* Cross-promo: Weekly Digest */}
+      <div className="max-w-[1400px] mx-auto px-6 md:px-10 pb-16 md:pb-24">
+        <a href={locale === 'en' ? '/weekly' : `/${locale}/weekly`} className="soft-card soft-card-interactive group block max-w-md p-6">
+          <h2 className="font-sans font-semibold text-text-1 group-hover:text-accent transition-colors duration-150">
+            {t('promo.digest')}
+          </h2>
+          <p className="font-sans text-sm text-text-2 leading-relaxed mt-2">{t('promo.digestDescription')}</p>
+          <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 mt-4">{t('promo.goTo')}</p>
+        </a>
       </div>
     </main>
   );

@@ -36,12 +36,12 @@ export default async function Navbar({ authUser }: { authUser: AuthUser | null }
   const current = isMagazine ? null : await getCurrentRound();
 
   return (
-    <nav className="bg-bg border-b border-border sticky top-0 z-50 shrink-0">
+    <nav className="bg-surface sticky top-0 z-50 shrink-0" style={{ boxShadow: 'var(--shadow-card)' }}>
       {/* Desktop — hidden below lg breakpoint (md/768 doesn't have room for brand + links + Vol/Rd + locale switcher) */}
       <div className="h-12 px-5 gap-8 hidden lg:flex items-center">
         <Link href="/" className="shrink-0 flex items-center">
           <span className="font-sans font-bold text-sm tracking-wider text-text-1">PADDOCK</span>
-          <span className="font-sans font-bold text-sm text-terracotta">·</span>
+          <span className="font-sans font-bold text-sm text-accent">·</span>
           <span className="font-sans font-bold text-sm tracking-wider text-text-1">INTEL</span>
         </Link>
 
