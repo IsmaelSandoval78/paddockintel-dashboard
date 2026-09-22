@@ -1,12 +1,15 @@
 // Beagle — sniffs out what's being talked about across the F1 press right now.
-// Pulls the ~15 credible F1 RSS feeds (see docs/advisors/SEO-EXPERT.md's source-authority
-// notes for how this tier list was chosen), tags each item against the current season's real
+// Pulls the credible F1 RSS/Atom feeds below: the original 15, plus verified additions
+// from the 2026-09-22 source survey (official, major press, Spanish and other languages,
+// economics-adjacent). See docs/advisors/SEO-EXPERT.md's source-authority notes for how
+// the original tier was chosen. Tags each item against the current season's real
 // drivers/constructors (pulled fresh from Supabase, never hardcoded), and ranks entities by
 // how many independent outlets are covering them right now.
 //
 // This is an editorial radar, not a publisher: it never writes to Supabase. Read the report,
 // pick what's worth a real digest_items entry (with a genuine our_summary from the actual
 // article, per DATA-EXPERT.md), and add those by hand or via a separate insert script.
+// app/api/cron/refresh-beagle keeps its own copy of the original 15 and is not updated here.
 //
 // Usage: node scripts/beagle.mjs [hours]   (default: last 48h)
 
@@ -31,6 +34,50 @@ const FEEDS = [
   { name: 'Formula1.com', url: 'https://www.formula1.com/en/latest/all.xml' },
   { name: 'Racecar Engineering', url: 'https://www.racecar-engineering.com/feed/' },
   { name: 'FIA', url: 'https://www.fia.com/rss/press-release' },
+  // Verified additions (2026-09-22). Original entries above stay as they were.
+  { name: 'Liberty Media', url: 'https://libertymedia.com/investors/news-events/press-releases/rss' },
+  { name: 'Motorsport Week', url: 'https://www.motorsportweek.com/feed/' },
+  { name: 'Pitpass', url: 'https://www.pitpass.com/fes_php/fes_usr_sit_newsfeed.php?fes_prepend_aty_sht_name=1/feed' },
+  { name: 'The Checkered Flag', url: 'https://www.thecheckeredflag.co.uk/open-wheel/formula-1/feed/' },
+  { name: 'Speedcafe', url: 'https://www.speedcafe.com/f1/feed/' },
+  { name: 'ESPN', url: 'https://www.espn.com/espn/rss/f1/news' },
+  { name: 'The New York Times', url: 'https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/topic/organization/formula-one/rss.xml' },
+  { name: 'Mirror', url: 'https://www.mirror.co.uk/sport/formula-1/rss.xml' },
+  { name: 'The Independent', url: 'https://www.independent.co.uk/sport/motor-racing/rss' },
+  { name: 'Race Tech Magazine', url: 'https://www.racetechmag.com/feed/' },
+  { name: 'SportsPro', url: 'https://www.sportspromedia.com/feed/' },
+  { name: 'Forbes SportsMoney', url: 'https://www.forbes.com/sportsmoney/feed/' },
+  { name: 'Motorsport Broadcasting', url: 'https://motorsportbroadcasting.com/feed/' },
+  { name: 'AS', url: 'https://feeds.as.com/mrss-s/pages/as/site/as.com/section/motor/subsection/formula_1/' },
+  { name: 'Marca', url: 'https://www.marca.com/rss/motor/formula1.xml' },
+  { name: 'El Mundo', url: 'https://e00-elmundo.uecdn.es/elmundodeporte/rss/motor.xml' },
+  { name: 'Mundo Deportivo', url: 'https://www.mundodeportivo.com/rss/motor.xml' },
+  { name: 'Motorsport.com ES', url: 'https://es.motorsport.com/rss/f1/news/' },
+  { name: 'FormulaPassion', url: 'https://www.formulapassion.it/feed' },
+  { name: 'Formula1.it', url: 'https://www.formula1.it/rss.asp' },
+  { name: 'F1Sport.it', url: 'https://www.f1sport.it/feed/' },
+  { name: 'Automoto.it', url: 'https://www.automoto.it/rss/formula1.xml' },
+  { name: 'Gazzetta dello Sport', url: 'https://www.gazzetta.it/rss/motori.xml' },
+  { name: 'Motorsport.com IT', url: 'https://it.motorsport.com/rss/f1/news/' },
+  { name: 'AutoHebdo', url: 'https://www.autohebdo.fr/feed' },
+  { name: 'Motorsport.com FR', url: 'https://fr.motorsport.com/rss/f1/news/' },
+  { name: 'Motorsport-Total', url: 'https://www.motorsport-total.com/rss/rss_formel-1.xml' },
+  { name: 'Motorsport-Magazin', url: 'https://www.motorsport-magazin.com/rss/formel1.xml' },
+  { name: 'Motorsport.com DE', url: 'https://de.motorsport.com/rss/f1/news/' },
+  { name: 'Motorsport.com BR', url: 'https://br.motorsport.com/rss/f1/news/' },
+  { name: 'F1Mania', url: 'https://www.f1mania.net/feed/' },
+  { name: 'Autoracing', url: 'https://autoracing.com.br/feed/' },
+  { name: 'Motorsport.com NL', url: 'https://nl.motorsport.com/rss/f1/news/' },
+  { name: 'Motorsport.com JP', url: 'https://jp.motorsport.com/rss/f1/news/' },
+  { name: 'Formula Web', url: 'http://www.formula-web.jp/f1news/rss2.xml' },
+  { name: 'Joe Saward', url: 'https://joesaward.wordpress.com/feed/' },
+  { name: 'Adam Cooper', url: 'https://adamcooperf1.com/feed/' },
+  { name: 'Peter Windsor', url: 'https://peterwindsor.com/feed/' },
+  { name: 'Will Buxton', url: 'https://willthef1journo.wordpress.com/feed/' },
+  { name: 'TheJudge13', url: 'https://thejudge13.com/feed/' },
+  { name: 'F1 Chronicle', url: 'https://f1chronicle.com/feed/' },
+  { name: 'NewsOnF1', url: 'https://newsonf1.com/feed/' },
+  { name: 'F1 Beyond The Grid', url: 'https://audioboom.com/channels/4964339.rss' },
 ];
 
 function decodeEntities(str) {
