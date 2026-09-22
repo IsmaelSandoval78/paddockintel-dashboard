@@ -1,0 +1,148 @@
+name: Beagle pipeline canary
+
+# Answers one question twice a day: is the 4h Beagle cron still putting real press into
+# beagle_items? Nothing else asks. Cloudflare Cron Triggers do not retry and do not alert,
+# custom-worker.ts only console.errors a failed run, and the route swallows per-feed errors
+# by design (it returns feedsFailed, which no one reads). So the pipeline can go quiet --
+# a rotated CRON_SECRET, a Supabase permission change, half the feeds breaking -- and the
+# only symptom is entity scores on magazine-home and /feed slowly going stale. Nobody
+# notices a number that is quietly too low.
+#
+# Read-only on purpose: it inspects what the cron already wrote instead of invoking it.
+# refresh-beagle-manual.yml is the workflow that triggers a real refresh; this one must not,
+# or the canary would mask the outage it exists to find by writing the rows itself.
+#
+# When it fails, GitHub emails the repo owner about the failed scheduled run. That email is
+# the alert.
+on:
+  schedule:
+    - cron: "0 */12 * * *"
+  workflow_dispatch:
+    inputs:
+      min_sources_24h:
+        description: "Fail if fewer than this many distinct sources appear in 24h"
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: beagle-canary
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # The publishable/anon key, not the service role key: beagle_items already grants
+      # public SELECT, so this needs no privilege beyond what the live site's own client
+      # has. Verified the key works for this read, and that production's client bundle
+      # carries the same one (the project's legacy anon JWT is disabled and returns 401).
+      - name: Check the pipeline is alive
+        env:
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          # Baselines measured 2026-09-22: at 15 feeds, 13 distinct sources appear per 24h
+          # and ~22 rows land per 8h. At 50 feeds (PR #35) it is 34 of 50 feeds publishing
+          # within 24h and ~85 rows per 8h -- many feeds are journalist blogs that go days
+          # between posts, so this floor is deliberately well under both, catching a
+          # collapse rather than a quiet day. Raise it after the 50-feed list settles.
+          MIN_SOURCES_24H: ${{ inputs.min_sources_24h || '10' }}
+          # Two missed 4h cycles.
+          ROWS_WINDOW_HOURS: "8"
+        run: |
+          node <<'NODE'
+          const url = process.env.SUPABASE_URL;
+          const key = process.env.SUPABASE_ANON_KEY;
+          if (!url || !key) {
+            console.error('Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY.');
+            process.exit(1);
+          }
+          const minSources = Number(process.env.MIN_SOURCES_24H);
+          const windowHours = Number(process.env.ROWS_WINDOW_HOURS);
+          const iso = (h) => new Date(Date.now() - h * 3600 * 1000).toISOString();
+          const headers = { apikey: key, Authorization: `Bearer ${key}` };
+
+          async function rowsSince(hours) {
+            const res = await fetch(
+              `${url}/rest/v1/beagle_items?select=id&fetched_at=gte.${iso(hours)}`,
+              { headers: { ...headers, Prefer: 'count=exact', Range: '0-0' } }
+            );
+            if (!res.ok) throw new Error(`count query failed: HTTP ${res.status} ${await res.text()}`);
+            // content-range looks like "0-0/123"; the total is what matters, so the query
+            // never has to transfer the rows themselves.
+            const total = Number((res.headers.get('content-range') || '').split('/')[1]);
+            if (!Number.isFinite(total)) throw new Error('could not read count from content-range');
+            return total;
+          }
+
+          async function distinctSourcesSince(hours) {
+            // PostgREST cannot do SELECT DISTINCT, and this project caps a response at 1,000
+            // rows, so this samples the most recent 1,000 rows instead of reading the window
+            // whole. Ordered by fetched_at desc, that spans several cron runs across every
+            // feed -- plenty to tell "most feeds are reporting" from "most feeds are gone",
+            // which is all this threshold claims.
+            const res = await fetch(
+              `${url}/rest/v1/beagle_items?select=source_name&fetched_at=gte.${iso(hours)}` +
+                `&order=fetched_at.desc&limit=1000`,
+              { headers }
+            );
+            if (!res.ok) throw new Error(`source query failed: HTTP ${res.status} ${await res.text()}`);
+            const rows = await res.json();
+            return { distinct: new Set(rows.map((r) => r.source_name)).size, sampled: rows.length };
+          }
+
+          async function main() {
+            const recent = await rowsSince(windowHours);
+            const daily = await rowsSince(24);
+            const { distinct, sampled } = await distinctSourcesSince(24);
+
+            const lines = [
+              `rows fetched in the last ${windowHours}h: ${recent}`,
+              `rows fetched in the last 24h: ${daily}`,
+              `distinct sources in the last 24h: ${distinct} (from a ${sampled}-row sample)`,
+            ];
+            lines.forEach((l) => console.log(l));
+
+            const failures = [];
+            if (recent === 0) {
+              failures.push(
+                `No rows written in ${windowHours}h. The 4h cron has missed at least two cycles — ` +
+                  `check the Cloudflare Worker's scheduled handler, CRON_SECRET, and whether ` +
+                  `refresh-beagle is returning 401 or 500.`
+              );
+            }
+            if (distinct < minSources) {
+              failures.push(
+                `Only ${distinct} distinct sources in 24h, expected at least ${minSources}. ` +
+                  `Feeds are failing en masse rather than the cron being down — call ` +
+                  `/api/cron/refresh-beagle and read its feedsFailed list.`
+              );
+            }
+
+            const summary = [
+              '## Beagle pipeline canary',
+              '',
+              ...lines.map((l) => `- ${l}`),
+              '',
+              failures.length ? `**FAIL**\n\n${failures.map((f) => `- ${f}`).join('\n')}` : '**OK**',
+            ].join('\n');
+            if (process.env.GITHUB_STEP_SUMMARY) {
+              require('fs').appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary + '\n');
+            }
+
+            if (failures.length) {
+              failures.forEach((f) => console.error(`::error::${f}`));
+              process.exit(1);
+            }
+            console.log('Pipeline looks alive.');
+          }
+
+          main().catch((err) => {
+            console.error(`::error::Canary could not complete: ${err.message}`);
+            process.exit(1);
+          });
+          NODE
