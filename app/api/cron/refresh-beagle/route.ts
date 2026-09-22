@@ -42,10 +42,16 @@ const FEEDS = [
   { name: 'FIA', url: 'https://www.fia.com/rss/press-release' },
   // Verified additions (2026-09-22 source survey), minus the Motorsport.com locale
   // siblings -- see the note above the list for why those are radar-only.
+  //
+  // Four feeds from that survey were dropped after the first production run: they answer
+  // HTTP 200 (which is how they passed verification) but their newest item is years old --
+  // El Mundo 2013, Will Buxton 2019, Gazzetta dello Sport 2023, The Checkered Flag 2024.
+  // AutoHebdo went with them: it parses fine from a normal network but is the one feed
+  // that fails from the Worker's egress, so here it is a guaranteed wasted subrequest.
+  // Verify an addition by its newest item's date, not just its status code.
   { name: 'Liberty Media', url: 'https://libertymedia.com/investors/news-events/press-releases/rss' },
   { name: 'Motorsport Week', url: 'https://www.motorsportweek.com/feed/' },
   { name: 'Pitpass', url: 'https://www.pitpass.com/fes_php/fes_usr_sit_newsfeed.php?fes_prepend_aty_sht_name=1/feed' },
-  { name: 'The Checkered Flag', url: 'https://www.thecheckeredflag.co.uk/open-wheel/formula-1/feed/' },
   { name: 'Speedcafe', url: 'https://www.speedcafe.com/f1/feed/' },
   { name: 'ESPN', url: 'https://www.espn.com/espn/rss/f1/news' },
   { name: 'The New York Times', url: 'https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/topic/organization/formula-one/rss.xml' },
@@ -56,14 +62,11 @@ const FEEDS = [
   { name: 'Motorsport Broadcasting', url: 'https://motorsportbroadcasting.com/feed/' },
   { name: 'AS', url: 'https://feeds.as.com/mrss-s/pages/as/site/as.com/section/motor/subsection/formula_1/' },
   { name: 'Marca', url: 'https://www.marca.com/rss/motor/formula1.xml' },
-  { name: 'El Mundo', url: 'https://e00-elmundo.uecdn.es/elmundodeporte/rss/motor.xml' },
   { name: 'Mundo Deportivo', url: 'https://www.mundodeportivo.com/rss/motor.xml' },
   { name: 'FormulaPassion', url: 'https://www.formulapassion.it/feed' },
   { name: 'Formula1.it', url: 'https://www.formula1.it/rss.asp' },
   { name: 'F1Sport.it', url: 'https://www.f1sport.it/feed/' },
   { name: 'Automoto.it', url: 'https://www.automoto.it/rss/formula1.xml' },
-  { name: 'Gazzetta dello Sport', url: 'https://www.gazzetta.it/rss/motori.xml' },
-  { name: 'AutoHebdo', url: 'https://www.autohebdo.fr/feed' },
   { name: 'Motorsport-Total', url: 'https://www.motorsport-total.com/rss/rss_formel-1.xml' },
   { name: 'Motorsport-Magazin', url: 'https://www.motorsport-magazin.com/rss/formel1.xml' },
   { name: 'F1Mania', url: 'https://www.f1mania.net/feed/' },
@@ -72,7 +75,6 @@ const FEEDS = [
   { name: 'Joe Saward', url: 'https://joesaward.wordpress.com/feed/' },
   { name: 'Adam Cooper', url: 'https://adamcooperf1.com/feed/' },
   { name: 'Peter Windsor', url: 'https://peterwindsor.com/feed/' },
-  { name: 'Will Buxton', url: 'https://willthef1journo.wordpress.com/feed/' },
   { name: 'TheJudge13', url: 'https://thejudge13.com/feed/' },
   { name: 'F1 Chronicle', url: 'https://f1chronicle.com/feed/' },
   { name: 'NewsOnF1', url: 'https://www.newsonf1.com/feed/' },
@@ -184,8 +186,8 @@ export async function GET(req: Request) {
   // weight. Without the cutoff every feed's whole visible backlog lands on the first run
   // (that's the 681-row spike on 2026-09-18), and the archive-deep feeds make that scale
   // with back-catalogue size rather than with how much news happened: 442 F1 Beyond The
-  // Grid episodes, 262 RacingNews365 items. Measured across these 50 feeds, the cutoff
-  // drops a run from 1,883 rows to 860.
+  // Grid episodes, 262 RacingNews365 items. Measured across this list, the cutoff drops a
+  // run from 1,883 rows to 860 (production's first expanded run fetched 843).
   //
   // Items with no parseable pubDate are kept: they coalesce to fetched_at and do count.
   const cutoff = Date.now() - SCORING_WINDOW_DAYS * 24 * 60 * 60 * 1000;
