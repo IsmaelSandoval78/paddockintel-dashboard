@@ -83,6 +83,18 @@ async function getItems(): Promise<FeedItem[]> {
   return (data ?? []) as FeedItem[];
 }
 
+function dayLabel(
+  date: Date,
+  t: Awaited<ReturnType<typeof getTranslations>>,
+  format: Awaited<ReturnType<typeof getFormatter>>
+): string {
+  const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+  const diffDays = Math.round((startOfDay(new Date()) - startOfDay(date)) / 86_400_000);
+  if (diffDays === 0) return t('today');
+  if (diffDays === 1) return t('yesterday');
+  return format.dateTime(date, { month: 'short', day: 'numeric' });
+}
+
 function mostMentioned(counts: Map<string, number>): { entity: string; count: number }[] {
   return Array.from(counts.entries())
     .map(([entity, count]) => ({ entity, count }))
@@ -100,18 +112,20 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
   const mentioned = mostMentioned(entityCounts);
   const feedUrl = locale === 'es' ? FEED_URLS.es : FEED_URLS.en;
 
-  // Lead + runner-up: the two highest-significance stories (by shared-entity score,
-  // tie-broken by recency since `items` is already published_at desc). Everything
-  // else keeps its original recency order in the grid below.
-  const byScoreDesc = [...items].sort((a, b) => {
-    const diff = significanceScore(b, entityCounts) - significanceScore(a, entityCounts);
-    if (diff !== 0) return diff;
-    return new Date(b.published_at).getTime() - new Date(a.published_at).getTime();
-  });
-  const lead = byScoreDesc[0] ?? null;
-  const runnerUp = byScoreDesc[1] ?? null;
-  const featuredIds = new Set([lead?.id, runnerUp?.id].filter(Boolean));
-  const rest = items.filter((item) => !featuredIds.has(item.id));
+  // Grouped by day (items already arrive published_at desc, so same-day items
+  // are always adjacent -- a single pass groups them without re-sorting).
+  // Within each day, the 3 highest-significance stories keep full card
+  // treatment; the rest of that day falls to a dense list row. Replaces the
+  // old whole-page lead+runner-up pick, which read fine at a handful of
+  // stories but turned into a wall of identical cards once the feed grew.
+  const dayGroups: { key: string; date: Date; items: FeedItem[] }[] = [];
+  for (const item of items) {
+    const date = new Date(item.published_at);
+    const key = date.toISOString().slice(0, 10);
+    const current = dayGroups[dayGroups.length - 1];
+    if (current && current.key === key) current.items.push(item);
+    else dayGroups.push({ key, date, items: [item] });
+  }
 
   // Items with a slug get their own page (app/[locale]/(digest)/feed/[slug]/page.tsx) and
   // a real, independently indexable URL -- Google can rank and rich-snippet that story on
@@ -218,38 +232,37 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
           </p>
         ) : (
           <>
-            {/* Lead + runner-up row -- the two highest-significance stories get the
-                visual weight; picked by score (see significanceScore), tie-broken by
-                recency. Grid rows below stay uniform height via line-clamp, not
-                free-floating masonry, so reading order never gets ambiguous. */}
-            {lead && (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5 border-t border-border-subtle pt-6 mb-4 lg:mb-5">
-                <div className="lg:col-span-2">
-                  <FeedCard item={lead} text={localize(lead, locale)} score={significanceScore(lead, entityCounts)} format={format} t={t} variant="lead" />
-                </div>
-                {runnerUp && (
-                  <div className="lg:col-span-1">
-                    <FeedCard item={runnerUp} text={localize(runnerUp, locale)} score={significanceScore(runnerUp, entityCounts)} format={format} t={t} variant="runnerUp" />
-                  </div>
-                )}
-              </div>
-            )}
+            {dayGroups.map((group, i) => {
+              const scored = group.items.map((item) => ({ item, score: significanceScore(item, entityCounts) }));
+              const topCards = [...scored].sort((a, b) => b.score - a.score).slice(0, 3);
+              const topIds = new Set(topCards.map((s) => s.item.id));
+              const restRows = scored.filter((s) => !topIds.has(s.item.id));
 
-            {rest.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
-                {rest.map((item) => (
-                  <FeedCard
-                    key={item.id}
-                    item={item}
-                    text={localize(item, locale)}
-                    score={significanceScore(item, entityCounts)}
-                    format={format}
-                    t={t}
-                    variant="grid"
-                  />
-                ))}
-              </div>
-            )}
+              return (
+                <div key={group.key} className={`${i === 0 ? 'border-t border-border-subtle pt-6' : 'mt-8 lg:mt-10'}`}>
+                  <div className="flex items-baseline justify-between gap-3 mb-3 pb-2 border-b border-border-subtle">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.1em]" style={{ color: 'var(--terracotta)' }}>
+                      {dayLabel(group.date, t, format)}
+                    </p>
+                    <p className="font-mono text-[10px] text-text-3">{t('storyCount', { count: group.items.length })}</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
+                    {topCards.map(({ item, score }) => (
+                      <FeedCard key={item.id} item={item} text={localize(item, locale)} score={score} format={format} t={t} />
+                    ))}
+                  </div>
+
+                  {restRows.length > 0 && (
+                    <div className="flex flex-col divide-y divide-border-subtle mt-3">
+                      {restRows.map(({ item, score }) => (
+                        <FeedListRow key={item.id} item={item} text={localize(item, locale)} score={score} format={format} t={t} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </>
         )}
       </div>
@@ -268,31 +281,21 @@ function FeedCard({
   score,
   format,
   t,
-  variant,
 }: {
   item: FeedItem;
   text: LocalizedText;
   score: number;
   format: Formatter;
   t: FeedT;
-  variant: 'lead' | 'runnerUp' | 'grid';
 }) {
-  const headlineClamp = variant === 'lead' ? '' : 'line-clamp-2';
-  const summaryClamp = variant === 'lead' ? 'line-clamp-4' : variant === 'runnerUp' ? 'line-clamp-3' : 'line-clamp-2';
-  const headlineSize = variant === 'lead' ? 'clamp(1.25rem, 2.4vw, 1.625rem)' : '0.9375rem';
-
   const headlineEl = (
-    <span className={`block font-prose font-semibold text-text-1 leading-snug ${headlineClamp}`} style={{ fontSize: headlineSize }}>
+    <span className="block font-prose font-semibold text-text-1 leading-snug line-clamp-2" style={{ fontSize: '0.9375rem' }}>
       {text.headline}
     </span>
   );
 
   return (
-    <article
-      className={`h-full flex flex-col border rounded-sm p-4 lg:p-5 transition-colors duration-150 ${
-        variant === 'lead' ? 'border-border bg-surface-raised' : 'border-border-subtle hover:border-terracotta'
-      }`}
-    >
+    <article className="h-full flex flex-col border border-border-subtle rounded-sm p-4 lg:p-5 transition-colors duration-150 hover:border-terracotta">
       <div className="flex items-center justify-between gap-2 mb-2.5">
         <div className="flex items-center gap-2 flex-wrap min-w-0">
           <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 truncate">{item.source_name}</span>
@@ -310,12 +313,6 @@ function FeedCard({
         </span>
       </div>
 
-      {variant === 'lead' && (
-        <p className="font-mono text-[10px] uppercase tracking-[0.12em] mb-1.5" style={{ color: 'var(--terracotta)' }}>
-          {t('leadLabel')}
-        </p>
-      )}
-
       {item.slug ? (
         <Link href={`/feed/${item.slug}`} className="mb-2 hover:text-terracotta transition-colors duration-150">
           {headlineEl}
@@ -327,7 +324,7 @@ function FeedCard({
       )}
 
       <p
-        className={`text-text-2 leading-relaxed mt-1.5 ${summaryClamp}`}
+        className="text-text-2 leading-relaxed mt-1.5 line-clamp-2"
         style={{ fontFamily: 'var(--pi-sans)', fontSize: '0.8125rem', lineHeight: '1.6' }}
       >
         {text.our_summary}
@@ -336,7 +333,7 @@ function FeedCard({
       <div className="mt-auto pt-3 flex items-end justify-between gap-3">
         {text.featuredStat ? (
           <div className="min-w-0">
-            <p className="font-display tabular-nums text-text-1 leading-none" style={{ fontSize: variant === 'lead' ? '2rem' : '1.375rem' }}>
+            <p className="font-display tabular-nums text-text-1 leading-none" style={{ fontSize: '1.375rem' }}>
               {text.featuredStat.value}
             </p>
             <p className="font-mono text-[9px] uppercase tracking-[0.08em] text-text-2 mt-1 truncate">{text.featuredStat.label}</p>
@@ -349,5 +346,61 @@ function FeedCard({
         </span>
       </div>
     </article>
+  );
+}
+
+// Dense fallback once a day's story count passes 3 -- a text row (source ·
+// headline · score · date) instead of full card chrome, so a busy day
+// doesn't turn into a wall of identical cards.
+function FeedListRow({
+  item,
+  text,
+  score,
+  format,
+  t,
+}: {
+  item: FeedItem;
+  text: LocalizedText;
+  score: number;
+  format: Formatter;
+  t: FeedT;
+}) {
+  const headlineEl = (
+    <span className="flex-1 min-w-0 font-prose font-semibold text-text-1 truncate" style={{ fontSize: '0.875rem' }}>
+      {text.headline}
+    </span>
+  );
+
+  return (
+    <div className="flex items-center gap-4 py-3">
+      <span className="hidden sm:block w-32 shrink-0 font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 truncate">
+        {item.source_name}
+      </span>
+      {item.slug ? (
+        <Link href={`/feed/${item.slug}`} className="flex-1 min-w-0 flex hover:text-terracotta transition-colors duration-150">
+          {headlineEl}
+        </Link>
+      ) : (
+        <a
+          href={item.source_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1 min-w-0 flex hover:text-terracotta transition-colors duration-150"
+          title={t('readOriginal')}
+        >
+          {headlineEl}
+        </a>
+      )}
+      <span
+        className="font-mono text-[11px] tabular-nums shrink-0 font-medium"
+        style={{ color: score > 1 ? 'var(--terracotta)' : 'var(--text-3)' }}
+        title={t('scoreHint')}
+      >
+        {score}
+      </span>
+      <span className="hidden md:block shrink-0 font-mono text-[10px] text-text-3">
+        {format.dateTime(new Date(item.published_at), { month: 'short', day: 'numeric' })}
+      </span>
+    </div>
   );
 }

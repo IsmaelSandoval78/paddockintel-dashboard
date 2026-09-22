@@ -970,6 +970,9 @@
     "editorsNote": "Nota do editor",
     "editorsTake": "Análise do editor",
     "ourBrief": "Nossa nota completa →",
+    "today": "Hoje",
+    "yesterday": "Ontem",
+    "storyCount": "{count, plural, one {# história} other {# histórias}}",
     "scoreHint": "O número ao lado de cada história = quantas outras histórias desta semana tocam a mesma entidade — um sinal real, não uma contagem de votos."
   }
 }
