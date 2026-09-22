@@ -43,7 +43,6 @@ const FEEDS = [
   { name: 'ESPN', url: 'https://www.espn.com/espn/rss/f1/news' },
   { name: 'The New York Times', url: 'https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/topic/organization/formula-one/rss.xml' },
   { name: 'Mirror', url: 'https://www.mirror.co.uk/sport/formula-1/rss.xml' },
-  { name: 'The Independent', url: 'https://www.independent.co.uk/sport/motor-racing/rss' },
   { name: 'Race Tech Magazine', url: 'https://www.racetechmag.com/feed/' },
   { name: 'SportsPro', url: 'https://www.sportspromedia.com/feed/' },
   { name: 'Forbes SportsMoney', url: 'https://www.forbes.com/sportsmoney/feed/' },
@@ -76,7 +75,8 @@ const FEEDS = [
   { name: 'Will Buxton', url: 'https://willthef1journo.wordpress.com/feed/' },
   { name: 'TheJudge13', url: 'https://thejudge13.com/feed/' },
   { name: 'F1 Chronicle', url: 'https://f1chronicle.com/feed/' },
-  { name: 'NewsOnF1', url: 'https://newsonf1.com/feed/' },
+  // Apex newsonf1.com 301s to www and the hop alone eats most of the 10s timeout.
+  { name: 'NewsOnF1', url: 'https://www.newsonf1.com/feed/' },
   { name: 'F1 Beyond The Grid', url: 'https://audioboom.com/channels/4964339.rss' },
 ];
 
