@@ -8,7 +8,15 @@ name: Deploy to Cloudflare
 # "2026-08-27 — R2 population hang RESOLVED via --rclone").
 #
 # Skips docs/content-only pushes on purpose (paths-ignore below) — a README or
-# article change doesn't need a new Worker.
+# article change doesn't need a new Worker. Same reasoning extended to `.github/**`
+# (CI config is never bundled) and `scripts/**` (offline tooling — data loaders,
+# seeders, the Beagle radar; nothing under app/, components/, lib/ or remotion/
+# imports from it, so a change there cannot alter the Worker).
+#
+# One caveat that comes with ignoring `scripts/**`: `scripts/cloudflare-build.sh` is
+# what this workflow runs to build. Editing it no longer triggers a deploy on its own,
+# so verify a change to that file with a manual `workflow_dispatch` run. paths-ignore
+# has no negation syntax, which is why this is a comment and not a pattern.
 on:
   push:
     branches: [main]
@@ -17,6 +25,8 @@ on:
       - "articles/**"
       - "digests/**"
       - "**/*.md"
+      - ".github/**"
+      - "scripts/**"
   workflow_dispatch: {}
 
 permissions:
