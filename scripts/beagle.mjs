@@ -176,6 +176,18 @@ function matchEntities(title, dictionary) {
   return [...found];
 }
 
+// The Motorsport Network ships one story across its locale feeds, so a single wire item
+// would otherwise count as eight independent outlets and beat genuinely cross-covered
+// news. Items still print under their own feed name; only the ranking collapses them.
+const SYNDICATION_GROUPS = [[/^Motorsport\.com/, 'Motorsport Network']];
+
+function outletOf(sourceName) {
+  for (const [pattern, outlet] of SYNDICATION_GROUPS) {
+    if (pattern.test(sourceName)) return outlet;
+  }
+  return sourceName;
+}
+
 async function main() {
   console.log(`Fetching ${FEEDS.length} feeds, entity dictionary from Supabase (2026 season)...\n`);
 
@@ -203,12 +215,12 @@ async function main() {
 
   console.log(`${allItems.length} items across ${feedResults.filter((f) => !f.error).length} working feeds in the last ${HOURS}h.\n`);
 
-  // Rank entities by how many DISTINCT SOURCES are covering them right now.
-  const entitySources = new Map(); // entity -> Set(source)
+  // Rank entities by how many DISTINCT OUTLETS are covering them right now.
+  const entitySources = new Map(); // entity -> Set(outlet)
   for (const item of allItems) {
     for (const e of item.entities) {
       if (!entitySources.has(e)) entitySources.set(e, new Set());
-      entitySources.get(e).add(item.source);
+      entitySources.get(e).add(outletOf(item.source));
     }
   }
 
@@ -217,9 +229,9 @@ async function main() {
     .filter((e) => e.sourceCount >= 2)
     .sort((a, b) => b.sourceCount - a.sourceCount);
 
-  console.log('=== Cross-covered right now (2+ independent sources) ===\n');
+  console.log('=== Cross-covered right now (2+ independent outlets) ===\n');
   for (const { entity, sourceCount } of ranked) {
-    console.log(`${entity} — ${sourceCount} sources`);
+    console.log(`${entity} — ${sourceCount} outlets`);
     const items = allItems
       .filter((i) => i.entities.includes(entity))
       .sort((a, b) => (b.pubDate?.getTime() ?? 0) - (a.pubDate?.getTime() ?? 0));
