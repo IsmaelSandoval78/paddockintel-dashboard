@@ -1,0 +1,92 @@
+name: PR checks
+
+# The only automated gate on a pull request. It matters more than it looks:
+# deploy-cloudflare.yml deploys the Worker serving all 3 domains on every push to
+# main, so anything this workflow misses ships to production unreviewed by a machine.
+# Runs the same npm ci -> next build the deploy runs, minus the OpenNext packaging
+# and the deploy itself.
+#
+# Deliberately `pull_request`, never `pull_request_target` -- this repo is public, and
+# pull_request_target runs with repo secrets against code from an untrusted fork. The
+# tradeoff is that fork PRs get no secrets, so the build step is skipped there; types
+# and lint still run, and a maintainer branch runs the full set.
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-checks-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      # fetch-depth: 0 so the lint step can diff against the base branch.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npx tsc --noEmit
+
+      # Scoped to files this PR touches on purpose. `npm run lint` over the whole repo
+      # reports 38 pre-existing errors and 151 warnings on main (mostly require() imports
+      # in scripts/charts), so a repo-wide gate would fail every PR on inherited debt.
+      # New and modified code still has to come back clean.
+      - name: Lint changed files
+        env:
+          BASE_REF: ${{ github.base_ref || 'main' }}
+        run: |
+          files=$(git diff --name-only --diff-filter=ACMR "origin/$BASE_REF...HEAD" \
+            -- '*.ts' '*.tsx' '*.js' '*.mjs' '*.cjs')
+          if [ -z "$files" ]; then
+            echo "No JS/TS files changed against $BASE_REF — nothing to lint."
+            exit 0
+          fi
+          echo "Linting:"; echo "$files" | sed 's/^/  /'
+          npx eslint $files
+
+      - name: Check whether build secrets are available
+        id: build_secrets
+        env:
+          SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          if [ -n "$SERVICE_ROLE" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No Supabase secrets on this run (expected for a fork PR) — skipping the build. Types and lint still ran."
+          fi
+
+      # Same vars the deploy build consumes (see deploy-cloudflare.yml) because
+      # prerendered routes do real Supabase reads at build time.
+      - name: Write build-time env (never logged)
+        if: steps.build_secrets.outputs.available == 'true'
+        run: |
+          cat > .env.local <<EOF
+          NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          EOF
+
+      - name: Build
+        if: steps.build_secrets.outputs.available == 'true'
+        run: npx next build
+
+      - name: Remove build-time env file
+        if: always()
+        run: rm -f .env.local
