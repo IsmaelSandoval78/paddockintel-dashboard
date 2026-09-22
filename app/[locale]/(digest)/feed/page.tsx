@@ -181,25 +181,22 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
     <main className="bg-bg min-h-screen">
-      <div className="h-12 border-b border-border flex items-center px-5">
+      <div className="h-12 border-b border-border-subtle flex items-center px-5">
         <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-2">
           {t('kicker')} · {items.length}
         </p>
       </div>
 
       <div className="max-w-6xl mx-auto px-5 py-10 md:py-14">
-        <h1
-          className="uppercase leading-none tracking-[-0.02em] text-text-1"
-          style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.8rem, 5vw, 3rem)' }}
-        >
+        <h1 className="font-sans font-bold text-text-1 tracking-[-0.02em] leading-[1.05]" style={{ fontSize: 'clamp(1.75rem, 4.2vw, 2.5rem)' }}>
           {t('title')}
         </h1>
-        <p className="font-prose text-text-2 leading-relaxed max-w-lg mt-3">{t('description')}</p>
+        <p className="font-sans text-text-2 leading-relaxed max-w-lg mt-3">{t('description')}</p>
 
         <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 mt-4">
           {t('editedBy')}
           <span className="text-text-3"> · </span>
-          <Link href="/about" className="hover:text-terracotta transition-colors duration-150">
+          <Link href="/about" className="hover:text-accent transition-colors duration-150">
             {t('about')}
           </Link>
         </p>
@@ -215,9 +212,9 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
               {mentioned.map(({ entity, count }) => (
                 <span
                   key={entity}
-                  className="font-mono text-[11px] uppercase tracking-[0.04em] border border-border-subtle rounded-sm px-2.5 py-1 text-text-1"
+                  className="bg-accent-dim rounded-sm px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.04em] text-text-1"
                 >
-                  {entity} <span style={{ color: 'var(--terracotta)' }}>×{count}</span>
+                  {entity} <span className="text-accent font-semibold">×{count}</span>
                 </span>
               ))}
             </div>
@@ -241,7 +238,7 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
               return (
                 <div key={group.key} className={`${i === 0 ? 'border-t border-border-subtle pt-6' : 'mt-8 lg:mt-10'}`}>
                   <div className="flex items-baseline justify-between gap-3 mb-3 pb-2 border-b border-border-subtle">
-                    <p className="font-mono text-[10px] uppercase tracking-[0.1em]" style={{ color: 'var(--terracotta)' }}>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-accent">
                       {dayLabel(group.date, t, format)}
                     </p>
                     <p className="font-mono text-[10px] text-text-3">{t('storyCount', { count: group.items.length })}</p>
@@ -289,13 +286,13 @@ function FeedCard({
   t: FeedT;
 }) {
   const headlineEl = (
-    <span className="block font-prose font-semibold text-text-1 leading-snug line-clamp-2" style={{ fontSize: '0.9375rem' }}>
+    <span className="block font-sans font-semibold text-text-1 leading-snug line-clamp-2" style={{ fontSize: '0.9375rem' }}>
       {text.headline}
     </span>
   );
 
   return (
-    <article className="h-full flex flex-col border border-border-subtle rounded-sm p-4 lg:p-5 transition-colors duration-150 hover:border-terracotta">
+    <article className="soft-card soft-card-interactive h-full flex flex-col p-4 lg:p-5">
       <div className="flex items-center justify-between gap-2 mb-2.5">
         <div className="flex items-center gap-2 flex-wrap min-w-0">
           <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 truncate">{item.source_name}</span>
@@ -306,7 +303,7 @@ function FeedCard({
         </div>
         <span
           className="font-mono text-[11px] tabular-nums shrink-0 font-medium"
-          style={{ color: score > 1 ? 'var(--terracotta)' : 'var(--text-3)' }}
+          style={{ color: score > 1 ? 'var(--accent)' : 'var(--text-3)' }}
           title={t('scoreHint')}
         >
           {score}
@@ -314,26 +311,23 @@ function FeedCard({
       </div>
 
       {item.slug ? (
-        <Link href={`/feed/${item.slug}`} className="mb-2 hover:text-terracotta transition-colors duration-150">
+        <Link href={`/feed/${item.slug}`} className="mb-2 hover:text-accent transition-colors duration-150">
           {headlineEl}
         </Link>
       ) : (
-        <a href={item.source_url} target="_blank" rel="noopener noreferrer" className="mb-2 hover:text-terracotta transition-colors duration-150">
+        <a href={item.source_url} target="_blank" rel="noopener noreferrer" className="mb-2 hover:text-accent transition-colors duration-150">
           {headlineEl}
         </a>
       )}
 
-      <p
-        className="text-text-2 leading-relaxed mt-1.5 line-clamp-2"
-        style={{ fontFamily: 'var(--pi-sans)', fontSize: '0.8125rem', lineHeight: '1.6' }}
-      >
+      <p className="font-sans text-text-2 leading-relaxed mt-1.5 line-clamp-2" style={{ fontSize: '0.8125rem', lineHeight: '1.6' }}>
         {text.our_summary}
       </p>
 
       <div className="mt-auto pt-3 flex items-end justify-between gap-3">
         {text.featuredStat ? (
           <div className="min-w-0">
-            <p className="font-display tabular-nums text-text-1 leading-none" style={{ fontSize: '1.375rem' }}>
+            <p className="font-sans font-extrabold tabular-nums text-accent-2 leading-none tracking-[-0.01em]" style={{ fontSize: '1.375rem' }}>
               {text.featuredStat.value}
             </p>
             <p className="font-mono text-[9px] uppercase tracking-[0.08em] text-text-2 mt-1 truncate">{text.featuredStat.label}</p>
@@ -366,7 +360,7 @@ function FeedListRow({
   t: FeedT;
 }) {
   const headlineEl = (
-    <span className="flex-1 min-w-0 font-prose font-semibold text-text-1 truncate" style={{ fontSize: '0.875rem' }}>
+    <span className="flex-1 min-w-0 font-sans font-semibold text-text-1 truncate" style={{ fontSize: '0.875rem' }}>
       {text.headline}
     </span>
   );
@@ -377,7 +371,7 @@ function FeedListRow({
         {item.source_name}
       </span>
       {item.slug ? (
-        <Link href={`/feed/${item.slug}`} className="flex-1 min-w-0 flex hover:text-terracotta transition-colors duration-150">
+        <Link href={`/feed/${item.slug}`} className="flex-1 min-w-0 flex hover:text-accent transition-colors duration-150">
           {headlineEl}
         </Link>
       ) : (
@@ -385,7 +379,7 @@ function FeedListRow({
           href={item.source_url}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-1 min-w-0 flex hover:text-terracotta transition-colors duration-150"
+          className="flex-1 min-w-0 flex hover:text-accent transition-colors duration-150"
           title={t('readOriginal')}
         >
           {headlineEl}
@@ -393,7 +387,7 @@ function FeedListRow({
       )}
       <span
         className="font-mono text-[11px] tabular-nums shrink-0 font-medium"
-        style={{ color: score > 1 ? 'var(--terracotta)' : 'var(--text-3)' }}
+        style={{ color: score > 1 ? 'var(--accent)' : 'var(--text-3)' }}
         title={t('scoreHint')}
       >
         {score}
