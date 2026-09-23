@@ -38,15 +38,15 @@ export default function EmailCapture({ className, compact }: { className?: strin
 
   if (compact) {
     return (
-      <div className={`relative ${className ?? ''}`}>
-        <form onSubmit={handleSubmit} className="soft-card flex items-center h-9 pl-4 pr-1.5 gap-2">
+      <div className={`relative w-full md:w-auto ${className ?? ''}`}>
+        <form onSubmit={handleSubmit} className="soft-card flex items-center h-9 pl-4 pr-1.5 gap-2 w-full md:w-auto">
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={t('placeholder')}
             required
-            className="w-28 sm:w-40 bg-transparent font-mono text-[11px] text-text-1 placeholder:text-text-3 outline-none min-w-0"
+            className="min-w-0 flex-1 md:flex-none md:w-40 bg-transparent font-mono text-[11px] text-text-1 placeholder:text-text-3 outline-none"
           />
           <button
             type="submit"
@@ -57,7 +57,7 @@ export default function EmailCapture({ className, compact }: { className?: strin
           </button>
         </form>
         {(status === 'error' || status === 'errorInvalid') && (
-          <p className="absolute top-full left-0 mt-1 font-mono text-[10px] text-accent-2 whitespace-nowrap">
+          <p className="absolute top-full left-0 mt-1 max-w-full font-mono text-[10px] text-accent-2 md:whitespace-nowrap">
             {status === 'errorInvalid' ? t('errorInvalid') : t('error')}
           </p>
         )}
