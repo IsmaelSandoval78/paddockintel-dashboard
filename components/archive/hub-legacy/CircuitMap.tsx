@@ -194,10 +194,19 @@ export default function CircuitMap({
       markersRef.current.set(circuit.id, marker);
     });
 
+    // Captured rather than read in the cleanup: markersRef.current is never reassigned (one
+    // Map, created once at its declaration), so this is equivalent, and it is what the
+    // ref-in-cleanup rule asks for instead of reading a ref that may have moved on.
+    const markers = markersRef.current;
+
     return () => {
-      markersRef.current.forEach((m) => m.remove());
-      markersRef.current.clear();
+      markers.forEach((m) => m.remove());
+      markers.clear();
     };
+    // Keyed on `circuits` alone on purpose. `onSelect` is a fresh closure on every parent
+    // render, so listing it would tear down and rebuild every Leaflet marker each time, and
+    // `dominanceData` has its own recolour effect below that does not touch marker identity.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [circuits]);
 
   // Recolor all markers when dominanceData changes

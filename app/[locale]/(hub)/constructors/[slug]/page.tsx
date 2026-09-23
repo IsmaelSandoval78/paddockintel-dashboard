@@ -33,31 +33,6 @@ function teamColor(ref: string): string {
 
 // ─── Flag gradient (nationality → 3-stripe) ───────────────────────
 
-// ─── Team hex values for color pills ──────────────────────────────
-const TEAM_HEX: Record<string, string> = {
-  mercedes:     '#00D2BE',
-  mclaren:      '#FF8700',
-  red_bull:     '#3671C6',
-  ferrari:      '#E8002D',
-  alpine:       '#FF87BC',
-  aston_martin: '#358C75',
-  haas:         '#B6BABD',
-  williams:     '#64C4FF',
-  sauber:       '#52E252',
-  kick_sauber:  '#52E252',
-  rb:           '#6692FF',
-  alphatauri:   '#6692FF',
-  toro_rosso:   '#469BFF',
-  renault:      '#FFD700',
-  benetton:     '#00964B',
-  jordan:       '#FFB800',
-  brawn:        '#B0FF00',
-};
-
-function teamHex(ref: string): string {
-  return TEAM_HEX[ref] ?? '#B0AFA8';
-}
-
 function cleanLapTime(t: string | null | undefined): string | null {
   if (!t || t === '\\N' || t.trim() === '') return null;
   return t;

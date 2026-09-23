@@ -36,12 +36,10 @@ function SeasonRow({
   constructor: c,
   selected,
   onClick,
-  t,
 }: {
   constructor: ConstructorSeasonRow;
   selected: boolean;
   onClick: () => void;
-  t: ReturnType<typeof useTranslations<'constructors'>>;
 }) {
   const isP1 = c.position === 1;
   const winRate = c.races > 0 ? Math.round((c.wins / c.races) * 100) : 0;
@@ -276,7 +274,6 @@ export default function ConstructorsClient({
               constructor={c}
               selected={c.constructor_id === selectedId}
               onClick={() => handleSelectConstructor(c.constructor_id)}
-              t={t}
             />
           ))}
         </div>

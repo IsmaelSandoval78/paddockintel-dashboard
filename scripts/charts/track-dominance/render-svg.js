@@ -31,7 +31,7 @@ const d = require('./dominance-data.json');
 const corners = require('./corners.json');
 const dc = require('./delta-curve.json');
 
-const [codeA, codeB, nameA, nameB, angleArg, ...flags] = process.argv.slice(2);
+const [codeA, _codeB, nameA, nameB, angleArg, ...flags] = process.argv.slice(2);
 const angleDeg = parseFloat(angleArg || '0');
 const flipX = flags.includes('flipX');
 const flipY = flags.includes('flipY');

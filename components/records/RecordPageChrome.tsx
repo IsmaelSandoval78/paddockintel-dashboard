@@ -43,11 +43,9 @@ export function SubBar({ t, updated }: { t: T; updated?: boolean }) {
 }
 
 export function OtherRecordsNav({
-  t,
   title,
   siblings,
 }: {
-  t: T;
   title: string;
   siblings: { slug: string; title: string }[];
 }) {

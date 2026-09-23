@@ -125,7 +125,6 @@ export default function CircuitDetailExperience({
   winnerRows,
   decadeDominance,
   lapEntries,
-  allTimeRecord,
   constructorWins,
   maxConWins,
   nextRace,

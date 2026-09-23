@@ -43,13 +43,17 @@ export default function NextRaceChapter({ race, motionOk }: NextRaceChapterProps
   const titleRef = useRef<HTMLHeadingElement>(null);
   const [cd, setCd] = useState<{ days: number; hours: number; minutes: number } | null>(null);
 
+  // Depends on the date string, not the race object: the parent can hand back a new object
+  // with the same date on any render, and restarting a 60s interval for that would be wrong.
+  // Hoisting the field out is what makes that dependency honest instead of suppressed.
+  const raceDate = race?.date;
   useEffect(() => {
-    if (!race) return;
-    const tick = () => setCd(getCountdown(race.date));
+    if (!raceDate) return;
+    const tick = () => setCd(getCountdown(raceDate));
     tick();
     const id = setInterval(tick, 60000);
     return () => clearInterval(id);
-  }, [race?.date]);
+  }, [raceDate]);
 
   // Fit circuit name to one line — runs regardless of motion
   useEffect(() => {
