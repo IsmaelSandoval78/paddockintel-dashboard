@@ -69,7 +69,6 @@ export default function CircuitIntelGrid({ intelData, lapEntries, motionOk }: Pr
   } = intelData;
 
   const maxNatWins = natWins[0]?.wins ?? 1;
-  const maxPodNoWin = podNoWin[0]?.podiums ?? 1;
   const poleConvPct = poleTotal > 0 ? (poleWins / poleTotal) * 100 : null;
   const maxPitDecadeAvg = Math.max(...pitByDecade.map((d) => d.avgSec), 0.01);
   const maxFastPit = fastestPitByConstructor[0]?.avgBestSec ?? 0.01;

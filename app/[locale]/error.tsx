@@ -11,7 +11,6 @@ export default function LocaleError({ error, reset }: { error: Error & { digest?
   const t = useTranslations('error');
 
   useEffect(() => {
-    // eslint-disable-next-line no-console
     console.error(error);
   }, [error]);
 

@@ -12,7 +12,23 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Agent skill tooling, not application code, and partly vendored third-party bundles
+    // (modern-screenshot.umd.js is minified UMD and accounted for 78 warnings on its own).
+    // Linting it says nothing about the site and drowned out the 16 warnings that were ours.
+    ".claude/**",
   ]),
+
+  // `_`-prefixed means "deliberately unused" -- the convention this repo already reaches for
+  // (scripts/load-delta-ribbon.ts destructures `{ t: _t, ...rest }` to drop one key) but that
+  // the default rule config had no way to express.
+  {
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_", caughtErrorsIgnorePattern: "^_" },
+      ],
+    },
+  },
 
   // These two replace the entire document rather than rendering inside the app shell --
   // they ship their own <html>/<body> because Next.js requires it of global-error and of a

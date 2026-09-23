@@ -40,15 +40,16 @@ jobs:
       - name: Type-check
         run: npx tsc --noEmit
 
-      # Repo-wide, because main now has zero lint errors. This used to lint only the files a
-      # PR touched: a whole-repo gate would have failed every PR on 38 inherited errors.
-      # Those are fixed, so the gate can cover everything and keep it that way -- a repo-wide
-      # error count of zero is only cheap to hold while it is already zero.
+      # Repo-wide and zero-tolerance, in that order. This used to lint only the files a PR
+      # touched, because main carried 38 errors and a whole-repo gate would have failed every
+      # PR on inherited debt. Those are fixed and so are the warnings, so --max-warnings 0
+      # holds the line: a count of zero is only cheap to keep while it is already zero.
       #
-      # Warnings stay non-blocking (eslint exits 0 on warnings alone). There are still 151,
-      # and turning them into failures is a separate decision from keeping errors at zero.
+      # A deliberately unused binding is expressible -- name it with a leading underscore
+      # (see the no-unused-vars config in eslint.config.mjs) rather than reaching for a
+      # disable comment.
       - name: Lint
-        run: npx eslint .
+        run: npx eslint . --max-warnings 0
 
       - name: Check whether build secrets are available
         id: build_secrets

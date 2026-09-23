@@ -65,7 +65,7 @@ export default function CircuitsClient({
   const [loading,      setLoading]      = useState(false);
   const [search,       setSearch]       = useState('');
   const [showCalendar, setShowCalendar] = useState(false);
-  const [flyTo, setFlyTo] = useState<{ lat: number; lng: number; nonce: number } | null>(null);
+  const [, setFlyTo] = useState<{ lat: number; lng: number; nonce: number } | null>(null);
 
   const searchMatches = search.trim()
     ? circuits.filter((c) => {

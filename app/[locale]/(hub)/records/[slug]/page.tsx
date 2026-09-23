@@ -109,7 +109,6 @@ async function renderDriverRecord(slug: RecordSlug, locale: string, t: T, title:
         share={<ShareButton url={sharePath} title={`${title} · PaddockIntel`} />}
       />
       <OtherRecordsNav
-        t={t}
         title={t('sectionDrivers')}
         siblings={RECORD_SLUGS.filter((s) => s !== slug).map((s) => ({ slug: s, title: t(`${s}.title`) }))}
       />
@@ -164,7 +163,6 @@ async function renderConstructorRecord(
         share={<ShareButton url={sharePath} title={`${title} · PaddockIntel`} />}
       />
       <OtherRecordsNav
-        t={t}
         title={t('sectionConstructors')}
         siblings={CONSTRUCTOR_RECORD_SLUGS.filter((s) => s !== slug).map((s) => ({
           slug: s,
@@ -250,7 +248,6 @@ async function renderAgeRecord(locale: string, t: T, title: string, sharePath: s
       </div>
 
       <OtherRecordsNav
-        t={t}
         title={t('sectionSpecial')}
         siblings={SPECIAL_RECORD_SLUGS.filter((s) => s !== 'youngest-oldest-winner').map((s) => ({
           slug: s,
@@ -302,7 +299,6 @@ async function renderCircuitWinRecord(locale: string, t: T, title: string, share
         share={<ShareButton url={sharePath} title={`${title} · PaddockIntel`} />}
       />
       <OtherRecordsNav
-        t={t}
         title={t('sectionSpecial')}
         siblings={SPECIAL_RECORD_SLUGS.filter((s) => s !== 'most-wins-single-circuit').map((s) => ({
           slug: s,

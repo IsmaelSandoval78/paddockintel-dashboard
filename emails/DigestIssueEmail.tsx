@@ -43,7 +43,6 @@ export default function DigestIssueEmail({
   const ink = '#0A0A0A';
   const muted = '#6B6B6B';
   const ghost = '#B5B4AE';
-  const red = '#E61919';
   const mono = 'ui-monospace, "JetBrains Mono", "Courier New", monospace';
   const sans = 'ui-sans-serif, system-ui, -apple-system, sans-serif';
   const border = '1px solid #0A0A0A';

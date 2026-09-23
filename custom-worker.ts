@@ -28,7 +28,7 @@ interface MinimalScheduledController {
   cron: string;
 }
 
-export default {
+const worker = {
   fetch: handler.fetch,
 
   // Two Cron Triggers share this one handler (see wrangler.jsonc) -- `controller.cron`
@@ -48,3 +48,5 @@ export default {
     }
   },
 };
+
+export default worker;
