@@ -25,7 +25,7 @@ You'll need a `.env.local` with Supabase credentials (`NEXT_PUBLIC_SUPABASE_URL`
 - **`CLAUDE.md`** / **`AGENTS.md`** — guidelines for AI coding agents working in this repo.
 - **`docs/archive/`** — superseded planning/spec docs (including the old `PHASES.md` status log and the shipped `RECORDS-HUB-SPEC*.md` specs), kept for historical reference only. Not the active plan.
 - **`docs/BEAGLE-SCORE-V0.md`** — DigOps significance score v0 (schema, 0–100 formula, how to run `scripts/score-beagle-v0.mjs`). A score is not a publish.
-- **`docs/DIGOPS-QUEUE-V0.md`** — editorial candidate queue. Run order: `node scripts/score-beagle-v0.mjs --apply`, then `node scripts/queue-digest-candidates-v0.mjs --apply`, then a human reviews. Publish stays manual (`scripts/publish_digest.py`). Candidates are not on the Feed.
+- **`docs/DIGOPS-QUEUE-V0.md`** — editorial candidate queue. Run order: `node scripts/score-beagle-v0.mjs --apply`, then `node scripts/queue-digest-candidates-v0.mjs --apply`, then a human rewrites. Items sit on draft issue `digops-queue` (`series = digops_queue`). Publish stays manual.
 
 ## Database / migrations
 

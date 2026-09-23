@@ -227,7 +227,7 @@ order by s.score desc, s.independent_outlet_count desc
 limit 25;
 ```
 
-The editorial queue is the next command. Dry-run is the default. `--apply` upserts `digest_item_candidates` and still does not publish. Run order, the table, and what a human does next: `docs/DIGOPS-QUEUE-V0.md`.
+The editorial queue is the next command. Dry-run is the default. `--apply` inserts `digest_items` on the draft issue `digops-queue` (`series = digops_queue`) and still does not publish. Run order and the holder issue: `docs/DIGOPS-QUEUE-V0.md`.
 
 ```bash
 node scripts/queue-digest-candidates-v0.mjs
@@ -247,4 +247,4 @@ node scripts/queue-digest-candidates-v0.mjs --apply
 - No `drama_data_contradiction` key and no migration change for it. That signal is v0.1, optional, and unread here.
 - No scheduled scoring cron. The route stays off unless `BEAGLE_SCORE_CRON=1`.
 - `economic_payoff_flag` stays `false` on every row this writer inserts. `economic_title_hint.verified` is never `true`.
-- No threshold that means "high enough to publish." The printed top 25 is what a person looks at. `scripts/queue-digest-candidates-v0.mjs` copies that cut into `digest_item_candidates` and still does not publish (`docs/DIGOPS-QUEUE-V0.md`).
+- No threshold that means "high enough to publish." The printed top 25 is what a person looks at. `scripts/queue-digest-candidates-v0.mjs` copies that cut onto the draft issue `digops-queue` and still does not publish (`docs/DIGOPS-QUEUE-V0.md`).
