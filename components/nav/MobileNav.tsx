@@ -115,7 +115,7 @@ export default function MobileNav({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setOpen(false)}
-                className="flex items-center h-12 px-5 border-b border-border font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 bg-bg"
+                className="flex items-center h-12 px-5 border-b border-border font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-accent bg-bg"
               >
                 {t('hub')}
               </a>

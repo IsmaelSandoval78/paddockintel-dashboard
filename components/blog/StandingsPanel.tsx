@@ -38,13 +38,13 @@ export default async function StandingsPanel({ drivers, constructors, compact = 
   if (compact) {
     return (
       <div className="flex flex-col h-full">
-        <div className="mb-6 flex items-baseline justify-between gap-3">
+        <div className="mb-6 flex flex-col items-start gap-2 md:flex-row md:items-baseline md:justify-between">
           <h2 className="font-sans font-semibold text-text-1 tracking-[-0.01em] text-lg">{t('title')}</h2>
           <a
             href="https://hub.paddockintel.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 hover:text-accent transition-colors duration-150 shrink-0"
+            className="font-sans text-sm font-semibold text-accent hover:text-text-1 transition-colors duration-150"
           >
             {t('cta')} →
           </a>
@@ -83,7 +83,7 @@ export default async function StandingsPanel({ drivers, constructors, compact = 
 
   return (
     <section className="soft-card p-8 md:p-10">
-      <div className="flex items-baseline justify-between mb-8">
+      <div className="mb-8 flex flex-col items-start gap-3 md:flex-row md:items-end md:justify-between">
         <h2 className="font-sans font-semibold text-text-1 tracking-[-0.01em]" style={{ fontSize: 'clamp(1.35rem, 2.6vw, 1.75rem)' }}>
           {t('title')}
         </h2>
@@ -91,7 +91,7 @@ export default async function StandingsPanel({ drivers, constructors, compact = 
           href="https://hub.paddockintel.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-accent transition-colors duration-150 shrink-0"
+          className="font-sans text-sm font-semibold text-accent hover:text-text-1 transition-colors duration-150"
         >
           {t('cta')} →
         </a>

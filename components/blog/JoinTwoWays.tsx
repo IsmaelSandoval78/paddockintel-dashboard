@@ -7,12 +7,10 @@ import { createAuthBrowserClient } from '@/lib/supabase/authBrowserClient';
 import EmailCapture from '@/components/ui/EmailCapture';
 
 // The two ways to join magazine-home already exist separately — EmailCapture
-// (registration wall) and the Google path from AuthWidget — this just puts
-// them side by side, matching the "join two ways" pattern from AI Weekly's
-// home. Google button has its own small handler rather than reusing
-// AuthWidget directly: that component is built as a nav dropdown trigger,
-// not an always-open inline block, and the two use sites don't share enough
-// to justify extracting a shared button yet.
+// (registration wall) and the Google path from AuthWidget. The full card
+// still offers both. Compact mode is the masthead: newsletter only, so the
+// page has one primary CTA above the fold. Google stays in the header
+// Sign-in control (AuthWidget), which already runs the same OAuth redirect.
 export default function JoinTwoWays({ className, compact }: { className?: string; compact?: boolean }) {
   const t = useTranslations('magazine.join');
   const tAuth = useTranslations('auth');
@@ -31,27 +29,13 @@ export default function JoinTwoWays({ className, compact }: { className?: string
     if (error) setStatus('error');
   }
 
-  // Compact mode — hero-bar placement: both join paths shrink to inline pill
-  // controls next to the headline, no cards, no legal text (still linked from
-  // the sitewide footer). The full card layout below stays the default for
-  // any other placement.
+  // Compact mode — masthead placement: the newsletter is the only control.
+  // Full width below md so the field isn't clipped; inline on the right from
+  // md up. Legal text stays in the sitewide footer.
   if (compact) {
     return (
-      <div className={`relative flex flex-col gap-2 w-full min-w-0 md:w-auto md:flex-row md:items-center md:shrink-0 ${className ?? ''}`}>
+      <div className={`relative w-full min-w-0 md:w-auto md:shrink-0 ${className ?? ''}`}>
         <EmailCapture compact />
-        <button
-          type="button"
-          onClick={handleGoogle}
-          disabled={status === 'sending'}
-          className="soft-card h-9 px-4 w-full md:w-auto font-sans text-[11px] font-semibold text-text-1 hover:text-accent transition-colors duration-150 disabled:opacity-50 whitespace-nowrap"
-        >
-          {status === 'sending' ? tAuth('sending') : tAuth('google')}
-        </button>
-        {status === 'error' && (
-          <p className="absolute top-full left-0 md:left-auto md:right-0 mt-1 max-w-full font-mono text-[10px] text-accent-2 md:whitespace-nowrap">
-            {tAuth('error')}
-          </p>
-        )}
       </div>
     );
   }

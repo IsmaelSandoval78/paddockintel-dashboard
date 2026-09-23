@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/lib/i18n/navigation';
 import { createClient } from '@/lib/supabase/server';
@@ -27,6 +28,28 @@ import {
 export const revalidate = 3600;
 
 type Stat = { value: string; label: string; unit?: string };
+
+// next/image only for hosts already in next.config remotePatterns. A cover on
+// any other host is skipped and the hero number fills the tile instead.
+function isOptimizableCover(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== 'https:') return false;
+    if (parsed.hostname === 'paddockintel.com' && parsed.pathname.startsWith('/content/images/')) return true;
+    if (parsed.hostname === 'hub.paddockintel.com' && parsed.pathname.startsWith('/charts/')) return true;
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+function FeaturedCover({ src }: { src: string }) {
+  return (
+    <div className="relative mb-5 aspect-[16/9] w-full overflow-hidden rounded-md bg-surface-raised">
+      <Image src={src} alt="" fill sizes="(min-width: 1024px) 34vw, 100vw" className="object-cover" />
+    </div>
+  );
+}
 
 type PageParams = Promise<{ locale: string }>;
 type SearchParams = Promise<{ page?: string; tag?: string }>;
@@ -188,6 +211,8 @@ export default async function MagazineHomePage({
     ];
   const { featured, recent } = featuredAndRecent;
   const featuredStat = ((featured?.stats as Stat[] | undefined) ?? [])[0];
+  const featuredCoverRaw = featured?.cover_image_url?.trim() || null;
+  const featuredCover = featuredCoverRaw && isOptimizableCover(featuredCoverRaw) ? featuredCoverRaw : null;
 
   const lastRaceSnapshot = raceHighlights.raceName
     ? { raceName: raceHighlights.raceName, winner: raceHighlights.winner, fastestLap: raceHighlights.fastestLap }
@@ -210,13 +235,13 @@ export default async function MagazineHomePage({
 
   return (
     <main className="bg-bg min-h-screen font-sans">
-      {/* Hero bar — headline + subhead and both join paths. Below md they
-          stack so the email and Google controls stay inside the viewport;
-          from md up they share one row. */}
+      {/* Hero bar — headline + subhead, and one primary CTA (the newsletter).
+          Google sign-in stays in the header. Below md the row stacks so the
+          email field stays inside the viewport. */}
       <div className="border-b border-border-subtle">
         <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-4 flex flex-col items-stretch gap-4 md:flex-row md:flex-wrap md:items-center md:justify-between">
           <div className="flex items-baseline gap-3 flex-wrap min-w-0">
-            <h1 className="font-sans font-bold text-text-1 text-lg md:text-xl tracking-[-0.01em] min-w-0 md:shrink-0">
+            <h1 className="font-sans font-bold text-text-1 text-lg md:text-xl tracking-[-0.01em] min-w-0 md:shrink-0 text-balance">
               {t('headline')}
             </h1>
             <p className="hidden sm:block min-w-0 max-w-full font-sans text-text-2 text-sm truncate">
@@ -232,15 +257,19 @@ export default async function MagazineHomePage({
             grid per the approved layout: not full-bleed, not the old 1024px column. */}
         {featured && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-            {/* sm is 375px in this theme, so the two-column split has to wait
-                until md — a phone was still getting the desktop columns. */}
-            <div className="soft-card-lg soft-card-interactive lg:col-span-2 p-7 md:p-9 grid grid-cols-1 md:grid-cols-[1.3fr_1fr] gap-0 md:gap-6">
-              <Link href={`/${featured.slug}`} className="flex flex-col justify-center min-w-0">
+            {/* sm is 375px in this theme, so the Featured | Latest split waits
+                until md — same stack PR #43 uses below 768px. */}
+            <div className="soft-card-lg soft-card-interactive lg:col-span-2 h-full p-7 md:p-9 grid grid-cols-1 md:grid-cols-[1.3fr_1fr] gap-0 md:gap-6">
+              <Link href={`/${featured.slug}`} className="flex h-full flex-col min-w-0">
+                {featuredCover && <FeaturedCover src={featuredCover} />}
                 <div>
                   <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent mb-3">
                     {t('featuredKicker')}
                   </p>
-                  <h2 className="font-sans font-bold text-text-1 tracking-[-0.02em] leading-[1.15] mb-3 break-words" style={{ fontSize: 'clamp(1.3rem, 2.4vw, 1.75rem)' }}>
+                  <h2
+                    className="font-sans font-bold text-text-1 tracking-[-0.02em] leading-[1.12] mb-3 text-balance break-words"
+                    style={{ fontSize: featuredCover ? 'clamp(1.3rem, 2.4vw, 1.75rem)' : 'clamp(1.65rem, 2.8vw, 2.15rem)' }}
+                  >
                     {featured.title as string}
                   </h2>
                   {featured.meta_description && (
@@ -250,8 +279,11 @@ export default async function MagazineHomePage({
                   )}
                 </div>
                 {featuredStat && (
-                  <div className="mt-6">
-                    <p className="font-sans font-extrabold tabular-nums leading-none tracking-[-0.02em] text-accent-2" style={{ fontSize: 'clamp(1.75rem, 3.4vw, 2.5rem)' }}>
+                  <div className={featuredCover ? 'mt-6' : 'mt-auto pt-8'}>
+                    <p
+                      className="font-sans font-extrabold tabular-nums leading-none tracking-[-0.03em] text-accent-2"
+                      style={{ fontSize: featuredCover ? 'clamp(1.75rem, 3.4vw, 2.5rem)' : 'clamp(3.25rem, 6vw, 4.75rem)' }}
+                    >
                       {featuredStat.value}
                     </p>
                     <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-2 mt-2">
@@ -344,7 +376,7 @@ export default async function MagazineHomePage({
 
           return (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 py-6">
-              {hasAttention && <AttentionThisWeekPanel attention={attention} />}
+              {hasAttention && <AttentionThisWeekPanel attention={attention} scores={feedScores} />}
               {f1News.length > 0 && (
                 <div className="soft-card p-6">
                   <FeedTeaserPanel items={f1News} scores={feedScores} title={t('f1News.title')} showBadge={false} />
