@@ -749,6 +749,7 @@
       "vsLastWeek": "{count} vs {prevCount} tracked stories",
       "storiesThisWeek": "{count, plural, one {# tracked story} other {# tracked stories}} this week",
       "ofStoriesThisWeek": "{count} of {total} tracked stories this week",
+      "alsoMentioned": "Also mentioned",
       "seeAll": "See the full feed"
     },
     "learning": {

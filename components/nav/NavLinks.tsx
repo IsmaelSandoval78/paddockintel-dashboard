@@ -55,7 +55,7 @@ export default function NavLinks({ isMagazine }: { isMagazine: boolean }) {
           href="https://hub.paddockintel.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="font-sans text-[13px] font-medium no-underline text-text-2 hover:text-text-1 transition-colors duration-150"
+          className="font-sans text-[13px] font-semibold no-underline text-accent hover:text-text-1 transition-colors duration-150"
         >
           {t('hub')}
         </a>

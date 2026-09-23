@@ -749,6 +749,7 @@
       "vsLastWeek": "{count} vs {prevCount} historias registradas",
       "storiesThisWeek": "{count, plural, one {# historia registrada} other {# historias registradas}} esta semana",
       "ofStoriesThisWeek": "{count} de {total} historias registradas esta semana",
+      "alsoMentioned": "También mencionados",
       "seeAll": "Ver el feed completo"
     },
     "learning": {
