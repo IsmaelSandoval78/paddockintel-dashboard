@@ -64,7 +64,7 @@ v0 boosts an item when two things are true together:
 
 Virality alone does not raise the score. `independent_outlet_count` is an input the rubric may use. It is not the ranking. This document does not set weights. Weights are the scoring job, and that job is not in this change.
 
-`economic_title_hint.verified` is `false` until a human has checked the claim against the article. A keyword in the title is not verification. While that hint is the only evidence, `economic_payoff_flag` stays `false`.
+`economic_title_hint.verified` is `false` until a human has checked the claim against the article. A keyword in the title is not verification. While that hint is the only evidence, `economic_payoff_flag` stays `false`. The same holds while `economic_mechanism` is `null`: v0 reserves the key and does not fill it.
 
 `eeat_incomplete: true` means Journalism, SEO, and EEAT have not been passed. v0 does not set it to `false`. Those gates are the advisor files, not this table:
 
@@ -81,15 +81,20 @@ A high score does not publish. It does not insert into `digest_items`, does not 
 
 ## `signals` keys (v0)
 
-`signals` is a JSON object. Unknown keys may be added later; v0 readers must understand these:
+`signals` is a JSON object. The migration column comment names the first keys; this section is the shape. v0 reserves `primary_source`, `economic_mechanism`, `named_expert`, and `eeat_incomplete` even when the value is `null` or `true`/`false`. Those four keys are present on a v0 object. A missing key is not how v0 says "unknown."
 
-| Key | Shape | Meaning |
+| Key | v0 value | Shape when filled |
 |---|---|---|
-| `independent_outlets` | string array | Collapsed outlet labels that were counted. Length matches `independent_outlet_count` |
-| `syndication_collapse` | object | Raw `source_name` values folded into a group. v0 group is Motorsport Network, e.g. `{ "Motorsport Network": ["Motorsport.com"] }`. Omit groups that did not fire |
-| `source_tier` | string or null | Only a label that already exists in the feed notes (`scripts/beagle.mjs`, `docs/advisors/SEO-EXPERT.md`). v0 does not invent a tier enum. `null` if none is recorded |
-| `economic_title_hint` | object | `{ "verified": false }` in v0. Optional short `hint` string for the phrase the matcher saw. `verified` stays `false` until a human checks the article |
-| `eeat_incomplete` | boolean | `true` on every v0 row this pipeline writes. This table does not clear it |
+| `independent_outlets` | the collapsed list, or omit only if the count column stands alone | string array. Length matches `independent_outlet_count` |
+| `syndication_collapse` | object, or omit when no group fired | Raw `source_name` values folded into a group. v0 group is Motorsport Network, e.g. `{ "Motorsport Network": ["Motorsport.com"] }` |
+| `source_tier` | `null` until classified | string. Guidance below. Free text, not a database enum |
+| `economic_title_hint` | `{ "verified": false }` | object. Optional short `hint` for the phrase the matcher saw. `verified` stays `false` until a human checks the article |
+| `primary_source` | `null` | `{ "name": string, "url": string }` or `null`. The original document (an FIA release, a team statement, a Formula1.com page), not the RSS item that mentioned it |
+| `economic_mechanism` | `null` | string or `null`. The mechanism itself (cost cap, prize money, contract cycle), distinct from a title keyword in `economic_title_hint` |
+| `named_expert` | `null` | `{ "name": string, "platform": string, "link": string }` or `null`. All three together when set: real name, real platform, real link to the original statement (`docs/advisors/EEAT-EXPERT.md`). v0 does not invent a person from a headline |
+| `eeat_incomplete` | `true` | boolean. Stays `true` on every row this pipeline writes. This table does not clear it |
+
+`primary_source`, `economic_mechanism`, and `named_expert` are reserved so a later writer has a typed slot. v0 leaves them `null`. `eeat_incomplete` stays `true`.
 
 Example, not a scored production row:
 
@@ -99,11 +104,44 @@ Example, not a scored production row:
   "syndication_collapse": { "Motorsport Network": ["Motorsport.com"] },
   "source_tier": null,
   "economic_title_hint": { "verified": false, "hint": "cost cap" },
+  "primary_source": null,
+  "economic_mechanism": null,
+  "named_expert": null,
   "eeat_incomplete": true
 }
 ```
 
-`independent_outlet_count` for that object is `3`. `economic_payoff_flag` is `false` because the hint is unverified.
+`independent_outlet_count` for that object is `3`. `economic_payoff_flag` is `false` because the hint is unverified and `economic_mechanism` is null.
+
+There is no `story_mode` key and no `drama_data_contradiction` key in this object. Both decisions are below.
+
+### `source_tier` — first-party, syndicated, wire
+
+v0 does not add a check constraint or a closed enum. `source_tier` stays a string or `null`. When a value is written, use one of these three labels, matched from the cron's `source_name` (the string `app/api/cron/refresh-beagle` stores), after syndication collapse:
+
+| Label | What it means | Cron `source_name` examples |
+|---|---|---|
+| `first_party` | The organization speaking for itself | `FIA`, `Formula1.com`, `Liberty Media` |
+| `syndicated` | One story repeated across a network, already collapsed | `Motorsport Network` (raw `source_name` `Motorsport.com`, and any future name matching `/^Motorsport\.com/` in `SYNDICATION_GROUPS`) |
+| `wire` | Everyone else on the cron list: a newsroom or a wire. v0 does not split those two | `The Race`, `BBC Sport`, `RACER`, `Autosport`, `ESPN`, `Joe Saward` |
+
+`Autosport` is its own cron `source_name`. `SYNDICATION_GROUPS` does not fold it into Motorsport Network, so it stays `wire` until that constant changes. The current cron list is covered by the three labels: the three first-party names, collapsed Motorsport Network, and `wire` for every other `source_name`. A feed added later that fits none of those readings stays `null` until this table of examples is extended. v0 does not invent a fourth label for a single feed.
+
+### `story_mode` is a publish gate
+
+`story_mode` (`fact` | `analysis` | `opinion`) is **not** a v0 scorer signal. It is entirely a publish gate.
+
+`docs/advisors/SPORTS-JOURNALISM-EXPERT.md` requires the published piece to show the reader which sentence is reported fact, which is analysis, and which is opinion (opinion belongs in the Verdict). That label describes PaddockIntel's own copy. The cron pool only has `source_name`, `title`, `link`, and `entity_tags`. A scorer that wrote `fact` or `opinion` from a headline would be guessing, and a guess in `signals` would look like the gate had already been passed.
+
+DigOps does not read `story_mode` off `beagle_item_scores`. The human applies it when writing, against the journalism advisor, before anything enters `digest_items` or `articles`.
+
+### v0.1 optional signal — drama vs Hub data (out of this migration)
+
+v0.1 may add an optional `signals` key, `drama_data_contradiction` (boolean or `null`). v0 does not write it, and this migration does not add a column for it.
+
+The key means: the wire drama and PaddockIntel's own Hub history disagree. The press is repeating a row, a penalty, or a driver argument, and the career or season record (wins, championships, head-to-head, DNFs in `driver_stats` / `results`) says something else. That is the Feed rule already in force for humans: `EDITORIAL.md` "The drama rule" and `docs/ROADMAP-SEMANA.md` (16 Sep 2026) — an Alonso/Sainz argument still needs who is champion and who has the wins. The contradiction is the wedge. It is not a virality boost, and it is not required to queue a v0 row.
+
+It sits in v0.1 because it needs a Hub read the v0 contract does not perform. Adding it later is a new `rubric_version` (or a doc revision that still does not publish), not a change to `beagle_items`.
 
 ## Access
 
@@ -120,3 +158,5 @@ These rows are editorial judgments, not user data. No client bundle key should w
 - No numeric formula, weights, or threshold for "high enough to queue."
 - No second syndication map.
 - No change to `lib/entityMentions.ts` `significanceScore` or to the public feed badge.
+- No `story_mode` on the score row. Fact, analysis, and opinion stay on the publish gate.
+- No `drama_data_contradiction` key and no migration change for it. That signal is v0.1, optional, and unread here.
