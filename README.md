@@ -24,7 +24,7 @@ You'll need a `.env.local` with Supabase credentials (`NEXT_PUBLIC_SUPABASE_URL`
 - **`EDITORIAL.md`** — source of truth for voice/structure/process on any article, digest issue, or newsletter copy.
 - **`CLAUDE.md`** / **`AGENTS.md`** — guidelines for AI coding agents working in this repo.
 - **`docs/archive/`** — superseded planning/spec docs (including the old `PHASES.md` status log and the shipped `RECORDS-HUB-SPEC*.md` specs), kept for historical reference only. Not the active plan.
-- **`docs/BEAGLE-SCORE-V0.md`** — DigOps significance score v0 (schema, formula, how to run `scripts/score-beagle.mjs`). A score is not a publish.
+- **`docs/BEAGLE-SCORE-V0.md`** — DigOps significance score v0 (schema, 0–100 formula, how to run `scripts/score-beagle-v0.mjs`). A score is not a publish.
 
 ## Database / migrations
 

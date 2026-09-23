@@ -2,14 +2,15 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 
 export const RUBRIC_VERSION: 'v0';
 export const WINDOW_DAYS: number;
+export const TOP_N: number;
 
 export type SourceTier = 'first_party' | 'syndicated' | 'wire';
 
 export type ScoreSignals = {
   independent_outlets: string[];
   syndication_collapse?: Record<string, string[]>;
-  source_tier: SourceTier | null;
-  economic_title_hint: { verified: false; hint?: string };
+  source_tier: SourceTier;
+  economic_title_hint?: { verified: false; hint: string };
   primary_source: null;
   economic_mechanism: null;
   named_expert: null;
@@ -24,7 +25,7 @@ export type JudgedItem = {
   independentOutletCount: number;
   economicPayoffFlag: false;
   score: number;
-  parts: { tierPoints: number; hintPoints: number; coveragePoints: number };
+  parts: { base: number; hintPoints: number; party: number };
   signals: ScoreSignals;
 };
 
@@ -38,6 +39,8 @@ export type PoolRow = {
   fetched_at?: string | null;
 };
 
+export function outletOf(sourceName: string): string;
+
 export function judgeItems(rows: PoolRow[]): JudgedItem[];
 
 export function loadWindowItems(supabase: SupabaseClient, now?: number): Promise<PoolRow[]>;
@@ -47,7 +50,5 @@ export function upsertScoreRows(
   judged: JudgedItem[],
   scoredAt?: string,
 ): Promise<number>;
-
-export function listTopScores(supabase: SupabaseClient, limit: number): Promise<unknown[]>;
 
 export function selfTest(): void;
