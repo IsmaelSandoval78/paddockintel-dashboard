@@ -984,6 +984,19 @@
     "itemPage": {
       "theNumbers": "The Numbers",
       "backToFeed": "← Back to Feed"
+    },
+    "hookDeliver": {
+      "context": "Context",
+      "hub": "Hub → {name}",
+      "source": "Hub data · {tables}",
+      "h2h": "H2H {year}",
+      "winsAtCircuit": "Wins at circuit",
+      "constructorPoints": "Constructor points",
+      "constructorWins": "Constructor wins",
+      "constructorPodiums": "Constructor podiums",
+      "constructorRaces": "Constructor races",
+      "constructorChampionships": "Constructor titles",
+      "constructorCareerPoints": "Constructor career points"
     }
   }
 }

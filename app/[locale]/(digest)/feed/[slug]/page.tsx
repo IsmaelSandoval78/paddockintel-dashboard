@@ -4,10 +4,16 @@ import { getTranslations, getFormatter } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
 import ShareButton from '@/components/ui/ShareButton';
+import HookDeliverBlock from '@/components/digest/HookDeliverBlock';
+import {
+  readFeaturedStats,
+  resolveHookDeliver,
+  hookDeliverSpecForItem,
+  type HookDeliverFallbacks,
+} from '@/lib/hookDeliver';
 
 export const revalidate = 3600;
 
-type Stat = { value: string; label: string; label_es?: string | null; unit?: string | null; unit_es?: string | null };
 type Faq = { q: string; a: string; q_es?: string | null; a_es?: string | null };
 
 type FeedItem = {
@@ -26,7 +32,8 @@ type FeedItem = {
   editor_take: string | null;
   editor_take_es: string | null;
   internal_link_slug: string | null;
-  stats: Stat[] | null;
+  stats: unknown;
+  hook_deliver: unknown;
   faq: Faq[] | null;
   meta_description: string | null;
   meta_description_es: string | null;
@@ -51,7 +58,7 @@ function localize(item: FeedItem, locale: string) {
     editor_note: isEs ? item.editor_note_es ?? item.editor_note : item.editor_note,
     editor_take: isEs ? item.editor_take_es ?? item.editor_take : item.editor_take,
     meta_description: isEs ? item.meta_description_es ?? item.meta_description : item.meta_description,
-    stats: (item.stats ?? []).map((s) => ({
+    stats: readFeaturedStats(item.stats).map((s) => ({
       value: s.value,
       label: isEs ? s.label_es ?? s.label : s.label,
       unit: isEs ? s.unit_es ?? s.unit : s.unit,
@@ -70,7 +77,7 @@ async function getItem(slug: string): Promise<FeedItem | null> {
     .select(
       `id, slug, source_name, source_url, headline, headline_es, our_summary, our_summary_es,
        entity_tags, published_at, editor_note, editor_note_es, editor_take, editor_take_es,
-       internal_link_slug, stats, faq, meta_description, meta_description_es,
+       internal_link_slug, stats, hook_deliver, faq, meta_description, meta_description_es,
        digest_issues!inner(status, series)`
     )
     .eq('slug', slug)
@@ -113,6 +120,8 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
   const t = await getTranslations('feed');
   const format = await getFormatter();
   const text = localize(item, locale);
+  const hookSpec = hookDeliverSpecForItem(item);
+  const hook = hookSpec ? await resolveHookDeliver(hookSpec, locale, hookDeliverFallbacks(t)) : null;
   const pageUrl = localeUrl(locale, `/feed/${slug}/`);
 
   const jsonLd: Record<string, unknown> = {
@@ -191,6 +200,16 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
               <p className="font-prose text-text-2 leading-relaxed" style={{ fontSize: '0.9375rem', lineHeight: '1.7' }}>
                 {text.our_summary}
               </p>
+
+              {hook && (
+                <HookDeliverBlock
+                  data={hook}
+                  variant="page"
+                  contextLabel={t('hookDeliver.context')}
+                  sourceLabel={t('hookDeliver.source', { tables: hook.sources.join(' · ') })}
+                  hubLabel={t('hookDeliver.hub', { name: hook.hub.name })}
+                />
+              )}
 
               {text.editor_note && (
                 <p className="font-prose text-text-2 leading-relaxed mt-5" style={{ fontSize: '0.9375rem', lineHeight: '1.7' }}>
@@ -292,4 +311,19 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
       </main>
     </>
   );
+}
+
+function hookDeliverFallbacks(t: Awaited<ReturnType<typeof getTranslations>>): HookDeliverFallbacks {
+  return {
+    h2h: (year) => t('hookDeliver.h2h', { year }),
+    winsAtCircuit: t('hookDeliver.winsAtCircuit'),
+    constructorSeasonPoints: t('hookDeliver.constructorPoints'),
+    constructorCareer: (metric) => {
+      if (metric === 'wins') return t('hookDeliver.constructorWins');
+      if (metric === 'podiums') return t('hookDeliver.constructorPodiums');
+      if (metric === 'races') return t('hookDeliver.constructorRaces');
+      if (metric === 'championships') return t('hookDeliver.constructorChampionships');
+      return t('hookDeliver.constructorCareerPoints');
+    },
+  };
 }

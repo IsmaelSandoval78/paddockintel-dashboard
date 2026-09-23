@@ -984,6 +984,19 @@
     "itemPage": {
       "theNumbers": "Los Números",
       "backToFeed": "← Volver al Feed"
+    },
+    "hookDeliver": {
+      "context": "Contexto",
+      "hub": "Hub → {name}",
+      "source": "Datos del Hub · {tables}",
+      "h2h": "Cara a cara {year}",
+      "winsAtCircuit": "Victorias en el circuito",
+      "constructorPoints": "Puntos del constructor",
+      "constructorWins": "Victorias del constructor",
+      "constructorPodiums": "Podios del constructor",
+      "constructorRaces": "Carreras del constructor",
+      "constructorChampionships": "Títulos del constructor",
+      "constructorCareerPoints": "Puntos históricos del constructor"
     }
   }
 }

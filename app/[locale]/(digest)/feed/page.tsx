@@ -4,10 +4,15 @@ import { createClient } from '@/lib/supabase/server';
 import { weeklyEntityCounts, significanceScore } from '@/lib/entityMentions';
 import { getBeagleEntityCounts, mergeEntityCounts } from '@/lib/beagleCounts';
 import { Link } from '@/lib/i18n/navigation';
+import HookDeliverBlock from '@/components/digest/HookDeliverBlock';
+import {
+  loadHookDeliverMap,
+  readFeaturedStats,
+  type HookDeliverFallbacks,
+  type ResolvedHookDeliver,
+} from '@/lib/hookDeliver';
 
 export const revalidate = 3600;
-
-type Stat = { value: string; label: string; label_es?: string | null; unit?: string | null; unit_es?: string | null };
 
 type FeedItem = {
   id: string;
@@ -25,7 +30,8 @@ type FeedItem = {
   editor_take: string | null;
   editor_take_es: string | null;
   internal_link_slug: string | null;
-  stats: Stat[] | null;
+  stats: unknown;
+  hook_deliver: unknown;
 };
 
 // Feed content lives on one row per story (see the digest_items _es columns
@@ -38,9 +44,12 @@ function localize(item: FeedItem, locale: string) {
     our_summary: isEs ? item.our_summary_es ?? item.our_summary : item.our_summary,
     editor_note: isEs ? item.editor_note_es ?? item.editor_note : item.editor_note,
     editor_take: isEs ? item.editor_take_es ?? item.editor_take : item.editor_take,
-    featuredStat: item.stats?.[0]
-      ? { value: item.stats[0].value, label: isEs ? item.stats[0].label_es ?? item.stats[0].label : item.stats[0].label }
-      : null,
+    featuredStat: (() => {
+      const stat = readFeaturedStats(item.stats)[0];
+      return stat
+        ? { value: stat.value, label: isEs ? stat.label_es ?? stat.label : stat.label }
+        : null;
+    })(),
   };
 }
 
@@ -76,7 +85,7 @@ async function getItems(): Promise<FeedItem[]> {
   const { data } = await supabase
     .from('digest_items')
     .select(
-      'id, slug, source_name, source_url, headline, headline_es, our_summary, our_summary_es, entity_tags, published_at, editor_note, editor_note_es, editor_take, editor_take_es, internal_link_slug, stats'
+      'id, slug, source_name, source_url, headline, headline_es, our_summary, our_summary_es, entity_tags, published_at, editor_note, editor_note_es, editor_take, editor_take_es, internal_link_slug, stats, hook_deliver'
     )
     .in('issue_id', issueIds)
     .order('published_at', { ascending: false });
@@ -108,6 +117,7 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
   const t = await getTranslations('feed');
   const format = await getFormatter();
   const [items, beagleCounts] = await Promise.all([getItems(), getBeagleEntityCounts(createClient())]);
+  const hookById = await loadHookDeliverMap(items, locale, hookDeliverFallbacks(t));
   const entityCounts = mergeEntityCounts(weeklyEntityCounts(items), beagleCounts);
   const mentioned = mostMentioned(entityCounts);
   const feedUrl = locale === 'es' ? FEED_URLS.es : FEED_URLS.en;
@@ -246,14 +256,30 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
                     {topCards.map(({ item, score }) => (
-                      <FeedCard key={item.id} item={item} text={localize(item, locale)} score={score} format={format} t={t} />
+                      <FeedCard
+                        key={item.id}
+                        item={item}
+                        text={localize(item, locale)}
+                        score={score}
+                        format={format}
+                        t={t}
+                        hook={hookById.get(item.id) ?? null}
+                      />
                     ))}
                   </div>
 
                   {restRows.length > 0 && (
                     <div className="flex flex-col divide-y divide-border-subtle mt-3">
                       {restRows.map(({ item, score }) => (
-                        <FeedListRow key={item.id} item={item} text={localize(item, locale)} score={score} format={format} t={t} />
+                        <FeedListRow
+                          key={item.id}
+                          item={item}
+                          text={localize(item, locale)}
+                          score={score}
+                          format={format}
+                          t={t}
+                          hook={hookById.get(item.id) ?? null}
+                        />
                       ))}
                     </div>
                   )}
@@ -272,18 +298,47 @@ type LocalizedText = ReturnType<typeof localize>;
 type Formatter = Awaited<ReturnType<typeof getFormatter>>;
 type FeedT = Awaited<ReturnType<typeof getTranslations>>;
 
+function hookDeliverFallbacks(t: FeedT): HookDeliverFallbacks {
+  return {
+    h2h: (year) => t('hookDeliver.h2h', { year }),
+    winsAtCircuit: t('hookDeliver.winsAtCircuit'),
+    constructorSeasonPoints: t('hookDeliver.constructorPoints'),
+    constructorCareer: (metric) => {
+      if (metric === 'wins') return t('hookDeliver.constructorWins');
+      if (metric === 'podiums') return t('hookDeliver.constructorPodiums');
+      if (metric === 'races') return t('hookDeliver.constructorRaces');
+      if (metric === 'championships') return t('hookDeliver.constructorChampionships');
+      return t('hookDeliver.constructorCareerPoints');
+    },
+  };
+}
+
+function HookDeliverSlot({ data, t }: { data: ResolvedHookDeliver; t: FeedT }) {
+  return (
+    <HookDeliverBlock
+      data={data}
+      variant="compact"
+      contextLabel={t('hookDeliver.context')}
+      sourceLabel={t('hookDeliver.source', { tables: data.sources.join(' · ') })}
+      hubLabel={t('hookDeliver.hub', { name: data.hub.name })}
+    />
+  );
+}
+
 function FeedCard({
   item,
   text,
   score,
   format,
   t,
+  hook,
 }: {
   item: FeedItem;
   text: LocalizedText;
   score: number;
   format: Formatter;
   t: FeedT;
+  hook: ResolvedHookDeliver | null;
 }) {
   const headlineEl = (
     <span className="block font-sans font-semibold text-text-1 leading-snug line-clamp-2" style={{ fontSize: '0.9375rem' }}>
@@ -292,7 +347,7 @@ function FeedCard({
   );
 
   return (
-    <article className="soft-card soft-card-interactive h-full flex flex-col p-4 lg:p-5">
+    <article className="soft-card soft-card-interactive h-full flex flex-col p-4 lg:p-5 min-w-0">
       <div className="flex items-center justify-between gap-2 mb-2.5">
         <div className="flex items-center gap-2 flex-wrap min-w-0">
           <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 truncate">{item.source_name}</span>
@@ -324,8 +379,10 @@ function FeedCard({
         {text.our_summary}
       </p>
 
+      {hook && <HookDeliverSlot data={hook} t={t} />}
+
       <div className="mt-auto pt-3 flex items-end justify-between gap-3">
-        {text.featuredStat ? (
+        {text.featuredStat && !hook ? (
           <div className="min-w-0">
             <p className="font-sans font-extrabold tabular-nums text-accent-2 leading-none tracking-[-0.01em]" style={{ fontSize: '1.375rem' }}>
               {text.featuredStat.value}
@@ -352,12 +409,14 @@ function FeedListRow({
   score,
   format,
   t,
+  hook,
 }: {
   item: FeedItem;
   text: LocalizedText;
   score: number;
   format: Formatter;
   t: FeedT;
+  hook: ResolvedHookDeliver | null;
 }) {
   const headlineEl = (
     <span className="flex-1 min-w-0 font-sans font-semibold text-text-1 truncate" style={{ fontSize: '0.875rem' }}>
@@ -366,7 +425,8 @@ function FeedListRow({
   );
 
   return (
-    <div className="flex items-center gap-4 py-3">
+    <div className="min-w-0 py-3">
+    <div className="flex items-center gap-4 min-w-0">
       <span className="hidden sm:block w-32 shrink-0 font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 truncate">
         {item.source_name}
       </span>
@@ -395,6 +455,12 @@ function FeedListRow({
       <span className="hidden md:block shrink-0 font-mono text-[10px] text-text-3">
         {format.dateTime(new Date(item.published_at), { month: 'short', day: 'numeric' })}
       </span>
+    </div>
+    {hook && (
+      <div className="min-w-0 sm:pl-36">
+        <HookDeliverSlot data={hook} t={t} />
+      </div>
+    )}
     </div>
   );
 }
