@@ -15,6 +15,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import fs from 'fs';
+import { outletOf } from '../lib/beagleSyndication.mjs';
 
 const HOURS = Number(process.argv[2]) > 0 ? Number(process.argv[2]) : 48;
 
@@ -181,14 +182,7 @@ function matchEntities(title, dictionary) {
 // The Motorsport Network ships one story across its locale feeds, so a single wire item
 // would otherwise count as eight independent outlets and beat genuinely cross-covered
 // news. Items still print under their own feed name; only the ranking collapses them.
-const SYNDICATION_GROUPS = [[/^Motorsport\.com/, 'Motorsport Network']];
-
-function outletOf(sourceName) {
-  for (const [pattern, outlet] of SYNDICATION_GROUPS) {
-    if (pattern.test(sourceName)) return outlet;
-  }
-  return sourceName;
-}
+// The list itself is lib/beagleSyndication.mjs — the v0 scorer imports that same array.
 
 async function main() {
   console.log(`Fetching ${FEEDS.length} feeds, entity dictionary from Supabase (2026 season)...\n`);

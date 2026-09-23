@@ -35,6 +35,8 @@ const worker = {
   // says which schedule fired, same idea as the digest route's Bearer auth: reuse the
   // existing route handler instead of duplicating its logic here.
   async scheduled(controller: MinimalScheduledController, env: Env, ctx: MinimalExecutionContext) {
+    // score-beagle is not a schedule. It upserts judgments only when BEAGLE_SCORE_CRON=1,
+    // and a score is not a publish. Leave it off this switch.
     const path = controller.cron === '0 */4 * * *' ? '/api/cron/refresh-beagle' : '/api/digest/send';
     const response = await handler.fetch(
       new Request(`https://internal${path}`, {
