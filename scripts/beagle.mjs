@@ -181,6 +181,7 @@ function matchEntities(title, dictionary) {
 // The Motorsport Network ships one story across its locale feeds, so a single wire item
 // would otherwise count as eight independent outlets and beat genuinely cross-covered
 // news. Items still print under their own feed name; only the ranking collapses them.
+// scripts/score-beagle-v0.mjs copies this array. Change it here first.
 const SYNDICATION_GROUPS = [[/^Motorsport\.com/, 'Motorsport Network']];
 
 function outletOf(sourceName) {

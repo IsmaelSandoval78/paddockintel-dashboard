@@ -1,6 +1,8 @@
 # Beagle significance score v0
 
-Schema and contract only. Nothing in this change scores a row, and nothing inserts into `digest_items`.
+Contract for `beagle_item_scores`, and the writer that upserts that table only.
+
+The migration does not score a row. `scripts/score-beagle-v0.mjs` does, and only when passed `--apply`. A plain run is a dry run. It does not insert into `digest_items` or `articles`, and it does not publish. The route at `app/api/cron/score-beagle` is off unless `BEAGLE_SCORE_CRON=1`, and it is not on a schedule.
 
 ## Where the judgment lives
 
@@ -43,7 +45,7 @@ Columns the scorer uses from the pool: `id`, `source_name`, `title`, `link`, `en
 
 `independent_outlet_count` counts **collapsed** outlets, not raw `source_name` strings.
 
-Reuse the rule in `scripts/beagle.mjs`:
+The list is defined in `scripts/beagle.mjs`:
 
 ```js
 const SYNDICATION_GROUPS = [[/^Motorsport\.com/, 'Motorsport Network']];
@@ -51,7 +53,7 @@ const SYNDICATION_GROUPS = [[/^Motorsport\.com/, 'Motorsport Network']];
 
 `outletOf` maps any `source_name` matching `/^Motorsport\.com/` to `Motorsport Network`. Every other `source_name` is its own outlet. Items stay stored under their own feed name; only the count collapses.
 
-The cron route does not import that constant (the feed lists are copied by hand and already diverge). The scorer copies **this** collapse rule from `scripts/beagle.mjs`. It does not invent a third group list. If a new syndication family is real, it is added to `SYNDICATION_GROUPS` first, then the scorer follows.
+`scripts/score-beagle-v0.mjs` copies that array (the same regex, the same label). It does not invent a second map. The cron route does not import the constant (the feed lists are copied by hand and already diverge). If a new syndication family is real, it is added to `SYNDICATION_GROUPS` in `scripts/beagle.mjs` first, then the scorer copy is updated to match.
 
 When `signals.independent_outlets` is present it is that collapsed label list, and its length must equal `independent_outlet_count` (enforced in the migration).
 
@@ -62,7 +64,7 @@ v0 boosts an item when two things are true together:
 1. **Drama** — other newsrooms are actually on it, after the Motorsport Network collapse. One wire translated across locales is one outlet.
 2. **A verifiable economic or data payoff** — cost cap, rights, prize money, a figure that can be checked against a primary source or against PaddockIntel's own tables. A title that merely sounds expensive is not that payoff.
 
-Virality alone does not raise the score. `independent_outlet_count` is an input the rubric may use. It is not the ranking. This document does not set weights. Weights are the scoring job, and that job is not in this change.
+The v0 number is the rubric in [v0 formula](#v0-formula). Outlet count is a capped base, a listed title keyword adds a fixed hint, and a first-party outlet adds a bump. None of that publishes. `economic_payoff_flag` stays `false` on every row this writer inserts. A keyword is not verification, and `economic_title_hint.verified` is never `true`.
 
 `economic_title_hint.verified` is `false` until a human has checked the claim against the article. A keyword in the title is not verification. While that hint is the only evidence, `economic_payoff_flag` stays `false`. The same holds while `economic_mechanism` is `null`: v0 reserves the key and does not fill it.
 
@@ -88,7 +90,7 @@ A high score does not publish. It does not insert into `digest_items`, does not 
 | `independent_outlets` | the collapsed list, or omit only if the count column stands alone | string array. Length matches `independent_outlet_count` |
 | `syndication_collapse` | object, or omit when no group fired | Raw `source_name` values folded into a group. v0 group is Motorsport Network, e.g. `{ "Motorsport Network": ["Motorsport.com"] }` |
 | `source_tier` | `null` until classified | string. Guidance below. Free text, not a database enum |
-| `economic_title_hint` | `{ "verified": false }` | object. Optional short `hint` for the phrase the matcher saw. `verified` stays `false` until a human checks the article |
+| `economic_title_hint` | omitted when no listed keyword matches | `{ "verified": false, "hint": string }`. The writer never sets `verified` to `true`. |
 | `primary_source` | `null` | `{ "name": string, "url": string }` or `null`. The original document (an FIA release, a team statement, a Formula1.com page), not the RSS item that mentioned it |
 | `economic_mechanism` | `null` | string or `null`. The mechanism itself (cost cap, prize money, contract cycle), distinct from a title keyword in `economic_title_hint` |
 | `named_expert` | `null` | `{ "name": string, "platform": string, "link": string }` or `null`. All three together when set: real name, real platform, real link to the original statement (`docs/advisors/EEAT-EXPERT.md`). v0 does not invent a person from a headline |
@@ -125,7 +127,7 @@ v0 does not add a check constraint or a closed enum. `source_tier` stays a strin
 | `syndicated` | One story repeated across a network, already collapsed | `Motorsport Network` (raw `source_name` `Motorsport.com`, and any future name matching `/^Motorsport\.com/` in `SYNDICATION_GROUPS`) |
 | `wire` | Everyone else on the cron list: a newsroom or a wire. v0 does not split those two | `The Race`, `BBC Sport`, `RACER`, `Autosport`, `ESPN`, `Joe Saward` |
 
-`Autosport` is its own cron `source_name`. `SYNDICATION_GROUPS` does not fold it into Motorsport Network, so it stays `wire` until that constant changes. The current cron list is covered by the three labels: the three first-party names, collapsed Motorsport Network, and `wire` for every other `source_name`. A feed added later that fits none of those readings stays `null` until this table of examples is extended. v0 does not invent a fourth label for a single feed.
+`Autosport` is its own cron `source_name`. `SYNDICATION_GROUPS` does not fold it into Motorsport Network, so it stays `wire` until that constant changes. The writer maps a collapsed outlet like this: `FIA`, `Formula1.com`, or `Liberty Media` → `first_party`; `Motorsport Network` → `syndicated`; every other name, including a blank `source_name`, → `wire`. v0 does not invent a fourth label, and this writer does not leave `source_tier` null.
 
 ### `story_mode` is a publish gate
 
@@ -145,18 +147,97 @@ It sits in v0.1 because it needs a Hub read the v0 contract does not perform. Ad
 
 ## Access
 
-RLS is on. There is no policy, and `anon` / `authenticated` have no grants. The public site does not read this table. `service_role` has `SELECT`, `INSERT`, `UPDATE`, `DELETE` for a future server-side scorer and for the queue. `service_role` bypasses RLS and still needs that grant — same failure mode as `beagle_items` on 2026-09-18. `DELETE` is granted up front so a replace-the-row writer does not discover the miss in production.
+RLS is on. There is no policy, and `anon` / `authenticated` have no grants. The public site does not read this table. `service_role` has `SELECT`, `INSERT`, `UPDATE`, `DELETE` for the scorer and for the queue. `service_role` bypasses RLS and still needs that grant — same failure mode as `beagle_items` on 2026-09-18. `DELETE` is granted up front so a replace-the-row writer does not discover the miss in production.
 
-These rows are editorial judgments, not user data. No client bundle key should write them.
+These rows are editorial judgments, not user data. No client bundle key should write them. The writer uses the service role from a local script or from the gated route. It does not ship the key to the browser.
+
+## v0 formula
+
+`scripts/score-beagle-v0.mjs` sets `rubric_version` to `v0`. `score` is an integer from 0 to 100. A person can recompute it from the row. There is no model, and no cutoff that publishes.
+
+The window is `beagle_items` where `coalesce(published_at, fetched_at) >= now() - interval '7 days'`. Columns read: `id`, `source_name`, `title`, `link`, `entity_tags`, `published_at`, `fetched_at`.
+
+For one pool row, `independent_outlet_count` is the number of distinct `outletOf(source_name)` values among window rows that share at least one `entity_tags` value with it, including itself. `signals.independent_outlets` is that list, sorted, and its length is the count.
+
+- Empty `entity_tags` does not join a cluster. The count is 1: this row's own collapsed outlet.
+- Overlap is direct. A row tagged only Hamilton is not inside a Verstappen-only count. A row tagged with both is in both counts. That is not a transitive connected component.
+- `Motorsport.com`, `Motorsport.com ES`, and any other `source_name` matching `/^Motorsport\.com/` are one outlet inside that count.
+- `signals.syndication_collapse` is omitted unless a `SYNDICATION_GROUPS` pattern fired among the rows that contributed to the count.
+
+`source_tier` is **this row's** collapsed outlet:
+
+| Collapsed outlet | `source_tier` | `party` |
+|---|---|---|
+| `FIA`, `Formula1.com`, `Liberty Media` | `first_party` | 10 |
+| `Motorsport Network` | `syndicated` | 0 |
+| Anything else | `wire` | 0 |
+
+`economic_title_hint` is set only when this row's title contains one of these keywords: cost cap, budget cap, prize money, prize fund, rights, TV rights, sponsorship, sponsor, valuation, revenue, salary, contract, equity, IPO, stake, buyout. `fine` or `penalty` counts only when the same title also contains `$`, `£`, `€`, `¥`, `%`, or a digit. The object is `{ "verified": false, "hint": "<keyword>" }`. No match means the key is omitted. `verified` is never `true`. `economic_payoff_flag` is always `false`.
+
+```
+base  = 10 * min(independent_outlet_count, 8)
+hint  = economic_title_hint present ? 15 : 0
+party = source_tier === 'first_party' ? 10 : 0
+score = min(100, base + hint + party)
+```
+
+Eight outlets already max the base at 80. A ninth outlet does not add points. First-party plus a hint plus that cap is 105, which stores as 100.
+
+`primary_source`, `economic_mechanism`, and `named_expert` are `null`. `eeat_incomplete` is `true`. `story_mode` is absent. `drama_data_contradiction` is absent.
+
+Upsert is `ON CONFLICT (beagle_item_id, rubric_version) DO UPDATE`, and `scored_at` moves to `now()` on every apply. Running `--apply` twice updates the same rows.
+
+## How to run
+
+Apply `supabase/migrations/20260923010000_beagle_item_scores.sql` by hand in the Supabase SQL editor before `--apply`. Do not apply it from this script.
+
+The script reads `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` from the environment or from `.env.local`. It does not read the anon key. It does not fetch RSS.
+
+```bash
+# Formula fixtures. No database.
+node scripts/score-beagle-v0.mjs --self-test
+
+# Default. Score the 7-day pool and print the top 25. Writes nothing.
+node scripts/score-beagle-v0.mjs
+
+# Upsert rubric v0 for every in-window pool row, then print the top 25.
+node scripts/score-beagle-v0.mjs --apply
+```
+
+DigOps queue, after an apply. Service role in the SQL editor. This does not publish:
+
+```sql
+select
+  s.score,
+  s.independent_outlet_count,
+  s.economic_payoff_flag,
+  s.signals,
+  s.rubric_version,
+  s.scored_at,
+  i.id as beagle_item_id,
+  i.source_name,
+  i.title,
+  i.link,
+  i.entity_tags,
+  coalesce(i.published_at, i.fetched_at) as seen_at
+from public.beagle_item_scores s
+join public.beagle_items i on i.id = s.beagle_item_id
+where s.rubric_version = 'v0'
+order by s.score desc, s.independent_outlet_count desc
+limit 25;
+```
+
+`GET /api/cron/score-beagle` checks `Authorization: Bearer $CRON_SECRET`. If `BEAGLE_SCORE_CRON` is not `1`, it returns `wrote: false` and does not query the pool. The route is not listed in `wrangler.jsonc`, `vercel.json`, or `custom-worker.ts`. When the flag is on, the route upserts `beagle_item_scores` and nothing else. The script is the path DigOps runs.
 
 ## Non-goals
 
-- No scoring cron, script, or route that writes judgments.
 - No auto-publish, and no insert into `digest_items` or `articles`.
-- No change to either `FEEDS` list.
-- No new columns on `beagle_items`.
-- No numeric formula, weights, or threshold for "high enough to queue."
-- No second syndication map.
+- No change to either `FEEDS` list, and no RSS fetch or scraping from the scorer.
+- No new columns on `beagle_items`, and no update of pool rows.
+- No second syndication map. `SYNDICATION_GROUPS` changes in `scripts/beagle.mjs` first; the scorer copies that array.
 - No change to `lib/entityMentions.ts` `significanceScore` or to the public feed badge.
 - No `story_mode` on the score row. Fact, analysis, and opinion stay on the publish gate.
 - No `drama_data_contradiction` key and no migration change for it. That signal is v0.1, optional, and unread here.
+- No scheduled scoring cron. The route stays off unless `BEAGLE_SCORE_CRON=1`.
+- `economic_payoff_flag` stays `false` on every row this writer inserts. `economic_title_hint.verified` is never `true`.
+- No threshold that means "high enough to publish." The printed top 25 is a queue for a person.
