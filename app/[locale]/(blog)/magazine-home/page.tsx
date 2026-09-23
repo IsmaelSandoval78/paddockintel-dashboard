@@ -210,16 +210,16 @@ export default async function MagazineHomePage({
 
   return (
     <main className="bg-bg min-h-screen font-sans">
-      {/* Hero bar — headline + subhead and both join paths in one fixed-height
-          row, instead of two stacked full-width bands. Trades the old large
-          brand moment for more vertical room before Featured. */}
+      {/* Hero bar — headline + subhead and both join paths. Below md they
+          stack so the email and Google controls stay inside the viewport;
+          from md up they share one row. */}
       <div className="border-b border-border-subtle">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-4 flex flex-wrap items-center justify-between gap-4">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-4 flex flex-col items-stretch gap-4 md:flex-row md:flex-wrap md:items-center md:justify-between">
           <div className="flex items-baseline gap-3 flex-wrap min-w-0">
-            <h1 className="font-sans font-bold text-text-1 text-lg md:text-xl tracking-[-0.01em] shrink-0">
+            <h1 className="font-sans font-bold text-text-1 text-lg md:text-xl tracking-[-0.01em] min-w-0 md:shrink-0">
               {t('headline')}
             </h1>
-            <p className="hidden sm:block font-sans text-text-2 text-sm truncate">
+            <p className="hidden sm:block min-w-0 max-w-full font-sans text-text-2 text-sm truncate">
               {t('description')}
             </p>
           </div>
@@ -232,13 +232,15 @@ export default async function MagazineHomePage({
             grid per the approved layout: not full-bleed, not the old 1024px column. */}
         {featured && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-            <div className="soft-card-lg soft-card-interactive lg:col-span-2 p-7 md:p-9 grid grid-cols-1 sm:grid-cols-[1.3fr_1fr] gap-6">
+            {/* sm is 375px in this theme, so the two-column split has to wait
+                until md — a phone was still getting the desktop columns. */}
+            <div className="soft-card-lg soft-card-interactive lg:col-span-2 p-7 md:p-9 grid grid-cols-1 md:grid-cols-[1.3fr_1fr] gap-0 md:gap-6">
               <Link href={`/${featured.slug}`} className="flex flex-col justify-center min-w-0">
                 <div>
                   <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent mb-3">
                     {t('featuredKicker')}
                   </p>
-                  <h2 className="font-sans font-bold text-text-1 tracking-[-0.02em] leading-[1.15] mb-3" style={{ fontSize: 'clamp(1.3rem, 2.4vw, 1.75rem)' }}>
+                  <h2 className="font-sans font-bold text-text-1 tracking-[-0.02em] leading-[1.15] mb-3 break-words" style={{ fontSize: 'clamp(1.3rem, 2.4vw, 1.75rem)' }}>
                     {featured.title as string}
                   </h2>
                   {featured.meta_description && (
@@ -260,14 +262,14 @@ export default async function MagazineHomePage({
               </Link>
 
               {recent.length > 0 && (
-                <div className="sm:border-l sm:border-border-subtle sm:pl-6 flex flex-col justify-center min-w-0">
+                <div className="mt-6 border-t border-border-subtle pt-6 md:mt-0 md:border-t-0 md:border-l md:border-border-subtle md:pt-0 md:pl-6 flex flex-col justify-center min-w-0">
                   <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-3 mb-1">{t('recent')}</p>
                   <div className="flex flex-col divide-y divide-border-subtle">
                     {recent.slice(0, 5).map((a) => (
                       <Link
                         key={a.slug}
                         href={`/${a.slug}`}
-                        className="py-3 font-sans text-sm font-semibold text-text-1 hover:text-accent transition-colors duration-150 line-clamp-2"
+                        className="py-3 font-sans text-sm font-semibold text-text-1 hover:text-accent transition-colors duration-150 line-clamp-2 min-w-0 break-words"
                       >
                         {a.title as string}
                       </Link>

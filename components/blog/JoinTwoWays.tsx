@@ -37,18 +37,18 @@ export default function JoinTwoWays({ className, compact }: { className?: string
   // any other placement.
   if (compact) {
     return (
-      <div className={`relative flex items-center gap-2 shrink-0 ${className ?? ''}`}>
+      <div className={`relative flex flex-col gap-2 w-full min-w-0 md:w-auto md:flex-row md:items-center md:shrink-0 ${className ?? ''}`}>
         <EmailCapture compact />
         <button
           type="button"
           onClick={handleGoogle}
           disabled={status === 'sending'}
-          className="soft-card h-9 px-4 font-sans text-[11px] font-semibold text-text-1 hover:text-accent transition-colors duration-150 disabled:opacity-50 whitespace-nowrap"
+          className="soft-card h-9 px-4 w-full md:w-auto font-sans text-[11px] font-semibold text-text-1 hover:text-accent transition-colors duration-150 disabled:opacity-50 whitespace-nowrap"
         >
           {status === 'sending' ? tAuth('sending') : tAuth('google')}
         </button>
         {status === 'error' && (
-          <p className="absolute top-full right-0 mt-1 font-mono text-[10px] text-accent-2 whitespace-nowrap">
+          <p className="absolute top-full left-0 md:left-auto md:right-0 mt-1 max-w-full font-mono text-[10px] text-accent-2 md:whitespace-nowrap">
             {tAuth('error')}
           </p>
         )}
