@@ -47,6 +47,36 @@
       "editor_note_es": null,
       "editor_take_es": null,
       "slug": "ferrari-strategy-communication-weakness-spanish-gp-2026",
+      "hook_deliver": {
+        "hub": { "kind": "constructor", "ref": "ferrari" },
+        "callouts": [
+          {
+            "kind": "h2h_season",
+            "driver_a": "leclerc",
+            "driver_b": "norris",
+            "year": 2026,
+            "label": "Leclerc–Norris H2H 2026",
+            "label_es": "Cara a cara Leclerc–Norris 2026",
+            "label_pt": "Cara a cara Leclerc–Norris 2026"
+          },
+          {
+            "kind": "wins_at_circuit",
+            "driver_ref": "leclerc",
+            "circuit_ref": "madring",
+            "label": "Leclerc wins at Madring",
+            "label_es": "Victorias de Leclerc en Madring",
+            "label_pt": "Vitórias de Leclerc em Madring"
+          },
+          {
+            "kind": "constructor_career",
+            "constructor_ref": "ferrari",
+            "metric": "points",
+            "label": "Ferrari career points",
+            "label_es": "Puntos históricos de Ferrari",
+            "label_pt": "Pontos históricos da Ferrari"
+          }
+        ]
+      },
       "stats": [
         { "value": "35", "label": "LAPS LED BY LECLERC", "label_es": "VUELTAS LIDERADAS POR LECLERC", "unit": null, "unit_es": null },
         { "value": "4", "label": "FINISHING POSITION (FROM P5 GRID)", "label_es": "POSICIÓN FINAL (LARGÓ P5)", "unit": null, "unit_es": null },

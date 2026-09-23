@@ -974,6 +974,19 @@
     "today": "Hoje",
     "yesterday": "Ontem",
     "storyCount": "{count, plural, one {# história} other {# histórias}}",
-    "scoreHint": "O número ao lado de cada história = quantas outras histórias desta semana tocam a mesma entidade — um sinal real, não uma contagem de votos."
+    "scoreHint": "O número ao lado de cada história = quantas outras histórias desta semana tocam a mesma entidade — um sinal real, não uma contagem de votos.",
+    "hookDeliver": {
+      "context": "Contexto",
+      "hub": "Hub → {name}",
+      "source": "Dados do Hub · {tables}",
+      "h2h": "Cara a cara {year}",
+      "winsAtCircuit": "Vitórias no circuito",
+      "constructorPoints": "Pontos do construtor",
+      "constructorWins": "Vitórias do construtor",
+      "constructorPodiums": "Pódios do construtor",
+      "constructorRaces": "Corridas do construtor",
+      "constructorChampionships": "Títulos do construtor",
+      "constructorCareerPoints": "Pontos históricos do construtor"
+    }
   }
 }

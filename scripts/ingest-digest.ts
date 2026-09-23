@@ -33,6 +33,7 @@ type DigestItem = {
   editor_take_es?: string | null;
   slug?: string | null;
   stats?: Stat[] | null;
+  hook_deliver?: unknown;
   faq?: Faq[] | null;
   meta_description?: string | null;
   meta_description_es?: string | null;
@@ -106,6 +107,7 @@ async function main() {
     editor_take_es: item.editor_take_es ?? null,
     slug: item.slug ?? null,
     stats: item.stats ?? null,
+    hook_deliver: item.hook_deliver ?? null,
     faq: item.faq ?? null,
     meta_description: item.meta_description ?? null,
     meta_description_es: item.meta_description_es ?? null,
