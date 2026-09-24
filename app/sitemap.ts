@@ -5,7 +5,8 @@ import { createClient } from '@/lib/supabase/server';
 export const revalidate = 3600;
 
 const HUB_BASE = 'https://hub.paddockintel.com';
-const MAGAZINE_BASE = 'https://paddockintel.com';
+// Canonical magazine host. The apex 308s to www, so locs must not use the apex.
+const MAGAZINE_BASE = 'https://www.paddockintel.com';
 const MAGAZINE_HOSTS = new Set(['paddockintel.com', 'www.paddockintel.com']);
 
 function localeUrl(base: string, locale: string, path: string): string {
