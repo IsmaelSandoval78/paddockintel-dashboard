@@ -11,6 +11,11 @@ import CircuitOverview from '@/components/circuits/CircuitOverview';
 import type { DriverSelectorRow, CircuitCorner } from '@/lib/types';
 import type { RibbonFrame } from '@/components/circuits/kinetic/deltaRibbon/geometry';
 import type { DeltaRibbonEventRow, DeltaRibbonDriver } from '@/components/circuits/kinetic/DeltaRibbonSection';
+import {
+  buildWeekendSchedule,
+  digestSlugMentionsCircuit,
+  type WeekendSchedule,
+} from '@/lib/weekendSchedule';
 
 export const revalidate = 3600;
 
@@ -90,7 +95,7 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
   const [{ data: racesRaw }, trackPathData, { data: cornersRaw }] = await Promise.all([
     supabase
       .from('races')
-      .select('id, year, round, name, date')
+      .select('id, year, round, name, date, time, fp1_date, fp1_time, fp2_date, fp2_time, fp3_date, fp3_time, quali_date, quali_time, sprint_date, sprint_time')
       .eq('circuit_id', circuit.id)
       .order('year', { ascending: true }),
     fetchTrackPathData(circuit.circuit_ref),
@@ -773,6 +778,31 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
       }
     : null;
 
+  // Upcoming weekend only. Times come from races.* (UTC). The Feed link is the
+  // published weekend-light digest for this circuit, when one exists.
+  let weekendSchedule: WeekendSchedule | null = null;
+  if (nextRace && nextRace.daysAway >= 0 && race2026) {
+    weekendSchedule = buildWeekendSchedule({
+      circuitRef: circuit.circuit_ref,
+      year: 2026,
+      race: race2026,
+    });
+    if (weekendSchedule) {
+      const { data: lightRows } = await supabase
+        .from('digest_items')
+        .select('slug, digest_issues!inner(status, series)')
+        .ilike('slug', '%weekend-light%')
+        .eq('digest_issues.status', 'published')
+        .eq('digest_issues.series', 'newsletter')
+        .order('published_at', { ascending: false });
+      const feedSlug =
+        (lightRows ?? [])
+          .map((row) => row.slug as string | null)
+          .find((slug): slug is string => !!slug && digestSlugMentionsCircuit(slug, circuit.circuit_ref)) ?? null;
+      weekendSchedule = { ...weekendSchedule, feedSlug };
+    }
+  }
+
   // ─── Render ──────────────────────────────────────────────────────────────
 
   return (
@@ -805,6 +835,7 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
         constructorWins={constructorWins}
         maxConWins={maxConWins}
         nextRace={nextRace}
+        weekendSchedule={weekendSchedule}
         race2026Result={race2026Result}
         allTimePole={allTimePole}
         recentPoles={recentPoles}

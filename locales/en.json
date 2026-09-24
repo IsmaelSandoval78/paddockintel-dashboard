@@ -240,6 +240,23 @@
       "today": "Race day",
       "past": "Race completed"
     },
+    "schedule": {
+      "title": "Weekend schedule",
+      "local": "Local",
+      "et": "ET",
+      "etFull": "US Eastern",
+      "utc": "UTC",
+      "fp1": "FP1",
+      "fp2": "FP2",
+      "fp3": "FP3",
+      "sprint": "Sprint",
+      "qualifying": "Qualifying",
+      "race": "Race",
+      "feedCta": "Read the weekend light",
+      "notes": {
+        "bakuSaturday": "Race moved to Saturday to avoid Azerbaijan Remembrance Day (Sun 27 Sep)."
+      }
+    },
     "noData": "No race data available for this circuit.",
     "intel": {
       "title": "Circuit Intelligence",
