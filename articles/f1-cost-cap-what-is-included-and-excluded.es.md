@@ -18,17 +18,17 @@ stats:
 
 faq:
   - q: "¿Cuál es el límite de costes de F1 en 2026?"
-    a: "Es de US$215 millones para un período anual con 24 Competiciones o menos, sujeto a indexación. Por encima de 24 se suman US$1,8 millones por cada Competición adicional. [VERIFY: FIA D4.1.2]"
+    a: "Es de US$215 millones para un período anual con 24 Competiciones o menos, sujeto a indexación. Por encima de 24 se suman US$1,8 millones por cada Competición adicional."
   - q: "¿Qué incluye el límite de costes?"
-    a: "En general, los costes vinculados de forma directa con operar, desarrollar, fabricar, probar y competir con el coche de F1, incluidos el I+D de rendimiento y la fabricación de piezas aerodinámicas. El límite es el de costes relevantes, no cada factura del equipo. [VERIFY: FIA D1.2.1 / F1.com]"
+    a: "En general, los costes vinculados de forma directa con operar, desarrollar, fabricar, probar y competir con el coche de F1, incluidos el I+D de rendimiento y la fabricación de piezas aerodinámicas. El límite es el de costes relevantes, no cada factura del equipo."
   - q: "¿Qué queda fuera del límite de costes?"
-    a: "Entre las exclusiones están el sueldo de los pilotos, otros pilotos y la academia, el marketing, las tres personas elegibles mejor pagadas, el patrimonio histórico y determinados costes corporativos, de viaje, de salud y seguridad, y de catering. Cada partida tiene su propia redacción. [VERIFY: FIA D5.1 / F1.com]"
+    a: "Entre las exclusiones están el sueldo de los pilotos, otros pilotos y la academia, el marketing, las tres personas elegibles mejor pagadas, el patrimonio histórico y determinados costes corporativos, de viaje, de salud y seguridad, y de catering. Cada partida tiene su propia redacción."
   - q: "¿El sueldo de un piloto entra en el límite de costes?"
-    a: "No. La remuneración por sus servicios como piloto, además de sus viajes y su alojamiento, está excluida. Eso no deja fuera de toda regla financiera al resto del programa de pilotos. [VERIFY: FIA D5.1.1(b)]"
+    a: "No. La remuneración por sus servicios como piloto, además de sus viajes y su alojamiento, está excluida. Eso no deja fuera de toda regla financiera al resto del programa de pilotos."
   - q: "¿Por qué subió a US$215 millones en 2026?"
-    a: "No es simplemente dinero adicional para gastar. F1 explica que ciertos costes pasan a entrar en el límite, incluida la depreciación anual, tras eliminarse el límite de CapEx móvil. [VERIFY: F1.com / FIA D5.1 y D6.1]"
+    a: "No es simplemente dinero adicional para gastar. F1 explica que ciertos costes pasan a entrar en el límite, incluida la depreciación anual, tras eliminarse el límite de CapEx móvil."
   - q: "¿El límite incluye los viajes a las carreras?"
-    a: "No todos los viajes se tratan igual. D5.1 excluye determinados hoteles, vuelos, trenes y traslados del personal en Competiciones o en pruebas del coche actual. No afirma que todo viaje quede fuera. [VERIFY: FIA D5.1.1(r) / F1.com]"
+    a: "No todos los viajes se tratan igual. D5.1 excluye determinados hoteles, vuelos, trenes y traslados del personal en Competiciones o en pruebas del coche actual. No afirma que todo viaje quede fuera."
 
 sources:
   - name: "FIA — 2026 Formula One Financial Regulations for F1 Teams, Section D (Issue 3, 10 June 2025)"
@@ -37,9 +37,9 @@ sources:
     url: "https://www.formula1.com/en/latest/article/explained-what-is-the-f1-cost-cap-and-why-has-it-gone-up.2tYtDIe5SbE5utjThctBT3"
 ---
 
-El límite de costes de un equipo de F1 para 2026 es de **US$215 millones para 24 Competiciones o menos**, con el ajuste por indexación que prevea el reglamento. Si hay más de 24 Competiciones, el límite sube **US$1,8 millones por cada Competición adicional**. Cubre costes definidos del equipo, sobre todo el trabajo ligado al rendimiento, y no cada dólar que recibe un equipo o un piloto. [VERIFY: FIA D4.1.2]
+El límite de costes de un equipo de F1 para 2026 es de **US$215 millones para 24 Competiciones o menos**, con el ajuste por indexación que prevea el reglamento. Si hay más de 24 Competiciones, el límite sube **US$1,8 millones por cada Competición adicional**. Cubre costes definidos del equipo, sobre todo el trabajo ligado al rendimiento, y no cada dólar que recibe un equipo o un piloto.
 
-Esta página describe el límite de costes del equipo en la Sección D de la FIA. Es independiente del reglamento financiero de la FIA para los fabricantes de unidades de potencia. En las búsquedas, el mismo límite aparece a veces como budget cap; el término de la FIA es cost cap. [VERIFY: FIA D1.6]
+Esta página describe el límite de costes del equipo en la Sección D de la FIA. Es independiente del reglamento financiero de la FIA para los fabricantes de unidades de potencia. En las búsquedas, el mismo límite aparece a veces como budget cap; el término de la FIA es cost cap.
 
 "Dentro" significa, en general, dentro de los costes relevantes. El texto del reglamento y el tratamiento contable deciden la clasificación final. La definición corta está en el glosario de [costes relevantes](/es/glossary/relevant-costs). Esta página es el mapa, no una segunda definición del [límite de costes](/es/glossary/cost-cap).
 
@@ -56,8 +56,6 @@ Estas partidas se tratan, en general, como dentro del límite del equipo. Una fi
 | Depreciación anual de 2026 | F1 dice que se eliminó el límite de CapEx móvil y que la depreciación anual entra ahora en el límite del equipo. Es el tratamiento de 2026, no una regla contable universal. |
 | Asignación de tiempo en 2026 | El explicador de F1 dice que, desde 2026, los costes se tratan como 100% F1 si una persona dedica cualquier tiempo al trabajo de F1. El tratamiento final sigue sujeto al reglamento. |
 
-[VERIFY: FIA D5.1 / F1.com; alcance D1.2.1. Cláusulas: personal D5.1.1(d); depreciación 2026 D6.1; asignación de tiempo D5.1.1(h).]
-
 ## Fuera del límite del equipo
 
 Estas partidas quedan excluidas del límite del equipo, o viven en un reglamento distinto. Una exclusión nominada no describe el gasto total del equipo.
@@ -73,13 +71,11 @@ Estas partidas quedan excluidas del límite del equipo, o viven en un reglamento
 | Sostenibilidad, salud y seguridad, catering | Los costes de iniciativas de sostenibilidad, los de salud y seguridad, y el catering atribuible de forma directa a una Competición, a una prueba del coche actual o a la sede del equipo figuran como exclusiones. |
 | Límite del fabricante de unidad de potencia | El reglamento financiero de los fabricantes de unidades de potencia es un conjunto distinto. No se incorpora a este mapa del equipo. |
 
-[VERIFY: FIA D5.1 / F1.com. Cláusulas: marketing D5.1.1(a); sueldo del piloto D5.1.1(b); otros pilotos y academia D5.1.1(c); tres mejor pagados D5.1.1(d); patrimonio D5.1.1(e); corporativo D5.1.1(f), (g), (i); viajes especificados D5.1.1(r); sostenibilidad, salud y seguridad, catering D5.1.1(x), (y), (z); separación de unidad de potencia D1.6.]
-
 ## El sueldo del piloto no es el límite de costes
 
-El sueldo de un piloto **no** forma parte del límite de costes del equipo. La FIA excluye la contraprestación por los servicios de pilotaje de un piloto de F1, junto con sus viajes y su alojamiento. [VERIFY: FIA D5.1.1(b)]
+El sueldo de un piloto **no** forma parte del límite de costes del equipo. La FIA excluye la contraprestación por los servicios de pilotaje de un piloto de F1, junto con sus viajes y su alojamiento.
 
-Esa exclusión no significa que todo el programa de pilotos quede fuera de cada regla financiera. La paga de otros pilotos de competición, la actividad de la academia y los costes relacionados tienen su propia redacción. [VERIFY: FIA D5.1.1(b)–(c)]
+Esa exclusión no significa que todo el programa de pilotos quede fuera de cada regla financiera. La paga de otros pilotos de competición, la actividad de la academia y los costes relacionados tienen su propia redacción.
 
 ## Lecturas relacionadas
 

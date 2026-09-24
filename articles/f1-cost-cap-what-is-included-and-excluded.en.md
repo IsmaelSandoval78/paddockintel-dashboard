@@ -18,17 +18,17 @@ stats:
 
 faq:
   - q: "What is the F1 cost cap in 2026?"
-    a: "It is US$215 million for a full-year period with 24 Competitions or fewer, subject to indexation. Above 24 Competitions, add US$1.8 million per extra Competition. [VERIFY: FIA D4.1.2]"
+    a: "It is US$215 million for a full-year period with 24 Competitions or fewer, subject to indexation. Above 24 Competitions, add US$1.8 million per extra Competition."
   - q: "What is included in the F1 cost cap?"
-    a: "Costs directly connected with operating, developing, manufacturing, testing, and racing the F1 car are generally in scope, including performance-related research and development and aero-part manufacturing. The boundary is Relevant Costs, not every invoice a team pays. [VERIFY: FIA D1.2.1 / F1.com]"
+    a: "Costs directly connected with operating, developing, manufacturing, testing, and racing the F1 car are generally in scope, including performance-related research and development and aero-part manufacturing. The boundary is Relevant Costs, not every invoice a team pays."
   - q: "What is excluded from the F1 cost cap?"
-    a: "Key exclusions include driver pay, other racing-driver pay and academy operations, marketing, the three highest-paid eligible personnel, heritage work, and specified corporate, travel, health and safety, and catering costs. Each item follows its own wording in the exclusion list. [VERIFY: FIA D5.1 / F1.com]"
+    a: "Key exclusions include driver pay, other racing-driver pay and academy operations, marketing, the three highest-paid eligible personnel, heritage work, and specified corporate, travel, health and safety, and catering costs. Each item follows its own wording in the exclusion list."
   - q: "Is an F1 driver’s salary included in the cost cap?"
-    a: "No. The consideration paid to an F1 driver for driving services, plus that driver’s travel and accommodation costs, is excluded. That does not put the rest of a driver programme outside every financial rule. [VERIFY: FIA D5.1.1(b)]"
+    a: "No. The consideration paid to an F1 driver for driving services, plus that driver’s travel and accommodation costs, is excluded. That does not put the rest of a driver programme outside every financial rule."
   - q: "Why did the F1 cost cap rise to $215m in 2026?"
-    a: "The increase is not simply an allowance to spend more. Formula 1 says the 2026 changes also bring some costs into the cap, including annual depreciation after the separate rolling capital-expenditure cap was removed. [VERIFY: F1.com / FIA D5.1 and D6.1]"
+    a: "The increase is not simply an allowance to spend more. Formula 1 says the 2026 changes also bring some costs into the cap, including annual depreciation after the separate rolling capital-expenditure cap was removed."
   - q: "Does the cost cap include race travel?"
-    a: "Not all travel is treated the same way. The exclusion list covers specified hotel, flight, rail, and airport or station-to-site transport for personnel at a Competition or Current Car test. It does not say that every travel cost is outside the cap. [VERIFY: FIA D5.1.1(r) / F1.com]"
+    a: "Not all travel is treated the same way. The exclusion list covers specified hotel, flight, rail, and airport or station-to-site transport for personnel at a Competition or Current Car test. It does not say that every travel cost is outside the cap."
 
 sources:
   - name: "FIA — 2026 Formula One Financial Regulations for F1 Teams, Section D (Issue 3, 10 June 2025)"
@@ -37,9 +37,9 @@ sources:
     url: "https://www.formula1.com/en/latest/article/explained-what-is-the-f1-cost-cap-and-why-has-it-gone-up.2tYtDIe5SbE5utjThctBT3"
 ---
 
-The 2026 FIA Formula 1 team Cost Cap is **US$215 million for 24 Competitions or fewer**, adjusted for indexation where the regulations apply that adjustment. If more than 24 Competitions take place, the cap increases by **US$1.8 million per additional Competition**. It covers defined team costs, especially performance-related work, rather than every dollar a team or a driver receives. [VERIFY: FIA D4.1.2]
+The 2026 FIA Formula 1 team Cost Cap is **US$215 million for 24 Competitions or fewer**, adjusted for indexation where the regulations apply that adjustment. If more than 24 Competitions take place, the cap increases by **US$1.8 million per additional Competition**. It covers defined team costs, especially performance-related work, rather than every dollar a team or a driver receives.
 
-This page maps the team Cost Cap in FIA Section D. It is separate from the FIA financial regulations for Power Unit Manufacturers. In search, the same limit is sometimes called a budget cap; the FIA term is cost cap. [VERIFY: FIA D1.6]
+This page maps the team Cost Cap in FIA Section D. It is separate from the FIA financial regulations for Power Unit Manufacturers. In search, the same limit is sometimes called a budget cap; the FIA term is cost cap.
 
 "In" below means generally within Relevant Costs. The regulation text and the accounting treatment decide the final classification. The short definition sits in the [Relevant Costs](/glossary/relevant-costs) glossary entry. This page is the map, not a second definition of the [Cost Cap](/glossary/cost-cap).
 
@@ -56,8 +56,6 @@ These items are generally treated as inside the team cap. Do not read a row as a
 | 2026 annual depreciation | Formula 1 says the separate rolling capital-expenditure cap was removed and annual depreciation now falls inside the team cap. That is the 2026 treatment, not a universal accounting rule. |
 | 2026 time allocation | Formula 1's explainer says that, from 2026, costs are treated as 100% F1 if a person spends any time on F1 work. Final treatment remains subject to the regulations. |
 
-[VERIFY: FIA D5.1 / F1.com; scope D1.2.1. Clauses: staff D5.1.1(d); 2026 depreciation D6.1; time allocation D5.1.1(h).]
-
 ## Outside the team Cost Cap
 
 These items are excluded from the team cap, or they sit in a separate regulation. A named exclusion is not a statement about total team spending.
@@ -73,13 +71,11 @@ These items are excluded from the team cap, or they sit in a separate regulation
 | Sustainability, health and safety, catering | Sustainability-initiative costs, health and safety costs, and catering directly attributable to a Competition, a Current Car test site, or team premises are listed exclusions. |
 | Power unit manufacturer cap | The Power Unit Manufacturer financial regulations are a distinct set of rules. They are not folded into this team map. |
 
-[VERIFY: FIA D5.1 / F1.com. Clauses: marketing D5.1.1(a); driver pay D5.1.1(b); other drivers and academy D5.1.1(c); three highest-paid D5.1.1(d); heritage D5.1.1(e); corporate D5.1.1(f), (g), (i); specified travel D5.1.1(r); sustainability, health and safety, catering D5.1.1(x), (y), (z); power-unit separation D1.6.]
-
 ## Driver salary is not the cost cap
 
-A driver's salary is **not** part of the F1 team Cost Cap. The FIA excludes consideration for an F1 driver's driving services, together with that driver's travel and accommodation costs. [VERIFY: FIA D5.1.1(b)]
+A driver's salary is **not** part of the F1 team Cost Cap. The FIA excludes consideration for an F1 driver's driving services, together with that driver's travel and accommodation costs.
 
-That exclusion does not mean the entire driver programme sits outside every financial rule. Other racing-driver pay, academy activity, and related costs have their own wording. [VERIFY: FIA D5.1.1(b)–(c)]
+That exclusion does not mean the entire driver programme sits outside every financial rule. Other racing-driver pay, academy activity, and related costs have their own wording.
 
 ## Related reading
 
