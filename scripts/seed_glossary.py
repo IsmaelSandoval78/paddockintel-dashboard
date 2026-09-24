@@ -24,7 +24,7 @@ TERMS = [
     {
         "slug": "cost-cap",
         "category": "regulations",
-        "related_terms": ["concorde-agreement", "anti-dilution-fee", "title-sponsorship"],
+        "related_terms": ["concorde-agreement", "anti-dilution-fee", "title-sponsorship", "relevant-costs"],
         "sources": [
             {"name": "FIA — Cost Cap Administration", "url": "https://www.fia.com/events/fia-formula-one-world-championship/season-2025/cost-cap-administration"},
             {"name": "Formula1.com — The 2021 F1 cost cap explained", "url": "https://www.formula1.com/en/latest/article/the-2021-f1-cost-cap-explained-what-has-changed-and-why.5O1Te8udKLmkUl4PyVZtUJ"},
