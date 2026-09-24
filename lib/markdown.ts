@@ -101,6 +101,13 @@ export function markdownToHtml(markdown: string): string {
       continue;
     }
 
+    if (isTableStart(lines, i)) {
+      const table = renderTable(lines, i);
+      out.push(table.html);
+      i = table.next;
+      continue;
+    }
+
     if (line.trim() === '') { i++; continue; }
 
     const para: string[] = [];
@@ -109,7 +116,8 @@ export function markdownToHtml(markdown: string): string {
       lines[i].trim() !== '' &&
       !lines[i].match(/^#{2,3} /) &&
       !lines[i].match(/^[•\-] /) &&
-      !lines[i].match(/^> /)
+      !lines[i].match(/^> /) &&
+      !isTableStart(lines, i)
     ) {
       para.push(lines[i]);
       i++;
@@ -118,6 +126,45 @@ export function markdownToHtml(markdown: string): string {
   }
 
   return out.join('\n');
+}
+
+function isPipeRow(line: string): boolean {
+  const t = line.trim();
+  return t.startsWith('|') && t.endsWith('|') && t.split('|').length >= 3;
+}
+
+function splitCells(line: string): string[] {
+  return line.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((cell) => cell.trim());
+}
+
+function isSeparatorRow(line: string): boolean {
+  if (!isPipeRow(line)) return false;
+  const cells = splitCells(line);
+  return cells.length > 0 && cells.every((cell) => /^:?-{3,}:?$/.test(cell));
+}
+
+function isTableStart(lines: string[], index: number): boolean {
+  return index + 1 < lines.length && isPipeRow(lines[index]) && isSeparatorRow(lines[index + 1]);
+}
+
+function renderTable(lines: string[], start: number): { html: string; next: number } {
+  const header = splitCells(lines[start]);
+  let i = start + 2;
+  const body: string[][] = [];
+  while (i < lines.length && isPipeRow(lines[i]) && !isSeparatorRow(lines[i])) {
+    const cells = splitCells(lines[i]);
+    while (cells.length < header.length) cells.push('');
+    body.push(cells.slice(0, header.length));
+    i++;
+  }
+  const th = header.map((cell) => `<th>${applyInline(cell)}</th>`).join('');
+  const trs = body
+    .map((row) => `<tr>${row.map((cell) => `<td>${applyInline(cell)}</td>`).join('')}</tr>`)
+    .join('');
+  return {
+    html: `<div class="table-scroll"><table><thead><tr>${th}</tr></thead><tbody>${trs}</tbody></table></div>`,
+    next: i,
+  };
 }
 
 function slugify(text: string): string {
