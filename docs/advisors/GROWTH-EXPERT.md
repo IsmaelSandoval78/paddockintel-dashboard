@@ -2,7 +2,7 @@
 
 Read this before shipping anything that touches the subscribe flow, the paywall, a CTA, an
 email, or a distribution decision — and monthly for a real look at the funnel numbers. The
-other seven advisors build the product (content, SEO, data integrity, security,
+other eight advisors build the product (content, SEO, data integrity, security,
 performance, authority, legal footing); this one owns turning the traffic they earn into
 subscribers, and the subscriber base into revenue. Nobody else has that job. Digital PR
 earns links; SEO earns rankings; this advisor owns what happens after someone actually

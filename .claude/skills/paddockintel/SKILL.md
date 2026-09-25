@@ -80,14 +80,20 @@ including external information. Digest items use the numbered-source format:
 paraphrase.
 
 **Advisor gate (required, not optional):** before publishing any article, digest issue, or data-vertical
-piece, read the four advisor files in `docs/advisors/`: `SEO-EXPERT.md`, `DATA-EXPERT.md`,
-`EEAT-EXPERT.md`, `SPORTS-JOURNALISM-EXPERT.md`. They are an additional gate on top of this section and
-`EDITORIAL.md` — none of their requirements are waived by a redesign or a new content vertical.
+piece, read all nine advisor files in `docs/advisors/`: `SEO-EXPERT.md`, `DATA-EXPERT.md`,
+`EEAT-EXPERT.md`, `SPORTS-JOURNALISM-EXPERT.md`, `CYBERSECURITY-EXPERT.md`, `PERFORMANCE-EXPERT.md`,
+`DIGITAL-PR-EXPERT.md`, `LEGAL-COMPLIANCE-EXPERT.md`, `GROWTH-EXPERT.md`. They are an additional
+gate on top of this section and `EDITORIAL.md` — none of their requirements are waived by a
+redesign or a new content vertical. (This count goes stale every time an advisor is added — if it
+doesn't match `ls docs/advisors/ | wc -l`, fix this line first.)
 
-A fifth advisor, `docs/advisors/CYBERSECURITY-EXPERT.md`, gates engineering work instead of content:
-read it before shipping anything touching auth, user data, secrets/tokens, third-party content
-ingestion, dependency upgrades, or infra changes (Cloudflare, Supabase) — relevant to the user-accounts
-step in `docs/ROADMAP-SEMANA.md` and any RLS-touching migration.
+Four of the nine gate engineering work instead of content directly — `CYBERSECURITY-EXPERT.md`
+(auth, user data, secrets/tokens, third-party content ingestion, dependency/infra changes, relevant
+to the user-accounts step in `docs/ROADMAP-SEMANA.md` and any RLS-touching migration),
+`PERFORMANCE-EXPERT.md` (page templates, dependencies, motion/visual effects), `DIGITAL-PR-EXPERT.md`
+(outreach pitches, syndication), and `GROWTH-EXPERT.md` (subscribe flow, paywall, CTAs, distribution
+decisions) — read the relevant one before that specific kind of change, on top of the content gate
+above.
 
 **EEAT signals (required, not optional):**
 - `/about` or `/author/ismael-sandoval` — real, verifiable background. Every article and digest issue

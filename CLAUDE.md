@@ -211,11 +211,16 @@ Minimum to ship: **4 on all five**. If any score < 4, iterate before moving on.
 Before starting any task, read `.claude/skills/paddockintel/SKILL.md` (loaded automatically as the
 `paddockintel` skill). DESIGN.md is the source of truth for visual tokens.
 
-Before any content task (article, digest issue, copy), also read the four advisor files in
-`docs/advisors/`: `SEO-EXPERT.md`, `DATA-EXPERT.md`, `EEAT-EXPERT.md`, `SPORTS-JOURNALISM-EXPERT.md`.
-They are an additional gate on top of `EDITORIAL.md` — they do not replace it.
+Before any content task (article, digest issue, copy), also read all nine advisor files in
+`docs/advisors/`: `SEO-EXPERT.md`, `DATA-EXPERT.md`, `EEAT-EXPERT.md`, `SPORTS-JOURNALISM-EXPERT.md`,
+`CYBERSECURITY-EXPERT.md`, `PERFORMANCE-EXPERT.md`, `DIGITAL-PR-EXPERT.md`,
+`LEGAL-COMPLIANCE-EXPERT.md`, `GROWTH-EXPERT.md`. They are an additional gate on top of
+`EDITORIAL.md` — they do not replace it. (This count goes stale every time an advisor is added —
+if it doesn't match `ls docs/advisors/ | wc -l`, fix this line first.)
 
-Separately — before shipping anything touching auth, user data, API tokens/secrets, third-party
-content ingestion (experts personalization), dependency upgrades, or infrastructure changes
-(Cloudflare, Supabase), read `docs/advisors/CYBERSECURITY-EXPERT.md`. Different trigger than the
-four content advisors above — this one gates engineering work, not editorial work.
+Each advisor's own trigger differs — `CYBERSECURITY-EXPERT.md` gates engineering work (auth, user
+data, secrets, third-party ingestion, dependency/infra changes), `PERFORMANCE-EXPERT.md` gates
+template/dependency/motion changes, `DIGITAL-PR-EXPERT.md` gates outreach and syndication,
+`GROWTH-EXPERT.md` gates the subscribe flow, paywall, CTAs, and distribution decisions — but every
+one of them applies its own non-negotiables to content work too where relevant, so read the whole
+set before any content task, not just the four that used to be "the content advisors."
