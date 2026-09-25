@@ -2,8 +2,49 @@
   "slug": "vol-12-week-2026-09-25",
   "published_at": "2026-09-25T00:00:00+00:00",
   "status": "draft",
-  "intro_synthesis": "Working draft — started from a single Feed item (Baku qualifying penalties) surfaced via Beagle and cleared through the council's Story Selection process. More items to be added before this issue is sent; do not publish as-is.",
+  "intro_synthesis": "Working draft — started from Feed items surfaced via Beagle and cleared through the council's Story Selection process. More items may be added before this issue is sent; do not publish as-is.",
   "items": [
+    {
+      "source_name": "PlanetF1",
+      "source_url": "https://www.planetf1.com/news/azerbaijan-grand-prix-2026-qualifying-report",
+      "headline": "Russell Storms to Pole in Baku by 0.837s — Antonelli Crashes Out in Q1",
+      "headline_es": "Russell arrasa en la pole de Bakú por 0,837s — Antonelli se estrella en Q1",
+      "our_summary": "George Russell took pole for the Azerbaijan GP with a 0.837-second margin — one of the largest qualifying gaps of the season — after Kimi Antonelli crashed out in Q1, ending his championship rival's session early against the wall. Russell enters Sunday looking to close a gap in the standings; Antonelli, who arrived in Baku holding the points advantage, now starts from the back of the field at one of the calendar's hardest circuits to overtake at.",
+      "our_summary_es": "George Russell se quedó con la pole del GP de Azerbaiyán con una ventaja de 0,837 segundos — una de las mayores diferencias de clasificación de la temporada — después de que Kimi Antonelli se estrellara en Q1, terminando temprano la sesión de su rival de campeonato contra el muro. Russell llega al domingo buscando recortar una diferencia en el campeonato; Antonelli, que llegó a Bakú con ventaja en puntos, ahora largará desde el fondo del pelotón en uno de los circuitos del calendario donde menos se puede adelantar.",
+      "published_at": "2026-09-25T13:12:00+00:00",
+      "entity_tags": ["George Russell", "Kimi Antonelli"],
+      "editor_note": "Baku is one of the hardest circuits on the calendar to overtake at — a Q1 exit here costs more than at a typical track. Russell's margin is real pace, not a fluke lap; multiple independent outlets (BBC Sport, RaceFans, PlanetF1) clocked the same result. The story underneath the story: Antonelli still holds the points lead entering this weekend, so today's session is a swing in momentum, not (yet) a swing in the championship.",
+      "editor_note_es": "Bakú es uno de los circuitos más difíciles del calendario para adelantar — una eliminación en Q1 acá cuesta más que en una pista típica. La ventaja de Russell es ritmo real, no una vuelta de casualidad; varios medios independientes (BBC Sport, RaceFans, PlanetF1) coincidieron en el mismo resultado. La historia detrás de la historia: Antonelli sigue liderando el campeonato al llegar a este fin de semana, así que la sesión de hoy es un giro de momentum, no (todavía) un giro en el campeonato.",
+      "editor_take": "A single bad qualifying session doesn't erase a points lead, but it does set up a low-probability recovery drive at one of the calendar's least forgiving circuits for overtaking. Worth watching whether this is a one-off or the start of a real form swing between the two Mercedes drivers with eight rounds still to go.",
+      "editor_take_es": "Una sola clasificación mala no borra una ventaja en puntos, pero sí plantea una recuperación de baja probabilidad en uno de los circuitos del calendario donde menos se puede adelantar. Vale la pena ver si esto es algo puntual o el comienzo de un cambio real de forma entre los dos pilotos de Mercedes con ocho fechas todavía por delante.",
+      "internal_link_slug": null,
+      "slug": "russell-pole-antonelli-crash-baku-2026-qualifying",
+      "stats": [
+        {
+          "value": "0.837s",
+          "label": "RUSSELL'S POLE MARGIN",
+          "label_es": "VENTAJA DE POLE — RUSSELL",
+          "unit": "one of the largest gaps this season",
+          "unit_es": "una de las mayores diferencias de la temporada"
+        }
+      ],
+      "faq": [
+        {
+          "q": "How big was George Russell's pole position margin in Baku?",
+          "a": "0.837 seconds over the next-fastest car, according to PlanetF1 — one of the largest qualifying gaps of the 2026 season.",
+          "q_es": "¿Qué tan grande fue la ventaja de pole de George Russell en Bakú?",
+          "a_es": "0,837 segundos sobre el auto siguiente, según PlanetF1 — una de las mayores diferencias de clasificación de la temporada 2026."
+        },
+        {
+          "q": "What happened to Kimi Antonelli in qualifying?",
+          "a": "Antonelli crashed out during Q1 and was eliminated, meaning he starts Sunday's race from the back of the field at one of the calendar's hardest circuits to overtake at.",
+          "q_es": "¿Qué le pasó a Kimi Antonelli en la clasificación?",
+          "a_es": "Antonelli se estrelló durante la Q1 y quedó eliminado, lo que significa que largará el domingo desde el fondo del pelotón en uno de los circuitos del calendario donde menos se puede adelantar."
+        }
+      ],
+      "meta_description": "Russell claims Baku pole by 0.837s as championship rival Antonelli crashes out in Q1 and starts from the back.",
+      "meta_description_es": "Russell logra la pole en Bakú por 0,837s mientras su rival de campeonato Antonelli se estrella en Q1 y largará desde el fondo."
+    },
     {
       "source_name": "Formula1.com",
       "source_url": "https://www.formula1.com/en/latest/article/perez-handed-penalty-for-azerbaijan-grand-prix-after-qualifying-infringement.zuQBKGcAcuTO1vc7esCSP",
