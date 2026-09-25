@@ -95,6 +95,35 @@ nobody else does that, say so explicitly in the brief — that gap is the SEO op
 - El titular puede usar el gancho dramático; el cierre del artículo SIEMPRE debe resolver con
   el mecanismo económico, nunca al revés.
 
+## Story selection (from Beagle)
+
+`scripts/beagle.mjs` is an editorial radar, not a publisher — it reads ~50 F1 RSS feeds,
+cross-references titles against the live driver/constructor roster, and ranks entities by how
+many *independent* outlets are covering them right now (syndication-deduped). It never writes
+to Supabase; it exists to answer "what does the press think matters today," nothing else. A
+topic showing up on Beagle's report is not yet a brief — it becomes one only after clearing
+this council in order:
+
+1. **SEO-EXPERT (this doc) — Nivel 2 check.** Does a relevant Nivel 2 piece already exist to
+   link the Nivel 1 angle to? If not, the Nivel 1 doesn't get written until one exists or gets
+   written alongside it — same rule as the Hook & Deliver framework above, applied at
+   selection time instead of at publish time.
+2. **SPORTS-JOURNALISM-EXPERT.md — angle test.** Can the "This article argues that [X] because
+   [Y]" sentence actually be written, with a real economic/data mechanism? If Beagle surfaced
+   a rumor with no mechanism behind it, that's a topic, not an angle — don't draft it yet.
+3. **EEAT-EXPERT.md — regla de resolución.** If the story is a rumor/conflict, is there a
+   verifiable economic mechanism to resolve it with, or is it chisme with no added data? No
+   mechanism, no draft: `[EEAT-HOLD: rumor/conflicto sin mecanismo económico verificado]`
+   applies at selection time, before a single sentence gets written.
+4. **DATA-EXPERT.md — source tier.** What does verifying this story's core facts actually
+   require (live Supabase query, historical Hub data, a dated financial source)? Confirm the
+   tier is reachable before greenlighting — a topic that needs a source PaddockIntel can't get
+   doesn't become a brief no matter how many outlets are covering it.
+
+Only a topic that clears all four becomes a real brief. A topic covered by many outlets that
+fails here isn't wasted — Beagle's report is dated and re-runnable, and a topic that fails
+step 1 today (no Nivel 2 piece yet) can clear tomorrow once that piece exists.
+
 ## When this advisor should block publication
 
 If any non-negotiable is unchecked, or if the primary keyword targets a query PaddockIntel
