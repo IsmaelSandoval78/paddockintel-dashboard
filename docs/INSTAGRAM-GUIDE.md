@@ -1,8 +1,9 @@
 # PaddockIntel — Instagram Guide
 
 Growth playbook for `@paddockintel.com` on Instagram. This is an operational guide, not a
-compliance gate — it doesn't replace `EDITORIAL.md` or the four content advisors in
-`docs/advisors/`. Every fact, stat, and quote posted to Instagram still has to clear the same
+compliance gate — it doesn't replace `EDITORIAL.md` or the advisor files in
+`docs/advisors/` (see `GROWTH-EXPERT.md` specifically for the funnel/monetization side of this
+guide's own subject). Every fact, stat, and quote posted to Instagram still has to clear the same
 sourcing bar as an article: verified, attributed, traceable. Instagram is a distribution channel
 for that work, not a lower-trust exception to it.
 
