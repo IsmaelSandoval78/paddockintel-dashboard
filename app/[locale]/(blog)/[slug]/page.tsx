@@ -89,10 +89,15 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
   const ogImage =
     (article.cover_image_url as string | null) ?? `https://paddockintel.com/api/og/article/${locale}/${slug}`;
 
+  const canonical = localeUrl(locale, slug);
+
   return {
     title: `${article.title as string} — PaddockIntel`,
     description: (article.meta_description as string) ?? undefined,
-    alternates: Object.keys(alternates).length ? { languages: alternates } : undefined,
+    alternates: {
+      canonical,
+      ...(Object.keys(alternates).length ? { languages: alternates } : {}),
+    },
     openGraph: { images: [ogImage] },
     twitter: { card: 'summary_large_image', images: [ogImage] },
   };
