@@ -240,6 +240,23 @@
       "today": "Dia de corrida",
       "past": "Corrida concluída"
     },
+    "schedule": {
+      "title": "Horário do fim de semana",
+      "local": "Local",
+      "et": "ET",
+      "etFull": "Leste dos EUA",
+      "utc": "UTC",
+      "fp1": "Treino 1",
+      "fp2": "Treino 2",
+      "fp3": "Treino 3",
+      "sprint": "Sprint",
+      "qualifying": "Classificação",
+      "race": "Corrida",
+      "feedCta": "Ler o weekend light",
+      "notes": {
+        "bakuSaturday": "A corrida passa para sábado para não coincidir com o Dia da Memória do Azerbaijão (dom. 27 set.)."
+      }
+    },
     "noData": "Não há dados de corrida disponíveis para este circuito.",
     "intel": {
       "title": "Inteligência do Circuito",

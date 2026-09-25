@@ -11,6 +11,8 @@ import CircuitIntelGrid from './CircuitIntelGrid';
 import TrackDominancePanel from './TrackDominancePanel';
 import DeltaRibbonSection from './DeltaRibbonSection';
 import InfoTooltip from './InfoTooltip';
+import WeekendScheduleStrip from './WeekendScheduleStrip';
+import type { WeekendSchedule } from '@/lib/weekendSchedule';
 import type { IntelData } from './CircuitIntelGrid';
 import type { DriverSelectorRow, CircuitCorner } from '@/lib/types';
 import type { RibbonFrame } from './deltaRibbon/geometry';
@@ -104,6 +106,7 @@ export interface CircuitDetailProps {
   constructorWins: ConstructorWin[];
   maxConWins: number;
   nextRace: NextRaceInfo | null;
+  weekendSchedule: WeekendSchedule | null;
   race2026Result: Race2026Row[];
   allTimePole: PoleRow | null;
   recentPoles: PoleRow[];
@@ -128,6 +131,7 @@ export default function CircuitDetailExperience({
   constructorWins,
   maxConWins,
   nextRace,
+  weekendSchedule,
   race2026Result,
   allTimePole,
   recentPoles,
@@ -454,6 +458,10 @@ export default function CircuitDetailExperience({
                 {t('nextRace.today')}
               </p>
             </div>
+          )}
+
+          {weekendSchedule && (
+            <WeekendScheduleStrip schedule={weekendSchedule} location={circuit.location} />
           )}
 
           {/* Race result — past race with data */}
