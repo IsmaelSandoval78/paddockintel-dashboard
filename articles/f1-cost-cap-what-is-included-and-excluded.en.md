@@ -3,7 +3,8 @@ slug: "f1-cost-cap-what-is-included-and-excluded"
 title: "F1 Cost Cap: What's Included and Excluded?"
 locale: en
 meta_description: "F1 cost cap explained: the 2026 $215m limit, what counts, what is excluded and why a driver’s salary is not in the cap."
-status: draft
+status: published
+published_at: "2026-09-24T03:20:43.376179+00:00"
 paywalled: false
 translation_group_id: "6f0c8e2a-4b17-4d9e-a351-8c7d2e1b90f4"
 tags: ["regulations", "team-finance"]

@@ -3,7 +3,8 @@ slug: "f1-cost-cap-what-is-included-and-excluded"
 title: "Límite de costes F1: qué incluye y qué excluye"
 locale: es
 meta_description: "Límite de costes de F1 en 2026: US$215 millones, qué cuenta, qué queda fuera y por qué el sueldo de un piloto no entra en el tope."
-status: draft
+status: published
+published_at: "2026-09-24T03:20:57.491228+00:00"
 paywalled: false
 translation_group_id: "6f0c8e2a-4b17-4d9e-a351-8c7d2e1b90f4"
 tags: ["regulations", "team-finance"]

@@ -3,7 +3,8 @@ slug: "f1-cost-cap-what-is-included-and-excluded"
 title: "Teto de gastos da F1: o que entra e o que sai"
 locale: pt
 meta_description: "Teto de gastos da F1 em 2026: US$ 215 milhões, o que conta, o que fica de fora e por que o salário do piloto não entra."
-status: draft
+status: published
+published_at: "2026-09-24T03:24:15.895405+00:00"
 paywalled: false
 translation_group_id: "6f0c8e2a-4b17-4d9e-a351-8c7d2e1b90f4"
 tags: ["regulations", "team-finance"]
