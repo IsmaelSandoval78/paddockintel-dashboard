@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { usePathname, Link, useRouter } from '@/lib/i18n/navigation';
 import { useLocale } from 'next-intl';
 import { routing } from '@/lib/i18n/routing';
+import { MAGAZINE_BASE } from '@/lib/magazineUrl';
 import { getAlternateLocaleHref, goToAlternateLocale } from '@/lib/i18n/switchLocale';
 import AuthWidget, { type AuthUser } from './AuthWidget';
 import SearchBar from './SearchBar';
@@ -140,7 +141,7 @@ export default function MobileNav({
                 );
               })}
               <a
-                href="https://paddockintel.com"
+                href={`${MAGAZINE_BASE}/`}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setOpen(false)}

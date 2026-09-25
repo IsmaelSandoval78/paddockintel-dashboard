@@ -93,3 +93,27 @@ export async function getRelatedGlossaryTerms(locale: string, slugs: string[]): 
   }
   return slugs.map((s) => bySlug.get(s)).filter((r): r is GlossaryTermRow => Boolean(r));
 }
+
+// Published locales for one term. eli5 hreflang also counts a technical-only
+// locale, because that locale's public URL is still /glossary/{slug}/.
+// PT is included only when a published row exists.
+export async function getGlossaryAlternateLocales(
+  translationGroupId: string,
+  depth: GlossaryDepth,
+): Promise<{ locale: string; slug: string }[]> {
+  const supabase = createClient();
+  const depths = depth === 'eli5' ? ['eli5', 'technical'] : [depth];
+  const { data } = await supabase
+    .from('glossary_terms')
+    .select('locale, slug, depth')
+    .eq('translation_group_id', translationGroupId)
+    .eq('status', 'published')
+    .in('depth', depths);
+  const rows = (data as { locale: string; slug: string; depth: string }[] | null) ?? [];
+  const byLocale = new Map<string, { locale: string; slug: string; depth: string }>();
+  for (const row of rows) {
+    const existing = byLocale.get(row.locale);
+    if (!existing || row.depth === 'eli5') byLocale.set(row.locale, row);
+  }
+  return Array.from(byLocale.values()).map(({ locale, slug }) => ({ locale, slug }));
+}

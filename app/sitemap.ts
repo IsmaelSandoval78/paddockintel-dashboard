@@ -1,17 +1,12 @@
 import type { MetadataRoute } from 'next';
 import { headers } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
+import { MAGAZINE_BASE, magazinePath } from '@/lib/magazineUrl';
 
 export const revalidate = 3600;
 
 const HUB_BASE = 'https://hub.paddockintel.com';
-// Canonical magazine host. The apex 308s to www, so locs must not use the apex.
-const MAGAZINE_BASE = 'https://www.paddockintel.com';
 const MAGAZINE_HOSTS = new Set(['paddockintel.com', 'www.paddockintel.com']);
-
-function localeUrl(base: string, locale: string, path: string): string {
-  return locale === 'en' ? `${base}${path}` : `${base}/${locale}${path}`;
-}
 
 // A sitemap must only list URLs on its own host — both domains share this one
 // deployment, so /sitemap.xml emits a different URL set depending on which
@@ -82,7 +77,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ];
 
     const articleRoutes: MetadataRoute.Sitemap = (articles ?? []).map((a) => ({
-      url: localeUrl(MAGAZINE_BASE, a.locale as string, `/${a.slug as string}/`),
+      url: magazinePath(a.locale as string, `/${a.slug as string}/`),
       lastModified: a.published_at ? new Date(a.published_at as string) : new Date(),
       changeFrequency: 'monthly' as const,
       priority: 0.85,
@@ -124,8 +119,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // URL_DEPTH map exactly (note: 'fia-regulation' in the URL, not 'fia').
     const DEPTH_PATH: Record<string, string> = { eli5: '', technical: '/technical', fia: '/fia-regulation' };
     const glossaryRoutes: MetadataRoute.Sitemap = (glossaryTerms ?? []).map((g) => ({
-      url: localeUrl(
-        MAGAZINE_BASE,
+      url: magazinePath(
         g.locale as string,
         `/glossary/${g.slug as string}${DEPTH_PATH[g.depth as string] ?? ''}/`
       ),

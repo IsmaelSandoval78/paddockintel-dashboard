@@ -106,9 +106,10 @@ lower `position` finishes ahead; one classified and one null finishes ahead; bot
 null counts as a shared race and awards neither. The label has to name who is on
 the left of the dash (`driver_a`).
 
-Each rendered block ends with a mono source line naming the tables that actually
-returned a callout (`results`, `driver_circuit_wins`, `constructor_stats`,
-`constructor_standings`).
+Each rendered block ends with one mono source line for the reader:
+`Source: Formula 1 official results / PaddockIntel data` (ES: `Fuente: resultados
+oficiales de F1 / datos de PaddockIntel`). The line does not name database tables
+or columns. Which table answered a callout stays inside the resolver.
 
 ## Authoring the next item
 

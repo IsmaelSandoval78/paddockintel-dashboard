@@ -11,6 +11,14 @@ import {
   hookDeliverSpecForItem,
   type HookDeliverFallbacks,
 } from '@/lib/hookDeliver';
+import { getDefaultEditorialAuthor } from '@/lib/editorialAuthor';
+import {
+  feedContentLocale,
+  feedLanguageUrls,
+  localePath,
+  magazinePath,
+  magazinePublisherJsonLd,
+} from '@/lib/magazineUrl';
 
 export const revalidate = 3600;
 
@@ -40,12 +48,6 @@ type FeedItem = {
 };
 
 type PageParams = Promise<{ locale: string; slug: string }>;
-
-const MAGAZINE_BASE = 'https://paddockintel.com';
-
-function localeUrl(locale: string, path: string): string {
-  return locale === 'en' ? `${MAGAZINE_BASE}${path}` : `${MAGAZINE_BASE}/${locale}${path}`;
-}
 
 // Same one-row-two-locale-columns shape as the /feed index page -- see
 // 20260915180000_digest_items_es_columns.sql. Numbers in `stats` don't get a
@@ -96,19 +98,16 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
   }
 
   const text = localize(item, locale);
-  const canonical = localeUrl(locale, `/feed/${slug}/`);
+  const canonical = magazinePath(feedContentLocale(locale), `/feed/${slug}/`);
 
   return {
     title: `${text.headline} — PaddockIntel`,
     description: text.meta_description ?? text.our_summary.slice(0, 145),
     alternates: {
       canonical,
-      languages: {
-        en: localeUrl('en', `/feed/${slug}/`),
-        es: localeUrl('es', `/feed/${slug}/`),
-        'x-default': localeUrl('en', `/feed/${slug}/`),
-      },
+      languages: feedLanguageUrls(`/feed/${slug}/`),
     },
+    openGraph: { url: canonical },
   };
 }
 
@@ -120,9 +119,12 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
   const t = await getTranslations('feed');
   const format = await getFormatter();
   const text = localize(item, locale);
+  const author = await getDefaultEditorialAuthor();
   const hookSpec = hookDeliverSpecForItem(item);
   const hook = hookSpec ? await resolveHookDeliver(hookSpec, locale, hookDeliverFallbacks(t)) : null;
-  const pageUrl = localeUrl(locale, `/feed/${slug}/`);
+  const contentLocale = feedContentLocale(locale);
+  const pageUrl = magazinePath(contentLocale, `/feed/${slug}/`);
+  const authorUrl = magazinePath(locale, '/about/');
 
   const jsonLd: Record<string, unknown> = {
     '@context': 'https://schema.org',
@@ -131,14 +133,11 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
     description: text.meta_description ?? text.our_summary,
     datePublished: item.published_at,
     url: pageUrl,
+    '@id': pageUrl,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
     isBasedOn: item.source_url,
-    author: { '@type': 'Person', name: 'Ismael Sandoval', url: 'https://paddockintel.com/about' },
-    publisher: {
-      '@type': 'Organization',
-      name: 'PaddockIntel',
-      url: 'https://paddockintel.com',
-      logo: { '@type': 'ImageObject', url: 'https://paddockintel.com/opengraph-image' },
-    },
+    author: { '@type': 'Person', name: author.name, url: authorUrl },
+    publisher: magazinePublisherJsonLd(),
   };
 
   const faqJsonLd =
@@ -158,9 +157,9 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: locale === 'en' ? `${MAGAZINE_BASE}/` : `${MAGAZINE_BASE}/${locale}/` },
-      { '@type': 'ListItem', position: 2, name: t('title'), item: localeUrl(locale, '/feed/') },
-      { '@type': 'ListItem', position: 3, name: text.headline },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: magazinePath(locale, '/') },
+      { '@type': 'ListItem', position: 2, name: t('title'), item: magazinePath(contentLocale, '/feed/') },
+      { '@type': 'ListItem', position: 3, name: text.headline, item: pageUrl },
     ],
   };
 
@@ -206,7 +205,7 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
                   data={hook}
                   variant="page"
                   contextLabel={t('hookDeliver.context')}
-                  sourceLabel={t('hookDeliver.source', { tables: hook.sources.join(' · ') })}
+                  sourceLabel={t('hookDeliver.source')}
                   hubLabel={t('hookDeliver.hub', { name: hook.hub.name })}
                 />
               )}
@@ -281,9 +280,10 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
               <div className="mt-8 pt-6 border-t border-border-subtle flex items-center justify-between">
                 <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-3">
                   Written by{' '}
-                  <Link href="/about" className="text-text-1 hover:text-terracotta transition-colors duration-150">
-                    Ismael Sandoval
-                  </Link>
+                  {/* Plain <a>, not next-intl Link: Link is a client component and its children stream into an empty template, so the name is missing from the first HTML. */}
+                  <a href={localePath(locale, '/about/')} className="text-text-1 hover:text-terracotta transition-colors duration-150">
+                    {author.name}
+                  </a>
                   {' '}· PaddockIntel
                 </p>
                 <ShareButton url={pageUrl} title={text.headline} />

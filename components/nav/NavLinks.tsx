@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { usePathname, Link } from '@/lib/i18n/navigation';
+import { MAGAZINE_BASE } from '@/lib/magazineUrl';
 
 type NavKey = 'hub' | 'circuits' | 'drivers' | 'constructors' | 'compare' | 'records';
 
@@ -81,7 +82,7 @@ export default function NavLinks({ isMagazine }: { isMagazine: boolean }) {
         );
       })}
       <a
-        href="https://paddockintel.com"
+        href={`${MAGAZINE_BASE}/`}
         target="_blank"
         rel="noopener noreferrer"
         className="font-sans text-[13px] font-medium no-underline text-text-2 hover:text-text-1 transition-colors duration-150"

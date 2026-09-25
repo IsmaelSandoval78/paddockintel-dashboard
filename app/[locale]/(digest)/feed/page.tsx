@@ -11,6 +11,13 @@ import {
   type HookDeliverFallbacks,
   type ResolvedHookDeliver,
 } from '@/lib/hookDeliver';
+import { getDefaultEditorialAuthor } from '@/lib/editorialAuthor';
+import {
+  feedContentLocale,
+  feedLanguageUrls,
+  magazinePath,
+  magazinePublisherJsonLd,
+} from '@/lib/magazineUrl';
 
 export const revalidate = 3600;
 
@@ -53,22 +60,18 @@ function localize(item: FeedItem, locale: string) {
   };
 }
 
-const FEED_URLS = {
-  en: 'https://paddockintel.com/feed/',
-  es: 'https://paddockintel.com/es/feed/',
-};
-
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations('feed');
-  const canonical = locale === 'es' ? FEED_URLS.es : FEED_URLS.en;
+  const canonical = magazinePath(feedContentLocale(locale), '/feed/');
   return {
     title: `${t('title')} — PaddockIntel`,
     description: t('description'),
     alternates: {
       canonical,
-      languages: { ...FEED_URLS, 'x-default': FEED_URLS.en },
+      languages: feedLanguageUrls('/feed/'),
     },
+    openGraph: { url: canonical },
   };
 }
 
@@ -116,11 +119,18 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   const t = await getTranslations('feed');
   const format = await getFormatter();
-  const [items, beagleCounts] = await Promise.all([getItems(), getBeagleEntityCounts(createClient())]);
+  const [items, beagleCounts, author] = await Promise.all([
+    getItems(),
+    getBeagleEntityCounts(createClient()),
+    getDefaultEditorialAuthor(),
+  ]);
   const hookById = await loadHookDeliverMap(items, locale, hookDeliverFallbacks(t));
   const entityCounts = mergeEntityCounts(weeklyEntityCounts(items), beagleCounts);
   const mentioned = mostMentioned(entityCounts);
-  const feedUrl = locale === 'es' ? FEED_URLS.es : FEED_URLS.en;
+  const contentLocale = feedContentLocale(locale);
+  const feedUrl = magazinePath(contentLocale, '/feed/');
+  const authorUrl = magazinePath(contentLocale, '/about/');
+  const homeUrl = magazinePath(contentLocale, '/');
 
   // Grouped by day (items already arrive published_at desc, so same-day items
   // are always adjacent -- a single pass groups them without re-sorting).
@@ -146,6 +156,7 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
     '@type': 'ItemList',
     name: t('title'),
     url: feedUrl,
+    '@id': feedUrl,
     itemListElement: items.map((item, i) => {
       const text = localize(item, locale);
       const itemUrl = item.slug ? `${feedUrl}${item.slug}/` : `${feedUrl}#item-${item.id}`;
@@ -158,15 +169,11 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
           description: text.our_summary,
           datePublished: item.published_at,
           url: itemUrl,
-          ...(item.slug ? {} : { mainEntityOfPage: feedUrl }),
+          '@id': itemUrl,
+          mainEntityOfPage: { '@type': 'WebPage', '@id': itemUrl },
           isBasedOn: item.source_url,
-          author: { '@type': 'Person', name: 'Ismael Sandoval', url: 'https://paddockintel.com/about' },
-          publisher: {
-            '@type': 'Organization',
-            name: 'PaddockIntel',
-            url: 'https://paddockintel.com',
-            logo: { '@type': 'ImageObject', url: 'https://paddockintel.com/opengraph-image' },
-          },
+          author: { '@type': 'Person', name: author.name, url: authorUrl },
+          publisher: magazinePublisherJsonLd(),
         },
       };
     }),
@@ -180,7 +187,7 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: locale === 'en' ? 'https://paddockintel.com/' : `https://paddockintel.com/${locale}/`,
+        item: homeUrl,
       },
       { '@type': 'ListItem', position: 2, name: t('title') },
     ],
@@ -204,7 +211,7 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
         <p className="font-sans text-text-2 leading-relaxed max-w-lg mt-3">{t('description')}</p>
 
         <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 mt-4">
-          {t('editedBy')}
+          {t('editedBy', { name: author.name })}
           <span className="text-text-3"> · </span>
           <Link href="/about" className="hover:text-accent transition-colors duration-150">
             {t('about')}
@@ -319,7 +326,7 @@ function HookDeliverSlot({ data, t }: { data: ResolvedHookDeliver; t: FeedT }) {
       data={data}
       variant="compact"
       contextLabel={t('hookDeliver.context')}
-      sourceLabel={t('hookDeliver.source', { tables: data.sources.join(' · ') })}
+      sourceLabel={t('hookDeliver.source')}
       hubLabel={t('hookDeliver.hub', { name: data.hub.name })}
     />
   );

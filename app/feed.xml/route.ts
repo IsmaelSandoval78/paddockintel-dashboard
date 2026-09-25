@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { MAGAZINE_BASE } from '@/lib/magazineUrl';
 
 export const revalidate = 3600;
 
-const BASE = 'https://paddockintel.com';
+const BASE = MAGAZINE_BASE;
 
 function escapeXml(str: string): string {
   return str
@@ -45,7 +46,7 @@ export async function GET() {
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>PaddockIntel</title>
-    <link>${BASE}</link>
+    <link>${BASE}/</link>
     <description>F1 economic and performance intelligence — verified sources, original analysis.</description>
     <language>en</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>

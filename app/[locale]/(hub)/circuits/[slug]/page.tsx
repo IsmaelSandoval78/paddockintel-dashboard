@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
+import { magazinePath } from '@/lib/magazineUrl';
 import { Link } from '@/lib/i18n/navigation';
 import { routing } from '@/lib/i18n/routing';
 import { fetchTrackPathData } from '@/lib/trackSvg';
@@ -769,7 +770,7 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
     ? {
         title: lastArticleRaw.title as string,
         metaDescription: lastArticleRaw.meta_description as string,
-        href: `https://paddockintel.com${locale === 'en' ? '' : `/${locale}`}/${lastArticleRaw.slug as string}`,
+        href: magazinePath(locale, `/${lastArticleRaw.slug as string}/`),
       }
     : null;
 

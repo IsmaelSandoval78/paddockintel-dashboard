@@ -69,7 +69,6 @@ export type ResolvedCallout = {
 export type ResolvedHookDeliver = {
   callouts: ResolvedCallout[];
   hub: { href: string; name: string };
-  sources: string[];
 };
 
 export type HookDeliverFallbacks = {
@@ -472,11 +471,9 @@ export async function resolveHookDeliver(
   const callouts = resolved.filter((callout): callout is ResolvedCallout => callout !== null);
   if (callouts.length === 0) return null;
 
-  const sources: string[] = [];
-  for (const callout of callouts) {
-    if (!sources.includes(callout.source)) sources.push(callout.source);
-  }
-  return { callouts, hub, sources };
+  // `callout.source` stays the internal table that produced the number.
+  // Reader-facing copy is feed.hookDeliver.source — never those table names.
+  return { callouts, hub };
 }
 
 export async function loadHookDeliverMap(
