@@ -49,6 +49,22 @@ export function feedLanguageUrls(path: string): Record<string, string> {
   return withXDefault(languages);
 }
 
+/** Self canonical plus hreflang for the published translations of one article. */
+export function articleAlternates(
+  locale: string,
+  slug: string,
+  versions: { locale: string; slug: string }[],
+): { canonical: string; languages: Record<string, string> } {
+  const languages: Record<string, string> = {};
+  for (const version of versions) {
+    languages[version.locale] = magazinePath(version.locale, `/${version.slug}/`);
+  }
+  return {
+    canonical: magazinePath(locale, `/${slug}/`),
+    languages: withXDefault(languages),
+  };
+}
+
 /** Non-Spanish Feed requests stay on the English URL. There is no PT Feed. */
 export function feedContentLocale(locale: string): 'en' | 'es' {
   return locale === 'es' ? 'es' : 'en';

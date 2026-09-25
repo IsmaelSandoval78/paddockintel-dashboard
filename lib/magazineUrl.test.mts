@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import {
   FEED_LOCALES,
   MAGAZINE_BASE,
+  articleAlternates,
   feedContentLocale,
   feedLanguageUrls,
   magazinePath,
@@ -35,6 +36,41 @@ test('Feed hreflang is EN, ES, and x-default only', () => {
   assert.deepEqual([...FEED_LOCALES], ['en', 'es']);
   assert.equal(feedContentLocale('pt'), 'en');
   assert.equal(feedContentLocale('es'), 'es');
+});
+
+test('article canonical is self-referencing on www, hreflang uses each locale slug', () => {
+  const versions = [
+    { locale: 'en', slug: 'azerbaijan-gp-2026-qualifying-antonelli-16th' },
+    { locale: 'es', slug: 'clasificacion-gp-azerbaiyan-2026-antonelli-16' },
+    { locale: 'pt', slug: 'classificacao-gp-azerbaijao-2026-antonelli-16' },
+  ];
+  const en = articleAlternates('en', versions[0].slug, versions);
+  assert.equal(
+    en.canonical,
+    'https://www.paddockintel.com/azerbaijan-gp-2026-qualifying-antonelli-16th/',
+  );
+  assert.equal(en.languages.en, en.canonical);
+  assert.equal(
+    en.languages.es,
+    'https://www.paddockintel.com/es/clasificacion-gp-azerbaiyan-2026-antonelli-16/',
+  );
+  assert.equal(
+    en.languages.pt,
+    'https://www.paddockintel.com/pt/classificacao-gp-azerbaijao-2026-antonelli-16/',
+  );
+  assert.equal(en.languages['x-default'], en.languages.en);
+  assert.equal(en.canonical.includes('https://paddockintel.com/'), false);
+
+  const es = articleAlternates('es', versions[1].slug, versions);
+  assert.equal(
+    es.canonical,
+    'https://www.paddockintel.com/es/clasificacion-gp-azerbaiyan-2026-antonelli-16/',
+  );
+  const pt = articleAlternates('pt', versions[2].slug, versions);
+  assert.equal(
+    pt.canonical,
+    'https://www.paddockintel.com/pt/classificacao-gp-azerbaijao-2026-antonelli-16/',
+  );
 });
 
 test('x-default follows English and is omitted when English is absent', () => {

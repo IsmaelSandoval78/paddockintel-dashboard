@@ -14,7 +14,7 @@ import { extractTOC, markdownToHtml, estimateReadTime, splitMarkdownAtSection } 
 import { getArticleTagSlugs, getRelatedArticles } from '@/lib/blog/tags';
 import { getCurrentAuthUser } from '@/lib/auth/getCurrentAuthUser';
 import { getDefaultEditorialAuthor } from '@/lib/editorialAuthor';
-import { MAGAZINE_BASE, localePath, magazinePath, magazinePublisherJsonLd, withXDefault } from '@/lib/magazineUrl';
+import { MAGAZINE_BASE, articleAlternates, localePath, magazinePath, magazinePublisherJsonLd } from '@/lib/magazineUrl';
 
 // Free sections before the registration wall cuts in — see
 // docs on ArticlePaywallGate. Matches EDITORIAL.md's five-section
@@ -73,19 +73,18 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
   const { locale, slug } = await params;
   const { isEnabled: isDraft } = await draftMode();
   const article = await getArticle(locale, slug, isDraft);
-  if (!article) {
-    const t = await getTranslations({ locale, namespace: 'notFound' });
-    return { title: `${t('label')} — PaddockIntel`, robots: { index: false, follow: true } };
-  }
+  // Missing slugs 404. Returning metadata here used to render the noindex
+  // "Did Not Finish" page on a 200, because the response had already succeeded.
+  if (!article) notFound();
 
-  const pageUrl = magazinePath(locale, `/${slug}/`);
-  const languages: Record<string, string> = {};
-  if (article.translation_group_id) {
-    const versions = await getHreflangUrls(article.translation_group_id as string);
-    for (const v of versions) {
-      languages[v.locale as string] = magazinePath(v.locale as string, `/${v.slug as string}/`);
-    }
-  }
+  const versions = article.translation_group_id
+    ? await getHreflangUrls(article.translation_group_id as string)
+    : [];
+  const { canonical: pageUrl, languages } = articleAlternates(
+    locale,
+    slug,
+    versions.map((version) => ({ locale: version.locale as string, slug: version.slug as string })),
+  );
 
   const ogImage = articleOgImage(locale, slug, article.cover_image_url as string | null);
 
@@ -94,7 +93,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
     description: (article.meta_description as string) ?? undefined,
     alternates: {
       canonical: pageUrl,
-      ...(Object.keys(languages).length ? { languages: withXDefault(languages) } : {}),
+      ...(Object.keys(languages).length ? { languages } : {}),
     },
     openGraph: { url: pageUrl, images: [ogImage] },
     twitter: { card: 'summary_large_image', images: [ogImage] },
@@ -105,6 +104,9 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
   const { locale, slug } = await params;
   const { isEnabled: isDraft } = await draftMode();
   const article = await getArticle(locale, slug, isDraft);
+  // No loading.tsx beside this page. That file is a Suspense boundary, so Next
+  // commits 200 as soon as the fallback streams and a later notFound() cannot
+  // change the status. The existence check stays here, before any Suspense.
   if (!article) notFound();
 
   const fullBody    = article.body_markdown as string;
@@ -198,7 +200,7 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
         name: 'Home',
         item: magazinePath(locale, '/'),
       },
-      { '@type': 'ListItem', position: 2, name: title },
+      { '@type': 'ListItem', position: 2, name: title, item: pageUrl },
     ],
   };
 
