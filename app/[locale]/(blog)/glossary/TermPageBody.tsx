@@ -1,24 +1,37 @@
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/lib/i18n/navigation';
 import { markdownToHtml } from '@/lib/markdown';
-import { getGlossaryTerm, getGlossaryTermLayers, getRelatedGlossaryTerms } from './data';
+import { magazinePath, withXDefault } from '@/lib/magazineUrl';
+import { getGlossaryAlternateLocales, getGlossaryTerm, getGlossaryTermLayers, getRelatedGlossaryTerms } from './data';
 import { DepthNav } from './DepthNav';
 import type { GlossaryDepth } from './data';
 
-export function termUrl(locale: string, slug: string, depth?: GlossaryDepth): string {
+export function glossaryTermPath(slug: string, depth?: GlossaryDepth): string {
   const suffix = depth === 'technical' ? '/technical' : depth === 'fia' ? '/fia-regulation' : '';
-  return locale === 'en'
-    ? `https://paddockintel.com/glossary/${slug}${suffix}/`
-    : `https://paddockintel.com/${locale}/glossary/${slug}${suffix}/`;
+  return `/glossary/${slug}${suffix}/`;
 }
 
-export async function getTermMetadata(locale: string, slug: string, depth: GlossaryDepth) {
+export function termUrl(locale: string, slug: string, depth?: GlossaryDepth): string {
+  return magazinePath(locale, glossaryTermPath(slug, depth));
+}
+
+export async function getTermMetadata(locale: string, slug: string, depth: GlossaryDepth): Promise<Metadata> {
   const term = await getGlossaryTerm(locale, slug, depth);
   if (!term) return { title: 'Glossary — PaddockIntel' };
+  const canonical = termUrl(locale, term.slug, depth);
+  const alternates = await getGlossaryAlternateLocales(term.translation_group_id, depth);
+  const languages: Record<string, string> = {};
+  for (const row of alternates) {
+    languages[row.locale] = termUrl(row.locale, row.slug, depth);
+  }
+  if (!languages[locale]) languages[locale] = canonical;
   return {
     title: `${term.term} — PaddockIntel Glossary`,
     description: term.short_definition,
+    alternates: { canonical, languages: withXDefault(languages) },
+    openGraph: { url: canonical },
   };
 }
 
@@ -38,7 +51,7 @@ export async function TermPageBody({
   const layers = await getGlossaryTermLayers(locale, slug);
   const related = await getRelatedGlossaryTerms(locale, term.related_terms);
   const html = markdownToHtml(term.body_markdown);
-  const pageUrl = termUrl(locale, term.slug, term.depth);
+  const pageUrl = termUrl(locale, term.slug, depth);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -46,7 +59,8 @@ export async function TermPageBody({
     name: term.term,
     description: term.short_definition,
     url: pageUrl,
-    inDefinedTermSet: locale === 'en' ? 'https://paddockintel.com/glossary/' : `https://paddockintel.com/${locale}/glossary/`,
+    '@id': pageUrl,
+    inDefinedTermSet: magazinePath(locale, '/glossary/'),
   };
 
   return (

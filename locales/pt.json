@@ -962,7 +962,7 @@
     "kicker": "PaddockIntel Feed",
     "title": "Notícias de F1 Hoje",
     "description": "Cada história verificada da pesquisa do newsletter da PaddockIntel, em um único feed contínuo — fontes citadas, análise própria, sem copiar de agências.",
-    "editedBy": "Editado por Ismael Sandoval",
+    "editedBy": "Editado por {name}",
     "about": "Sobre →",
     "mostMentioned": "Mais mencionados esta semana",
     "noItems": "Ainda não há histórias.",
@@ -978,7 +978,7 @@
     "hookDeliver": {
       "context": "Contexto",
       "hub": "Hub → {name}",
-      "source": "Dados do Hub · {tables}",
+      "source": "Fonte: resultados oficiais da F1 / dados da PaddockIntel",
       "h2h": "Cara a cara {year}",
       "winsAtCircuit": "Vitórias no circuito",
       "constructorPoints": "Pontos do construtor",

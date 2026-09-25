@@ -17,7 +17,7 @@ import DigestIssueEmail from '@/emails/DigestIssueEmail';
 export async function GET(req: Request) {
   const resend = new Resend(process.env.RESEND_API_KEY);
   const FROM = process.env.RESEND_FROM_EMAIL ?? 'info@paddockintel.com';
-  const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://paddockintel.com';
+  const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.paddockintel.com';
   const auth = req.headers.get('authorization');
   if (!process.env.CRON_SECRET || auth !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

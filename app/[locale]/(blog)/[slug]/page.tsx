@@ -13,6 +13,8 @@ import ArticlePaywallGate from '@/components/blog/ArticlePaywallGate';
 import { extractTOC, markdownToHtml, estimateReadTime, splitMarkdownAtSection } from '@/lib/markdown';
 import { getArticleTagSlugs, getRelatedArticles } from '@/lib/blog/tags';
 import { getCurrentAuthUser } from '@/lib/auth/getCurrentAuthUser';
+import { getDefaultEditorialAuthor } from '@/lib/editorialAuthor';
+import { MAGAZINE_BASE, articleAlternates, localePath, magazinePath, magazinePublisherJsonLd } from '@/lib/magazineUrl';
 
 // Free sections before the registration wall cuts in — see
 // docs on ArticlePaywallGate. Matches EDITORIAL.md's five-section
@@ -63,37 +65,37 @@ async function getHreflangUrls(translationGroupId: string) {
   return data ?? [];
 }
 
-function localeUrl(locale: string, slug: string): string {
-  return locale === 'en'
-    ? `https://paddockintel.com/${slug}/`
-    : `https://paddockintel.com/${locale}/${slug}/`;
+function articleOgImage(locale: string, slug: string, cover: string | null): string {
+  return cover ?? `${MAGAZINE_BASE}/api/og/article/${locale}/${slug}`;
 }
 
 export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
   const { locale, slug } = await params;
   const { isEnabled: isDraft } = await draftMode();
   const article = await getArticle(locale, slug, isDraft);
-  if (!article) {
-    const t = await getTranslations({ locale, namespace: 'notFound' });
-    return { title: `${t('label')} — PaddockIntel`, robots: { index: false, follow: true } };
-  }
+  // Missing slugs 404. Returning metadata here used to render the noindex
+  // "Did Not Finish" page on a 200, because the response had already succeeded.
+  if (!article) notFound();
 
-  const alternates: Record<string, string> = {};
-  if (article.translation_group_id) {
-    const versions = await getHreflangUrls(article.translation_group_id as string);
-    for (const v of versions) {
-      alternates[v.locale as string] = localeUrl(v.locale as string, v.slug as string);
-    }
-  }
+  const versions = article.translation_group_id
+    ? await getHreflangUrls(article.translation_group_id as string)
+    : [];
+  const { canonical: pageUrl, languages } = articleAlternates(
+    locale,
+    slug,
+    versions.map((version) => ({ locale: version.locale as string, slug: version.slug as string })),
+  );
 
-  const ogImage =
-    (article.cover_image_url as string | null) ?? `https://paddockintel.com/api/og/article/${locale}/${slug}`;
+  const ogImage = articleOgImage(locale, slug, article.cover_image_url as string | null);
 
   return {
     title: `${article.title as string} — PaddockIntel`,
     description: (article.meta_description as string) ?? undefined,
-    alternates: Object.keys(alternates).length ? { languages: alternates } : undefined,
-    openGraph: { images: [ogImage] },
+    alternates: {
+      canonical: pageUrl,
+      ...(Object.keys(languages).length ? { languages } : {}),
+    },
+    openGraph: { url: pageUrl, images: [ogImage] },
     twitter: { card: 'summary_large_image', images: [ogImage] },
   };
 }
@@ -102,6 +104,9 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
   const { locale, slug } = await params;
   const { isEnabled: isDraft } = await draftMode();
   const article = await getArticle(locale, slug, isDraft);
+  // No loading.tsx beside this page. That file is a Suspense boundary, so Next
+  // commits 200 as soon as the fallback streams and a later notFound() cannot
+  // change the status. The existence check stays here, before any Suspense.
   if (!article) notFound();
 
   const fullBody    = article.body_markdown as string;
@@ -136,7 +141,9 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
   const toc      = extractTOC(body);
   const html     = markdownToHtml(body);
   const readTime = estimateReadTime(fullBody);
-  const pageUrl  = localeUrl(locale, slug);
+  const author   = await getDefaultEditorialAuthor();
+  const pageUrl  = magazinePath(locale, `/${slug}/`);
+  const authorUrl = magazinePath(locale, '/about/');
 
   // Only offered when there's a real, ungated stat to feature — a stat card
   // with nothing to show isn't worth the modal, and using `stats` (not
@@ -162,15 +169,12 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
     '@type': 'NewsArticle',
     headline: title,
     datePublished: publishedAt,
-    image: (article.cover_image_url as string | null) ?? `https://paddockintel.com/api/og/article/${locale}/${slug}`,
-    author: { '@type': 'Person', name: 'Ismael Sandoval', url: 'https://paddockintel.com/about' },
-    publisher: {
-      '@type': 'Organization',
-      name: 'PaddockIntel',
-      url: 'https://paddockintel.com',
-      logo: { '@type': 'ImageObject', url: 'https://paddockintel.com/opengraph-image' },
-    },
+    image: articleOgImage(locale, slug, article.cover_image_url as string | null),
+    author: { '@type': 'Person', name: author.name, url: authorUrl },
+    publisher: magazinePublisherJsonLd(),
     url: pageUrl,
+    '@id': pageUrl,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
     ...(article.meta_description ? { description: article.meta_description as string } : {}),
   };
 
@@ -194,9 +198,9 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: locale === 'en' ? 'https://paddockintel.com/' : `https://paddockintel.com/${locale}/`,
+        item: magazinePath(locale, '/'),
       },
-      { '@type': 'ListItem', position: 2, name: title },
+      { '@type': 'ListItem', position: 2, name: title, item: pageUrl },
     ],
   };
 
@@ -304,12 +308,9 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
               <div className="mt-12 pt-6 border-t border-border-subtle flex items-center justify-between">
                 <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-3">
                   Written by{' '}
-                  <Link
-                    href="/about"
-                    className="text-text-1 hover:text-terracotta transition-colors duration-150"
-                  >
-                    Ismael Sandoval
-                  </Link>
+                  <a href={localePath(locale, '/about/')} className="text-text-1 hover:text-terracotta transition-colors duration-150">
+                    {author.name}
+                  </a>
                   {' '}· PaddockIntel
                 </p>
                 <div className="flex items-center gap-2">

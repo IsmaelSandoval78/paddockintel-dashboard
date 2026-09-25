@@ -7,6 +7,7 @@ import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/lib/i18n/routing';
 import { siteModeForHost } from '@/lib/siteMode';
+import { MAGAZINE_BASE } from '@/lib/magazineUrl';
 import { getCurrentAuthUser } from '@/lib/auth/getCurrentAuthUser';
 import { getFollowedRefs } from '@/lib/follows/actions';
 import { AuthProvider } from '@/lib/auth/AuthContext';
@@ -57,7 +58,7 @@ export const metadata: Metadata = {
   description: 'F1 economic and performance intelligence hub',
   alternates: {
     types: {
-      'application/rss+xml': 'https://paddockintel.com/feed.xml',
+      'application/rss+xml': `${MAGAZINE_BASE}/feed.xml`,
     },
   },
 };

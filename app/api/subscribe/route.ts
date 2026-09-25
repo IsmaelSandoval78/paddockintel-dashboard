@@ -15,7 +15,7 @@ function localizedPath(locale: WelcomeEmailLocale, path: string): string {
 async function sendWelcomeEmail(email: string, locale: WelcomeEmailLocale): Promise<void> {
   const resend = new Resend(process.env.RESEND_API_KEY);
   const FROM = process.env.RESEND_FROM_EMAIL ?? 'info@paddockintel.com';
-  const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://paddockintel.com';
+  const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.paddockintel.com';
 
   const html = await render(
     WelcomeEmail({

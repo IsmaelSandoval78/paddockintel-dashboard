@@ -966,7 +966,7 @@
     "kicker": "PaddockIntel Feed",
     "title": "F1 News Today",
     "description": "Every verified story from PaddockIntel's newsletter research, in one running feed — cited sources, our own analysis, no wire-service copy.",
-    "editedBy": "Edited by Ismael Sandoval",
+    "editedBy": "Edited by {name}",
     "about": "About →",
     "mostMentioned": "Most mentioned this week",
     "noItems": "No stories yet.",
@@ -988,7 +988,7 @@
     "hookDeliver": {
       "context": "Context",
       "hub": "Hub → {name}",
-      "source": "Hub data · {tables}",
+      "source": "Source: Formula 1 official results / PaddockIntel data",
       "h2h": "H2H {year}",
       "winsAtCircuit": "Wins at circuit",
       "constructorPoints": "Constructor points",

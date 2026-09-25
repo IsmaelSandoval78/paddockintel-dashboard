@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/lib/i18n/navigation';
+import { magazinePath, withXDefault } from '@/lib/magazineUrl';
 import { getGlossaryTerms } from './data';
 
 export const revalidate = 3600;
@@ -18,17 +19,24 @@ const CATEGORY_ORDER = [
 type PageParams = Promise<{ locale: string }>;
 
 function termUrl(locale: string, slug: string): string {
-  return locale === 'en'
-    ? `https://paddockintel.com/glossary/${slug}/`
-    : `https://paddockintel.com/${locale}/glossary/${slug}/`;
+  return magazinePath(locale, `/glossary/${slug}/`);
 }
 
 export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'glossary' });
+  const canonical = magazinePath(locale, '/glossary/');
+  // EN, ES, and PT glossary indexes are real routes. Feed is the one without PT.
+  const languages = withXDefault({
+    en: magazinePath('en', '/glossary/'),
+    es: magazinePath('es', '/glossary/'),
+    pt: magazinePath('pt', '/glossary/'),
+  });
   return {
     title: `${t('title')} — PaddockIntel`,
     description: t('description'),
+    alternates: { canonical, languages },
+    openGraph: { url: canonical },
   };
 }
 
@@ -44,16 +52,20 @@ export default async function GlossaryIndexPage({ params }: { params: PageParams
     byCategory.set(term.category, list);
   }
 
+  const indexUrl = magazinePath(locale, '/glossary/');
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'DefinedTermSet',
     name: t('title'),
     description: t('description'),
+    url: indexUrl,
+    '@id': indexUrl,
     hasDefinedTerm: terms.map((term) => ({
       '@type': 'DefinedTerm',
       name: term.term,
       description: term.short_definition,
       url: termUrl(locale, term.slug),
+      '@id': termUrl(locale, term.slug),
     })),
   };
 

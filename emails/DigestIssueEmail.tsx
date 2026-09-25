@@ -104,7 +104,7 @@ export default function DigestIssueEmail({
                 Read on web →
               </Link>
               <span style={{ color: ghost }}>{' · '}</span>
-              <Link href="https://paddockintel.com/about" style={{ color: ghost, textDecoration: 'none' }}>
+              <Link href="https://www.paddockintel.com/about/" style={{ color: ghost, textDecoration: 'none' }}>
                 By Ismael Sandoval
               </Link>
             </Text>

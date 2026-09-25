@@ -63,13 +63,11 @@ export type FeaturedStat = {
 export type ResolvedCallout = {
   value: string;
   label: string;
-  source: string;
 };
 
 export type ResolvedHookDeliver = {
   callouts: ResolvedCallout[];
   hub: { href: string; name: string };
-  sources: string[];
 };
 
 export type HookDeliverFallbacks = {
@@ -300,7 +298,6 @@ async function resolveH2H(
   return {
     value: `${aAhead}\u2013${bAhead}`,
     label: authoredLabel(spec, locale) ?? fallbacks.h2h(spec.year),
-    source: 'results',
   };
 }
 
@@ -335,7 +332,6 @@ async function resolveWinsAtCircuit(
   return {
     value,
     label: authoredLabel(spec, locale) ?? fallbacks.winsAtCircuit,
-    source: 'driver_circuit_wins',
   };
 }
 
@@ -366,7 +362,6 @@ async function resolveConstructorCareer(
   return {
     value,
     label: authoredLabel(spec, locale) ?? fallbacks.constructorCareer(spec.metric),
-    source: 'constructor_stats',
   };
 }
 
@@ -412,7 +407,6 @@ async function resolveConstructorSeasonPoints(
   return {
     value,
     label: authoredLabel(spec, locale) ?? fallbacks.constructorSeasonPoints,
-    source: 'constructor_standings',
   };
 }
 
@@ -472,11 +466,9 @@ export async function resolveHookDeliver(
   const callouts = resolved.filter((callout): callout is ResolvedCallout => callout !== null);
   if (callouts.length === 0) return null;
 
-  const sources: string[] = [];
-  for (const callout of callouts) {
-    if (!sources.includes(callout.source)) sources.push(callout.source);
-  }
-  return { callouts, hub, sources };
+  // Table names stay inside the queries. The card's source line is the
+  // locale string feed.hookDeliver.source, not a join of those tables.
+  return { callouts, hub };
 }
 
 export async function loadHookDeliverMap(

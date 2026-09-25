@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "node --experimental-strip-types --test lib/magazineUrl.test.mts",
     "remotion:studio": "remotion studio remotion/index.ts",
     "remotion:render": "remotion render remotion/index.ts LapComparison-Belgium2026-ANT-vs-LEC out/lap-comparison.mp4"
   },
