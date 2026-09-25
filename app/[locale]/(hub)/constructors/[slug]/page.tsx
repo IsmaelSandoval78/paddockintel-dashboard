@@ -38,6 +38,12 @@ function cleanLapTime(t: string | null | undefined): string | null {
   return t;
 }
 
+function localeUrl(locale: string, path: string): string {
+  return locale === 'en'
+    ? `https://paddockintel.com${path}`
+    : `https://paddockintel.com/${locale}${path}`;
+}
+
 // ─── Rivalry ────────────────────────────────────────────────────────────────
 
 type ConstructorStatsRow = {
@@ -106,7 +112,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const supabase = createClient();
   const { data } = await supabase
     .from('constructors')
@@ -115,16 +121,25 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
     .single();
   if (!data) return { title: 'Constructor — PaddockIntel' };
   const name = data.name as string;
+  const canonical = localeUrl(locale, `/constructors/${slug}`);
   return {
     title: `${name} — PaddockIntel`,
     description: `Season records, win history, and driver roster for ${name} (${data.nationality as string}).`,
+    alternates: {
+      canonical,
+      languages: {
+        en: localeUrl('en', `/constructors/${slug}`),
+        es: localeUrl('es', `/constructors/${slug}`),
+        'x-default': localeUrl('en', `/constructors/${slug}`),
+      },
+    },
   };
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function ConstructorDetailPage({ params }: { params: PageParams }) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const t = await getTranslations('constructorDetail');
   const supabase = createClient();
 
@@ -145,6 +160,28 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
   };
 
   const color = teamColor(constructor.constructor_ref);
+
+  const constructorUrl = localeUrl(locale, `/constructors/${constructor.constructor_ref}`);
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: localeUrl(locale, '/') },
+      { '@type': 'ListItem', position: 2, name: 'Constructors', item: localeUrl(locale, '/constructors') },
+      { '@type': 'ListItem', position: 3, name: constructor.name },
+    ],
+  };
+
+  // Base SportsTeam schema — foundingDate is added once constructor_stats
+  // resolves below (it's not available this early).
+  const teamJsonLdBase = {
+    '@context': 'https://schema.org',
+    '@type': 'SportsTeam',
+    name: constructor.name,
+    address: { '@type': 'PostalAddress', addressCountry: constructor.nationality },
+    url: constructorUrl,
+  };
 
   // Batch 2 — career stats + standings (two era splits) + podium results + fastest laps count
   //
@@ -256,7 +293,16 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
   // Early return — no race data
   if (!allStandings.length || !stats) {
     return (
-      <main className="flex flex-col">
+      <>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(teamJsonLdBase) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        />
+        <main className="flex flex-col">
         <div className="h-10 px-6 border-b border-border flex items-center gap-2 shrink-0">
           <Link
             href="/constructors"
@@ -282,7 +328,8 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
         <div className="px-6 py-12">
           <p className="font-mono text-[13px] text-text-3">{t('noData')}</p>
         </div>
-      </main>
+        </main>
+      </>
     );
   }
 
@@ -650,10 +697,24 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
   const maxSeasonPoints = Math.max(...seasonRows.map((r) => r.points), 1);
   const maxCircuitWins = circuitDomRows[0]?.wins ?? 1;
 
+  const teamJsonLd = {
+    ...teamJsonLdBase,
+    foundingDate: String(stats.first_year as number),
+  };
+
   // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
-    <main className="flex flex-col">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(teamJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <main className="flex flex-col">
 
       {/* Breadcrumb */}
       <div className="h-10 px-6 border-b border-border flex items-center gap-2 shrink-0">
@@ -1055,6 +1116,7 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
         />
       </div>
 
-    </main>
+      </main>
+    </>
   );
 }

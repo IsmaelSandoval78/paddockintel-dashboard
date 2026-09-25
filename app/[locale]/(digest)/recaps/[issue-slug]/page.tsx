@@ -61,13 +61,21 @@ function weekOf(slug: string): string | null {
   return formatDate(m[1]);
 }
 
+function localeUrl(locale: string, path: string): string {
+  return locale === 'en'
+    ? `https://paddockintel.com${path}`
+    : `https://paddockintel.com/${locale}${path}`;
+}
+
 export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
-  const { 'issue-slug': slug } = await params;
+  const { locale, 'issue-slug': slug } = await params;
   const recap = await getRecap(slug);
   if (!recap) return { title: 'Recap Series — PaddockIntel' };
+  const canonical = localeUrl(locale, `/recaps/${slug}/`);
   return {
     title: `Recap Vol.${recapNumber(slug as string)} — PaddockIntel`,
     description: (recap.intro_synthesis as string).slice(0, 145),
+    alternates: { canonical },
   };
 }
 

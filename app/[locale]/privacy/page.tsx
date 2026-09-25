@@ -32,7 +32,18 @@ export default async function PrivacyPage({ params }: { params: PageParams }) {
     { num: '02', heading: t('s2h'), body: t('s2p') },
     { num: '03', heading: t('s3h'), body: t('s3p') },
     { num: '04', heading: t('s4h'), body: t.rich('s4p', { mail: mailLink }) },
-    { num: '05', heading: t('s5h'), body: t.rich('s5p', { mail: mailLink }) },
+    {
+      num: '05',
+      heading: t('s5h'),
+      body: t.rich('s5p', {
+        mail: mailLink,
+        account: (chunks) => (
+          <Link href="/account" className="text-terracotta hover:underline">
+            {chunks}
+          </Link>
+        ),
+      }),
+    },
     { num: '06', heading: t('s6h'), body: t('s6p') },
     {
       num: '07',

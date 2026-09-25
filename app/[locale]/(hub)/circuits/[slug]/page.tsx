@@ -31,6 +31,12 @@ function formatCoord(lat: number, lng: number): string {
   return `${Math.abs(lat).toFixed(2)}°${ns} · ${Math.abs(lng).toFixed(2)}°${ew}`;
 }
 
+function localeUrl(locale: string, path: string): string {
+  return locale === 'en'
+    ? `https://paddockintel.com${path}`
+    : `https://paddockintel.com/${locale}${path}`;
+}
+
 // ─── Static generation ────────────────────────────────────────────────────────
 
 export async function generateStaticParams() {
@@ -43,7 +49,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const supabase = createClient();
   const { data } = await supabase
     .from('circuits')
@@ -54,9 +60,18 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
   const name = data.name as string;
   const location = data.location as string;
   const country = data.country as string;
+  const canonical = localeUrl(locale, `/circuits/${slug}`);
   return {
     title: `${name} — PaddockIntel`,
     description: `Full race history, lap records, and statistics for ${name} in ${location}, ${country}.`,
+    alternates: {
+      canonical,
+      languages: {
+        en: localeUrl('en', `/circuits/${slug}`),
+        es: localeUrl('es', `/circuits/${slug}`),
+        'x-default': localeUrl('en', `/circuits/${slug}`),
+      },
+    },
   };
 }
 
@@ -84,6 +99,33 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
     lat: circuitRaw.lat as number,
     lng: circuitRaw.lng as number,
     circuit_ref: circuitRaw.circuit_ref as string,
+  };
+
+  const circuitUrl = localeUrl(locale, `/circuits/${circuit.circuit_ref}`);
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: localeUrl(locale, '/') },
+      { '@type': 'ListItem', position: 2, name: 'Circuits', item: localeUrl(locale, '/circuits') },
+      { '@type': 'ListItem', position: 3, name: circuit.name },
+    ],
+  };
+
+  const placeJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Place',
+    name: circuit.name,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: circuit.location,
+      addressCountry: circuit.country,
+    },
+    ...(circuit.lat != null && circuit.lng != null
+      ? { geo: { '@type': 'GeoCoordinates', latitude: circuit.lat, longitude: circuit.lng } }
+      : {}),
+    url: circuitUrl,
   };
 
   // Batch 2 — all races at this circuit + track SVG + corners (parallel)
@@ -137,24 +179,34 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
   // No-races early return
   if (!raceIds.length) {
     return (
-      <main className="flex flex-col">
-        <div className="h-10 px-6 border-b border-border flex items-center gap-2 shrink-0">
-          <Link href="/circuits" className="font-mono text-[11px] text-text-3 hover:text-text-2 transition-colors duration-150">
-            {t('breadcrumb.circuits')}
-          </Link>
-          <span className="font-mono text-[11px] text-text-3">·</span>
-          <span className="font-mono text-[11px] text-text-2">{circuit.name}</span>
-        </div>
-        <div className="px-6 pt-8 pb-7">
-          <p className="font-mono text-[11px] text-text-3 uppercase tracking-[0.06em] mb-3">{t('hero.label')}</p>
-          <h1 className="font-serif text-5xl text-text-1 leading-[1.1] mb-2">{circuit.name}</h1>
-          <p className="text-[14px] text-text-2 mb-1">{circuit.location} · {circuit.country}</p>
-          <p className="font-mono text-[12px] text-text-3">{formatCoord(circuit.lat, circuit.lng)}</p>
-        </div>
-        <div className="px-6 py-12 border-t border-border">
-          <p className="font-mono text-[13px] text-text-3">{t('noData')}</p>
-        </div>
-      </main>
+      <>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(placeJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        />
+        <main className="flex flex-col">
+          <div className="h-10 px-6 border-b border-border flex items-center gap-2 shrink-0">
+            <Link href="/circuits" className="font-mono text-[11px] text-text-3 hover:text-text-2 transition-colors duration-150">
+              {t('breadcrumb.circuits')}
+            </Link>
+            <span className="font-mono text-[11px] text-text-3">·</span>
+            <span className="font-mono text-[11px] text-text-2">{circuit.name}</span>
+          </div>
+          <div className="px-6 pt-8 pb-7">
+            <p className="font-mono text-[11px] text-text-3 uppercase tracking-[0.06em] mb-3">{t('hero.label')}</p>
+            <h1 className="font-serif text-5xl text-text-1 leading-[1.1] mb-2">{circuit.name}</h1>
+            <p className="text-[14px] text-text-2 mb-1">{circuit.location} · {circuit.country}</p>
+            <p className="font-mono text-[12px] text-text-3">{formatCoord(circuit.lat, circuit.lng)}</p>
+          </div>
+          <div className="px-6 py-12 border-t border-border">
+            <p className="font-mono text-[13px] text-text-3">{t('noData')}</p>
+          </div>
+        </main>
+      </>
     );
   }
 
@@ -777,6 +829,14 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(placeJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <CircuitOverview
         name={circuit.name}
         location={circuit.location}

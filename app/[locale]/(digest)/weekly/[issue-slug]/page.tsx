@@ -50,13 +50,21 @@ function issueNumber(slug: string): string {
   return m ? m[1].padStart(2, '0') : '01';
 }
 
+function localeUrl(locale: string, path: string): string {
+  return locale === 'en'
+    ? `https://paddockintel.com${path}`
+    : `https://paddockintel.com/${locale}${path}`;
+}
+
 export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
-  const { 'issue-slug': slug } = await params;
+  const { locale, 'issue-slug': slug } = await params;
   const issue = await getIssue(slug);
   if (!issue) return { title: 'Weekly Digest — PaddockIntel' };
+  const canonical = localeUrl(locale, `/weekly/${slug}/`);
   return {
     title: `Digest Vol.${issueNumber(slug as string)} — PaddockIntel`,
     description: (issue.intro_synthesis as string).slice(0, 145),
+    alternates: { canonical },
   };
 }
 
