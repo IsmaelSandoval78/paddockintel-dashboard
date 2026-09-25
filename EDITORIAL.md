@@ -48,6 +48,7 @@ Before stating any fact, number, or claim in an article or digest:
 | Contract news | Team press releases — never rumor sites |
 | Historical data (pre-2026) | Supabase Hub (already verified Ergast data) |
 | Live 2026 standings | Supabase Hub — query the DB, don't assume |
+| Stewards decisions, grid penalties | formula1.com official penalty/stewards documents — never secondary wire coverage, which routinely blurs two separate incidents into one (verified case: Baku 2026, Sainz's yellow-flag penalty and Pérez's impeding penalty were two unrelated infringements that translated wire coverage merged) |
 
 **This rule applies to Claude writing drafts too.** If a writing session produces a number
 without a cited source in the `sources` frontmatter array, that number is not verified and
@@ -309,16 +310,35 @@ piénsalo, tú) before publishing.
 
 ## The Writing Session Flow
 
-1. **Research first.** Before opening a draft, read the four advisor files in `docs/advisors/`
-   (`SEO-EXPERT.md`, `DATA-EXPERT.md`, `EEAT-EXPERT.md`, `SPORTS-JOURNALISM-EXPERT.md`) — they are
-   an additional gate on top of this document, not a replacement for it. Then verify: race results
-   from Formula1.com, standings from Supabase Hub, economic claims from primary sources (FIA, team
-   press releases, FT/Bloomberg if available). Never estimate a number.
+0. **Where the story comes from.** `scripts/beagle.mjs` is the editorial radar — it never picks a
+   topic for you, it ranks what independent outlets are covering right now. A Beagle-surfaced topic
+   becomes a real brief only after it clears the Story Selection gate in `docs/advisors/
+   SEO-EXPERT.md` (Nivel 2 check, angle test, EEAT resolution rule, Data source-tier check). Skip
+   this step only when the piece didn't originate from Beagle (e.g. a scheduled recap, a
+   methodology page).
+
+1. **Research first.** Before opening a draft, read the advisor files in `docs/advisors/` — all
+   eight of them (`EEAT-EXPERT.md`, `SEO-EXPERT.md`, `DATA-EXPERT.md`, `SPORTS-JOURNALISM-EXPERT.md`,
+   `CYBERSECURITY-EXPERT.md`, `PERFORMANCE-EXPERT.md`, `DIGITAL-PR-EXPERT.md`,
+   `LEGAL-COMPLIANCE-EXPERT.md`) — they are an additional gate on top of this document, not a
+   replacement for it. Then verify: race results from Formula1.com, standings from Supabase Hub,
+   economic claims from primary sources (FIA, team press releases, FT/Bloomberg if available).
+   Never estimate a number.
 
 2. **Angle before structure.** Write one sentence: *"This article argues that [X] because [Y]."*
-   If you can't write that sentence, the angle isn't sharp enough yet.
+   If you can't write that sentence, the angle isn't sharp enough yet. If the angle rests on a new
+   proprietary metric (not one that already has a page under `/methodology/`), that page gets
+   written before or alongside the article — `DATA-EXPERT.md` blocks citing an unaudited metric.
 
-3. **EN draft first.** Full five sections. Stat callouts. FAQ. Sources list.
+3. **EN draft first.** Full five sections. Stat callouts. FAQ. Sources list. If this is a Nivel 1
+   piece (a high-search-volume hook — rumor, conflict, signing), the body must link inline to an
+   existing Nivel 2 piece (see `SEO-EXPERT.md`'s Hook & Deliver framework) — there is no frontmatter
+   field for this, it's a real `<a>` link inside the prose, same pattern as the Baku qualifying
+   article linking to the Azerbaijan GP economics piece. No relevant Nivel 2 piece exists yet →
+   write it first or fold this into an existing page instead.
+   If the piece pulls in a take from an "expert" (the X/Twitter personalization feature), see
+   `SPORTS-JOURNALISM-EXPERT.md`'s expert-sourcing checklist and `LEGAL-COMPLIANCE-EXPERT.md`'s
+   third-party-rights section before attributing anything to them.
 
 4. **Critique gate.** Before translating, score against the six dimensions in SKILL.md §16.
    Minimum 4 on all six.
