@@ -3,8 +3,8 @@
 ## Project Overview
 
 **hub.paddockintel.com** — F1 economic and performance intelligence hub.
-Interactive map-driven dashboard with historical data from 1950 to present.
-Stack: Next.js 16 + TypeScript + Tailwind v4 + Supabase + Vercel + d3-geo (SVG map) + next-intl.
+Editorial, scroll-driven dashboard with historical data from 1950 to present.
+Stack: Next.js 16 + TypeScript + Tailwind v4 + Supabase + Vercel + GSAP + next-intl.
 i18n: EN / ES / PT. Default locale: `en`.
 
 ---
@@ -42,16 +42,16 @@ i18n: EN / ES / PT. Default locale: `en`.
 paddockintel-dashboard/
 ├── app/
 │   ├── [locale]/           # EN / ES / PT routing
-│   │   ├── page.tsx        # Hub principal (map + panels)
+│   │   ├── page.tsx        # Home (kinetic / magazine)
 │   │   ├── circuits/       # Página de circuitos
 │   │   ├── drivers/        # Página de drivers
 │   │   ├── constructors/   # Página de constructores
 │   │   └── compare/        # Comparador interactivo
 │   └── api/                # Supabase server-side queries
 ├── components/
-│   ├── map/                # Mapa interactivo SVG con d3-geo (circuitos)
-│   ├── panels/             # Panel derecho dinámico
-│   ├── cards/              # Driver cards, constructor cards
+│   ├── home/               # Home kinetic (GSAP) + magazine-home
+│   ├── circuits/           # Circuits index + detail
+│   ├── records/            # Records hub
 │   ├── scorecards/         # Shareable scorecards
 │   └── ui/                 # Primitivos (botones, badges, etc.)
 ├── lib/
@@ -100,7 +100,13 @@ All data lives in Supabase. Never use mock data — always query real tables.
 
 ---
 
-## Hub Principal Layout
+## Hub Principal Layout — RETIRADO, no implementar
+
+**This describes the original map-driven hub, retired 2026-08-25.** The map/panel split below
+does not exist in the product and there is no `components/map/` to build it in. Kept because the
+*data* each panel showed is still the right answer to "what belongs on a hub surface" — treat the
+bullet lists as a data spec, not the ASCII layout. The live home is `components/home/kinetic/`
+plus `magazine-home`. History: `docs/archive/CIRCUITS-MAP-LEGACY.md`.
 
 ```
 ┌─────────────────────────────┬──────────────────────┐
@@ -156,10 +162,10 @@ All data lives in Supabase. Never use mock data — always query real tables.
 ## Performance Rules
 
 - All Supabase queries are server-side (React Server Components by default)
-- No client-side fetching unless interactive (map clicks, comparator, locale switcher)
+- No client-side fetching unless interactive (comparator, locale switcher)
 - Paginate any list over 20 items
 - Images: `next/image` always, WebP format
-- Map component (`components/map/`): client component (`"use client"`) — d3-geo projections run in the browser
+- GSAP-driven surfaces (`components/*/kinetic/`): client components (`"use client"`)
 
 **Mobile strategy (confirmed 2026-08-04, v2 relaunch):** PWA, not a native app, for the Dutch GP launch — `manifest.json` + add-to-homescreen icon + a basic service worker for fast/offline-tolerant loading. Native app is a post-launch decision, revisit only with real traction.
 
@@ -204,7 +210,7 @@ Minimum to ship: **4 on all five**. If any score < 4, iterate before moving on.
 - Do not generate placeholder or lorem ipsum content
 - Do not invent circuit records, lap times, or historical data — query Supabase
 - Do not use inline styles or hardcoded hex values — use CSS variables from globals.css
-- Do not reintroduce Leaflet or a 3D globe — the map is a flat SVG using a d3-geo Natural Earth projection
+- Do not reintroduce Leaflet or a 3D globe. **There is no map in the product** — the d3-geo SVG map was retired 2026-08-25 with the Vintage Editorial `/circuits` redesign, and its code and its `d3-geo`/`world-atlas`/`topojson-client` dependencies were removed 2026-09-22. If a map ever comes back, read `docs/archive/CIRCUITS-MAP-LEGACY.md` first — it records what the old one did and what the current index lost. A flat d3-geo SVG is the shape to revive; Leaflet and a 3D globe stay banned.
 - Do not use `rounded-3xl`, gradients, or glassmorphism (`backdrop-blur`) — shape is `--radius-sm`/`--radius-md`/`--radius-lg` (12/18/24px) per DESIGN.md v5.0.0 (Warm Studio); illustrated circular containers (`rounded-full`) stay available for avatars/badges. **Soft, accent-tinted shadows are the system's signature now, not banned** — that's the inverse of the old v3.0.0 rule. Use `.soft-card`/`.soft-card-lg`/`--shadow-card`/`--shadow-card-lg` from `globals.css`, never a plain neutral `box-shadow`. The one real ban carried forward: don't stack a shadow AND an `--accent-dim` fill on the same tile — pick one separation mechanism (see DESIGN.md "Shadow"). Gradient *text* (`background-clip: text` on a gradient) stays banned regardless of system version.
 - Two-tone pie/donut breakdowns are allowed (max 3 segments) per DESIGN.md v3.0.0 — prefer ranked lists otherwise
 ## Skills
