@@ -21,5 +21,5 @@ export default async function AuthorPage({
 }) {
   const { locale, slug } = await params;
   if (!KNOWN_AUTHOR_SLUGS.includes(slug)) notFound();
-  redirect('/about', locale);
+  redirect({ href: '/about', locale });
 }

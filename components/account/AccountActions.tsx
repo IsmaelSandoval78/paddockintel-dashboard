@@ -35,6 +35,9 @@ export default function AccountActions() {
           {t('exportHeading')}
         </p>
         <p className="font-prose text-sm text-text-2 leading-relaxed mb-3">{t('exportBody')}</p>
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- a
+            real browser navigation, not a Next route: only a full request
+            to this API route triggers the Content-Disposition download. */}
         <a
           href="/api/account/export"
           className="inline-block border border-border px-4 py-2 font-mono text-[11px] uppercase tracking-[0.08em] text-text-1 hover:border-terracotta hover:text-terracotta transition-colors duration-150"
