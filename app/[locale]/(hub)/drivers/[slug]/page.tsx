@@ -16,6 +16,12 @@ function cleanLapTime(t: string | null | undefined): string | null {
   return t;
 }
 
+function localeUrl(locale: string, path: string): string {
+  return locale === 'en'
+    ? `https://paddockintel.com${path}`
+    : `https://paddockintel.com/${locale}${path}`;
+}
+
 // ─── Static generation ────────────────────────────────────────────────────────
 
 export async function generateStaticParams() {
@@ -32,7 +38,7 @@ export async function generateMetadata({
 }: {
   params: PageParams;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const supabase = createClient();
   const { data } = await supabase
     .from('drivers')
@@ -41,9 +47,18 @@ export async function generateMetadata({
     .single();
   if (!data) return { title: 'Driver — PaddockIntel' };
   const name = `${data.forename as string} ${data.surname as string}`;
+  const canonical = localeUrl(locale, `/drivers/${slug}`);
   return {
     title: `${name} — PaddockIntel`,
     description: `Career statistics, season records, and win history for ${name} (${data.nationality as string}).`,
+    alternates: {
+      canonical,
+      languages: {
+        en: localeUrl('en', `/drivers/${slug}`),
+        es: localeUrl('es', `/drivers/${slug}`),
+        'x-default': localeUrl('en', `/drivers/${slug}`),
+      },
+    },
   };
 }
 
@@ -54,7 +69,7 @@ export default async function DriverDetailPage({
 }: {
   params: PageParams;
 }) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const t = await getTranslations('driverDetail');
   const supabase = createClient();
 
@@ -76,6 +91,32 @@ export default async function DriverDetailPage({
     number: (driverRaw.number as number | null) ?? null,
     nationality: driverRaw.nationality as string,
     dob: (driverRaw.dob as string | null) ?? null,
+  };
+
+  const driverName = `${driver.forename} ${driver.surname}`;
+  const driverUrl = localeUrl(locale, `/drivers/${driver.driver_ref}`);
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: localeUrl(locale, '/') },
+      { '@type': 'ListItem', position: 2, name: 'Drivers', item: localeUrl(locale, '/drivers') },
+      { '@type': 'ListItem', position: 3, name: driverName },
+    ],
+  };
+
+  // Base Person schema — affiliation (current constructor) is added once season
+  // data is assembled further down, since it's not available this early.
+  const personJsonLdBase = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    mainEntity: {
+      '@type': 'Person',
+      name: driverName,
+      nationality: driver.nationality,
+      url: driverUrl,
+    },
   };
 
   // Batch 2 — career stats + all results + all qualifying (parallel)
@@ -110,33 +151,43 @@ export default async function DriverDetailPage({
   // Early return if no data
   if (!allRaceIds.length || !stats) {
     return (
-      <main className="flex flex-col">
-        <div className="h-10 px-6 border-b border-border flex items-center gap-2 shrink-0">
-          <Link
-            href="/drivers"
-            className="font-mono text-[11px] text-text-3 hover:text-text-2 transition-colors duration-150"
-          >
-            {t('breadcrumb.drivers')}
-          </Link>
-          <span className="font-mono text-[11px] text-text-3">·</span>
-          <span className="font-mono text-[11px] text-text-2">{driver.surname}</span>
-        </div>
-        <div className="px-6 pt-8 pb-7">
-          <p className="font-mono text-[11px] text-text-3 uppercase tracking-[0.06em] mb-3">
-            {t('hero.label')}
-          </p>
-          <h1
-            className="uppercase text-text-1 leading-none tracking-[-0.03em] mb-2 text-[clamp(2.5rem,8vw,5rem)]"
-            style={{ fontFamily: 'var(--pi-display)' }}
-          >
-            {driver.surname}
-          </h1>
-          <p className="text-[14px] text-text-2">{driver.forename} · {driver.nationality}</p>
-        </div>
-        <div className="px-6 py-12 border-t border-border">
-          <p className="font-mono text-[13px] text-text-3">{t('noData')}</p>
-        </div>
-      </main>
+      <>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLdBase) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        />
+        <main className="flex flex-col">
+          <div className="h-10 px-6 border-b border-border flex items-center gap-2 shrink-0">
+            <Link
+              href="/drivers"
+              className="font-mono text-[11px] text-text-3 hover:text-text-2 transition-colors duration-150"
+            >
+              {t('breadcrumb.drivers')}
+            </Link>
+            <span className="font-mono text-[11px] text-text-3">·</span>
+            <span className="font-mono text-[11px] text-text-2">{driver.surname}</span>
+          </div>
+          <div className="px-6 pt-8 pb-7">
+            <p className="font-mono text-[11px] text-text-3 uppercase tracking-[0.06em] mb-3">
+              {t('hero.label')}
+            </p>
+            <h1
+              className="uppercase text-text-1 leading-none tracking-[-0.03em] mb-2 text-[clamp(2.5rem,8vw,5rem)]"
+              style={{ fontFamily: 'var(--pi-display)' }}
+            >
+              {driver.surname}
+            </h1>
+            <p className="text-[14px] text-text-2">{driver.forename} · {driver.nationality}</p>
+          </div>
+          <div className="px-6 py-12 border-t border-border">
+            <p className="font-mono text-[13px] text-text-3">{t('noData')}</p>
+          </div>
+        </main>
+      </>
     );
   }
 
@@ -395,6 +446,23 @@ export default async function DriverDetailPage({
     })
     .sort((a, b) => b.year - a.year);
 
+  // Most recent constructor (season rows are sorted desc by year) — used as
+  // the Person's `affiliation` in structured data when one is on record.
+  const currentConstructor = seasonRows.find((r) => r.constructorRef);
+  const personJsonLd = currentConstructor
+    ? {
+        ...personJsonLdBase,
+        mainEntity: {
+          ...personJsonLdBase.mainEntity,
+          affiliation: {
+            '@type': 'SportsTeam',
+            name: currentConstructor.constructorName,
+            url: localeUrl(locale, `/constructors/${currentConstructor.constructorRef}`),
+          },
+        },
+      }
+    : personJsonLdBase;
+
   // ─── Assemble: win history ────────────────────────────────────────────────
 
   type WinRow = {
@@ -518,37 +586,47 @@ export default async function DriverDetailPage({
   // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
-    <DriverDetailExperience
-      driver={{
-        forename:    driver.forename,
-        surname:     driver.surname,
-        code:        driver.code,
-        number:      driver.number,
-        nationality: driver.nationality,
-        dob:         driver.dob,
-        driver_ref:  driver.driver_ref,
-      }}
-      stats={{
-        races:       stats.races        as number,
-        wins:        stats.wins         as number,
-        podiums:     stats.podiums      as number,
-        poles:       stats.poles        as number,
-        fastestLaps: stats.fastest_laps as number,
-        dnfs:        stats.dnfs         as number,
-        firstYear:   stats.first_year   as number,
-        lastYear:    stats.last_year    as number,
-      }}
-      winPct={winPct}
-      avgQuali={avgQuali}
-      frontRowCount={frontRowCount}
-      championshipYears={championshipYears}
-      seasonRows={seasonRows}
-      winRows={winRows}
-      poleRows={poleRows}
-      constructorRows={constructorRows}
-      maxConRaces={maxConRaces}
-      circuitRecords={circuitRecords}
-      careerHistory={careerHistory}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <DriverDetailExperience
+        driver={{
+          forename:    driver.forename,
+          surname:     driver.surname,
+          code:        driver.code,
+          number:      driver.number,
+          nationality: driver.nationality,
+          dob:         driver.dob,
+          driver_ref:  driver.driver_ref,
+        }}
+        stats={{
+          races:       stats.races        as number,
+          wins:        stats.wins         as number,
+          podiums:     stats.podiums      as number,
+          poles:       stats.poles        as number,
+          fastestLaps: stats.fastest_laps as number,
+          dnfs:        stats.dnfs         as number,
+          firstYear:   stats.first_year   as number,
+          lastYear:    stats.last_year    as number,
+        }}
+        winPct={winPct}
+        avgQuali={avgQuali}
+        frontRowCount={frontRowCount}
+        championshipYears={championshipYears}
+        seasonRows={seasonRows}
+        winRows={winRows}
+        poleRows={poleRows}
+        constructorRows={constructorRows}
+        maxConRaces={maxConRaces}
+        circuitRecords={circuitRecords}
+        careerHistory={careerHistory}
+      />
+    </>
   );
 }

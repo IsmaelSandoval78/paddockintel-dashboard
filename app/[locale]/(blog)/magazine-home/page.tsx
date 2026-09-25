@@ -56,11 +56,22 @@ type SearchParams = Promise<{ page?: string; tag?: string }>;
 
 const PAGE_SIZE = 20;
 
-export async function generateMetadata(): Promise<Metadata> {
+const HOME_URLS = {
+  en: 'https://paddockintel.com/',
+  es: 'https://paddockintel.com/es/',
+};
+
+export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
+  const { locale } = await params;
+  const canonical = locale === 'es' ? HOME_URLS.es : HOME_URLS.en;
   return {
     title: 'PaddockIntel — Follow the Facts, Not the Hype',
     description:
       'Economics, data, and real F1 news — verified against 75 years of race history, not press releases.',
+    alternates: {
+      canonical,
+      languages: { ...HOME_URLS, 'x-default': HOME_URLS.en },
+    },
   };
 }
 

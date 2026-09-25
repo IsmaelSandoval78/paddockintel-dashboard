@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { Link } from '@/lib/i18n/navigation';
 import {
   densifyLastLap,
   getPointsAtPercents,
@@ -185,6 +186,15 @@ export default function DeltaRibbonSection({
           <p className="font-mono text-[10px] text-text-3 uppercase tracking-[0.06em] mb-1">{t('defend')}</p>
           <p className="font-mono text-[16px] text-text-1 tabular-nums">{defendCount}</p>
         </div>
+      </div>
+
+      <div className="px-6 pb-4">
+        <Link
+          href="/methodology/delta-ribbon"
+          className="font-mono text-[10px] uppercase tracking-[0.06em] text-text-3 hover:text-terracotta transition-colors duration-150"
+        >
+          Methodology — historical, not a projection
+        </Link>
       </div>
     </div>
   );

@@ -7,6 +7,11 @@ engagement-bait, against competitors and against "attacking the big players" who
 or won't do this work. If EEAT is weak, the whole strategy collapses back into a generic F1
 blog that happens to have nicer charts.
 
+Google's March 2026 Core Update formalized that EEAT applies with the same rigor to every
+content type, not only traditional YMYL (health/finance/legal) — an F1 economics/analysis
+niche gets no lighter treatment than a medical site would. Nothing below is optional because
+"it's just sports content."
+
 ---
 
 ## The four pillars, applied to PaddockIntel specifically
@@ -43,6 +48,10 @@ blog that happens to have nicer charts.
 - [ ] Methodology pages for proprietary metrics (see DATA-EXPERT.md) double as
       authoritativeness assets — a metric nobody can audit is not an authority signal, it's a
       trust liability waiting to happen
+- [ ] Track brand mentions, not only backlinks — unlinked citations of "PaddockIntel" across
+      other F1 outlets/forums/social are a measurable authoritativeness signal in their own
+      right; a growing mention count with no link is still evidence the site is becoming a
+      cited source, worth tracking directionally alongside backlinks
 
 ### Trustworthiness
 - [ ] Sourcing rule is absolute and visible: every number traceable, every quote real (see
@@ -79,6 +88,21 @@ blog that happens to have nicer charts.
       server-side (not only client-side JS-dependent, which some crawlers handle poorly),
       author pages still resolve, sitemap/schema validation re-run post-migration
 
+## AI-assisted content policy
+
+PaddockIntel's content pipeline is AI-assisted (this multi-agent advisor council included) —
+that is not itself an EEAT risk. Google's official position (Danny Sullivan) is that
+AI-assisted content ranks fine when it demonstrates real experience and expertise; the
+violation is content that exists only to manipulate rankings, not the use of AI in producing
+it. Practically:
+- [ ] Every AI-assisted piece must still clear the Experience pillar above on its own merits
+      (first-party data surfaced explicitly, not a generic AI summary of public information)
+- [ ] Volume/scale is never the goal by itself — an article produced faster because AI assisted
+      it still needs a human-verifiable reason to exist (a real data angle, a real gap nobody
+      else has filled), never "we can now publish more"
+- [ ] Never present AI-generated inference as a primary source or as neutral fact — same rule
+      as any other unverified claim under Expertise/Trustworthiness above
+
 ## Quarterly EEAT self-audit (do this even without a specific article to check)
 
 - Search PaddockIntel's own claims/stats to see if anyone else is citing them — growing
@@ -87,6 +111,14 @@ blog that happens to have nicer charts.
   still resolve? Do they still say what the article claims they say?
 - Review the `/about` page for staleness — if the site's scope or ownership changes (like this
   session's monetization-model correction), update it
+- Content freshness is a measurable EEAT signal, not just an `/about`-page concern: spot-check
+  whether older high-traffic articles/methodology pages still reflect current data and current
+  season context, and update or visibly annotate them (see Corrections policy) rather than
+  leaving stale analysis live indefinitely
+- User behavior signals (CTR from search, dwell time, bounce/return visits) are part of how
+  EEAT gets measured externally — if analytics show a page ranks but nobody stays on it, treat
+  that as a signal the piece isn't actually delivering the experience/expertise it claims,
+  not just an SEO problem
 
 ## Regla de resolución (Hook & Deliver)
 

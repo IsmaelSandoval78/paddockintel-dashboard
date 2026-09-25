@@ -25,9 +25,27 @@ async function getChapters(year: number, locale: string) {
   return articles ?? [];
 }
 
+function localeUrl(locale: string, path: string): string {
+  return locale === 'en'
+    ? `https://paddockintel.com${path}`
+    : `https://paddockintel.com/${locale}${path}`;
+}
+
 export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
-  const { year } = await params;
-  return { title: `Season ${year} — PaddockIntel Book` };
+  const { year, locale } = await params;
+  const canonical = localeUrl(locale, `/season/${year}/`);
+  return {
+    title: `Season ${year} — PaddockIntel Book`,
+    alternates: {
+      canonical,
+      languages: {
+        en: localeUrl('en', `/season/${year}/`),
+        es: localeUrl('es', `/season/${year}/`),
+        pt: localeUrl('pt', `/season/${year}/`),
+        'x-default': localeUrl('en', `/season/${year}/`),
+      },
+    },
+  };
 }
 
 export default async function BookSeasonPage({ params }: { params: PageParams }) {

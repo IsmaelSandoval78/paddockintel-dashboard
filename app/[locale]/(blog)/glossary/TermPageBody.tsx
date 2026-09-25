@@ -16,9 +16,18 @@ export function termUrl(locale: string, slug: string, depth?: GlossaryDepth): st
 export async function getTermMetadata(locale: string, slug: string, depth: GlossaryDepth) {
   const term = await getGlossaryTerm(locale, slug, depth);
   if (!term) return { title: 'Glossary — PaddockIntel' };
+  const canonical = termUrl(locale, term.slug, term.depth);
   return {
     title: `${term.term} — PaddockIntel Glossary`,
     description: term.short_definition,
+    alternates: {
+      canonical,
+      languages: {
+        en: termUrl('en', term.slug, term.depth),
+        es: termUrl('es', term.slug, term.depth),
+        'x-default': termUrl('en', term.slug, term.depth),
+      },
+    },
   };
 }
 

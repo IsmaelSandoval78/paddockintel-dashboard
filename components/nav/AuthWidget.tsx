@@ -137,6 +137,12 @@ export default function AuthWidget({
               <p className="font-mono text-[11px] text-text-1 truncate mb-3">
                 {user.name ?? user.email}
               </p>
+              <Link
+                href="/account"
+                className="block font-mono text-[10px] uppercase tracking-[0.08em] text-text-3 hover:text-terracotta transition-colors duration-150 mb-2"
+              >
+                {t('manageAccount')}
+              </Link>
               <button
                 type="button"
                 onClick={handleSignOut}
