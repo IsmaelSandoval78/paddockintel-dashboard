@@ -14,6 +14,12 @@ publicly destroys more trust than a hundred good articles build.
 applies to every number in an article body, every stat callout, every chart axis, every FAQ
 answer. No exceptions for "it's probably close enough" or "I'm confident from training data."
 
+Enforced in code, not just this doc: `scripts/ingest-article.ts` refuses to ingest a file as
+`status: published` with an empty `sources` array — found necessary after an audit turned up 44
+of 97 pre-September articles (mostly Ghost-era, before the `sources` column existed) published
+with zero traceable source, structured or inline. Ingesting as `draft` with no sources is still
+allowed; publishing without one is not.
+
 ## Source hierarchy for any F1 statistic
 
 1. **Live/current season** → query Supabase directly (`driver_stats`/`constructor_stats`,

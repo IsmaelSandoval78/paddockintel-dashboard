@@ -49,6 +49,21 @@ function readArticle(filePath: string): { frontmatter: Frontmatter; body: string
     }
   }
 
+  // EDITORIAL.md's sourcing rule and DATA-EXPERT.md's source hierarchy are both
+  // non-negotiable, but neither was ever enforced at the one place that actually
+  // writes to the `articles` table — an audit found 44 of 97 pre-September
+  // articles published with zero traceable source, structured or inline. This is
+  // the actual gate: a `published` article without a real `sources` array never
+  // reaches the database. Ingesting as `draft` with no sources is still allowed
+  // (a source-verification pass can happen before flipping status later).
+  if (data.status === 'published' && (!data.sources || (data.sources as unknown[]).length === 0)) {
+    throw new Error(
+      `Refusing to ingest ${filePath} as status: published with no "sources" — ` +
+        `EDITORIAL.md's sourcing rule requires every claim traceable to a primary source. ` +
+        `Add real sources or ingest as status: draft first.`
+    );
+  }
+
   return { frontmatter: data as Frontmatter, body: content.trim() };
 }
 
