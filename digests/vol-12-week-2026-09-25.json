@@ -1,0 +1,63 @@
+{
+  "slug": "vol-12-week-2026-09-25",
+  "published_at": "2026-09-25T00:00:00+00:00",
+  "status": "draft",
+  "intro_synthesis": "Working draft — started from a single Feed item (Baku qualifying penalties) surfaced via Beagle and cleared through the council's Story Selection process. More items to be added before this issue is sent; do not publish as-is.",
+  "items": [
+    {
+      "source_name": "Formula1.com",
+      "source_url": "https://www.formula1.com/en/latest/article/perez-handed-penalty-for-azerbaijan-grand-prix-after-qualifying-infringement.zuQBKGcAcuTO1vc7esCSP",
+      "headline": "Sainz and Pérez Both Penalized in Baku Qualifying — Only One of Them Actually Pays for It",
+      "headline_es": "Sainz y Pérez, sancionados en la clasificación de Baku — solo uno de los dos paga de verdad",
+      "our_summary": "Stewards handed out two grid penalties after Azerbaijan GP qualifying. Carlos Sainz gets 5 places for failing to slow enough for yellow flags in Q3 — moving him from P9 to P14, plus 2 penalty points. Sergio Pérez gets 3 places for unnecessarily impeding Oscar Piastri on a preparation lap — but stays at P20, exactly where he already was.",
+      "our_summary_es": "Los comisarios repartieron dos sanciones de grilla tras la clasificación del GP de Azerbaiyán. Carlos Sainz recibe 5 puestos por no reducir suficiente la velocidad ante banderas amarillas en Q3 — pasa de P9 a P14, además de 2 puntos de penalización. Sergio Pérez recibe 3 puestos por estorbar innecesariamente a Oscar Piastri en una vuelta de preparación — pero se queda en P20, exactamente donde ya estaba.",
+      "published_at": "2026-09-25T15:43:00+00:00",
+      "entity_tags": ["Carlos Sainz", "Sergio Pérez"],
+      "editor_note": "Two 'equal' headline penalties, two completely different real costs. Sainz's penalty moves him five real grid positions and adds to a rolling penalty-points total now at 4 of the 12 that trigger a race ban. Pérez's penalty changes nothing — the stewards themselves note other, larger penalties already had him at P20. Same word in every headline ('penalized'), opposite actual consequence.",
+      "editor_note_es": "Dos sanciones 'iguales' en los titulares, dos costos reales completamente distintos. La sanción de Sainz le mueve cinco posiciones reales de grilla y suma a un total acumulado de puntos de penalización que ya llega a 4 de los 12 que activan una suspensión. La de Pérez no cambia nada — los propios comisarios señalan que otras sanciones más grandes ya lo tenían en P20. Misma palabra en cada titular ('sancionado'), consecuencia real opuesta.",
+      "editor_take": "The penalty points system exists to build toward a real sanction over time — Sainz is now a third of the way to a ban with 8 rounds left in the season. Pérez's penalty is a paper sanction: real under the rules, zero effect on Sunday. Worth tracking whether either driver picks up another infringement before the points reset.",
+      "editor_take_es": "El sistema de puntos de penalización existe para construir una sanción real con el tiempo — Sainz ya está a un tercio del camino hacia una suspensión con 8 fechas restantes en la temporada. La sanción de Pérez es de papel: real bajo el reglamento, sin efecto el domingo. Vale la pena seguir si alguno de los dos suma otra infracción antes de que los puntos se reinicien.",
+      "internal_link_slug": null,
+      "slug": "sainz-perez-baku-2026-qualifying-penalties",
+      "stats": [
+        {
+          "value": "P9→P14",
+          "label": "SAINZ GRID CHANGE",
+          "label_es": "CAMBIO DE GRILLA — SAINZ",
+          "unit": "5-place penalty",
+          "unit_es": "sanción de 5 puestos"
+        },
+        {
+          "value": "P20→P20",
+          "label": "PÉREZ GRID CHANGE",
+          "label_es": "CAMBIO DE GRILLA — PÉREZ",
+          "unit": "3-place penalty, no real cost",
+          "unit_es": "sanción de 3 puestos, sin costo real"
+        },
+        {
+          "value": "4/12",
+          "label": "SAINZ PENALTY POINTS",
+          "label_es": "PUNTOS DE PENALIZACIÓN — SAINZ",
+          "unit": "rolling 12 months",
+          "unit_es": "acumulado 12 meses"
+        }
+      ],
+      "faq": [
+        {
+          "q": "How many grid places did Carlos Sainz lose in Baku qualifying?",
+          "a": "Five places, dropping him from P9 to P14, after stewards ruled he failed to sufficiently reduce speed under yellow flags in Q3. He also received 2 penalty points, taking his 12-month total to 4.",
+          "q_es": "¿Cuántos puestos de grilla perdió Carlos Sainz en la clasificación de Baku?",
+          "a_es": "Cinco puestos, de P9 a P14, después de que los comisarios determinaran que no redujo suficiente la velocidad ante banderas amarillas en Q3. También recibió 2 puntos de penalización, llevando su total a 4 en 12 meses."
+        },
+        {
+          "q": "Did Sergio Pérez's grid penalty actually cost him a position?",
+          "a": "No. Pérez received a 3-place penalty for impeding Oscar Piastri, but stewards noted other, larger penalties already had him at P20 — so his grid position doesn't change.",
+          "q_es": "¿La sanción de grilla de Sergio Pérez le cambió la posición?",
+          "a_es": "No. Pérez recibió una sanción de 3 puestos por estorbar a Oscar Piastri, pero los comisarios señalaron que otras sanciones más grandes ya lo tenían en P20 — así que su posición de grilla no cambia."
+        }
+      ],
+      "meta_description": "Sainz and Pérez both got grid penalties in Baku qualifying. Sainz drops five real places and picks up penalty points; Pérez's penalty costs him nothing.",
+      "meta_description_es": "Sainz y Pérez recibieron sanciones de grilla en Baku. Sainz pierde cinco puestos reales y suma puntos de penalización; la sanción de Pérez no le cuesta nada."
+    }
+  ]
+}
