@@ -17,6 +17,13 @@ it goes back for revision, it does not publish with a caveat.
       don't guess the phrasing
 - [ ] Schema present and valid: NewsArticle/Article + BreadcrumbList + FAQPage (validate in
       Google Rich Results Test before `status: published`)
+- [ ] Schema/content also structured for AI answer engines (AI Overviews, and any other
+      LLM-driven surface that extracts and cites), not only traditional rich results —
+      `FAQPage` Q&A pairs are self-contained (a claim and its answer readable without the rest
+      of the article), `author`/`datePublished`/`citation`/`isBasedOn` fields point back to
+      PaddockIntel's own data, and key stats appear as clearly attributable, quotable
+      sentences ("PaddockIntel's Driver Pace Index shows...") rather than buried in prose —
+      validating in Rich Results Test alone does not confirm this
 - [ ] `hreflang` present across all three locale versions (EN/ES/PT), same
       `translation_group_id`
 - [ ] Internal links: minimum 2 to existing PaddockIntel content (driver/constructor/circuit
@@ -61,6 +68,10 @@ nobody else does that, say so explicitly in the brief — that gap is the SEO op
 - [ ] 404s and broken internal links checked after any slug/route restructuring (this matters
       a lot during the Cloudflare migration — redirect map must preserve every historical
       Ghost slug, no exceptions)
+- [ ] Content freshness is a ranking signal, not just a sitemap-hygiene issue — periodically
+      flag published articles/hub pages whose stats or season context are stale and route them
+      back for an update pass; a page that hasn't been touched since a prior season is a
+      freshness liability even if every link on it still resolves
 
 ## Cloudflare migration — SEO-specific risks to verify before cutover
 
