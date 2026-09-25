@@ -28,7 +28,12 @@ answer. No exceptions for "it's probably close enough" or "I'm confident from tr
 4. **Financial/business data** (cost cap usage, team valuations, sponsor deals) → FT,
    Bloomberg, Forbes, FIA technical/financial regulations PDF — always with a date, financial
    figures age fast
-5. **Anything not covered by 1–4** → flag explicitly: `[VERIFY: X — source needed]`, do not
+5. **Stewards decisions, grid/time penalties** → formula1.com's official penalty documents —
+   never secondary wire coverage. Verified failure case: Baku 2026, translated wire coverage
+   merged Carlos Sainz's yellow-flag penalty and Sergio Pérez's separate impeding penalty into
+   one incident; the official documents show two unrelated infringements with different real
+   costs (Sainz P9→P14 plus penalty points, Pérez P20→P20 with no actual grid change)
+6. **Anything not covered by 1–5** → flag explicitly: `[VERIFY: X — source needed]`, do not
    estimate a number to fill the gap
 
 ## Before any stat becomes a headline number or chart
