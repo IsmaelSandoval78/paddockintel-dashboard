@@ -133,16 +133,27 @@ def main() -> None:
     # ── Auto-detect pending race (for scheduled/cron runs) ─────────────
     if args.auto:
         today = date.today().isoformat()
-        candidates = (
-            sb.table("races")
-            .select("id, year, round, name, date")
-            .lte("date", today)
-            .order("date")
-            .limit(5000)
-            .execute()
-        )
+        # PostgREST caps rows per request (default 1000) regardless of
+        # .limit(), so a single query silently truncates to the oldest
+        # races — page through with .range() to see every past race.
+        candidates: list[dict] = []
+        page_size = 1000
+        offset = 0
+        while True:
+            page = (
+                sb.table("races")
+                .select("id, year, round, name, date")
+                .lte("date", today)
+                .order("date")
+                .range(offset, offset + page_size - 1)
+                .execute()
+            )
+            candidates.extend(page.data)
+            if len(page.data) < page_size:
+                break
+            offset += page_size
         target = None
-        for race in candidates.data:
+        for race in candidates:
             has_results = sb.table("results").select("id").eq("race_id", race["id"]).limit(1).execute()
             if not has_results.data:
                 target = race
