@@ -12,7 +12,10 @@
       "our_summary": "George Russell took pole for the Azerbaijan GP with a 0.837-second margin — one of the largest qualifying gaps of the season — after Kimi Antonelli crashed out in Q1, ending his championship rival's session early against the wall. Russell enters Sunday looking to close a gap in the standings; Antonelli, who arrived in Baku holding the points advantage, now starts from the back of the field at one of the calendar's hardest circuits to overtake at.",
       "our_summary_es": "George Russell se quedó con la pole del GP de Azerbaiyán con una ventaja de 0,837 segundos — una de las mayores diferencias de clasificación de la temporada — después de que Kimi Antonelli se estrellara en Q1, terminando temprano la sesión de su rival de campeonato contra el muro. Russell llega al domingo buscando recortar una diferencia en el campeonato; Antonelli, que llegó a Bakú con ventaja en puntos, ahora largará desde el fondo del pelotón en uno de los circuitos del calendario donde menos se puede adelantar.",
       "published_at": "2026-09-25T13:12:00+00:00",
-      "entity_tags": ["George Russell", "Kimi Antonelli"],
+      "entity_tags": [
+        "George Russell",
+        "Kimi Antonelli"
+      ],
       "editor_note": "Baku is one of the hardest circuits on the calendar to overtake at — a Q1 exit here costs more than at a typical track. Russell's margin is real pace, not a fluke lap; multiple independent outlets (BBC Sport, RaceFans, PlanetF1) clocked the same result. The story underneath the story: Antonelli still holds the points lead entering this weekend, so today's session is a swing in momentum, not (yet) a swing in the championship.",
       "editor_note_es": "Bakú es uno de los circuitos más difíciles del calendario para adelantar — una eliminación en Q1 acá cuesta más que en una pista típica. La ventaja de Russell es ritmo real, no una vuelta de casualidad; varios medios independientes (BBC Sport, RaceFans, PlanetF1) coincidieron en el mismo resultado. La historia detrás de la historia: Antonelli sigue liderando el campeonato al llegar a este fin de semana, así que la sesión de hoy es un giro de momentum, no (todavía) un giro en el campeonato.",
       "editor_take": "A single bad qualifying session doesn't erase a points lead, but it does set up a low-probability recovery drive at one of the calendar's least forgiving circuits for overtaking. Worth watching whether this is a one-off or the start of a real form swing between the two Mercedes drivers with eight rounds still to go.",
@@ -53,7 +56,10 @@
       "our_summary": "Stewards handed out two grid penalties after Azerbaijan GP qualifying. Carlos Sainz gets 5 places for failing to slow enough for yellow flags in Q3 — moving him from P9 to P14, plus 2 penalty points. Sergio Pérez gets 3 places for unnecessarily impeding Oscar Piastri on a preparation lap — but stays at P20, exactly where he already was.",
       "our_summary_es": "Los comisarios repartieron dos sanciones de grilla tras la clasificación del GP de Azerbaiyán. Carlos Sainz recibe 5 puestos por no reducir suficiente la velocidad ante banderas amarillas en Q3 — pasa de P9 a P14, además de 2 puntos de penalización. Sergio Pérez recibe 3 puestos por estorbar innecesariamente a Oscar Piastri en una vuelta de preparación — pero se queda en P20, exactamente donde ya estaba.",
       "published_at": "2026-09-25T15:43:00+00:00",
-      "entity_tags": ["Carlos Sainz", "Sergio Pérez"],
+      "entity_tags": [
+        "Carlos Sainz",
+        "Sergio Pérez"
+      ],
       "editor_note": "Two 'equal' headline penalties, two completely different real costs. Sainz's penalty moves him five real grid positions and adds to a rolling penalty-points total now at 4 of the 12 that trigger a race ban. Pérez's penalty changes nothing — the stewards themselves note other, larger penalties already had him at P20. Same word in every headline ('penalized'), opposite actual consequence.",
       "editor_note_es": "Dos sanciones 'iguales' en los titulares, dos costos reales completamente distintos. La sanción de Sainz le mueve cinco posiciones reales de grilla y suma a un total acumulado de puntos de penalización que ya llega a 4 de los 12 que activan una suspensión. La de Pérez no cambia nada — los propios comisarios señalan que otras sanciones más grandes ya lo tenían en P20. Misma palabra en cada titular ('sancionado'), consecuencia real opuesta.",
       "editor_take": "The penalty points system exists to build toward a real sanction over time — Sainz is now a third of the way to a ban with 8 rounds left in the season. Pérez's penalty is a paper sanction: real under the rules, zero effect on Sunday. Worth tracking whether either driver picks up another infringement before the points reset.",
@@ -108,7 +114,11 @@
       "our_summary": "Franco Colapinto locked up into Turn 1 at the second Safety Car restart of the Azerbaijan Grand Prix (lap 36), hitting teammate Pierre Gasly, who was then pushed into Lando Norris's McLaren. All three cars retired on the spot. Stewards handed Colapinto the standard 10-second time penalty for causing a collision — but since he did not finish the race, the penalty cannot actually be served; it may instead be converted into a grid penalty for his next start.",
       "our_summary_es": "Franco Colapinto se bloqueó entrando a la Curva 1 en el segundo reinicio tras Safety Car del Gran Premio de Azerbaiyán (vuelta 36), impactando a su compañero Pierre Gasly, que a su vez empujó al McLaren de Lando Norris. Los tres autos abandonaron en el acto. Los comisarios le dieron a Colapinto la sanción estándar de 10 segundos por causar una colisión — pero como no terminó la carrera, no puede cumplirla; podría convertirse en una sanción de grilla para su próxima largada.",
       "published_at": "2026-09-26T13:10:00+00:00",
-      "entity_tags": ["Franco Colapinto", "Pierre Gasly", "Lando Norris"],
+      "entity_tags": [
+        "Franco Colapinto",
+        "Pierre Gasly",
+        "Lando Norris"
+      ],
       "editor_note": "This is being covered everywhere as \"chaos\" — the actual story is what it cost each team. Norris and Gasly both retired with zero points. Colapinto's own quote over team radio was unusually direct: \"I completely locked up... not a lot I could do.\" No excuse-making, which is worth noting on its own.",
       "editor_note_es": "Todos lo están cubriendo como \"caos\" — la historia real es lo que le costó a cada equipo. Norris y Gasly abandonaron con cero puntos. La frase de Colapinto por radio fue inusualmente directa: \"Me bloqueé por completo... no había mucho que pudiera hacer.\" Sin excusas, que ya es notable de por sí.",
       "editor_take": "A 10-second penalty that cannot be served because the car is already wrecked is close to a symbolic gesture — the real cost lands on McLaren and Alpine's championship math, not on Colapinto's race result. We are breaking down exactly what that costs each team in a separate piece.",
@@ -149,7 +159,11 @@
       "our_summary": "Both Aston Martin cars retired from the Azerbaijan Grand Prix — Lance Stroll stopped around lap 7 with a water pressure issue, Fernando Alonso retired around lap 20-21 with a separate mechanical failure after battling Valtteri Bottas. It is the team's fourth double-retirement of the 2026 season, following China, Barcelona, and Italy. Both drivers had already taken grid penalties this weekend for exceeding their allotted Honda power unit component counts — though nothing published so far confirms the race-day failures were power-unit related.",
       "our_summary_es": "Los dos Aston Martin abandonaron el Gran Premio de Azerbaiyán — Lance Stroll se detuvo alrededor de la vuelta 7 por un problema de presión de agua, Fernando Alonso abandonó cerca de la vuelta 20-21 por una falla mecánica distinta, tras pelear con Valtteri Bottas. Es el cuarto doble abandono del equipo en la temporada 2026, después de China, Barcelona e Italia. Ambos pilotos ya habían recibido sanciones de grilla este fin de semana por exceder los componentes permitidos de la unidad de potencia Honda — aunque nada publicado hasta ahora confirma que las fallas en carrera hayan sido por la unidad de potencia.",
       "published_at": "2026-09-26T13:20:00+00:00",
-      "entity_tags": ["Fernando Alonso", "Lance Stroll", "Aston Martin"],
+      "entity_tags": [
+        "Fernando Alonso",
+        "Lance Stroll",
+        "Aston Martin"
+      ],
       "editor_note": "Worth being precise here: the grid penalties this weekend were confirmed as component-count violations, a paperwork/allocation issue, not a failure. The race retirements are a separate, unconfirmed cause. Reporting has linked them by proximity, not by evidence — we are not making that leap until a source actually says so.",
       "editor_note_es": "Vale la pena ser precisos acá: las sanciones de grilla de este fin de semana fueron confirmadas como violaciones de cantidad de componentes, un tema de asignación, no una falla. Los abandonos en carrera son una causa distinta, no confirmada. La cobertura los conectó por cercanía, no por evidencia — nosotros no damos ese salto hasta que una fuente lo diga explícitamente.",
       "editor_take": "Four double-DNFs in fifteen races is a reliability pattern, not bad luck. Aston Martin sits 10th of 11 constructors on 3 points, 535 behind Mercedes — a gap this race did not change, since neither car scored. The story here is not this one Sunday, it is the season.",
@@ -197,7 +211,10 @@
       "our_summary": "Isack Hadjar finished third in the Azerbaijan Grand Prix — his first F1 podium — in a race interrupted by two Safety Cars, on his return from the wrist injury that kept him out of the previous three races. He had already qualified P4. The result lands days after Red Bull Racing announced, on September 23, that it had extended his contract through 2027 — timing worth being precise about: the deal was already signed before this race, not a reaction to it.",
       "our_summary_es": "Isack Hadjar terminó tercero en el Gran Premio de Azerbaiyán — su primer podio en F1 — en una carrera interrumpida por dos Safety Cars, en su regreso tras la lesión de muñeca que lo dejó afuera de las tres carreras anteriores. Ya había clasificado P4. El resultado llega días después de que Red Bull Racing anunciara, el 23 de septiembre, la extensión de su contrato hasta 2027 — vale la pena ser precisos con el orden: el acuerdo ya estaba firmado antes de esta carrera, no fue una reacción a ella.",
       "published_at": "2026-09-26T13:30:00+00:00",
-      "entity_tags": ["Isack Hadjar", "Red Bull Racing"],
+      "entity_tags": [
+        "Isack Hadjar",
+        "Red Bull Racing"
+      ],
       "editor_note": "Easy mistake to make here: framing the podium as what earned him the contract. It did not — Red Bull signed the extension three days before Baku, timed to his comeback weekend, not his result in it. The podium validates the bet Red Bull already made, it is not the reason for it. Also worth noting: Hadjar now drives for Red Bull Racing itself, not Racing Bulls — he was promoted to the senior team for 2026.",
       "editor_note_es": "Un error fácil de cometer acá: presentar el podio como lo que le ganó el contrato. No fue así — Red Bull firmó la extensión tres días antes de Bakú, coincidiendo con su fin de semana de regreso, no con su resultado en carrera. El podio valida la apuesta que Red Bull ya había hecho, no es la razón de ella. También vale aclarar: Hadjar corre ahora para Red Bull Racing, el equipo grande, no Racing Bulls — lo ascendieron para 2026.",
       "editor_take": "A podium on a comeback weekend, with the contract already secured, is about as clean a validation story as this sport produces. No hedge needed on this one — the numbers and the timeline both hold up.",
@@ -229,6 +246,64 @@
       ],
       "meta_description": "Hadjar finishes P3 in Baku for his first F1 podium, days after Red Bull secured his 2027 deal.",
       "meta_description_es": "Hadjar termina P3 en Bakú, su primer podio en F1, días después de que Red Bull le asegurara su contrato para 2027."
+    },
+    {
+      "source_name": "BBC Sport",
+      "source_url": "https://www.bbc.co.uk/sport/formula1/articles/c9vgyyd5n4yjo?at_medium=RSS&at_campaign=rss",
+      "headline": "Norris Wants Colapinto Banned. The Standings Say He's Having His Best Season Yet",
+      "headline_es": "Norris pide que baneen a Colapinto. Los puntos dicen que está en su mejor temporada",
+      "our_summary": "Lando Norris said after Baku that Colapinto is 'a driver that shouldn't be in F1' and should face a ban, after being collected in the restart-lap crash that also ended Gasly's race. It's a strong quote and the internet ran with it. The numbers tell a different story about where Colapinto's season actually sits: 5 points in his 9-race Williams call-up in 2024, 0 points across all of 2025, and 27 points through 14 races in 2026 — already his best season by a wide margin, with more points finishes (8) than his first two seasons combined (2). None of that excuses the crash. It does mean the loudest storyline of the day and the driver's actual season-long form are two different things.",
+      "our_summary_es": "Lando Norris dijo después de Bakú que Colapinto es 'un piloto que no debería estar en la F1' y que debería ser sancionado con una suspensión, tras verse involucrado en el choque de la vuelta de relanzamiento que también terminó la carrera de Gasly. Es una declaración fuerte y ya está circulando en todos lados. Los números cuentan una historia distinta sobre dónde está realmente la temporada de Colapinto: 5 puntos en su debut de 9 carreras con Williams en 2024, 0 puntos en toda la temporada 2025, y 27 puntos en 14 carreras de 2026 — ya es su mejor temporada por lejos, con más carreras puntuando (8) que sus primeras dos temporadas juntas (2). Nada de esto excusa el choque. Pero sí significa que la historia más ruidosa del día y la forma real de la temporada del piloto son dos cosas distintas.",
+      "published_at": "2026-09-26T16:15:00+00:00",
+      "entity_tags": [
+        "Franco Colapinto",
+        "Lando Norris"
+      ],
+      "editor_note": "Careful with the tempting comparison here: Colapinto's 2024 rookie year and Norris's 2019 rookie year are not the same kind of season. Colapinto's was 9 races as a mid-year emergency call-up for Williams, a back-of-grid team, with no pre-season and no car built around him. Norris's was a full 21-race season from round one in a McLaren that was already a top-six constructor. Comparing 5 points in 9 races of that kind to 49 points in 21 races of a different kind isn't measuring talent — it's measuring circumstance. The number that actually holds up is Colapinto's own trajectory across his three seasons: 5 to 0 to 27, with his points-finish count already more than quadrupling his first two years combined. That's the real story, not a head-to-head with a driver who started from a completely different position.",
+      "editor_note_es": "Ojo con la comparación tentadora acá: el año de novato de Colapinto en 2024 y el de Norris en 2019 no son el mismo tipo de temporada. La de Colapinto fueron 9 carreras como suplente de emergencia para Williams, un equipo de fondo de tabla, sin pretemporada y sin un auto pensado para él. La de Norris fue una temporada completa de 21 carreras desde la primera fecha en un McLaren que ya era top-6 de constructores. Comparar 5 puntos en 9 carreras de un tipo con 49 puntos en 21 carreras de otro tipo distinto no mide talento — mide circunstancia. El dato que sí se sostiene es la trayectoria propia de Colapinto en sus tres temporadas: 5, luego 0, luego 27, con su cantidad de carreras puntuando ya más que cuadruplicando sus primeros dos años juntos. Esa es la historia real, no un cara a cara con un piloto que arrancó desde una posición completamente distinta.",
+      "editor_take": "The crash is real and Colapinto owns it — he apologized for it himself. But 'shouldn't be in F1' doesn't square with a driver posting his best points total, best finishing position, and most points finishes of his career in the same season he said it. Worth watching whether Alpine's form and Colapinto's individually keep climbing together for the rest of the year, or whether this turns out to be a plateau.",
+      "editor_take_es": "El choque es real y Colapinto lo asumió — se disculpó él mismo por eso. Pero 'no debería estar en la F1' no encaja con un piloto que está registrando su mejor total de puntos, mejor posición final y más carreras puntuando de su carrera, en la misma temporada en la que se lo dijeron. Vale la pena seguir viendo si la forma de Alpine y la de Colapinto individualmente siguen subiendo juntas el resto del año, o si esto termina siendo una meseta.",
+      "internal_link_slug": "colapinto-crash-cost-mclaren-championship-2026",
+      "slug": "colapinto-trajectory-vs-norris-criticism-baku-2026",
+      "stats": [
+        {
+          "value": "5 → 0 → 27",
+          "label": "COLAPINTO'S POINTS BY SEASON",
+          "label_es": "PUNTOS DE COLAPINTO POR TEMPORADA",
+          "unit": "2024 Williams debut · 2025 · 2026, through Baku",
+          "unit_es": "debut 2024 con Williams · 2025 · 2026, hasta Bakú"
+        },
+        {
+          "value": "P20 → P12",
+          "label": "CHAMPIONSHIP STANDING",
+          "label_es": "POSICIÓN EN EL CAMPEONATO",
+          "unit": "worst season to best, one year apart",
+          "unit_es": "de su peor temporada a la mejor, en un año"
+        },
+        {
+          "value": "8",
+          "label": "POINTS FINISHES IN 2026",
+          "label_es": "CARRERAS EN PUNTOS EN 2026",
+          "unit": "more than his first two seasons combined (2)",
+          "unit_es": "más que sus primeras dos temporadas juntas (2)"
+        }
+      ],
+      "faq": [
+        {
+          "q": "Has Franco Colapinto actually improved in F1, or is this just a stronger Alpine car?",
+          "a": "The points trajectory is real regardless of cause: 5 points in his 9-race 2024 Williams debut, 0 across all of 2025, and 27 through 14 races in 2026 — already his best season by points, by finishing position (P12 vs P19-P20), and by points finishes (8, more than his first two seasons combined).",
+          "q_es": "¿Franco Colapinto realmente mejoró en la F1, o es solo que el Alpine 2026 es mejor auto?",
+          "a_es": "La trayectoria de puntos es real más allá de la causa: 5 puntos en su debut de 9 carreras con Williams en 2024, 0 en toda la temporada 2025, y 27 en 14 carreras de 2026 — ya es su mejor temporada por puntos, por posición final (P12 frente a P19-P20) y por carreras puntuando (8, más que sus primeras dos temporadas juntas)."
+        },
+        {
+          "q": "Is comparing Colapinto's rookie year to Norris's rookie year a fair comparison?",
+          "a": "Not really. Colapinto's 2024 was a 9-race mid-season emergency call-up at Williams, a back-of-grid team, with no pre-season. Norris's 2019 was a full 21-race season from round one at a top-six McLaren. Different car tiers and different amounts of racing make a head-to-head comparison measure circumstance more than talent.",
+          "q_es": "¿Es justo comparar el año de novato de Colapinto con el de Norris?",
+          "a_es": "No realmente. El 2024 de Colapinto fue un llamado de emergencia a mitad de temporada de 9 carreras con Williams, un equipo de fondo de tabla, sin pretemporada. El 2019 de Norris fue una temporada completa de 21 carreras desde la primera fecha en un McLaren top-6. Niveles de auto y cantidades de carreras tan distintos hacen que una comparación directa mida más la circunstancia que el talento."
+        }
+      ],
+      "meta_description": "Norris called for a ban after Baku. Colapinto's own numbers — 5, 0, then 27 points across three seasons — tell a different story about his 2026 form.",
+      "meta_description_es": "Norris pidió una suspensión después de Bakú. Los propios números de Colapinto — 5, 0 y luego 27 puntos en tres temporadas — cuentan una historia distinta sobre su forma en 2026."
     }
   ]
 }
