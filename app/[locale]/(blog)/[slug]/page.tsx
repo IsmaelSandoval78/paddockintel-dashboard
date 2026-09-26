@@ -8,6 +8,7 @@ import ShareButton from '@/components/ui/ShareButton';
 import { ArticleScorecardButton } from '@/components/scorecards/ArticleScorecard';
 import ArticleHero from '@/components/blog/ArticleHero';
 import ArticleTOC from '@/components/blog/ArticleTOC';
+import ArticleCharts, { type ChartSpec } from '@/components/blog/ArticleCharts';
 import NewsletterCard from '@/components/blog/NewsletterCard';
 import ArticlePaywallGate from '@/components/blog/ArticlePaywallGate';
 import { extractTOC, markdownToHtml, estimateReadTime, splitMarkdownAtSection } from '@/lib/markdown';
@@ -45,7 +46,7 @@ async function getArticle(locale: string, slug: string, isDraft: boolean) {
 
   const { data: ext } = await supabase
     .from('articles')
-    .select('stats, faq_items, sources')
+    .select('stats, faq_items, sources, charts')
     .eq('locale', locale)
     .eq('slug', slug)
     .single();
@@ -115,6 +116,7 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
   const allStats    = (article.stats as Stat[]) ?? [];
   const allFaqItems = (article.faq_items as FAQ[]) ?? [];
   const allSources  = (article.sources as Source[]) ?? [];
+  const allCharts   = (article.charts as ChartSpec[]) ?? [];
 
   const cookieStore = await cookies();
   const hasSubscribedCookie = cookieStore.get('pi_subscribed')?.value === '1';
@@ -132,6 +134,7 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
   const stats    = isGated ? [] : allStats;
   const faqItems = isGated ? [] : allFaqItems;
   const sources  = isGated ? [] : allSources;
+  const charts   = isGated ? [] : allCharts;
 
   const tTags = await getTranslations('articleTags');
   const tagSlugs = (await getArticleTagSlugs(createClient(), [article.id as string])).get(article.id as string) ?? [];
@@ -253,6 +256,10 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
                 className="prose-article"
                 dangerouslySetInnerHTML={{ __html: html }}
               />
+
+              {/* Charts — server-rendered, data-driven (see the `charts`
+                  column and ArticleCharts.tsx); never embedded markup/JS */}
+              <ArticleCharts charts={charts} />
 
               {/* Registration wall (gated) or the normal newsletter card —
                   never both, the wall already asks for an email itself */}
