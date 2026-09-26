@@ -44,6 +44,24 @@ charts:
       - { code: "SAI", team: "williams", quali: 9, finish: 10 }
       - { code: "ANT", team: "mercedes", quali: 16, finish: 5, highlight: true }
 
+  - type: lap_pace_heatmap
+    title: "Lap Pace, Front of the Field"
+    note: "Every lap for Russell, Verstappen, Hadjar, and Antonelli, colored against each driver's own best lap of the race. Blanked cells are laps inside the two Safety Car periods — not real pace data for anyone."
+    outlierThresholdMs: 115000
+    drivers:
+      - code: "RUS"
+        team: "mercedes"
+        laps: [null,109535,108858,108619,108169,107932,107812,107687,108016,107891,107869,107497,107607,107566,108011,107503,107925,107870,107580,107572,107465,107191,107109,107363,107364,107176,107058,107005,106991,106937,null,null,null,null,null,null,null,null,106332,106039,105620,105480,105721,105164,105055,105259,105037,104996,104916,105005,107230]
+      - code: "VER"
+        team: "redbull"
+        laps: [null,109236,109023,109457,107851,107574,107931,107919,108868,108019,108557,108407,108001,108011,108132,107942,107687,107916,108454,107838,107663,107655,107385,107497,107207,107800,107480,107370,107307,107290,null,null,null,null,null,null,null,null,106422,106196,105784,105389,105574,105135,105070,105271,105136,104993,105020,105188,106520]
+      - code: "HAD"
+        team: "rb"
+        laps: [null,109976,108833,109322,108447,107994,109033,107935,108248,108643,108366,108143,108130,108011,108180,107883,107909,108021,107598,108321,107547,107806,107444,107249,107482,107172,107992,107249,107337,107374,null,null,null,null,null,null,null,null,108253,106628,106251,106155,106167,105846,105733,105856,105844,105792,105618,105932,107805]
+      - code: "ANT"
+        team: "mercedes"
+        laps: [null,111637,110744,109951,108913,108245,109433,109476,109871,108118,110312,109236,108135,108066,108062,108472,107852,108053,107860,108009,107732,108331,107901,107518,107899,107582,107554,107289,107452,null,null,null,null,null,null,null,null,null,109335,107249,107066,107410,106056,106209,105638,105551,105803,105716,105533,105413,108032]
+
 sources:
   - name: "Formula1.com — Russell narrowly holds off Verstappen to take victory over the line in chaotic Azerbaijan GP"
     url: "https://www.formula1.com/en/latest/article/russell-narrowly-holds-off-verstappen-to-take-victory-over-the-line-in-chaotic-azerbaijan-gp.5J4lgNh82JDL2GM302irF0"
@@ -66,6 +84,12 @@ Isack Hadjar's third place belongs in the same conversation. He'd missed the pre
 ## Grid to Finish
 
 Three of the ten drivers who define this weekend retired in the same incident: Franco Colapinto locked up at the restart, collecting his own teammate Gasly and McLaren's Norris. That crash is covered in full elsewhere, including what it actually cost McLaren against Alpine in the championship. The chart below traces qualifying position against finishing position for the ten drivers who actually decided how this race is remembered.
+
+## Lap Pace, Front of the Field
+
+The chart below is every lap for the four drivers who mattered most, colored against each driver's own best lap of the race — lighter is closer to their fastest, darker is further off it. Laps during the race's two Safety Car periods are blanked out rather than colored, since a Safety Car lap isn't a real pace data point for anyone.
+
+Russell's row is the most telling: never the single fastest lap of the race, but the most consistent, which is what a lead this margin actually needs. Antonelli's row is the one that backs up the recovery claim above — his pace for almost the whole distance sits in the same band as the front-runners', not trailing off the way a driver coasting to points from a bad grid slot would.
 
 ## Verdict
 
