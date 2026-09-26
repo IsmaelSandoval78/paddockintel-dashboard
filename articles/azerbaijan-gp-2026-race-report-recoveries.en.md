@@ -28,6 +28,22 @@ faq:
   - q: "Did the Colapinto crash affect who won the race?"
     a: "No. The restart-lap pileup involving Colapinto, Gasly, and Norris happened well behind the lead battle and is covered separately, including what it cost McLaren and Alpine in the championship."
 
+charts:
+  - type: grid_to_finish
+    title: "Qualifying to Finish"
+    note: "The ten drivers whose weekend defines the story: the podium, both recovery drives, and the three retirements from the Colapinto restart-lap incident. Positions shown are qualifying order, not final grid — Sainz's post-qualifying penalty moved him back five places to a P14 start, which doesn't change any of the other nine positions."
+    rows:
+      - { code: "RUS", team: "mercedes", quali: 1, finish: 1, highlight: true }
+      - { code: "LEC", team: "ferrari", quali: 2, finish: 4 }
+      - { code: "PIA", team: "mclaren", quali: 3, finish: 14 }
+      - { code: "HAD", team: "rb", quali: 4, finish: 3 }
+      - { code: "NOR", team: "mclaren", quali: 5, finish: null, dnf: true }
+      - { code: "HAM", team: "ferrari", quali: 6, finish: 6 }
+      - { code: "GAS", team: "alpine", quali: 7, finish: null, dnf: true }
+      - { code: "VER", team: "redbull", quali: 8, finish: 2, highlight: true }
+      - { code: "SAI", team: "williams", quali: 9, finish: 10 }
+      - { code: "ANT", team: "mercedes", quali: 16, finish: 5, highlight: true }
+
 sources:
   - name: "Formula1.com — Russell narrowly holds off Verstappen to take victory over the line in chaotic Azerbaijan GP"
     url: "https://www.formula1.com/en/latest/article/russell-narrowly-holds-off-verstappen-to-take-victory-over-the-line-in-chaotic-azerbaijan-gp.5J4lgNh82JDL2GM302irF0"
@@ -49,22 +65,7 @@ Isack Hadjar's third place belongs in the same conversation. He'd missed the pre
 
 ## Grid to Finish
 
-Qualifying position (not final grid — Carlos Sainz's post-qualifying penalty moved him back five places to a P14 start, which doesn't change any of the positions below) against where each driver actually finished:
-
-| Driver | Qualified | Finished |
-| --- | --- | --- |
-| Russell | P1 | P1 |
-| Leclerc | P2 | P4 |
-| Piastri | P3 | P14 |
-| Hadjar | P4 | P3 |
-| Norris | P5 | DNF |
-| Hamilton | P6 | P6 |
-| Gasly | P7 | DNF |
-| Verstappen | P8 | P2 |
-| Sainz | P9 (P14 after penalty) | P10 |
-| Antonelli | P16 | P5 |
-
-Three of the ten retired in the same incident: Franco Colapinto locked up at the restart, collecting his own teammate Gasly and McLaren's Norris. That crash is covered in full elsewhere, including what it actually cost McLaren against Alpine in the championship.
+Three of the ten drivers who define this weekend retired in the same incident: Franco Colapinto locked up at the restart, collecting his own teammate Gasly and McLaren's Norris. That crash is covered in full elsewhere, including what it actually cost McLaren against Alpine in the championship. The chart below traces qualifying position against finishing position for the ten drivers who actually decided how this race is remembered.
 
 ## Verdict
 

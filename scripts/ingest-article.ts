@@ -22,6 +22,7 @@ import { createClient } from '../lib/supabase/server';
 type Stat = { value: string; label: string; unit?: string };
 type FAQ  = { q: string; a: string };
 type Source = { name: string; url: string };
+type Chart = Record<string, unknown>; // dispatched by `type` — see components/blog/ArticleCharts.tsx
 
 type Frontmatter = {
   slug: string;
@@ -37,6 +38,7 @@ type Frontmatter = {
   stats?: Stat[];
   faq?: FAQ[];
   sources?: Source[];
+  charts?: Chart[];
 };
 
 function readArticle(filePath: string): { frontmatter: Frontmatter; body: string } {
@@ -114,6 +116,7 @@ async function main() {
         ...(frontmatter.stats    !== undefined ? { stats:     frontmatter.stats }     : {}),
         ...(frontmatter.faq      !== undefined ? { faq_items: frontmatter.faq }       : {}),
         ...(frontmatter.sources  !== undefined ? { sources:   frontmatter.sources }   : {}),
+        ...(frontmatter.charts   !== undefined ? { charts:    frontmatter.charts }    : {}),
         updated_at: new Date().toISOString(),
       },
       { onConflict: 'locale,slug' }
