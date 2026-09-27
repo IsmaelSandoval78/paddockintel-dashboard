@@ -45,6 +45,7 @@ jobs:
           RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
           CRON_SECRET=${{ secrets.CRON_SECRET }}
           DRAFT_SECRET=${{ secrets.DRAFT_SECRET }}
+          RESEND_WEBHOOK_SECRET=${{ secrets.RESEND_WEBHOOK_SECRET }}
           EOF
 
       - name: Build for Cloudflare (secrets stripped before packaging)
@@ -73,6 +74,7 @@ jobs:
           echo "${{ secrets.RESEND_API_KEY }}" | npx wrangler secret put RESEND_API_KEY --config wrangler.preview.jsonc
           echo "${{ secrets.CRON_SECRET }}" | npx wrangler secret put CRON_SECRET --config wrangler.preview.jsonc
           echo "${{ secrets.DRAFT_SECRET }}" | npx wrangler secret put DRAFT_SECRET --config wrangler.preview.jsonc
+          echo "${{ secrets.RESEND_WEBHOOK_SECRET }}" | npx wrangler secret put RESEND_WEBHOOK_SECRET --config wrangler.preview.jsonc
 
       - name: Remove build-time env file
         if: always()
