@@ -12,7 +12,7 @@ tags: ["race-analysis", "team-finance"]
 stats:
   - value: "5 posições no grid"
     label: "PUNIÇÃO DE COLAPINTO"
-    unit: "penalidade de 10s convertida — confirmada pelos comissários"
+    unit: "penalidade de 10s convertida — para o GP do Bahrein em Sepang, round 16"
   - value: "306 pts"
     label: "TOTAL DA McLAREN NOS CONSTRUTORES"
     unit: "inalterado após Baku, agora 232 atrás da Mercedes"
@@ -22,7 +22,7 @@ stats:
 
 faq:
   - q: "Colapinto foi punido pelo acidente em Baku?"
-    a: "Sim. Os comissários determinaram que ele foi \"total ou predominantemente responsável pela colisão\" e aplicaram a penalidade padrão de 10 segundos por causar um acidente. Como o carro não terminou a corrida, essa penalidade não pôde ser cumprida na pista — os comissários confirmaram sua conversão em uma punição de cinco posições no grid para sua próxima largada."
+    a: "Sim. Os comissários determinaram que ele foi \"total ou predominantemente responsável pela colisão\" e aplicaram a penalidade padrão de 10 segundos por causar um acidente. Como o carro não terminou a corrida, essa penalidade não pôde ser cumprida na pista — os comissários confirmaram sua conversão em uma punição de cinco posições no grid para o round 16, o GP do Bahrein no circuito de Sepang (Malásia) — a substituta no calendário das etapas do Bahrein e da Arábia Saudita canceladas no início do ano."
   - q: "Quanto o acidente custou à McLaren no campeonato?"
     a: "O total da McLaren nos construtores ficou em 306 pontos — inalterado, já que Norris não pontuou após o abandono. Mas a vitória de George Russell levou a líder do campeonato, Mercedes, a 538 pontos, ampliando a diferença para 232. O carro não perdeu pontos que já tinha; perdeu a chance de reduzir uma diferença que cresceu de qualquer forma."
   - q: "A Alpine foi tão afetada quanto a McLaren?"
@@ -33,6 +33,8 @@ sources:
     url: "https://www.formula1.com/en/latest/article/russell-narrowly-holds-off-verstappen-to-take-victory-over-the-line-in-chaotic-azerbaijan-gp.5J4lgNh82JDL2GM302irF0"
   - name: "Formula1.com — Colapinto hit with five-place grid penalty after Baku collision"
     url: "https://www.formula1.com/en/latest/article/colapinto-hit-with-five-place-grid-penalty-for-bahrain-gp-in-malaysia-after-baku-collision.3gWVfzDMMr5hReiwTt1fPD"
+  - name: "Sky Sports — Malaysia added to 2026 F1 calendar in October to host postponed Bahrain GP amid continued conflict in Middle East"
+    url: "https://www.skysports.com/f1/news/13566600/malaysia-added-to-2026-f1-calendar-in-october-to-host-postponed-bahrain-gp-amid-continued-conflict-in-middle-east"
   - name: "RaceFans — Colapinto handed 10-second penalty for crash which took out team mate and Norris"
     url: "https://www.racefans.net/2026/09/26/colapinto-handed-10-second-penalty-for-crash-which-took-out-team-mate-and-norris/"
   - name: "RacingNews365 — 2026 F1 championship standings after the Spanish Grand Prix at Madrid"
@@ -47,7 +49,7 @@ sources:
 
 Na volta 36 do GP do Azerbaijão de 2026, no segundo relargada após o Safety Car, Franco Colapinto travou as rodas ao frear para a curva 1. Ele bateu no próprio companheiro de Alpine, Pierre Gasly, que por sua vez foi empurrado contra a McLaren de Lando Norris. Os três carros abandonaram na hora.
 
-O próprio rádio de Colapinto para a equipe não deixou dúvidas sobre o ocorrido: "Desculpa a todo o time. Desculpa, Pierre. Muito ruim, travei tudo... Estava travado e completamente fora de controle. Não tinha muito o que fazer." Os comissários determinaram que ele foi "total ou predominantemente responsável pela colisão", rejeitando o critério mais brando às vezes aplicado a incidentes de primeira curva, já que, em suas próprias palavras, "não houve contribuição de outro piloto que justificasse aplicá-lo". Aplicaram a penalidade padrão de 10 segundos por causar uma colisão, e como o carro não terminou a corrida, essa punição não pôde ser cumprida na pista — os comissários confirmaram sua conversão em uma punição de cinco posições no grid para sua próxima largada.
+O próprio rádio de Colapinto para a equipe não deixou dúvidas sobre o ocorrido: "Desculpa a todo o time. Desculpa, Pierre. Muito ruim, travei tudo... Estava travado e completamente fora de controle. Não tinha muito o que fazer." Os comissários determinaram que ele foi "total ou predominantemente responsável pela colisão", rejeitando o critério mais brando às vezes aplicado a incidentes de primeira curva, já que, em suas próprias palavras, "não houve contribuição de outro piloto que justificasse aplicá-lo". Aplicaram a penalidade padrão de 10 segundos por causar uma colisão, e como o carro não terminou a corrida, essa punição não pôde ser cumprida na pista — os comissários confirmaram sua conversão em uma punição de cinco posições no grid para o round 16, o GP do Bahrein — realocado para o circuito de Sepang (Malásia) depois que as etapas originais do Bahrein e da Arábia Saudita foram canceladas no início do ano.
 
 George Russell venceu a corrida por apenas duas décimas sobre Max Verstappen, num Grande Prêmio que comissários e imprensa já classificam como um dos mais caóticos da temporada 2026.
 

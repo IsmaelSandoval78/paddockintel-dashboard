@@ -12,7 +12,7 @@ tags: ["race-analysis", "team-finance"]
 stats:
   - value: "5-place grid"
     label: "COLAPINTO'S PENALTY"
-    unit: "10s time penalty converted — confirmed by stewards"
+    unit: "10s time penalty converted — for the Bahrain GP at Sepang, round 16"
   - value: "306 pts"
     label: "MCLAREN CONSTRUCTORS' TOTAL"
     unit: "unchanged after Baku, now 232 behind Mercedes"
@@ -22,7 +22,7 @@ stats:
 
 faq:
   - q: "Did Colapinto get penalized for the Baku crash?"
-    a: "Yes. Stewards ruled he was \"wholly or predominantly to blame for the collision,\" issuing the standard 10-second time penalty for causing it. Because his car did not finish the race, that penalty could not be served on track — the stewards confirmed its conversion into a five-place grid penalty for his next race start."
+    a: "Yes. Stewards ruled he was \"wholly or predominantly to blame for the collision,\" issuing the standard 10-second time penalty for causing it. Because his car did not finish the race, that penalty could not be served on track — the stewards confirmed its conversion into a five-place grid penalty for round 16, the Bahrain Grand Prix at Malaysia's Sepang International Circuit — the calendar's replacement for the Bahrain and Saudi Arabian rounds cancelled earlier in the year."
   - q: "How much did the crash cost McLaren in the championship?"
     a: "McLaren's constructors' points total stayed at 306 — unchanged, since Norris scored zero from the retirement. But George Russell's win moved championship leaders Mercedes to 538, widening the gap to 232 points. The car didn't lose points it already had; it lost a chance to close a gap that grew anyway."
   - q: "Was Alpine hit as hard as McLaren by this?"
@@ -33,6 +33,8 @@ sources:
     url: "https://www.formula1.com/en/latest/article/russell-narrowly-holds-off-verstappen-to-take-victory-over-the-line-in-chaotic-azerbaijan-gp.5J4lgNh82JDL2GM302irF0"
   - name: "Formula1.com — Colapinto hit with five-place grid penalty after Baku collision"
     url: "https://www.formula1.com/en/latest/article/colapinto-hit-with-five-place-grid-penalty-for-bahrain-gp-in-malaysia-after-baku-collision.3gWVfzDMMr5hReiwTt1fPD"
+  - name: "Sky Sports — Malaysia added to 2026 F1 calendar in October to host postponed Bahrain GP amid continued conflict in Middle East"
+    url: "https://www.skysports.com/f1/news/13566600/malaysia-added-to-2026-f1-calendar-in-october-to-host-postponed-bahrain-gp-amid-continued-conflict-in-middle-east"
   - name: "RaceFans — Colapinto handed 10-second penalty for crash which took out team mate and Norris"
     url: "https://www.racefans.net/2026/09/26/colapinto-handed-10-second-penalty-for-crash-which-took-out-team-mate-and-norris/"
   - name: "RacingNews365 — 2026 F1 championship standings after the Spanish Grand Prix at Madrid"
@@ -47,7 +49,7 @@ sources:
 
 On lap 36 of the 2026 Azerbaijan Grand Prix, at the race's second Safety Car restart, Franco Colapinto locked up under braking into Turn 1. He hit his own Alpine teammate, Pierre Gasly, who was in turn pushed into Lando Norris's McLaren. All three cars retired on the spot.
 
-Colapinto's own team radio left little ambiguity about what happened: "Sorry to all the team. Sorry to Pierre. Very bad, I completely locked up... I was locking up and completely out of control. So not a lot I could do." Stewards ruled he was "wholly or predominantly to blame for the collision," rejecting the more lenient standard sometimes applied to first-lap incidents since, in their words, "there was no contribution from another driver which would justify applying" it. They issued the standard 10-second time penalty for causing a collision, and because his car did not finish the race, that penalty could not be served on track — the stewards confirmed its conversion into a five-place grid penalty for his next race start.
+Colapinto's own team radio left little ambiguity about what happened: "Sorry to all the team. Sorry to Pierre. Very bad, I completely locked up... I was locking up and completely out of control. So not a lot I could do." Stewards ruled he was "wholly or predominantly to blame for the collision," rejecting the more lenient standard sometimes applied to first-lap incidents since, in their words, "there was no contribution from another driver which would justify applying" it. They issued the standard 10-second time penalty for causing a collision, and because his car did not finish the race, that penalty could not be served on track — the stewards confirmed its conversion into a five-place grid penalty for round 16, the Bahrain Grand Prix — relocated to Malaysia's Sepang International Circuit after the original Bahrain and Saudi Arabian rounds were cancelled earlier in the year.
 
 George Russell went on to win the race by roughly two tenths of a second over Max Verstappen, in a Grand Prix stewards and press alike are already calling one of the most chaotic of the 2026 season.
 
