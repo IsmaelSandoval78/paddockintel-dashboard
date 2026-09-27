@@ -2,7 +2,7 @@
   "slug": "vol-12-week-2026-09-25",
   "published_at": "2026-09-25T00:00:00+00:00",
   "status": "draft",
-  "intro_synthesis": "Working draft — started from Feed items surfaced via Beagle and cleared through the council's Story Selection process. More items may be added before this issue is sent; do not publish as-is.",
+  "intro_synthesis": "Working draft — started from a single Feed item (Baku qualifying penalties) surfaced via Beagle and cleared through the council's Story Selection process. More items to be added before this issue is sent; do not publish as-is.",
   "items": [
     {
       "source_name": "PlanetF1",
@@ -304,6 +304,63 @@
       ],
       "meta_description": "Norris called for a ban after Baku. Colapinto's own numbers — 5, 0, then 27 points across three seasons — tell a different story about his 2026 form.",
       "meta_description_es": "Norris pidió una suspensión después de Bakú. Los propios números de Colapinto — 5, 0 y luego 27 puntos en tres temporadas — cuentan una historia distinta sobre su forma en 2026."
+    },
+    {
+      "source_name": "RacingNews365",
+      "source_url": "https://racingnews365.com/fred-vasseur-responds-to-christian-horner-ferrari-rumours",
+      "headline": "Horner Wants Vasseur's Seat. Ferrari Is Sitting Second in the Standings.",
+      "headline_es": "Horner quiere el asiento de Vasseur. Ferrari está segundo en el campeonato.",
+      "our_summary": "Christian Horner said this week that Ferrari is the only team he'd join without an equity stake — \"the dream,\" he called it, \"the sleeping giant of Formula 1.\" Fred Vasseur, still under contract through 2027, called the renewed speculation \"frustrating\" and shot back that \"Mr. Horner is looking for a job — that everybody knows — everywhere.\" RacingNews365 reports Ferrari has provisionally sketched a plan for managing Vasseur's exit if he steps down at year's end. None of that changes where Ferrari's car actually sits: second in the constructors' championship, clear of every team chasing it.",
+      "our_summary_es": "Christian Horner dijo esta semana que Ferrari es el único equipo al que se sumaría sin pedir participación accionaria — \"el sueño\", lo llamó, \"el gigante dormido de la Fórmula 1\". Fred Vasseur, todavía con contrato hasta 2027, calificó de \"frustrante\" la especulación renovada y respondió que \"el señor Horner está buscando trabajo — eso lo sabe todo el mundo — en todos lados\". RacingNews365 informa que Ferrari armó de forma provisoria un plan para manejar la salida de Vasseur si decide dar un paso al costado a fin de año. Nada de eso cambia dónde está realmente el auto de Ferrari: segundo en el campeonato de constructores, cómodo por delante de todos los que lo persiguen.",
+      "published_at": "2026-09-27T16:00:00+00:00",
+      "entity_tags": [
+        "Ferrari",
+        "Fred Vasseur",
+        "Christian Horner"
+      ],
+      "editor_note": "Horner's own quote does the work here — he's publicly campaigning for the job, not just fielding questions about it. Vasseur's contract reportedly runs through 2027, and a \"plan\" for his exit is not the same thing as a decision to trigger it. Worth separating those two facts before treating this as settled.",
+      "editor_note_es": "La propia declaración de Horner dice todo — está haciendo campaña pública por el puesto, no solo respondiendo preguntas sobre eso. El contrato de Vasseur, según se informa, corre hasta 2027, y tener un \"plan\" para su salida no es lo mismo que la decisión de activarlo. Vale la pena separar esos dos hechos antes de darlo por resuelto.",
+      "editor_take": "A team principal search only makes sense as urgent if the team needs fixing. Ferrari's 2026 hasn't been Vasseur's best season by results, but it also hasn't been a collapse — the numbers below say so directly. The Horner story is a power move by Horner, not necessarily a verdict on Vasseur's job performance.",
+      "editor_take_es": "Una búsqueda de team principal solo tiene sentido como urgente si el equipo necesita arreglarse. El 2026 de Ferrari no fue la mejor temporada de Vasseur en resultados, pero tampoco fue un derrumbe — los números de abajo lo dicen directamente. La historia de Horner es una jugada de poder de Horner, no necesariamente un veredicto sobre el desempeño de Vasseur.",
+      "internal_link_slug": null,
+      "slug": "vasseur-horner-ferrari-rumours-2026",
+      "stats": null,
+      "hook_deliver": {
+        "hub": { "kind": "constructor", "ref": "ferrari" },
+        "callouts": [
+          {
+            "kind": "constructor_season_points",
+            "constructor_ref": "ferrari",
+            "year": 2026,
+            "label": "Ferrari 2026 points",
+            "label_es": "Puntos de Ferrari en 2026"
+          },
+          {
+            "kind": "constructor_season_points",
+            "constructor_ref": "mclaren",
+            "year": 2026,
+            "label": "McLaren 2026 points",
+            "label_es": "Puntos de McLaren en 2026"
+          },
+          {
+            "kind": "constructor_career",
+            "constructor_ref": "ferrari",
+            "metric": "championships",
+            "label": "Ferrari constructors' titles, all-time",
+            "label_es": "Títulos de constructores de Ferrari (histórico)"
+          }
+        ]
+      },
+      "faq": [
+        {
+          "q": "Is Fred Vasseur leaving Ferrari?",
+          "a": "Not confirmed. His contract is reported to run through 2027, and Ferrari has only provisionally sketched contingency plans for his eventual exit — that's different from an active decision to replace him now.",
+          "q_es": "¿Fred Vasseur se va de Ferrari?",
+          "a_es": "No está confirmado. Se informa que su contrato corre hasta 2027, y Ferrari solo armó planes de contingencia de forma provisoria para su eventual salida — eso es distinto de una decisión activa de reemplazarlo ahora."
+        }
+      ],
+      "meta_description": "Christian Horner wants Fred Vasseur's job at Ferrari. The constructors' standings say Ferrari is still second.",
+      "meta_description_es": "Christian Horner quiere el puesto de Fred Vasseur en Ferrari. El campeonato de constructores dice que Ferrari sigue segundo."
     }
   ]
 }
