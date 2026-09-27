@@ -699,7 +699,7 @@
     }
   },
   "newsletter": {
-    "button": "Assinar",
+    "button": "Receba os números",
     "placeholder": "seu@email.com",
     "loading": "…",
     "success": "✓ Assinado",
@@ -707,7 +707,7 @@
     "errorInvalid": "Esse e-mail não parece válido.",
     "legal": "Ao assinar você concorda com a <link>política de privacidade</link>.",
     "kicker": "PaddockIntel Digest",
-    "headline": "Economia da F1 toda semana, na sua caixa de entrada."
+    "headline": "A economia por trás da manchete — cada número, com fonte, toda semana."
   },
   "articlePaywall": {
     "kicker": "Grátis, sem pegadinha",

@@ -699,7 +699,7 @@
     }
   },
   "newsletter": {
-    "button": "Subscribe",
+    "button": "Get the Numbers",
     "placeholder": "your@email.com",
     "loading": "…",
     "success": "✓ Subscribed",
@@ -707,7 +707,7 @@
     "errorInvalid": "That doesn't look like a valid email address.",
     "legal": "By subscribing you agree to the <link>privacy policy</link>.",
     "kicker": "PaddockIntel Digest",
-    "headline": "F1 economics weekly, in your inbox."
+    "headline": "The economics behind the headline — every number sourced, every week."
   },
   "articlePaywall": {
     "kicker": "Free, no catch",
