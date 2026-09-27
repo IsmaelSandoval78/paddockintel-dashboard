@@ -89,6 +89,11 @@ export async function GET(req: Request) {
           to: s.email as string,
           subject,
           html,
+          // Lets the Resend webhook (app/api/webhooks/resend) roll opens/
+          // clicks up per issue in email_events -- see that migration's
+          // comment for why this is the only way to attribute an event
+          // back to the digest that produced it.
+          tags: [{ name: 'issue_id', value: issue.id as string }],
         };
       })
     );
