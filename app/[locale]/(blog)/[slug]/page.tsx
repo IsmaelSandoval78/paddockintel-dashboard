@@ -34,24 +34,16 @@ async function getArticle(locale: string, slug: string, isDraft: boolean) {
 
   let query = supabase
     .from('articles')
-    .select('id, title, meta_description, body_markdown, published_at, translation_group_id, paywalled, cover_image_url')
+    .select(
+      'id, title, meta_description, body_markdown, published_at, translation_group_id, paywalled, cover_image_url, stats, faq_items, sources, charts'
+    )
     .eq('locale', locale)
     .eq('slug', slug);
 
   if (!isDraft) query = query.eq('status', 'published');
 
-  const { data: core } = await query.single();
-
-  if (!core) return null;
-
-  const { data: ext } = await supabase
-    .from('articles')
-    .select('stats, faq_items, sources, charts')
-    .eq('locale', locale)
-    .eq('slug', slug)
-    .single();
-
-  return { ...core, ...(ext ?? {}) };
+  const { data } = await query.single();
+  return data;
 }
 
 async function getHreflangUrls(translationGroupId: string) {
@@ -136,10 +128,16 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
   const sources  = isGated ? [] : allSources;
   const charts   = isGated ? [] : allCharts;
 
-  const tTags = await getTranslations('articleTags');
-  const tagSlugs = (await getArticleTagSlugs(createClient(), [article.id as string])).get(article.id as string) ?? [];
+  // Independent reads (no shared inputs) — run concurrently so their
+  // latency doesn't stack, which is what turns a single slow round trip
+  // into several on a page far from Supabase's region.
+  const [tTags, tagSlugsMap, relatedArticles] = await Promise.all([
+    getTranslations('articleTags'),
+    getArticleTagSlugs(createClient(), [article.id as string]),
+    getRelatedArticles(createClient(), article.id as string, locale, 3),
+  ]);
+  const tagSlugs = tagSlugsMap.get(article.id as string) ?? [];
   const tags = tagSlugs.map((slug) => tTags(slug));
-  const relatedArticles = await getRelatedArticles(createClient(), article.id as string, locale, 3);
 
   const toc      = extractTOC(body);
   const html     = markdownToHtml(body);
