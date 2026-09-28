@@ -87,8 +87,11 @@ export function ConstructorScorecardButton({ data }: { data: ScorecardConstructo
       const nav = navigator as ShareCapableNavigator;
       const file = new File([blob], `paddockintel-${data.constructorRef}-${format}.png`, { type: 'image/png' });
       if (nav.share && nav.canShare?.({ files: [file] })) {
-        nav.share({ files: [file] }).catch(() => {
-          // user cancelled the share sheet — no-op
+        nav.share({ files: [file] }).catch((err) => {
+          // AbortError is a real user cancel — no-op. Anything else (e.g. the
+          // OS share picker itself failing to enumerate targets, a known
+          // Windows Chrome bug) should still land the image with the user.
+          if (err?.name !== 'AbortError') downloadBlob(blob);
         });
       } else {
         downloadBlob(blob);
