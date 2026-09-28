@@ -12,6 +12,11 @@ import {
   drawDriverCard,
 } from './canvasUtils';
 
+type ShareCapableNavigator = Navigator & {
+  canShare?: (data: { files: File[] }) => boolean;
+  share?: (data: { files: File[] }) => Promise<void>;
+};
+
 export function DriverScorecardButton({ data }: { data: ScorecardDriverData }) {
   const t = useTranslations('scorecard');
   const [isOpen, setIsOpen] = useState(false);
@@ -19,6 +24,10 @@ export function DriverScorecardButton({ data }: { data: ScorecardDriverData }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const logoRef = useRef<HTMLImageElement | null>(null);
   const fontsReady = useRef(false);
+
+  // The modal (and this check) never renders until a click flips `isOpen`,
+  // so this only ever runs client-side — no SSR/hydration mismatch to guard.
+  const canNativeShare = typeof navigator !== 'undefined' && 'share' in navigator && 'canShare' in navigator;
 
   const teamColor = getTeamColor(data.constructorRef);
 
@@ -58,15 +67,33 @@ export function DriverScorecardButton({ data }: { data: ScorecardDriverData }) {
     return () => window.removeEventListener('keydown', onKey);
   }, [isOpen]);
 
+  function downloadBlob(blob: Blob) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `paddockintel-${data.surname.toLowerCase()}-${format}.png`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   function handleDownload() {
+    canvasRef.current?.toBlob((blob) => { if (blob) downloadBlob(blob); }, 'image/png');
+  }
+
+  // See ArticleScorecard.tsx for why native share (not just download) matters
+  // for the distribution loop — same fallback behavior here.
+  function handleShare() {
     canvasRef.current?.toBlob((blob) => {
       if (!blob) return;
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `paddockintel-${data.surname.toLowerCase()}-${format}.png`;
-      a.click();
-      URL.revokeObjectURL(url);
+      const nav = navigator as ShareCapableNavigator;
+      const file = new File([blob], `paddockintel-${data.surname.toLowerCase()}-${format}.png`, { type: 'image/png' });
+      if (nav.share && nav.canShare?.({ files: [file] })) {
+        nav.share({ files: [file] }).catch(() => {
+          // user cancelled the share sheet — no-op
+        });
+      } else {
+        downloadBlob(blob);
+      }
     }, 'image/png');
   }
 
@@ -131,10 +158,10 @@ export function DriverScorecardButton({ data }: { data: ScorecardDriverData }) {
             {/* Download */}
             <div className="px-5 py-3 border-t border-border shrink-0">
               <button
-                onClick={handleDownload}
+                onClick={canNativeShare ? handleShare : handleDownload}
                 className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-1 hover:text-terracotta transition-colors duration-150"
               >
-                {t('download')}
+                {canNativeShare ? t('shareImage') : t('download')}
               </button>
             </div>
 
