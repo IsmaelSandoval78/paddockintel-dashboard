@@ -290,7 +290,7 @@ export default async function MagazineHomePage({
                   )}
                 </div>
                 {featuredStat && (
-                  <div className={featuredCover ? 'mt-6' : 'mt-auto pt-8'}>
+                  <div className="mt-6">
                     <p
                       className="font-sans font-extrabold tabular-nums leading-none tracking-[-0.03em] text-accent-2"
                       style={{ fontSize: featuredCover ? 'clamp(1.75rem, 3.4vw, 2.5rem)' : 'clamp(3.25rem, 6vw, 4.75rem)' }}
