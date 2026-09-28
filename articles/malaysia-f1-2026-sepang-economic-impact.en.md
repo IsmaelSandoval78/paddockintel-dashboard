@@ -7,7 +7,7 @@ status: published
 published_at: "2026-09-28T18:00:00+00:00"
 paywalled: false
 translation_group_id: "488ac547-3aaa-4051-ac06-8ed6b58e69c8"
-tags: ["race-weekend-economics", "economics"]
+tags: ["featured", "race-weekend-economics", "economics"]
 
 stats:
   - value: "RM16M"
