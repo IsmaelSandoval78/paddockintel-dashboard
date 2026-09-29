@@ -16,6 +16,11 @@ const eslintConfig = defineConfig([
     // (modern-screenshot.umd.js is minified UMD and accounted for 78 warnings on its own).
     // Linting it says nothing about the site and drowned out the 16 warnings that were ours.
     ".claude/**",
+    // The OpenNext bundle written by scripts/cloudflare-build.sh. Generated, gitignored, and
+    // 23,427 problems on its own -- enough to make `eslint . --max-warnings 0` unusable on any
+    // machine that has run a Cloudflare build, even though CI never sees it. `.next/**` above
+    // is ignored for the same reason; this directory is just the second half of that build.
+    ".open-next/**",
   ]),
 
   // `_`-prefixed means "deliberately unused" -- the convention this repo already reaches for
