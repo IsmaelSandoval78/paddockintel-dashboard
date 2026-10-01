@@ -731,7 +731,7 @@
     "noArticles": "Aún no hay artículos publicados.",
     "join": {
       "emailTitle": "Con tu email",
-      "emailSub": "Un link de confirmación, una sola vez.",
+      "emailSub": "Instantáneo — un email de bienvenida, sin nada que clickear.",
       "accountTitle": "Con una cuenta que ya tienes",
       "accountSub": "Instantáneo — sin nada que confirmar."
     },
