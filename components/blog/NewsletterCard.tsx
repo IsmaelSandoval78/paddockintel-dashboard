@@ -29,8 +29,11 @@ export default function NewsletterCard() {
   return (
     <aside className="my-10 soft-card p-8">
       <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent mb-2">{t('kicker')}</p>
-      <p className="font-sans font-semibold text-text-1 tracking-[-0.01em] leading-tight mb-4" style={{ fontSize: 'clamp(1.1rem, 2.2vw, 1.4rem)' }}>
+      <p className="font-sans font-semibold text-text-1 tracking-[-0.01em] leading-tight mb-2" style={{ fontSize: 'clamp(1.1rem, 2.2vw, 1.4rem)' }}>
         {t('headline')}
+      </p>
+      <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-2 mb-4">
+        {t('editorLine')}
       </p>
 
       {status === 'success' ? (
