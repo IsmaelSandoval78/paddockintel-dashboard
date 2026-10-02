@@ -12,7 +12,8 @@ import ArticleCharts, { type ChartSpec } from '@/components/blog/ArticleCharts';
 import NewsletterCard from '@/components/blog/NewsletterCard';
 import ArticlePaywallGate from '@/components/blog/ArticlePaywallGate';
 import { extractTOC, markdownToHtml, estimateReadTime, splitMarkdownAtSection } from '@/lib/markdown';
-import { getArticleTagSlugs, getRelatedArticles } from '@/lib/blog/tags';
+import { getArticleTagSlugs, getRelatedArticles, getArticleVoices } from '@/lib/blog/tags';
+import ArticleVoices from '@/components/blog/ArticleVoices';
 import { getCurrentAuthUser } from '@/lib/auth/getCurrentAuthUser';
 
 // Free sections before the registration wall cuts in — see
@@ -131,13 +132,17 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
   // Independent reads (no shared inputs) — run concurrently so their
   // latency doesn't stack, which is what turns a single slow round trip
   // into several on a page far from Supabase's region.
-  const [tTags, tagSlugsMap, relatedArticles] = await Promise.all([
+  const [tTags, tagSlugsMap, relatedArticles, voicesMap] = await Promise.all([
     getTranslations('articleTags'),
     getArticleTagSlugs(createClient(), [article.id as string]),
     getRelatedArticles(createClient(), article.id as string, locale, 3),
+    getArticleVoices(createClient(), [article.id as string]),
   ]);
   const tagSlugs = tagSlugsMap.get(article.id as string) ?? [];
   const tags = tagSlugs.map((slug) => tTags(slug));
+  // Gated the same as stats/faq/sources -- a Voices quote can carry the same
+  // substance the paywall is meant to hold back.
+  const voices = isGated ? [] : voicesMap.get(article.id as string) ?? [];
 
   const toc      = extractTOC(body);
   const html     = markdownToHtml(body);
@@ -309,6 +314,9 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
                   </ul>
                 </section>
               )}
+
+              {/* Voices — curated expert_picks relevant to this article's topic */}
+              <ArticleVoices voices={voices} />
 
               {/* Author + share footer */}
               <div className="mt-12 pt-6 border-t border-border-subtle flex items-center justify-between">

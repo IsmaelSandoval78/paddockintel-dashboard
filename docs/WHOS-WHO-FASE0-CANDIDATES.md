@@ -3,11 +3,11 @@
 Investigación real vía web (sep 2026), no lista de memoria — cada persona tiene rol/outlet
 verificado en el momento de escribir esto. Aprobada por Ismael en la Fase 0 original.
 
-**Actualizado 8 sep 2026 — estado real del mecanismo de picks, no aspiracional:** de las 34
+**Actualizado 1 oct 2026 — estado real del mecanismo de picks, no aspiracional:** de las 34
 voces curadas por identidad, **31 siguen elegibles para producir un pick real**, **3 quedaron
 excluidas del mecanismo** (cuentas verificadas como no funcionales para este propósito
-específico, detalle en "Estado de la Fase 0" más abajo). De las 31 elegibles, **19 ya tienen
-un pick real** publicado en `expert_picks`, y **12 están pendientes de que Ismael elija un
+específico, detalle en "Estado de la Fase 0" más abajo). De las 31 elegibles, **23 ya tienen
+un pick real** publicado en `expert_picks`, y **8 están pendientes de que Ismael elija un
 post real y arme el takeaway** (mismo mecanismo que ya funcionó con Rencken/Coleman/etc.) —
 ninguna de las 34 está "lista para producir contenido" automáticamente, la curación siempre
 es manual.
@@ -49,7 +49,7 @@ columna de estado real, verificada contra `expert_picks` en Supabase, no contra 
 
 ---
 
-## Lista (34 nombres curados por identidad) — 19 con pick real, 12 pendientes, 3 excluidas
+## Lista (34 nombres curados por identidad) — 23 con pick real, 8 pendientes, 3 excluidas
 
 Investigación 16 · Construcción 6 · Crítica 8 · Contexto 3 · Datos 1.
 
@@ -63,7 +63,7 @@ Investigación 16 · Construcción 6 · Crítica 8 · Contexto 3 · Datos 1.
 | Adam Cooper | Motorsport.com / Motor Sport Magazine | `@adamcooperF1` | ✅ Pick real | Veterano, cobertura histórica |
 | Luke Smith | Senior writer, The Athletic | `@LukeSmithF1` | ✅ Pick real | Foco en detrás de escena (mecánicos, ingenieros) |
 | Madeline Coleman | Staff writer, The Athletic | `@mwc13_3` | ✅ Pick real | Co-cobertura con Smith |
-| Andrew Benson | Corresponsal de F1, BBC Sport | `@andrewbensonf1` | ⏳ Pendiente de curación | Cuenta oficial BBC, 185.2K seguidores, activa con contenido real de F1 (verificado 8 sep 2026) — solo falta que Ismael elija un post |
+| Andrew Benson | Corresponsal de F1, BBC Sport | `@andrewbensonf1` | ✅ Pick real | Q&A de BBC sobre el pase de Gianpiero Lambiase (ingeniero de Verstappen) a McLaren en 2028 |
 | Nate Saunders | ESPN (podcast *Unlapped*) | `@natesaundersF1` (+ Bluesky `@natesaunders.bsky.social`) | ✅ Pick real | Único confirmado con presencia activa en Bluesky |
 | Laurence Edmondson | ESPN, editor de F1 | `@Edmondson_F1` | ⏳ Pendiente de curación | Cuenta real confirmada (verificado 8 sep 2026), pocos seguidores (3,894) para su rol, sin post puntual indexado — sin evidencia de cuenta rota, solo falta curación |
 | Scott Mitchell-Malm | The Race | `@SMitchellF1` | ✅ Pick real | — |
@@ -82,18 +82,18 @@ Investigación 16 · Construcción 6 · Crítica 8 · Contexto 3 · Datos 1.
 | Giorgio Piola | Veterano (50+ años) | `@Giorgio_Piola` | ❌ Excluida del mecanismo | Cuenta real, pero 100% comercial desde nov. 2021 (Black Friday, relojes de edición limitada) — sin contenido técnico real que citar. Excluirlo evita atribuirle al ilustrador técnico histórico de F1 una opinión que nunca dio (riesgo real de EEAT, no solo falta de material) |
 | Mark Hughes | The Race / Motor Sport / F1.com | `@SportmphMark` | ✅ Pick real | Veterano en análisis técnico/estrategia |
 | Gary Anderson | The Race F1 Tech Show | `@GaryAndersonF1` | ⏳ Pendiente de curación | Ex-director técnico real (Jordan, Jaguar) — ojo, homónimo del jugador de darts, verificar handle con "F1" en el nombre |
-| Bernie Collins | Sky Sports F1, analista | `@bernie_collins1` | ⏳ Pendiente de curación | Ex-jefa de estrategia (Aston Martin, McLaren) — rol técnico real |
+| Bernie Collins | Sky Sports F1, analista | `@bernie_collins1` | ✅ Pick real | Confirma que no cubrió el GP de Gran Bretaña en cabina — dato real sobre la carga de las 24 fechas del calendario |
 | Toni Cuquerella | DAZN España, comentarista (ex-Movistar+) | `@tonicuque` | ✅ Pick real | Ex-ingeniero de pista en escuderías de F1 |
 
 ### Crítica — ex-pilotos y comentaristas
 
 | Nombre | Rol / outlet | Handle X | Estado | Nota |
 |---|---|---|---|---|
-| Martin Brundle | Sky Sports F1 | `@MBrundleF1` | ⏳ Pendiente de curación | Ex-piloto de F1 |
+| Martin Brundle | Sky Sports F1 | `@MBrundleF1` | ✅ Pick real | Reacción a la extensión de Sky-F1 hasta 2034 (~£200M/temporada) |
 | Jenson Button | Sky Sports F1 | `@JensonButton` | ✅ Pick real | Campeón del mundo F1 |
 | Nico Rosberg | Sky Sports F1 | `@NicoRosberg` | ⏳ Pendiente de curación | Campeón del mundo F1 — cuenta activa con contenido real de F1 confirmado (post del 18 mar 2026 reaccionando a la victoria de Antonelli en Australia, verificado 8 sep 2026), mezclado con contenido de su fondo VC |
 | Jacques Villeneuve | Sky Sports F1 | `@27villeneuve` | ⏳ Pendiente de curación | Campeón del mundo F1 — cuenta real confirmada (24.9K seguidores desde 2009), muy citado en medios durante 2026 sobre reglamentos/mercado de pilotos, sin post propio indexado con URL específica (verificado 8 sep 2026) |
-| Karun Chandhok | Sky Sports F1 | `@karunchandhok` | ⏳ Pendiente de curación | Ex-piloto de F1 |
+| Karun Chandhok | Sky Sports F1 | `@karunchandhok` | ✅ Pick real | Pide V10 no híbrido para 2026, cree que la FIA "perdió el barco" |
 | Anthony Davidson | Sky Sports F1 | `@antdavidson` | ❌ Excluida del mecanismo | Ex-piloto de F1 — no tiene cuenta personal de X en absoluto, solo aparece citado a través de `@SkySportsF1`. Distinto a Piola/Slater: acá no hay handle que corregir, el mecanismo de "un post por persona" no le aplica en absoluto (sin plataforma propia, requisito explícito de `docs/advisors/EEAT-EXPERT.md`) |
 | Naomi Schiff | Sky Sports F1 | `@NaomiSchiff` | ⏳ Pendiente de curación | Ex-piloto GT |
 | Pedro de la Rosa | DAZN/Movistar España, embajador Aston Martin | `@PedrodelaRosa1` | ⏳ Pendiente de curación | Ex-piloto de F1 |
@@ -184,15 +184,17 @@ que estén rotas, pero no al mismo nivel de certeza que un feed en vivo.
 
 7. **Estado real consolidado de las 34 voces curadas, verificado contra `expert_picks` en
    Supabase (no contra ninguna versión anterior de este doc):**
-   - **19 con pick real** — ver columna "Estado" en cada tabla de arriba.
-   - **12 pendientes de curación** (Ted Kravitz, Karun Chandhok, Pedro de la Rosa, Martin
-     Brundle, Naomi Schiff, Gary Anderson, Bernie Collins, Nico Rosberg, Jacques
-     Villeneuve, Laurence Edmondson, Andrew Benson, Ben Anderson) — cuentas reales y
-     verificadas, sin motivo para excluirlas, esperando que Ismael elija un post real y
-     arme el takeaway (mismo mecanismo que ya funcionó con Rencken/Coleman/etc., un LLM
-     ayuda a redactar, nunca a elegir qué es relevante).
+   - **23 con pick real** — ver columna "Estado" en cada tabla de arriba. Sumados el 1 oct
+     2026: Andrew Benson (Lambiase a McLaren), Bernie Collins (ausencia en Silverstone),
+     Martin Brundle (extensión Sky-F1 a 2034), Karun Chandhok (V10 no híbrido para 2026) —
+     posts de su propia cuenta, verificados vía búsqueda real, no de memoria.
+   - **8 pendientes de curación** (Ted Kravitz, Pedro de la Rosa, Naomi Schiff, Gary
+     Anderson, Nico Rosberg, Jacques Villeneuve, Laurence Edmondson, Ben Anderson) —
+     cuentas reales y verificadas, sin motivo para excluirlas; para estas 8 la búsqueda del
+     1 oct 2026 encontró la historia real pero no un post propio con URL verificable (varios
+     resultados eran cuentas de fans citándolos, no su cuenta), o el único post propio
+     encontrado (Pedro de la Rosa, aviso de ausencia por resfrío) no tenía sustancia
+     suficiente para un takeaway real — sigue pendiente, no forzado.
    - **3 excluidas del mecanismo** (Giorgio Piola, Craig Slater, Anthony Davidson) — ver
      punto 5.
-   - 19 + 12 + 3 = 34, cuenta exacta (corrige un error de conteo del 4 sep 2026 en
-     `docs/ROADMAP-SEMANA.md`, donde la enumeración de "15 nombres sin pick" solo sumaba
-     14 — faltaba Ben Anderson).
+   - 23 + 8 + 3 = 34, cuenta exacta.
