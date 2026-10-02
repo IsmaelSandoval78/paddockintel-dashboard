@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { editorialToday } from '@/lib/dates';
 import { getArticleIdsForTagSlug, getArticleTagSlugs, type TagRef } from '@/lib/blog/tags';
 import { entityCountsInWindow, weeklyEntityCounts, topEntity, type EntityCount } from '@/lib/entityMentions';
 import { getTranslations } from 'next-intl/server';
@@ -826,7 +827,7 @@ export type CircuitOfTheDay = {
 
 export async function getCircuitOfTheDay(): Promise<CircuitOfTheDay | null> {
   const supabase = createClient();
-  const today = new Date().toISOString().slice(0, 10);
+  const today = editorialToday();
 
   const { data: nextRace } = await supabase
     .from('races')
