@@ -53,6 +53,59 @@ export async function getArticleIdsForTagSlug(
   return (data ?? []).map((r) => r.article_id as string);
 }
 
+export type ArticleVoice = {
+  name: string;
+  slug: string;
+  role: string;
+  x_handle: string | null;
+  post_url: string;
+  takeaway: string;
+};
+
+type ArticleExpertPickRow = {
+  article_id: string;
+  position: number | null;
+  expert_picks: {
+    post_url: string;
+    takeaway: string;
+    experts: { name: string; slug: string; role: string; x_handle: string | null } | null;
+  } | null;
+};
+
+/** Ordered (curated position) voices linked to each article id -- see
+ * article_expert_picks and the `voices` frontmatter field in
+ * scripts/ingest-article.ts. */
+export async function getArticleVoices(
+  supabase: SupabaseClient,
+  articleIds: string[]
+): Promise<Map<string, ArticleVoice[]>> {
+  const map = new Map<string, ArticleVoice[]>();
+  if (!articleIds.length) return map;
+
+  const { data } = await supabase
+    .from('article_expert_picks')
+    .select('article_id, position, expert_picks(post_url, takeaway, experts(name, slug, role, x_handle))')
+    .in('article_id', articleIds)
+    .order('position', { ascending: true, nullsFirst: false });
+
+  for (const row of (data as unknown as ArticleExpertPickRow[] | null) ?? []) {
+    const pick = row.expert_picks;
+    const expert = pick?.experts;
+    if (!pick || !expert) continue;
+    const list = map.get(row.article_id) ?? [];
+    list.push({
+      name: expert.name,
+      slug: expert.slug,
+      role: expert.role,
+      x_handle: expert.x_handle,
+      post_url: pick.post_url,
+      takeaway: pick.takeaway,
+    });
+    map.set(row.article_id, list);
+  }
+  return map;
+}
+
 export type RelatedArticle = { slug: string; title: string; published_at: string | null };
 
 /**

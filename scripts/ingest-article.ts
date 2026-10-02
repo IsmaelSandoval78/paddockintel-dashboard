@@ -39,6 +39,7 @@ type Frontmatter = {
   faq?: FAQ[];
   sources?: Source[];
   charts?: Chart[];
+  voices?: string[];
 };
 
 function readArticle(filePath: string): { frontmatter: Frontmatter; body: string } {
@@ -149,6 +150,52 @@ async function main() {
     const { error: tagError } = await supabase.from('article_tags').insert(rows);
     if (tagError) {
       console.error('Tag linking failed:', tagError.message);
+      process.exit(1);
+    }
+  }
+
+  // Voices: frontmatter lists expert slugs (docs/WHOS-WHO-FASE0-CANDIDATES.md),
+  // resolved here to each expert's current active pick -- same
+  // idempotent delete-then-insert semantics as tags above. Fails loudly
+  // (unknown slug, no active pick, or more than one active pick for the
+  // same expert) rather than guessing which quote to show.
+  const voiceSlugs = frontmatter.voices ?? [];
+  await supabase.from('article_expert_picks').delete().eq('article_id', article.id);
+  if (voiceSlugs.length) {
+    const { data: expertRows } = await supabase
+      .from('experts')
+      .select('id, slug, name')
+      .in('slug', voiceSlugs);
+    const unknownExperts = voiceSlugs.filter((slug) => !expertRows?.some((e) => e.slug === slug));
+    if (unknownExperts.length) {
+      console.error(`Unknown expert slug(s), not in the "experts" table: ${unknownExperts.join(', ')}`);
+      process.exit(1);
+    }
+
+    const expertIds = expertRows!.map((e) => e.id);
+    const { data: pickRows } = await supabase
+      .from('expert_picks')
+      .select('id, expert_id')
+      .in('expert_id', expertIds)
+      .eq('is_active', true);
+
+    const rows = voiceSlugs.map((slug, i) => {
+      const expert = expertRows!.find((e) => e.slug === slug)!;
+      const picks = pickRows?.filter((p) => p.expert_id === expert.id) ?? [];
+      if (picks.length === 0) {
+        console.error(`"${expert.name}" (${slug}) has no active pick in expert_picks -- curate one first (scripts/whos-who-pick.ts) before linking them as a voice.`);
+        process.exit(1);
+      }
+      if (picks.length > 1) {
+        console.error(`"${expert.name}" (${slug}) has ${picks.length} active picks -- ambiguous which one this article should link. Deactivate all but one first.`);
+        process.exit(1);
+      }
+      return { article_id: article.id, expert_pick_id: picks[0].id, position: i + 1 };
+    });
+
+    const { error: voicesError } = await supabase.from('article_expert_picks').insert(rows);
+    if (voicesError) {
+      console.error('Voice linking failed:', voicesError.message);
       process.exit(1);
     }
   }

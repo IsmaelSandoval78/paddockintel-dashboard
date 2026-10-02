@@ -8,6 +8,7 @@ published_at: "2026-09-29T19:00:00+00:00"
 paywalled: false
 translation_group_id: "48f74c4f-b487-4b2f-b91d-d8865b4bcd65"
 tags: ["featured", "driver-finance", "team-valuations", "regulations"]
+voices: ["mat-coch"]
 
 stats:
   - value: "3 pts"
