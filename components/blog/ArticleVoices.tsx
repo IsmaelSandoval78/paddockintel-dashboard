@@ -1,3 +1,4 @@
+import { Link } from '@/lib/i18n/navigation';
 import type { ArticleVoice } from '@/lib/blog/tags';
 
 export default function ArticleVoices({ voices }: { voices: ArticleVoice[] }) {
@@ -5,9 +6,17 @@ export default function ArticleVoices({ voices }: { voices: ArticleVoice[] }) {
 
   return (
     <section className="mt-8 pt-6 border-t border-border-subtle">
-      <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-2 mb-3">
-        Voices On This
-      </p>
+      <div className="flex items-baseline justify-between mb-3">
+        <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-2">
+          Voices On This
+        </p>
+        <Link
+          href="/whos-who"
+          className="font-mono text-[9px] uppercase tracking-[0.06em] text-text-3 hover:text-terracotta transition-colors duration-150 shrink-0"
+        >
+          All Voices →
+        </Link>
+      </div>
       <div className="space-y-4">
         {voices.map((voice) => (
           <div key={voice.slug} className="pb-4 last:pb-0">
