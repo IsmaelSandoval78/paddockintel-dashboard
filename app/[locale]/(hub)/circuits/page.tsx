@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
+import { editorialToday } from '@/lib/dates';
 import { fetchTrackPathData } from '@/lib/trackSvg';
 import { Link } from '@/lib/i18n/navigation';
 import EpicenterMap, { type EpicenterEvent } from '@/components/circuits/EpicenterMap';
@@ -44,7 +45,7 @@ interface CalendarRow {
 
 async function getFeaturedCircuit(): Promise<FeaturedCircuit | null> {
   const supabase = createClient();
-  const today = new Date().toISOString().slice(0, 10);
+  const today = editorialToday();
 
   // Same selection rule as the magazine's CircuitOfTheDay (app/[locale]/(blog)/magazine-home/data.ts):
   // the circuit hosting the next race on the calendar. Kept in sync deliberately, not reused

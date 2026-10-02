@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { editorialToday } from '@/lib/dates';
 import type {
   DriverSeasonRow,
   DriverAllTimeRow,
@@ -47,7 +48,7 @@ async function getDriversData(): Promise<{
   champions: ChampionYear[];
 }> {
   const supabase = createClient();
-  const today = new Date().toISOString().slice(0, 10);
+  const today = editorialToday();
 
   // Batch 1: latest race WITH results loaded + all-time stats + drivers table + all races
   // (for championship calc). Keyed off driver_standings, not races.date <= today — a race

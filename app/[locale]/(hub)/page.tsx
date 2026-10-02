@@ -1,6 +1,7 @@
 export const revalidate = 3600;
 
 import { createClient } from '@/lib/supabase/server';
+import { editorialToday } from '@/lib/dates';
 import { fetchTrackPathData } from '@/lib/trackSvg';
 import HomeExperience from '@/components/home/kinetic/HomeExperience';
 import type {
@@ -36,7 +37,7 @@ async function getHomeData(): Promise<{
   leaderPodiumsSeason: number;
 }> {
   const supabase = createClient();
-  const today = new Date().toISOString().slice(0, 10);
+  const today = editorialToday();
 
   // ── Batch 1 ─────────────────────────────────────────────────────
   // NOTE: driver_standings max race_id — not races by date — because

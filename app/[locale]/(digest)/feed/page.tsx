@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations, getFormatter } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
+import { easternDateKey } from '@/lib/dates';
 import { weeklyEntityCounts, significanceScore } from '@/lib/entityMentions';
 import { getBeagleEntityCounts, mergeEntityCounts } from '@/lib/beagleCounts';
 import { Link } from '@/lib/i18n/navigation';
@@ -97,9 +98,10 @@ function dayLabel(
   t: Awaited<ReturnType<typeof getTranslations>>,
   format: Awaited<ReturnType<typeof getFormatter>>
 ): string {
-  const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
-  const diffDays = Math.round((startOfDay(new Date()) - startOfDay(date)) / 86_400_000);
-  if (diffDays === 0) return t('today');
+  const todayKey = easternDateKey(new Date());
+  const dateKey = easternDateKey(date);
+  if (dateKey === todayKey) return t('today');
+  const diffDays = Math.round((Date.parse(todayKey) - Date.parse(dateKey)) / 86_400_000);
   if (diffDays === 1) return t('yesterday');
   return format.dateTime(date, { month: 'short', day: 'numeric' });
 }
@@ -131,7 +133,7 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
   const dayGroups: { key: string; date: Date; items: FeedItem[] }[] = [];
   for (const item of items) {
     const date = new Date(item.published_at);
-    const key = date.toISOString().slice(0, 10);
+    const key = easternDateKey(date);
     const current = dayGroups[dayGroups.length - 1];
     if (current && current.key === key) current.items.push(item);
     else dayGroups.push({ key, date, items: [item] });
