@@ -8,6 +8,7 @@ paywalled: false
 published_at: "2026-09-12T11:15:00+00:00"
 translation_group_id: "9584f25a-8e3e-406e-b259-cbee51ffb62d"
 tags: ["economics", "europe", "motorsport-business"]
+voices: ["martin-brundle"]
 
 stats:
   - value: "€65M"

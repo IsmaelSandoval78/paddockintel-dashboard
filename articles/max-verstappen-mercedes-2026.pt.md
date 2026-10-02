@@ -7,6 +7,7 @@ status: published
 translation_group_id: "da49cbf7-0636-4f3f-aa5e-74df330f9581"
 paywalled: false
 tags: ["driver-finance", "red-bull", "mercedes-amg-f1"]
+voices: ["lawrence-barretto"]
 
 stats:
   - value: "6º"

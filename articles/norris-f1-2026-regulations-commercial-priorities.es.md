@@ -7,6 +7,7 @@ status: published
 published_at: "2026-07-25"
 translation_group_id: "d4a1c8e9-2f3b-4a75-b6e0-9c1a7d2e5f68"
 tags: ["regulaciones", "economia", "mclaren"]
+voices: ["karun-chandhok"]
 
 stats:
   - value: "50-50"
