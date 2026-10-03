@@ -6,6 +6,7 @@ import { weeklyEntityCounts, significanceScore } from '@/lib/entityMentions';
 import { getBeagleEntityCounts, mergeEntityCounts } from '@/lib/beagleCounts';
 import { Link } from '@/lib/i18n/navigation';
 import HookDeliverBlock from '@/components/digest/HookDeliverBlock';
+import NewsletterCard from '@/components/blog/NewsletterCard';
 import {
   loadHookDeliverMap,
   readFeaturedStats,
@@ -232,6 +233,8 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
             </div>
           </div>
         )}
+
+        <NewsletterCard />
       </div>
 
       <div className="max-w-6xl mx-auto px-5 pb-16">

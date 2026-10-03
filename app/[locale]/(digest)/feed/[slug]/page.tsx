@@ -4,6 +4,7 @@ import { getTranslations, getFormatter } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
 import ShareButton from '@/components/ui/ShareButton';
+import NewsletterCard from '@/components/blog/NewsletterCard';
 import HookDeliverBlock from '@/components/digest/HookDeliverBlock';
 import {
   readFeaturedStats,
@@ -239,6 +240,8 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
                   ))}
                 </div>
               )}
+
+              <NewsletterCard />
 
               {item.internal_link_slug && (
                 <Link
