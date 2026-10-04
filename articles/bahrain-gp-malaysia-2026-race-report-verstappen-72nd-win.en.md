@@ -23,7 +23,7 @@ stats:
     unit: "Schumacher's 72 all came at Ferrari; Verstappen's all at Red Bull"
   - value: "~100 min"
     label: "HOW LONG RAIN AND A POWER-UNIT FAULT DELAYED THE START"
-    unit: "the FIA called the software issue \"unprecedented\""
+    unit: "40 min of rain, then an FIA-distributed fix for a software fault"
   - value: "84 pts"
     label: "ANTONELLI'S CHAMPIONSHIP LEAD OVER RUSSELL AFTER SEPANG"
     unit: "a season-high, with 7 races remaining"
@@ -41,7 +41,7 @@ faq:
 charts:
   - type: grid_to_finish
     title: "Qualifying to Finish"
-    note: "Qualifying order, not final grid -- Hadjar's 5-place engine-component penalty (P3 on pace to a P8 start) moves everyone from P4 down one grid slot, which doesn't change any of these finishing positions. Finish positions per the official classification; Russell's retirement came in the second Safety Car period, five laps from the end."
+    note: "Qualifying order, not final grid -- Hadjar's 5-place engine-component penalty (P3 on pace to a P8 start) moves everyone from P4 down one grid slot, which doesn't change any of these finishing positions. Lindblad's own penalty was far bigger: a 30-place drop put him dead last on the grid (P22) despite qualifying 16th on pace, so his P10 finish is a last-to-points drive through the whole field, not the modest 16-to-10 gain this chart alone would suggest. Finish positions per the official classification; Russell's retirement came in the second Safety Car period, five laps from the end."
     rows:
       - { code: "VER", team: "redbull", quali: 1, finish: 1, highlight: true }
       - { code: "HAM", team: "ferrari", quali: 2, finish: 3, highlight: true }
@@ -105,14 +105,16 @@ Hamilton's line on the chart undersells his afternoon. He qualified second, on t
 
 George Russell's line ends early. His Mercedes failed in the second Safety Car period, five laps from the end, in what Crash.net described as echoing Hamilton's own engine failure at the same corner a decade ago. Toto Wolff confirmed an engine issue; Russell's own reaction was "You've got to laugh." Paired with Antonelli's second place, it pushed his championship deficit to a season-high 84 points with seven races left.
 
+The chart's quietest line hides its biggest story. Arvid Lindblad qualified 16th, then took a 30-place grid penalty that put him dead last — P22, behind all 21 other cars. He finished tenth and scored a point. That's not a recovery from 16th; it's a drive through the entire field from the very back of it, and the quali-to-finish format above can't show that without saying so directly.
+
 ## Lap Pace, Front of the Field
 
 The heatmap below is every lap for the top five finishers, colored against each driver's own best lap — lighter is closer to their fastest, darker is further off it. The wet opening laps, the pit stops, and the Safety Car period in the mid-40s are blanked out rather than colored, since none of those are real pace data for anyone.
 
-What's left is two genuine green-flag stints: roughly laps 13 to 42, and the sprint to the flag from lap 51 on. Verstappen's row is the one worth reading closest — not dramatically faster than Antonelli or Hamilton on any single lap, but the most consistently near his own best across both stints, which is exactly the kind of race a 2.307-second, lights-to-flag win is actually built from. Hadjar's row tells the quieter version of his story: matching the identical pace band as the two drivers who finished ahead of him for most of the race, with nothing on the stopwatch explaining the two-position gap except the penalty that was already decided before he turned a wheel.
+What's left is two genuine green-flag stints: roughly laps 13 to 42, and the sprint to the flag from lap 52 on. Verstappen's row is the one worth reading closest — not meaningfully faster than Antonelli or Hamilton on any single lap, but the most consistently near his own best across both stints, which is exactly the kind of race a 2.307-second, lights-to-flag win is actually built from. Hadjar's row tells the quieter version of his story: matching the same tight pace band as the four drivers in this chart who finished ahead of him, with nothing on the stopwatch explaining the gap to any of them except the penalty that was already decided before he turned a wheel.
 
 ## Verdict
 
-[Saturday's pole](/verstappen-sepang-pole-red-bull-ford-engine-2026) was the clean version of this argument: dry track, one lap, nothing to react to. Sunday was the version with everything thrown at it — a start delayed by rain and a power-unit software fault bad enough to need an FIA fix mid-grid, two Safety Car periods, a tyre gamble that cost the fastest qualifier not on pole eighteen places in the opening laps, and a title contender's engine failing outright five laps from the end. None of that happened to Red Bull-Ford. Verstappen never needed a strategy gamble, because Saturday's pace simply held, lap after lap, through exactly the kind of conditions built to expose a weakness in a power unit sixteen races into its own existence.
+[Saturday's pole](/verstappen-sepang-pole-red-bull-ford-engine-2026) was the clean version of this argument: dry track, one lap, nothing to react to. Sunday was the version with everything thrown at it — a start delayed by rain and a power-unit software fault bad enough to need an FIA fix mid-grid, two Safety Car periods, a tyre gamble that cost the driver who'd lined up second on the grid eighteen places in the opening laps, and a title contender's engine failing outright five laps from the end. None of that happened to Red Bull-Ford. Verstappen never needed a strategy gamble, because Saturday's pace simply held, lap after lap, through exactly the kind of conditions built to expose a weakness in a power unit sixteen races into its own existence.
 
 A clean pole is one data point. A win that survives a race actively trying to break everything around it is harder to write off as a one-off. The FIA's own measurements said months ago that Red Bull-Ford had built the best engine on the 2026 grid. Sepang is the first time the result and the data agree on a day when nothing else went right.
