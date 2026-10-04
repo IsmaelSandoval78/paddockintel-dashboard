@@ -3,7 +3,8 @@ slug: "bahrain-gp-malasia-2026-victoria-72-de-verstappen"
 title: "La Victoria de Verstappen Es el Recibo del Sábado"
 locale: es
 meta_description: "La victoria 72 de Verstappen iguala a Schumacher y le da a Red Bull-Ford su primer triunfo -- tras 100 min de demora por lluvia y falla de motor."
-status: draft
+status: published
+published_at: "2026-10-04T16:00:00+00:00"
 paywalled: false
 translation_group_id: "a1ed0cba-4e97-4c50-a161-0034ea7f0172"
 tags: ["race-analysis", "red-bull"]
@@ -84,8 +85,6 @@ sources:
   - name: "f1mania — Verstappen iguala marca de Schumacher com vitória no GP do Bahrein na Malásia"
     url: "https://www.f1mania.net/f1/f1-verstappen-iguala-marca-de-schumacher-com-vitoria-no-gp-do-bahrein-na-malasia/"
 ---
-
-**[BORRADOR — todavía no ingestado. Resultados y standings ya confirmados en Supabase, cargados directo desde la clasificación oficial de formula1.com después de que FastF1 y jolpica-f1 fallaran en sincronizar los puntos de esta carrera; cruzados contra Sky Sports, Crash.net y Autosport antes de cargarlos. Los datos de los gráficos (tiempos de vuelta, orden de clasificación) son datos propios de Supabase. Falta: una última lectura, y el ok explícito para pasar `status: draft` → `published` y fijar `published_at`.]**
 
 Max Verstappen ganó una carrera que tardó más en arrancar de lo que duran la mayoría de las carreras enteras. Una lluvia torrencial cayó sobre Sepang cuarenta minutos antes de la largada programada, y cuando amainó, una falla de software del motor que la FIA calificó de "sin precedentes" afectó a varios autos en la vuelta de formación y forzó una demora adicional -- unos 100 minutos en total antes de que se distribuyera una solución y el pelotón arrancara a correr de verdad. Martin Brundle, en la transmisión, la calificó como "una de las carreras más locas de Fórmula 1 que vi en mi vida. Fue absolutamente una locura".
 

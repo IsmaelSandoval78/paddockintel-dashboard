@@ -3,16 +3,11 @@ slug: "bahrain-gp-malaysia-2026-race-report-verstappen-72nd-win"
 title: "Verstappen's Win Is the Receipt Saturday Promised"
 locale: en
 meta_description: "Verstappen's 72nd win ties Schumacher's record and gives Red Bull-Ford its first win -- delayed 100 minutes by rain and a power-unit fault."
-status: draft
+status: published
+published_at: "2026-10-04T16:00:00+00:00"
 paywalled: false
 translation_group_id: "a1ed0cba-4e97-4c50-a161-0034ea7f0172"
 tags: ["race-analysis", "red-bull"]
-
-# status is still "draft" on purpose -- results/standings are now confirmed
-# in Supabase (official formula1.com classification, manually loaded after
-# FastF1/jolpica-f1 both failed to sync), and stats/faq/verdict below are
-# filled in for real. Ready for a final read before flipping to "published"
-# and setting published_at -- that's an explicit go, not assumed here.
 
 stats:
   - value: "2.307s"
@@ -90,8 +85,6 @@ sources:
   - name: "f1mania — Verstappen iguala marca de Schumacher com vitória no GP do Bahrein na Malásia"
     url: "https://www.f1mania.net/f1/f1-verstappen-iguala-marca-de-schumacher-com-vitoria-no-gp-do-bahrein-na-malasia/"
 ---
-
-**[DRAFT — not yet ingested. Results/standings are now confirmed in Supabase, loaded directly from formula1.com's official classification after FastF1 and jolpica-f1 both failed to sync points for this race; cross-checked against Sky Sports, Crash.net, and Autosport before loading. Chart data (lap times, qualifying order) is our own Supabase data throughout. Remaining before this ships: a final read, ES/PT translations, and an explicit go-ahead to flip `status: draft` → `published` and set `published_at`.]**
 
 Max Verstappen won a race that took longer to start than most races take to finish. Torrential rain hit Sepang forty minutes before the scheduled start, and when it eased, a power-unit software fault the FIA called "unprecedented" struck several cars on the formation lap and forced a further delay — roughly 100 minutes in total before a fix went out and the field actually got racing. Martin Brundle, commentating, called it "one of the craziest Formula 1 races I have ever seen. That was absolutely wild."
 
