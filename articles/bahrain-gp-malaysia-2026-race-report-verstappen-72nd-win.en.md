@@ -1,25 +1,47 @@
 ---
 slug: "bahrain-gp-malaysia-2026-race-report-verstappen-72nd-win"
-title: "DRAFT — Verstappen's Win Is the Receipt the Pole Only Promised"
+title: "Verstappen's Win Is the Receipt Saturday Promised"
 locale: en
-meta_description: "Verstappen's 72nd win ties Schumacher's record and gives Red Bull-Ford its first victory -- in a race delayed 100 minutes by rain and an engine fault."
+meta_description: "Verstappen's 72nd win ties Schumacher's record and gives Red Bull-Ford its first win -- delayed 100 minutes by rain and a power-unit fault."
 status: draft
 paywalled: false
-translation_group_id: "TODO-generate-uuid-before-ingest"
+translation_group_id: "a1ed0cba-4e97-4c50-a161-0034ea7f0172"
 tags: ["race-analysis", "red-bull"]
 
-# TODO before ingest:
-# - published_at: set once this actually ships
-# - stats[]: add once official points/classification sync (currently NaN in
-#   both FastF1 and jolpica-f1 for round 16 -- do not fabricate in the meantime)
-# - faq[]: draft after the angle is locked, verify against real search queries
-# - Russell's exact championship-gap number needs re-confirming once standings
-#   load for real (84 pts is from Crash.net's own math, not our own DB yet)
+# status is still "draft" on purpose -- results/standings are now confirmed
+# in Supabase (official formula1.com classification, manually loaded after
+# FastF1/jolpica-f1 both failed to sync), and stats/faq/verdict below are
+# filled in for real. Ready for a final read before flipping to "published"
+# and setting published_at -- that's an explicit go, not assumed here.
+
+stats:
+  - value: "2.307s"
+    label: "VERSTAPPEN'S WINNING MARGIN OVER ANTONELLI"
+    unit: "pole to flag, no safety-car luck needed at the front"
+  - value: "72"
+    label: "VERSTAPPEN'S CAREER WINS -- TIES SCHUMACHER'S RECORD"
+    unit: "Schumacher's 72 all came at Ferrari; Verstappen's all at Red Bull"
+  - value: "~100 min"
+    label: "HOW LONG RAIN AND A POWER-UNIT FAULT DELAYED THE START"
+    unit: "the FIA called the software issue \"unprecedented\""
+  - value: "84 pts"
+    label: "ANTONELLI'S CHAMPIONSHIP LEAD OVER RUSSELL AFTER SEPANG"
+    unit: "a season-high, with 7 races remaining"
+
+faq:
+  - q: "Who won the 2026 Bahrain Grand Prix in Malaysia?"
+    a: "Max Verstappen, leading every lap once the race actually started and beating Kimi Antonelli by 2.307 seconds at the flag -- his first win of 2026 and Red Bull-Ford Powertrains' first win in its debut season."
+  - q: "Why was the Bahrain Grand Prix in Malaysia delayed?"
+    a: "Torrential rain hit Sepang forty minutes before the scheduled start, and when it eased, a power-unit software fault the FIA called \"unprecedented\" struck several cars on the formation lap and forced a further delay -- roughly 100 minutes in total before a fix was distributed and the race got underway."
+  - q: "How many Grand Prix has Max Verstappen won in his career?"
+    a: "72, as of the 2026 Bahrain Grand Prix in Malaysia -- tying Michael Schumacher's record for the most wins with a single team. Schumacher's 72 all came at Ferrari; Verstappen's have all come with Red Bull Racing."
+  - q: "What happened to George Russell in the Bahrain Grand Prix in Malaysia?"
+    a: "His Mercedes failed during the race's second Safety Car period, five laps from the end -- Toto Wolff confirmed an engine issue. Combined with Kimi Antonelli's second-place finish, it pushed Russell's championship deficit to a season-high 84 points with seven races left."
 
 charts:
   - type: grid_to_finish
     title: "Qualifying to Finish"
-    note: "Qualifying order, not final grid -- Hadjar's 5-place engine-component penalty (P3 on pace to a P8 start) moves everyone from P4 down one grid slot, which doesn't change any of these finishing positions. Finish positions per Autosport's and Sky Sports' race reports; Russell's retirement came in the second Safety Car period, five laps from the end."
+    note: "Qualifying order, not final grid -- Hadjar's 5-place engine-component penalty (P3 on pace to a P8 start) moves everyone from P4 down one grid slot, which doesn't change any of these finishing positions. Finish positions per the official classification; Russell's retirement came in the second Safety Car period, five laps from the end."
     rows:
       - { code: "VER", team: "redbull", quali: 1, finish: 1, highlight: true }
       - { code: "HAM", team: "ferrari", quali: 2, finish: 3, highlight: true }
@@ -69,7 +91,7 @@ sources:
     url: "https://www.f1mania.net/f1/f1-verstappen-iguala-marca-de-schumacher-com-vitoria-no-gp-do-bahrein-na-malasia/"
 ---
 
-**[DRAFT — not ingested. Written while round 16's official classification/points were still unsynced in both FastF1 and jolpica-f1, several hours after the race. Finishing positions below are cross-verified against Sky Sports, Crash.net, and Autosport's own race reports, not our own `results` table, which is empty for this race. Lap-time and qualifying-position data in the charts ARE our own Supabase data (loaded from FastF1's `laps`/`qualifying` sessions, which are unaffected by the broken classification computation). Do not publish until: published_at is set, a translation_group_id is generated, stats[] reflects confirmed points/standings, and the FAQ is drafted and verified.]**
+**[DRAFT — not yet ingested. Results/standings are now confirmed in Supabase, loaded directly from formula1.com's official classification after FastF1 and jolpica-f1 both failed to sync points for this race; cross-checked against Sky Sports, Crash.net, and Autosport before loading. Chart data (lap times, qualifying order) is our own Supabase data throughout. Remaining before this ships: a final read, ES/PT translations, and an explicit go-ahead to flip `status: draft` → `published` and set `published_at`.]**
 
 Max Verstappen won a race that took longer to start than most races take to finish. Torrential rain hit Sepang forty minutes before the scheduled start, and when it eased, a power-unit software fault the FIA called "unprecedented" struck several cars on the formation lap and forced a further delay — roughly 100 minutes in total before a fix went out and the field actually got racing. Martin Brundle, commentating, called it "one of the craziest Formula 1 races I have ever seen. That was absolutely wild."
 
@@ -81,7 +103,7 @@ The chart below carries the real shape of the race: eleven drivers whose qualify
 
 Hamilton's line on the chart undersells his afternoon. He qualified second, on the front row next to Verstappen, and Ferrari sent him out on slick tyres for a still-wet, drying track. The gamble backfired immediately — he fell to 18th before the race had properly started — and he spent the rest of the afternoon driving back through the field to finish third, 4.919 seconds off the win. A quali-to-finish chart reads that as "P2 to P3." It was not a P2-to-P3 kind of race for him.
 
-George Russell's line ends early. His Mercedes failed in the second Safety Car period, five laps from the end, in what Crash.net described as echoing Hamilton's own engine failure at the same corner a decade ago. Toto Wolff confirmed an engine issue; Russell's own reaction was "You've got to laugh." Paired with Antonelli's second place, it pushed his championship deficit to a season-high — Crash.net's own math puts it at 84 points with seven races left, though PaddockIntel will confirm that figure against the official standings once they sync.
+George Russell's line ends early. His Mercedes failed in the second Safety Car period, five laps from the end, in what Crash.net described as echoing Hamilton's own engine failure at the same corner a decade ago. Toto Wolff confirmed an engine issue; Russell's own reaction was "You've got to laugh." Paired with Antonelli's second place, it pushed his championship deficit to a season-high 84 points with seven races left.
 
 ## Lap Pace, Front of the Field
 
@@ -91,4 +113,6 @@ What's left is two genuine green-flag stints: roughly laps 13 to 42, and the spr
 
 ## Verdict
 
-[TODO — write once the angle is locked and the Red Bull-Ford engine-investment framing is confirmed worth repeating from the pole-position piece without just restating it. Working thesis: this is the second confirmation in two days of the same mechanism — the FIA's own data said Red Bull-Ford built the grid's best power unit months ago, Saturday's pole was the first on-track proof, and Sunday's win in genuinely chaotic conditions, with the chassis now also sorted, is the second. Needs a sharper close than that paragraph.]
+[Saturday's pole](/verstappen-sepang-pole-red-bull-ford-engine-2026) was the clean version of this argument: dry track, one lap, nothing to react to. Sunday was the version with everything thrown at it — a start delayed by rain and a power-unit software fault bad enough to need an FIA fix mid-grid, two Safety Car periods, a tyre gamble that cost the fastest qualifier not on pole eighteen places in the opening laps, and a title contender's engine failing outright five laps from the end. None of that happened to Red Bull-Ford. Verstappen never needed a strategy gamble, because Saturday's pace simply held, lap after lap, through exactly the kind of conditions built to expose a weakness in a power unit sixteen races into its own existence.
+
+A clean pole is one data point. A win that survives a race actively trying to break everything around it is harder to write off as a one-off. The FIA's own measurements said months ago that Red Bull-Ford had built the best engine on the 2026 grid. Sepang is the first time the result and the data agree on a day when nothing else went right.
