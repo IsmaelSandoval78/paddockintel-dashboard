@@ -120,6 +120,10 @@ def main() -> None:
     parser.add_argument("--skip-quali", action="store_true")
     parser.add_argument("--skip-race", action="store_true")
     parser.add_argument("--skip-sprint", action="store_true")
+    parser.add_argument("--skip-results", action="store_true",
+                         help="still extract/write pit_stops and lap_times, but skip the results "
+                              "table and standings recompute — for when points/status haven't "
+                              "synced yet right after a race (classification pending review)")
     args = parser.parse_args()
 
     if not args.auto and (args.year is None or args.round_num is None):
@@ -295,40 +299,43 @@ def main() -> None:
                 pass
 
             result_rows: list[dict] = []
-            for pos_order, (_, row) in enumerate(race_session.results.iterrows(), 1):
-                driver = resolve_driver(code=row.get("Abbreviation"), number=row.get("DriverNumber"))
-                constructor = resolve_constructor(str(row.get("TeamName", "")))
-                if not driver or not constructor:
-                    continue
+            if args.skip_results:
+                print("  (--skip-results: classification/points not synced yet, skipping results table)")
+            else:
+                for pos_order, (_, row) in enumerate(race_session.results.iterrows(), 1):
+                    driver = resolve_driver(code=row.get("Abbreviation"), number=row.get("DriverNumber"))
+                    constructor = resolve_constructor(str(row.get("TeamName", "")))
+                    if not driver or not constructor:
+                        continue
 
-                status_text = str(row.get("Status", "Finished"))
-                pos_raw = safe_int(row.get("Position"), 0)
-                position = pos_raw if pos_raw > 0 else None
-                position_text = str(position) if position else "R"
-                status_id = status_map.get(status_text, status_map.get("Finished", 1))
+                    status_text = str(row.get("Status", "Finished"))
+                    pos_raw = safe_int(row.get("Position"), 0)
+                    position = pos_raw if pos_raw > 0 else None
+                    position_text = str(position) if position else "R"
+                    status_id = status_map.get(status_text, status_map.get("Finished", 1))
 
-                fl_time = td_to_str(best_lap_by_code.get(row.get("Abbreviation")))
-                fl_speed_f = safe_float(row.get("FastestLapSpeed"))
-                is_fastest = (row.get("Abbreviation") == fastest_lap_code)
+                    fl_time = td_to_str(best_lap_by_code.get(row.get("Abbreviation")))
+                    fl_speed_f = safe_float(row.get("FastestLapSpeed"))
+                    is_fastest = (row.get("Abbreviation") == fastest_lap_code)
 
-                result_rows.append({
-                    "id": next_result_id + len(result_rows),
-                    "race_id": race_id,
-                    "driver_id": driver["id"],
-                    "constructor_id": constructor["id"],
-                    "grid": safe_int(row.get("GridPosition")),
-                    "position": position,
-                    "position_text": position_text,
-                    "position_order": pos_order,
-                    "points": safe_float(row.get("Points")) or 0.0,
-                    "laps": safe_int(row.get("NumberOfLaps")),
-                    "time": td_to_str(row.get("Time")),
-                    "fastest_lap_time": fl_time,
-                    "fastest_lap_speed": str(round(fl_speed_f, 3)) if fl_speed_f else None,
-                    "rank": 1 if is_fastest else None,
-                    "status_id": status_id,
-                })
-                print(f"  P{str(position or 'R'):>3}  {row.get('Abbreviation')}  {status_text}  {safe_float(row.get('Points')) or 0:.0f}pts")
+                    result_rows.append({
+                        "id": next_result_id + len(result_rows),
+                        "race_id": race_id,
+                        "driver_id": driver["id"],
+                        "constructor_id": constructor["id"],
+                        "grid": safe_int(row.get("GridPosition")),
+                        "position": position,
+                        "position_text": position_text,
+                        "position_order": pos_order,
+                        "points": safe_float(row.get("Points")) or 0.0,
+                        "laps": safe_int(row.get("NumberOfLaps")),
+                        "time": td_to_str(row.get("Time")),
+                        "fastest_lap_time": fl_time,
+                        "fastest_lap_speed": str(round(fl_speed_f, 3)) if fl_speed_f else None,
+                        "rank": 1 if is_fastest else None,
+                        "status_id": status_id,
+                    })
+                    print(f"  P{str(position or 'R'):>3}  {row.get('Abbreviation')}  {status_text}  {safe_float(row.get('Points')) or 0:.0f}pts")
 
             # ── Pit stops ────────────────────────────────────────────
             # FastF1 semantics: PitInTime is stamped on the in-lap (lap N) and
@@ -463,83 +470,86 @@ def main() -> None:
 
     # ── STANDINGS ────────────────────────────────────────────────────
     print("\n── Standings ───────────────────────────────────────")
-    try:
-        season_races = (
-            sb.table("races")
-            .select("id")
-            .eq("year", year)
-            .lte("round", round_num)
-            .execute()
-        )
-        season_race_ids = [r["id"] for r in season_races.data]
+    if args.skip_results:
+        print("  (--skip-results: this race has no results yet — standings left untouched)")
+    else:
+        try:
+            season_races = (
+                sb.table("races")
+                .select("id")
+                .eq("year", year)
+                .lte("round", round_num)
+                .execute()
+            )
+            season_race_ids = [r["id"] for r in season_races.data]
 
-        all_results = (
-            sb.table("results")
-            .select("driver_id, constructor_id, points, position")
-            .in_("race_id", season_race_ids)
-            .execute()
-        )
+            all_results = (
+                sb.table("results")
+                .select("driver_id, constructor_id, points, position")
+                .in_("race_id", season_race_ids)
+                .execute()
+            )
 
-        # Sprint results — included in championship standings
-        all_sprint = (
-            sb.table("sprint_results")
-            .select("driver_id, constructor_id, points, position")
-            .in_("race_id", season_race_ids)
-            .execute()
-        )
+            # Sprint results — included in championship standings
+            all_sprint = (
+                sb.table("sprint_results")
+                .select("driver_id, constructor_id, points, position")
+                .in_("race_id", season_race_ids)
+                .execute()
+            )
 
-        # Aggregate
-        driver_pts: dict[int, float] = defaultdict(float)
-        driver_wins: dict[int, int] = defaultdict(int)
-        driver_constr: dict[int, int] = {}
-        constr_pts: dict[int, float] = defaultdict(float)
-        constr_wins: dict[int, int] = defaultdict(int)
+            # Aggregate
+            driver_pts: dict[int, float] = defaultdict(float)
+            driver_wins: dict[int, int] = defaultdict(int)
+            driver_constr: dict[int, int] = {}
+            constr_pts: dict[int, float] = defaultdict(float)
+            constr_wins: dict[int, int] = defaultdict(int)
 
-        for r in all_results.data:
-            did, cid = r["driver_id"], r["constructor_id"]
-            pts = r["points"] or 0
-            driver_pts[did] += pts
-            constr_pts[cid] += pts
-            if r["position"] == 1:
-                driver_wins[did] += 1
-                constr_wins[cid] += 1
-            driver_constr[did] = cid
+            for r in all_results.data:
+                did, cid = r["driver_id"], r["constructor_id"]
+                pts = r["points"] or 0
+                driver_pts[did] += pts
+                constr_pts[cid] += pts
+                if r["position"] == 1:
+                    driver_wins[did] += 1
+                    constr_wins[cid] += 1
+                driver_constr[did] = cid
 
-        # Add sprint points (sprint wins don't count toward wins tally)
-        for r in (all_sprint.data or []):
-            did, cid = r["driver_id"], r["constructor_id"]
-            pts = r["points"] or 0
-            driver_pts[did] += pts
-            constr_pts[cid] += pts
+            # Add sprint points (sprint wins don't count toward wins tally)
+            for r in (all_sprint.data or []):
+                did, cid = r["driver_id"], r["constructor_id"]
+                pts = r["points"] or 0
+                driver_pts[did] += pts
+                constr_pts[cid] += pts
 
-        sorted_drivers = sorted(driver_pts.items(), key=lambda x: x[1], reverse=True)
-        sorted_constrs = sorted(constr_pts.items(), key=lambda x: x[1], reverse=True)
+            sorted_drivers = sorted(driver_pts.items(), key=lambda x: x[1], reverse=True)
+            sorted_constrs = sorted(constr_pts.items(), key=lambda x: x[1], reverse=True)
 
-        driver_standing_rows = [
-            {"id": next_dstand_id + i, "race_id": race_id, "driver_id": did, "points": pts, "position": i + 1, "wins": driver_wins[did]}
-            for i, (did, pts) in enumerate(sorted_drivers)
-        ]
-        constructor_standing_rows = [
-            {"id": next_cstand_id + i, "race_id": race_id, "constructor_id": cid, "points": pts, "position": i + 1, "wins": constr_wins[cid]}
-            for i, (cid, pts) in enumerate(sorted_constrs)
-        ]
+            driver_standing_rows = [
+                {"id": next_dstand_id + i, "race_id": race_id, "driver_id": did, "points": pts, "position": i + 1, "wins": driver_wins[did]}
+                for i, (did, pts) in enumerate(sorted_drivers)
+            ]
+            constructor_standing_rows = [
+                {"id": next_cstand_id + i, "race_id": race_id, "constructor_id": cid, "points": pts, "position": i + 1, "wins": constr_wins[cid]}
+                for i, (cid, pts) in enumerate(sorted_constrs)
+            ]
 
-        if not dry_run:
-            sb.table("driver_standings").delete().eq("race_id", race_id).execute()
-            sb.table("driver_standings").insert(driver_standing_rows).execute()
-            sb.table("constructor_standings").delete().eq("race_id", race_id).execute()
-            sb.table("constructor_standings").insert(constructor_standing_rows).execute()
-            print(f"  ✓ {len(driver_standing_rows)} driver standing rows")
-            print(f"  ✓ {len(constructor_standing_rows)} constructor standing rows")
+            if not dry_run:
+                sb.table("driver_standings").delete().eq("race_id", race_id).execute()
+                sb.table("driver_standings").insert(driver_standing_rows).execute()
+                sb.table("constructor_standings").delete().eq("race_id", race_id).execute()
+                sb.table("constructor_standings").insert(constructor_standing_rows).execute()
+                print(f"  ✓ {len(driver_standing_rows)} driver standing rows")
+                print(f"  ✓ {len(constructor_standing_rows)} constructor standing rows")
 
-        print("\n  Top 5 drivers:")
-        for i, (did, pts) in enumerate(sorted_drivers[:5], 1):
-            drv = next((d for d in drivers_res.data if d["id"] == did), None)
-            name = drv["surname"] if drv else str(did)
-            print(f"    P{i}  {name:<20} {pts:.0f} pts  ({driver_wins[did]} W)")
+            print("\n  Top 5 drivers:")
+            for i, (did, pts) in enumerate(sorted_drivers[:5], 1):
+                drv = next((d for d in drivers_res.data if d["id"] == did), None)
+                name = drv["surname"] if drv else str(did)
+                print(f"    P{i}  {name:<20} {pts:.0f} pts  ({driver_wins[did]} W)")
 
-    except Exception as exc:
-        print(f"  ERROR: {exc}")
+        except Exception as exc:
+            print(f"  ERROR: {exc}")
 
     # ── Done ─────────────────────────────────────────────────────────
     if not dry_run:
