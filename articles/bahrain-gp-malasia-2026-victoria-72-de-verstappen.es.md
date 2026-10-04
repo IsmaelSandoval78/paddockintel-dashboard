@@ -7,7 +7,7 @@ status: published
 published_at: "2026-10-04T16:00:00+00:00"
 paywalled: false
 translation_group_id: "a1ed0cba-4e97-4c50-a161-0034ea7f0172"
-tags: ["race-analysis", "red-bull"]
+tags: ["race-analysis", "red-bull", "featured"]
 
 stats:
   - value: "2.307s"
