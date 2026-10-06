@@ -7,6 +7,7 @@ import { routing } from '@/lib/i18n/routing';
 import { ConstructorScorecardButton } from '@/components/scorecards/ConstructorScorecard';
 import { flagGradient } from '@/lib/flagGradient';
 import FollowButton from '@/components/ui/FollowButton';
+import { HUB_URL } from '@/lib/site-url';
 
 type PageParams = Promise<{ locale: string; slug: string }>;
 
@@ -39,9 +40,7 @@ function cleanLapTime(t: string | null | undefined): string | null {
 }
 
 function localeUrl(locale: string, path: string): string {
-  return locale === 'en'
-    ? `https://paddockintel.com${path}`
-    : `https://paddockintel.com/${locale}${path}`;
+  return locale === 'en' ? `${HUB_URL}${path}` : `${HUB_URL}/${locale}${path}`;
 }
 
 // ─── Rivalry ────────────────────────────────────────────────────────────────

@@ -12,6 +12,7 @@ import {
   hookDeliverSpecForItem,
   type HookDeliverFallbacks,
 } from '@/lib/hookDeliver';
+import { SITE_URL } from '@/lib/site-url';
 
 export const revalidate = 3600;
 
@@ -42,7 +43,7 @@ type FeedItem = {
 
 type PageParams = Promise<{ locale: string; slug: string }>;
 
-const MAGAZINE_BASE = 'https://paddockintel.com';
+const MAGAZINE_BASE = SITE_URL;
 
 function localeUrl(locale: string, path: string): string {
   return locale === 'en' ? `${MAGAZINE_BASE}${path}` : `${MAGAZINE_BASE}/${locale}${path}`;
@@ -133,12 +134,12 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
     datePublished: item.published_at,
     url: pageUrl,
     isBasedOn: item.source_url,
-    author: { '@type': 'Person', name: 'Ismael Sandoval', url: 'https://paddockintel.com/about' },
+    author: { '@type': 'Person', name: 'Ismael Sandoval', url: `${MAGAZINE_BASE}/about` },
     publisher: {
       '@type': 'Organization',
       name: 'PaddockIntel',
-      url: 'https://paddockintel.com',
-      logo: { '@type': 'ImageObject', url: 'https://paddockintel.com/opengraph-image' },
+      url: MAGAZINE_BASE,
+      logo: { '@type': 'ImageObject', url: `${MAGAZINE_BASE}/opengraph-image` },
     },
   };
 

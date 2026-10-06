@@ -3,6 +3,7 @@ import { Resend } from 'resend';
 import { render } from '@react-email/render';
 import { createClient } from '@/lib/supabase/server';
 import WelcomeEmail, { type WelcomeEmailLocale } from '@/emails/WelcomeEmail';
+import { SITE_URL } from '@/lib/site-url';
 
 const VALID_LOCALES = ['en', 'es', 'pt'] as const;
 
@@ -15,7 +16,7 @@ function localizedPath(locale: WelcomeEmailLocale, path: string): string {
 async function sendWelcomeEmail(email: string, locale: WelcomeEmailLocale): Promise<void> {
   const resend = new Resend(process.env.RESEND_API_KEY);
   const FROM = process.env.RESEND_FROM_EMAIL ?? 'info@paddockintel.com';
-  const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://paddockintel.com';
+  const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? SITE_URL;
 
   const html = await render(
     WelcomeEmail({

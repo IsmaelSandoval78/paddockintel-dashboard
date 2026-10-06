@@ -15,6 +15,7 @@ import { extractTOC, markdownToHtml, estimateReadTime, splitMarkdownAtSection } 
 import { getArticleTagSlugs, getRelatedArticles, getArticleVoices } from '@/lib/blog/tags';
 import ArticleVoices from '@/components/blog/ArticleVoices';
 import { getCurrentAuthUser } from '@/lib/auth/getCurrentAuthUser';
+import { SITE_URL } from '@/lib/site-url';
 
 // Free sections before the registration wall cuts in — see
 // docs on ArticlePaywallGate. Matches EDITORIAL.md's five-section
@@ -59,8 +60,8 @@ async function getHreflangUrls(translationGroupId: string) {
 
 function localeUrl(locale: string, slug: string): string {
   return locale === 'en'
-    ? `https://paddockintel.com/${slug}/`
-    : `https://paddockintel.com/${locale}/${slug}/`;
+    ? `${SITE_URL}/${slug}/`
+    : `${SITE_URL}/${locale}/${slug}/`;
 }
 
 export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
@@ -81,7 +82,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
   }
 
   const ogImage =
-    (article.cover_image_url as string | null) ?? `https://paddockintel.com/api/og/article/${locale}/${slug}`;
+    (article.cover_image_url as string | null) ?? `${SITE_URL}/api/og/article/${locale}/${slug}`;
 
   const canonical = localeUrl(locale, slug);
 
@@ -173,13 +174,13 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
     '@type': 'NewsArticle',
     headline: title,
     datePublished: publishedAt,
-    image: (article.cover_image_url as string | null) ?? `https://paddockintel.com/api/og/article/${locale}/${slug}`,
-    author: { '@type': 'Person', name: 'Ismael Sandoval', url: 'https://paddockintel.com/about' },
+    image: (article.cover_image_url as string | null) ?? `${SITE_URL}/api/og/article/${locale}/${slug}`,
+    author: { '@type': 'Person', name: 'Ismael Sandoval', url: `${SITE_URL}/about` },
     publisher: {
       '@type': 'Organization',
       name: 'PaddockIntel',
-      url: 'https://paddockintel.com',
-      logo: { '@type': 'ImageObject', url: 'https://paddockintel.com/opengraph-image' },
+      url: SITE_URL,
+      logo: { '@type': 'ImageObject', url: `${SITE_URL}/opengraph-image` },
     },
     url: pageUrl,
     ...(article.meta_description ? { description: article.meta_description as string } : {}),
@@ -205,7 +206,7 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: locale === 'en' ? 'https://paddockintel.com/' : `https://paddockintel.com/${locale}/`,
+        item: locale === 'en' ? `${SITE_URL}/` : `${SITE_URL}/${locale}/`,
       },
       { '@type': 'ListItem', position: 2, name: title },
     ],

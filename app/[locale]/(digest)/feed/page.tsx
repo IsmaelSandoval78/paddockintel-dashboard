@@ -7,6 +7,7 @@ import { getBeagleEntityCounts, mergeEntityCounts } from '@/lib/beagleCounts';
 import { Link } from '@/lib/i18n/navigation';
 import HookDeliverBlock from '@/components/digest/HookDeliverBlock';
 import NewsletterCard from '@/components/blog/NewsletterCard';
+import { SITE_URL } from '@/lib/site-url';
 import {
   loadHookDeliverMap,
   readFeaturedStats,
@@ -56,8 +57,8 @@ function localize(item: FeedItem, locale: string) {
 }
 
 const FEED_URLS = {
-  en: 'https://paddockintel.com/feed/',
-  es: 'https://paddockintel.com/es/feed/',
+  en: `${SITE_URL}/feed/`,
+  es: `${SITE_URL}/es/feed/`,
 };
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -163,12 +164,12 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
           url: itemUrl,
           ...(item.slug ? {} : { mainEntityOfPage: feedUrl }),
           isBasedOn: item.source_url,
-          author: { '@type': 'Person', name: 'Ismael Sandoval', url: 'https://paddockintel.com/about' },
+          author: { '@type': 'Person', name: 'Ismael Sandoval', url: `${SITE_URL}/about` },
           publisher: {
             '@type': 'Organization',
             name: 'PaddockIntel',
-            url: 'https://paddockintel.com',
-            logo: { '@type': 'ImageObject', url: 'https://paddockintel.com/opengraph-image' },
+            url: SITE_URL,
+            logo: { '@type': 'ImageObject', url: `${SITE_URL}/opengraph-image` },
           },
         },
       };
@@ -183,7 +184,7 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: locale === 'en' ? 'https://paddockintel.com/' : `https://paddockintel.com/${locale}/`,
+        item: locale === 'en' ? `${SITE_URL}/` : `${SITE_URL}/${locale}/`,
       },
       { '@type': 'ListItem', position: 2, name: t('title') },
     ],

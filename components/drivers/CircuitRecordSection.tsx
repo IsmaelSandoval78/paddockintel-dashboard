@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
+import { SITE_URL } from '@/lib/site-url';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -86,7 +87,7 @@ function flagGradient(country: string): string {
 const CARD_BG   = '#EDEAE0';
 const DIVIDER   = '#C8C5BB';
 const RED       = '#E61919';
-const LOGO_URL  = 'https://paddockintel.com/content/images/2026/02/paddockintel-logo-light-xl.png';
+const LOGO_URL  = `${SITE_URL}/content/images/2026/02/paddockintel-logo-light-xl.png`;
 
 function CircuitCard({
   record,

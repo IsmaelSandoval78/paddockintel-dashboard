@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/lib/i18n/navigation';
+import { SITE_URL } from '@/lib/site-url';
 import { getGlossaryTerms } from './data';
 
 export const revalidate = 3600;
@@ -19,8 +20,8 @@ type PageParams = Promise<{ locale: string }>;
 
 function termUrl(locale: string, slug: string): string {
   return locale === 'en'
-    ? `https://paddockintel.com/glossary/${slug}/`
-    : `https://paddockintel.com/${locale}/glossary/${slug}/`;
+    ? `${SITE_URL}/glossary/${slug}/`
+    : `${SITE_URL}/${locale}/glossary/${slug}/`;
 }
 
 export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {

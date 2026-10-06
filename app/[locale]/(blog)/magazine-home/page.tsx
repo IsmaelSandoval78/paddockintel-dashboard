@@ -13,6 +13,7 @@ import RaceSnapshotPanel from '@/components/blog/RaceSnapshotPanel';
 import AttentionThisWeekPanel from '@/components/blog/AttentionThisWeekPanel';
 import LearningPanel from '@/components/blog/LearningPanel';
 import FeedTeaserPanel from '@/components/blog/FeedTeaserPanel';
+import { SITE_URL } from '@/lib/site-url';
 import {
   getFeaturedAndRecent,
   getDataDeskArticles,
@@ -57,13 +58,17 @@ type SearchParams = Promise<{ page?: string; tag?: string }>;
 const PAGE_SIZE = 20;
 
 const HOME_URLS = {
-  en: 'https://paddockintel.com/',
-  es: 'https://paddockintel.com/es/',
+  en: `${SITE_URL}/`,
+  es: `${SITE_URL}/es/`,
+  pt: `${SITE_URL}/pt/`,
 };
 
 export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
   const { locale } = await params;
-  const canonical = locale === 'es' ? HOME_URLS.es : HOME_URLS.en;
+  // Was `locale === 'es' ? es : en` -- any other locale (pt included) fell
+  // through to the EN URL, so the pt homepage declared the EN homepage as
+  // its own canonical instead of itself.
+  const canonical = HOME_URLS[locale as keyof typeof HOME_URLS] ?? HOME_URLS.en;
   return {
     title: 'PaddockIntel — Follow the Facts, Not the Hype',
     description:

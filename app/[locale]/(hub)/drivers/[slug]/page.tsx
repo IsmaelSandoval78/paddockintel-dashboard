@@ -6,6 +6,7 @@ import { Link } from '@/lib/i18n/navigation';
 import { routing } from '@/lib/i18n/routing';
 import { type CircuitRecord } from '@/components/drivers/CircuitRecordSection';
 import DriverDetailExperience from '@/components/drivers/kinetic/DriverDetailExperience';
+import { HUB_URL } from '@/lib/site-url';
 
 type PageParams = Promise<{ locale: string; slug: string }>;
 
@@ -17,9 +18,7 @@ function cleanLapTime(t: string | null | undefined): string | null {
 }
 
 function localeUrl(locale: string, path: string): string {
-  return locale === 'en'
-    ? `https://paddockintel.com${path}`
-    : `https://paddockintel.com/${locale}${path}`;
+  return locale === 'en' ? `${HUB_URL}${path}` : `${HUB_URL}/${locale}${path}`;
 }
 
 // ─── Static generation ────────────────────────────────────────────────────────

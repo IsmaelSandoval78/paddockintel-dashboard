@@ -53,32 +53,43 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .eq('digest_issues.series', 'newsletter')
       .not('slug', 'is', null);
 
-    // EN/ES only, matching the site-wide PT scope-down — see the shell-page
-    // fix above this one. glossary_terms has no 'status' column value other
-    // than 'published' in practice but the filter is kept explicit anyway.
+    // All three locales -- glossary_terms carries real published pt rows
+    // (confirmed 2026-10-06), they were just never queried here. glossary_terms
+    // has no 'status' column value other than 'published' in practice but the
+    // filter is kept explicit anyway.
     const { data: glossaryTerms } = await supabase
       .from('glossary_terms')
       .select('slug, locale, depth, published_at')
-      .eq('status', 'published')
-      .in('locale', ['en', 'es']);
+      .eq('status', 'published');
 
+    // Feed is deliberately EN/ES only (no pt edition exists at all — see
+    // EDITORIAL.md's "The Feed" section), so its two root/item routes below
+    // stay two-locale on purpose. Every other section here has a live pt
+    // page (confirmed via direct fetch, 2026-10-06) and must list all three.
     const staticRoutes: MetadataRoute.Sitemap = [
       { url: `${MAGAZINE_BASE}/`,             lastModified: new Date(), changeFrequency: 'daily',   priority: 1.0 },
       { url: `${MAGAZINE_BASE}/es/`,          lastModified: new Date(), changeFrequency: 'daily',   priority: 0.9 },
+      { url: `${MAGAZINE_BASE}/pt/`,          lastModified: new Date(), changeFrequency: 'daily',   priority: 0.9 },
       { url: `${MAGAZINE_BASE}/glossary/`,    lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.6 },
       { url: `${MAGAZINE_BASE}/es/glossary/`, lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.6 },
+      { url: `${MAGAZINE_BASE}/pt/glossary/`, lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.6 },
       { url: `${MAGAZINE_BASE}/weekly/`,      lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.8 },
       { url: `${MAGAZINE_BASE}/es/weekly/`,   lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.8 },
+      { url: `${MAGAZINE_BASE}/pt/weekly/`,   lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.8 },
       { url: `${MAGAZINE_BASE}/recaps/`,      lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.6 },
       { url: `${MAGAZINE_BASE}/es/recaps/`,   lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.6 },
+      { url: `${MAGAZINE_BASE}/pt/recaps/`,   lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.6 },
       { url: `${MAGAZINE_BASE}/feed/`,        lastModified: new Date(), changeFrequency: 'daily',   priority: 0.7 },
       { url: `${MAGAZINE_BASE}/es/feed/`,     lastModified: new Date(), changeFrequency: 'daily',   priority: 0.7 },
       { url: `${MAGAZINE_BASE}/whos-who/`,    lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.5 },
       { url: `${MAGAZINE_BASE}/es/whos-who/`, lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.5 },
+      { url: `${MAGAZINE_BASE}/pt/whos-who/`, lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.5 },
       { url: `${MAGAZINE_BASE}/about/`,       lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
       { url: `${MAGAZINE_BASE}/es/about/`,    lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
+      { url: `${MAGAZINE_BASE}/pt/about/`,    lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
       { url: `${MAGAZINE_BASE}/privacy/`,     lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.3 },
       { url: `${MAGAZINE_BASE}/es/privacy/`,  lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.3 },
+      { url: `${MAGAZINE_BASE}/pt/privacy/`,  lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.3 },
     ];
 
     const articleRoutes: MetadataRoute.Sitemap = (articles ?? []).map((a) => ({
@@ -88,19 +99,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.85,
     }));
 
-    const issueRoutes: MetadataRoute.Sitemap = (issues ?? []).map((i) => ({
-      url: `${MAGAZINE_BASE}/weekly/${i.slug as string}/`,
-      lastModified: i.published_at ? new Date(i.published_at as string) : new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.7,
-    }));
+    // Each issue/recap row renders on all three locales (unlike feed items,
+    // these aren't paired rows) -- confirmed the en/es/pt page all live and
+    // return 200 for the same slug, but only the bare (en) URL was ever
+    // listed here, leaving the es/pt page of every single issue unlisted.
+    const issueRoutes: MetadataRoute.Sitemap = (issues ?? []).flatMap((i) =>
+      ['en', 'es', 'pt'].map((locale) => ({
+        url: localeUrl(MAGAZINE_BASE, locale, `/weekly/${i.slug as string}/`),
+        lastModified: i.published_at ? new Date(i.published_at as string) : new Date(),
+        changeFrequency: 'monthly' as const,
+        priority: locale === 'en' ? 0.7 : 0.65,
+      }))
+    );
 
-    const recapRoutes: MetadataRoute.Sitemap = (recaps ?? []).map((r) => ({
-      url: `${MAGAZINE_BASE}/recaps/${r.slug as string}/`,
-      lastModified: r.published_at ? new Date(r.published_at as string) : new Date(),
-      changeFrequency: 'yearly' as const,
-      priority: 0.5,
-    }));
+    const recapRoutes: MetadataRoute.Sitemap = (recaps ?? []).flatMap((r) =>
+      ['en', 'es', 'pt'].map((locale) => ({
+        url: localeUrl(MAGAZINE_BASE, locale, `/recaps/${r.slug as string}/`),
+        lastModified: r.published_at ? new Date(r.published_at as string) : new Date(),
+        changeFrequency: 'yearly' as const,
+        priority: locale === 'en' ? 0.5 : 0.45,
+      }))
+    );
 
     // EN + ES for each item, same slug both locales -- one row per story,
     // not a locale-paired row like articles (see 20260915180000).

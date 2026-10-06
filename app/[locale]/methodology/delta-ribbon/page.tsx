@@ -1,15 +1,14 @@
 import type { Metadata } from 'next';
 import { Link } from '@/lib/i18n/navigation';
 import { routing } from '@/lib/i18n/routing';
+import { SITE_URL } from '@/lib/site-url';
 
 type PageParams = Promise<{ locale: string }>;
 
 const SLUG = 'methodology/delta-ribbon';
 
 function localeUrl(locale: string, slug: string): string {
-  return locale === 'en'
-    ? `https://paddockintel.com/${slug}/`
-    : `https://paddockintel.com/${locale}/${slug}/`;
+  return locale === 'en' ? `${SITE_URL}/${slug}/` : `${SITE_URL}/${locale}/${slug}/`;
 }
 
 export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {

@@ -8,6 +8,7 @@ import {
   Text,
   Link,
 } from '@react-email/components';
+import { SITE_URL } from '@/lib/site-url';
 
 export type DigestItem = {
   id: string;
@@ -104,7 +105,7 @@ export default function DigestIssueEmail({
                 Read on web →
               </Link>
               <span style={{ color: ghost }}>{' · '}</span>
-              <Link href="https://paddockintel.com/about" style={{ color: ghost, textDecoration: 'none' }}>
+              <Link href={`${SITE_URL}/about`} style={{ color: ghost, textDecoration: 'none' }}>
                 By Ismael Sandoval
               </Link>
             </Text>
