@@ -902,6 +902,12 @@
     "sources": "Fontes",
     "backToGlossary": "Glossário"
   },
+  "tagArchive": {
+    "kicker": "Tag",
+    "title": "{tag} — PaddockIntel",
+    "metaDescription": "Todos os artigos do PaddockIntel marcados como {tag} — economia, estratégia e dados da F1, verificados em fontes reais.",
+    "backToArchive": "Todos os Artigos"
+  },
   "privacyPage": {
     "metaTitle": "Política de Privacidade — PaddockIntel",
     "metaDescription": "Como o PaddockIntel coleta e usa seu endereço de e-mail.",

@@ -62,6 +62,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .select('slug, locale, depth, published_at')
       .eq('status', 'published');
 
+    // Canonical tag slugs only -- app/[locale]/(blog)/tag/[slug]/page.tsx
+    // validates against the articleTags translation namespace, not this
+    // table directly, but every tag here has a translation (confirmed
+    // 2026-10-06), so the row set and the page's own validation agree.
+    const { data: tags } = await supabase.from('tags').select('slug');
+
     // Feed is deliberately EN/ES only (no pt edition exists at all — see
     // EDITORIAL.md's "The Feed" section), so its two root/item routes below
     // stay two-locale on purpose. Every other section here has a live pt
@@ -153,7 +159,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     }));
 
-    return [...staticRoutes, ...articleRoutes, ...issueRoutes, ...recapRoutes, ...feedItemRoutes, ...glossaryRoutes];
+    // Tags aren't locale-paired rows -- one tag, three locale variants of the
+    // same archive page (en/es/pt all validated live, 2026-10-06).
+    const tagRoutes: MetadataRoute.Sitemap = (tags ?? []).flatMap((tg) =>
+      ['en', 'es', 'pt'].map((locale) => ({
+        url: localeUrl(MAGAZINE_BASE, locale, `/tag/${tg.slug as string}/`),
+        lastModified: new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: locale === 'en' ? 0.5 : 0.45,
+      }))
+    );
+
+    return [
+      ...staticRoutes,
+      ...articleRoutes,
+      ...issueRoutes,
+      ...recapRoutes,
+      ...feedItemRoutes,
+      ...glossaryRoutes,
+      ...tagRoutes,
+    ];
   }
 
   const recordSlugs = [

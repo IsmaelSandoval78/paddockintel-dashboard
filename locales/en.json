@@ -906,6 +906,12 @@
     "sources": "Sources",
     "backToGlossary": "Glossary"
   },
+  "tagArchive": {
+    "kicker": "Tag",
+    "title": "{tag} — PaddockIntel",
+    "metaDescription": "Every PaddockIntel article tagged {tag} — F1 economics, strategy, and data, verified against real sources.",
+    "backToArchive": "All Articles"
+  },
   "privacyPage": {
     "metaTitle": "Privacy Policy — PaddockIntel",
     "metaDescription": "How PaddockIntel collects and uses your email address.",
