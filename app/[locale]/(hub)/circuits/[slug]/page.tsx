@@ -11,6 +11,7 @@ import CircuitOverview from '@/components/circuits/CircuitOverview';
 import type { DriverSelectorRow, CircuitCorner } from '@/lib/types';
 import type { RibbonFrame } from '@/components/circuits/kinetic/deltaRibbon/geometry';
 import type { DeltaRibbonEventRow, DeltaRibbonDriver } from '@/components/circuits/kinetic/DeltaRibbonSection';
+import { SITE_URL, HUB_URL } from '@/lib/site-url';
 
 export const revalidate = 3600;
 
@@ -32,9 +33,7 @@ function formatCoord(lat: number, lng: number): string {
 }
 
 function localeUrl(locale: string, path: string): string {
-  return locale === 'en'
-    ? `https://paddockintel.com${path}`
-    : `https://paddockintel.com/${locale}${path}`;
+  return locale === 'en' ? `${HUB_URL}${path}` : `${HUB_URL}/${locale}${path}`;
 }
 
 // ─── Static generation ────────────────────────────────────────────────────────
@@ -821,7 +820,7 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
     ? {
         title: lastArticleRaw.title as string,
         metaDescription: lastArticleRaw.meta_description as string,
-        href: `https://paddockintel.com${locale === 'en' ? '' : `/${locale}`}/${lastArticleRaw.slug as string}`,
+        href: `${SITE_URL}${locale === 'en' ? '' : `/${locale}`}/${lastArticleRaw.slug as string}`,
       }
     : null;
 

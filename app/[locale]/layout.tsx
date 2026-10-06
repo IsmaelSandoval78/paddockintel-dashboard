@@ -13,6 +13,7 @@ import { AuthProvider } from '@/lib/auth/AuthContext';
 import Navbar from '@/components/nav/Navbar';
 import Footer from '@/components/nav/Footer';
 import PwaRegister from '@/components/PwaRegister';
+import { SITE_URL } from '@/lib/site-url';
 import '../globals.css';
 
 const display = Archivo_Black({
@@ -57,7 +58,7 @@ export const metadata: Metadata = {
   description: 'F1 economic and performance intelligence hub',
   alternates: {
     types: {
-      'application/rss+xml': 'https://paddockintel.com/feed.xml',
+      'application/rss+xml': `${SITE_URL}/feed.xml`,
     },
   },
 };

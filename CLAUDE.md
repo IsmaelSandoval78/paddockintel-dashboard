@@ -150,6 +150,39 @@ All data lives in Supabase. Never use mock data — always query real tables.
 - Translation keys use dot notation: `hub.drivers.title`
 - Numbers and dates via `useFormatter` from next-intl
 - Locale switcher: text only, no dropdown library
+- When a content type supports all three locales (most of them do), build its canonical/hreflang
+  URL as a locale-keyed object (`{ en, es, pt }`) or a loop over `routing.locales` — never a
+  ternary that only checks one non-default locale and falls through to `en` for everything else.
+  That fallthrough is exactly how the magazine homepage and Who's Who page ended up declaring the
+  `pt` page's canonical as the `en` page's URL (fixed 2026-10-06).
+- Feed (`digest_items`) is the one content type that's genuinely EN/ES-only, no `pt` edition
+  exists — see EDITORIAL.md's "The Feed" section. That's a deliberate exception, not a template
+  to copy for other content types.
+
+---
+
+## SEO & Indexing Rules
+
+Found via a real Google Search Console audit (2026-10-06): 853 unindexed pages, the majority
+traced to exactly the two bugs below, which had spread to ~20 files by copy-paste.
+
+- **Always build canonical/hreflang/JSON-LD URLs from `SITE_URL` (magazine) or `HUB_URL` (hub
+  dashboard) in `lib/site-url.ts` — never hardcode `https://paddockintel.com` or any other literal
+  domain string.** The bare apex 308s to `www` at the platform level (see `middleware.ts`); a page
+  that canonicalizes to the apex is handing Google a URL that immediately redirects elsewhere,
+  which Search Console surfaces as "Page with redirect" and quietly suppresses from the index.
+  Same failure mode, different pair of hosts, for any Hub entity page (circuits/drivers/
+  constructors/season) that canonicalizes to the magazine domain instead of `hub.paddockintel.com`.
+- **Every page variant needs a distinct `<title>`.** Depth/format variants of the same underlying
+  entity (e.g. the glossary's `eli5`/`technical`/`fia-regulation` depths for one term) must carry a
+  depth-specific suffix in the title, or Google folds them together as duplicates and drops all
+  but one from the index — distinct canonicals alone don't prevent this if the `<title>` is
+  identical.
+- **`app/sitemap.ts` must emit one URL per locale the page actually supports**, not just the
+  locale(s) the original author happened to add when the route was built. Before adding a new
+  content type's routes there, confirm live (`curl -o /dev/null -w '%{http_code}'`) which locale
+  variants actually return 200, and match that — don't assume EN/ES is the limit without checking
+  for `pt`.
 
 ---
 

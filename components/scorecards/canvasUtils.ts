@@ -1,3 +1,5 @@
+import { SITE_URL } from '@/lib/site-url';
+
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 export const CARD_SIZES = {
@@ -56,8 +58,7 @@ export async function loadLogoImage(): Promise<HTMLImageElement | null> {
     img.crossOrigin = 'anonymous';
     img.onload = () => resolve(img);
     img.onerror = () => resolve(null);
-    img.src =
-      'https://paddockintel.com/content/images/2026/02/paddockintel-logo-light-xl.png';
+    img.src = `${SITE_URL}/content/images/2026/02/paddockintel-logo-light-xl.png`;
   });
 }
 

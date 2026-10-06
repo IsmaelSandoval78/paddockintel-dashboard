@@ -1,16 +1,18 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
+import { SITE_URL } from '@/lib/site-url';
 
 const WHOS_WHO_URLS = {
-  en: 'https://paddockintel.com/whos-who/',
-  es: 'https://paddockintel.com/es/whos-who/',
+  en: `${SITE_URL}/whos-who/`,
+  es: `${SITE_URL}/es/whos-who/`,
+  pt: `${SITE_URL}/pt/whos-who/`,
 };
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations('whosWho');
-  const canonical = locale === 'es' ? WHOS_WHO_URLS.es : WHOS_WHO_URLS.en;
+  const canonical = WHOS_WHO_URLS[locale as keyof typeof WHOS_WHO_URLS] ?? WHOS_WHO_URLS.en;
   return {
     title: `${t('title')} — PaddockIntel`,
     description: t('description'),

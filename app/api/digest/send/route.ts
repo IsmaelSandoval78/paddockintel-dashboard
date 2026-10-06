@@ -3,6 +3,7 @@ import { Resend } from 'resend';
 import { render } from '@react-email/render';
 import { createClient } from '@/lib/supabase/server';
 import DigestIssueEmail from '@/emails/DigestIssueEmail';
+import { SITE_URL } from '@/lib/site-url';
 
 // Called by the Cloudflare cron (daily). Finds published issues with sent_at IS NULL
 // and sends a batch email to all subscribers, then stamps sent_at.
@@ -17,7 +18,7 @@ import DigestIssueEmail from '@/emails/DigestIssueEmail';
 export async function GET(req: Request) {
   const resend = new Resend(process.env.RESEND_API_KEY);
   const FROM = process.env.RESEND_FROM_EMAIL ?? 'info@paddockintel.com';
-  const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://paddockintel.com';
+  const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? SITE_URL;
   const auth = req.headers.get('authorization');
   if (!process.env.CRON_SECRET || auth !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

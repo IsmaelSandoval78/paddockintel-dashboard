@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
+import { SITE_URL } from '@/lib/site-url';
 
 export const revalidate = 3600;
 
@@ -62,9 +63,7 @@ function weekOf(slug: string): string | null {
 }
 
 function localeUrl(locale: string, path: string): string {
-  return locale === 'en'
-    ? `https://paddockintel.com${path}`
-    : `https://paddockintel.com/${locale}${path}`;
+  return locale === 'en' ? `${SITE_URL}${path}` : `${SITE_URL}/${locale}${path}`;
 }
 
 export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {

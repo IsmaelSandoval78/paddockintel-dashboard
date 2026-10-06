@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/lib/i18n/navigation';
 import { markdownToHtml } from '@/lib/markdown';
+import { SITE_URL } from '@/lib/site-url';
 import { getGlossaryTerm, getGlossaryTermLayers, getRelatedGlossaryTerms } from './data';
 import { DepthNav } from './DepthNav';
 import type { GlossaryDepth } from './data';
@@ -9,22 +10,28 @@ import type { GlossaryDepth } from './data';
 export function termUrl(locale: string, slug: string, depth?: GlossaryDepth): string {
   const suffix = depth === 'technical' ? '/technical' : depth === 'fia' ? '/fia-regulation' : '';
   return locale === 'en'
-    ? `https://paddockintel.com/glossary/${slug}${suffix}/`
-    : `https://paddockintel.com/${locale}/glossary/${slug}${suffix}/`;
+    ? `${SITE_URL}/glossary/${slug}${suffix}/`
+    : `${SITE_URL}/${locale}/glossary/${slug}${suffix}/`;
 }
 
 export async function getTermMetadata(locale: string, slug: string, depth: GlossaryDepth) {
   const term = await getGlossaryTerm(locale, slug, depth);
   if (!term) return { title: 'Glossary — PaddockIntel' };
   const canonical = termUrl(locale, term.slug, term.depth);
+  // Depth variants share the same term -- without a depth-specific suffix
+  // every variant renders an identical <title>, which Google folds together
+  // as duplicates and drops two of every three pages from the index.
+  const t = await getTranslations({ locale, namespace: 'glossary' });
+  const titleSuffix = term.depth === 'eli5' ? '' : ` (${t(`depth.${term.depth}`)})`;
   return {
-    title: `${term.term} — PaddockIntel Glossary`,
+    title: `${term.term}${titleSuffix} — PaddockIntel Glossary`,
     description: term.short_definition,
     alternates: {
       canonical,
       languages: {
         en: termUrl('en', term.slug, term.depth),
         es: termUrl('es', term.slug, term.depth),
+        pt: termUrl('pt', term.slug, term.depth),
         'x-default': termUrl('en', term.slug, term.depth),
       },
     },
@@ -55,7 +62,7 @@ export async function TermPageBody({
     name: term.term,
     description: term.short_definition,
     url: pageUrl,
-    inDefinedTermSet: locale === 'en' ? 'https://paddockintel.com/glossary/' : `https://paddockintel.com/${locale}/glossary/`,
+    inDefinedTermSet: locale === 'en' ? `${SITE_URL}/glossary/` : `${SITE_URL}/${locale}/glossary/`,
   };
 
   return (
