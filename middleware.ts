@@ -45,6 +45,25 @@ const HUB_ENTITY_PATH =
 // next-intl must not see these — it would locale-prefix a metadata file.
 const HOST_METADATA_PATHS = new Set(['/robots.txt', '/sitemap.xml']);
 
+// One-time 301s recovering real crawl/backlink equity from the old Ghost
+// site's URL structure -- each of these was confirmed still live-404ing in
+// Search Console's "Not found" export (2026-10-06) while the same content
+// exists today at a different path. Exact-path match only, checked before
+// the apex → www redirect (same reasoning as HUB_ENTITY_PATH) so an apex
+// hit lands on the final destination in one hop.
+const LEGACY_REDIRECTS: Record<string, string> = {
+  '/rss': '/feed.xml',
+  '/rss/': '/feed.xml',
+  '/contact': '/about/',
+  '/contact/': '/about/',
+  '/f1-2026-season-hub': '/season/2026/',
+  '/f1-2026-season-hub/': '/season/2026/',
+  '/f1-news/red-bull/craig-skinner-leaves-chief-designer':
+    '/f1-news-red-bull-craig-skinner-leaves-chief-designer/',
+  '/f1-news/red-bull/craig-skinner-leaves-chief-designer/':
+    '/f1-news-red-bull-craig-skinner-leaves-chief-designer/',
+};
+
 // HSTS + the apex -> www redirect were never app code — Vercel adds both
 // automatically at the platform/domain level (confirmed via curl: every
 // vercel.com-served response carries this header, and the bare apex 308s to
@@ -71,6 +90,17 @@ export default function middleware(request: NextRequest) {
 
   if (MAGAZINE_HOSTS.has(host) && HUB_ENTITY_PATH.test(pathname)) {
     return redirectToHost(request, HUB_HOST, 301);
+  }
+
+  if (MAGAZINE_HOSTS.has(host) && LEGACY_REDIRECTS[pathname]) {
+    const target = request.nextUrl.clone();
+    target.protocol = 'https:';
+    target.host = 'www.paddockintel.com';
+    target.port = '';
+    target.pathname = LEGACY_REDIRECTS[pathname];
+    const redirect = NextResponse.redirect(target, 301);
+    redirect.headers.set('strict-transport-security', HSTS_VALUE);
+    return redirect;
   }
 
   if (host === 'paddockintel.com') {

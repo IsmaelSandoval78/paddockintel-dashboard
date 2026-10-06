@@ -12,7 +12,10 @@ import type { Locale } from '@/lib/i18n/routing';
 // redirecting there — so the URL the advisor doc names by name is a real,
 // working page instead of a 404, without splitting authority across two
 // pages that would say almost the same thing.
-const KNOWN_AUTHOR_SLUGS = ['ismael-sandoval'];
+// 'ismael' is the old Ghost-era author slug (/author/ismael/) -- confirmed
+// still a live 404 in Search Console's crawl report (2026-10-06), recovered
+// the same way as 'ismael-sandoval' rather than a separate redirect rule.
+const KNOWN_AUTHOR_SLUGS = ['ismael-sandoval', 'ismael'];
 
 export default async function AuthorPage({
   params,
