@@ -86,11 +86,13 @@ async function queryTrends(client: JWT, projectId: string, days: number, countri
   const countryFilter = countries ? `AND country_code IN (${countries.map((c) => `'${c}'`).join(',')})` : '';
 
   const query = `
-    SELECT term, week, score, rank, percent_gain, country_name
+    SELECT term, week, MAX(score) AS score, MIN(rank) AS rank, MAX(percent_gain) AS percent_gain, country_name
     FROM \`bigquery-public-data.google_trends.international_top_rising_terms\`
-    WHERE refresh_date >= '${sinceStr}'
+    WHERE refresh_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY)
+    AND week >= '${sinceStr}'
     ${countryFilter}
     AND (${termFilter})
+    GROUP BY term, week, country_name
     ORDER BY score DESC NULLS LAST, week DESC
     LIMIT ${limit}
   `;
