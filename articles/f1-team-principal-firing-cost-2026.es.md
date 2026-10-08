@@ -10,9 +10,9 @@ translation_group_id: "b3d8e6a2-4f19-4c7d-9a2e-1c6d8f3b5e97"
 tags: ["team-finance", "operational-strategy"]
 
 stats:
-  - value: "US$100M+"
-    label: "ACUERDO REPORTADO DE HORNER CON RED BULL"
-    unit: "rango reportado: entre ~£52M y US$107M según el medio"
+  - value: "£100,48M"
+    label: "INDEMNIZACIÓN DE HORNER, SEGÚN LOS BALANCES DE OCT. 2026"
+    unit: "£33,49M (Racing) + £66,99M (Technology); los balances no lo nombran"
   - value: "US$3M"
     label: "PAGO REPORTADO DE BINOTTO EN FERRARI"
     unit: "12 meses de sueldo como \"gardening leave\""
@@ -22,7 +22,7 @@ stats:
 
 faq:
   - q: "¿Cuánto costó la salida de Christian Horner de Red Bull?"
-    a: "Las cifras reportadas varían según el medio — desde unas £52 millones (BBC) hasta US$100-107 millones (ESPN, Forbes) o £80 millones (The Guardian). Ninguna de esas cifras está confirmada oficialmente por Red Bull. Su contrato corría hasta 2030, y el acuerdo habría incluido un período de \"gardening leave\" antes de poder sumarse a un rival."
+    a: "La cifra más precisa surge de los propios balances ante el registro de empresas del Reino Unido de Red Bull Racing Ltd y Red Bull Technology Ltd, presentados y reportados en octubre de 2026: £100,48 millones en \"compensación por pérdida del cargo\" combinados entre ambas entidades, además de la remuneración ordinaria por separado. Los balances describen esto como compensación al director mejor pago de cada empresa sin nombrar a Horner directamente, y ni él ni Red Bull confirmaron la cifra públicamente. Las estimaciones de prensa de septiembre de 2025, antes de que existiera cualquier balance, iban de unas £52 millones a US$107 millones según el medio. Su contrato corría hasta 2030, y el acuerdo habría incluido un período de \"gardening leave\" antes de poder sumarse a un rival."
   - q: "¿Despedir al team principal mejoró realmente los resultados en Red Bull, Ferrari o Alpine?"
     a: "No en la temporada inmediatamente posterior. La caída de Red Bull siguió después de la salida de Horner en julio de 2025 (P4 en el campeonato 2026 hasta ahora, su peor posición del período). El primer año de Vasseur en Ferrari (2023) sumó menos puntos que la última temporada de Binotto. Alpine empeoró dos años más después de sacar a Szafnauer antes de recuperarse en 2026."
   - q: "¿Por qué la salida de un team principal tarda meses en cerrarse en vez de ser inmediata?"
@@ -41,11 +41,17 @@ sources:
     url: "https://thesportsrush.com/f1-news-mattia-binotto-will-continue-to-collect-3-million-gardening-paycheck-despite-ferraris-sacking/"
   - name: "Sky Sports — Otmar Szafnauer: Alpine sack team principal and sporting director Alan Permane"
     url: "https://www.skysports.com/f1/news/12433/12877166/otmar-szafnauer-alpine-sack-team-principal-and-sporting-director-alan-permane-pat-fry-joins-williams"
+  - name: "RacingNews365 — Christian Horner received nine-figure compensation after Red Bull exit"
+    url: "https://racingnews365.com/christian-horner-received-nine-figure-compensation-after-red-bull-exit"
+  - name: "Motorsport Week — Christian Horner Red Bull F1 severance package revealed"
+    url: "https://www.motorsportweek.com/2026/10/07/christian-horner-red-bull-f1-pay/"
+  - name: "Grande Premio — Horner received $100m compensation after Red Bull exit, documents reveal"
+    url: "https://grandepremio.com/en/f1/horner-received-100m-compensation-after-red-bull-exit-documents-reveal/"
 ---
 
 ## Qué pasó
 
-Christian Horner fue apartado de sus funciones operativas en Red Bull Racing el 9 de julio de 2025, después de 20 años al frente del equipo. La salida no se cerró formalmente hasta el 22 de septiembre de 2025, cuando Red Bull y Horner acordaron un arreglo que, según reportes, vale entre £52 millones y US$107 millones — depende de qué medio se consulte, y ninguna cifra está confirmada oficialmente. Su contrato corría hasta 2030. Se entiende que el acuerdo incluye un período de "gardening leave" que lo mantiene afuera de un rival durante varios meses — la razón directa por la que Horner recién ahora aparece como candidato real para otros equipos, incluido, según la cobertura de esta semana, Ferrari, donde la especulación sobre que reemplace a Fred Vasseur es justo lo que hace valioso sumar estas cuentas ahora.
+Christian Horner fue apartado de sus funciones operativas en Red Bull Racing el 9 de julio de 2025, después de 20 años al frente del equipo. La salida no se cerró formalmente hasta el 22 de septiembre de 2025, cuando Red Bull y Horner acordaron un arreglo que las estimaciones de prensa de ese momento ubicaban entre £52 millones y US$107 millones, según el medio. Un año después, la cifra real salió a la luz por una vía poco glamorosa: los propios balances ante el registro de empresas del Reino Unido de Red Bull Racing Ltd y Red Bull Technology Ltd, presentados y reportados el 7 de octubre de 2026, que registran £100,48 millones combinados en "compensación por pérdida del cargo" al director mejor pago de cada empresa. Ningún balance nombra a Horner, y ni él ni Red Bull pusieron una cifra en público — pero fue el director mejor pago de ambas entidades en el año en que se fue, que es como los medios cerraron la brecha entre una línea contable anónima y un ejecutivo con nombre. Su contrato corría hasta 2030. Se entiende que el acuerdo incluye un período de "gardening leave" que lo mantiene afuera de un rival durante varios meses — la razón directa por la que Horner recién ahora aparece como candidato real para otros equipos, incluido, según la cobertura de esta semana, Ferrari, donde la especulación sobre que reemplace a Fred Vasseur es justo lo que hace valioso sumar estas cuentas ahora.
 
 El caso de Horner es el más grande y el más público, pero no es el único. Ferrari sacó a Mattia Binotto después de la temporada 2022 pese a que Ferrari había terminado segundo en el campeonato de constructores ese año — pagándole, según reportes, unos US$3 millones, su sueldo completo por 12 meses, para que no se sume de inmediato a un rival. Alpine fue al otro extremo: Otmar Szafnauer fue despedido como team principal en julio de 2023, a 18 meses de haber asumido, avisado por una videollamada del jefe de RR.HH. de Renault — sin que se conociera nunca una cifra pública de indemnización.
 
@@ -57,7 +63,7 @@ El pago de Horner escala con lo que quedaba sobre la mesa — un contrato con ci
 
 ## Impacto económico
 
-Puestos uno al lado del otro, los tres casos abarcan casi dos órdenes de magnitud: el acuerdo reportado de Horner (£52M–US$107M) empequeñece el de Binotto (US$3 millones reportados), y ambos empequeñecen la cifra no revelada de Szafnauer, que por todos los relatos se resolvió sin el tipo de pago prolongado por gardening leave que recibieron los otros dos. Esa diferencia es en sí misma reveladora — sigue al tiempo de contrato restante y al poder de negociación, no a los resultados en pista, ya que el Ferrari de Binotto acababa de salir segundo en el campeonato y el Red Bull de Horner acababa de salir tercero el año de su salida, una posición peor que la de Ferrari.
+Puestos uno al lado del otro, los tres casos abarcan casi dos órdenes de magnitud: los £100,48 millones de Horner confirmados por balance empequeñecen el de Binotto (US$3 millones reportados), y ambos empequeñecen la cifra no revelada de Szafnauer, que por todos los relatos se resolvió sin el tipo de pago prolongado por gardening leave que recibieron los otros dos. Esa diferencia es en sí misma reveladora — sigue al tiempo de contrato restante y al poder de negociación, no a los resultados en pista, ya que el Ferrari de Binotto acababa de salir segundo en el campeonato y el Red Bull de Horner acababa de salir tercero el año de su salida, una posición peor que la de Ferrari.
 
 Nada de esto incluye lo que un equipo gasta en reemplazar al principal que se va, en absorber una transición de liderazgo a mitad de un ciclo de desarrollo, o en manejar la rotación de personal técnico que a veces sigue a un cambio en la cúpula — costos reales, pero sin una cifra pública asociada a ninguno de estos tres casos, así que este artículo no le pone un número.
 
