@@ -119,8 +119,12 @@ this council in order:
    require (live Supabase query, historical Hub data, a dated financial source)? Confirm the
    tier is reachable before greenlighting — a topic that needs a source PaddockIntel can't get
    doesn't become a brief no matter how many outlets are covering it.
+5. **FAN-PSYCHOLOGY-EXPERT.md — real hook check.** Does this angle have an actual psychological
+   pull for this site's reader (status, a resolvable comparison, real stakes), or is it dry data
+   nobody is motivated to click? A topic can clear steps 1-4 and still die here — that's a
+   distinct failure mode from the SEO/EEAT/Data checks above, not a duplicate of any of them.
 
-Only a topic that clears all four becomes a real brief. A topic covered by many outlets that
+Only a topic that clears all five becomes a real brief. A topic covered by many outlets that
 fails here isn't wasted — Beagle's report is dated and re-runnable, and a topic that fails
 step 1 today (no Nivel 2 piece yet) can clear tomorrow once that piece exists.
 

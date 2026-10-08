@@ -318,9 +318,9 @@ piénsalo, tú) before publishing.
    methodology page).
 
 1. **Research first.** Before opening a draft, read the advisor files in `docs/advisors/` — all
-   nine of them (`EEAT-EXPERT.md`, `SEO-EXPERT.md`, `DATA-EXPERT.md`, `SPORTS-JOURNALISM-EXPERT.md`,
+   ten of them (`EEAT-EXPERT.md`, `SEO-EXPERT.md`, `DATA-EXPERT.md`, `SPORTS-JOURNALISM-EXPERT.md`,
    `CYBERSECURITY-EXPERT.md`, `PERFORMANCE-EXPERT.md`, `DIGITAL-PR-EXPERT.md`,
-   `LEGAL-COMPLIANCE-EXPERT.md`, `GROWTH-EXPERT.md`) — they are an additional gate on top of this
+   `LEGAL-COMPLIANCE-EXPERT.md`, `GROWTH-EXPERT.md`, `FAN-PSYCHOLOGY-EXPERT.md`) — they are an additional gate on top of this
    document, not a replacement for it. Then verify: race results from Formula1.com, standings from
    Supabase Hub, economic claims from primary sources (FIA, team press releases, FT/Bloomberg if
    available). Never estimate a number.

@@ -1,8 +1,8 @@
 ---
 slug: "antonelli-salary-2026"
-title: "Kimi Antonelli Salary 2026: $2M Base + $12M Bonus"
+title: "Kimi Antonelli's Salary: $2M vs. Verstappen's €92M"
 locale: en
-meta_description: "Antonelli's reported $2M Mercedes base vs. Red Bull's ~€92M Verstappen deal — the real 2026 pay gap, contract terms, and bonus math."
+meta_description: "Antonelli's reported $2M Mercedes base vs. Red Bull's ~€92M Verstappen deal — the real 2026 F1 pay gap, in one number."
 status: published
 translation_group_id: "b1dbf5c6-ad14-4a94-8f80-b3e80231da1a"
 paywalled: true
