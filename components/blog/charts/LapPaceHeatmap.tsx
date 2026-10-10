@@ -33,6 +33,8 @@ const TEAM_VAR: Record<string, string> = {
   williams: 'var(--team-williams)',
   sauber: 'var(--team-sauber)',
   rb: 'var(--team-rb)',
+  audi: 'var(--team-audi)',
+  cadillac: 'var(--team-cadillac)',
 };
 
 function teamColor(team: string): string {

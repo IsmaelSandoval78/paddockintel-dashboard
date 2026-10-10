@@ -74,6 +74,8 @@
   --team-williams:   #2A7CB0;
   --team-sauber:     #259825;
   --team-rb:         #3A5EC4;
+  --team-audi:       #7A1220;
+  --team-cadillac:   #B08D3F;
 
   /* Data-viz accent (Delta Ribbon, track dominance lines) — reserved, never a CTA. */
   --teal:            var(--accent);
