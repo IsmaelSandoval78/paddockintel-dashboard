@@ -39,6 +39,7 @@ SUPABASE_KEY = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
 TEAM_TO_CONSTRUCTOR_REF: dict[str, str] = {
     "Red Bull Racing": "red_bull",
     "Oracle Red Bull Racing": "red_bull",
+    "Red Bull": "red_bull",
     "McLaren": "mclaren",
     "Ferrari": "ferrari",
     "Mercedes": "mercedes",
@@ -190,17 +191,20 @@ def main() -> None:
             return drivers_by_number[str(number)]
         return None
 
-    def resolve_constructor(team_name: str) -> dict | None:
+    constructors_by_name: dict[str, dict] = {r["name"].lower(): r for r in constructors_res.data}
+
+    def resolve_constructor(team_name: str) -> dict:
         ref = TEAM_TO_CONSTRUCTOR_REF.get(team_name)
-        if ref:
-            return constructors_by_ref.get(ref)
-        # fuzzy fallback
-        tl = team_name.lower()
-        for ref, c in constructors_by_ref.items():
-            if tl in c["name"].lower() or c["name"].lower() in tl:
-                return c
-        print(f"  WARN: unknown constructor '{team_name}' — add to TEAM_TO_CONSTRUCTOR_REF")
-        return None
+        if ref and ref in constructors_by_ref:
+            return constructors_by_ref[ref]
+        # Exact (case-insensitive) name match only. The old substring fallback matched any team
+        # containing "re" to constructor 93 ("RE", a 1965 entrant) -- Red Bull's 2026 Singapore
+        # results and four qualifying sessions were written to it. Unknown team = stop the load,
+        # never a guess.
+        c = constructors_by_name.get(team_name.strip().lower())
+        if c:
+            return c
+        sys.exit(f"ERROR: unknown constructor '{team_name}' -- add it to TEAM_TO_CONSTRUCTOR_REF and re-run")
 
     # ── Find race in Supabase ────────────────────────────────────────
     race_res = (
