@@ -31,7 +31,7 @@ faq:
   - q: "¿Qué hizo tan difícil la curva 2 de Marina Bay este fin de semana?"
     a: "Entre la Sprint Qualifying del viernes, la clasificación del Gran Premio del sábado y la carrera del domingo, a los pilotos les borraron 59 vueltas por límites de pista. 40 de esas -- más que todas las demás curvas de Marina Bay juntas -- fueron en la curva 2, afectando a por lo menos 14 pilotos distintos solo en la carrera."
   - q: "¿Las vueltas borradas en la curva 2 cambiaron el resultado de la carrera o el podio?"
-    a: "No. Una vuelta borrada en una carrera no le resta tiempo total al piloto ni le cambia la posición de llegada -- solo la excluye de la elegibilidad para el punto de vuelta rápida y cuenta para el conteo de advertencias de los comisarios por límites de pista, que puede escalar a una sanción de tiempo después de infracciones repetidas en la misma sesión."
+    a: "No. Una vuelta borrada en una carrera no le resta tiempo total al piloto ni le cambia la posición de llegada -- solo deja de contar como un tiempo de vuelta válido y suma para el conteo de advertencias de los comisarios por límites de pista, que puede escalar a una sanción de tiempo después de infracciones repetidas en la misma sesión."
 
 sources:
   - name: "Crash.net — Peerless Max Verstappen beats Charles Leclerc for first Singapore GP win"
@@ -71,3 +71,5 @@ Este es el argumento para la capa de datos y estadística que PaddockIntel viene
 ## Veredicto
 
 El fin de semana de Verstappen no necesita ningún asterisco: pole en el Sprint, victoria en el Sprint, pole para el Gran Premio, y una victoria de carrera dominante y sin desafío, todo en los mismos cuatro días, con una radio rota en la segunda mitad y nada de eso costándole algo. El sexto puesto de Hamilton sí necesita uno -- un auto rápido para el podio, arruinado por una decisión del box, no por un tiempo de vuelta. Y el veredicto real de la curva 2 no está escrito en ningún lado de la clasificación oficial del domingo. Cincuenta y nueve vueltas borradas, cuarenta de ellas en una sola curva, son la historia real de cómo este circuito trató a todo el campo durante tres días -- solo hacía falta comparar los datos propios de las tres sesiones para verla.
+
+*Corrección editorial (11 de octubre de 2026): una versión anterior de las preguntas frecuentes de este artículo decía que una vuelta borrada en carrera quedaba excluida de la "elegibilidad para el punto de vuelta rápida". No existe punto de campeonato por la vuelta rápida desde la temporada 2025, así que no había puntos en juego. La respuesta quedó corregida; el resultado de la carrera, la matemática de puntos y los conteos de la curva 2 de este artículo no se vieron afectados.*

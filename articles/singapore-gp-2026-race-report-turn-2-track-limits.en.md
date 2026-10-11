@@ -31,7 +31,7 @@ faq:
   - q: "What made Turn 2 at Marina Bay so difficult this weekend?"
     a: "Across Friday's Sprint Qualifying, Saturday's Grand Prix qualifying, and Sunday's race, drivers had 59 lap times deleted for track limits. 40 of those -- more than every other corner at Marina Bay combined -- were at Turn 2, affecting at least 14 different drivers in the race alone."
   - q: "Did the Turn 2 deletions change the race result or the podium?"
-    a: "No. A deleted lap time in a race doesn't subtract from a driver's total race time or change their finishing position -- it only removes that lap from fastest-lap-bonus eligibility and counts toward the stewards' track-limits warning tally, which can escalate to a time penalty after repeated offenses in the same session."
+    a: "No. A deleted lap time in a race doesn't subtract from a driver's total race time or change their finishing position -- it no longer counts as a valid lap time and counts toward the stewards' track-limits warning tally, which can escalate to a time penalty after repeated offenses in the same session."
 
 sources:
   - name: "Crash.net — Peerless Max Verstappen beats Charles Leclerc for first Singapore GP win"
@@ -71,3 +71,5 @@ This is the argument for the stats-and-data layer PaddockIntel has been building
 ## Verdict
 
 Verstappen's weekend needs no asterisk: pole in the Sprint, the Sprint win, pole for the Grand Prix, and a dominant, uncontested race win, all in the same four days, with a broken radio in the back half and none of it costing him anything. Hamilton's sixth does need one -- a car fast enough for the podium, undone by a pit wall call, not a lap time. And Turn 2's real verdict isn't written anywhere in Sunday's official classification at all. Fifty-nine deleted laps, forty of them at one corner, are the actual story of how this track treated the whole field over three days -- it just took comparing three sessions' worth of our own data to see it.
+
+*Editor's correction (Oct. 11, 2026): An earlier version of this article's FAQ said a deleted race lap removes that lap from "fastest-lap-bonus eligibility." There has been no championship point for the fastest lap since the 2025 season, so no points were at stake. The answer has been corrected; the race result, the points math and the Turn 2 counts in this article were not affected.*

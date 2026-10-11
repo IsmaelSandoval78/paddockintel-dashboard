@@ -31,7 +31,7 @@ faq:
   - q: "O que tornou a curva 2 de Marina Bay tão difícil neste fim de semana?"
     a: "Entre a Sprint Qualifying de sexta-feira, a classificação do Grande Prêmio de sábado e a corrida de domingo, os pilotos tiveram 59 voltas anuladas por limites de pista. 40 delas -- mais do que todas as outras curvas de Marina Bay juntas -- foram na curva 2, afetando pelo menos 14 pilotos diferentes só na corrida."
   - q: "As voltas anuladas na curva 2 mudaram o resultado da corrida ou o pódio?"
-    a: "Não. Uma volta anulada numa corrida não subtrai do tempo total do piloto nem muda sua posição de chegada -- ela apenas remove essa volta da elegibilidade ao ponto de volta mais rápida e conta para o total de advertências dos comissários por limites de pista, que pode escalar para uma penalização de tempo após infrações repetidas na mesma sessão."
+    a: "Não. Uma volta anulada numa corrida não subtrai do tempo total do piloto nem muda sua posição de chegada -- ela apenas deixa de contar como um tempo de volta válido e conta para o total de advertências dos comissários por limites de pista, que pode escalar para uma penalização de tempo após infrações repetidas na mesma sessão."
 
 sources:
   - name: "Crash.net — Peerless Max Verstappen beats Charles Leclerc for first Singapore GP win"
@@ -71,3 +71,5 @@ Esse é o argumento para a camada de dados e estatística que a PaddockIntel vem
 ## Veredito
 
 O fim de semana de Verstappen não precisa de nenhum asterisco: pole no Sprint, vitória no Sprint, pole para o Grande Prêmio, e uma vitória de corrida dominante e sem desafio, tudo nos mesmos quatro dias, com um rádio quebrado na segunda metade e nada disso custando a ele. O sexto lugar de Hamilton precisa de um -- um carro rápido o suficiente para o pódio, arruinado por uma decisão do boxe, não por um tempo de volta. E o veredito real da curva 2 não está escrito em lugar nenhum da classificação oficial de domingo. Cinquenta e nove voltas anuladas, quarenta delas numa única curva, são a história real de como esta pista tratou todo o pelotão ao longo de três dias -- só foi preciso comparar os dados próprios das três sessões para ver isso.
+
+*Correção editorial (11 de outubro de 2026): uma versão anterior das perguntas frequentes deste artigo dizia que uma volta anulada na corrida perdia a "elegibilidade ao ponto de volta mais rápida". Não existe ponto de campeonato pela volta mais rápida desde a temporada 2025, então não havia pontos em jogo. A resposta foi corrigida; o resultado da corrida, a matemática de pontos e as contagens da curva 2 deste artigo não foram afetados.*
