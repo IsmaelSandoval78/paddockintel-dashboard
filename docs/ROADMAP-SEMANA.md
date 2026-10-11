@@ -2212,14 +2212,18 @@ la carrera más reciente por (año, ronda) con standings cargados (`getLatestSta
 no 307; la procedencia del JSON del handoff estaba mal. Copy del newsletter: "every week", no
 "every race weekend" (cadencia real, GROWTH-EXPERT).
 
-**⚠️ Pendiente — dato corrupto en Supabase (no corregido, requiere OK):** los resultados de
+**✅ Corregido 11 oct (con OK de Ismael) — dato corrupto en Supabase:** los resultados de
 Singapur (R17, race_id 1184) en `results`, `qualifying`, `sprint_results` y
 `constructor_standings` tienen a Red Bull como constructor id 93 (`re`, "RE", el equipo rodesiano
 de 1965) en vez de id 9 (`red_bull`). Causa: el fallback difuso de `resolve_constructor()` en
 `scripts/load_race.py` (`c["name"].lower() in tl` → "re" está dentro de "red bull"). Efecto:
 Verstappen aparece como "RE" en los standings del home y del Hub, y la tabla de constructores
 muestra Red Bull 295 (P4) + "RE" 34 (P7). Riesgo de repetirse en Austin (R18, 25 oct) vía
-`post-race-loader.yml`.
+`post-race-loader.yml`. **Arreglo:** el mismo problema estaba también en el qualifying de R10, R13
+y R16. Se movieron 12 filas de 93 a 9, se borró la fila fantasma de "RE" en standings y Red Bull
+quedó en 329 pts / 2 victorias tras R17. Verificado: para los 11 equipos, standings = suma real de
+carrera + sprint. El script ya no hace match por substring y, si no reconoce un equipo, frena la
+carga en vez de adivinar (PR #91).
 
 **Preview:** Vercel está desconectado desde el 18 sep — el preview real es
 `deploy-preview.yml` (manual, Worker separado en workers.dev). En ese host el home del magazine
