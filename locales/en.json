@@ -1034,6 +1034,12 @@
       "caption": "The pole lap as terrain · {driver} {lapTime} · speed {min}–{max} km/h · FastF1 telemetry",
       "aria": "{driver}'s pole lap speed drawn as a mountain range: every peak is a straight, every valley a corner. Speed ranges from {min} to {max} km/h."
     },
+    "trackMap": {
+      "top": "{speed} km/h",
+      "min": "{speed} km/h",
+      "caption": "{circuit} · drawn from {driver}'s pole lap, coloured by speed",
+      "aria": "Map of {circuit} drawn from {driver}'s pole lap, coloured by speed: {max} km/h at the fastest point, {min} km/h at the slowest corner."
+    },
     "gauges": {
       "title": "Race in numbers",
       "topSpeedCaption": "Top speed on {driver}'s pole lap, {lapTime}.",

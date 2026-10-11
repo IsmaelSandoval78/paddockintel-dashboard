@@ -8,6 +8,8 @@ Usage:
 
 Writes only facts FastF1 can reproduce from the official F1 timing API, each with its own `source`:
   - poleLap:  the pole lap's speed trace (140 samples, evenly spaced by distance) + top/min speed
+  - trackMap: the pole lap's own X/Y positions (official circuit rotation), speed per point, and where
+              the top/min speed happened -- the circuit map is drawn from the car's line, not a stock outline
   - poleDuel: official sector times of the pole lap and P2's best lap (cumulative gap per sector)
   - lapsLed:  laps led by the race winner, counted from the leader at the end of every lap
 
@@ -23,6 +25,8 @@ import fastf1
 import numpy as np
 
 SAMPLES = 140
+MAP_SAMPLES = 260
+MAP_SIZE = 1000  # longest side of the normalised map box
 REPO = Path(__file__).resolve().parents[2]
 OUT_DIR = REPO / "content" / "race-highlights"
 
@@ -69,6 +73,39 @@ def pole_lap(quali, year: int, event: str) -> tuple[dict, object, str] | None:
                   f"{SAMPLES} samples evenly spaced by distance, top/min speed from the unresampled telemetry",
     }
     return data, lap, pole_abbr
+
+
+def track_map(quali, lap, pole_abbr: str, year: int, event: str) -> dict | None:
+    tel = lap.get_telemetry()
+    if tel.empty or tel[["X", "Y", "Speed", "Distance"]].isna().any().any():
+        return None
+    rotation = float(quali.get_circuit_info().rotation)
+    a = np.radians(rotation)
+    x, y = tel["X"].to_numpy(), tel["Y"].to_numpy()
+    # Same rotation FastF1 applies for its official-orientation plots; y flipped for SVG (y grows down).
+    rx = x * np.cos(a) - y * np.sin(a)
+    ry = -(x * np.sin(a) + y * np.cos(a))
+    dist, speed = tel["Distance"].to_numpy(), tel["Speed"].to_numpy()
+
+    minx, miny = rx.min(), ry.min()
+    scale = MAP_SIZE / max(rx.max() - minx, ry.max() - miny)
+
+    def norm(px, py):
+        return [int(round((px - minx) * scale)), int(round((py - miny) * scale))]
+
+    grid = np.linspace(dist.min(), dist.max(), MAP_SAMPLES)
+    gx, gy, gs = np.interp(grid, dist, rx), np.interp(grid, dist, ry), np.interp(grid, dist, speed)
+    i_max, i_min = int(np.argmax(speed)), int(np.argmin(speed))
+    return {
+        "width": int(round((rx.max() - minx) * scale)),
+        "height": int(round((ry.max() - miny) * scale)),
+        "points": [norm(px, py) + [int(round(v))] for px, py, v in zip(gx, gy, gs)],
+        "topSpeedAt": norm(rx[i_max], ry[i_max]),
+        "minSpeedAt": norm(rx[i_min], ry[i_min]),
+        "source": f"FastF1 position + car telemetry (official F1 timing API), {year} {event} Qualifying, "
+                  f"{pole_abbr} pole lap; {MAP_SAMPLES} points evenly spaced by distance, "
+                  f"rotated {rotation:g} degrees (FastF1 circuit info)",
+    }
 
 
 def pole_duel(quali, pole_lap_obj, pole_abbr: str, year: int, event: str) -> dict | None:
@@ -136,6 +173,9 @@ def main() -> None:
     if pole:
         pole_data, pole_lap_obj, pole_abbr = pole
         out["poleLap"] = pole_data
+        track = track_map(quali, pole_lap_obj, pole_abbr, args.year, event)
+        if track:
+            out["trackMap"] = track
         duel = pole_duel(quali, pole_lap_obj, pole_abbr, args.year, event)
         if duel:
             out["poleDuel"] = duel

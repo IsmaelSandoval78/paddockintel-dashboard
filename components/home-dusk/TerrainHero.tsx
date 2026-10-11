@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Link } from '@/lib/i18n/navigation';
 
 // Server-rendered SVG, zero client JS (same discipline as components/blog/charts/*).
@@ -46,9 +47,11 @@ type Props = {
   ctaLabel: string;
   keyNumber: { value: string; label: string } | null;
   terrain: TerrainData | null;
+  // Rendered under the key number (the circuit map).
+  aside?: ReactNode;
 };
 
-export default function TerrainHero({ kicker, title, dek, href, ctaLabel, keyNumber, terrain }: Props) {
+export default function TerrainHero({ kicker, title, dek, href, ctaLabel, keyNumber, terrain, aside }: Props) {
   const speeds = terrain?.speeds ?? [];
   const hasTerrain = speeds.length > 1;
   const min = hasTerrain ? Math.min(...speeds) : 0;
@@ -73,15 +76,20 @@ export default function TerrainHero({ kicker, title, dek, href, ctaLabel, keyNum
             {ctaLabel}
           </Link>
         </div>
-        {keyNumber && (
+        {(keyNumber || aside) && (
           <div className="flex-[1_1_260px] min-w-0">
-            <p
-              className="dusk-display dusk-number-glow leading-[0.9] tracking-[-0.03em] text-white tabular-nums"
-              style={{ fontSize: 'clamp(3.2rem, 7.5vw, 5.5rem)' }}
-            >
-              {keyNumber.value}
-            </p>
-            <p className="dusk-mono uppercase mt-2 text-[12px] tracking-[0.08em] text-[#F4E3D7]">{keyNumber.label}</p>
+            {keyNumber && (
+              <>
+                <p
+                  className="dusk-display dusk-number-glow leading-[0.9] tracking-[-0.03em] text-white tabular-nums"
+                  style={{ fontSize: 'clamp(3.2rem, 7.5vw, 5.5rem)' }}
+                >
+                  {keyNumber.value}
+                </p>
+                <p className="dusk-mono uppercase mt-2 text-[12px] tracking-[0.08em] text-[#F4E3D7]">{keyNumber.label}</p>
+              </>
+            )}
+            {aside}
           </div>
         )}
       </div>

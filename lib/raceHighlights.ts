@@ -13,6 +13,15 @@ export type PoleLap = {
   source: string;
 };
 
+export type TrackMap = {
+  width: number;
+  height: number;
+  points: [number, number, number][];
+  topSpeedAt: [number, number];
+  minSpeedAt: [number, number];
+  source: string;
+};
+
 export type DuelDriver = {
   driver: string;
   lapTime: string;
@@ -38,6 +47,7 @@ export type RaceHighlights = {
   round: number;
   event: string;
   poleLap?: PoleLap;
+  trackMap?: TrackMap;
   poleDuel?: PoleDuel;
   lapsLed?: LapsLed;
 };

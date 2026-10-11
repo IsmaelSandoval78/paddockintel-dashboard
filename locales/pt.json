@@ -1024,6 +1024,12 @@
       "caption": "A volta da pole como relevo · {driver} {lapTime} · velocidade {min}–{max} km/h · telemetria do FastF1",
       "aria": "A velocidade da volta da pole de {driver} desenhada como uma cordilheira: cada pico é uma reta, cada vale uma curva. A velocidade vai de {min} a {max} km/h."
     },
+    "trackMap": {
+      "top": "{speed} km/h",
+      "min": "{speed} km/h",
+      "caption": "{circuit} · traçado com a volta da pole de {driver}, cor conforme a velocidade",
+      "aria": "Mapa de {circuit} traçado com a volta da pole de {driver}, colorido conforme a velocidade: {max} km/h no ponto mais rápido, {min} km/h na curva mais lenta."
+    },
     "gauges": {
       "title": "A corrida em números",
       "topSpeedCaption": "Velocidade máxima na volta da pole de {driver}, {lapTime}.",

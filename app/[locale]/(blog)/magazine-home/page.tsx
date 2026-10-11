@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/server';
 import { getArticleIdsForTagSlug, getArticleTagSlugs, type TagRef } from '@/lib/blog/tags';
 import ArticlePreviewCard, { formatDate } from '@/components/blog/ArticlePreviewCard';
 import TerrainHero, { type TerrainData } from '@/components/home-dusk/TerrainHero';
+import TrackMap from '@/components/home-dusk/TrackMap';
 import RaceGauges, { type Gauge } from '@/components/home-dusk/RaceGauges';
 import PoleDuel, { cumulativeGaps, type DuelSide } from '@/components/home-dusk/PoleDuel';
 import StandingsGlow from '@/components/home-dusk/StandingsGlow';
@@ -227,6 +228,23 @@ export default async function MagazineHomePage({
       }
     : null;
 
+  const track = highlights?.trackMap;
+  const trackMapNode =
+    pole && track && latestRace ? (
+      <TrackMap
+        map={track}
+        topLabel={t('trackMap.top', { speed: format.number(pole.topSpeedKmh) })}
+        minLabel={t('trackMap.min', { speed: format.number(pole.minSpeedKmh) })}
+        caption={t('trackMap.caption', { circuit: latestRace.circuitName, driver: surname(pole.driver) })}
+        ariaLabel={t('trackMap.aria', {
+          circuit: latestRace.circuitName,
+          driver: surname(pole.driver),
+          max: format.number(pole.topSpeedKmh),
+          min: format.number(pole.minSpeedKmh),
+        })}
+      />
+    ) : null;
+
   // ── Race in numbers ─────────────────────────────────────────────────
   const gauges: Gauge[] = [];
   if (pole) {
@@ -416,6 +434,7 @@ export default async function MagazineHomePage({
             ctaLabel={t('cta')}
             keyNumber={featuredStat ? { value: featuredStat.value, label: featuredStat.label } : null}
             terrain={terrain}
+            aside={trackMapNode}
           />
         )}
 
