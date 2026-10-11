@@ -1024,5 +1024,63 @@
       "constructorChampionships": "Constructor titles",
       "constructorCareerPoints": "Constructor career points"
     }
+  },
+  "homeDusk": {
+    "kickerRace": "{race} · {session} · {date}",
+    "sessionRace": "Race",
+    "kickerFeatured": "Featured · {date}",
+    "cta": "Read the analysis",
+    "terrain": {
+      "caption": "The pole lap as terrain · {driver} {lapTime} · speed {min}–{max} km/h · FastF1 telemetry",
+      "aria": "{driver}'s pole lap speed drawn as a mountain range: every peak is a straight, every valley a corner. Speed ranges from {min} to {max} km/h."
+    },
+    "gauges": {
+      "title": "Race in numbers",
+      "topSpeedCaption": "Top speed on {driver}'s pole lap, {lapTime}.",
+      "topSpeedUnit": "km/h",
+      "topSpeedAria": "Top speed {value} km/h, on a scale from 0 to {max} km/h",
+      "lapsLedCaptionAll": "Laps {driver} led on race day: every single one.",
+      "lapsLedCaption": "Laps {driver} led on race day.",
+      "lapsLedUnit": "laps",
+      "lapsLedAria": "{driver} led {value} of {max} laps",
+      "poleToWinCaption": "Races at {circuit} won from pole since {year}.",
+      "poleToWinUnit": "races",
+      "poleToWinAria": "{value} of {max} races at {circuit} won from pole since {year}"
+    },
+    "duel": {
+      "kicker": "Qualifying · cumulative gap after each sector",
+      "title": "Pole decided by {gap}s",
+      "ahead": "{driver} +{gap} ahead",
+      "sector": "S{n}",
+      "summaryFlip": "{challenger} was ahead after sector {sector}. {pole} found {gain}s from there to take pole.",
+      "summaryNoFlip": "{pole} was ahead after every sector.",
+      "aria": "Cumulative qualifying gap after each sector between {pole} and {challenger}: {gaps}. {pole} took pole by {gap}s.",
+      "ariaGap": "after sector {n}, {driver} ahead by {gap}s"
+    },
+    "standings": {
+      "title": "Drivers after the {race}",
+      "lead": "{driver} +{gap}",
+      "link": "Full standings on the Hub"
+    },
+    "nextRace": {
+      "kicker": "Next race · {days, plural, one {# day} other {# days}} to go",
+      "meta": "{circuit} · {date}",
+      "lapRecord": "Lap record",
+      "lapRecordHolder": "{driver}, {year}",
+      "recentWinners": "Recent winners"
+    },
+    "latest": {
+      "title": "Latest",
+      "link": "See the full feed",
+      "ownSource": "PaddockIntel"
+    },
+    "newsletter": {
+      "title": "Follow the facts, not the hype.",
+      "body": "Real numbers. Real history. Zero spin. Every week in your inbox.",
+      "emailLabel": "Email address"
+    },
+    "archive": {
+      "title": "Analysis archive"
+    }
   }
 }

@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PaddockIntel home · "Telemetry at Dusk" · design reference</title>
+<!-- Static design reference exported from the approved canvas. NOT production code:
+     rebuild it as Next.js + Tailwind v4 components bound to live Supabase data. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&amp;family=Instrument+Sans:wght@400;600&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#EEF0F3}a:hover{color:#F2A35E}
+</style>
+</head>
+<body>
+<div style="background: #0D0E12; color: #EEF0F3; font-family: 'Instrument Sans', system-ui, sans-serif; min-height: 100vh; container-type: inline-size">
+<header style="border-bottom: 1px solid #1E2129">
+<nav style="max-width: 1240px; margin: 0 auto; padding: 18px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px">
+<a href="#" style="font-family: 'Archivo Black', sans-serif; font-size: 22px; text-decoration: none; color: #EEF0F3">PADDOCK<span style="color: #F07A45">·</span>INTEL</a>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<a href="#" style="padding: 10px 14px; border-radius: 999px; background: #EEF0F3; color: #0D0E12; text-decoration: none; font-size: 14px; font-weight: 600">Home</a>
+<a href="#" style="padding: 10px 14px; border-radius: 999px; text-decoration: none; font-size: 14px; color: #C9CDD6">Feed</a>
+<a href="#" style="padding: 10px 14px; border-radius: 999px; text-decoration: none; font-size: 14px; color: #C9CDD6">Weekly Digest</a>
+<a href="#" style="padding: 10px 14px; border-radius: 999px; text-decoration: none; font-size: 14px; color: #C9CDD6">Voices</a>
+<a href="#" style="padding: 10px 14px; border-radius: 999px; text-decoration: none; font-size: 14px; color: #C9CDD6">Glossary</a>
+<a href="#" style="padding: 10px 14px; border-radius: 999px; text-decoration: none; font-size: 14px; color: #C9CDD6">Hub</a>
+</div>
+</nav>
+</header>
+<main style="max-width: 1240px; margin: 0 auto; padding: 28px 24px 64px; display: flex; flex-direction: column; gap: 24px">
+
+<section style="position: relative; border-radius: 24px; overflow: hidden; border: 1px solid #262A33; background: linear-gradient(180deg, #120F17 0%, #2B1626 34%, #6B2A33 62%, #C1502E 84%, #F2A35E 100%); min-height: 560px; display: flex; flex-direction: column; justify-content: space-between">
+<div style="position: relative; z-index: 1; padding: clamp(20px, 5cqi, 36px) clamp(20px, 5cqi, 36px) 0; display: flex; flex-wrap: wrap; gap: 28px; justify-content: space-between; align-items: flex-start">
+<div style="flex: 1 1 420px; max-width: 640px">
+<p style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 1.5px; color: #F2A35E">SINGAPORE GP 2026 · RACE · OCT 11</p>
+<h1 style="margin: 12px 0 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: clamp(2rem, 7.4cqi, 3.4rem); line-height: 1.04; letter-spacing: -1px; overflow-wrap: anywhere">Verstappen Wins Singapore GP as Turn 2 Erases 40 Laps</h1>
+<p style="margin: 16px 0 0; font-size: 18px; line-height: 1.5; color: #E4D9D2; max-width: 540px">Verstappen won Singapore by 7.3s. Our own timing data across all three sessions found something no result sheet shows: Turn 2's real cost.</p>
+<a href="#" style="display: inline-block; margin-top: 22px; padding: 14px 20px; border-radius: 999px; background: #EEF0F3; color: #0D0E12; text-decoration: none; font-weight: 600; font-size: 15px">Read the analysis</a>
+</div>
+<div style="flex: 1 1 260px; text-align: left">
+<p style="margin: 0; font-family: 'Archivo Black', sans-serif; font-size: clamp(3.2rem, 14cqi, 5.5rem); line-height: .9; letter-spacing: -2px; color: #FFFFFF; text-shadow: 0 0 40px rgba(242,163,94,.6)">+7.335s</p>
+<p style="margin: 8px 0 0; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 1px; color: #F4E3D7">WINNING MARGIN OVER LECLERC</p>
+</div>
+</div>
+<figure style="position: relative; margin: 0; height: 300px">
+<svg width="100%" height="300" viewBox="0 0 1000 300" preserveAspectRatio="none" role="img" aria-label="Verstappen's pole lap speed, drawn as a mountain range: every peak is a straight, every valley a corner">
+<defs>
+<linearGradient id="front" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0D0E12" stop-opacity=".55"></stop><stop offset="1" stop-color="#0D0E12"></stop></linearGradient>
+</defs>
+<path d="M0,300 L0.0,164.6 L7.2,170.9 L14.4,176.8 L21.6,180.9 L28.8,184.8 L36.0,189.8 L43.2,194.5 L50.4,197.6 L57.6,199.2 L64.7,199.7 L71.9,199.7 L79.1,200.7 L86.3,201.6 L93.5,202.4 L100.7,203.2 L107.9,205.3 L115.1,208.9 L122.3,213.0 L129.5,216.9 L136.7,220.1 L143.9,221.9 L151.1,221.4 L158.3,219.0 L165.5,216.1 L172.7,213.2 L179.9,209.8 L187.1,205.1 L194.2,199.9 L201.4,195.5 L208.6,192.2 L215.8,189.6 L223.0,187.5 L230.2,185.7 L237.4,184.1 L244.6,182.8 L251.8,181.6 L259.0,179.5 L266.2,176.8 L273.4,174.4 L280.6,174.4 L287.8,176.1 L295.0,178.2 L302.2,179.7 L309.4,180.8 L316.5,181.8 L323.7,185.5 L330.9,190.6 L338.1,195.6 L345.3,199.5 L352.5,202.5 L359.7,205.4 L366.9,209.4 L374.1,214.0 L381.3,217.9 L388.5,221.1 L395.7,223.6 L402.9,225.7 L410.1,227.0 L417.3,227.4 L424.5,226.5 L431.7,223.5 L438.8,219.3 L446.0,216.2 L453.2,215.9 L460.4,217.3 L467.6,218.9 L474.8,217.9 L482.0,216.0 L489.2,215.5 L496.4,215.9 L503.6,216.3 L510.8,216.4 L518.0,214.8 L525.2,212.6 L532.4,212.4 L539.6,214.6 L546.8,218.5 L554.0,221.6 L561.2,224.0 L568.3,225.7 L575.5,227.2 L582.7,228.4 L589.9,229.3 L597.1,228.9 L604.3,226.5 L611.5,223.0 L618.7,219.5 L625.9,216.2 L633.1,212.6 L640.3,209.9 L647.5,209.6 L654.7,211.6 L661.9,213.6 L669.1,215.1 L676.3,215.7 L683.5,214.4 L690.6,211.0 L697.8,206.2 L705.0,202.5 L712.2,199.8 L719.4,197.9 L726.6,196.3 L733.8,195.0 L741.0,194.1 L748.2,193.4 L755.4,192.7 L762.6,192.2 L769.8,191.7 L777.0,191.3 L784.2,191.2 L791.4,191.1 L798.6,190.5 L805.8,189.9 L812.9,189.4 L820.1,189.8 L827.3,190.6 L834.5,191.2 L841.7,191.6 L848.9,191.9 L856.1,192.1 L863.3,192.3 L870.5,193.1 L877.7,194.8 L884.9,196.9 L892.1,198.7 L899.3,200.2 L906.5,201.6 L913.7,202.8 L920.9,203.9 L928.1,205.0 L935.3,207.3 L942.4,207.8 L949.6,206.3 L956.8,203.2 L964.0,200.2 L971.2,197.0 L978.4,194.4 L985.6,192.7 L992.8,191.9 L1000.0,191.7 L1000,300 Z" fill="#3A1B2C" opacity=".85"></path>
+<path d="M0,300 L0.0,119.4 L7.2,117.7 L14.4,116.2 L21.6,114.8 L28.8,113.7 L36.0,113.6 L43.2,119.9 L50.4,131.2 L57.6,144.1 L64.7,155.3 L71.9,167.5 L79.1,183.8 L86.3,201.0 L93.5,215.5 L100.7,224.1 L107.9,224.2 L115.1,218.1 L122.3,209.7 L129.5,202.5 L136.7,193.9 L143.9,181.1 L151.1,171.1 L158.3,168.0 L165.5,170.1 L172.7,173.7 L179.9,176.7 L187.1,178.9 L194.2,180.9 L201.4,182.5 L208.6,183.8 L215.8,179.5 L223.0,170.4 L230.2,159.3 L237.4,148.5 L244.6,139.7 L251.8,132.5 L259.0,126.3 L266.2,120.8 L273.4,115.9 L280.6,112.9 L287.8,110.6 L295.0,108.6 L302.2,108.2 L309.4,110.2 L316.5,115.2 L323.7,126.7 L330.9,141.5 L338.1,155.9 L345.3,167.3 L352.5,176.2 L359.7,184.4 L366.9,198.0 L374.1,213.2 L381.3,224.4 L388.5,225.8 L395.7,221.2 L402.9,216.4 L410.1,217.8 L417.3,223.2 L424.5,227.5 L431.7,222.9 L438.8,212.4 L446.0,201.7 L453.2,193.2 L460.4,186.9 L467.6,180.4 L474.8,170.1 L482.0,157.9 L489.2,150.5 L496.4,151.2 L503.6,156.6 L510.8,163.3 L518.0,169.9 L525.2,178.0 L532.4,190.4 L539.6,202.5 L546.8,211.9 L554.0,216.8 L561.2,214.4 L568.3,208.8 L575.5,207.4 L582.7,212.7 L589.9,220.2 L597.1,220.5 L604.3,218.1 L611.5,215.9 L618.7,213.8 L625.9,212.1 L633.1,209.3 L640.3,201.5 L647.5,187.8 L654.7,170.6 L661.9,156.8 L669.1,145.9 L676.3,137.8 L683.5,137.1 L690.6,144.6 L697.8,157.2 L705.0,169.5 L712.2,179.2 L719.4,186.3 L726.6,191.9 L733.8,196.6 L741.0,200.5 L748.2,197.7 L755.4,187.7 L762.6,173.6 L769.8,160.4 L777.0,150.2 L784.2,142.5 L791.4,136.5 L798.6,131.5 L805.8,127.2 L812.9,123.3 L820.1,119.8 L827.3,117.3 L834.5,121.0 L841.7,130.7 L848.9,144.4 L856.1,157.5 L863.3,170.3 L870.5,181.5 L877.7,190.3 L884.9,197.4 L892.1,202.6 L899.3,201.1 L906.5,193.1 L913.7,183.4 L920.9,177.1 L928.1,172.0 L935.3,167.6 L942.4,164.4 L949.6,162.4 L956.8,160.9 L964.0,159.7 L971.2,159.0 L978.4,159.1 L985.6,156.2 L992.8,151.5 L1000.0,147.2 L1000,300 Z" fill="#22141F" opacity=".9"></path>
+<path d="M0,300 L0.0,88.4 L7.2,85.7 L14.4,79.4 L21.6,74.1 L28.8,71.4 L36.0,66.9 L43.2,65.1 L50.4,62.4 L57.6,61.5 L64.7,87.5 L71.9,154.8 L79.1,204.1 L86.3,215.7 L93.5,193.3 L100.7,201.4 L107.9,243.5 L115.1,251.6 L122.3,221.1 L129.5,181.7 L136.7,155.7 L143.9,136.8 L151.1,124.3 L158.3,114.4 L165.5,106.3 L172.7,102.8 L179.9,142.2 L187.1,187.0 L194.2,205.0 L201.4,195.1 L208.6,170.0 L215.8,147.6 L223.0,136.8 L230.2,124.3 L237.4,117.1 L244.6,94.7 L251.8,87.5 L259.0,82.1 L266.2,76.8 L273.4,73.2 L280.6,69.6 L287.8,67.8 L295.0,64.2 L302.2,63.3 L309.4,62.4 L316.5,61.5 L323.7,60.6 L330.9,72.3 L338.1,94.7 L345.3,125.2 L352.5,194.2 L359.7,226.5 L366.9,221.1 L374.1,187.9 L381.3,159.2 L388.5,150.3 L395.7,221.1 L402.9,261.4 L410.1,248.9 L417.3,209.4 L424.5,175.4 L431.7,168.2 L438.8,204.1 L446.0,218.4 L453.2,197.8 L460.4,170.0 L467.6,146.7 L474.8,131.4 L482.0,116.2 L489.2,106.3 L496.4,96.5 L503.6,91.1 L510.8,83.9 L518.0,117.1 L525.2,177.2 L532.4,206.8 L539.6,205.0 L546.8,187.9 L554.0,196.0 L561.2,231.9 L568.3,224.7 L575.5,187.0 L582.7,170.9 L589.9,150.3 L597.1,145.8 L604.3,189.7 L611.5,245.3 L618.7,278.5 L625.9,235.4 L633.1,197.8 L640.3,163.7 L647.5,147.6 L654.7,131.4 L661.9,115.3 L669.1,103.7 L676.3,95.6 L683.5,89.3 L690.6,83.9 L697.8,77.7 L705.0,75.0 L712.2,140.4 L719.4,213.9 L726.6,253.4 L733.8,239.0 L741.0,201.4 L748.2,167.3 L755.4,145.8 L762.6,128.8 L769.8,118.0 L777.0,109.9 L784.2,103.7 L791.4,99.2 L798.6,93.8 L805.8,89.3 L812.9,83.0 L820.1,79.4 L827.3,74.1 L834.5,70.5 L841.7,67.8 L848.9,65.1 L856.1,71.4 L863.3,135.0 L870.5,196.0 L877.7,232.8 L884.9,222.9 L892.1,214.8 L899.3,193.3 L906.5,164.6 L913.7,143.1 L920.9,128.8 L928.1,118.0 L935.3,108.1 L942.4,127.0 L949.6,153.0 L956.8,159.2 L964.0,144.9 L971.2,129.7 L978.4,120.7 L985.6,112.6 L992.8,105.4 L1000.0,100.1 L1000,300 Z" fill="url(#front)"></path>
+<polyline points="0.0,88.4 7.2,85.7 14.4,79.4 21.6,74.1 28.8,71.4 36.0,66.9 43.2,65.1 50.4,62.4 57.6,61.5 64.7,87.5 71.9,154.8 79.1,204.1 86.3,215.7 93.5,193.3 100.7,201.4 107.9,243.5 115.1,251.6 122.3,221.1 129.5,181.7 136.7,155.7 143.9,136.8 151.1,124.3 158.3,114.4 165.5,106.3 172.7,102.8 179.9,142.2 187.1,187.0 194.2,205.0 201.4,195.1 208.6,170.0 215.8,147.6 223.0,136.8 230.2,124.3 237.4,117.1 244.6,94.7 251.8,87.5 259.0,82.1 266.2,76.8 273.4,73.2 280.6,69.6 287.8,67.8 295.0,64.2 302.2,63.3 309.4,62.4 316.5,61.5 323.7,60.6 330.9,72.3 338.1,94.7 345.3,125.2 352.5,194.2 359.7,226.5 366.9,221.1 374.1,187.9 381.3,159.2 388.5,150.3 395.7,221.1 402.9,261.4 410.1,248.9 417.3,209.4 424.5,175.4 431.7,168.2 438.8,204.1 446.0,218.4 453.2,197.8 460.4,170.0 467.6,146.7 474.8,131.4 482.0,116.2 489.2,106.3 496.4,96.5 503.6,91.1 510.8,83.9 518.0,117.1 525.2,177.2 532.4,206.8 539.6,205.0 546.8,187.9 554.0,196.0 561.2,231.9 568.3,224.7 575.5,187.0 582.7,170.9 589.9,150.3 597.1,145.8 604.3,189.7 611.5,245.3 618.7,278.5 625.9,235.4 633.1,197.8 640.3,163.7 647.5,147.6 654.7,131.4 661.9,115.3 669.1,103.7 676.3,95.6 683.5,89.3 690.6,83.9 697.8,77.7 705.0,75.0 712.2,140.4 719.4,213.9 726.6,253.4 733.8,239.0 741.0,201.4 748.2,167.3 755.4,145.8 762.6,128.8 769.8,118.0 777.0,109.9 784.2,103.7 791.4,99.2 798.6,93.8 805.8,89.3 812.9,83.0 820.1,79.4 827.3,74.1 834.5,70.5 841.7,67.8 848.9,65.1 856.1,71.4 863.3,135.0 870.5,196.0 877.7,232.8 884.9,222.9 892.1,214.8 899.3,193.3 906.5,164.6 913.7,143.1 920.9,128.8 928.1,118.0 935.3,108.1 942.4,127.0 949.6,153.0 956.8,159.2 964.0,144.9 971.2,129.7 978.4,120.7 985.6,112.6 992.8,105.4 1000.0,100.1" fill="none" stroke="#F07A45" stroke-width="2.5" vector-effect="non-scaling-stroke" style="filter: drop-shadow(0 0 6px #F07A45)"></polyline>
+</svg>
+<figcaption style="position: absolute; left: clamp(20px, 5cqi, 36px); right: 20px; bottom: 18px; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.5; color: #A3A9B6">THE POLE LAP AS TERRAIN · VERSTAPPEN 1:31.373 · SPEED 64–307 KM/H · OUR LIVE TIMING</figcaption>
+</figure>
+</section>
+
+<section aria-label="Race in numbers" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+<div style="background: #15171D; border: 1px solid #262A33; border-radius: 18px; padding: 22px; display: flex; align-items: center; gap: 18px">
+<svg width="140" height="140" viewBox="0 0 140 140" aria-hidden="true" style="flex: 0 0 auto">
+<path d="M30.4,109.6 A56,56 0 1 1 109.6,109.6" fill="none" stroke="#262A33" stroke-width="10" stroke-linecap="round"></path>
+<path d="M30.4,109.6 A56,56 0 1 1 109.6,109.6" fill="none" stroke="#F07A45" stroke-width="10" stroke-linecap="round" pathLength="100" stroke-dasharray="87.7 100" style="filter: drop-shadow(0 0 8px #F07A45)"></path>
+<text x="70" y="78" text-anchor="middle" fill="#EEF0F3" font-family="Archivo Black, sans-serif" font-size="26">307</text>
+<text x="70" y="98" text-anchor="middle" fill="#A3A9B6" font-family="JetBrains Mono, monospace" font-size="11">km/h</text>
+</svg>
+<p style="margin: 0; font-size: 16px; line-height: 1.4; color: #C9CDD6">Top speed on Verstappen's pole lap, 1:31.373.</p>
+</div>
+<div style="background: #15171D; border: 1px solid #262A33; border-radius: 18px; padding: 22px; display: flex; align-items: center; gap: 18px">
+<svg width="140" height="140" viewBox="0 0 140 140" aria-hidden="true" style="flex: 0 0 auto">
+<path d="M30.4,109.6 A56,56 0 1 1 109.6,109.6" fill="none" stroke="#262A33" stroke-width="10" stroke-linecap="round"></path>
+<path d="M30.4,109.6 A56,56 0 1 1 109.6,109.6" fill="none" stroke="#F07A45" stroke-width="10" stroke-linecap="round" pathLength="100" stroke-dasharray="100 100" style="filter: drop-shadow(0 0 8px #F07A45)"></path>
+<text x="70" y="78" text-anchor="middle" fill="#EEF0F3" font-family="Archivo Black, sans-serif" font-size="26">62/62</text>
+<text x="70" y="98" text-anchor="middle" fill="#A3A9B6" font-family="JetBrains Mono, monospace" font-size="11">laps</text>
+</svg>
+<p style="margin: 0; font-size: 16px; line-height: 1.4; color: #C9CDD6">Laps Verstappen led on Sunday: every single one.</p>
+</div>
+<div style="background: #15171D; border: 1px solid #262A33; border-radius: 18px; padding: 22px; display: flex; align-items: center; gap: 18px">
+<svg width="140" height="140" viewBox="0 0 140 140" aria-hidden="true" style="flex: 0 0 auto">
+<path d="M30.4,109.6 A56,56 0 1 1 109.6,109.6" fill="none" stroke="#262A33" stroke-width="10" stroke-linecap="round"></path>
+<path d="M30.4,109.6 A56,56 0 1 1 109.6,109.6" fill="none" stroke="#F07A45" stroke-width="10" stroke-linecap="round" pathLength="100" stroke-dasharray="70.6 100" style="filter: drop-shadow(0 0 8px #F07A45)"></path>
+<text x="70" y="78" text-anchor="middle" fill="#EEF0F3" font-family="Archivo Black, sans-serif" font-size="26">12/17</text>
+<text x="70" y="98" text-anchor="middle" fill="#A3A9B6" font-family="JetBrains Mono, monospace" font-size="11">races</text>
+</svg>
+<p style="margin: 0; font-size: 16px; line-height: 1.4; color: #C9CDD6">Singapore Grands Prix won from pole since 2008.</p>
+</div>
+</section>
+
+<div style="display: flex; flex-wrap: wrap; gap: 16px">
+<section style="flex: 1 1 520px; min-width: 0; background: #15171D; border: 1px solid #262A33; border-radius: 18px; padding: 24px">
+<p style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 1.5px; color: #A3A9B6">QUALIFYING · CUMULATIVE GAP AFTER EACH SECTOR</p>
+<h2 style="margin: 8px 0 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: 1.9rem">Pole decided by 0.054s</h2>
+<div style="overflow-x: auto; margin-top: 12px">
+<svg width="100%" viewBox="0 0 600 220" role="img" aria-label="Verstappen led after sector 1, Leclerc led by 0.107s after sector 2, Verstappen took pole by 0.054s after sector 3" style="min-width: 420px">
+<line x1="40" y1="110" x2="560" y2="110" stroke="#3A3F4B" stroke-dasharray="4 6"></line>
+<line x1="212.6" y1="30" x2="212.6" y2="190" stroke="#262A33"></line>
+<line x1="404" y1="30" x2="404" y2="190" stroke="#262A33"></line>
+<text x="126" y="206" text-anchor="middle" fill="#A3A9B6" font-family="JetBrains Mono, monospace" font-size="12">S1</text>
+<text x="308" y="206" text-anchor="middle" fill="#A3A9B6" font-family="JetBrains Mono, monospace" font-size="12">S2</text>
+<text x="482" y="206" text-anchor="middle" fill="#A3A9B6" font-family="JetBrains Mono, monospace" font-size="12">S3</text>
+<polyline points="40,110 213,124 404,46 560,142" fill="none" stroke="#E8002D" stroke-width="3" style="filter: drop-shadow(0 0 6px #E8002D)"></polyline>
+<polyline points="40,110 213,96 404,174 560,78" fill="none" stroke="#3671C6" stroke-width="3" style="filter: drop-shadow(0 0 6px #3671C6)"></polyline>
+<text x="566" y="82" fill="#EEF0F3" font-family="JetBrains Mono, monospace" font-size="12">VER</text>
+<text x="566" y="146" fill="#EEF0F3" font-family="JetBrains Mono, monospace" font-size="12">LEC</text>
+<text x="404" y="24" text-anchor="middle" fill="#F2A35E" font-family="JetBrains Mono, monospace" font-size="12">LEC +0.107 AHEAD</text>
+</svg>
+</div>
+<p style="margin: 6px 0 0; font-size: 15px; line-height: 1.5; color: #C9CDD6">Leclerc had pole after two sectors. Verstappen found 0.161s in the last one.</p>
+</section>
+
+<section style="flex: 1 1 380px; min-width: 0; background: #15171D; border: 1px solid #262A33; border-radius: 18px; padding: 24px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap">
+<h2 style="margin: 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: 1.4rem">Drivers after Singapore</h2>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #27F4D2">ANTONELLI +102</span>
+</div>
+<div style="display: grid; grid-template-columns: 22px minmax(0, 1fr) 52px; gap: 12px; align-items: center">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #A3A9B6">1</span>
+<div><div style="font-size: 15px">Antonelli <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6">Mercedes</span></div>
+<div style="height: 8px; border-radius: 4px; background: #262A33; margin-top: 6px; overflow: hidden"><div style="height: 8px; width: 100.0%; background: #27F4D2; box-shadow: 0 0 12px #27F4D2"></div></div></div>
+<span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 16px; text-align: right">340</span>
+</div>
+<div style="display: grid; grid-template-columns: 22px minmax(0, 1fr) 52px; gap: 12px; align-items: center">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #A3A9B6">2</span>
+<div><div style="font-size: 15px">Russell <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6">Mercedes</span></div>
+<div style="height: 8px; border-radius: 4px; background: #262A33; margin-top: 6px; overflow: hidden"><div style="height: 8px; width: 70.0%; background: #27F4D2; box-shadow: 0 0 12px #27F4D2"></div></div></div>
+<span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 16px; text-align: right">238</span>
+</div>
+<div style="display: grid; grid-template-columns: 22px minmax(0, 1fr) 52px; gap: 12px; align-items: center">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #A3A9B6">3</span>
+<div><div style="font-size: 15px">Hamilton <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6">Ferrari</span></div>
+<div style="height: 8px; border-radius: 4px; background: #262A33; margin-top: 6px; overflow: hidden"><div style="height: 8px; width: 67.4%; background: #E8002D; box-shadow: 0 0 12px #E8002D"></div></div></div>
+<span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 16px; text-align: right">229</span>
+</div>
+<div style="display: grid; grid-template-columns: 22px minmax(0, 1fr) 52px; gap: 12px; align-items: center">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #A3A9B6">4</span>
+<div><div style="font-size: 15px">Verstappen <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6">Red Bull</span></div>
+<div style="height: 8px; border-radius: 4px; background: #262A33; margin-top: 6px; overflow: hidden"><div style="height: 8px; width: 65.0%; background: #3671C6; box-shadow: 0 0 12px #3671C6"></div></div></div>
+<span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 16px; text-align: right">221</span>
+</div>
+<div style="display: grid; grid-template-columns: 22px minmax(0, 1fr) 52px; gap: 12px; align-items: center">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #A3A9B6">5</span>
+<div><div style="font-size: 15px">Leclerc <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6">Ferrari</span></div>
+<div style="height: 8px; border-radius: 4px; background: #262A33; margin-top: 6px; overflow: hidden"><div style="height: 8px; width: 63.2%; background: #E8002D; box-shadow: 0 0 12px #E8002D"></div></div></div>
+<span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 16px; text-align: right">215</span>
+</div>
+<a href="#" style="margin-top: 4px; font-size: 14px; color: #F2A35E">Full standings on the Hub</a>
+</section>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 16px">
+<section style="flex: 1 1 320px; min-width: 0; border-radius: 18px; padding: 24px; border: 1px solid #262A33; background: linear-gradient(160deg, #1A1C24 0%, #15171D 60%)">
+<p style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 1.5px; color: #8FD3FF">NEXT RACE · 14 DAYS TO GO</p>
+<h2 style="margin: 10px 0 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: 1.8rem">United States GP, Austin</h2>
+<p style="margin: 6px 0 0; font-size: 16px; color: #C9CDD6">Circuit of the Americas · October 25</p>
+<div style="display: flex; gap: 24px; margin-top: 22px; flex-wrap: wrap">
+<div><p style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6">LAP RECORD</p><p style="margin: 4px 0 0; font-family: 'Archivo Black', sans-serif; font-size: 1.6rem; color: #8FD3FF">1:36.169</p><p style="margin: 2px 0 0; font-size: 14px; color: #C9CDD6">Leclerc, 2019</p></div>
+<div><p style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A9B6">RECENT WINNERS</p><p style="margin: 4px 0 0; font-size: 15px; line-height: 1.6; color: #EEF0F3">2025 Verstappen<br>2024 Leclerc<br>2023 Verstappen</p></div>
+</div>
+</section>
+<section style="flex: 2 1 520px; min-width: 0; background: #15171D; border: 1px solid #262A33; border-radius: 18px; padding: 24px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap">
+<h2 style="margin: 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: 1.4rem">Latest</h2>
+<a href="#" style="font-size: 14px; color: #F2A35E">See the full feed</a>
+</div>
+<div style="margin-top: 8px">
+<a href="#" style="display: block; padding: 14px 0; border-top: 1px solid #262A33; text-decoration: none; color: #EEF0F3; font-size: 17px; line-height: 1.35">Stewards cleared Norris. His own team principal didn't.<span style="display: block; margin-top: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1px; color: #A3A9B6">FORMULA1.COM · OCT 11</span></a>
+<a href="#" style="display: block; padding: 14px 0; border-top: 1px solid #262A33; text-decoration: none; color: #EEF0F3; font-size: 17px; line-height: 1.35">Verstappen answers the question we asked after qualifying, with a 7-second win<span style="display: block; margin-top: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1px; color: #A3A9B6">CRASH.NET · OCT 11</span></a>
+<a href="#" style="display: block; padding: 14px 0; border-top: 1px solid #262A33; text-decoration: none; color: #EEF0F3; font-size: 17px; line-height: 1.35">Carlos Sainz got failed by a timing system twice in one weekend<span style="display: block; margin-top: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1px; color: #A3A9B6">PLANETF1 · OCT 11</span></a>
+<a href="#" style="display: block; padding: 14px 0; border-top: 1px solid #262A33; text-decoration: none; color: #EEF0F3; font-size: 17px; line-height: 1.35">Norris and Piastri's Crash Cost McLaren More Than a Result<span style="display: block; margin-top: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1px; color: #A3A9B6">PADDOCKINTEL</span></a>
+<a href="#" style="display: block; padding: 14px 0; border-top: 1px solid #262A33; text-decoration: none; color: #EEF0F3; font-size: 17px; line-height: 1.35">Mercedes' New Upgrade Lost to the Old Car in Singapore<span style="display: block; margin-top: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1px; color: #A3A9B6">PADDOCKINTEL</span></a>
+</div>
+</section>
+</div>
+
+<section style="border-radius: 20px; padding: 32px; border: 1px solid #3A2430; background: linear-gradient(120deg, #2B1626 0%, #5A2534 55%, #A8442E 100%); display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between">
+<div style="flex: 1 1 360px">
+<h2 style="margin: 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: 1.9rem">Follow the facts, not the hype.</h2>
+<p style="margin: 8px 0 0; font-size: 16px; color: #F1DFD6">Real numbers. Real history. Zero spin. Every race weekend in your inbox.</p>
+</div>
+<form style="flex: 1 1 360px; display: flex; flex-wrap: wrap; gap: 10px">
+<label for="email" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Email address</label>
+<input id="email" type="email" placeholder="you@email.com" style="flex: 1 1 200px; min-height: 48px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,.35); background: rgba(13,14,18,.45); color: #FFFFFF; font-size: 15px">
+<button type="submit" style="min-height: 48px; padding: 0 22px; border-radius: 999px; border: 0; background: #EEF0F3; color: #0D0E12; font-weight: 600; font-size: 15px; cursor: pointer">Get the numbers</button>
+</form>
+</section>
+</main>
+<footer style="border-top: 1px solid #1E2129; padding: 24px; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #A3A9B6">PADDOCKINTEL · F1, DECODED WITH DATA</footer>
+</div>
+</body>
+</html>

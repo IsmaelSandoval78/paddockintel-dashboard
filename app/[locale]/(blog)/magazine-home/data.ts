@@ -208,18 +208,28 @@ export type Top5Constructor = {
   wins: number;
 };
 
+// The most recent race (by year, round) that driver_standings has rows for. Not max race_id:
+// ids aren't calendar order (2026 Bahrain R16 is id 1191, Singapore R17 is 1184), and not
+// `races` by date alone — a race can exist before its results are imported.
+export async function getLatestStandingsRaceId(supabase: ReturnType<typeof createClient>): Promise<number | null> {
+  const { data: recentRaces } = await supabase
+    .from('races')
+    .select('id')
+    .lte('date', editorialToday())
+    .order('year', { ascending: false })
+    .order('round', { ascending: false })
+    .limit(30);
+  const ids = (recentRaces ?? []).map((r) => r.id as number);
+  if (!ids.length) return null;
+  const { data: rows } = await supabase.from('driver_standings').select('race_id').in('race_id', ids);
+  const withStandings = new Set((rows ?? []).map((r) => r.race_id as number));
+  return ids.find((id) => withStandings.has(id)) ?? null;
+}
+
 export async function getStandings(): Promise<{ drivers: Top5Driver[]; constructors: Top5Constructor[] }> {
   const supabase = createClient();
 
-  // Same gotcha as the Hub home: join on driver_standings' own max race_id,
-  // not `races` by date — a race can exist before its results are imported.
-  const { data: latestRow } = await supabase
-    .from('driver_standings')
-    .select('race_id')
-    .order('race_id', { ascending: false })
-    .limit(1)
-    .single();
-  const latestRaceId = (latestRow?.race_id as number | undefined) ?? null;
+  const latestRaceId = await getLatestStandingsRaceId(supabase);
   if (latestRaceId === null) return { drivers: [], constructors: [] };
 
   const [driverStandRes, constructorStandRes, resultsRes] = await Promise.all([

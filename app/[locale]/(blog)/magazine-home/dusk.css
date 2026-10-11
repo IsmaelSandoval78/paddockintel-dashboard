@@ -1,0 +1,164 @@
+/* "Telemetry at Dusk" — home page only. See docs/DECISION-2026-10-11-home-dusk.md and
+   docs/design/home-dusk/HANDOFF.md. Nothing here applies outside a page that renders
+   `.theme-dusk`: every rule is scoped to that class or to `body:has(.theme-dusk)` (so the
+   shared Navbar/Footer, which sit outside the page, take the same tokens on the home only).
+   Redefining the existing tokens (not adding parallel ones) is what lets the archive cards,
+   pagination and Navbar re-skin themselves without touching their components.
+   Scoped exception to CLAUDE.md: gradients and glow are allowed inside this scope only;
+   gradient text and backdrop-blur stay banned. */
+
+.theme-dusk,
+body:has(.theme-dusk) {
+  color-scheme: dark;
+
+  --dusk-ground: #0D0E12;
+  --dusk-panel: #15171D;
+  --dusk-line: #262A33;
+  --dusk-header-line: #1E2129;
+  --dusk-ink: #EEF0F3;
+  --dusk-ink-2: #C9CDD6;
+  --dusk-muted: #A3A9B6;
+  --dusk-warm: #F07A45;
+  --dusk-sunset: #F2A35E;
+  --dusk-ice: #8FD3FF;
+
+  --bg: var(--dusk-ground);
+  --surface: var(--dusk-panel);
+  --surface-raised: #1B1E26;
+  --surface-overlay: #1B1E26;
+  --border: var(--dusk-line);
+  --border-subtle: var(--dusk-header-line);
+  --text-1: var(--dusk-ink);
+  --text-2: var(--dusk-ink-2);
+  --text-3: var(--dusk-muted);
+  --accent: var(--dusk-warm);
+  --accent-dim: #2B1626;
+  --accent-2: var(--dusk-sunset);
+  --text-on-accent: var(--dusk-ground);
+  --green: #6FD3A2;
+  --shadow-card: 0 1px 0 var(--dusk-header-line);
+  --shadow-card-lg: 0 1px 0 var(--dusk-header-line);
+
+  /* Team colours are data, never decoration — on this dark ground they come from the
+     official 2026 F1 live-timing TeamColour field (the light-substrate values in
+     globals.css are darkened for cream and lose contrast here). */
+  --team-mercedes: #00D7B6;
+  --team-mclaren: #F47600;
+  --team-redbull: #4781D7;
+  --team-ferrari: #ED1131;
+  --team-alpine: #00A1E8;
+  --team-aston: #229971;
+  --team-haas: #9C9FA2;
+  --team-williams: #1868DB;
+  --team-rb: #6C98FF;
+  --team-audi: #F50537;
+  --team-cadillac: #909090;
+}
+
+body:has(.theme-dusk) {
+  background: var(--dusk-ground);
+}
+
+/* Shared Navbar on the home: active item as a pill, per the reference. */
+body:has(.theme-dusk) nav a[aria-current="page"] {
+  background: var(--dusk-ink);
+  color: var(--dusk-ground);
+  border-radius: 999px;
+  padding: 6px 12px;
+  margin: -6px -12px;
+}
+
+.theme-dusk {
+  font-family: var(--pi-dusk-sans), var(--pi-sans), system-ui, sans-serif;
+  background: var(--dusk-ground);
+  color: var(--dusk-ink);
+}
+
+.theme-dusk .dusk-display {
+  font-family: var(--pi-display), var(--pi-sans), sans-serif;
+  font-weight: 400;
+}
+
+.theme-dusk .dusk-mono {
+  font-family: var(--pi-mono), ui-monospace, monospace;
+}
+
+.theme-dusk .dusk-panel {
+  background: var(--dusk-panel);
+  border: 1px solid var(--dusk-line);
+  border-radius: 18px;
+}
+
+.theme-dusk .soft-card,
+.theme-dusk .soft-card-lg {
+  border: 1px solid var(--dusk-line);
+}
+
+.theme-dusk .dusk-hero {
+  border: 1px solid var(--dusk-line);
+  border-radius: 24px;
+  background: linear-gradient(180deg, #120F17 0%, #2B1626 34%, #6B2A33 62%, #C1502E 84%, #F2A35E 100%);
+}
+
+.theme-dusk .dusk-newsletter {
+  border: 1px solid #3A2430;
+  border-radius: 20px;
+  background: linear-gradient(120deg, #2B1626 0%, #5A2534 55%, #A8442E 100%);
+}
+
+.theme-dusk .dusk-next-race {
+  border: 1px solid var(--dusk-line);
+  border-radius: 18px;
+  background: linear-gradient(160deg, #1A1C24 0%, #15171D 60%);
+}
+
+.theme-dusk .dusk-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 999px;
+  background: var(--dusk-ink);
+  color: var(--dusk-ground);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 150ms ease;
+}
+.theme-dusk .dusk-pill:hover,
+.theme-dusk .dusk-pill:focus-visible {
+  background: #FFFFFF;
+}
+
+.theme-dusk .dusk-link {
+  color: var(--dusk-sunset);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.theme-dusk .dusk-link:hover,
+.theme-dusk .dusk-link:focus-visible {
+  color: var(--dusk-ink);
+}
+
+.theme-dusk :focus-visible {
+  outline: 2px solid var(--dusk-sunset);
+  outline-offset: 3px;
+}
+
+/* Glow: static (no animation), so nothing to stop under reduced motion — but users who ask
+   for reduced motion often also want less visual intensity, so the glow drops out too. */
+.theme-dusk .dusk-glow-warm { filter: drop-shadow(0 0 6px var(--dusk-warm)); }
+.theme-dusk .dusk-glow-gauge { filter: drop-shadow(0 0 8px var(--dusk-warm)); }
+.theme-dusk .dusk-number-glow { text-shadow: 0 0 40px rgba(242, 163, 94, 0.6); }
+@media (prefers-reduced-motion: reduce) {
+  .theme-dusk .dusk-glow-warm,
+  .theme-dusk .dusk-glow-gauge,
+  /* !important: the duel lines set their team-coloured glow as an inline style. */
+  .theme-dusk [data-glow] { filter: none !important; box-shadow: none !important; }
+  .theme-dusk .dusk-number-glow { text-shadow: none; }
+}
+
+/* The duel chart scales with its panel; on phones its 12-unit labels would render ~5px,
+   so they grow in viewBox units to stay legible (end labels may spill into the padding). */
+@media (max-width: 640px) {
+  .theme-dusk .dusk-duel text { font-size: 22px; }
+}

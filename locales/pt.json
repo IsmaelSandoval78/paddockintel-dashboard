@@ -1014,5 +1014,63 @@
       "constructorChampionships": "Títulos do construtor",
       "constructorCareerPoints": "Pontos históricos do construtor"
     }
+  },
+  "homeDusk": {
+    "kickerRace": "{race} · {session} · {date}",
+    "sessionRace": "Corrida",
+    "kickerFeatured": "Destaque · {date}",
+    "cta": "Ler a análise",
+    "terrain": {
+      "caption": "A volta da pole como relevo · {driver} {lapTime} · velocidade {min}–{max} km/h · telemetria do FastF1",
+      "aria": "A velocidade da volta da pole de {driver} desenhada como uma cordilheira: cada pico é uma reta, cada vale uma curva. A velocidade vai de {min} a {max} km/h."
+    },
+    "gauges": {
+      "title": "A corrida em números",
+      "topSpeedCaption": "Velocidade máxima na volta da pole de {driver}, {lapTime}.",
+      "topSpeedUnit": "km/h",
+      "topSpeedAria": "Velocidade máxima {value} km/h, numa escala de 0 a {max} km/h",
+      "lapsLedCaptionAll": "Voltas que {driver} liderou no dia da corrida: todas.",
+      "lapsLedCaption": "Voltas que {driver} liderou no dia da corrida.",
+      "lapsLedUnit": "voltas",
+      "lapsLedAria": "{driver} liderou {value} de {max} voltas",
+      "poleToWinCaption": "Corridas em {circuit} vencidas da pole desde {year}.",
+      "poleToWinUnit": "corridas",
+      "poleToWinAria": "{value} de {max} corridas em {circuit} vencidas da pole desde {year}"
+    },
+    "duel": {
+      "kicker": "Classificação · diferença acumulada após cada setor",
+      "title": "Pole decidida por {gap}s",
+      "ahead": "{driver} +{gap} à frente",
+      "sector": "S{n}",
+      "summaryFlip": "{challenger} estava à frente após o setor {sector}. {pole} encontrou {gain}s a partir dali para ficar com a pole.",
+      "summaryNoFlip": "{pole} estava à frente após cada setor.",
+      "aria": "Diferença acumulada de classificação após cada setor entre {pole} e {challenger}: {gaps}. {pole} ficou com a pole por {gap}s.",
+      "ariaGap": "após o setor {n}, {driver} à frente por {gap}s"
+    },
+    "standings": {
+      "title": "Pilotos após o {race}",
+      "lead": "{driver} +{gap}",
+      "link": "Classificação completa no Hub"
+    },
+    "nextRace": {
+      "kicker": "Próxima corrida · {days, plural, one {falta # dia} other {faltam # dias}}",
+      "meta": "{circuit} · {date}",
+      "lapRecord": "Recorde da pista",
+      "lapRecordHolder": "{driver}, {year}",
+      "recentWinners": "Vencedores recentes"
+    },
+    "latest": {
+      "title": "Mais recentes",
+      "link": "Ver o feed completo",
+      "ownSource": "PaddockIntel"
+    },
+    "newsletter": {
+      "title": "Os fatos, não o alarde.",
+      "body": "Números reais. História real. Zero enrolação. Toda semana no seu e-mail.",
+      "emailLabel": "Endereço de e-mail"
+    },
+    "archive": {
+      "title": "Arquivo de análises"
+    }
   }
 }
