@@ -295,6 +295,16 @@ body:has(.theme-dusk) nav a[aria-current="page"] {
   color: var(--accent);
 }
 
+/* Feed: the lead story card (same warm insight gradient as the home's insight card) and the
+   FAQ disclosure colour on the light sheet. */
+.theme-dusk .dusk-feed-lead {
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(240, 122, 69, 0.42) 0%, rgba(240, 122, 69, 0) 55%),
+    linear-gradient(160deg, #241521 0%, #3E1B27 60%, #5E2A24 100%);
+}
+.theme-dusk .dusk-sheet details.dusk-faq > summary::after { color: var(--accent); }
+
 /* Grid-to-flag ribbons: hovering one car dims the rest (pure CSS, no client JS). */
 .theme-dusk .dusk-ribbons path { opacity: 0.5; transition: opacity 0.15s ease; }
 .theme-dusk .dusk-ribbons:hover path { opacity: 0.12; }

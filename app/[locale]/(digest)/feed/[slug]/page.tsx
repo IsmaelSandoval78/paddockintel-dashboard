@@ -4,8 +4,12 @@ import { getTranslations, getFormatter } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
 import ShareButton from '@/components/ui/ShareButton';
-import NewsletterCard from '@/components/blog/NewsletterCard';
-import HookDeliverBlock from '@/components/digest/HookDeliverBlock';
+import NewsletterBand from '@/components/home-dusk/NewsletterBand';
+import HubContext from '@/components/feed-dusk/HubContext';
+import PressBars from '@/components/feed-dusk/PressBars';
+import { easternDateKey } from '@/lib/dates';
+import { weeklyEntityCounts } from '@/lib/entityMentions';
+import { getBeagleEntityCounts, mergeEntityCounts } from '@/lib/beagleCounts';
 import {
   readFeaturedStats,
   resolveHookDeliver,
@@ -13,6 +17,8 @@ import {
   type HookDeliverFallbacks,
 } from '@/lib/hookDeliver';
 import { SITE_URL } from '@/lib/site-url';
+import { duskSans } from '../../../(blog)/dusk-font';
+import '../../../(blog)/dusk.css';
 
 export const revalidate = 3600;
 
@@ -41,9 +47,23 @@ type FeedItem = {
   meta_description_es: string | null;
 };
 
+type NearbyItem = {
+  id: string;
+  slug: string | null;
+  source_name: string;
+  source_url: string;
+  headline: string;
+  headline_es: string | null;
+  entity_tags: string[];
+  published_at: string;
+};
+
 type PageParams = Promise<{ locale: string; slug: string }>;
 
 const MAGAZINE_BASE = SITE_URL;
+const DAY_MS = 86_400_000;
+// Request time for the day windows below (a server component renders once per revalidation).
+const requestTime = () => Date.now();
 
 function localeUrl(locale: string, path: string): string {
   return locale === 'en' ? `${MAGAZINE_BASE}${path}` : `${MAGAZINE_BASE}/${locale}${path}`;
@@ -89,6 +109,21 @@ async function getItem(slug: string): Promise<FeedItem | null> {
   return data as FeedItem | null;
 }
 
+// Published Feed items from the earlier of "a week ago" and "two days before this story": enough
+// for this week's mention counts and for the other stories of the same editorial day.
+async function getNearby(publishedAt: string): Promise<NearbyItem[]> {
+  const supabase = createClient();
+  const from = new Date(Math.min(Date.now() - 7 * DAY_MS, new Date(publishedAt).getTime() - 2 * DAY_MS)).toISOString();
+  const { data } = await supabase
+    .from('digest_items')
+    .select('id, slug, source_name, source_url, headline, headline_es, entity_tags, published_at, digest_issues!inner(status, series)')
+    .gte('published_at', from)
+    .eq('digest_issues.status', 'published')
+    .eq('digest_issues.series', 'newsletter')
+    .order('published_at', { ascending: false });
+  return (data ?? []) as unknown as NearbyItem[];
+}
+
 export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
   const { locale, slug } = await params;
   const item = await getItem(slug);
@@ -96,10 +131,8 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
     const t = await getTranslations({ locale, namespace: 'notFound' });
     return { title: `${t('label')} — PaddockIntel`, robots: { index: false, follow: true } };
   }
-
   const text = localize(item, locale);
   const canonical = localeUrl(locale, `/feed/${slug}/`);
-
   return {
     title: `${text.headline} — PaddockIntel`,
     description: text.meta_description ?? text.our_summary.slice(0, 145),
@@ -120,10 +153,39 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
   if (!item) notFound();
 
   const t = await getTranslations('feed');
+  const tArticle = await getTranslations('articleDusk');
   const format = await getFormatter();
   const text = localize(item, locale);
+
+  const now = requestTime();
+  const itemDayKey = easternDateKey(new Date(item.published_at));
+  const todayKey = easternDateKey(new Date(now));
+  const yesterdayKey = easternDateKey(new Date(now - DAY_MS));
+  // Mention counts only cover the last 7 days, so they're shown for this week's stories only.
+  const inCountWindow = itemDayKey >= easternDateKey(new Date(now - 7 * DAY_MS));
+
   const hookSpec = hookDeliverSpecForItem(item);
-  const hook = hookSpec ? await resolveHookDeliver(hookSpec, locale, hookDeliverFallbacks(t)) : null;
+  const [hook, nearby, beagleCounts] = await Promise.all([
+    hookSpec ? resolveHookDeliver(hookSpec, locale, hookDeliverFallbacks(t)) : Promise.resolve(null),
+    getNearby(item.published_at),
+    inCountWindow ? getBeagleEntityCounts(createClient()) : Promise.resolve(new Map<string, number>()),
+  ]);
+  const counts = inCountWindow ? mergeEntityCounts(weeklyEntityCounts(nearby), beagleCounts) : new Map<string, number>();
+  const whoRows = item.entity_tags
+    .map((name) => ({ name, count: counts.get(name) ?? 0 }))
+    .filter((r) => r.count > 0)
+    .sort((a, b) => b.count - a.count);
+  const sameDay = nearby
+    .filter((n) => n.id !== item.id && easternDateKey(new Date(n.published_at)) === itemDayKey)
+    .slice(0, 5);
+
+  const dayDate = new Date(`${itemDayKey}T12:00:00Z`);
+  const shortDate = format.dateTime(dayDate, {
+    month: 'short',
+    day: 'numeric',
+    ...(itemDayKey.slice(0, 4) !== todayKey.slice(0, 4) ? { year: 'numeric' as const } : {}),
+  });
+  const dayLabel = itemDayKey === todayKey ? t('today') : itemDayKey === yesterdayKey ? t('yesterday') : shortDate;
   const pageUrl = localeUrl(locale, `/feed/${slug}/`);
 
   const jsonLd: Record<string, unknown> = {
@@ -166,7 +228,8 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
     ],
   };
 
-  const hasStats = text.stats.length > 0;
+  const prose = 'font-prose text-[clamp(17px,1.25vw,19px)] leading-[1.7] m-0 mb-[1.1em]';
+  const sheetH2 = 'dusk-display text-[clamp(1.25rem,1.9vw,1.5rem)] leading-tight tracking-[-0.01em] mt-8 mb-3 first:mt-0';
 
   return (
     <>
@@ -174,143 +237,159 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
       {faqJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
 
-      <main className="bg-bg min-h-screen">
-        <div className="h-12 border-b border-border flex items-center px-5">
-          <Link href="/feed" className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-2 hover:text-terracotta transition-colors duration-150">
-            {t('itemPage.backToFeed')}
-          </Link>
-        </div>
+      <main className={`theme-dusk ${duskSans.variable} min-h-screen`}>
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-5 pt-6 pb-16 flex flex-col gap-4">
+          <nav aria-label={tArticle('crumbsAria')} className="dusk-mono text-[11.5px] tracking-[0.04em] text-[color:var(--dusk-muted)]">
+            <Link href="/" className="hover:text-[color:var(--dusk-ink)]">{t('crumbHome')}</Link>
+            {' / '}
+            <Link href="/feed" className="hover:text-[color:var(--dusk-ink)]">{t('title')}</Link>
+            {` / ${shortDate}`}
+          </nav>
 
-        <div className="px-5 py-10 md:py-14 max-w-5xl mx-auto">
-          <div className={`flex gap-12 items-start ${hasStats ? '' : 'max-w-2xl'}`}>
-            <div className="flex-1 min-w-0 max-w-2xl">
-              <div className="flex items-center gap-2 mb-3 flex-wrap">
-                <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2">{item.source_name}</span>
-                <span className="text-text-3">·</span>
-                <span className="font-mono text-[10px] text-text-3">
-                  {format.dateTime(new Date(item.published_at), { month: 'short', day: 'numeric', year: 'numeric' })}
-                </span>
-              </div>
+          {/* Cover */}
+          <header className="dusk-card dusk-cover px-5 py-7 md:px-9 md:py-9 flex flex-col gap-4">
+            <p className="dusk-mono uppercase text-[12px] tracking-[0.12em] text-[color:var(--dusk-sunset)] m-0">
+              {t('itemKicker', { day: dayLabel, source: item.source_name })}
+            </p>
+            <h1 className="dusk-display m-0 text-[clamp(1.9rem,4.2vw,3.2rem)] leading-[1.04] tracking-[-0.02em] max-w-[24ch] text-balance [overflow-wrap:anywhere]">
+              {text.headline}
+            </h1>
+            <p className="dusk-hero-dek m-0 text-[16px] md:text-[18.5px] leading-[1.55] max-w-[64ch]">{text.our_summary}</p>
+            {item.entity_tags.length > 0 && (
+              <ul className="m-0 p-0 list-none flex flex-wrap gap-2">
+                {item.entity_tags.map((tag) => (
+                  <li key={tag} className="px-3 py-1 rounded-full text-[12.5px] text-[color:var(--dusk-peach)] bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.16)]">
+                    {tag}
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div className="flex flex-wrap items-center gap-x-[18px] gap-y-2 dusk-mono uppercase text-[11.5px] tracking-[0.05em] text-[#E2CEC6]">
+              <Link href="/about" className="hover:text-[color:var(--dusk-peach)]">{t('editedBy')}</Link>
+              <time dateTime={item.published_at}>{format.dateTime(dayDate, { month: 'short', day: 'numeric', year: 'numeric' })}</time>
+              <a href={item.source_url} target="_blank" rel="noopener noreferrer" className="text-[color:var(--dusk-peach)] hover:underline">
+                {t('originallyReportedBy', { source: item.source_name })} ↗
+              </a>
+              <ShareButton url={pageUrl} title={text.headline} />
+            </div>
+          </header>
 
-              <h1
-                className="uppercase leading-none tracking-[-0.02em] text-text-1 mb-6"
-                style={{ fontFamily: 'var(--pi-display)', fontSize: 'clamp(1.5rem, 4vw, 2.25rem)' }}
-              >
-                {text.headline}
-              </h1>
-
-              <p className="font-prose text-text-2 leading-relaxed" style={{ fontSize: '0.9375rem', lineHeight: '1.7' }}>
-                {text.our_summary}
-              </p>
-
-              {hook && (
-                <HookDeliverBlock
-                  data={hook}
-                  variant="page"
-                  contextLabel={t('hookDeliver.context')}
-                  sourceLabel={t('hookDeliver.source', { tables: hook.sources.join(' · ') })}
-                  hubLabel={t('hookDeliver.hub', { name: hook.hub.name })}
-                />
-              )}
-
-              {text.editor_note && (
-                <p className="font-prose text-text-2 leading-relaxed mt-5" style={{ fontSize: '0.9375rem', lineHeight: '1.7' }}>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-1 mr-1.5">{t('editorsNote')}:</span>
-                  {text.editor_note}
-                </p>
-              )}
-
-              {text.editor_take && (
-                <p className="font-prose text-text-2 leading-relaxed mt-5" style={{ fontSize: '0.9375rem', lineHeight: '1.7' }}>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.08em] mr-1.5" style={{ color: 'var(--terracotta)' }}>
-                    {t('editorsTake')}:
-                  </span>
-                  {text.editor_take}
-                </p>
-              )}
-
-              {/* Stats -- mobile horizontal strip, hidden on desktop (sidebar owns it there) */}
-              {hasStats && (
-                <div className="lg:hidden mt-8 pt-6 border-t border-border-subtle overflow-x-auto border border-border flex gap-0">
-                  {text.stats.map((stat, i) => (
-                    <div key={i} className={`p-4 shrink-0 ${i > 0 ? 'border-l border-border-subtle' : ''}`}>
-                      <p className="font-display text-[1.5rem] text-text-1 tabular-nums leading-none">{stat.value}</p>
-                      <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 mt-1.5">{stat.label}</p>
-                      {stat.unit && <p className="font-mono text-[10px] text-text-3 mt-0.5">{stat.unit}</p>}
-                    </div>
-                  ))}
+          {/* The numbers */}
+          {text.stats.length > 0 && (
+            <section aria-label={t('itemPage.theNumbers')} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+              {text.stats.map((stat) => (
+                <div key={stat.label} className="dusk-card p-5 sm:p-6 flex flex-col gap-2.5">
+                  <p className="dusk-display tabular-nums text-[2.5rem] leading-none tracking-[-0.03em] m-0">{stat.value}</p>
+                  <p className="dusk-mono uppercase text-[11px] tracking-[0.07em] leading-[1.45] text-[color:var(--dusk-peach)] m-0">{stat.label}</p>
+                  {stat.unit && <p className="text-[13.5px] text-[color:var(--dusk-ink-2)] m-0">{stat.unit}</p>}
                 </div>
-              )}
+              ))}
+            </section>
+          )}
 
-              <NewsletterCard />
+          {/* Reading sheet + rail */}
+          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-4 items-start">
+            <article className="dusk-sheet relative rounded-[24px] px-4 py-7 md:px-10 md:py-10 lg:px-14 lg:py-12 min-w-0">
+              <div className="max-w-[64ch] mx-auto">
+                {hook && (
+                  <div className="dusk-island dusk-card p-4 mb-8">
+                    <HubContext
+                      data={hook}
+                      contextLabel={t('hookDeliver.context')}
+                      sourceLabel={t('hookDeliver.source', { tables: hook.sources.join(' · ') })}
+                      hubLabel={t('hookDeliver.hub', { name: hook.hub.name })}
+                    />
+                  </div>
+                )}
 
-              {item.internal_link_slug && (
-                <Link
-                  href={`/${item.internal_link_slug}`}
-                  className="block font-mono text-[10px] uppercase tracking-[0.1em] hover:underline mt-6"
-                  style={{ color: 'var(--terracotta)' }}
-                >
-                  {t('ourBrief')}
-                </Link>
-              )}
+                {text.editor_note && (
+                  <>
+                    <h2 className={sheetH2}>{t('dataAdds')}</h2>
+                    <p className={prose}>{text.editor_note}</p>
+                  </>
+                )}
 
-              {text.faq.length > 0 && (
-                <section className="mt-12 pt-8 border-t border-border">
-                  <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-2 mb-6">
-                    Frequently Asked Questions
-                  </p>
-                  <dl>
-                    {text.faq.map((faq, i) => (
-                      <div key={i} className={`py-4 ${i > 0 ? 'border-t border-border-subtle' : ''}`}>
-                        <dt className="font-prose font-semibold text-text-1 mb-1.5 text-sm">{faq.q}</dt>
-                        <dd className="font-prose text-sm text-text-2 leading-relaxed">{faq.a}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </section>
-              )}
+                {text.editor_take && (
+                  <div className="my-8 rounded-2xl px-5 py-5 sm:px-6 bg-[color:var(--accent-dim)] border-l-4 border-[color:var(--accent)] text-[17px] leading-[1.55]">
+                    <span className="block dusk-mono uppercase text-[11px] tracking-[0.1em] text-[color:var(--accent)] mb-1.5">{t('editorsTake')}</span>
+                    {text.editor_take}
+                  </div>
+                )}
 
-              <div className="mt-8 pt-6 border-t border-border-subtle">
-                <a
-                  href={item.source_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-mono text-[11px] hover:underline"
-                  style={{ color: 'var(--terracotta)' }}
-                >
-                  {t('originallyReportedBy', { source: item.source_name })} · {t('readOriginal')}
-                </a>
-              </div>
-
-              <div className="mt-8 pt-6 border-t border-border-subtle flex items-center justify-between">
-                <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-3">
-                  Written by{' '}
-                  <Link href="/about" className="text-text-1 hover:text-terracotta transition-colors duration-150">
-                    Ismael Sandoval
+                {item.internal_link_slug && (
+                  <Link href={`/${item.internal_link_slug}`} className="inline-block dusk-mono uppercase text-[11px] tracking-[0.1em] text-[color:var(--accent)] hover:underline mb-6">
+                    {t('ourBrief')}
                   </Link>
+                )}
+
+                {text.faq.length > 0 && (
+                  <section aria-labelledby="feed-faq-title">
+                    <h2 id="feed-faq-title" className={sheetH2}>{t('faqTitle')}</h2>
+                    {text.faq.map((faq, i) => (
+                      <details key={i} className="dusk-faq border-t border-[color:var(--border)]">
+                        <summary className="flex justify-between gap-4 py-3.5 font-semibold text-[16px]">{faq.q}</summary>
+                        <p className="m-0 mb-3.5 text-[16px] leading-[1.6] text-[color:var(--text-2)]">{faq.a}</p>
+                      </details>
+                    ))}
+                  </section>
+                )}
+
+                <div className="mt-8 rounded-2xl px-5 py-4 bg-[color:var(--surface)] border border-[color:var(--border)] flex flex-wrap items-center justify-between gap-3 text-[15px]">
+                  <span>{t('originallyReportedBy', { source: item.source_name })}</span>
+                  <a href={item.source_url} target="_blank" rel="noopener noreferrer" className="font-semibold text-[color:var(--accent)] hover:underline">
+                    {t('readOriginal')}
+                  </a>
+                </div>
+
+                <p className="mt-10 pt-6 border-t border-[color:var(--border-subtle)] font-mono text-[11px] uppercase tracking-[0.06em] text-[color:var(--text-3)]">
+                  {tArticle('writtenBy')}{' '}
+                  <Link href="/about" className="text-[color:var(--text-1)] hover:text-[color:var(--accent)]">Ismael Sandoval</Link>
                   {' '}· PaddockIntel
                 </p>
-                <ShareButton url={pageUrl} title={text.headline} />
               </div>
-            </div>
+            </article>
 
-            {hasStats && (
-              <aside className="hidden lg:flex flex-col gap-8 w-52 shrink-0 sticky top-8">
-                <div>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 mb-3">{t('itemPage.theNumbers')}</p>
-                  <div className="border border-border">
-                    {text.stats.map((stat, i) => (
-                      <div key={i} className={`p-4 ${i > 0 ? 'border-t border-border-subtle' : ''}`}>
-                        <p className="font-display text-[2rem] text-text-1 tabular-nums leading-none">{stat.value}</p>
-                        <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 mt-2">{stat.label}</p>
-                        {stat.unit && <p className="font-mono text-[10px] text-text-3 mt-0.5">{stat.unit}</p>}
-                      </div>
-                    ))}
+            <aside className="flex flex-col gap-4 lg:sticky lg:top-20">
+              {whoRows.length > 0 && (
+                <section className="dusk-card p-5 flex flex-col gap-3" aria-labelledby="feed-who-title">
+                  <div>
+                    <h2 id="feed-who-title" className="dusk-label m-0 font-normal">{t('whoTitle')}</h2>
+                    <p className="text-[13px] text-[color:var(--dusk-muted)] mt-1 mb-0">{t('whoSub')}</p>
                   </div>
-                </div>
-              </aside>
-            )}
+                  <PressBars rows={whoRows} ariaLabel={t('whoTitle')} />
+                </section>
+              )}
+              {sameDay.length > 0 && (
+                <section className="dusk-card p-5 flex flex-col gap-2" aria-labelledby="feed-more-title">
+                  <h2 id="feed-more-title" className="dusk-label m-0 font-normal">{t('moreFrom', { date: shortDate })}</h2>
+                  <ul className="m-0 p-0 list-none">
+                    {sameDay.map((n) => {
+                      const headline = locale === 'es' ? n.headline_es ?? n.headline : n.headline;
+                      const inner = (
+                        <>
+                          {headline}
+                          <small className="block dusk-mono uppercase text-[10.5px] tracking-[0.04em] text-[color:var(--dusk-muted)] mt-1">{n.source_name}</small>
+                        </>
+                      );
+                      const cls = 'block py-2.5 text-[14px] leading-[1.35] hover:text-[color:var(--dusk-peach)]';
+                      return (
+                        <li key={n.id} className="border-t border-[color:var(--dusk-line)] first:border-t-0">
+                          {n.slug ? (
+                            <Link href={`/feed/${n.slug}`} className={cls}>{inner}</Link>
+                          ) : (
+                            <a href={n.source_url} target="_blank" rel="noopener noreferrer" className={cls}>{inner}</a>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  <Link href="/feed" className="dusk-link text-[13px]">{t('allFeed')}</Link>
+                </section>
+              )}
+            </aside>
           </div>
+
+          <NewsletterBand className="mt-2" />
         </div>
       </main>
     </>
