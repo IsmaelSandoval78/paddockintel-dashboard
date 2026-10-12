@@ -108,3 +108,16 @@ Prototyped from the live Feed data (dumped with the site's own functions) and ap
   for stories inside that 7-day window, never zeros) and the other stories of the same day.
 - Metadata, canonical/hreflang (EN/ES) and all JSON-LD unchanged; new labels in `feed` (EN/ES/PT).
 
+## Weekly Digest (2026-10-12)
+Prototyped from the live issues and approved. Built into `app/[locale]/(digest)/weekly/`:
+- **Index:** latest issue (volume number, synthesis, its stories with their key numbers) next to
+  the subscribe card (the page is the newsletter's own landing), the archive in numbers, then older
+  issues by month (volume, date, synthesis, story count, first key number) and the Recaps link.
+- **Issue page:** dusk cover with the volume number and the synthesis, the issue's key numbers as
+  cards that jump to their story, the stories in issue order on the light sheet (each links to our
+  Feed page when it has one, and to the original report), rail with the issue's contents,
+  subscribe and older/newer issue.
+- All interface text moved into `digest` (EN/ES/PT); it was hardcoded English on every locale.
+  Story headlines and summaries use their Spanish columns on `/es/`; issue syntheses only exist in
+  English. Metadata kept (titles now localized for ES/PT); no JSON-LD existed and none was added.
+
