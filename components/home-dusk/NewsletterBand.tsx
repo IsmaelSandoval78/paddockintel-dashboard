@@ -6,7 +6,16 @@ import { Link } from '@/lib/i18n/navigation';
 
 // Same /api/subscribe flow (and the same consent/legal line) as components/blog/NewsletterCard.tsx,
 // in the dusk band layout.
-export default function NewsletterBand({ className = '' }: { className?: string }) {
+export default function NewsletterBand({
+  className = '',
+  title,
+  body,
+}: {
+  className?: string;
+  // Optional page-specific heading/body (e.g. the Weekly Digest's own pitch); defaults to the home's.
+  title?: string;
+  body?: string;
+}) {
   const t = useTranslations('homeDusk.newsletter');
   const tn = useTranslations('newsletter');
   const locale = useLocale();
@@ -33,8 +42,8 @@ export default function NewsletterBand({ className = '' }: { className?: string 
   return (
     <section className={`dusk-card dusk-newsletter p-6 sm:p-8 flex flex-wrap gap-5 items-center justify-between ${className}`}>
       <div className="flex-[1_1_360px] min-w-0">
-        <h2 className="dusk-display text-[1.6rem] sm:text-[1.9rem] leading-tight">{t('title')}</h2>
-        <p className="dusk-newsletter-body mt-2 text-[16px]">{t('body')}</p>
+        <h2 className="dusk-display text-[1.6rem] sm:text-[1.9rem] leading-tight">{title ?? t('title')}</h2>
+        <p className="dusk-newsletter-body mt-2 text-[16px]">{body ?? t('body')}</p>
       </div>
       <div className="flex-[1_1_360px] min-w-0">
         {status === 'success' ? (
