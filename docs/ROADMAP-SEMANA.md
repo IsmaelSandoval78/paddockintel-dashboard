@@ -2238,3 +2238,28 @@ semana de carrera), fila de KPIs (velocidad, vueltas lideradas vuelta por vuelta
 "How the race was won" (diferencia ganador–P2 por vuelta + orden de carrera), campeonato, pole por
 sectores, mapa, evolución del título y próxima carrera. `race_highlights.py` ahora genera `raceTrace`. Solo
 el home; artículos después, con prototipo primero. Vocabulario de zonas: artifact "Anatomía del Home".
+
+**Artículos en dusk, 12 oct 2026:** tras el prototipo del reporte de Singapur (modo oscuro vs. hoja clara),
+Ismael eligió la hoja clara. Todos los artículos pasan a la carcasa dusk (portada, fila de KPIs, rail con
+índice y resultado, FAQ/fuentes en tarjetas, relacionados) con el texto sobre una hoja clara. Si el
+artículo tiene `race_id`, suma el paisaje de la vuelta de pole en la portada y figuras de carrera
+colocadas con marcadores `[[figure:…]]` en el markdown: dominancia de la pole por curvas (nuevo bloque
+`qualiDominance` en `race_highlights.py`, alineado con los tiempos oficiales por sector), de la parrilla
+a la bandera (desde `results`) y "How the race was won". El reporte de Singapur ya tiene `race_id: 1184`
+en Supabase; **los marcadores se ingieren recién después del deploy** (si no, producción mostraría el
+texto `[[figure:…]]`). **`load_race.py` corregido (mismo día):** la clasificación se leía mal desde FastF1.
+`laps` salía de una columna que no existe (`NumberOfLaps` → 0), la posición de `Position` en vez de
+`ClassifiedPosition` (los no clasificados quedaban con 20–22), el estado "Lapped" caía a "Finished"
+sin aviso y `time` guardaba el gap crudo de FastF1 ("0:07.335", sin sentido para los doblados). Ahora
+sigue la convención Ergast de las filas históricas: `laps` real, `position` NULL + `position_text`
+"R" para no clasificados, "+N Lap(s)", tiempo del ganador "1:42:00.785" y "+7.335" solo para autos en
+la vuelta del líder, `milliseconds` total; un estado desconocido frena la carga. Singapur (carrera +
+sprint) se recargó con el script: standings idénticos (Red Bull 329). **Rondas 7–16 recargadas (mismo día):** antes se compararon contra Supabase con un dry run y
+coincidían en puntos y orden. La única diferencia fue Azerbaiyán (R15): Bortoleto pasa de 13° a 15°
+por una penalización de 10 s posterior a la carrera que FastF1 ya refleja, sin cambio de puntos.
+Además, esa ronda tenía `grid = -1` en las 22 filas, y Bélgica (R10) e Italia (R13) no tenían pit stops
+ni tiempos por vuelta; los tres quedaron corregidos. Puntos y victorias del campeonato: idénticos en
+las 23 rondas. Al recalcular apareció otro bug: los empates en puntos quedaban en cualquier orden.
+Ahora `load_race.py` desempata por countback (más victorias en GP, luego más segundos puestos, etc.),
+y se recalcularon los standings de R7–R17 (ej. R8: Norris 5° y Leclerc 6° con 79 pts, porque Norris
+tiene un P2).

@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { Instrument_Sans } from 'next/font/google';
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { Link } from '@/lib/i18n/navigation';
 import { createClient } from '@/lib/supabase/server';
@@ -9,6 +8,7 @@ import HeroLandscape, { type TerrainData } from '@/components/home-dusk/HeroLand
 import InsightCarousel, { type InsightSlide } from '@/components/home-dusk/InsightCarousel';
 import { LapsLedKpi, PoleToWinKpi, SpeedKpi } from '@/components/home-dusk/KpiCards';
 import RaceStoryCard from '@/components/home-dusk/RaceStoryCard';
+import { buildRaceStory } from '@/components/home-dusk/raceStory';
 import StandingsCard, { teamVar } from '@/components/home-dusk/StandingsCard';
 import SectorDuel from '@/components/home-dusk/SectorDuel';
 import TrackMap from '@/components/home-dusk/TrackMap';
@@ -21,17 +21,10 @@ import { SITE_URL, hubLocaleUrl } from '@/lib/site-url';
 import { getRaceHighlightsFor } from '@/lib/raceHighlights';
 import { getFeaturedAndRecent, getStandings, getCircuitOfTheDay, getFeedTeaser } from './data';
 import { getLatestRace, getTitleTrend } from './dusk-data';
-import './dusk.css';
+import { duskSans } from '../dusk-font';
+import '../dusk.css';
 
 export const revalidate = 3600;
-
-// "Telemetry at Dusk" v2 (docs/DECISION-2026-10-11-home-dusk.md): UI/body face for this page only.
-const duskSans = Instrument_Sans({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
-  variable: '--pi-dusk-sans',
-  display: 'swap',
-});
 
 type Stat = { value: string; label: string; unit?: string };
 
@@ -261,43 +254,7 @@ export default async function MagazineHomePage({
   const p2w = latestRace?.poleToWin;
 
   // ── D · How the race was won ────────────────────────────────────────
-  let mover: { driver: string; peakLap: number; peakPos: number; note: string; final: number } | null = null;
-  if (trace) {
-    for (const d of trace.drivers.slice(1)) {
-      const later = d.positions.slice(1).filter((p): p is number => p !== null);
-      const final = d.positions[d.positions.length - 1];
-      if (!later.length || final === null) continue;
-      const peak = Math.min(...later);
-      if (final - peak >= 2 && (!mover || final - peak > mover.final - mover.peakPos)) {
-        mover = {
-          driver: d.driver,
-          peakPos: peak,
-          peakLap: d.positions.indexOf(peak, 1) + 1,
-          final,
-          note: t('story.moverNote', { driver: d.driver, peak, final }),
-        };
-      }
-    }
-  }
-  const storyGap = trace?.gap;
-  const stops = storyGap
-    ? trace.drivers
-        .filter((d) => (d.driver === storyGap.chaser || d.driver === storyGap.leader) && d.pitLaps.length)
-        .map((d) => t('story.stop', { driver: d.driver, laps: d.pitLaps.join(', ') }))
-        .join('; ')
-    : '';
-  const leaderCode = trace?.drivers[0]?.driver ?? '';
-  const ledCount = trace?.drivers[0]?.positions.filter((p) => p === 1).length ?? 0;
-  const orderSummary = trace
-    ? [
-        ledCount === trace.totalLaps
-          ? t('story.summaryOrderAll', { leader: surname(leaderCode) })
-          : t('story.summaryOrder', { leader: surname(leaderCode), led: ledCount, total: trace.totalLaps }),
-        mover ? t('story.mover', { driver: surname(mover.driver), peak: mover.peakPos, final: mover.final }) : '',
-      ]
-        .filter(Boolean)
-        .join(' ')
-    : '';
+  const story = trace ? await buildRaceStory(trace, surname, fmt3) : null;
 
   // ── E · Standings ───────────────────────────────────────────────────
   const racesLeft = latestRace ? Math.max(0, latestRace.seasonRounds - latestRace.round) : 0;
@@ -457,32 +414,8 @@ export default async function MagazineHomePage({
               />
             )}
 
-            {trace && (
-              <RaceStoryCard
-                className="md:col-span-6 lg:col-span-8"
-                trace={trace}
-                mover={mover}
-                labels={{
-                  title: t('story.title'),
-                  subGap: storyGap ? t('story.subGap', { leader: surname(storyGap.leader), chaser: surname(storyGap.chaser) }) : '',
-                  subOrder: t('story.subOrder', { n: trace.drivers.length }),
-                  tabGap: storyGap ? t('story.tabGap', { chaser: surname(storyGap.chaser) }) : '',
-                  tabOrder: t('story.tabOrder'),
-                  tablist: t('story.tablist'),
-                  summaryGap: storyGap ? t('story.summaryGap', { gap: fmt3(storyGap.seconds[storyGap.seconds.length - 1]), stops }) : '',
-                  summaryOrder: orderSummary,
-                  source: t('story.source'),
-                  vsc: t('story.vsc'),
-                  lap: t('story.lap', { lap: '{lap}' }),
-                  pit: t('story.pit', { driver: '{driver}' }),
-                  pitVsc: t('story.pitVsc', { driver: '{driver}' }),
-                  tip: t('story.tip', { lap: '{lap}', driver: '{driver}', gap: '{gap}' }),
-                  ariaGap: storyGap
-                    ? t('story.ariaGap', { leader: surname(storyGap.leader), chaser: surname(storyGap.chaser), gap: fmt3(storyGap.seconds[storyGap.seconds.length - 1]) })
-                    : '',
-                  ariaOrder: t('story.ariaOrder', { n: trace.drivers.length }),
-                }}
-              />
+            {trace && story && (
+              <RaceStoryCard className="md:col-span-6 lg:col-span-8" trace={trace} mover={story.mover} labels={story.labels} />
             )}
             {latestRace && topDrivers.length > 0 && (
               <StandingsCard

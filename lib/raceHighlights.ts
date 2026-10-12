@@ -60,6 +60,28 @@ export type RaceTrace = {
   source: string;
 };
 
+export type DominanceSection = {
+  faster: string;
+  gain: number;
+  corners: string[];
+  path: [number, number][];
+};
+
+export type QualiDominance = {
+  pole: { driver: string; lapTime: string; teamColour: string | null };
+  challenger: { driver: string; lapTime: string; teamColour: string | null };
+  width: number;
+  height: number;
+  lapLength: number;
+  sectorEnds: [number, number];
+  boundaries: number[];
+  // challenger's elapsed time minus the pole-sitter's at each boundary: > 0 = pole-sitter ahead.
+  gapAtBoundaries: number[];
+  sections: DominanceSection[];
+  corners: Array<{ number: string; at: [number, number]; distance: number }>;
+  source: string;
+};
+
 export type RaceHighlights = {
   year: number;
   round: number;
@@ -67,6 +89,7 @@ export type RaceHighlights = {
   poleLap?: PoleLap;
   trackMap?: TrackMap;
   poleDuel?: PoleDuel;
+  qualiDominance?: QualiDominance;
   lapsLed?: LapsLed;
   raceTrace?: RaceTrace;
 };

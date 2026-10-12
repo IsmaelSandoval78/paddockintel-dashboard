@@ -1146,5 +1146,52 @@
     "archive": {
       "title": "Archivo de análisis"
     }
+  },
+  "articleDusk": {
+    "crumbHome": "Inicio",
+    "crumbsAria": "Ruta de navegación",
+    "round": "Ronda {round}",
+    "by": "Por",
+    "readTime": "{n} min de lectura",
+    "sources": "{n, plural, one {# fuente} other {# fuentes}}",
+    "kpisAria": "Cifras clave",
+    "resultTitle": "Resultado de la carrera",
+    "resultPoints": "{n} pts",
+    "resultSource": "Clasificación oficial",
+    "shareTitle": "Compartir",
+    "faqTitle": "Preguntas frecuentes",
+    "sourcesTitle": "Fuentes documentadas",
+    "writtenBy": "Escrito por",
+    "related": "Más para leer",
+    "dom": {
+      "title": "Cómo se ganó la pole",
+      "sub": "{pole} contra {challenger} en cada sección de curvas de la vuelta · Clasificación",
+      "badge": "Pole por {gap}s",
+      "gapTitle": "Diferencia al final de cada sección",
+      "ahead": "{driver} delante",
+      "sectorEnd": "Fin S{n}",
+      "captionMore": "{driver} ganó {won} de {total} secciones de curvas.",
+      "captionEven": "{pole} y {challenger} ganaron {won} secciones de curvas cada uno.",
+      "captionBest": "La mayor ganancia en una sola sección fue de {gain}s, de {driver} en T{corners}.",
+      "captionLine": "{pole} cruzó la línea {gap}s por delante.",
+      "mapAria": "{circuit} trazado con la vuelta de pole de {pole}, cada sección de curvas coloreada según quién fue más rápido entre {pole} y {challenger}",
+      "gapAria": "Diferencia de {challenger} con {pole} al final de cada sección, {gap}s en la línea",
+      "source": "Telemetría FastF1 de ambas vueltas · alineadas con los tiempos oficiales por sector · secciones divididas en la velocidad máxima de cada recta · numeración oficial de curvas"
+    },
+    "flag": {
+      "title": "De la parrilla a la bandera",
+      "sub": "La posición de salida de cada auto (izquierda) y dónde terminó (derecha)",
+      "badge": "{n, plural, one {# abandono} other {# abandonos}}",
+      "grid": "PARRILLA",
+      "flag": "BANDERA",
+      "dnf": "ABD",
+      "dsq": "DSQ",
+      "dns": "DNS",
+      "pitLane": "PL",
+      "captionUp": "Mayor remontada: {driver}, de P{from} a P{to}.",
+      "captionDown": "Mayor caída entre los que terminaron: {driver}, de P{from} a P{to}.",
+      "aria": "Posición de salida y de llegada de los {n} autos",
+      "source": "Parrilla de salida y clasificación oficiales"
+    }
   }
 }

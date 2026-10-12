@@ -42,12 +42,6 @@ type Props = {
 };
 
 export default function HeroLandscape({ kicker, title, dek, href, ctaLabel, keyNumber, terrain, className = '' }: Props) {
-  const speeds = terrain?.speeds ?? [];
-  const hasTerrain = speeds.length > 1;
-  const min = hasTerrain ? Math.min(...speeds) : 0;
-  const max = hasTerrain ? Math.max(...speeds) : 0;
-  const front = hasTerrain ? ridge(speeds, min, max, 1) : '';
-
   return (
     <section className={`dusk-card dusk-hero flex flex-col justify-between ${className}`} aria-labelledby="dusk-hero-title">
       <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] gap-5 px-5 pt-6 pb-10 sm:px-8 sm:pt-8 sm:pb-14">
@@ -76,38 +70,48 @@ export default function HeroLandscape({ kicker, title, dek, href, ctaLabel, keyN
         )}
       </div>
 
-      {hasTerrain && terrain && (
-        <figure className="relative z-[2] m-0 -mt-[70px] md:-mt-[100px]">
-          <svg
-            viewBox={`0 0 ${W} ${H}`}
-            preserveAspectRatio="none"
-            role="img"
-            aria-label={terrain.ariaLabel}
-            className="block w-full h-[170px] md:h-[250px]"
-          >
-            <defs>
-              <linearGradient id="dusk-front-fill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stopColor="#0E0D12" stopOpacity="0.55" />
-                <stop offset="1" stopColor="#0E0D12" />
-              </linearGradient>
-            </defs>
-            <path d={area(ridge(smooth(speeds, 10), min, max, 0.62))} fill="#4A2234" opacity="0.9" />
-            <path d={area(ridge(smooth(speeds, 4), min, max, 0.82))} fill="#2A1520" opacity="0.95" />
-            <path d={area(front)} fill="url(#dusk-front-fill)" />
-            <polyline
-              points={front}
-              fill="none"
-              stroke="var(--dusk-warm)"
-              strokeWidth="2.5"
-              vectorEffect="non-scaling-stroke"
-              className="dusk-glow-ridge"
-            />
-          </svg>
-          <figcaption className="dusk-terrain-caption dusk-mono uppercase text-[10.5px] leading-[1.5] tracking-[0.06em] px-5 pb-4 pt-1 bg-[color:var(--dusk-ground)] md:bg-transparent md:absolute md:left-8 md:right-8 md:bottom-3.5 md:p-0">
-            {terrain.caption}
-          </figcaption>
-        </figure>
-      )}
+      {terrain && <TerrainFigure terrain={terrain} className="relative z-[2] m-0 -mt-[70px] md:-mt-[100px]" />}
     </section>
+  );
+}
+
+// The three ridges + caption on their own, so the article cover can draw the same landscape.
+export function TerrainFigure({ terrain, className = '' }: { terrain: TerrainData; className?: string }) {
+  const speeds = terrain.speeds;
+  if (speeds.length < 2) return null;
+  const min = Math.min(...speeds);
+  const max = Math.max(...speeds);
+  const front = ridge(speeds, min, max, 1);
+  return (
+    <figure className={className}>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        preserveAspectRatio="none"
+        role="img"
+        aria-label={terrain.ariaLabel}
+        className="block w-full h-[170px] md:h-[250px]"
+      >
+        <defs>
+          <linearGradient id="dusk-front-fill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#0E0D12" stopOpacity="0.55" />
+            <stop offset="1" stopColor="#0E0D12" />
+          </linearGradient>
+        </defs>
+        <path d={area(ridge(smooth(speeds, 10), min, max, 0.62))} fill="#4A2234" opacity="0.9" />
+        <path d={area(ridge(smooth(speeds, 4), min, max, 0.82))} fill="#2A1520" opacity="0.95" />
+        <path d={area(front)} fill="url(#dusk-front-fill)" />
+        <polyline
+          points={front}
+          fill="none"
+          stroke="var(--dusk-warm)"
+          strokeWidth="2.5"
+          vectorEffect="non-scaling-stroke"
+          className="dusk-glow-ridge"
+        />
+      </svg>
+      <figcaption className="dusk-terrain-caption dusk-mono uppercase text-[10.5px] leading-[1.5] tracking-[0.06em] px-5 pb-4 pt-1 bg-[color:var(--dusk-ground)] md:bg-transparent md:absolute md:left-8 md:right-8 md:bottom-3.5 md:p-0">
+        {terrain.caption}
+      </figcaption>
+    </figure>
   );
 }

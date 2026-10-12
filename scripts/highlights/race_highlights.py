@@ -12,6 +12,9 @@ Writes only facts FastF1 can reproduce from the official F1 timing API, each wit
               the top/min speed happened -- the circuit map is drawn from the car's line, not a stock outline
   - poleDuel: official sector times of the pole lap and P2's best lap (cumulative gap per sector)
   - lapsLed:  laps led by the race winner, counted from the leader at the end of every lap
+  - qualiDominance: pole lap vs P2's best lap, corner section by corner section (sections split at the
+              top speed of each straight; both laps aligned on their official sector times, so the
+              sector-1, sector-2 and lap gaps match the timing sheet exactly), with official corner numbers
   - raceTrace: winner-vs-P2 gap at the end of every lap (kept only if the last lap matches the official
               classification interval), running order of the top 8 lap by lap, VSC/SC laps and pit laps
 
@@ -154,6 +157,101 @@ def laps_led(race, year: int, event: str) -> dict | None:
     }
 
 
+def quali_dominance(quali, year: int, event: str) -> dict | None:
+    """Track dominance for the front row. Not fastf1.utils.delta_time: on Singapore 2026 it missed the
+    official sector-1 gap by 0.07s and spiked by up to 0.8s in braking zones. Instead each driver's own
+    distance is mapped onto the pole-sitter's at the official sector boundaries, and sections are
+    split where speed peaks (where a small distance misalignment costs almost no time)."""
+    from scipy.signal import find_peaks
+
+    ordered = quali.results.sort_values("Position")
+    if len(ordered) < 2:
+        return None
+    a, b = str(ordered.iloc[0]["Abbreviation"]), str(ordered.iloc[1]["Abbreviation"])
+    laps = {d: quali.laps.pick_drivers(d).pick_fastest() for d in (a, b)}
+    if any(l is None for l in laps.values()):
+        return None
+    tel = {d: laps[d].get_telemetry() for d in (a, b)}
+
+    anchors = {}
+    for d in (a, b):
+        lap = laps[d]
+        s = [secs(lap["Sector1Time"]), secs(lap["Sector2Time"]), secs(lap["LapTime"])]
+        if any(v is None for v in s):
+            return None
+        t = tel[d]["Time"].dt.total_seconds().to_numpy()
+        dist = tel[d]["Distance"].to_numpy()
+        marks = [0.0, s[0], s[0] + s[1], s[2]]
+        anchors[d] = (t, dist, [float(np.interp(m, t, dist)) for m in marks])
+    ref = anchors[a][2]
+    lap_len = ref[-1]
+
+    def time_at(d, ref_dist):
+        t, dist, own = anchors[d]
+        return np.interp(np.interp(ref_dist, ref, own), dist, t)
+
+    speed = tel[a]["Speed"].to_numpy()
+    dist_a = tel[a]["Distance"].to_numpy()
+    peaks, _ = find_peaks(speed, prominence=15, distance=20)
+    candidates = sorted(set([0.0, lap_len, ref[1], ref[2]] + [float(dist_a[p]) for p in peaks if 50 < dist_a[p] < lap_len - 50]))
+    fixed = {0.0, ref[1], ref[2], lap_len}
+    bounds: list[float] = []
+    for c in candidates:  # drop boundaries closer than 120 m, never a sector anchor
+        if bounds and c - bounds[-1] < 120:
+            if c in fixed and bounds[-1] not in fixed:
+                bounds[-1] = c
+            continue
+        bounds.append(c)
+
+    t_a, t_b = time_at(a, np.array(bounds)), time_at(b, np.array(bounds))
+    gaps = [round(float(v), 3) for v in (t_b - t_a)]
+    official = secs(laps[b]["LapTime"]) - secs(laps[a]["LapTime"])
+    if abs(gaps[-1] - official) > 0.002:
+        return None
+
+    info = quali.get_circuit_info()
+    rot = np.radians(float(info.rotation))
+    x, y = tel[a]["X"].to_numpy(), tel[a]["Y"].to_numpy()
+    rx, ry = x * np.cos(rot) - y * np.sin(rot), -(x * np.sin(rot) + y * np.cos(rot))
+    minx, miny = rx.min(), ry.min()
+    scale = MAP_SIZE / max(rx.max() - minx, ry.max() - miny)
+    norm = lambda px, py: [round(float((px - minx) * scale), 1), round(float((py - miny) * scale), 1)]
+
+    corners = []
+    for _, c in info.corners.iterrows():
+        cx = c["X"] * np.cos(rot) - c["Y"] * np.sin(rot)
+        cy = -(c["X"] * np.sin(rot) + c["Y"] * np.cos(rot))
+        corners.append({"number": f"{int(c['Number'])}{c['Letter'] or ''}", "at": norm(cx, cy), "distance": round(float(c["Distance"]))})
+
+    sections = []
+    for k in range(len(bounds) - 1):
+        lo, hi = bounds[k], bounds[k + 1]
+        da, db = t_a[k + 1] - t_a[k], t_b[k + 1] - t_b[k]
+        mask = (dist_a >= lo - 1) & (dist_a <= hi + 1)
+        sections.append({
+            "faster": a if da < db else b,
+            "gain": round(float(abs(db - da)), 3),
+            "corners": [c["number"] for c in corners if lo <= c["distance"] < hi],
+            "path": [norm(px, py) for px, py in zip(rx[mask], ry[mask])],
+        })
+
+    return {
+        "pole": {"driver": a, "lapTime": lap_time_str(laps[a]["LapTime"]), "teamColour": team_colour(quali, a)},
+        "challenger": {"driver": b, "lapTime": lap_time_str(laps[b]["LapTime"]), "teamColour": team_colour(quali, b)},
+        "width": int(round((rx.max() - minx) * scale)),
+        "height": int(round((ry.max() - miny) * scale)),
+        "lapLength": round(float(lap_len)),
+        "sectorEnds": [round(ref[1]), round(ref[2])],
+        "boundaries": [round(v) for v in bounds],
+        "gapAtBoundaries": gaps,
+        "sections": sections,
+        "corners": corners,
+        "source": (f"FastF1 telemetry (official F1 timing API), {year} {event} Qualifying, {a} and {b} fastest laps; "
+                   "laps aligned on official sector times; sections split at straight-line speed peaks; "
+                   "official corner numbers"),
+    }
+
+
 TRACE_DRIVERS = 8
 
 
@@ -229,6 +327,9 @@ def main() -> None:
         duel = pole_duel(quali, pole_lap_obj, pole_abbr, args.year, event)
         if duel:
             out["poleDuel"] = duel
+        dominance = quali_dominance(quali, args.year, event)
+        if dominance:
+            out["qualiDominance"] = dominance
 
     try:
         race = fastf1.get_session(args.year, args.round_num, "R")

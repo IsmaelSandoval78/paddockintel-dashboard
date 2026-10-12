@@ -1146,5 +1146,52 @@
     "archive": {
       "title": "Analysis archive"
     }
+  },
+  "articleDusk": {
+    "crumbHome": "Home",
+    "crumbsAria": "Breadcrumb",
+    "round": "Round {round}",
+    "by": "By",
+    "readTime": "{n} min read",
+    "sources": "{n, plural, one {# source} other {# sources}}",
+    "kpisAria": "Key numbers",
+    "resultTitle": "Race result",
+    "resultPoints": "{n} pts",
+    "resultSource": "Official classification",
+    "shareTitle": "Share",
+    "faqTitle": "Frequently asked questions",
+    "sourcesTitle": "Documented sources",
+    "writtenBy": "Written by",
+    "related": "Keep reading",
+    "dom": {
+      "title": "How the pole was won",
+      "sub": "{pole} vs {challenger} through every corner section of the lap · Qualifying",
+      "badge": "Pole by {gap}s",
+      "gapTitle": "Gap at the end of each section",
+      "ahead": "{driver} ahead",
+      "sectorEnd": "S{n} end",
+      "captionMore": "{driver} won {won} of {total} corner sections.",
+      "captionEven": "{pole} and {challenger} won {won} corner sections each.",
+      "captionBest": "The biggest single gain was {gain}s, by {driver} through T{corners}.",
+      "captionLine": "{pole} crossed the line {gap}s ahead.",
+      "mapAria": "{circuit} drawn from {pole}'s pole lap, each corner section coloured by the faster of {pole} and {challenger}",
+      "gapAria": "{challenger}'s gap to {pole} at the end of every section, {gap}s at the line",
+      "source": "FastF1 telemetry of both laps · aligned on the official sector times · sections split at the top speed of each straight · official corner numbers"
+    },
+    "flag": {
+      "title": "From the grid to the flag",
+      "sub": "Every car's starting position (left) and where it finished (right)",
+      "badge": "{n, plural, one {# retirement} other {# retirements}}",
+      "grid": "GRID",
+      "flag": "FLAG",
+      "dnf": "DNF",
+      "dsq": "DSQ",
+      "dns": "DNS",
+      "pitLane": "PL",
+      "captionUp": "Biggest climb: {driver}, P{from} to P{to}.",
+      "captionDown": "Biggest drop among finishers: {driver}, P{from} to P{to}.",
+      "aria": "Starting and finishing position of all {n} cars",
+      "source": "Official starting grid and classification"
+    }
   }
 }

@@ -40,6 +40,8 @@ type Frontmatter = {
   sources?: Source[];
   charts?: Chart[];
   voices?: string[];
+  // Supabase races.id this piece is about; links it to that race's data figures.
+  race_id?: number;
 };
 
 function readArticle(filePath: string): { frontmatter: Frontmatter; body: string } {
@@ -118,6 +120,7 @@ async function main() {
         ...(frontmatter.faq      !== undefined ? { faq_items: frontmatter.faq }       : {}),
         ...(frontmatter.sources  !== undefined ? { sources:   frontmatter.sources }   : {}),
         ...(frontmatter.charts   !== undefined ? { charts:    frontmatter.charts }    : {}),
+        ...(frontmatter.race_id  !== undefined ? { race_id:   frontmatter.race_id }   : {}),
         updated_at: new Date().toISOString(),
       },
       { onConflict: 'locale,slug' }

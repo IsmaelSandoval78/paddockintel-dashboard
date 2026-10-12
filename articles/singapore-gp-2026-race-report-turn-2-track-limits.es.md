@@ -5,6 +5,7 @@ locale: es
 meta_description: "Verstappen ganó en Singapur por 7,3s. Nuestros datos de las tres sesiones muestran algo que ninguna planilla dice: el costo de la curva 2."
 status: published
 paywalled: false
+race_id: 1184
 published_at: "2026-10-11T17:00:00+00:00"
 translation_group_id: "ec9fbd78-6f4e-4366-b512-2d2bc08dd4fe"
 tags: ["featured", "race-analysis", "red-bull", "ferrari"]
@@ -46,9 +47,15 @@ sources:
 
 Max Verstappen lideró todas las vueltas del Gran Premio de Singapur desde la pole y ganó por 7,335 segundos sobre Charles Leclerc de Ferrari, cerrando [un fin de semana en el que ya se había quedado con la pole de la Sprint Qualifying del viernes](/singapore-gp-2026-clasificacion-pole-verstappen-red-bull-conversion) y la victoria del Sprint del sábado. Kimi Antonelli sostuvo el tercer puesto con Mercedes. Lo hizo con el box dañado: una falla de radio le impidió al ingeniero de pista Gianpiero Lambiase comunicarse con normalidad en la segunda mitad de la carrera, obligando a pasar a mensajes codificados. Nada de eso afectó el resultado.
 
+[[figure:pole-dominance:2]]
+
 Más atrás, la estrategia decidió más que el ritmo. Lewis Hamilton corrió tercero durante tramos largos en el Ferrari hermano, y perdió la posición tras quedarse en pista bajo el segundo Auto de Seguridad Virtual de la carrera, alrededor de la vuelta 39 -- una ventana de pits gratis que varios autos detrás de él usaron para una parada. Ferrari lo había llamado a boxes; Hamilton dijo después que se pasó la entrada y que luego decidió seguir en pista, y asumió toda la responsabilidad. Cayó al sexto puesto en la bandera a cuadros. [Lando Norris y Oscar Piastri](/singapore-gp-2026-sprint-choque-norris-piastri-campeonato) se quedaron con el cuarto y quinto para McLaren, con Piastri pasando a Hamilton en la última vuelta. George Russell, que largó 19° tras una sanción de grilla que arrastraba del fin de semana, se recuperó hasta el noveno puesto.
 
+[[figure:grid-to-flag]]
+
 Dos períodos de Auto de Seguridad Virtual -- uno breve alrededor de la vuelta 9, el más costoso alrededor de la vuelta 39 -- fueron las únicas interrupciones. Los comisarios revisaron tres incidentes separados de "salir de pista y ganar una ventaja", para Oliver Bearman, Carlos Sainz y Hamilton; los tres quedaron liberados sin más acción.
+
+[[figure:race-story]]
 
 Esa planilla tan limpia de los comisarios en realidad engaña un poco, porque deja afuera el verdadero patrón de la sesión -- uno que no aparece en ninguna clasificación oficial, porque no tiene que ver con quién terminó dónde. Tiene que ver con una sola curva.
 

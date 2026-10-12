@@ -5,6 +5,7 @@ locale: pt
 meta_description: "Verstappen venceu em Singapura por 7,3s. Nossos próprios dados das três sessões mostram algo que nenhuma súmula mostra: o custo real da curva 2."
 status: published
 paywalled: false
+race_id: 1184
 published_at: "2026-10-11T17:00:00+00:00"
 translation_group_id: "ec9fbd78-6f4e-4366-b512-2d2bc08dd4fe"
 tags: ["featured", "race-analysis", "red-bull", "ferrari"]
@@ -46,9 +47,15 @@ sources:
 
 Max Verstappen liderou todas as voltas do Grande Prêmio de Singapura a partir da pole e venceu por 7,335 segundos sobre Charles Leclerc, da Ferrari, encerrando [um fim de semana em que já tinha conquistado a pole da Sprint Qualifying na sexta-feira](/singapore-gp-2026-classificacao-pole-verstappen-red-bull-conversao) e a vitória do Sprint no sábado. Kimi Antonelli sustentou o terceiro lugar pela Mercedes. Ele fez isso com o boxe prejudicado: uma falha de rádio impediu o engenheiro de pista Gianpiero Lambiase de se comunicar normalmente na segunda metade da corrida, forçando a troca para mensagens codificadas. Nada disso afetou o resultado.
 
+[[figure:pole-dominance:2]]
+
 Mais atrás, a estratégia decidiu mais do que o ritmo. Lewis Hamilton correu em terceiro por longos trechos na Ferrari irmã, e perdeu a posição depois de ficar na pista sob o segundo Safety Car Virtual da corrida, por volta da volta 39 -- uma janela de boxe gratuita que vários carros atrás dele usaram para uma parada. A Ferrari o havia chamado para os boxes; Hamilton disse depois que perdeu a entrada e então decidiu ficar na pista, e assumiu toda a responsabilidade. Ele caiu para sexto na bandeirada final. [Lando Norris e Oscar Piastri](/singapore-gp-2026-sprint-batida-norris-piastri-campeonato) ficaram com o quarto e o quinto lugar pela McLaren, com Piastri superando Hamilton na última volta. George Russell, que largou em 19º depois de uma penalização de grid que carregava do fim de semana, se recuperou até o nono lugar.
 
+[[figure:grid-to-flag]]
+
 Dois períodos de Safety Car Virtual -- um breve por volta da volta 9, o mais custoso por volta da volta 39 -- foram as únicas interrupções. Os comissários revisaram três incidentes separados de "deixar a pista e ganhar vantagem", envolvendo Oliver Bearman, Carlos Sainz e Hamilton; os três foram liberados sem mais ação.
+
+[[figure:race-story]]
 
 Essa súmula tão limpa dos comissários na verdade engana um pouco, porque deixa de fora o verdadeiro padrão da sessão -- um que não aparece em nenhuma classificação oficial, porque não tem a ver com quem terminou onde. Tem a ver com uma única curva.
 

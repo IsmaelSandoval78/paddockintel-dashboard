@@ -69,3 +69,24 @@ Data rules carried over unchanged: every card hides when its data is missing; pe
 `race_highlights.py` (now also `raceTrace`: winner-vs-P2 gap per lap — published only if the flag lap
 reproduces the official interval —, top-8 running order, VSC/SC and pit laps); the insight card only shows
 key numbers already published in our own race-week articles, each linking to its article.
+
+## Articles (2026-10-12)
+Prototyped on the Singapore 2026 race report with a dark-body vs. light-sheet toggle; Ismael chose the
+**light reading sheet** ("la clara"). Built into `app/[locale]/(blog)/[slug]/page.tsx` for every article:
+- **Dusk shell:** crumbs, cover (kicker, title, dek, byline, share/scorecard; the pole-lap landscape when
+  the article is tied to a race), the article's own key numbers as a KPI row, a rail (TOC, race result),
+  FAQ and sources as cards, related articles. `dusk.css` moved up to `app/[locale]/(blog)/` and the
+  Instrument Sans setup to `dusk-font.ts`, shared by both pages.
+- **Light sheet:** `.dusk-sheet` resets the shared tokens to light values, so the existing prose, TOC,
+  charts, newsletter and paywall components render light untouched; serif body at 17–19px.
+- **Race figures** (dark `.dusk-island`s inside the sheet), placed by a paragraph that is only
+  `[[figure:name]]` in `body_markdown`, and only when the article has `race_id` set (frontmatter →
+  `articles.race_id`): `pole-dominance[:corner]` (front-row track dominance, `race_highlights.py`
+  `qualiDominance`: laps aligned on the official sector times, sections split at straight-line speed
+  peaks, official corner numbers), `grid-to-flag` (every car's grid → classification from `results`),
+  `race-story` (the home's gap/running-order card). An unknown marker or missing data renders nothing.
+- Gating, JSON-LD, metadata and draft mode are unchanged; all new labels live in `articleDusk` (EN/ES/PT).
+- **Rollout order matters:** production only understands the markers once this code is deployed, so a
+  markdown file with markers is ingested *after* the deploy (otherwise the live page shows the raw
+  `[[figure:…]]` line). `race_id` alone is harmless and can be ingested any time.
+
