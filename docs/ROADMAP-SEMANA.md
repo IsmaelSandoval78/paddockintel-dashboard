@@ -2254,6 +2254,12 @@ sin aviso y `time` guardaba el gap crudo de FastF1 ("0:07.335", sin sentido para
 sigue la convención Ergast de las filas históricas: `laps` real, `position` NULL + `position_text`
 "R" para no clasificados, "+N Lap(s)", tiempo del ganador "1:42:00.785" y "+7.335" solo para autos en
 la vuelta del líder, `milliseconds` total; un estado desconocido frena la carga. Singapur (carrera +
-sprint) se recargó con el script: standings idénticos (Red Bull 329). **Pendiente:** las rondas 7–16
-de 2026 (y sus sprints) se cargaron con el script viejo y tienen el mismo problema; se arreglan
-re-corriendo `load_race.py --year 2026 --round N --skip-quali` por ronda.
+sprint) se recargó con el script: standings idénticos (Red Bull 329). **Rondas 7–16 recargadas (mismo día):** antes se compararon contra Supabase con un dry run y
+coincidían en puntos y orden. La única diferencia fue Azerbaiyán (R15): Bortoleto pasa de 13° a 15°
+por una penalización de 10 s posterior a la carrera que FastF1 ya refleja, sin cambio de puntos.
+Además, esa ronda tenía `grid = -1` en las 22 filas, y Bélgica (R10) e Italia (R13) no tenían pit stops
+ni tiempos por vuelta; los tres quedaron corregidos. Puntos y victorias del campeonato: idénticos en
+las 23 rondas. Al recalcular apareció otro bug: los empates en puntos quedaban en cualquier orden.
+Ahora `load_race.py` desempata por countback (más victorias en GP, luego más segundos puestos, etc.),
+y se recalcularon los standings de R7–R17 (ej. R8: Norris 5° y Leclerc 6° con 79 pts, porque Norris
+tiene un P2).

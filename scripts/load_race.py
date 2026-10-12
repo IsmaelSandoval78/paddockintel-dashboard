@@ -576,8 +576,21 @@ def main() -> None:
                 driver_pts[did] += pts
                 constr_pts[cid] += pts
 
-            sorted_drivers = sorted(driver_pts.items(), key=lambda x: x[1], reverse=True)
-            sorted_constrs = sorted(constr_pts.items(), key=lambda x: x[1], reverse=True)
+            # Ties on points are broken by countback, as in the FIA Sporting Regulations: most
+            # Grand Prix wins, then most second places, and so on (sprints only add points).
+            # Sorting on points alone left tied drivers in whatever order the rows came back.
+            driver_finishes: dict[int, list[int]] = defaultdict(list)
+            constr_finishes: dict[int, list[int]] = defaultdict(list)
+            for r in all_results.data:
+                if r["position"]:
+                    driver_finishes[r["driver_id"]].append(r["position"])
+                    constr_finishes[r["constructor_id"]].append(r["position"])
+
+            def countback(points: float, finishes: list[int], tie_id: int) -> tuple:
+                return (-points, *(-finishes.count(p) for p in range(1, 31)), tie_id)
+
+            sorted_drivers = sorted(driver_pts.items(), key=lambda x: countback(x[1], driver_finishes[x[0]], x[0]))
+            sorted_constrs = sorted(constr_pts.items(), key=lambda x: countback(x[1], constr_finishes[x[0]], x[0]))
 
             driver_standing_rows = [
                 {"id": next_dstand_id + i, "race_id": race_id, "driver_id": did, "points": pts, "position": i + 1, "wins": driver_wins[did]}
