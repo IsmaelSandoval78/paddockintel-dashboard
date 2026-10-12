@@ -2247,6 +2247,13 @@ colocadas con marcadores `[[figure:…]]` en el markdown: dominancia de la pole 
 `qualiDominance` en `race_highlights.py`, alineado con los tiempos oficiales por sector), de la parrilla
 a la bandera (desde `results`) y "How the race was won". El reporte de Singapur ya tiene `race_id: 1184`
 en Supabase; **los marcadores se ingieren recién después del deploy** (si no, producción mostraría el
-texto `[[figure:…]]`). Pendiente de datos (no se tocó): para R17, `results` guarda `laps = 0` en todas
-las filas, `status = Finished` incluso para autos doblados, y posiciones numéricas (20–22) para Stroll,
-Colapinto y Bortoleto, que en la clasificación oficial figuran como no clasificados.
+texto `[[figure:…]]`). **`load_race.py` corregido (mismo día):** la clasificación se leía mal desde FastF1.
+`laps` salía de una columna que no existe (`NumberOfLaps` → 0), la posición de `Position` en vez de
+`ClassifiedPosition` (los no clasificados quedaban con 20–22), el estado "Lapped" caía a "Finished"
+sin aviso y `time` guardaba el gap crudo de FastF1 ("0:07.335", sin sentido para los doblados). Ahora
+sigue la convención Ergast de las filas históricas: `laps` real, `position` NULL + `position_text`
+"R" para no clasificados, "+N Lap(s)", tiempo del ganador "1:42:00.785" y "+7.335" solo para autos en
+la vuelta del líder, `milliseconds` total; un estado desconocido frena la carga. Singapur (carrera +
+sprint) se recargó con el script: standings idénticos (Red Bull 329). **Pendiente:** las rondas 7–16
+de 2026 (y sus sprints) se cargaron con el script viejo y tienen el mismo problema; se arreglan
+re-corriendo `load_race.py --year 2026 --round N --skip-quali` por ronda.

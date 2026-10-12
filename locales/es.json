@@ -1185,6 +1185,8 @@
       "grid": "PARRILLA",
       "flag": "BANDERA",
       "dnf": "ABD",
+      "dsq": "DSQ",
+      "dns": "DNS",
       "pitLane": "PL",
       "captionUp": "Mayor remontada: {driver}, de P{from} a P{to}.",
       "captionDown": "Mayor caída entre los que terminaron: {driver}, de P{from} a P{to}.",

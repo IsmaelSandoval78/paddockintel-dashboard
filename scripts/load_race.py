@@ -98,6 +98,60 @@ def safe_int(val, default=0) -> int:
         return default
 
 
+def classification(row, winner_laps: int, winner_ms: int | None, status_map: dict[str, int]) -> dict:
+    """position / position_text / laps / time / milliseconds / status_id for one race or sprint
+    result row, in the Ergast convention the historical rows use:
+    - position from ClassifiedPosition (Position is only the finishing order): unclassified
+      cars get position NULL and position_text "R" (or "D", "W", ... as FastF1 reports it);
+    - FastF1's "Lapped" becomes "+N Lap(s)" from the lap count, like every pre-2026 row;
+    - time is the winner's total ("1:42:00.785") or the gap to the winner ("+7.335") for cars on
+      the lead lap, NULL otherwise (FastF1's Time for a lapped car is not a gap to the winner);
+      milliseconds is the total race time, NULL where time is.
+    An unknown status stops the load instead of being written as "Finished"."""
+    classified = str(row.get("ClassifiedPosition", "") or "").strip()
+    position = int(classified) if classified.isdigit() else None
+    position_text = classified if classified else "R"
+    laps = safe_int(row.get("Laps"))
+
+    status_text = str(row.get("Status") or "Finished")
+    if status_text == "Lapped":
+        down = max(1, winner_laps - laps)
+        status_text = f"+{down} Lap{'s' if down > 1 else ''}"
+    status_id = status_map.get(status_text)
+    if status_id is None:
+        sys.exit(f"ERROR: unknown status '{status_text}' for {row.get('Abbreviation')} -- add it to the status table and re-run")
+
+    time_str: str | None = None
+    ms: int | None = None
+    t_ms = td_to_ms(row.get("Time"))
+    if position == 1 and t_ms is not None:
+        ms = t_ms
+        h, rem = divmod(t_ms, 3_600_000)
+        m, rem = divmod(rem, 60_000)
+        time_str = f"{h}:{m:02d}:{rem / 1000:06.3f}" if h else f"{m}:{rem / 1000:06.3f}"
+    elif status_text == "Finished" and laps == winner_laps and t_ms is not None and winner_ms is not None:
+        ms = winner_ms + t_ms
+        time_str = f"+{t_ms / 1000:.3f}"
+
+    return {
+        "position": position,
+        "position_text": position_text,
+        "laps": laps,
+        "time": time_str,
+        "milliseconds": ms,
+        "status_id": status_id,
+        "status_text": status_text,
+    }
+
+
+def winner_of(results) -> tuple[int, int | None]:
+    """(laps, total race ms) of the classified winner."""
+    for _, row in results.iterrows():
+        if str(row.get("ClassifiedPosition", "")).strip() == "1":
+            return safe_int(row.get("Laps")), td_to_ms(row.get("Time"))
+    sys.exit("ERROR: no classified winner in the FastF1 results -- classification not final yet? Use --skip-results")
+
+
 def safe_float(val) -> float | None:
     try:
         if pd.isna(val):
@@ -306,17 +360,14 @@ def main() -> None:
             if args.skip_results:
                 print("  (--skip-results: classification/points not synced yet, skipping results table)")
             else:
+                winner_laps, winner_ms = winner_of(race_session.results)
                 for pos_order, (_, row) in enumerate(race_session.results.iterrows(), 1):
                     driver = resolve_driver(code=row.get("Abbreviation"), number=row.get("DriverNumber"))
                     constructor = resolve_constructor(str(row.get("TeamName", "")))
                     if not driver or not constructor:
                         continue
 
-                    status_text = str(row.get("Status", "Finished"))
-                    pos_raw = safe_int(row.get("Position"), 0)
-                    position = pos_raw if pos_raw > 0 else None
-                    position_text = str(position) if position else "R"
-                    status_id = status_map.get(status_text, status_map.get("Finished", 1))
+                    c = classification(row, winner_laps, winner_ms, status_map)
 
                     fl_time = td_to_str(best_lap_by_code.get(row.get("Abbreviation")))
                     fl_speed_f = safe_float(row.get("FastestLapSpeed"))
@@ -328,18 +379,19 @@ def main() -> None:
                         "driver_id": driver["id"],
                         "constructor_id": constructor["id"],
                         "grid": safe_int(row.get("GridPosition")),
-                        "position": position,
-                        "position_text": position_text,
+                        "position": c["position"],
+                        "position_text": c["position_text"],
                         "position_order": pos_order,
                         "points": safe_float(row.get("Points")) or 0.0,
-                        "laps": safe_int(row.get("NumberOfLaps")),
-                        "time": td_to_str(row.get("Time")),
+                        "laps": c["laps"],
+                        "time": c["time"],
+                        "milliseconds": c["milliseconds"],
                         "fastest_lap_time": fl_time,
                         "fastest_lap_speed": str(round(fl_speed_f, 3)) if fl_speed_f else None,
                         "rank": 1 if is_fastest else None,
-                        "status_id": status_id,
+                        "status_id": c["status_id"],
                     })
-                    print(f"  P{str(position or 'R'):>3}  {row.get('Abbreviation')}  {status_text}  {safe_float(row.get('Points')) or 0:.0f}pts")
+                    print(f"  P{c['position_text']:>3}  {row.get('Abbreviation')}  {c['laps']:>3} laps  {c['status_text']:<9} {c['time'] or '':>12}  {safe_float(row.get('Points')) or 0:.0f}pts")
 
             # ── Pit stops ────────────────────────────────────────────
             # FastF1 semantics: PitInTime is stamped on the in-lap (lap N) and
@@ -435,17 +487,14 @@ def main() -> None:
             sprint_session.load(telemetry=False, weather=False, messages=False, laps=False)
 
             sprint_rows: list[dict] = []
+            winner_laps, winner_ms = winner_of(sprint_session.results)
             for pos_order, (_, row) in enumerate(sprint_session.results.iterrows(), 1):
                 driver = resolve_driver(code=row.get("Abbreviation"), number=row.get("DriverNumber"))
                 constructor = resolve_constructor(str(row.get("TeamName", "")))
                 if not driver or not constructor:
                     continue
 
-                status_text = str(row.get("Status", "Finished"))
-                pos_raw = safe_int(row.get("Position"), 0)
-                position = pos_raw if pos_raw > 0 else None
-                position_text = str(position) if position else "R"
-                status_id = status_map.get(status_text, status_map.get("Finished", 1))
+                c = classification(row, winner_laps, winner_ms, status_map)
 
                 sprint_rows.append({
                     "id": next_sprint_id + len(sprint_rows),
@@ -453,15 +502,16 @@ def main() -> None:
                     "driver_id": driver["id"],
                     "constructor_id": constructor["id"],
                     "grid": safe_int(row.get("GridPosition")),
-                    "position": position,
-                    "position_text": position_text,
+                    "position": c["position"],
+                    "position_text": c["position_text"],
                     "position_order": pos_order,
                     "points": safe_float(row.get("Points")) or 0.0,
-                    "laps": safe_int(row.get("NumberOfLaps")),
-                    "time": td_to_str(row.get("Time")),
-                    "status_id": status_id,
+                    "laps": c["laps"],
+                    "time": c["time"],
+                    "milliseconds": c["milliseconds"],
+                    "status_id": c["status_id"],
                 })
-                print(f"  P{str(position or 'R'):>3}  {row.get('Abbreviation')}  {status_text}  {safe_float(row.get('Points')) or 0:.0f}pts")
+                print(f"  P{c['position_text']:>3}  {row.get('Abbreviation')}  {c['laps']:>3} laps  {c['status_text']:<9} {c['time'] or '':>12}  {safe_float(row.get('Points')) or 0:.0f}pts")
 
             if not dry_run and sprint_rows:
                 sb.table("sprint_results").delete().eq("race_id", race_id).execute()

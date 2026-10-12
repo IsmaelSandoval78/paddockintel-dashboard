@@ -1,5 +1,5 @@
 // Grid to flag, every car: starting slot on the left, finishing slot on the right, one ribbon per
-// car in team colour. Retirements sit at the bottom in classification order. Hovering a ribbon
+// car in team colour. Unclassified cars sit at the bottom in classification order. Hovering a ribbon
 // dims the rest (CSS only, see .dusk-ribbons in dusk.css). Server-rendered SVG.
 
 export type GridToFlagRow = {
@@ -7,7 +7,8 @@ export type GridToFlagRow = {
   grid: number; // 1-based starting slot (pit-lane starters are placed after the last grid slot)
   gridLabel: string; // "P7", or the pit-lane label
   finish: number; // 1-based classification order
-  retired: boolean;
+  finishLabel: string; // "P5", or DNF / DSQ / DNS for an unclassified car
+  classified: boolean;
   colour: string;
 };
 
@@ -17,7 +18,6 @@ type Labels = {
   badge: string | null;
   grid: string;
   flag: string;
-  dnf: string;
   caption: string;
   aria: string;
   source: string;
@@ -58,7 +58,7 @@ export default function GridToFlag({ rows, labels }: { rows: GridToFlagRow[]; la
                 ` L${xR},${y1 + band / 2} C${mid},${y1 + band / 2} ${mid},${y0 + band / 2} ${xL},${y0 + band / 2} Z`;
               return (
                 <path key={r.code} d={d} fill={r.colour}>
-                  <title>{`${r.code}: ${r.gridLabel} → ${r.retired ? labels.dnf : `P${r.finish}`}`}</title>
+                  <title>{`${r.code}: ${r.gridLabel} → ${r.finishLabel}`}</title>
                 </path>
               );
             })}
@@ -70,10 +70,10 @@ export default function GridToFlag({ rows, labels }: { rows: GridToFlagRow[]; la
                 <rect x={xL - 3} y={y(r.grid) - band / 2} width="3" height={band} fill={r.colour} />
                 <rect x={xR} y={y(r.finish) - band / 2} width="3" height={band} fill={r.colour} />
                 <text x={xL - 8} y={y(r.grid) + 4} textAnchor="end" fontSize="11" fill="var(--dusk-ink-2)">{`${r.gridLabel} ${r.code}`}</text>
-                <text x={xR + 8} y={y(r.finish) + 4} fontSize="11" fill={r.retired ? 'var(--dusk-muted)' : 'var(--dusk-ink)'}>
-                  {`${r.code} ${r.retired ? labels.dnf : `P${r.finish}`}`}
+                <text x={xR + 8} y={y(r.finish) + 4} fontSize="11" fill={r.classified ? 'var(--dusk-ink)' : 'var(--dusk-muted)'}>
+                  {`${r.code} ${r.finishLabel}`}
                 </text>
-                {!r.retired && Math.abs(move) >= 4 && (
+                {r.classified && Math.abs(move) >= 4 && (
                   <text x={xR + 72} y={y(r.finish) + 4} fontSize="10.5" fill={move > 0 ? 'var(--dusk-good)' : 'var(--dusk-warm)'}>
                     {`${move > 0 ? '▲' : '▼'}${Math.abs(move)}`}
                   </text>

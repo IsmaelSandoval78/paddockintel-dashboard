@@ -304,13 +304,16 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
     grid: gridSlot.get(r.code) ?? r.positionOrder,
     gridLabel: r.grid > 0 ? `P${r.grid}` : t('flag.pitLane'),
     finish: r.positionOrder,
-    retired: r.retired,
+    finishLabel: r.classified
+      ? `P${r.positionOrder}`
+      : t(r.positionText === 'D' ? 'flag.dsq' : r.positionText === 'W' ? 'flag.dns' : 'flag.dnf'),
+    classified: r.classified,
     colour: teamVar(r.constructorRef),
   }));
-  const finishers = raceRows.filter((r) => !r.retired && r.grid > 0);
+  const finishers = raceRows.filter((r) => r.classified && r.grid > 0);
   const climber = [...finishers].sort((a, b) => b.grid - b.positionOrder - (a.grid - a.positionOrder))[0];
   const faller = [...finishers].sort((a, b) => a.grid - a.positionOrder - (b.grid - b.positionOrder))[0];
-  const retiredCount = raceRows.filter((r) => r.retired).length;
+  const retiredCount = raceRows.filter((r) => r.positionText === 'R').length;
   const flagCaption = [
     climber && climber.grid > climber.positionOrder
       ? t('flag.captionUp', { driver: climber.surname, from: climber.grid, to: climber.positionOrder })
@@ -361,7 +364,6 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
               badge: retiredCount ? t('flag.badge', { n: retiredCount }) : null,
               grid: t('flag.grid'),
               flag: t('flag.flag'),
-              dnf: t('flag.dnf'),
               caption: flagCaption,
               aria: t('flag.aria', { n: flagRows.length }),
               source: t('flag.source'),
@@ -521,7 +523,7 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
                   <ol className="m-0 p-0 list-none flex flex-col gap-2.5">
                     {podium.map((r) => (
                       <li key={r.code} className="grid grid-cols-[22px_8px_minmax(0,1fr)_auto] items-center gap-2.5 text-[14px]">
-                        <span className="dusk-mono tabular-nums text-[color:var(--dusk-muted)]">{r.retired ? '–' : r.positionOrder}</span>
+                        <span className="dusk-mono tabular-nums text-[color:var(--dusk-muted)]">{r.classified ? r.positionOrder : r.positionText}</span>
                         <span className="w-2 h-2 rounded-full" style={{ background: teamVar(r.constructorRef) }} aria-hidden="true" />
                         <span className="truncate">{r.surname}</span>
                         <span className="dusk-mono tabular-nums text-[12px] text-[color:var(--dusk-ink-2)]">{t('resultPoints', { n: r.points })}</span>

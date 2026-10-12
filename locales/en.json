@@ -1185,6 +1185,8 @@
       "grid": "GRID",
       "flag": "FLAG",
       "dnf": "DNF",
+      "dsq": "DSQ",
+      "dns": "DNS",
       "pitLane": "PL",
       "captionUp": "Biggest climb: {driver}, P{from} to P{to}.",
       "captionDown": "Biggest drop among finishers: {driver}, P{from} to P{to}.",

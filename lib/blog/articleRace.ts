@@ -13,8 +13,10 @@ export type ArticleRaceRow = {
   positionOrder: number;
   positionText: string;
   points: number;
-  // Not "Finished" and not "+N Lap(s)": the car stopped before the flag.
-  retired: boolean;
+  // position_text is a number: officially classified (a car that stopped late can still be,
+  // e.g. Albon P18 in Singapore 2026). Otherwise "R" (retired), "D" (disqualified), "W" (did
+  // not start), as load_race.py writes it from FastF1's ClassifiedPosition.
+  classified: boolean;
 };
 
 export type ArticleRace = {
@@ -35,17 +37,14 @@ type ResultJoin = {
   points: number | string | null;
   drivers: { code: string | null; surname: string } | null;
   constructors: { constructor_ref: string } | null;
-  status: { status: string } | null;
 };
-
-const FINISHED = /^(Finished|\+\d+ Laps?)$/;
 
 export async function getArticleRace(supabase: SupabaseClient, raceId: number): Promise<ArticleRace | null> {
   const [raceRes, resultsRes] = await Promise.all([
     supabase.from('races').select('id, year, round, name, date, circuits(name)').eq('id', raceId).single(),
     supabase
       .from('results')
-      .select('grid, position_order, position_text, points, drivers(code, surname), constructors(constructor_ref), status(status)')
+      .select('grid, position_order, position_text, points, drivers(code, surname), constructors(constructor_ref)')
       .eq('race_id', raceId)
       .order('position_order', { ascending: true }),
   ]);
@@ -66,7 +65,7 @@ export async function getArticleRace(supabase: SupabaseClient, raceId: number): 
             positionOrder: r.position_order,
             positionText: r.position_text ?? '',
             points: Number(r.points ?? 0),
-            retired: !FINISHED.test(r.status?.status ?? 'Finished'),
+            classified: /^\d+$/.test(r.position_text ?? ''),
           },
         ]
       : [],

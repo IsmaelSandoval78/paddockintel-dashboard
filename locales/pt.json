@@ -1175,6 +1175,8 @@
       "grid": "GRID",
       "flag": "BANDEIRADA",
       "dnf": "ABD",
+      "dsq": "DSQ",
+      "dns": "DNS",
       "pitLane": "PL",
       "captionUp": "Maior escalada: {driver}, de P{from} para P{to}.",
       "captionDown": "Maior queda entre os que terminaram: {driver}, de P{from} para P{to}.",
