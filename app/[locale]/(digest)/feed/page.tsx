@@ -5,8 +5,11 @@ import { easternDateKey } from '@/lib/dates';
 import { weeklyEntityCounts, significanceScore } from '@/lib/entityMentions';
 import { getBeagleEntityCounts, mergeEntityCounts } from '@/lib/beagleCounts';
 import { Link } from '@/lib/i18n/navigation';
-import HookDeliverBlock from '@/components/digest/HookDeliverBlock';
-import NewsletterCard from '@/components/blog/NewsletterCard';
+import NewsletterBand from '@/components/home-dusk/NewsletterBand';
+import HubContext from '@/components/feed-dusk/HubContext';
+import PressBars from '@/components/feed-dusk/PressBars';
+import DayBars from '@/components/feed-dusk/DayBars';
+import { StoryCard, StoryRow } from '@/components/feed-dusk/FeedStory';
 import { SITE_URL } from '@/lib/site-url';
 import {
   loadHookDeliverMap,
@@ -14,6 +17,8 @@ import {
   type HookDeliverFallbacks,
   type ResolvedHookDeliver,
 } from '@/lib/hookDeliver';
+import { duskSans } from '../../(blog)/dusk-font';
+import '../../(blog)/dusk.css';
 
 export const revalidate = 3600;
 
@@ -37,6 +42,10 @@ type FeedItem = {
   hook_deliver: unknown;
 };
 
+const DAY_MS = 86_400_000;
+// Request time for the day windows below (a server component renders once per revalidation).
+const requestTime = () => Date.now();
+
 // Feed content lives on one row per story (see the digest_items _es columns
 // migration) rather than a locale-paired row per Blog articles -- pick the
 // Spanish text when present, fall back to English rather than showing blank.
@@ -47,12 +56,11 @@ function localize(item: FeedItem, locale: string) {
     our_summary: isEs ? item.our_summary_es ?? item.our_summary : item.our_summary,
     editor_note: isEs ? item.editor_note_es ?? item.editor_note : item.editor_note,
     editor_take: isEs ? item.editor_take_es ?? item.editor_take : item.editor_take,
-    featuredStat: (() => {
-      const stat = readFeaturedStats(item.stats)[0];
-      return stat
-        ? { value: stat.value, label: isEs ? stat.label_es ?? stat.label : stat.label }
-        : null;
-    })(),
+    stats: readFeaturedStats(item.stats).map((s) => ({
+      value: s.value,
+      label: isEs ? s.label_es ?? s.label : s.label,
+      unit: isEs ? s.unit_es ?? s.unit : s.unit,
+    })),
   };
 }
 
@@ -95,51 +103,112 @@ async function getItems(): Promise<FeedItem[]> {
   return (data ?? []) as FeedItem[];
 }
 
-function dayLabel(
-  date: Date,
-  t: Awaited<ReturnType<typeof getTranslations>>,
-  format: Awaited<ReturnType<typeof getFormatter>>
-): string {
-  const todayKey = easternDateKey(new Date());
-  const dateKey = easternDateKey(date);
-  if (dateKey === todayKey) return t('today');
-  const diffDays = Math.round((Date.parse(todayKey) - Date.parse(dateKey)) / 86_400_000);
-  if (diffDays === 1) return t('yesterday');
-  return format.dateTime(date, { month: 'short', day: 'numeric' });
-}
-
-function mostMentioned(counts: Map<string, number>): { entity: string; count: number }[] {
-  return Array.from(counts.entries())
-    .map(([entity, count]) => ({ entity, count }))
-    .filter((e) => e.count > 1)
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 8);
-}
+// "2026-10-11" -> a Date at noon UTC, so formatting never shifts the calendar day.
+const dayDate = (key: string) => new Date(`${key}T12:00:00Z`);
 
 export default async function FeedPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations('feed');
+  const tCrumbs = await getTranslations('articleDusk');
   const format = await getFormatter();
   const [items, beagleCounts] = await Promise.all([getItems(), getBeagleEntityCounts(createClient())]);
   const hookById = await loadHookDeliverMap(items, locale, hookDeliverFallbacks(t));
   const entityCounts = mergeEntityCounts(weeklyEntityCounts(items), beagleCounts);
-  const mentioned = mostMentioned(entityCounts);
   const feedUrl = locale === 'es' ? FEED_URLS.es : FEED_URLS.en;
+
+  const now = requestTime();
+  const todayKey = easternDateKey(new Date(now));
+  const yesterdayKey = easternDateKey(new Date(now - DAY_MS));
+  // Same 7-day window as the mention counts: these days get the full card treatment, older
+  // days fold into the weekly archive (every story still linked, so nothing leaves the page).
+  const weekStartKey = easternDateKey(new Date(now - 7 * DAY_MS));
+  // The archive reaches back into previous seasons: dates outside the current year carry it.
+  const shortDate = (key: string) =>
+    format.dateTime(dayDate(key), {
+      month: 'short',
+      day: 'numeric',
+      ...(key.slice(0, 4) !== todayKey.slice(0, 4) ? { year: 'numeric' as const } : {}),
+    });
+  const dayLabel = (key: string) =>
+    key === todayKey
+      ? t('today')
+      : key === yesterdayKey
+        ? t('yesterday')
+        : format.dateTime(dayDate(key), { weekday: 'long', month: 'short', day: 'numeric' });
+
+  const scored = items.map((item) => ({ item, text: localize(item, locale), score: significanceScore(item, entityCounts) }));
+  type Scored = (typeof scored)[number];
+  const maxScore = Math.max(1, ...scored.map((s) => s.score));
+  const signal = (s: Scored) => ({ score: s.score, max: maxScore, title: t('scoreHint') });
 
   // Grouped by day (items already arrive published_at desc, so same-day items
   // are always adjacent -- a single pass groups them without re-sorting).
-  // Within each day, the 3 highest-significance stories keep full card
-  // treatment; the rest of that day falls to a dense list row. Replaces the
-  // old whole-page lead+runner-up pick, which read fine at a handful of
-  // stories but turned into a wall of identical cards once the feed grew.
-  const dayGroups: { key: string; date: Date; items: FeedItem[] }[] = [];
-  for (const item of items) {
-    const date = new Date(item.published_at);
-    const key = easternDateKey(date);
+  const dayGroups: { key: string; items: Scored[] }[] = [];
+  for (const s of scored) {
+    const key = easternDateKey(new Date(s.item.published_at));
     const current = dayGroups[dayGroups.length - 1];
-    if (current && current.key === key) current.items.push(item);
-    else dayGroups.push({ key, date, items: [item] });
+    if (current && current.key === key) current.items.push(s);
+    else dayGroups.push({ key, items: [s] });
   }
+  const recentDays = dayGroups.filter((g) => g.key >= weekStartKey);
+  const olderDays = dayGroups.filter((g) => g.key < weekStartKey);
+  const weekItems = recentDays.flatMap((g) => g.items);
+
+  // Lead: the highest-significance story of the latest day.
+  const latest = dayGroups[0];
+  const lead = latest ? [...latest.items].sort((a, b) => b.score - a.score)[0] : null;
+
+  const mentioned = Array.from(entityCounts.entries())
+    .filter(([, count]) => count > 1)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([name, count]) => ({ name, count }));
+  const weekSources = new Set(weekItems.map((s) => s.item.source_name)).size;
+  const weekWithData = weekItems.filter((s) => s.text.stats.length > 0 || hookById.has(s.item.id)).length;
+
+  const countByDay = new Map(dayGroups.map((g) => [g.key, g.items.length]));
+  const last14 = Array.from({ length: 14 }, (_, i) => {
+    const key = easternDateKey(new Date(now - (13 - i) * DAY_MS));
+    const count = countByDay.get(key) ?? 0;
+    return { key, day: Number(key.slice(8)), count, title: t('perDayTip', { date: shortDate(key), count }) };
+  });
+
+  // Archive: older days by week (weeks start on Monday).
+  const weeks: { key: string; items: Scored[] }[] = [];
+  for (const g of olderDays) {
+    const d = dayDate(g.key);
+    const monday = new Date(d.getTime() - ((d.getUTCDay() + 6) % 7) * DAY_MS).toISOString().slice(0, 10);
+    const current = weeks[weeks.length - 1];
+    if (current && current.key === monday) current.items.push(...g.items);
+    else weeks.push({ key: monday, items: [...g.items] });
+  }
+
+  const contextFor = (item: FeedItem) => {
+    const hook = hookById.get(item.id);
+    return hook ? <HookContext data={hook} t={t} /> : null;
+  };
+  const card = (s: Scored) => (
+    <StoryCard
+      key={s.item.id}
+      link={{ slug: s.item.slug, sourceUrl: s.item.source_url }}
+      meta={`${s.item.source_name} · ${shortDate(easternDateKey(new Date(s.item.published_at)))}`}
+      headline={s.text.headline}
+      summary={s.text.our_summary}
+      signal={signal(s)}
+      stat={s.text.stats[0] ?? null}
+      context={contextFor(s.item)}
+      readLabel={s.item.slug ? t('readBrief') : t('readOriginal')}
+    />
+  );
+  const row = (s: Scored, withDate: boolean) => (
+    <StoryRow
+      key={s.item.id}
+      link={{ slug: s.item.slug, sourceUrl: s.item.source_url }}
+      source={withDate ? `${s.item.source_name} · ${shortDate(easternDateKey(new Date(s.item.published_at)))}` : s.item.source_name}
+      headline={s.text.headline}
+      signal={signal(s)}
+    />
+  );
 
   // Items with a slug get their own page (app/[locale]/(digest)/feed/[slug]/page.tsx) and
   // a real, independently indexable URL -- Google can rank and rich-snippet that story on
@@ -190,118 +259,166 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
     ],
   };
 
+  const cardTitle = 'text-[17px] font-semibold m-0';
+  const cardSub = 'text-[13px] text-[color:var(--dusk-muted)] mt-0.5 mb-0';
+  const source = 'dusk-mono text-[10.5px] tracking-[0.03em] text-[color:var(--dusk-muted)] m-0';
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
-    <main className="bg-bg min-h-screen">
-      <div className="h-12 border-b border-border-subtle flex items-center px-5">
-        <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-2">
-          {t('kicker')} · {items.length}
-        </p>
-      </div>
+      <main className={`theme-dusk ${duskSans.variable} min-h-screen`}>
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-5 pt-6 pb-16 flex flex-col gap-4">
+          <nav aria-label={tCrumbs('crumbsAria')} className="dusk-mono text-[11.5px] tracking-[0.04em] text-[color:var(--dusk-muted)]">
+            <Link href="/" className="hover:text-[color:var(--dusk-ink)]">{t('crumbHome')}</Link> / {t('title')}
+          </nav>
 
-      <div className="max-w-6xl mx-auto px-5 py-10 md:py-14">
-        <h1 className="font-sans font-bold text-text-1 tracking-[-0.02em] leading-[1.05]" style={{ fontSize: 'clamp(1.75rem, 4.2vw, 2.5rem)' }}>
-          {t('title')}
-        </h1>
-        <p className="font-sans text-text-2 leading-relaxed max-w-lg mt-3">{t('description')}</p>
-
-        <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 mt-4">
-          {t('editedBy')}
-          <span className="text-text-3"> · </span>
-          <Link href="/about" className="hover:text-accent transition-colors duration-150">
-            {t('about')}
-          </Link>
-        </p>
-
-        <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 mt-4">{t('scoreHint')}</p>
-
-        {mentioned.length > 0 && (
-          <div className="mt-8 pt-6 border-t border-border-subtle">
-            <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 mb-3">
-              {t('mostMentioned')}
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {mentioned.map(({ entity, count }) => (
-                <span
-                  key={entity}
-                  className="bg-accent-dim rounded-sm px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.04em] text-text-1"
-                >
-                  {entity} <span className="text-accent font-semibold">×{count}</span>
-                </span>
-              ))}
+          <header className="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+            <div className="min-w-0">
+              {latest && <p className="dusk-label m-0">{t('updated', { date: shortDate(latest.key) })}</p>}
+              <h1 className="dusk-display mt-1.5 mb-0 text-[clamp(2rem,4.4vw,3.2rem)] leading-none tracking-[-0.02em]">{t('title')}</h1>
+              <p className="mt-2.5 mb-0 text-[color:var(--dusk-ink-2)] max-w-[62ch]">{t('description')}</p>
             </div>
-          </div>
-        )}
+            <div className="flex flex-wrap gap-2">
+              <Link href="/about" className="dusk-chip hover:text-[color:var(--dusk-ink)]">
+                <span className="dusk-chip-dot" aria-hidden="true" />
+                {t('editedBy')}
+              </Link>
+              {weekItems.length > 0 && <span className="dusk-chip">{t('storiesWeek', { count: weekItems.length })}</span>}
+              {weekSources > 0 && <span className="dusk-chip">{t('sourcesCount', { count: weekSources })}</span>}
+            </div>
+          </header>
 
-        <NewsletterCard />
-      </div>
-
-      <div className="max-w-6xl mx-auto px-5 pb-16">
-        {items.length === 0 ? (
-          <p className="py-12 font-mono text-[11px] text-text-3 uppercase tracking-[0.1em] border-t border-border-subtle">
-            {t('noItems')}
-          </p>
-        ) : (
-          <>
-            {dayGroups.map((group, i) => {
-              const scored = group.items.map((item) => ({ item, score: significanceScore(item, entityCounts) }));
-              const topCards = [...scored].sort((a, b) => b.score - a.score).slice(0, 3);
-              const topIds = new Set(topCards.map((s) => s.item.id));
-              const restRows = scored.filter((s) => !topIds.has(s.item.id));
-
-              return (
-                <div key={group.key} className={`${i === 0 ? 'border-t border-border-subtle pt-6' : 'mt-8 lg:mt-10'}`}>
-                  <div className="flex items-baseline justify-between gap-3 mb-3 pb-2 border-b border-border-subtle">
-                    <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-accent">
-                      {dayLabel(group.date, t, format)}
+          {items.length === 0 ? (
+            <p className="dusk-card p-6 dusk-mono uppercase text-[11px] tracking-[0.1em] text-[color:var(--dusk-muted)]">{t('noItems')}</p>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                {lead && (
+                  <article className={`dusk-card dusk-feed-lead p-6 sm:p-8 flex flex-col gap-3.5 ${mentioned.length ? 'lg:col-span-8' : 'lg:col-span-12'}`}>
+                    <p className="dusk-mono uppercase text-[12px] tracking-[0.12em] text-[color:var(--dusk-sunset)] m-0">
+                      {t('leadKicker', { day: dayLabel(latest.key), source: lead.item.source_name })}
                     </p>
-                    <p className="font-mono text-[10px] text-text-3">{t('storyCount', { count: group.items.length })}</p>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
-                    {topCards.map(({ item, score }) => (
-                      <FeedCard
-                        key={item.id}
-                        item={item}
-                        text={localize(item, locale)}
-                        score={score}
-                        format={format}
-                        t={t}
-                        hook={hookById.get(item.id) ?? null}
-                      />
-                    ))}
-                  </div>
-
-                  {restRows.length > 0 && (
-                    <div className="flex flex-col divide-y divide-border-subtle mt-3">
-                      {restRows.map(({ item, score }) => (
-                        <FeedListRow
-                          key={item.id}
-                          item={item}
-                          text={localize(item, locale)}
-                          score={score}
-                          format={format}
-                          t={t}
-                          hook={hookById.get(item.id) ?? null}
-                        />
+                    <h2 className="dusk-display m-0 text-[clamp(1.7rem,3.2vw,2.6rem)] leading-[1.04] tracking-[-0.02em] text-balance [overflow-wrap:anywhere]">
+                      {lead.item.slug ? (
+                        <Link href={`/feed/${lead.item.slug}`} className="hover:text-[color:var(--dusk-peach)]">{lead.text.headline}</Link>
+                      ) : (
+                        lead.text.headline
+                      )}
+                    </h2>
+                    <p className="dusk-hero-dek m-0 text-[16.5px] leading-[1.55] max-w-[68ch]">{lead.text.our_summary}</p>
+                    {lead.text.stats.length > 0 && (
+                      <div className="flex flex-wrap gap-3">
+                        {lead.text.stats.slice(0, 2).map((s) => (
+                          <div key={s.label} className="flex-[1_1_200px] rounded-2xl px-4 py-3.5 bg-[rgba(14,13,18,0.35)] border border-[rgba(255,255,255,0.1)]">
+                            <p className="dusk-display tabular-nums text-[1.9rem] leading-none m-0">{s.value}</p>
+                            <p className="dusk-mono uppercase text-[10.5px] tracking-[0.07em] leading-[1.45] text-[color:var(--dusk-peach)] mt-2 mb-0">{s.label}</p>
+                            {s.unit && <p className="text-[13px] text-[#E2CEC6] mt-1 mb-0">{s.unit}</p>}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {!lead.text.stats.length && contextFor(lead.item)}
+                    {lead.text.editor_take && (
+                      <p className="m-0 pl-4 border-l-[3px] border-[color:var(--dusk-warm)] text-[15.5px] max-w-[70ch]">
+                        <span className="block dusk-mono uppercase text-[10.5px] tracking-[0.1em] text-[color:var(--dusk-sunset)] mb-1">{t('editorsTake')}</span>
+                        {lead.text.editor_take}
+                      </p>
+                    )}
+                    {lead.item.slug ? (
+                      <Link href={`/feed/${lead.item.slug}`} className="dusk-pill self-start text-[14.5px]">{t('readBrief')}</Link>
+                    ) : (
+                      <a href={lead.item.source_url} target="_blank" rel="noopener noreferrer" className="dusk-pill self-start text-[14.5px]">{t('readOriginal')}</a>
+                    )}
+                  </article>
+                )}
+                {mentioned.length > 0 && (
+                  <section className="dusk-card p-5 sm:p-6 flex flex-col gap-3 lg:col-span-4" aria-labelledby="feed-press-title">
+                    <div>
+                      <h2 id="feed-press-title" className={cardTitle}>{t('pressTitle')}</h2>
+                      <p className={cardSub}>{t('pressSub')}</p>
+                    </div>
+                    <PressBars rows={mentioned} ariaLabel={t('pressTitle')} />
+                    <p className={`${source} mt-auto`}>{t('pressSource')}</p>
+                  </section>
+                )}
+                {weekItems.length > 0 && (
+                  <section className="dusk-card p-5 sm:p-6 flex flex-col gap-3 lg:col-span-4" aria-labelledby="feed-week-title">
+                    <h2 id="feed-week-title" className="dusk-label m-0 font-normal">{t('weekTitle')}</h2>
+                    <div className="flex flex-wrap gap-x-6 gap-y-3">
+                      {[
+                        { v: weekItems.length, l: t('weekStories'), warm: false },
+                        { v: weekSources, l: t('weekSources'), warm: false },
+                        { v: weekWithData, l: t('weekData'), warm: true },
+                      ].map((k) => (
+                        <div key={k.l}>
+                          <p className={`dusk-display tabular-nums text-[2.4rem] leading-none tracking-[-0.03em] m-0 ${k.warm ? 'text-[color:var(--dusk-sunset)]' : ''}`}>
+                            {format.number(k.v)}
+                          </p>
+                          <p className={`${source} mt-1.5`}>{k.l}</p>
+                        </div>
                       ))}
                     </div>
-                  )}
-                </div>
-              );
-            })}
-          </>
-        )}
-      </div>
-    </main>
+                  </section>
+                )}
+                <section className={`dusk-card p-5 sm:p-6 flex flex-col gap-3 ${weekItems.length ? 'lg:col-span-8' : 'lg:col-span-12'}`} aria-labelledby="feed-days-title">
+                  <div className="flex flex-wrap items-start justify-between gap-2.5">
+                    <div>
+                      <h2 id="feed-days-title" className={cardTitle}>{t('perDayTitle')}</h2>
+                      <p className={cardSub}>{t('perDaySub')}</p>
+                    </div>
+                    {latest && latest.key >= last14[0].key && (
+                      <span className="dusk-delta dusk-delta-warm">{t('perDayBadge', { count: latest.items.length, date: shortDate(latest.key) })}</span>
+                    )}
+                  </div>
+                  <DayBars days={last14} highlight={latest?.key ?? ''} ariaLabel={t('perDayAria')} />
+                </section>
+              </div>
+
+              {recentDays.map((g) => {
+                const pool = g.items.filter((s) => s !== lead);
+                if (!pool.length) return null;
+                const top = [...pool].sort((a, b) => b.score - a.score).slice(0, 3);
+                const rest = pool.filter((s) => !top.includes(s));
+                return (
+                  <section key={g.key} aria-labelledby={`feed-day-${g.key}`} className="flex flex-col gap-4 mt-2">
+                    <div className="flex items-baseline justify-between gap-3 pb-2 border-b border-[color:var(--dusk-line)]">
+                      <h2 id={`feed-day-${g.key}`} className="dusk-display m-0 text-[1.35rem] leading-tight">{dayLabel(g.key)}</h2>
+                      <span className="dusk-label">{t('storyCount', { count: g.items.length })}</span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">{top.map(card)}</div>
+                    {rest.length > 0 && <div className="dusk-card px-5 sm:px-[22px] py-1.5">{rest.map((s) => row(s, false))}</div>}
+                  </section>
+                );
+              })}
+
+              {weeks.length > 0 && (
+                <section className="dusk-card p-5 sm:p-6 flex flex-col gap-1 mt-2" aria-labelledby="feed-earlier-title">
+                  <h2 id="feed-earlier-title" className="dusk-display m-0 text-[1.35rem]">{t('earlier')}</h2>
+                  <p className={cardSub}>
+                    {t('earlierSub', { stories: weeks.reduce((n, w) => n + w.items.length, 0), weeks: weeks.length })}
+                  </p>
+                  {weeks.map((w, i) => (
+                    <details key={w.key} className="dusk-faq mt-1" open={i === 0}>
+                      <summary className="flex justify-between gap-3 py-3.5 border-t border-[color:var(--dusk-line)] font-semibold">
+                        {t('weekOf', { date: shortDate(w.key) })}
+                        <span className="ml-auto dusk-mono text-[11px] font-normal text-[color:var(--dusk-muted)]">{t('storyCount', { count: w.items.length })}</span>
+                      </summary>
+                      <div>{w.items.map((s) => row(s, true))}</div>
+                    </details>
+                  ))}
+                </section>
+              )}
+            </>
+          )}
+
+          <NewsletterBand className="mt-2" />
+        </div>
+      </main>
     </>
   );
 }
 
-type LocalizedText = ReturnType<typeof localize>;
-type Formatter = Awaited<ReturnType<typeof getFormatter>>;
 type FeedT = Awaited<ReturnType<typeof getTranslations>>;
 
 function hookDeliverFallbacks(t: FeedT): HookDeliverFallbacks {
@@ -319,154 +436,13 @@ function hookDeliverFallbacks(t: FeedT): HookDeliverFallbacks {
   };
 }
 
-function HookDeliverSlot({ data, t }: { data: ResolvedHookDeliver; t: FeedT }) {
+function HookContext({ data, t }: { data: ResolvedHookDeliver; t: FeedT }) {
   return (
-    <HookDeliverBlock
+    <HubContext
       data={data}
-      variant="compact"
       contextLabel={t('hookDeliver.context')}
       sourceLabel={t('hookDeliver.source', { tables: data.sources.join(' · ') })}
       hubLabel={t('hookDeliver.hub', { name: data.hub.name })}
     />
-  );
-}
-
-function FeedCard({
-  item,
-  text,
-  score,
-  format,
-  t,
-  hook,
-}: {
-  item: FeedItem;
-  text: LocalizedText;
-  score: number;
-  format: Formatter;
-  t: FeedT;
-  hook: ResolvedHookDeliver | null;
-}) {
-  const headlineEl = (
-    <span className="block font-sans font-semibold text-text-1 leading-snug line-clamp-2" style={{ fontSize: '0.9375rem' }}>
-      {text.headline}
-    </span>
-  );
-
-  return (
-    <article className="soft-card soft-card-interactive h-full flex flex-col p-4 lg:p-5 min-w-0">
-      <div className="flex items-center justify-between gap-2 mb-2.5">
-        <div className="flex items-center gap-2 flex-wrap min-w-0">
-          <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 truncate">{item.source_name}</span>
-          <span className="text-text-3 shrink-0">·</span>
-          <span className="font-mono text-[10px] text-text-3 shrink-0">
-            {format.dateTime(new Date(item.published_at), { month: 'short', day: 'numeric' })}
-          </span>
-        </div>
-        <span
-          className="font-mono text-[11px] tabular-nums shrink-0 font-medium"
-          style={{ color: score > 1 ? 'var(--accent)' : 'var(--text-3)' }}
-          title={t('scoreHint')}
-        >
-          {score}
-        </span>
-      </div>
-
-      {item.slug ? (
-        <Link href={`/feed/${item.slug}`} className="mb-2 hover:text-accent transition-colors duration-150">
-          {headlineEl}
-        </Link>
-      ) : (
-        <a href={item.source_url} target="_blank" rel="noopener noreferrer" className="mb-2 hover:text-accent transition-colors duration-150">
-          {headlineEl}
-        </a>
-      )}
-
-      <p className="font-sans text-text-2 leading-relaxed mt-1.5 line-clamp-2" style={{ fontSize: '0.8125rem', lineHeight: '1.6' }}>
-        {text.our_summary}
-      </p>
-
-      {hook && <HookDeliverSlot data={hook} t={t} />}
-
-      <div className="mt-auto pt-3 flex items-end justify-between gap-3">
-        {text.featuredStat && !hook ? (
-          <div className="min-w-0">
-            <p className="font-sans font-extrabold tabular-nums text-accent-2 leading-none tracking-[-0.01em]" style={{ fontSize: '1.375rem' }}>
-              {text.featuredStat.value}
-            </p>
-            <p className="font-mono text-[9px] uppercase tracking-[0.08em] text-text-2 mt-1 truncate">{text.featuredStat.label}</p>
-          </div>
-        ) : (
-          <span />
-        )}
-        <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-3 shrink-0">
-          {item.slug ? t('readBrief') : t('readOriginal')}
-        </span>
-      </div>
-    </article>
-  );
-}
-
-// Dense fallback once a day's story count passes 3 -- a text row (source ·
-// headline · score · date) instead of full card chrome, so a busy day
-// doesn't turn into a wall of identical cards.
-function FeedListRow({
-  item,
-  text,
-  score,
-  format,
-  t,
-  hook,
-}: {
-  item: FeedItem;
-  text: LocalizedText;
-  score: number;
-  format: Formatter;
-  t: FeedT;
-  hook: ResolvedHookDeliver | null;
-}) {
-  const headlineEl = (
-    <span className="flex-1 min-w-0 font-sans font-semibold text-text-1 truncate" style={{ fontSize: '0.875rem' }}>
-      {text.headline}
-    </span>
-  );
-
-  return (
-    <div className="min-w-0 py-3">
-    <div className="flex items-center gap-4 min-w-0">
-      <span className="hidden sm:block w-32 shrink-0 font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 truncate">
-        {item.source_name}
-      </span>
-      {item.slug ? (
-        <Link href={`/feed/${item.slug}`} className="flex-1 min-w-0 flex hover:text-accent transition-colors duration-150">
-          {headlineEl}
-        </Link>
-      ) : (
-        <a
-          href={item.source_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-1 min-w-0 flex hover:text-accent transition-colors duration-150"
-          title={t('readOriginal')}
-        >
-          {headlineEl}
-        </a>
-      )}
-      <span
-        className="font-mono text-[11px] tabular-nums shrink-0 font-medium"
-        style={{ color: score > 1 ? 'var(--accent)' : 'var(--text-3)' }}
-        title={t('scoreHint')}
-      >
-        {score}
-      </span>
-      <span className="hidden md:block shrink-0 font-mono text-[10px] text-text-3">
-        {format.dateTime(new Date(item.published_at), { month: 'short', day: 'numeric' })}
-      </span>
-    </div>
-    {hook && (
-      <div className="min-w-0 sm:pl-36">
-        <HookDeliverSlot data={hook} t={t} />
-      </div>
-    )}
-    </div>
   );
 }

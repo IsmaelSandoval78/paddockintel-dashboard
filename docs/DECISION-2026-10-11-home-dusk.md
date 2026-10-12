@@ -90,3 +90,21 @@ Prototyped on the Singapore 2026 race report with a dark-body vs. light-sheet to
   markdown file with markers is ingested *after* the deploy (otherwise the live page shows the raw
   `[[figure:…]]` line). `race_id` alone is harmless and can be ingested any time.
 
+## Feed (2026-10-12)
+Prototyped from the live Feed data (dumped with the site's own functions) and approved. Built into
+`app/[locale]/(digest)/feed/`:
+- **Index:** header with this week's counts; the lead story (highest significance score of the
+  latest day) with its key numbers and the editor's take; "Who the press is covering" (the existing
+  most-mentioned counts, Beagle + Feed, last 7 days) as ranked bars; this week's totals; stories per
+  day over the last 14 days. Then one block per day of the last 7 days (top three by significance as
+  cards, the rest as rows) and an **archive by week** for everything older, folded in `<details>`
+  (first week open). Every story is still linked from the page and listed in the ItemList JSON-LD.
+- **Significance** keeps its meaning (`significanceScore`) but reads as a signal: number plus a bar
+  scaled to the page's top story. Hook & Deliver facts render in ice (`HubContext`), the colour for
+  context, so they never compete with a story's own key number.
+- **Story page:** dusk cover (source, headline, summary, entities, byline, original report), the
+  numbers as a KPI row, the analysis on the light sheet (Hub context, what our data adds, editor's
+  take, FAQ, original source), rail with this week's press mentions of the story's entities (only
+  for stories inside that 7-day window, never zeros) and the other stories of the same day.
+- Metadata, canonical/hreflang (EN/ES) and all JSON-LD unchanged; new labels in `feed` (EN/ES/PT).
+
