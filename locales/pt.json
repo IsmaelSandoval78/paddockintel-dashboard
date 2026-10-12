@@ -1014,5 +1014,127 @@
       "constructorChampionships": "Títulos do construtor",
       "constructorCareerPoints": "Pontos históricos do construtor"
     }
+  },
+  "homeDusk": {
+    "kickerRace": "{race} · {session} · {date}",
+    "sessionRace": "Corrida",
+    "kickerFeatured": "Destaque · {date}",
+    "cta": "Ler a análise",
+    "header": {
+      "eyebrow": "Etapa {round} de {total} · Corrida · {date}",
+      "chipData": "Dados da corrida: cronometragem oficial da F1 via FastF1",
+      "chipLaps": "{circuit} · {laps} voltas"
+    },
+    "terrain": {
+      "caption": "A volta da pole como paisagem · cada pico é uma reta, cada vale uma curva · {driver} {lapTime} · {min}–{max} km/h · FastF1",
+      "aria": "A velocidade da volta da pole de {driver} desenhada como uma cordilheira: cada pico é uma reta, cada vale uma curva. A velocidade vai de {min} a {max} km/h."
+    },
+    "insights": {
+      "aria": "Números-chave da nossa análise da semana de corrida",
+      "pick": "Mostrar o número {n} de {total}",
+      "read": "Ler a análise"
+    },
+    "kpi": {
+      "speedTitle": "Velocidade máxima",
+      "speedSub": "Volta da pole de {driver}, {lapTime}",
+      "speedUnit": "km/h",
+      "speedBadge": "mínima {min} km/h",
+      "speedAria": "Traço de velocidade da volta da pole de {driver}, de {min} a {max} km/h",
+      "speedSource": "Telemetria do FastF1 · 140 amostras por distância",
+      "ledTitle": "Voltas lideradas",
+      "ledSubAll": "{driver}, todas as voltas da corrida",
+      "ledSub": "{driver}, ao fim de cada volta",
+      "ledBadgeAll": "Do início ao fim",
+      "ledBadge": "{pct}% da corrida",
+      "ledLegend": "Volta liderada",
+      "vscLegend": "Com VSC",
+      "ledAria": "{total} pontos, um por volta; {driver} liderou {laps}",
+      "ledSource": "Posições por volta do FastF1 · líder ao fim de cada volta",
+      "p2wTitle": "Da pole à vitória",
+      "p2wSub": "{circuit}, todos os Grandes Prêmios desde {year}",
+      "p2wBadge": "{pct}% a partir da pole",
+      "p2wDot": "{year} · {winner} venceu largando em P{grid}",
+      "p2wAria": "{races} Grandes Prêmios em {circuit} desde {year}; {wins} vencidos a partir da pole",
+      "p2wSource": "Resultados do Supabase · grid 1 e posição 1"
+    },
+    "story": {
+      "title": "Como a corrida foi vencida",
+      "subGap": "Vantagem de {leader} sobre {chaser} ao fim de cada volta",
+      "subOrder": "Ordem de corrida dos {n} primeiros, volta a volta · tracejado = segundo carro de uma equipe",
+      "tabGap": "Diferença para {chaser}",
+      "tabOrder": "Ordem de corrida",
+      "tablist": "Visualização do gráfico",
+      "summaryGap": "Diferença na bandeirada: {gap}s. Os saltos são ciclos de pit stop: {stops}.",
+      "stop": "{driver} na volta {laps}",
+      "summaryOrderAll": "{leader} liderou todas as voltas.",
+      "summaryOrder": "{leader} liderou {led} de {total} voltas.",
+      "mover": "{driver} chegou a P{peak} e terminou em P{final}.",
+      "moverNote": "{driver}: P{peak} → P{final}",
+      "vsc": "VSC",
+      "lap": "V{lap}",
+      "pit": "{driver} para",
+      "pitVsc": "{driver} para sob VSC",
+      "tip": "Volta {lap} · {driver} +{gap}s",
+      "ariaGap": "Vantagem de {leader} sobre {chaser} volta a volta, {gap}s na bandeirada",
+      "ariaOrder": "Ordem de corrida dos {n} primeiros, volta a volta",
+      "source": "Tempos por volta do FastF1 · classificação oficial"
+    },
+    "duel": {
+      "title": "A pole, setor por setor",
+      "sub": "Quem foi mais rápido, e por quanto",
+      "faster": "{driver} mais rápido",
+      "sector": "S{n}",
+      "summaryFlip": "{challenger} estava à frente após o setor {sector}. {pole} encontrou {gain}s a partir dali para ficar com a pole.",
+      "summaryNoFlip": "{pole} estava à frente após cada setor.",
+      "aria": "Tempos por setor na classificação, {pole} contra {challenger}: {gaps}. {pole} ficou com a pole por {gap}s.",
+      "ariaGap": "setor {n}, {driver} mais rápido por {gap}s",
+      "source": "Tempos oficiais por setor do FastF1 · Classificação"
+    },
+    "map": {
+      "sub": "Traçado com a volta da pole, cor conforme a velocidade",
+      "top": "{speed} km/h",
+      "min": "{speed} km/h",
+      "slow": "Lento",
+      "fast": "Pé embaixo",
+      "aria": "Mapa de {circuit} traçado com a volta da pole de {driver}, colorido conforme a velocidade: {max} km/h no ponto mais rápido, {min} km/h na curva mais lenta.",
+      "source": "Posição e telemetria do FastF1"
+    },
+    "trend": {
+      "title": "A briga pelo título, etapa por etapa",
+      "sub": "Pontos após cada uma das {n} etapas",
+      "round": "E{n}",
+      "tip": "Etapa {n}",
+      "aria": "Pontos do campeonato após cada etapa para {drivers}",
+      "source": "Classificação de pilotos no Supabase · {year}, etapas {first}–{last}"
+    },
+    "standings": {
+      "title": "Campeonato de pilotos",
+      "sub": "Após o {race} · {left, plural, =0 {temporada encerrada} one {falta # corrida} other {faltam # corridas}}",
+      "lead": "▲ +{gap} sobre {driver}",
+      "link": "Classificação completa no Hub"
+    },
+    "nextRace": {
+      "kicker": "Próxima corrida · Etapa {round}",
+      "meta": "{circuit} · {date}",
+      "days": "{days, plural, one {dia para a corrida} other {dias para a corrida}}",
+      "lapRecord": "Recorde da pista",
+      "lapRecordValue": "{time} · {driver}, {year}",
+      "recentWinners": "Vencedores recentes"
+    },
+    "latest": {
+      "title": "Mais recentes",
+      "link": "Ver o feed completo",
+      "ownSource": "PaddockIntel",
+      "tagFeed": "Feed",
+      "tagOwn": "Análise"
+    },
+    "newsletter": {
+      "title": "Os fatos, não o alarde.",
+      "body": "Números reais. História real. Zero enrolação. Toda semana no seu e-mail.",
+      "emailLabel": "Endereço de e-mail"
+    },
+    "archive": {
+      "title": "Arquivo de análises"
+    }
   }
 }

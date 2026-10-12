@@ -1024,5 +1024,127 @@
       "constructorChampionships": "Constructor titles",
       "constructorCareerPoints": "Constructor career points"
     }
+  },
+  "homeDusk": {
+    "kickerRace": "{race} · {session} · {date}",
+    "sessionRace": "Race",
+    "kickerFeatured": "Featured · {date}",
+    "cta": "Read the analysis",
+    "header": {
+      "eyebrow": "Round {round} of {total} · Race · {date}",
+      "chipData": "Race data: official F1 timing via FastF1",
+      "chipLaps": "{circuit} · {laps} laps"
+    },
+    "terrain": {
+      "caption": "The pole lap as a landscape · every peak a straight, every valley a corner · {driver} {lapTime} · {min}–{max} km/h · FastF1",
+      "aria": "{driver}'s pole lap speed drawn as a mountain range: every peak is a straight, every valley a corner. Speed ranges from {min} to {max} km/h."
+    },
+    "insights": {
+      "aria": "Key numbers from our race-week analysis",
+      "pick": "Show number {n} of {total}",
+      "read": "Read the analysis"
+    },
+    "kpi": {
+      "speedTitle": "Top speed",
+      "speedSub": "{driver}'s pole lap, {lapTime}",
+      "speedUnit": "km/h",
+      "speedBadge": "slowest {min} km/h",
+      "speedAria": "Speed trace of {driver}'s pole lap, from {min} to {max} km/h",
+      "speedSource": "FastF1 car telemetry · 140 samples by distance",
+      "ledTitle": "Laps led",
+      "ledSubAll": "{driver}, every lap of the race",
+      "ledSub": "{driver}, at the end of each lap",
+      "ledBadgeAll": "Lights to flag",
+      "ledBadge": "{pct}% of the race",
+      "ledLegend": "Lap led",
+      "vscLegend": "Under VSC",
+      "ledAria": "{total} dots, one per lap; {driver} led {laps} of them",
+      "ledSource": "FastF1 lap positions · leader at the end of every lap",
+      "p2wTitle": "Pole to win",
+      "p2wSub": "{circuit}, every Grand Prix since {year}",
+      "p2wBadge": "{pct}% from pole",
+      "p2wDot": "{year} · {winner} won from P{grid}",
+      "p2wAria": "{races} Grands Prix at {circuit} since {year}; {wins} won from pole",
+      "p2wSource": "Supabase results · grid 1 and position 1"
+    },
+    "story": {
+      "title": "How the race was won",
+      "subGap": "{leader}'s lead over {chaser} at the end of every lap",
+      "subOrder": "Running order of the top {n} finishers, lap by lap · dashed = second car of a team",
+      "tabGap": "Gap to {chaser}",
+      "tabOrder": "Running order",
+      "tablist": "Chart view",
+      "summaryGap": "Gap at the flag: {gap}s. The jumps are pit-stop cycles: {stops}.",
+      "stop": "{driver} on lap {laps}",
+      "summaryOrderAll": "{leader} led every lap.",
+      "summaryOrder": "{leader} led {led} of {total} laps.",
+      "mover": "{driver} ran as high as P{peak} and finished P{final}.",
+      "moverNote": "{driver}: P{peak} → P{final}",
+      "vsc": "VSC",
+      "lap": "L{lap}",
+      "pit": "{driver} pits",
+      "pitVsc": "{driver} pits under VSC",
+      "tip": "Lap {lap} · {driver} +{gap}s",
+      "ariaGap": "{leader}'s lead over {chaser} lap by lap, {gap}s at the flag",
+      "ariaOrder": "Running order of the top {n} finishers lap by lap",
+      "source": "FastF1 lap timing · official classification"
+    },
+    "duel": {
+      "title": "Pole, sector by sector",
+      "sub": "Who was faster, and by how much",
+      "faster": "{driver} faster",
+      "sector": "S{n}",
+      "summaryFlip": "{challenger} was ahead after sector {sector}. {pole} found {gain}s from there to take pole.",
+      "summaryNoFlip": "{pole} was ahead after every sector.",
+      "aria": "Sector times in qualifying, {pole} against {challenger}: {gaps}. {pole} took pole by {gap}s.",
+      "ariaGap": "sector {n}, {driver} faster by {gap}s",
+      "source": "FastF1 official sector times · Qualifying"
+    },
+    "map": {
+      "sub": "Drawn from the pole lap, coloured by speed",
+      "top": "{speed} km/h",
+      "min": "{speed} km/h",
+      "slow": "Slow",
+      "fast": "Flat out",
+      "aria": "Map of {circuit} drawn from {driver}'s pole lap, coloured by speed: {max} km/h at the fastest point, {min} km/h at the slowest corner.",
+      "source": "FastF1 position + car data"
+    },
+    "trend": {
+      "title": "The title race, round by round",
+      "sub": "Points after each of the {n} rounds",
+      "round": "R{n}",
+      "tip": "Round {n}",
+      "aria": "Championship points after each round for {drivers}",
+      "source": "Supabase driver standings · {year} rounds {first}–{last}"
+    },
+    "standings": {
+      "title": "Drivers' championship",
+      "sub": "After the {race} · {left, plural, =0 {season complete} one {# race left} other {# races left}}",
+      "lead": "▲ +{gap} over {driver}",
+      "link": "Full standings on the Hub"
+    },
+    "nextRace": {
+      "kicker": "Next race · Round {round}",
+      "meta": "{circuit} · {date}",
+      "days": "{days, plural, one {day to go} other {days to go}}",
+      "lapRecord": "Lap record",
+      "lapRecordValue": "{time} · {driver}, {year}",
+      "recentWinners": "Recent winners"
+    },
+    "latest": {
+      "title": "Latest",
+      "link": "See the full feed",
+      "ownSource": "PaddockIntel",
+      "tagFeed": "Feed",
+      "tagOwn": "Analysis"
+    },
+    "newsletter": {
+      "title": "Follow the facts, not the hype.",
+      "body": "Real numbers. Real history. Zero spin. Every week in your inbox.",
+      "emailLabel": "Email address"
+    },
+    "archive": {
+      "title": "Analysis archive"
+    }
   }
 }

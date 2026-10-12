@@ -2177,3 +2177,64 @@ check de Vercel era ruido, no un gate real.
 Ismael desconectó el repo del proyecto de Vercel (Vercel → Settings → Git → Disconnect) el 18
 de septiembre. Cloudflare queda como el único camino de deploy real, sin ambigüedad. Pendiente
 de confirmación: la próxima PR real no debería mostrar ya el check de Vercel.
+
+## Home "Telemetry at Dusk" — rediseño del magazine home (11 oct 2026)
+
+**Estado: construido en la rama `home-dusk` (desde `main`), PR abierto, sin mergear — Ismael lo
+revisa en el preview antes de cualquier merge.** Handoff completo en `docs/design/home-dusk/`,
+decisión en `docs/DECISION-2026-10-11-home-dusk.md` (corregida: el sistema vigente es Warm
+Studio v5.0.0, y este es el 3er intento oscuro — Data Mode revertido, Hypermodern PR #27 cerrado).
+
+**Hecho:**
+- Tema `.theme-dusk` con alcance solo al home (`magazine-home/dusk.css`): re-define los tokens
+  existentes bajo `.theme-dusk` / `body:has(.theme-dusk)`, así Navbar/Footer/archivo se re-pintan
+  sin tocar `globals.css`. Excepción acotada a CLAUDE.md: gradiente/glow solo dentro de
+  `.theme-dusk`; gradient text y backdrop-blur siguen prohibidos. Glow apagado con
+  `prefers-reduced-motion`.
+- Componentes nuevos server-rendered en `components/home-dusk/` (hero de terreno con la vuelta de
+  pole, 3 gauges, duelo de pole por sector, standings con barras, próxima carrera, Latest,
+  newsletter). Cada módulo se oculta si su dato no existe — nunca un valor de relleno.
+- Datos por carrera: `scripts/highlights/race_highlights.py` (FastF1) genera
+  `content/race-highlights/<año>-<ronda>.json`, registrado en `lib/raceHighlights.ts`. Sin
+  migración (JSON tipado en el repo). Singapur 2026 generado y verificado.
+- Archivo paginado del magazine se mantiene al final del home (estilo dusk) — es la ruta de
+  rastreo SEO y `/?tag=` sigue funcionando.
+- Textos nuevos en `homeDusk.*` en EN/ES/PT. Metadata/canonical/hreflang del home intactos.
+
+**Bug real encontrado y corregido:** `getStandings()` elegía la "última carrera" por
+`max(driver_standings.race_id)`. Los ids no siguen el calendario (2026 Bahréin R16 = 1191,
+Singapur R17 = 1184), así que el home mostraba "Drivers after the Bahrain Grand Prix". Ahora usa
+la carrera más reciente por (año, ronda) con standings cargados (`getLatestStandingsRaceId`).
+**El mismo patrón sigue en `getMovers`, `getRaceHighlights` (data.ts) y `Navbar.getCurrentRound`
+— no tocados, pendientes de decidir.**
+
+**Correcciones al handoff:** velocidad máxima de la vuelta de pole de VER = **308 km/h** (FastF1),
+no 307; la procedencia del JSON del handoff estaba mal. Copy del newsletter: "every week", no
+"every race weekend" (cadencia real, GROWTH-EXPERT).
+
+**✅ Corregido 11 oct (con OK de Ismael) — dato corrupto en Supabase:** los resultados de
+Singapur (R17, race_id 1184) en `results`, `qualifying`, `sprint_results` y
+`constructor_standings` tienen a Red Bull como constructor id 93 (`re`, "RE", el equipo rodesiano
+de 1965) en vez de id 9 (`red_bull`). Causa: el fallback difuso de `resolve_constructor()` en
+`scripts/load_race.py` (`c["name"].lower() in tl` → "re" está dentro de "red bull"). Efecto:
+Verstappen aparece como "RE" en los standings del home y del Hub, y la tabla de constructores
+muestra Red Bull 295 (P4) + "RE" 34 (P7). Riesgo de repetirse en Austin (R18, 25 oct) vía
+`post-race-loader.yml`. **Arreglo:** el mismo problema estaba también en el qualifying de R10, R13
+y R16. Se movieron 12 filas de 93 a 9, se borró la fila fantasma de "RE" en standings y Red Bull
+quedó en 329 pts / 2 victorias tras R17. Verificado: para los 11 equipos, standings = suma real de
+carrera + sprint. El script ya no hace match por substring y, si no reconoce un equipo, frena la
+carga en vez de adivinar (PR #91).
+
+**Preview:** Vercel está desconectado desde el 18 sep — el preview real es
+`deploy-preview.yml` (manual, Worker separado en workers.dev). En ese host el home del magazine
+se ve en `/magazine-home/` (`/es/magazine-home/`, `/pt/magazine-home/`), porque el rewrite de `/`
+solo aplica a los hosts `paddockintel.com`/`www`.
+
+**v2 del home, 12 oct 2026 (mismo PR #90, sin mergear):** Ismael pidió un salto visual ("eeeh" → "WOW").
+Se armó primero un prototipo estático con datos reales de Singapur combinando tres referencias (estructura
+bento de Zentra, piel dusk, gráficos estilo pit wall), se aprobó, y se pasó al home: Hero-paisaje con el
+número clave como sol, tarjeta de insight (rota los números clave ya publicados en los artículos de la
+semana de carrera), fila de KPIs (velocidad, vueltas lideradas vuelta por vuelta, pole-a-victoria por año),
+"How the race was won" (diferencia ganador–P2 por vuelta + orden de carrera), campeonato, pole por
+sectores, mapa, evolución del título y próxima carrera. `race_highlights.py` ahora genera `raceTrace`. Solo
+el home; artículos después, con prototipo primero. Vocabulario de zonas: artifact "Anatomía del Home".

@@ -1,61 +1,45 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
-import { getTranslations } from 'next-intl/server';
+import { Instrument_Sans } from 'next/font/google';
+import { getFormatter, getTranslations } from 'next-intl/server';
 import { Link } from '@/lib/i18n/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { getArticleIdsForTagSlug, getArticleTagSlugs, type TagRef } from '@/lib/blog/tags';
-import { getBeagleEntityCounts, mergeEntityCounts } from '@/lib/beagleCounts';
-import JoinTwoWays from '@/components/blog/JoinTwoWays';
-import ArticlePreviewCard, { formatDate } from '@/components/blog/ArticlePreviewCard';
-import NewsletterCard from '@/components/blog/NewsletterCard';
-import StandingsPanel from '@/components/blog/StandingsPanel';
-import RaceSnapshotPanel from '@/components/blog/RaceSnapshotPanel';
-import AttentionThisWeekPanel from '@/components/blog/AttentionThisWeekPanel';
-import LearningPanel from '@/components/blog/LearningPanel';
-import FeedTeaserPanel from '@/components/blog/FeedTeaserPanel';
-import { SITE_URL } from '@/lib/site-url';
-import {
-  getFeaturedAndRecent,
-  getDataDeskArticles,
-  getStandings,
-  getRaceHighlights,
-  getAttentionThisWeek,
-  getLearningTerms,
-  getCircuitOfTheDay,
-  getFeedTeaser,
-  getDigestEntityCounts,
-} from './data';
+import { formatDate } from '@/components/blog/ArticlePreviewCard';
+import HeroLandscape, { type TerrainData } from '@/components/home-dusk/HeroLandscape';
+import InsightCarousel, { type InsightSlide } from '@/components/home-dusk/InsightCarousel';
+import { LapsLedKpi, PoleToWinKpi, SpeedKpi } from '@/components/home-dusk/KpiCards';
+import RaceStoryCard from '@/components/home-dusk/RaceStoryCard';
+import StandingsCard, { teamVar } from '@/components/home-dusk/StandingsCard';
+import SectorDuel from '@/components/home-dusk/SectorDuel';
+import TrackMap from '@/components/home-dusk/TrackMap';
+import TitleTrend, { type TrendSeries } from '@/components/home-dusk/TitleTrend';
+import NextRaceCard from '@/components/home-dusk/NextRaceCard';
+import LatestList, { type LatestItem } from '@/components/home-dusk/LatestList';
+import NewsletterBand from '@/components/home-dusk/NewsletterBand';
+import DuskArticleCard from '@/components/home-dusk/DuskArticleCard';
+import { SITE_URL, hubLocaleUrl } from '@/lib/site-url';
+import { getRaceHighlightsFor } from '@/lib/raceHighlights';
+import { getFeaturedAndRecent, getStandings, getCircuitOfTheDay, getFeedTeaser } from './data';
+import { getLatestRace, getTitleTrend } from './dusk-data';
+import './dusk.css';
 
 export const revalidate = 3600;
 
+// "Telemetry at Dusk" v2 (docs/DECISION-2026-10-11-home-dusk.md): UI/body face for this page only.
+const duskSans = Instrument_Sans({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+  variable: '--pi-dusk-sans',
+  display: 'swap',
+});
+
 type Stat = { value: string; label: string; unit?: string };
-
-// next/image only for hosts already in next.config remotePatterns. A cover on
-// any other host is skipped and the hero number fills the tile instead.
-function isOptimizableCover(url: string): boolean {
-  try {
-    const parsed = new URL(url);
-    if (parsed.protocol !== 'https:') return false;
-    if (parsed.hostname === 'paddockintel.com' && parsed.pathname.startsWith('/content/images/')) return true;
-    if (parsed.hostname === 'hub.paddockintel.com' && parsed.pathname.startsWith('/charts/')) return true;
-    return false;
-  } catch {
-    return false;
-  }
-}
-
-function FeaturedCover({ src }: { src: string }) {
-  return (
-    <div className="relative mb-5 aspect-[16/9] w-full overflow-hidden rounded-md bg-surface-raised">
-      <Image src={src} alt="" fill sizes="(min-width: 1024px) 34vw, 100vw" className="object-cover" />
-    </div>
-  );
-}
 
 type PageParams = Promise<{ locale: string }>;
 type SearchParams = Promise<{ page?: string; tag?: string }>;
 
 const PAGE_SIZE = 20;
+const FEATURED_TAG_SLUG = 'featured';
 
 const HOME_URLS = {
   en: `${SITE_URL}/`,
@@ -113,25 +97,11 @@ async function getArticles(locale: string, page: number, tag?: string) {
   return { articles, total: count ?? 0 };
 }
 
-function ArticleCard({ a, locale }: { a: NonNullable<Awaited<ReturnType<typeof getArticles>>['articles']>[number]; locale: string }) {
-  const stats = (a.stats as Stat[]) ?? [];
-  return (
-    <ArticlePreviewCard
-      slug={a.slug as string}
-      title={a.title as string}
-      metaDescription={a.meta_description as string | null}
-      tags={a.tags}
-      publishedAt={a.published_at as string}
-      locale={locale}
-      featuredStat={stats[0]}
-    />
-  );
-}
+type ArchiveArticle = NonNullable<Awaited<ReturnType<typeof getArticles>>['articles']>[number];
 
-// Dense fallback for the rest of the archive, once it grows past the first few
-// cards — a text row (kicker · title · stat · date) instead of full card chrome,
-// so the section scales without turning into a wall of identical tiles.
-function ArticleListRow({ a, locale }: { a: NonNullable<Awaited<ReturnType<typeof getArticles>>['articles']>[number]; locale: string }) {
+// Dense fallback for the rest of the archive — a text row (kicker · title · stat · date)
+// instead of full card chrome, so the section scales without a wall of identical tiles.
+function ArticleListRow({ a, locale }: { a: ArchiveArticle; locale: string }) {
   const stats = (a.stats as Stat[]) ?? [];
   const stat = stats[0];
   const tag = a.tags[0];
@@ -155,13 +125,18 @@ function ArticleListRow({ a, locale }: { a: NonNullable<Awaited<ReturnType<typeo
       >
         {a.title as string}
       </Link>
-      {stat && (
-        <span className="shrink-0 font-mono text-xs font-bold text-accent-2 tabular-nums">{stat.value}</span>
-      )}
+      {stat && <span className="shrink-0 font-mono text-xs font-bold text-accent-2 tabular-nums">{stat.value}</span>}
       <span className="hidden md:block shrink-0 font-mono text-[10px] text-text-3">{date.toUpperCase()}</span>
     </div>
   );
 }
+
+// "2026-10-11" -> a Date at noon UTC, so no timezone can shift the calendar day.
+function dayDate(isoDay: string): Date {
+  return new Date(`${isoDay.slice(0, 10)}T12:00:00Z`);
+}
+
+const pct = (part: number, whole: number) => Math.round((part / whole) * 100);
 
 export default async function MagazineHomePage({
   params,
@@ -172,8 +147,12 @@ export default async function MagazineHomePage({
 }) {
   const { locale } = await params;
   const { page: pageParam, tag: tagParam } = await searchParams;
-  const t = await getTranslations('magazine');
-  const tArticleTags = await getTranslations('articleTags');
+  const [t, tMag, tArticleTags, format] = await Promise.all([
+    getTranslations('homeDusk'),
+    getTranslations('magazine'),
+    getTranslations('articleTags'),
+    getFormatter(),
+  ]);
 
   const page = Math.max(1, Number.parseInt(pageParam ?? '1', 10) || 1);
   const tag = tagParam?.slice(0, 64) || undefined;
@@ -181,28 +160,191 @@ export default async function MagazineHomePage({
   // a known canonical tag (stale/bookmarked link, tampered param, etc.)
   const tagLabel = tag ? (tArticleTags.has(tag) ? tArticleTags(tag) : tag) : undefined;
 
-  // Front-page state only (page 1, unfiltered) gets the full bento treatment — a
-  // filtered or paginated view is an archive, not a cover.
+  // Front-page state only (page 1, unfiltered) gets the dashboard — a filtered or
+  // paginated view is an archive, not a cover.
   const isFrontPage = page === 1 && !tag;
 
-  const [{ articles, total }, featuredAndRecent, frontPageExtras] = await Promise.all([
+  const [{ articles, total }, featuredAndRecent, front] = await Promise.all([
     getArticles(locale, page, tag),
     getFeaturedAndRecent(locale),
     isFrontPage
-      ? Promise.all([
-          getStandings(),
-          getRaceHighlights(),
-          getAttentionThisWeek(locale),
-          getDataDeskArticles(locale),
-          getLearningTerms(locale),
-          getCircuitOfTheDay(),
-          getFeedTeaser(locale, 10),
-          getBeagleEntityCounts(createClient()),
-          getDigestEntityCounts(),
-        ])
+      ? Promise.all([getStandings(), getLatestRace(), getCircuitOfTheDay(), getFeedTeaser(locale, 6)])
       : Promise.resolve(null),
   ]);
 
+  const [standings, latestRace, nextRace, feedItems] = front ?? [{ drivers: [], constructors: [] }, null, null, []];
+  const { featured, recent } = featuredAndRecent;
+  const topDrivers = standings.drivers;
+  const trend =
+    isFrontPage && latestRace && topDrivers.length
+      ? await getTitleTrend(latestRace.year, latestRace.round, topDrivers.map((d) => d.driver_id))
+      : null;
+
+  const highlights = latestRace ? getRaceHighlightsFor(latestRace.year, latestRace.round) : null;
+  const surname = (code: string) => latestRace?.surnameByCode[code] ?? code;
+  const codeBySurname = new Map(Object.entries(latestRace?.surnameByCode ?? {}).map(([code, name]) => [name, code]));
+  const fmt3 = (n: number) => format.number(n, { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+  const shortDate = (d: Date) => format.dateTime(d, { month: 'short', day: 'numeric' });
+  const raceDay = latestRace ? dayDate(latestRace.date) : null;
+  const pole = highlights?.poleLap;
+  const trace = highlights?.raceTrace;
+
+  // ── B · Page header ─────────────────────────────────────────────────
+  const raceLaps = trace?.totalLaps ?? highlights?.lapsLed?.totalLaps ?? null;
+
+  // ── 2 · Hero ────────────────────────────────────────────────────────
+  const featuredStats = (featured?.stats as Stat[] | undefined) ?? [];
+  const featuredStat = featuredStats[0];
+  const featuredPublished = featured?.published_at ? new Date(featured.published_at) : null;
+  // The race kicker only describes the featured piece if it was published during that race's
+  // week; otherwise the kicker is the article's own, so the hero never mislabels a story.
+  const inRaceWeek = (d: Date | null) =>
+    raceDay && d
+      ? d.getTime() >= raceDay.getTime() - 3 * 86_400_000 && d.getTime() <= raceDay.getTime() + 7 * 86_400_000
+      : false;
+  const featuredIsRaceWeek = inRaceWeek(featuredPublished);
+  const heroKicker =
+    latestRace && raceDay && featuredIsRaceWeek
+      ? t('kickerRace', { race: `${latestRace.name} ${latestRace.year}`, session: t('sessionRace'), date: shortDate(raceDay) })
+      : t('kickerFeatured', { date: featuredPublished ? shortDate(featuredPublished) : '' });
+
+  const terrain: TerrainData | null = pole
+    ? {
+        speeds: pole.speedKmh,
+        caption: t('terrain.caption', {
+          driver: surname(pole.driver),
+          lapTime: pole.lapTime,
+          min: format.number(pole.minSpeedKmh),
+          max: format.number(pole.topSpeedKmh),
+        }),
+        ariaLabel: t('terrain.aria', {
+          driver: surname(pole.driver),
+          min: format.number(pole.minSpeedKmh),
+          max: format.number(pole.topSpeedKmh),
+        }),
+      }
+    : null;
+
+  // ── I · Insights: key numbers already published in our race-week analysis ──
+  // The editorial 'featured' flag is a placement, not a topic: label by the first real tag.
+  const topicTag = (tags: TagRef[] | undefined) => tags?.find((tg) => tg.slug !== FEATURED_TAG_SLUG)?.label;
+  const featuredChip = topicTag(featured?.tags) ?? t('latest.tagOwn');
+  const insightCandidates: InsightSlide[] = [
+    ...featuredStats.slice(1).map((s, i) => ({
+      key: `f-${i}`,
+      chip: featuredChip,
+      value: s.value,
+      label: s.label,
+      context: s.unit ?? null,
+      href: `/${featured?.slug}`,
+      linkLabel: t('insights.read'),
+    })),
+    ...recent
+      .filter((a) => inRaceWeek(a.published_at ? new Date(a.published_at) : null))
+      .flatMap((a) => {
+        const s = ((a.stats as Stat[] | undefined) ?? [])[0];
+        return s
+          ? [{ key: `r-${a.slug}`, chip: topicTag(a.tags) ?? t('latest.tagOwn'), value: s.value, label: s.label, context: s.unit ?? null, href: `/${a.slug}`, linkLabel: t('insights.read') }]
+          : [];
+      }),
+  ];
+  const insights = featured ? insightCandidates.slice(0, 3) : [];
+
+  // ── 3 · KPI row ─────────────────────────────────────────────────────
+  const led = highlights?.lapsLed;
+  const leaderTrace = led && trace ? trace.drivers.find((d) => d.driver === led.driver) : undefined;
+  const ledByLap: boolean[] | null = leaderTrace
+    ? leaderTrace.positions.map((p) => p === 1)
+    : led && led.laps === led.totalLaps
+      ? Array.from({ length: led.totalLaps }, () => true)
+      : null;
+  const p2w = latestRace?.poleToWin;
+
+  // ── D · How the race was won ────────────────────────────────────────
+  let mover: { driver: string; peakLap: number; peakPos: number; note: string; final: number } | null = null;
+  if (trace) {
+    for (const d of trace.drivers.slice(1)) {
+      const later = d.positions.slice(1).filter((p): p is number => p !== null);
+      const final = d.positions[d.positions.length - 1];
+      if (!later.length || final === null) continue;
+      const peak = Math.min(...later);
+      if (final - peak >= 2 && (!mover || final - peak > mover.final - mover.peakPos)) {
+        mover = {
+          driver: d.driver,
+          peakPos: peak,
+          peakLap: d.positions.indexOf(peak, 1) + 1,
+          final,
+          note: t('story.moverNote', { driver: d.driver, peak, final }),
+        };
+      }
+    }
+  }
+  const storyGap = trace?.gap;
+  const stops = storyGap
+    ? trace.drivers
+        .filter((d) => (d.driver === storyGap.chaser || d.driver === storyGap.leader) && d.pitLaps.length)
+        .map((d) => t('story.stop', { driver: d.driver, laps: d.pitLaps.join(', ') }))
+        .join('; ')
+    : '';
+  const leaderCode = trace?.drivers[0]?.driver ?? '';
+  const ledCount = trace?.drivers[0]?.positions.filter((p) => p === 1).length ?? 0;
+  const orderSummary = trace
+    ? [
+        ledCount === trace.totalLaps
+          ? t('story.summaryOrderAll', { leader: surname(leaderCode) })
+          : t('story.summaryOrder', { leader: surname(leaderCode), led: ledCount, total: trace.totalLaps }),
+        mover ? t('story.mover', { driver: surname(mover.driver), peak: mover.peakPos, final: mover.final }) : '',
+      ]
+        .filter(Boolean)
+        .join(' ')
+    : '';
+
+  // ── E · Standings ───────────────────────────────────────────────────
+  const racesLeft = latestRace ? Math.max(0, latestRace.seasonRounds - latestRace.round) : 0;
+
+  // ── Duel ────────────────────────────────────────────────────────────
+  const duel = highlights?.poleDuel;
+  const duelGaps = duel ? duel.pole.sectors.map((v, i) => duel.challenger.sectors[i] - v) : [];
+  const cumulative = duelGaps.map((_, i) => duelGaps.slice(0, i + 1).reduce((a, b) => a + b, 0));
+  const lastChallengerLead = [0, 1].filter((i) => cumulative[i] < 0).pop();
+
+  // ── F · Title trend ─────────────────────────────────────────────────
+  const seenTeams = new Set<string>();
+  const trendSeries: TrendSeries[] = trend
+    ? topDrivers.flatMap((d) => {
+        const s = trend.series.find((x) => x.driverId === d.driver_id);
+        if (!s) return [];
+        const dashed = seenTeams.has(d.constructor_ref);
+        seenTeams.add(d.constructor_ref);
+        return [{ code: codeBySurname.get(d.surname) ?? d.surname.slice(0, 3).toUpperCase(), colour: teamVar(d.constructor_ref), dashed, points: s.points }];
+      })
+    : [];
+
+  // ── 7 · Latest: Feed items + our own recent articles, newest first ──
+  const latestItems: (LatestItem & { at: number })[] = [
+    ...feedItems.map((f) => ({
+      key: `feed-${f.id}`,
+      title: f.headline,
+      href: f.slug ? `/feed/${f.slug}` : '/feed',
+      meta: `${f.source_name} · ${shortDate(new Date(f.published_at))}`,
+      tag: t('latest.tagFeed'),
+      own: false,
+      at: new Date(f.published_at).getTime(),
+    })),
+    ...recent.slice(0, 4).map((a) => ({
+      key: `article-${a.slug}`,
+      title: a.title,
+      href: `/${a.slug}`,
+      meta: `${t('latest.ownSource')} · ${a.published_at ? shortDate(new Date(a.published_at)) : ''}`,
+      tag: t('latest.tagOwn'),
+      own: true,
+      at: a.published_at ? new Date(a.published_at).getTime() : 0,
+    })),
+  ]
+    .sort((a, b) => b.at - a.at)
+    .slice(0, 5);
+
+  // ── 9 · Archive ─────────────────────────────────────────────────────
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const basePath = locale === 'en' ? '/' : `/${locale}/`;
   const pageHref = (p: number) => {
@@ -212,221 +354,300 @@ export default async function MagazineHomePage({
     const qs = q.toString();
     return qs ? `${basePath}?${qs}` : basePath;
   };
-
-  const [standings, raceHighlights, attention, dataDeskArticles, learningTerms, circuit, feedTeaserAll, beagleCounts, digestCounts] =
-    frontPageExtras ?? [
-      { drivers: [], constructors: [] },
-      { raceName: '', gainers: [], fallers: [], maxAbsDelta: 0, winner: null, fastestLap: null, fastestPit: null, retirements: [] },
-      { mostCovered: null, fastestRiser: null, biggestFall: null, dominantTheme: null },
-      [],
-      [],
-      null,
-      [],
-      new Map<string, number>(),
-      new Map<string, number>(),
-    ];
-  const { featured, recent } = featuredAndRecent;
-  const featuredStat = ((featured?.stats as Stat[] | undefined) ?? [])[0];
-  const featuredCoverRaw = featured?.cover_image_url?.trim() || null;
-  const featuredCover = featuredCoverRaw && isOptimizableCover(featuredCoverRaw) ? featuredCoverRaw : null;
-
-  const lastRaceSnapshot = raceHighlights.raceName
-    ? { raceName: raceHighlights.raceName, winner: raceHighlights.winner, fastestLap: raceHighlights.fastestLap }
-    : null;
-  const nextRaceSnapshot = circuit
-    ? { name: circuit.name, daysUntil: circuit.days_until, lapRecord: circuit.fastest_lap, champions: circuit.champions }
-    : null;
-  const hasRaceSnapshot = Boolean(lastRaceSnapshot || nextRaceSnapshot);
-
-  // Feed teaser split into two non-overlapping slices: first 6 get the hero bento tile,
-  // the next 4 feed the lower "F1 News" tile — never the same story twice on one page.
-  const feedScores = mergeEntityCounts(digestCounts, beagleCounts);
-  const feedTeaser = feedTeaserAll.slice(0, 6);
-  const f1News = feedTeaserAll.slice(6, 10);
-
-  // The archive grid below the curated modules excludes anything already
-  // shown as featured/recent, so page 1 never repeats the same article twice.
-  const shownSlugs = new Set([featured?.slug, ...recent.map((a) => a.slug)].filter(Boolean));
+  // Page 1 never repeats a story already on the cover (hero or Latest).
+  const shownSlugs = new Set(
+    [featured?.slug, ...latestItems.filter((i) => i.key.startsWith('article-')).map((i) => i.href.slice(1))].filter(Boolean),
+  );
   const archiveArticles = isFrontPage ? articles.filter((a) => !shownSlugs.has(a.slug as string)) : articles;
 
+  const sub = 'text-[13px] text-[color:var(--dusk-muted)] mt-0.5';
+
   return (
-    <main className="bg-bg min-h-screen font-sans">
-      {/* Hero bar — headline + subhead, and one primary CTA (the newsletter).
-          Google sign-in stays in the header. Below md the row stacks so the
-          email field stays inside the viewport. */}
-      <div className="border-b border-border-subtle">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-4 flex flex-col items-stretch gap-4 md:flex-row md:flex-wrap md:items-center md:justify-between">
-          <div className="flex items-baseline gap-3 flex-wrap min-w-0">
-            <h1 className="font-sans font-bold text-text-1 text-lg md:text-xl tracking-[-0.01em] min-w-0 md:shrink-0 text-balance">
-              {t('headline')}
-            </h1>
-            <p className="hidden sm:block min-w-0 max-w-full font-sans text-text-2 text-sm truncate">
-              {t('description')}
-            </p>
-          </div>
-          <JoinTwoWays compact />
-        </div>
-      </div>
+    <main className={`theme-dusk ${duskSans.variable} min-h-screen`}>
+      <h1 className="sr-only">{tMag('headline')}</h1>
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-5 pt-7 pb-16 flex flex-col gap-5">
+        {isFrontPage && latestRace && raceDay && (
+          <header className="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+            <div>
+              <p className="dusk-label">
+                {t('header.eyebrow', {
+                  round: latestRace.round,
+                  total: latestRace.seasonRounds,
+                  date: format.dateTime(raceDay, { weekday: 'long', month: 'short', day: 'numeric' }),
+                })}
+              </p>
+              <h2 className="dusk-display mt-1.5 text-[clamp(2rem,4.4vw,3.2rem)] leading-none tracking-[-0.02em]">{latestRace.name}</h2>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {pole && (
+                <span className="dusk-chip">
+                  <span className="dusk-chip-dot" aria-hidden="true" />
+                  {t('header.chipData')}
+                </span>
+              )}
+              {raceLaps && <span className="dusk-chip">{t('header.chipLaps', { circuit: latestRace.circuitName, laps: raceLaps })}</span>}
+            </div>
+          </header>
+        )}
 
-      <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-14 md:py-20">
-        {/* Hero bento — Featured (spans 2 of 3 columns) + Feed teaser, wide-contained
-            grid per the approved layout: not full-bleed, not the old 1024px column. */}
-        {featured && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-            {/* sm is 375px in this theme, so the Featured | Latest split waits
-                until md — same stack PR #43 uses below 768px. */}
-            <div className="soft-card-lg soft-card-interactive lg:col-span-2 h-full p-7 md:p-9 grid grid-cols-1 md:grid-cols-[1.3fr_1fr] gap-0 md:gap-6">
-              <Link href={`/${featured.slug}`} className="flex h-full flex-col min-w-0">
-                {featuredCover && <FeaturedCover src={featuredCover} />}
+        {isFrontPage && (
+          <div className="grid grid-cols-1 md:grid-cols-6 lg:grid-cols-12 gap-4">
+            {featured && (
+              <HeroLandscape
+                className={`md:col-span-6 ${insights.length ? 'lg:col-span-8' : 'lg:col-span-12'}`}
+                kicker={heroKicker}
+                title={featured.title as string}
+                dek={(featured.meta_description as string | null) ?? null}
+                href={`/${featured.slug}`}
+                ctaLabel={t('cta')}
+                keyNumber={featuredStat ? { value: featuredStat.value, label: featuredStat.label } : null}
+                terrain={terrain}
+              />
+            )}
+            {insights.length > 0 && (
+              <InsightCarousel
+                className="md:col-span-6 lg:col-span-4"
+                slides={insights}
+                ariaLabel={t('insights.aria')}
+                pickLabels={insights.map((_, i) => t('insights.pick', { n: i + 1, total: insights.length }))}
+              />
+            )}
+
+            {pole && (
+              <SpeedKpi
+                className="md:col-span-2 lg:col-span-4"
+                title={t('kpi.speedTitle')}
+                sub={t('kpi.speedSub', { driver: surname(pole.driver), lapTime: pole.lapTime })}
+                topSpeed={format.number(pole.topSpeedKmh)}
+                unit={t('kpi.speedUnit')}
+                badge={t('kpi.speedBadge', { min: format.number(pole.minSpeedKmh) })}
+                speeds={pole.speedKmh}
+                ariaLabel={t('kpi.speedAria', { driver: surname(pole.driver), min: pole.minSpeedKmh, max: pole.topSpeedKmh })}
+                source={t('kpi.speedSource')}
+              />
+            )}
+            {led && ledByLap && (
+              <LapsLedKpi
+                className="md:col-span-2 lg:col-span-4"
+                title={t('kpi.ledTitle')}
+                sub={t(led.laps === led.totalLaps ? 'kpi.ledSubAll' : 'kpi.ledSub', { driver: surname(led.driver) })}
+                laps={led.laps}
+                total={led.totalLaps}
+                badge={led.laps === led.totalLaps ? t('kpi.ledBadgeAll') : t('kpi.ledBadge', { pct: pct(led.laps, led.totalLaps) })}
+                led={ledByLap}
+                vscLaps={trace?.vscLaps ?? []}
+                ledLabel={t('kpi.ledLegend')}
+                vscLabel={t('kpi.vscLegend')}
+                ariaLabel={t('kpi.ledAria', { total: led.totalLaps, driver: surname(led.driver), laps: led.laps })}
+                source={t('kpi.ledSource')}
+              />
+            )}
+            {latestRace && p2w && (
+              <PoleToWinKpi
+                className="md:col-span-2 lg:col-span-4"
+                title={t('kpi.p2wTitle')}
+                sub={t('kpi.p2wSub', { circuit: latestRace.circuitName, year: p2w.sinceYear })}
+                wins={p2w.poleWins}
+                races={p2w.races}
+                badge={t('kpi.p2wBadge', { pct: pct(p2w.poleWins, p2w.races) })}
+                history={p2w.history.map((h) => ({ year: h.year, grid: h.grid, title: t('kpi.p2wDot', { year: h.year, winner: h.winner, grid: h.grid }) }))}
+                currentYear={latestRace.year}
+                ariaLabel={t('kpi.p2wAria', { races: p2w.races, circuit: latestRace.circuitName, year: p2w.sinceYear, wins: p2w.poleWins })}
+                source={t('kpi.p2wSource')}
+              />
+            )}
+
+            {trace && (
+              <RaceStoryCard
+                className="md:col-span-6 lg:col-span-8"
+                trace={trace}
+                mover={mover}
+                labels={{
+                  title: t('story.title'),
+                  subGap: storyGap ? t('story.subGap', { leader: surname(storyGap.leader), chaser: surname(storyGap.chaser) }) : '',
+                  subOrder: t('story.subOrder', { n: trace.drivers.length }),
+                  tabGap: storyGap ? t('story.tabGap', { chaser: surname(storyGap.chaser) }) : '',
+                  tabOrder: t('story.tabOrder'),
+                  tablist: t('story.tablist'),
+                  summaryGap: storyGap ? t('story.summaryGap', { gap: fmt3(storyGap.seconds[storyGap.seconds.length - 1]), stops }) : '',
+                  summaryOrder: orderSummary,
+                  source: t('story.source'),
+                  vsc: t('story.vsc'),
+                  lap: t('story.lap', { lap: '{lap}' }),
+                  pit: t('story.pit', { driver: '{driver}' }),
+                  pitVsc: t('story.pitVsc', { driver: '{driver}' }),
+                  tip: t('story.tip', { lap: '{lap}', driver: '{driver}', gap: '{gap}' }),
+                  ariaGap: storyGap
+                    ? t('story.ariaGap', { leader: surname(storyGap.leader), chaser: surname(storyGap.chaser), gap: fmt3(storyGap.seconds[storyGap.seconds.length - 1]) })
+                    : '',
+                  ariaOrder: t('story.ariaOrder', { n: trace.drivers.length }),
+                }}
+              />
+            )}
+            {latestRace && topDrivers.length > 0 && (
+              <StandingsCard
+                className="md:col-span-3 lg:col-span-4"
+                title={t('standings.title')}
+                sub={t('standings.sub', { race: latestRace.name, left: racesLeft })}
+                leaderPoints={format.number(Number(topDrivers[0].points))}
+                delta={
+                  topDrivers.length > 1
+                    ? t('standings.lead', { gap: format.number(Number(topDrivers[0].points) - Number(topDrivers[1].points)), driver: topDrivers[1].surname })
+                    : null
+                }
+                rows={topDrivers.map((d) => ({
+                  key: d.driver_id,
+                  name: d.surname,
+                  team: d.constructor_name,
+                  teamRef: d.constructor_ref,
+                  points: Number(d.points),
+                  display: format.number(Number(d.points)),
+                }))}
+                linkLabel={t('standings.link')}
+                linkHref={hubLocaleUrl(locale, '/drivers/')}
+              />
+            )}
+
+            {duel && (
+              <SectorDuel
+                className="md:col-span-3 lg:col-span-3"
+                title={t('duel.title')}
+                sub={t('duel.sub')}
+                total={`${fmt3(cumulative[2])}s`}
+                poleFaster={t('duel.faster', { driver: duel.pole.driver })}
+                challengerFaster={t('duel.faster', { driver: duel.challenger.driver })}
+                sectorLabel={(n) => t('duel.sector', { n })}
+                format={fmt3}
+                summary={
+                  lastChallengerLead !== undefined
+                    ? t('duel.summaryFlip', {
+                        challenger: surname(duel.challenger.driver),
+                        sector: lastChallengerLead + 1,
+                        pole: surname(duel.pole.driver),
+                        gain: fmt3(cumulative[2] - cumulative[lastChallengerLead]),
+                      })
+                    : t('duel.summaryNoFlip', { pole: surname(duel.pole.driver) })
+                }
+                ariaLabel={t('duel.aria', {
+                  pole: surname(duel.pole.driver),
+                  challenger: surname(duel.challenger.driver),
+                  gaps: duelGaps
+                    .map((g, i) => t('duel.ariaGap', { n: i + 1, driver: g > 0 ? surname(duel.pole.driver) : surname(duel.challenger.driver), gap: fmt3(Math.abs(g)) }))
+                    .join('; '),
+                  gap: fmt3(cumulative[2]),
+                })}
+                source={t('duel.source')}
+                pole={{ code: duel.pole.driver, sectors: duel.pole.sectors }}
+                challenger={{ code: duel.challenger.driver, sectors: duel.challenger.sectors }}
+              />
+            )}
+            {pole && highlights?.trackMap && latestRace && (
+              <section className="dusk-card flex flex-col gap-4 p-5 sm:p-6 md:col-span-3 lg:col-span-3" aria-labelledby="dusk-map-title">
                 <div>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent mb-3">
-                    {t('featuredKicker')}
-                  </p>
-                  <h2
-                    className="font-sans font-bold text-text-1 tracking-[-0.02em] leading-[1.12] mb-3 text-balance break-words"
-                    style={{ fontSize: featuredCover ? 'clamp(1.3rem, 2.4vw, 1.75rem)' : 'clamp(1.65rem, 2.8vw, 2.15rem)' }}
-                  >
-                    {featured.title as string}
-                  </h2>
-                  {featured.meta_description && (
-                    <p className="font-sans text-sm text-text-2 leading-relaxed max-w-[46ch]">
-                      {featured.meta_description as string}
-                    </p>
-                  )}
+                  <h2 id="dusk-map-title" className="text-[17px] font-semibold m-0">{latestRace.circuitName}</h2>
+                  <p className={sub}>{t('map.sub')}</p>
                 </div>
-                {featuredStat && (
-                  <div className="mt-6">
-                    <p
-                      className="font-sans font-extrabold tabular-nums leading-none tracking-[-0.03em] text-accent-2"
-                      style={{ fontSize: featuredCover ? 'clamp(1.75rem, 3.4vw, 2.5rem)' : 'clamp(3.25rem, 6vw, 4.75rem)' }}
-                    >
-                      {featuredStat.value}
-                    </p>
-                    <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-2 mt-2">
-                      {featuredStat.label}
-                    </p>
-                  </div>
-                )}
-              </Link>
-
-              {recent.length > 0 && (
-                <div className="mt-6 border-t border-border-subtle pt-6 md:mt-0 md:border-t-0 md:border-l md:border-border-subtle md:pt-0 md:pl-6 flex flex-col justify-center min-w-0">
-                  <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-3 mb-1">{t('recent')}</p>
-                  <div className="flex flex-col divide-y divide-border-subtle">
-                    {recent.slice(0, 5).map((a) => (
-                      <Link
-                        key={a.slug}
-                        href={`/${a.slug}`}
-                        className="py-3 font-sans text-sm font-semibold text-text-1 hover:text-accent transition-colors duration-150 line-clamp-2 min-w-0 break-words"
-                      >
-                        {a.title as string}
-                      </Link>
-                    ))}
-                  </div>
+                <TrackMap
+                  map={highlights.trackMap}
+                  topLabel={t('map.top', { speed: format.number(pole.topSpeedKmh) })}
+                  minLabel={t('map.min', { speed: format.number(pole.minSpeedKmh) })}
+                  caption={t('map.source')}
+                  ariaLabel={t('map.aria', {
+                    circuit: latestRace.circuitName,
+                    driver: surname(pole.driver),
+                    max: format.number(pole.topSpeedKmh),
+                    min: format.number(pole.minSpeedKmh),
+                  })}
+                />
+                <div className="flex gap-3.5 text-[12px] text-[color:var(--dusk-muted)] mt-auto">
+                  <span className="inline-flex items-center gap-1.5"><i className="dusk-dot w-[9px] bg-[color:var(--dusk-muted)]" />{t('map.slow')}</span>
+                  <span className="inline-flex items-center gap-1.5"><i className="dusk-dot dusk-dot-on w-[9px]" />{t('map.fast')}</span>
                 </div>
-              )}
-            </div>
+              </section>
+            )}
+            {trend && trendSeries.length > 0 && latestRace && (
+              <TitleTrend
+                className="md:col-span-6 lg:col-span-6"
+                title={t('trend.title')}
+                sub={t('trend.sub', { n: trend.rounds.length })}
+                roundLabel={t('trend.round', { n: '{n}' })}
+                tip={t('trend.tip', { n: '{n}' })}
+                ariaLabel={t('trend.aria', { drivers: topDrivers.map((d) => d.surname).join(', ') })}
+                source={t('trend.source', { year: latestRace.year, first: trend.rounds[0], last: trend.rounds[trend.rounds.length - 1] })}
+                rounds={trend.rounds}
+                series={trendSeries}
+              />
+            )}
 
-            <div className="soft-card p-6">
-              <FeedTeaserPanel items={feedTeaser} scores={feedScores} title={t('feed.title')} />
-            </div>
+            {nextRace && (
+              <NextRaceCard
+                className="md:col-span-6 lg:col-span-4"
+                kicker={t('nextRace.kicker', { round: nextRace.round })}
+                name={nextRace.race_name}
+                meta={t('nextRace.meta', {
+                  circuit: nextRace.name,
+                  date: format.dateTime(dayDate(nextRace.race_date), { weekday: 'long', month: 'short', day: 'numeric' }),
+                })}
+                days={nextRace.days_until}
+                daysLabel={t('nextRace.days', { days: nextRace.days_until })}
+                facts={[
+                  ...(nextRace.fastest_lap
+                    ? [{ label: t('nextRace.lapRecord'), value: t('nextRace.lapRecordValue', { time: nextRace.fastest_lap.time, driver: nextRace.fastest_lap.surname, year: nextRace.fastest_lap.year }) }]
+                    : []),
+                  ...(nextRace.champions.length
+                    ? [{ label: t('nextRace.recentWinners'), value: nextRace.champions.slice(0, 3).map((c) => `${c.year} ${c.surname}`).join(' · ') }]
+                    : []),
+                ]}
+              />
+            )}
+            <LatestList
+              className="md:col-span-6 lg:col-span-8"
+              title={t('latest.title')}
+              linkLabel={t('latest.link')}
+              linkHref="/feed"
+              items={latestItems}
+            />
+
+            <NewsletterBand className="md:col-span-6 lg:col-span-12" />
           </div>
         )}
 
-        {/* Second row — last race + next race, now with circuit history (lap
-            record, recent winners) instead of the standings summary that used
-            to sit beside it; full standings get their own section below. */}
-        {hasRaceSnapshot && (
-          <div className="soft-card p-6 mb-4">
-            <RaceSnapshotPanel lastRace={lastRaceSnapshot} nextRace={nextRaceSnapshot} />
-          </div>
-        )}
-
-        {/* Standings — full detail, own soft card */}
-        {(standings.drivers.length > 0 || standings.constructors.length > 0) && (
-          <div className="mb-4">
-            <StandingsPanel drivers={standings.drivers} constructors={standings.constructors} />
-          </div>
-        )}
-
-        {tag && (
-          <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 mt-6 mb-6 flex items-center gap-3">
-            <span>
-              {t('filter.label')} <span className="text-accent">{tagLabel}</span>
-            </span>
-            <a
-              href={basePath}
-              className="text-text-3 hover:text-text-1 transition-colors duration-150"
-              aria-label={t('filter.clear')}
-            >
-              {t('filter.clear')} ×
-            </a>
-          </p>
-        )}
-
-        {/* Newsletter invite */}
-        {isFrontPage && <NewsletterCard />}
-
-        {/* The Data Desk */}
-        {dataDeskArticles.length > 0 && (
-          <section className="py-10 md:py-14">
-            <h2 className="font-sans font-semibold text-text-1 tracking-[-0.01em] mb-6" style={{ fontSize: 'clamp(1.35rem, 2.6vw, 1.75rem)' }}>
-              {t('dataDesk.title')}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {dataDeskArticles.map((a) => (
-                <ArticleCard key={a.slug} a={a} locale={locale} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Attention This Week / F1 News / Learning — three equal soft-card
-            tiles. Attention This Week replaces the old Latest Issue slot here
-            (moved out of its own full-width band above). */}
-        {(() => {
-          const hasAttention = Boolean(
-            attention.mostCovered || attention.fastestRiser || attention.biggestFall || attention.dominantTheme
-          );
-          if (!hasAttention && f1News.length === 0 && learningTerms.length === 0) return null;
-
-          return (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 py-6">
-              {hasAttention && <AttentionThisWeekPanel attention={attention} scores={feedScores} />}
-              {f1News.length > 0 && (
-                <div className="soft-card p-6">
-                  <FeedTeaserPanel items={f1News} scores={feedScores} title={t('f1News.title')} showBadge={false} />
-                </div>
-              )}
-              {learningTerms.length > 0 && (
-                <div className="soft-card soft-card-interactive p-6">
-                  <LearningPanel terms={learningTerms} compact />
-                </div>
-              )}
-            </div>
-          );
-        })()}
-
-        {/* Archive grid — the newest few keep full card treatment; the rest
-            falls to a dense text row so the section scales without becoming a
-            wall of identical tiles as it grows. */}
-        <div id="archive" className="py-10 md:py-14 scroll-mt-20">
-          {archiveArticles.length === 0 ? (
-            <p className="font-mono text-[11px] text-text-3 uppercase tracking-[0.1em]">
-              {t('noArticles')}
+        {/* 9 · Archive — the crawl path to every older article, and the target of every
+            `/?tag=` link across the site; kept on the home on purpose. */}
+        <section id="archive" className="pt-6 scroll-mt-20">
+          <h2 className="dusk-display text-[1.3rem] sm:text-[1.4rem] leading-tight mb-5">{t('archive.title')}</h2>
+          {tag && (
+            <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 mb-6 flex items-center gap-3">
+              <span>
+                {tMag('filter.label')} <span className="text-accent">{tagLabel}</span>
+              </span>
+              <a href={basePath} className="text-text-3 hover:text-text-1 transition-colors duration-150 py-2" aria-label={tMag('filter.clear')}>
+                {tMag('filter.clear')} ×
+              </a>
             </p>
+          )}
+          {archiveArticles.length === 0 ? (
+            <p className="font-mono text-[11px] text-text-3 uppercase tracking-[0.1em]">{tMag('noArticles')}</p>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {archiveArticles.slice(0, 3).map((a) => (
-                  <ArticleCard key={a.slug as string} a={a} locale={locale} />
-                ))}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {archiveArticles.slice(0, 3).map((a) => {
+                  const s = ((a.stats as Stat[]) ?? [])[0];
+                  const kicker = [topicTag(a.tags), a.published_at ? formatDate(a.published_at as string, locale) : null].filter(Boolean).join(' · ');
+                  return (
+                    <DuskArticleCard
+                      key={a.slug as string}
+                      href={`/${a.slug}`}
+                      kicker={kicker}
+                      title={a.title as string}
+                      stat={s ? { value: s.value, label: s.label } : null}
+                    />
+                  );
+                })}
               </div>
               {archiveArticles.length > 3 && (
                 <div className="mt-8">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 pt-6 mb-2 border-t border-border-subtle">
-                    {t('archive.rest')}
-                  </p>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 pt-6 mb-2 border-t border-border-subtle">{tMag('archive.rest')}</p>
                   <div className="flex flex-col divide-y divide-border-subtle">
                     {archiveArticles.slice(3).map((a) => (
                       <ArticleListRow key={a.slug as string} a={a} locale={locale} />
@@ -440,36 +661,23 @@ export default async function MagazineHomePage({
           {totalPages > 1 && (
             <nav className="flex items-center justify-between mt-10 pt-5 border-t border-border-subtle">
               {page > 1 ? (
-                <a href={pageHref(page - 1)} className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-150">
-                  {t('pagination.newer')}
+                <a href={pageHref(page - 1)} className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-150 py-3">
+                  {tMag('pagination.newer')}
                 </a>
               ) : (
-                <span aria-hidden className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-3 opacity-40">{t('pagination.newer')}</span>
+                <span aria-hidden className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-3 opacity-40">{tMag('pagination.newer')}</span>
               )}
-              <span className="font-mono text-[11px] tracking-[0.1em] text-text-3 tabular-nums">
-                {t('pagination.page', { current: page, total: totalPages })}
-              </span>
+              <span className="font-mono text-[11px] tracking-[0.1em] text-text-3 tabular-nums">{tMag('pagination.page', { current: page, total: totalPages })}</span>
               {page < totalPages ? (
-                <a href={pageHref(page + 1)} className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-150">
-                  {t('pagination.older')}
+                <a href={pageHref(page + 1)} className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-150 py-3">
+                  {tMag('pagination.older')}
                 </a>
               ) : (
-                <span aria-hidden className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-3 opacity-40">{t('pagination.older')}</span>
+                <span aria-hidden className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-3 opacity-40">{tMag('pagination.older')}</span>
               )}
             </nav>
           )}
-        </div>
-      </div>
-
-      {/* Cross-promo: Weekly Digest */}
-      <div className="max-w-[1400px] mx-auto px-6 md:px-10 pb-16 md:pb-24">
-        <a href={locale === 'en' ? '/weekly' : `/${locale}/weekly`} className="soft-card soft-card-interactive group block max-w-md p-6">
-          <h2 className="font-sans font-semibold text-text-1 group-hover:text-accent transition-colors duration-150">
-            {t('promo.digest')}
-          </h2>
-          <p className="font-sans text-sm text-text-2 leading-relaxed mt-2">{t('promo.digestDescription')}</p>
-          <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 mt-4">{t('promo.goTo')}</p>
-        </a>
+        </section>
       </div>
     </main>
   );

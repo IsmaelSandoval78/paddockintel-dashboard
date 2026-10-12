@@ -23,6 +23,7 @@ export default function NavLinks({ isMagazine }: { isMagazine: boolean }) {
       <div className="flex items-center gap-6 flex-1">
         <Link
           href="/"
+          aria-current={pathname === '/' ? 'page' : undefined}
           className="font-sans text-[13px] font-medium no-underline text-text-2 hover:text-text-1 transition-colors duration-150"
         >
           {t('home')}
