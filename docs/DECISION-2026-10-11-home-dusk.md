@@ -37,7 +37,7 @@ Build the home page in the "Telemetry at Dusk" look as a scoped trial:
 The handoff's `data/singapore-2026-ver-pole-speed.json` was labelled as coming from PaddockIntel's own
 live-timing recording. That recording contains timing data only — no car telemetry — so it cannot be the
 source. The production trace is regenerated from FastF1 car telemetry by
-`scripts/highlights/pole-speed-trace.py` (reproducible); its top speed is **308 km/h**, not the 307 shown
+`scripts/highlights/race_highlights.py` (reproducible); its top speed is **308 km/h**, not the 307 shown
 in the reference. The original file is kept in `docs/design/home-dusk/data/` as design material only.
 
 ## Consequences
@@ -46,3 +46,26 @@ in the reference. The original file is kept in `docs/design/home-dusk/data/` as 
 - Visual continuity between the website and the video channels.
 - New per-race highlights data is needed after every race weekend; a race without a highlights file simply
   hides those modules (no stale or placeholder numbers).
+
+## v2 — "Zentra skeleton, dusk skin, pit-wall charts" (2026-10-12)
+After the first dusk home, Ismael judged the site still visually flat ("eeeh") next to how the data performs
+on social. From three references (Zentra light bento dashboard; an AI-generated dusk-landscape UI kit; an
+AI-generated dark "pit wall" dashboard) we took one thing each:
+- **Structure from Zentra:** a 12-column bento grid of cards; big number + context + source in every card;
+  an insight card; a page header naming the race.
+- **Identity from the dusk landscape:** the dusk palette, cards with depth (inner highlight + soft shadow),
+  and the hero as a landscape — ours is drawn from the real pole-lap speed trace, with the featured
+  article's key number as the sun.
+- **Chart language from the pit wall:** large glowing line/area charts; warm (leader/pole) against ice (the
+  rival) for two-driver comparisons.
+Rejected from the AI references: neumorphic knobs/controls, decorative widgets with fake data, the generic
+"black + cyan neon" look.
+
+Validated first as a static prototype with real Singapore 2026 data, approved ("bastante wow"), then built
+into the home. **Home only**; the rest of the site migrates one surface at a time (articles next, prototype
+first — open question: light reading sheet vs. dark body text).
+
+Data rules carried over unchanged: every card hides when its data is missing; per-race data comes from
+`race_highlights.py` (now also `raceTrace`: winner-vs-P2 gap per lap — published only if the flag lap
+reproduces the official interval —, top-8 running order, VSC/SC and pit laps); the insight card only shows
+key numbers already published in our own race-week articles, each linking to its article.

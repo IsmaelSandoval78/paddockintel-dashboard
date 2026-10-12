@@ -12,6 +12,8 @@ Writes only facts FastF1 can reproduce from the official F1 timing API, each wit
               the top/min speed happened -- the circuit map is drawn from the car's line, not a stock outline
   - poleDuel: official sector times of the pole lap and P2's best lap (cumulative gap per sector)
   - lapsLed:  laps led by the race winner, counted from the leader at the end of every lap
+  - raceTrace: winner-vs-P2 gap at the end of every lap (kept only if the last lap matches the official
+              classification interval), running order of the top 8 lap by lap, VSC/SC laps and pit laps
 
 Anything FastF1 can't provide for a session is left out of the file, and the home hides that module.
 Never hand-edit numbers in the output; re-run this script instead.
@@ -152,6 +154,54 @@ def laps_led(race, year: int, event: str) -> dict | None:
     }
 
 
+TRACE_DRIVERS = 8
+
+
+def race_trace(race, year: int, event: str) -> dict | None:
+    laps = race.laps
+    if laps.empty:
+        return None
+    total = int(laps["LapNumber"].max())
+    ordered = race.results.sort_values("Position")
+    top = [str(a) for a in ordered["Abbreviation"][:TRACE_DRIVERS]]
+    if len(top) < 2:
+        return None
+
+    def lap_end(code: str) -> dict[int, float]:
+        rows = laps.pick_drivers(code)
+        return {int(n): t.total_seconds() for n, t in zip(rows["LapNumber"], rows["Time"]) if t == t}
+
+    def position(code: str) -> list[int | None]:
+        by_lap = {int(n): (int(p) if p == p else None) for n, p in zip(laps.pick_drivers(code)["LapNumber"], laps.pick_drivers(code)["Position"])}
+        return [by_lap.get(n) for n in range(1, total + 1)]
+
+    out: dict = {"totalLaps": total, "drivers": []}
+    for code in top:
+        out["drivers"].append({
+            "driver": code,
+            "team": str(ordered[ordered["Abbreviation"] == code].iloc[0]["TeamName"]),
+            "teamColour": team_colour(race, code),
+            "positions": position(code),
+            "pitLaps": [int(n) for n in laps.pick_drivers(code)[laps.pick_drivers(code)["PitInTime"].notna()]["LapNumber"]],
+        })
+
+    winner, second = top[0], top[1]
+    w, s = lap_end(winner), lap_end(second)
+    if all(n in w and n in s for n in range(1, total + 1)):
+        gaps = [round(s[n] - w[n], 3) for n in range(1, total + 1)]
+        official = secs(ordered.iloc[1]["Time"])
+        # Lap-end timing gaps are only published if the flag lap reproduces the official interval.
+        if official is not None and abs(gaps[-1] - official) <= 0.05:
+            out["gap"] = {"leader": winner, "chaser": second, "seconds": gaps}
+
+    status = laps.pick_drivers(winner).sort_values("LapNumber")
+    out["vscLaps"] = [int(n) for n, st in zip(status["LapNumber"], status["TrackStatus"]) if isinstance(st, str) and ("6" in st or "7" in st)]
+    out["scLaps"] = [int(n) for n, st in zip(status["LapNumber"], status["TrackStatus"]) if isinstance(st, str) and "4" in st]
+    out["source"] = (f"FastF1 lap timing (official F1 timing API), {year} {event} Race: lap-end times, positions, "
+                     f"track status and pit-in laps of the top {TRACE_DRIVERS} finishers")
+    return out
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--year", type=int, required=True)
@@ -186,6 +236,9 @@ def main() -> None:
         led = laps_led(race, args.year, event)
         if led:
             out["lapsLed"] = led
+        trace = race_trace(race, args.year, event)
+        if trace:
+            out["raceTrace"] = trace
     except Exception as exc:  # race not run yet, or no lap data yet
         print(f"race laps unavailable: {exc}")
 

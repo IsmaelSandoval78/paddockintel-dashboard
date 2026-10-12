@@ -2229,3 +2229,12 @@ carga en vez de adivinar (PR #91).
 `deploy-preview.yml` (manual, Worker separado en workers.dev). En ese host el home del magazine
 se ve en `/magazine-home/` (`/es/magazine-home/`, `/pt/magazine-home/`), porque el rewrite de `/`
 solo aplica a los hosts `paddockintel.com`/`www`.
+
+**v2 del home, 12 oct 2026 (mismo PR #90, sin mergear):** Ismael pidió un salto visual ("eeeh" → "WOW").
+Se armó primero un prototipo estático con datos reales de Singapur combinando tres referencias (estructura
+bento de Zentra, piel dusk, gráficos estilo pit wall), se aprobó, y se pasó al home: Hero-paisaje con el
+número clave como sol, tarjeta de insight (rota los números clave ya publicados en los artículos de la
+semana de carrera), fila de KPIs (velocidad, vueltas lideradas vuelta por vuelta, pole-a-victoria por año),
+"How the race was won" (diferencia ganador–P2 por vuelta + orden de carrera), campeonato, pole por
+sectores, mapa, evolución del título y próxima carrera. `race_highlights.py` ahora genera `raceTrace`. Solo
+el home; artículos después, con prototipo primero. Vocabulario de zonas: artifact "Anatomía del Home".

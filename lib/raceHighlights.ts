@@ -42,6 +42,24 @@ export type LapsLed = {
   source: string;
 };
 
+export type TraceDriver = {
+  driver: string;
+  team: string;
+  teamColour: string | null;
+  positions: (number | null)[];
+  pitLaps: number[];
+};
+
+export type RaceTrace = {
+  totalLaps: number;
+  drivers: TraceDriver[];
+  // Only present when the flag lap reproduces the official classification interval.
+  gap?: { leader: string; chaser: string; seconds: number[] };
+  vscLaps: number[];
+  scLaps: number[];
+  source: string;
+};
+
 export type RaceHighlights = {
   year: number;
   round: number;
@@ -50,10 +68,12 @@ export type RaceHighlights = {
   trackMap?: TrackMap;
   poleDuel?: PoleDuel;
   lapsLed?: LapsLed;
+  raceTrace?: RaceTrace;
 };
 
 const REGISTRY: Record<string, RaceHighlights> = {
-  '2026-17': r2026_17 as RaceHighlights,
+  // JSON imports widen tuples to number[][]; the generator script guarantees the shape.
+  '2026-17': r2026_17 as unknown as RaceHighlights,
 };
 
 export function getRaceHighlightsFor(year: number, round: number): RaceHighlights | null {

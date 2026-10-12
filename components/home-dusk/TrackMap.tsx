@@ -51,7 +51,7 @@ export default function TrackMap({ map, topLabel, minLabel, caption, ariaLabel }
   const dx = (x: number) => (x > map.width / 2 ? -22 : 22);
 
   return (
-    <figure className="m-0 mt-6 max-w-[360px]">
+    <figure className="m-0">
       <svg
         width="100%"
         viewBox={`${-PAD} ${-PAD} ${map.width + PAD * 2} ${map.height + PAD * 2}`}

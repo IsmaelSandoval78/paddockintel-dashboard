@@ -1,31 +1,38 @@
-/* "Telemetry at Dusk" — home page only. See docs/DECISION-2026-10-11-home-dusk.md and
-   docs/design/home-dusk/HANDOFF.md. Nothing here applies outside a page that renders
+/* "Telemetry at Dusk" v2 — home page only. Zentra's bento skeleton (structure), the dusk
+   landscape (identity) and pit-wall charts (chart language): see
+   docs/DECISION-2026-10-11-home-dusk.md. Nothing here applies outside a page that renders
    `.theme-dusk`: every rule is scoped to that class or to `body:has(.theme-dusk)` (so the
    shared Navbar/Footer, which sit outside the page, take the same tokens on the home only).
-   Redefining the existing tokens (not adding parallel ones) is what lets the archive cards,
+   Redefining the existing tokens (not adding parallel ones) is what lets the archive,
    pagination and Navbar re-skin themselves without touching their components.
    Scoped exception to CLAUDE.md: gradients and glow are allowed inside this scope only;
-   gradient text and backdrop-blur stay banned. */
+   gradient text and backdrop-blur stay banned. Layout and spacing stay in Tailwind
+   utilities in the components; this file holds tokens and the few surfaces utilities
+   can't express cleanly (layered gradients, the sun, dot matrices, glow). */
 
 .theme-dusk,
 body:has(.theme-dusk) {
   color-scheme: dark;
 
-  --dusk-ground: #0D0E12;
-  --dusk-panel: #15171D;
-  --dusk-line: #262A33;
-  --dusk-header-line: #1E2129;
-  --dusk-ink: #EEF0F3;
-  --dusk-ink-2: #C9CDD6;
-  --dusk-muted: #A3A9B6;
+  --dusk-ground: #0E0D12;
+  --dusk-panel: #17151C;
+  --dusk-panel-hi: #1F1C25;
+  --dusk-line: #2B2733;
+  --dusk-header-line: #221F29;
+  --dusk-ink: #F3EFF2;
+  --dusk-ink-2: #CFC8D2;
+  --dusk-muted: #A39BAA;
   --dusk-warm: #F07A45;
   --dusk-sunset: #F2A35E;
+  --dusk-peach: #F8CFA6;
   --dusk-ice: #8FD3FF;
+  --dusk-plum: #3A1B2C;
+  --dusk-good: #5CD69A;
 
   --bg: var(--dusk-ground);
   --surface: var(--dusk-panel);
-  --surface-raised: #1B1E26;
-  --surface-overlay: #1B1E26;
+  --surface-raised: var(--dusk-panel-hi);
+  --surface-overlay: var(--dusk-panel-hi);
   --border: var(--dusk-line);
   --border-subtle: var(--dusk-header-line);
   --text-1: var(--dusk-ink);
@@ -35,9 +42,9 @@ body:has(.theme-dusk) {
   --accent-dim: #2B1626;
   --accent-2: var(--dusk-sunset);
   --text-on-accent: var(--dusk-ground);
-  --green: #6FD3A2;
-  --shadow-card: 0 1px 0 var(--dusk-header-line);
-  --shadow-card-lg: 0 1px 0 var(--dusk-header-line);
+  --green: var(--dusk-good);
+  --shadow-card: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 24px 48px -28px rgba(0, 0, 0, 0.75);
+  --shadow-card-lg: var(--shadow-card);
 
   /* Team colours are data, never decoration — on this dark ground they come from the
      official 2026 F1 live-timing TeamColour field (the light-substrate values in
@@ -59,7 +66,7 @@ body:has(.theme-dusk) {
   background: var(--dusk-ground);
 }
 
-/* Shared Navbar on the home: active item as a pill, per the reference. */
+/* Shared Navbar on the home: active item as a pill (Zentra's active tab). */
 body:has(.theme-dusk) nav a[aria-current="page"] {
   background: var(--dusk-ink);
   color: var(--dusk-ground);
@@ -73,44 +80,58 @@ body:has(.theme-dusk) nav a[aria-current="page"] {
   background: var(--dusk-ground);
   color: var(--dusk-ink);
 }
+.theme-dusk .dusk-display { font-family: var(--pi-display), var(--pi-sans), sans-serif; font-weight: 400; }
+.theme-dusk .dusk-mono { font-family: var(--pi-mono), ui-monospace, monospace; }
+.theme-dusk svg text { font-family: var(--pi-mono), ui-monospace, monospace; }
+.theme-dusk :focus-visible { outline: 2px solid var(--dusk-sunset); outline-offset: 3px; }
 
-.theme-dusk .dusk-display {
-  font-family: var(--pi-display), var(--pi-sans), sans-serif;
-  font-weight: 400;
-}
-
-.theme-dusk .dusk-mono {
-  font-family: var(--pi-mono), ui-monospace, monospace;
-}
-
-.theme-dusk .dusk-panel {
-  background: var(--dusk-panel);
-  border: 1px solid var(--dusk-line);
-  border-radius: 18px;
-}
-
-.theme-dusk .soft-card,
-.theme-dusk .soft-card-lg {
-  border: 1px solid var(--dusk-line);
-}
-
-.theme-dusk .dusk-hero {
-  border: 1px solid var(--dusk-line);
+/* ── Cards: the one surface every bento tile shares ───────────────────────── */
+.theme-dusk .dusk-card {
+  position: relative;
+  min-width: 0;
   border-radius: 24px;
-  background: linear-gradient(180deg, #120F17 0%, #2B1626 34%, #6B2A33 62%, #C1502E 84%, #F2A35E 100%);
+  background: linear-gradient(180deg, var(--dusk-panel-hi) 0%, var(--dusk-panel) 38%);
+  box-shadow: var(--shadow-card);
 }
+.theme-dusk .soft-card,
+.theme-dusk .soft-card-lg { border: 1px solid var(--dusk-line); }
 
-.theme-dusk .dusk-newsletter {
-  border: 1px solid #3A2430;
-  border-radius: 20px;
-  background: linear-gradient(120deg, #2B1626 0%, #5A2534 55%, #A8442E 100%);
+.theme-dusk .dusk-label {
+  font-family: var(--pi-mono), ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dusk-muted);
 }
-
-.theme-dusk .dusk-next-race {
+.theme-dusk .dusk-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
   border: 1px solid var(--dusk-line);
-  border-radius: 18px;
-  background: linear-gradient(160deg, #1A1C24 0%, #15171D 60%);
+  background: var(--dusk-panel);
+  font-size: 12.5px;
+  color: var(--dusk-ink-2);
+  white-space: nowrap;
 }
+.theme-dusk .dusk-chip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--dusk-good);
+  box-shadow: 0 0 0 4px rgba(92, 214, 154, 0.15);
+}
+.theme-dusk .dusk-delta {
+  font-family: var(--pi-mono), ui-monospace, monospace;
+  font-size: 12px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+  background: rgba(92, 214, 154, 0.12);
+  color: var(--dusk-good);
+}
+.theme-dusk .dusk-delta-warm { background: rgba(240, 122, 69, 0.14); color: var(--dusk-sunset); }
 
 .theme-dusk .dusk-pill {
   display: inline-flex;
@@ -125,40 +146,95 @@ body:has(.theme-dusk) nav a[aria-current="page"] {
   transition: background-color 150ms ease;
 }
 .theme-dusk .dusk-pill:hover,
-.theme-dusk .dusk-pill:focus-visible {
-  background: #FFFFFF;
-}
+.theme-dusk .dusk-pill:focus-visible { background: var(--dusk-peach); }
 
-.theme-dusk .dusk-link {
-  color: var(--dusk-sunset);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
+.theme-dusk .dusk-link { color: var(--dusk-sunset); text-decoration: underline; text-underline-offset: 3px; }
 .theme-dusk .dusk-link:hover,
-.theme-dusk .dusk-link:focus-visible {
+.theme-dusk .dusk-link:focus-visible { color: var(--dusk-ink); }
+
+/* ── Hero: a landscape drawn from the pole lap, the key number as its sun ─── */
+.theme-dusk .dusk-hero {
+  overflow: hidden;
+  background: linear-gradient(180deg, #1A1420 0%, #3A1B2C 46%, #8A3A2C 78%, #C4573A 100%);
+}
+.theme-dusk .dusk-sun {
+  width: min(300px, 100%);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 42%, #FFE3C2 0%, #F8B47A 38%, #F07A45 70%, rgba(240, 122, 69, 0) 71%);
+  box-shadow: 0 0 120px 30px rgba(242, 140, 80, 0.35);
+  color: #2A1218;
+}
+.theme-dusk .dusk-sun-label { color: #5A2A22; }
+.theme-dusk .dusk-hero-dek { color: #EADBD6; }
+.theme-dusk .dusk-terrain-caption { color: #CDB8B4; text-shadow: 0 1px 8px var(--dusk-ground), 0 0 2px var(--dusk-ground); }
+
+/* ── Insight carousel ───────────────────────────────────────────────────── */
+.theme-dusk .dusk-insight {
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(240, 122, 69, 0.55) 0%, rgba(240, 122, 69, 0) 55%),
+    linear-gradient(160deg, #2B1724 0%, #4A1F2A 55%, #7A3326 100%);
+}
+.theme-dusk .dusk-insight-chip {
+  border-radius: 999px;
+  padding: 5px 11px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--dusk-peach);
+}
+.theme-dusk .dusk-insight-more { color: #E7D3CD; }
+.theme-dusk .dusk-slide { transition: opacity 0.45s ease, transform 0.45s ease; }
+.theme-dusk .dusk-progress { background: rgba(255, 255, 255, 0.22); }
+.theme-dusk .dusk-progress-fill { background: var(--dusk-peach); }
+.theme-dusk .dusk-progress-fill[data-playing="true"] { animation: dusk-fill 7s linear forwards; }
+@keyframes dusk-fill { from { width: 0; } to { width: 100%; } }
+
+/* ── Dot matrices (laps led, pole-to-win by year) ───────────────────────── */
+.theme-dusk .dusk-dot { display: block; aspect-ratio: 1; border-radius: 50%; background: #3A3442; }
+.theme-dusk .dusk-dot-on { background: var(--dusk-warm); box-shadow: 0 0 6px rgba(240, 122, 69, 0.55); }
+.theme-dusk .dusk-dot-ice { background: var(--dusk-ice); box-shadow: 0 0 6px rgba(143, 211, 255, 0.6); }
+.theme-dusk .dusk-dot-now { outline: 2px solid var(--dusk-peach); outline-offset: 2px; }
+
+/* ── Charts ─────────────────────────────────────────────────────────────── */
+.theme-dusk .dusk-seg { background: var(--dusk-ground); border: 1px solid var(--dusk-line); }
+.theme-dusk .dusk-seg [aria-selected="true"] {
+  background: var(--dusk-panel-hi);
   color: var(--dusk-ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.theme-dusk .dusk-tip {
+  background: rgba(14, 13, 18, 0.94);
+  border: 1px solid var(--dusk-line);
+  transform: translate(-50%, -115%);
+}
+.theme-dusk .dusk-track { background: #2A2631; }
+
+/* ── Next race, newsletter ──────────────────────────────────────────────── */
+.theme-dusk .dusk-next-race { background: linear-gradient(180deg, #1A2230 0%, var(--dusk-panel) 60%); }
+.theme-dusk .dusk-newsletter {
+  background:
+    radial-gradient(80% 140% at 100% 100%, rgba(240, 122, 69, 0.45), rgba(240, 122, 69, 0) 60%),
+    linear-gradient(110deg, #2A1622, #4A1F2A);
+}
+.theme-dusk .dusk-newsletter-body { color: #EADBD6; }
+.theme-dusk .dusk-newsletter-input { border-color: rgba(255, 255, 255, 0.3); background: rgba(14, 13, 18, 0.45); }
+.theme-dusk .dusk-newsletter-input::placeholder { color: #CDB8B4; }
+
+/* Line charts scale with their card; on phones their 11-unit labels would render ~6px, so they
+   grow in viewBox units (end labels may spill into the card padding). */
+@media (max-width: 640px) {
+  .theme-dusk .dusk-trend text { font-size: 18px; }
 }
 
-.theme-dusk :focus-visible {
-  outline: 2px solid var(--dusk-sunset);
-  outline-offset: 3px;
-}
-
-/* Glow: static (no animation), so nothing to stop under reduced motion — but users who ask
-   for reduced motion often also want less visual intensity, so the glow drops out too. */
-.theme-dusk .dusk-glow-warm { filter: drop-shadow(0 0 6px var(--dusk-warm)); }
-.theme-dusk .dusk-glow-gauge { filter: drop-shadow(0 0 8px var(--dusk-warm)); }
+/* Glow: static. Under reduced motion the glow and the carousel motion drop out too. */
+.theme-dusk .dusk-glow-warm { filter: drop-shadow(0 0 5px rgba(240, 122, 69, 0.8)); }
+.theme-dusk .dusk-glow-ridge { filter: drop-shadow(0 0 6px var(--dusk-warm)); }
 .theme-dusk .dusk-number-glow { text-shadow: 0 0 40px rgba(242, 163, 94, 0.6); }
 @media (prefers-reduced-motion: reduce) {
   .theme-dusk .dusk-glow-warm,
-  .theme-dusk .dusk-glow-gauge,
-  /* !important: the duel lines set their team-coloured glow as an inline style. */
-  .theme-dusk [data-glow] { filter: none !important; box-shadow: none !important; }
+  .theme-dusk .dusk-glow-ridge { filter: none; }
   .theme-dusk .dusk-number-glow { text-shadow: none; }
-}
-
-/* The duel chart scales with its panel; on phones its 12-unit labels would render ~5px,
-   so they grow in viewBox units to stay legible (end labels may spill into the padding). */
-@media (max-width: 640px) {
-  .theme-dusk .dusk-duel text { font-size: 22px; }
+  .theme-dusk .dusk-slide { transition: none; }
+  .theme-dusk .dusk-progress-fill[data-playing="true"] { animation: none; width: 100%; }
 }
