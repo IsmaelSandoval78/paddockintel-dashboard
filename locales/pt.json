@@ -1136,5 +1136,50 @@
     "archive": {
       "title": "Arquivo de análises"
     }
+  },
+  "articleDusk": {
+    "crumbHome": "Início",
+    "crumbsAria": "Trilha de navegação",
+    "round": "Etapa {round}",
+    "by": "Por",
+    "readTime": "{n} min de leitura",
+    "sources": "{n, plural, one {# fonte} other {# fontes}}",
+    "kpisAria": "Números-chave",
+    "resultTitle": "Resultado da corrida",
+    "resultPoints": "{n} pts",
+    "resultSource": "Classificação oficial",
+    "shareTitle": "Compartilhar",
+    "faqTitle": "Perguntas frequentes",
+    "sourcesTitle": "Fontes documentadas",
+    "writtenBy": "Escrito por",
+    "related": "Continue lendo",
+    "dom": {
+      "title": "Como a pole foi conquistada",
+      "sub": "{pole} contra {challenger} em cada trecho de curvas da volta · Classificação",
+      "badge": "Pole por {gap}s",
+      "gapTitle": "Diferença ao fim de cada trecho",
+      "ahead": "{driver} à frente",
+      "sectorEnd": "Fim S{n}",
+      "captionMore": "{driver} venceu {won} de {total} trechos de curvas.",
+      "captionEven": "{pole} e {challenger} venceram {won} trechos de curvas cada um.",
+      "captionBest": "O maior ganho num único trecho foi de {gain}s, de {driver} em T{corners}.",
+      "captionLine": "{pole} cruzou a linha {gap}s à frente.",
+      "mapAria": "{circuit} desenhado a partir da volta da pole de {pole}, cada trecho de curvas colorido conforme o mais rápido entre {pole} e {challenger}",
+      "gapAria": "Diferença de {challenger} para {pole} ao fim de cada trecho, {gap}s na linha",
+      "source": "Telemetria FastF1 das duas voltas · alinhadas aos tempos oficiais por setor · trechos divididos na velocidade máxima de cada reta · numeração oficial das curvas"
+    },
+    "flag": {
+      "title": "Do grid à bandeirada",
+      "sub": "A posição de largada de cada carro (esquerda) e onde terminou (direita)",
+      "badge": "{n, plural, one {# abandono} other {# abandonos}}",
+      "grid": "GRID",
+      "flag": "BANDEIRADA",
+      "dnf": "ABD",
+      "pitLane": "PL",
+      "captionUp": "Maior escalada: {driver}, de P{from} para P{to}.",
+      "captionDown": "Maior queda entre os que terminaram: {driver}, de P{from} para P{to}.",
+      "aria": "Posição de largada e de chegada dos {n} carros",
+      "source": "Grid de largada e classificação oficiais"
+    }
   }
 }

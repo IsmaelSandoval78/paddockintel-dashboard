@@ -1,5 +1,12 @@
 # Track Dominance Map — standard
 
+> **Front-row qualifying dominance for race-linked articles is now automated** in
+> `scripts/highlights/race_highlights.py` (`qualiDominance`), with a more robust method than
+> the one below: both laps are aligned on their *official sector times* and sections are split
+> at straight-line speed peaks. On Singapore 2026 `delta_time` missed the official sector-1 gap
+> by 0.07s and spiked by up to 0.8s in braking zones; the sector-anchored method matches the
+> sector-1, sector-2 and lap gaps exactly. Prefer it; this script stays for one-off comparisons.
+
 A two-part chart pair (used together, always) illustrating a head-to-head
 lap comparison between two drivers in a session: a track outline colored by
 who was faster through each stretch, plus a companion "Gap Over Distance"

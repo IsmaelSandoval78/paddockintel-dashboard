@@ -180,13 +180,15 @@ flagship implementation; Hub, Circuits, Drivers, Constructors, and the article/d
 reading surfaces inherit the new color tokens automatically but have not had their own
 layout pass yet — expect "new palette, old layout" there until a follow-up pass.
 
-**Exception — the magazine home only (2026-10-12, founder decision):** the home no longer
-uses Warm Studio. It runs the scoped dark system "Telemetry at Dusk" v2 — Zentra-style bento
-grid of cards, dusk palette, pit-wall chart language — defined in
-`app/[locale]/(blog)/magazine-home/dusk.css` and recorded in
-`docs/DECISION-2026-10-11-home-dusk.md`. Everything else on the site stays on this system
-until each surface is migrated deliberately (articles next, after a prototype). Do not copy
-dusk tokens or its gradient/glow exception into other routes.
+**Exception — the magazine home and article pages (2026-10-12, founder decisions):** these two
+surfaces no longer use Warm Studio. They run the scoped dark system "Telemetry at Dusk" v2 —
+Zentra-style bento grid of cards, dusk palette, pit-wall chart language — defined in
+`app/[locale]/(blog)/dusk.css` and recorded in `docs/DECISION-2026-10-11-home-dusk.md`.
+Articles (`app/[locale]/(blog)/[slug]/`) use the dusk shell (cover, KPI row, rail, FAQ/sources,
+related) around a **light reading sheet** (`.dusk-sheet`: light token values, serif body) chosen
+over a dark body in a side-by-side prototype; data figures inside the sheet stay dark as
+`.dusk-island`s. Everything else on the site stays on this system until each surface is migrated
+deliberately. Do not copy dusk tokens or its gradient/glow exception into other routes.
 
 ## What this replaces, explicitly
 

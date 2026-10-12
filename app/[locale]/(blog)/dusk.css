@@ -1,4 +1,4 @@
-/* "Telemetry at Dusk" v2 — home page only. Zentra's bento skeleton (structure), the dusk
+/* "Telemetry at Dusk" v2 — the magazine home and article pages only. Zentra's bento skeleton (structure), the dusk
    landscape (identity) and pit-wall charts (chart language): see
    docs/DECISION-2026-10-11-home-dusk.md. Nothing here applies outside a page that renders
    `.theme-dusk`: every rule is scoped to that class or to `body:has(.theme-dusk)` (so the
@@ -41,6 +41,7 @@ body:has(.theme-dusk) {
   --accent: var(--dusk-warm);
   --accent-dim: #2B1626;
   --accent-2: var(--dusk-sunset);
+  --terracotta: var(--dusk-sunset);
   --text-on-accent: var(--dusk-ground);
   --green: var(--dusk-good);
   --shadow-card: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 24px 48px -28px rgba(0, 0, 0, 0.75);
@@ -227,6 +228,78 @@ body:has(.theme-dusk) nav a[aria-current="page"] {
   .theme-dusk .dusk-trend text { font-size: 18px; }
 }
 
+/* ── Articles: dusk shell, light reading sheet ─────────────────────────────
+   Long-form text reads on a light "sheet" (founder decision 2026-10-12, chosen against a dark
+   body in a side-by-side prototype). Inside it the shared tokens go back to light values, so the
+   existing prose, chart, TOC and paywall components render light without being touched. Data
+   figures inside the sheet re-enter the dark scope as islands (`.dusk-island`). */
+.theme-dusk .dusk-sheet {
+  --bg: #F5EFE9;
+  --surface: #FFFFFF;
+  --surface-raised: #EFE7DF;
+  --surface-overlay: #FFFFFF;
+  --border: #E2D8CF;
+  --border-subtle: #EAE1D8;
+  --text-1: #1D1922;
+  --text-2: #4B4452;
+  --text-3: #7A7180;
+  --accent: #B4532A;
+  --accent-dim: #F6E2D6;
+  --accent-2: #B4532A;
+  --terracotta: #B4532A;
+  --text-on-accent: #FFFFFF;
+  --shadow-card: 0 1px 0 #E2D8CF;
+  --shadow-card-lg: 0 1px 0 #E2D8CF;
+  color-scheme: light;
+  background: var(--bg);
+  color: var(--text-1);
+}
+.theme-dusk .dusk-sheet .dusk-island {
+  --bg: var(--dusk-ground);
+  --surface: var(--dusk-panel);
+  --border: var(--dusk-line);
+  --text-1: var(--dusk-ink);
+  --text-2: var(--dusk-ink-2);
+  --text-3: var(--dusk-muted);
+  color-scheme: dark;
+  color: var(--dusk-ink);
+}
+.theme-dusk .dusk-cover {
+  overflow: hidden;
+  background: linear-gradient(180deg, #1A1420 0%, #3A1B2C 52%, #8A3A2C 84%, #C4573A 100%);
+}
+.theme-dusk details.dusk-faq > summary { list-style: none; cursor: pointer; }
+.theme-dusk details.dusk-faq > summary::-webkit-details-marker { display: none; }
+.theme-dusk details.dusk-faq > summary::after { content: "+"; font-family: var(--pi-mono), monospace; color: var(--dusk-sunset); }
+.theme-dusk details.dusk-faq[open] > summary::after { content: "–"; }
+
+/* Sheet typography: the reading column the founder approved (serif, 17–19px), on top of the
+   shared .prose-article rules. The body is split around data figures into several
+   .prose-article blocks; continuation blocks keep the section counter running (counter scope
+   covers following siblings) and keep the rule above their first heading. */
+.theme-dusk .dusk-sheet .prose-article p,
+.theme-dusk .dusk-sheet .prose-article ul li { font-size: clamp(17px, 1.25vw, 19px); line-height: 1.7; }
+.theme-dusk .dusk-sheet .prose-article h2 { font-size: clamp(1.35rem, 2vw, 1.6rem); text-transform: none; letter-spacing: -0.01em; }
+.theme-dusk .dusk-sheet .prose-article.dusk-prose-cont { counter-reset: none; }
+.theme-dusk .dusk-sheet .prose-article.dusk-prose-cont h2:first-of-type {
+  margin-top: 3.5rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--border);
+}
+.theme-dusk .dusk-sheet .dusk-prose-first > p:first-of-type::first-letter {
+  float: left;
+  font-family: var(--pi-display), sans-serif;
+  font-size: 3.6em;
+  line-height: 0.85;
+  padding: 0.06em 0.1em 0 0;
+  color: var(--accent);
+}
+
+/* Grid-to-flag ribbons: hovering one car dims the rest (pure CSS, no client JS). */
+.theme-dusk .dusk-ribbons path { opacity: 0.5; transition: opacity 0.15s ease; }
+.theme-dusk .dusk-ribbons:hover path { opacity: 0.12; }
+.theme-dusk .dusk-ribbons:hover path:hover { opacity: 0.95; }
+
 /* Glow: static. Under reduced motion the glow and the carousel motion drop out too. */
 .theme-dusk .dusk-glow-warm { filter: drop-shadow(0 0 5px rgba(240, 122, 69, 0.8)); }
 .theme-dusk .dusk-glow-ridge { filter: drop-shadow(0 0 6px var(--dusk-warm)); }
@@ -236,5 +309,6 @@ body:has(.theme-dusk) nav a[aria-current="page"] {
   .theme-dusk .dusk-glow-ridge { filter: none; }
   .theme-dusk .dusk-number-glow { text-shadow: none; }
   .theme-dusk .dusk-slide { transition: none; }
+  .theme-dusk .dusk-ribbons path { transition: none; }
   .theme-dusk .dusk-progress-fill[data-playing="true"] { animation: none; width: 100%; }
 }

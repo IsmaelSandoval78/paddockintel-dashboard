@@ -2238,3 +2238,15 @@ semana de carrera), fila de KPIs (velocidad, vueltas lideradas vuelta por vuelta
 "How the race was won" (diferencia ganador–P2 por vuelta + orden de carrera), campeonato, pole por
 sectores, mapa, evolución del título y próxima carrera. `race_highlights.py` ahora genera `raceTrace`. Solo
 el home; artículos después, con prototipo primero. Vocabulario de zonas: artifact "Anatomía del Home".
+
+**Artículos en dusk, 12 oct 2026:** tras el prototipo del reporte de Singapur (modo oscuro vs. hoja clara),
+Ismael eligió la hoja clara. Todos los artículos pasan a la carcasa dusk (portada, fila de KPIs, rail con
+índice y resultado, FAQ/fuentes en tarjetas, relacionados) con el texto sobre una hoja clara. Si el
+artículo tiene `race_id`, suma el paisaje de la vuelta de pole en la portada y figuras de carrera
+colocadas con marcadores `[[figure:…]]` en el markdown: dominancia de la pole por curvas (nuevo bloque
+`qualiDominance` en `race_highlights.py`, alineado con los tiempos oficiales por sector), de la parrilla
+a la bandera (desde `results`) y "How the race was won". El reporte de Singapur ya tiene `race_id: 1184`
+en Supabase; **los marcadores se ingieren recién después del deploy** (si no, producción mostraría el
+texto `[[figure:…]]`). Pendiente de datos (no se tocó): para R17, `results` guarda `laps = 0` en todas
+las filas, `status = Finished` incluso para autos doblados, y posiciones numéricas (20–22) para Stroll,
+Colapinto y Bortoleto, que en la clasificación oficial figuran como no clasificados.

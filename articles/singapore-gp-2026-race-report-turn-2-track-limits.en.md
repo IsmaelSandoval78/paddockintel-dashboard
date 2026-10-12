@@ -5,6 +5,7 @@ locale: en
 meta_description: "Verstappen won Singapore by 7.3s. Our own timing data across all three sessions found something no result sheet shows: Turn 2's real cost."
 status: published
 paywalled: false
+race_id: 1184
 published_at: "2026-10-11T17:00:00+00:00"
 translation_group_id: "ec9fbd78-6f4e-4366-b512-2d2bc08dd4fe"
 tags: ["featured", "race-analysis", "red-bull", "ferrari"]
@@ -46,9 +47,15 @@ sources:
 
 Max Verstappen led every lap of the Singapore Grand Prix he contested from pole and won by 7.335 seconds over Ferrari's Charles Leclerc, closing out [a weekend in which he'd already taken Friday's Sprint Qualifying pole](/singapore-gp-2026-qualifying-verstappen-pole-red-bull-conversion) and Saturday's Sprint win. Kimi Antonelli held third for Mercedes. He did it with a damaged pit-wall: a radio failure stopped race engineer Gianpiero Lambiase communicating normally for the second half of the race, forcing a switch to coded messages. None of it mattered to the result.
 
+[[figure:pole-dominance:2]]
+
 Further back, strategy decided more than pace did. Lewis Hamilton ran third for long stretches in the sister Ferrari, then lost the position after staying out under the race's second Virtual Safety Car, around lap 39 -- a pit-lane window several cars behind him used for a free stop. Ferrari had called him in; Hamilton said afterwards that he missed the entry and then decided to stay out, and took full responsibility. He fell to sixth by the flag. [Lando Norris and Oscar Piastri](/singapore-gp-2026-sprint-norris-piastri-collision-standings) took fourth and fifth for McLaren, with Piastri passing Hamilton on the final lap. George Russell, starting 19th after a grid penalty carried into the weekend, recovered to ninth.
 
+[[figure:grid-to-flag]]
+
 Two Virtual Safety Car periods -- a brief one around lap 9, the costlier one around lap 39 -- were the only interruptions. Stewards reviewed three separate "leaving the track and gaining an advantage" incidents, for Oliver Bearman, Carlos Sainz, and Hamilton; all three were cleared with no further action.
+
+[[figure:race-story]]
 
 That clean a sheet from the stewards is itself a little misleading, because it leaves out the session's real pattern -- one that doesn't show up in any official classification, because it isn't about who finished where. It's about one corner.
 
