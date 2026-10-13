@@ -1045,6 +1045,112 @@
     "about": "About",
     "privacy": "Privacy Policy"
   },
+  "about": {
+    "metaTitle": "About PaddockIntel — Ismael Sandoval",
+    "metaDescription": "F1 economic intelligence by Ismael Sandoval: Fortune 500 operations and supply chain experience applied to racing strategy and team economics.",
+    "crumbHome": "Home",
+    "crumb": "About",
+    "kicker": "About PaddockIntel",
+    "headline": "Formula 1 moves at 200 miles per hour. The decisions that decide it happen faster.",
+    "dek": "PaddockIntel decodes the operational intelligence, strategic execution and economic calculations that turn grid positions into podiums — and racing teams into billion-dollar businesses.",
+    "byline": "Written and edited by",
+    "independent": "Independent publication",
+    "stats": {
+      "aria": "PaddockIntel in numbers",
+      "articles": "Articles published",
+      "articlesUnit": "{count} across English, Spanish and Portuguese",
+      "sources": "Sources cited",
+      "sourcesUnit": "in the English articles, each one linked",
+      "feed": "Feed stories",
+      "feedUnit": "each with our own data on top",
+      "issues": "Weekly Digest issues",
+      "issuesUnit": "since {date}",
+      "races": "Grands Prix in our database",
+      "racesUnit": "{count} race results, 1950 to today",
+      "glossary": "Glossary terms",
+      "glossaryUnit": "up to three depths each, cited"
+    },
+    "who": {
+      "label": "Who's behind this",
+      "heading": "I'm Ismael, and I analyze Formula 1 through supply chain operations and business strategy.",
+      "current": "Current",
+      "currentValue": "Onboarding & Estimating Coordinator · Verst Logistics",
+      "previous": "Previous",
+      "previousValue": "Production Planner · Jabil (Fortune 500)",
+      "clients": "Clients",
+      "clientsValue": "P&G · Unilever · Sazerac",
+      "bio": []
+    },
+    "why": {
+      "heading": "Why this perspective matters",
+      "intro": "Most F1 media covers what happened. PaddockIntel explains why it happened and what it cost. Three numbers from our own published analysis:",
+      "read": "Read the analysis →"
+    },
+    "how": {
+      "heading": "How we work",
+      "principles": [
+        {
+          "title": "Business first, racing context second",
+          "body": "We analyze F1 as a business where operational excellence and economic strategy shape competitive outcomes — not as a racing blog."
+        },
+        {
+          "title": "Every number has a source",
+          "body": "Figures are traced to a primary source or to our own database, and the sources are listed on every article. If we can't verify a number, we don't print it."
+        },
+        {
+          "title": "Operational depth",
+          "body": "Most analysis stops at \"great strategy call.\" We explain the logistics, the incentives and the risk calculations that made the call possible — or impossible."
+        },
+        {
+          "title": "Corrections are visible",
+          "body": "When we get a number wrong, we fix it and say so on the page, with the date and what changed."
+        }
+      ]
+    },
+    "read": {
+      "title": "What you can read",
+      "items": [
+        {
+          "name": "Weekly Digest",
+          "desc": "The week in F1 economics, free by email.",
+          "href": "/weekly"
+        },
+        {
+          "name": "The Feed",
+          "desc": "Daily stories with our own data on top.",
+          "href": "/feed"
+        },
+        {
+          "name": "Race reports & analysis",
+          "desc": "Every Grand Prix weekend, from our race data.",
+          "href": "/"
+        },
+        {
+          "name": "F1 Glossary",
+          "desc": "The terms behind the rules and the money.",
+          "href": "/glossary"
+        }
+      ]
+    },
+    "subTitle": "Get the Weekly Digest in your inbox.",
+    "cover": {
+      "heading": "What we cover",
+      "pillars": [
+        {
+          "title": "F1 economic intelligence",
+          "body": "Team budgets, sponsor deals, cost cap strategy, driver markets, manufacturer investment and how the revenue is shared."
+        },
+        {
+          "title": "Operational strategy",
+          "body": "Decisions under pressure: tyre calls, pit stops, race-weekend logistics, and the risk calculations behind them."
+        },
+        {
+          "title": "Supply chain & logistics",
+          "body": "The infrastructure nobody sees: freight across the calendar, spare parts, factory-to-track pipelines, procurement."
+        }
+      ]
+    }
+  },
   "aboutDisclaimer": {
     "heading": "Disclaimer",
     "affiliation": "PaddockIntel is an independent publication. It is not affiliated with, associated with, authorized by, or endorsed by Formula 1, Formula One Licensing B.V., the FIA, or any Formula 1 team or driver. F1, FORMULA 1, GRAND PRIX and related marks are trademarks of their respective owners and are used here solely for editorial identification.",

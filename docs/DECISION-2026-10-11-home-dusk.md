@@ -156,3 +156,19 @@ Prototyped from the live rows and approved.
 - Data fix (founder-approved): recap 02's third story carried the source roundup's headline
   ("Hamilton's team hits $9bn valuation") over a summary about the F1-Disney extension; the headline
   now matches the summary, checked against the GPFans source.
+
+## About (2026-10-13)
+Prototyped and reviewed with the founder. `app/[locale]/about/` on the dusk shell: cover, "PaddockIntel in numbers"
+(live counts: articles, cited sources, Feed stories, Weekly issues, races and results in the
+database, glossary terms), the bio and career table on the light sheet, "why this perspective
+matters" as three figures read live from our own published articles in the reader's locale, four
+working principles (including visible corrections), what you can read, subscribe, coverage areas,
+disclaimer. `/author/[slug]` keeps redirecting here.
+- Removed three unsourced figures from the old copy ("$20 billion ecosystem", a "$90 million" sponsor
+  deal, Red Bull's "$500 million" engine investment) and the stale "coming soon" products (race
+  reports and paywalled analysis already exist).
+- Founder-confirmed career facts: "Onboarding & Estimating Coordinator" at Verst Logistics, Jabil
+  "Fortune 500" (the old meta said "Fortune 100"); the `authors.bio` row was aligned to the title.
+- All copy moved to `about` (EN/ES/PT); English reads the bio from `authors`, ES/PT use translated
+  paragraphs. Added canonical + en/es/pt hreflang and AboutPage/Person JSON-LD (name, url, job,
+  employer, no invented photo or social profiles).
