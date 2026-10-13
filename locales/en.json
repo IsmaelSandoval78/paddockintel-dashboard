@@ -218,7 +218,8 @@
       "corner": "Corner",
       "lap": "Lap",
       "finalGap": "Final gap",
-      "vs": "vs"
+      "vs": "vs",
+      "methodologyLink": "Methodology: historical, not a projection"
     },
     "qualifying": {
       "title": "Qualifying",
@@ -1149,6 +1150,94 @@
           "body": "The infrastructure nobody sees: freight across the calendar, spare parts, factory-to-track pipelines, procurement."
         }
       ]
+    }
+  },
+  "methodology": {
+    "metaTitle": "Delta Ribbon Methodology: How the Gap Chart Works",
+    "metaDescription": "How the Delta Ribbon is built from OpenF1 timing data: what it measures, how lead changes are detected, its limits and what it does not claim.",
+    "crumbHome": "Home",
+    "crumbAbout": "About",
+    "kicker": "Methodology",
+    "headline": "Delta Ribbon",
+    "dek": "Our chart for showing how the gap between two drivers opened and closed around a lap. This page documents exactly what it computes, where the data comes from, where it falls short, and what it deliberately does not claim.",
+    "byline": "Built and maintained by",
+    "source": "Data: OpenF1",
+    "notProjection": "Historical, not a projection",
+    "stats": {
+      "aria": "Delta Ribbon coverage",
+      "races": "Races loaded",
+      "racesUnit": "{count, plural, one {# driver pairing} other {# driver pairings}}",
+      "samples": "Gap samples stored",
+      "samplesUnit": "{count, plural, one {across # race lap} other {across # race laps}}",
+      "snaps": "Lead changes (snaps)",
+      "snapsUnit": "{count, plural, =0 {no braids} one {# braid} other {# braids}}",
+      "defends": "Defends",
+      "defendsUnit": "closed inside 1.0s, never passed"
+    },
+    "s1": {
+      "heading": "What it shows",
+      "body": "Delta Ribbon is a band drawn over a circuit's outline. Its <b>color</b> shows which of two drivers was ahead at each point of the lap; its <b>width</b> shows how big the gap between them was at that point: thin means a close fight, wide means a big gap. Markers along the band flag the moments the data shows a lead change or a near-miss."
+    },
+    "s2": {
+      "heading": "What is measured",
+      "p1": "The base number is the official gap to the race leader that OpenF1 publishes for every car, every few seconds. For each sample we take Driver B's gap minus Driver A's: the result is the gap between those two drivers. Positive means A is ahead.",
+      "p2": "Each sample is then placed on the lap using the position of whichever driver is ahead at that instant: we add up the distance between that car's consecutive location points and divide by the total for that lap, giving a 0–100% position independent of the track drawing. The width is square-root scaled, so a 0.3s fight still shows visible variation next to a 20s gap; the scale tops out at the race's largest gap or 8s, whichever is larger.",
+      "capExample": "At {circuit} that is {cap}s.",
+      "p3": "The ribbon on a circuit page draws one lap: the last lap with data, with the space between samples filled in to close the loop. The markers and the counts next to it cover the whole race, so a marker can sit on the drawn lap even though it happened on an earlier one."
+    },
+    "s3": {
+      "heading": "How events are detected",
+      "intro": "Events are found afterwards, by scanning the same stored gap series in time order. Nothing is predicted.",
+      "snapTerm": "Snap",
+      "snapDef": "The driver ahead changes between two consecutive samples.",
+      "braidTerm": "Braid",
+      "braidDef": "Two or more snaps within 400 metres of each other are grouped into one hatched braid instead of separate snaps.",
+      "defendTerm": "Defend",
+      "defendDef": "The trailing driver closes to under 1.0s without getting ahead, and the gap then reopens by more than 0.3s.",
+      "note": "A snap means the order in the timing data changed, not necessarily an overtake on track. A pit stop swings the gap by 20 seconds or more and shows up as a snap too."
+    },
+    "example": {
+      "heading": "Worked example: {circuit} {year}",
+      "raceLabel": "{year} {race}",
+      "intro": "The example below is the {race}, comparing {a} and {b}. Every stored sample is plotted.",
+      "ahead": "{driver} ahead",
+      "legendAhead": "{driver} ahead",
+      "legendLed": "Laps one of the two led the race",
+      "chartAria": "Gap between {a} and {b}, {race}, every stored sample",
+      "caption": "Gap between {a} and {b}, {race}, one dot per stored sample ({count}). Vertical axis square-root scaled, like the ribbon's width. Source: OpenF1 via PaddockIntel's database.",
+      "snapsIntro": "{count, plural, one {The lead change:} other {The # lead changes, in order:}}",
+      "lap": "Lap {n}",
+      "snapAt": "{driver} ahead at {corner}, by {gap}s.",
+      "snap": "{driver} ahead, by {gap}s.",
+      "snapPit": "Not an on-track pass: {driver} made a pit stop on lap {lap} ({secs}s in the pit lane).",
+      "snapPitNoTime": "Not an on-track pass: {driver} made a pit stop on lap {lap}.",
+      "defends": "{count, plural, one {The one defend came on lap {laps}.} other {The # defends came on laps {laps}.}}",
+      "gapIntro": "The ribbon's last sample and the official result do not match exactly, because the last sample is not taken on the finish line:",
+      "lastSample": "Ribbon · last sample, lap {lap}",
+      "official": "Official result",
+      "officialSub": "P{p1} and P{p2} at the flag"
+    },
+    "s5": {
+      "heading": "Source and coverage",
+      "intro": "Everything comes from OpenF1's public endpoints (laps, car location, car data and intervals), pulled once per race by an offline script and stored in our database. Pages never call OpenF1 directly; they read the stored result. Three limits follow from that:",
+      "since": "<b>2023 onward only.</b> OpenF1's telemetry starts with the 2023 season.",
+      "onePair": "<b>One race and one pairing at a time.</b> Each load is set up by hand. A circuit page without a load shows no ribbon.",
+      "leader": "<b>No data while one of the two leads the race.</b> The base number is a gap to the leader, and the leader has none.",
+      "leaderExample": "At {circuit}, the {count} laps where one of the two led ({laps}) carry {minLed}–{maxLed} samples each, against {minOther}–{maxOther} on the rest.",
+      "leaderMissing": "{count, plural, one {Lap {laps} has none.} other {Laps {laps} have none.}}",
+      "leaderEnd": "A fight for the lead itself cannot be drawn this way."
+    },
+    "s6": {
+      "heading": "What it is not",
+      "body": "Delta Ribbon describes a session that has already finished. It does not forecast, project or model where either driver might be, and it carries no measure of uncertainty. Every color, width and marker is computed from telemetry recorded after the fact."
+    },
+    "rail": {
+      "toc": "On this page",
+      "liveTitle": "See it live",
+      "liveBody": "{a} vs {b}, {race}, on the Hub.",
+      "errorTitle": "Found an error?",
+      "errorBody": "Corrections are made on the page, dated, with what changed.",
+      "errorLink": "How we work"
     }
   },
   "aboutDisclaimer": {

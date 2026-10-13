@@ -180,7 +180,7 @@ flagship implementation; Hub, Circuits, Drivers, Constructors, and the article/d
 reading surfaces inherit the new color tokens automatically but have not had their own
 layout pass yet — expect "new palette, old layout" there until a follow-up pass.
 
-**Exception — the magazine home, article pages, the Feed, the Weekly Digest, Recaps, tag archives, Voices, the Glossary and About (2026-10-12/13, founder decisions):**
+**Exception — the magazine home, article pages, the Feed, the Weekly Digest, Recaps, tag archives, Voices, the Glossary, About and the Delta Ribbon methodology (2026-10-12/13, founder decisions):**
 these surfaces no longer use Warm Studio. They run the scoped dark system "Telemetry at Dusk" v2 —
 Zentra-style bento grid of cards, dusk palette, pit-wall chart language — defined in
 `app/[locale]/(blog)/dusk.css` and recorded in `docs/DECISION-2026-10-11-home-dusk.md`.
