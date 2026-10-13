@@ -180,7 +180,7 @@ flagship implementation; Hub, Circuits, Drivers, Constructors, and the article/d
 reading surfaces inherit the new color tokens automatically but have not had their own
 layout pass yet — expect "new palette, old layout" there until a follow-up pass.
 
-**Exception — the magazine home, article pages, the Feed, the Weekly Digest, Voices and the Glossary (2026-10-12, founder decisions):**
+**Exception — the magazine home, article pages, the Feed, the Weekly Digest, Recaps, tag archives, Voices and the Glossary (2026-10-12/13, founder decisions):**
 these surfaces no longer use Warm Studio. They run the scoped dark system "Telemetry at Dusk" v2 —
 Zentra-style bento grid of cards, dusk palette, pit-wall chart language — defined in
 `app/[locale]/(blog)/dusk.css` and recorded in `docs/DECISION-2026-10-11-home-dusk.md`.
@@ -191,7 +191,8 @@ over a dark body in a side-by-side prototype; data figures inside the sheet stay
 `/weekly/[issue]`) follow the same split: bento index in the dusk shell, the reading on the light
 sheet. Voices (`/whos-who`) is a dusk index only (picks are short); Glossary term pages
 (`/glossary/[slug]` and its depth pages) put the body on the light sheet under a dusk cover with
-the depth switch. Everything else on the site stays on this
+the depth switch. Recaps (`/recaps`, `/recaps/[issue]`) follow the Weekly pattern; tag archives
+(`/tag/[slug]`) are a dusk index of article cards. Everything else on the site stays on this
 system until each surface is migrated deliberately. Do not copy dusk tokens or its gradient/glow exception into other routes.
 
 ## What this replaces, explicitly

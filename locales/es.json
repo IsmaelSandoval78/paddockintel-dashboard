@@ -714,6 +714,16 @@
     }
   },
   "recaps": {
+    "metaTitle": "Serie Recap — PaddockIntel",
+    "metaDescription": "Cobertura retrospectiva de la economía de la F1, publicada después de los hechos — aparte del Resumen Semanal en vivo.",
+    "headline": "La economía de la F1, revisitada.",
+    "recapsCount": "{count, plural, one {# recap} other {# recaps}}",
+    "howToTitle": "Cómo leer un recap",
+    "howToBody": "Un recap se escribe después del periodo que cubre. Cada uno muestra dos cosas -- las fechas de las historias que repasa y el día en que se publicó realmente --, para que nunca se lea como cobertura en vivo.",
+    "weeklyCta": "¿Buscas esta semana? Resumen Semanal →",
+    "vol": "Recap {n}",
+    "coversRange": "Cubre {range}",
+    "publishedOn": "Publicado el {date}",
     "kicker": "Serie Recap",
     "sources": "Fuentes",
     "index": {
@@ -724,6 +734,19 @@
       "read": "Leer →"
     },
     "detail": {
+      "kicker": "Recap de PaddockIntel · economía de la F1",
+      "coversLabel": "Repasa",
+      "publishedLabel": "Publicado",
+      "retroLabel": "Una retrospectiva",
+      "retroBody": "Escrito y publicado el {date}, después del periodo que cubre — no en tiempo real.",
+      "inRecap": "En este recap",
+      "moreRecaps": "Más recaps",
+      "allRecaps": "Todos los recaps →",
+      "liveTitle": "Cobertura en vivo",
+      "liveBody": "El Resumen Semanal cubre cada semana mientras sucede.",
+      "liveCta": "Resumen Semanal →",
+      "curatedBy": "Seleccionado por",
+      "metaTitle": "Recap {n} — PaddockIntel",
       "weekOf": "Semana del",
       "published": "Publicado",
       "disclaimer": "Esto es una retrospectiva. Se escribió y publicó en la fecha indicada arriba, después de la semana que cubre — no en tiempo real."
@@ -948,6 +971,17 @@
     "backToGlossary": "Glosario"
   },
   "tagArchive": {
+    "crumbHome": "Inicio",
+    "crumbTags": "Etiquetas",
+    "description": "Todos los artículos de PaddockIntel etiquetados como {tag} — economía, estrategia y datos de F1, verificados contra fuentes reales.",
+    "articlesCount": "{count, plural, one {# artículo} other {# artículos}}",
+    "since": "Desde el {date}",
+    "latestChip": "Último: {date}",
+    "latestKicker": "Lo más reciente · {date}",
+    "readArticle": "Leer el artículo →",
+    "read": "Leer →",
+    "oftenWith": "Suele ir con",
+    "pagesAria": "Páginas",
     "kicker": "Etiqueta",
     "title": "{tag} — PaddockIntel",
     "metaDescription": "Todos los artículos de PaddockIntel etiquetados como {tag} — economía, estrategia y datos de F1, verificados contra fuentes reales.",

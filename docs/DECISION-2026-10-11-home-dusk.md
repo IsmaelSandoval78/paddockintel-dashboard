@@ -138,3 +138,21 @@ Prototyped from the live rows (`experts`, `expert_picks`, `glossary_terms`) and 
   the light sheet, rail with related terms and the rest of the category. Titles with depth suffix,
   canonical and DefinedTerm JSON-LD unchanged. hreflang now lists only the locales where that term
   exists at that depth (pt has 7 of the 27 terms; it used to declare pt for all of them).
+
+## Recaps and tag archives (2026-10-13)
+Prototyped from the live rows and approved.
+- **Tag archive** (`app/[locale]/(blog)/tag/[slug]/`): counts (articles, first and latest date), the
+  newest article as the lead card with its key number, "often tagged with" (co-tag counts, the
+  internal `featured` flag excluded), then articles by month as cards with their first stat, 20 per
+  page. A tag with no published article in a locale is `noindex, follow` and is left out of
+  `app/sitemap.ts` (`breaking-news`, `deep-dive` and `data-desk` today); the sitemap now reads
+  `article_tags` in pages, since the table is past PostgREST's 1,000-row default.
+- **Recaps** (`app/[locale]/(digest)/recaps/`): index with counts, a "how to read a recap" note and
+  recap cards; recap pages on the Weekly layout (cover, light sheet, rail). What a recap covers is
+  now the date span of its own stories, not the week in its slug -- recap 01's slug says "week of
+  July 27" but its stories run February 19 to July 16. Draft recaps now return 404 instead of
+  rendering. All interface text moved to `recaps` (EN/ES/PT); recap content is English-only and is
+  marked `lang="en"` on `/es/` and `/pt/`.
+- Data fix (founder-approved): recap 02's third story carried the source roundup's headline
+  ("Hamilton's team hits $9bn valuation") over a summary about the F1-Disney extension; the headline
+  now matches the summary, checked against the GPFans source.
