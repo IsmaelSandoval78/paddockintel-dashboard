@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { finaleRaceIdByYear } from '@/lib/seasonFinale';
 import type { CompareDriverData } from '@/lib/types';
 
 export async function GET(
@@ -53,8 +54,9 @@ export async function GET(
   const allRaceIds = [...new Set([...standingRaceIds, ...resultRaceIds])];
   const constructorIds = [...new Set(allResults.map((r) => r.constructor_id as number))];
 
-  // Batch 3 — race metadata + constructor names (parallel)
-  const [racesRes, constructorsRes] = await Promise.all([
+  // Batch 3 — race metadata + constructor names + the full calendar of the driver's seasons,
+  // for each season's finale (parallel)
+  const [racesRes, constructorsRes, seasonRacesRes] = await Promise.all([
     allRaceIds.length
       ? supabase
           .from('races')
@@ -67,6 +69,11 @@ export async function GET(
           .select('id, name, constructor_ref')
           .in('id', constructorIds)
       : Promise.resolve({ data: [] as { id: unknown; name: unknown; constructor_ref: unknown }[] }),
+    supabase
+      .from('races')
+      .select('id, year, round')
+      .gte('year', stats.first_year as number)
+      .lte('year', stats.last_year as number),
   ]);
 
   const raceById = new Map(
@@ -107,11 +114,13 @@ export async function GET(
     ])
   );
 
-  // Championships — years where driver was P1 at their last race of the season
+  // Championships — years where the driver was P1 at the season's final round; a season still
+  // in progress has no standings there yet.
+  const finaleByYear = finaleRaceIdByYear(seasonRacesRes.data ?? []);
   let championships = 0;
-  for (const [, raceId] of lastRacePerYear.entries()) {
-    const standing = standingsByRaceId.get(raceId);
-    if (standing?.position === 1) championships++;
+  for (const year of lastRacePerYear.keys()) {
+    const finaleId = finaleByYear.get(year);
+    if (finaleId !== undefined && standingsByRaceId.get(finaleId)?.position === 1) championships++;
   }
 
   // Season breakdown — one entry per year

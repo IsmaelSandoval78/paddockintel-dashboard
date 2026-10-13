@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
+import { finaleRaceIdByYear } from '@/lib/seasonFinale';
 import { Link } from '@/lib/i18n/navigation';
 import { routing } from '@/lib/i18n/routing';
 import { ConstructorScorecardButton } from '@/components/scorecards/ConstructorScorecard';
@@ -511,10 +512,12 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
 
   // ─── Championships ────────────────────────────────────────────────────────
 
+  // P1 at the season's final round -- a season still in progress has no standings there yet.
+  const finaleByYear = finaleRaceIdByYear([...(racesLegacyRes.data ?? []), ...(racesModernRes.data ?? [])]);
   const championshipYears: number[] = [];
-  for (const [year, raceId] of lastRacePerYear.entries()) {
-    const standing = standingsByRaceId.get(raceId);
-    if (standing?.position === 1) championshipYears.push(year);
+  for (const year of lastRacePerYear.keys()) {
+    const finaleId = finaleByYear.get(year);
+    if (finaleId !== undefined && standingsByRaceId.get(finaleId)?.position === 1) championshipYears.push(year);
   }
   championshipYears.sort((a, b) => a - b);
 

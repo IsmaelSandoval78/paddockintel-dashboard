@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
+import { finaleRaceIdByYear } from '@/lib/seasonFinale';
 import { Link } from '@/lib/i18n/navigation';
 import { routing } from '@/lib/i18n/routing';
 import { type CircuitRecord } from '@/components/drivers/CircuitRecordSection';
@@ -190,13 +191,22 @@ export default async function DriverDetailPage({
     );
   }
 
-  // Batch 3 — race metadata (circuit_id included for §06 circuit record)
-  const { data: racesRaw } = await supabase
-    .from('races')
-    .select('id, year, round, name, circuit_id')
-    .in('id', allRaceIds)
-    .order('year', { ascending: true })
-    .order('round', { ascending: true });
+  // Batch 3 — race metadata (circuit_id included for §06 circuit record) + the full calendar of
+  // the driver's seasons, for each season's finale (championships count only there)
+  const [{ data: racesRaw }, { data: seasonRacesRaw }] = await Promise.all([
+    supabase
+      .from('races')
+      .select('id, year, round, name, circuit_id')
+      .in('id', allRaceIds)
+      .order('year', { ascending: true })
+      .order('round', { ascending: true }),
+    supabase
+      .from('races')
+      .select('id, year, round')
+      .gte('year', stats.first_year as number)
+      .lte('year', stats.last_year as number),
+  ]);
+  const finaleByYear = finaleRaceIdByYear(seasonRacesRaw ?? []);
 
   // Build race → circuit map for §06
   const raceCircuitMap = new Map(
@@ -232,18 +242,22 @@ export default async function DriverDetailPage({
   }
 
   const lastRaceIds = [...lastRacePerYear.values()];
+  const finaleRaceIds = [...lastRacePerYear.keys()]
+    .map((year) => finaleByYear.get(year))
+    .filter((id): id is number => id !== undefined);
+  const standingRaceIds = [...new Set([...lastRaceIds, ...finaleRaceIds])];
   const uniqueConstructorIds = [
     ...new Set(allResults.map((r) => r.constructor_id as number)),
   ];
 
   // Batch 4 — standings + constructors + circuits (§06) + status table (§06)
   const [standingsRes, constructorsRes, circuitsRes, finishedStatusRes] = await Promise.all([
-    lastRaceIds.length
+    standingRaceIds.length
       ? supabase
           .from('driver_standings')
           .select('race_id, position, points, wins')
           .eq('driver_id', driver.id)
-          .in('race_id', lastRaceIds)
+          .in('race_id', standingRaceIds)
       : Promise.resolve({
           data: [] as {
             race_id: unknown;
@@ -379,10 +393,11 @@ export default async function DriverDetailPage({
 
   // ─── Assemble: championships ─────────────────────────────────────────────
 
+  // P1 at the season's final round -- a season still in progress has no standings there yet.
   const championshipYears: number[] = [];
-  for (const [year, raceId] of lastRacePerYear.entries()) {
-    const standing = standingsByRaceId.get(raceId);
-    if (standing?.position === 1) championshipYears.push(year);
+  for (const year of lastRacePerYear.keys()) {
+    const finaleId = finaleByYear.get(year);
+    if (finaleId !== undefined && standingsByRaceId.get(finaleId)?.position === 1) championshipYears.push(year);
   }
   championshipYears.sort((a, b) => a - b);
 
