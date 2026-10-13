@@ -121,3 +121,20 @@ Prototyped from the live issues and approved. Built into `app/[locale]/(digest)/
   Story headlines and summaries use their Spanish columns on `/es/`; issue syntheses only exist in
   English. Metadata kept (titles now localized for ES/PT); no JSON-LD existed and none was added.
 
+## Voices and Glossary (2026-10-12)
+Prototyped from the live rows (`experts`, `expert_picks`, `glossary_terms`) and approved.
+- **Voices** (`app/[locale]/(digest)/whos-who/`): header with picks / voices quoted / voices
+  tracked, the five lenses as cards with their pick counts (jump links), the latest pick as the
+  lead card, the rest by lens in two columns, and the full roster of active experts by lens
+  ("quoted" marks the ones with a pick). Founder decision: picks are shown on every locale in the
+  language they were written in, marked with a language tag and `lang` attribute, instead of
+  filtering by locale (filtering would leave `/es/` with 2 picks and `/pt/` with none). The
+  hardcoded English "SOURCE: SUPABASE" footer was removed. Expert `role` values are Spanish in the
+  data and render as stored on every locale (a separate data task, not done here).
+- **Glossary index** (`app/[locale]/(blog)/glossary/`): counts, the three depths explained once,
+  category jump chips, terms by category as cards with the depths each term actually has. Added
+  the missing canonical + en/es/pt hreflang; the DefinedTermSet JSON-LD is unchanged.
+- **Term pages:** dusk cover (category, term, short definition, depth switch), body and sources on
+  the light sheet, rail with related terms and the rest of the category. Titles with depth suffix,
+  canonical and DefinedTerm JSON-LD unchanged. hreflang now lists only the locales where that term
+  exists at that depth (pt has 7 of the 27 terms; it used to declare pt for all of them).

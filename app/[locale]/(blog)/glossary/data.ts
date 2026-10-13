@@ -93,3 +93,31 @@ export async function getRelatedGlossaryTerms(locale: string, slugs: string[]): 
   }
   return slugs.map((s) => bySlug.get(s)).filter((r): r is GlossaryTermRow => Boolean(r));
 }
+
+// Which depths each term has in this locale (the index shows availability per term).
+export async function getGlossaryDepths(locale: string): Promise<Map<string, Set<GlossaryDepth>>> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from('glossary_terms')
+    .select('slug, depth')
+    .eq('locale', locale)
+    .eq('status', 'published');
+  const map = new Map<string, Set<GlossaryDepth>>();
+  for (const row of (data as { slug: string; depth: GlossaryDepth }[] | null) ?? []) {
+    map.set(row.slug, (map.get(row.slug) ?? new Set<GlossaryDepth>()).add(row.depth));
+  }
+  return map;
+}
+
+// Locales where a term's page at this depth actually renders, for hreflang. The base URL
+// (eli5) falls back to the technical row, same rule as getGlossaryTerm.
+export async function getGlossaryTermLocales(slug: string, depth: GlossaryDepth): Promise<string[]> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from('glossary_terms')
+    .select('locale')
+    .eq('slug', slug)
+    .eq('status', 'published')
+    .in('depth', depth === 'eli5' ? ['eli5', 'technical'] : [depth]);
+  return Array.from(new Set(((data as { locale: string }[] | null) ?? []).map((r) => r.locale)));
+}

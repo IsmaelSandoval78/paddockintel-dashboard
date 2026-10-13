@@ -24,7 +24,10 @@ export async function DepthNav({
   const present = new Set(layers.map((l) => l.depth));
 
   return (
-    <nav className="flex gap-2 mb-8 -mt-2">
+    <nav
+      aria-label={t('depthAria')}
+      className="grid grid-flow-col auto-cols-fr sm:inline-flex self-stretch sm:self-start gap-1 p-1 rounded-[18px] sm:rounded-full bg-[rgba(14,13,18,0.45)] border border-[rgba(255,255,255,0.14)]"
+    >
       {DEPTH_ORDER.filter((d) => present.has(d)).map((depth) => {
         const suffix = DEPTH_PATH[depth];
         const href = suffix ? `/glossary/${slug}/${suffix}` : `/glossary/${slug}`;
@@ -33,10 +36,11 @@ export async function DepthNav({
           <Link
             key={depth}
             href={href}
-            className={`font-mono text-[11px] uppercase tracking-[0.06em] px-3 py-1.5 border transition-colors duration-150 ${
+            aria-current={isActive ? 'page' : undefined}
+            className={`min-h-10 inline-flex items-center justify-center text-center px-2 sm:px-4 py-2 rounded-[14px] sm:rounded-full text-[13px] sm:text-[14px] font-semibold transition-colors duration-150 ${
               isActive
-                ? 'border-terracotta text-terracotta'
-                : 'border-border text-text-2 hover:border-text-1 hover:text-text-1'
+                ? 'bg-[color:var(--dusk-ink)] text-[color:var(--dusk-ground)]'
+                : 'text-[#EADBD6] hover:text-[color:var(--dusk-peach)]'
             }`}
           >
             {t(`depth.${depth}`)}
