@@ -25,7 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     const { data: articles } = await supabase
       .from('articles')
-      .select('slug, locale, published_at')
+      .select('id, slug, locale, published_at')
       .eq('status', 'published')
       .order('published_at', { ascending: false, nullsFirst: false });
 
@@ -67,6 +67,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // table directly, but every tag here has a translation (confirmed
     // 2026-10-06), so the row set and the page's own validation agree.
     const { data: tags } = await supabase.from('tags').select('slug');
+
+    // (tag, locale) pairs with at least one published article. A tag with nothing published in a
+    // locale renders an empty page that is noindexed (tag/[slug]/page.tsx), so it stays out of here.
+    // article_tags is read in pages: it is past PostgREST's 1,000-row default cap.
+    const localeById = new Map((articles ?? []).map((a) => [a.id as string, a.locale as string]));
+    const taggedPairs = new Set<string>();
+    for (let from = 0; ; from += 1000) {
+      const { data: rows } = await supabase
+        .from('article_tags')
+        .select('article_id, tags(slug)')
+        .range(from, from + 999);
+      for (const row of (rows as unknown as { article_id: string; tags: { slug: string } | null }[] | null) ?? []) {
+        const locale = localeById.get(row.article_id);
+        if (locale && row.tags?.slug) taggedPairs.add(`${row.tags.slug}|${locale}`);
+      }
+      if (!rows || rows.length < 1000) break;
+    }
 
     // Feed is deliberately EN/ES only (no pt edition exists at all — see
     // EDITORIAL.md's "The Feed" section), so its two root/item routes below
@@ -162,7 +179,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Tags aren't locale-paired rows -- one tag, three locale variants of the
     // same archive page (en/es/pt all validated live, 2026-10-06).
     const tagRoutes: MetadataRoute.Sitemap = (tags ?? []).flatMap((tg) =>
-      ['en', 'es', 'pt'].map((locale) => ({
+      ['en', 'es', 'pt'].filter((locale) => taggedPairs.has(`${tg.slug as string}|${locale}`)).map((locale) => ({
         url: localeUrl(MAGAZINE_BASE, locale, `/tag/${tg.slug as string}/`),
         lastModified: new Date(),
         changeFrequency: 'weekly' as const,

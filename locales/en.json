@@ -714,6 +714,16 @@
     }
   },
   "recaps": {
+    "metaTitle": "Recap Series — PaddockIntel",
+    "metaDescription": "Retrospective coverage of F1 economics, published after the fact — separate from the live Weekly Digest.",
+    "headline": "F1 economics, revisited.",
+    "recapsCount": "{count, plural, one {# recap} other {# recaps}}",
+    "howToTitle": "How to read a recap",
+    "howToBody": "A recap is written after the period it covers. Each one shows two things -- the dates of the stories it looks back on, and the day it was actually published -- so it never reads as live coverage.",
+    "weeklyCta": "Looking for this week? Weekly Digest →",
+    "vol": "Recap {n}",
+    "coversRange": "Covers {range}",
+    "publishedOn": "Published {date}",
     "kicker": "Recap Series",
     "sources": "Sources",
     "index": {
@@ -724,6 +734,19 @@
       "read": "Read →"
     },
     "detail": {
+      "kicker": "PaddockIntel Recap · F1 economics",
+      "coversLabel": "Looks back on",
+      "publishedLabel": "Published",
+      "retroLabel": "A retrospective",
+      "retroBody": "Written and published on {date}, after the period it covers — not in real time.",
+      "inRecap": "In this recap",
+      "moreRecaps": "More recaps",
+      "allRecaps": "All recaps →",
+      "liveTitle": "Live coverage",
+      "liveBody": "The Weekly Digest covers each week as it happens.",
+      "liveCta": "Weekly Digest →",
+      "curatedBy": "Curated by",
+      "metaTitle": "Recap {n} — PaddockIntel",
       "weekOf": "Week of",
       "published": "Published",
       "disclaimer": "This is a retrospective. It was written and published on the date above, after the week it covers — not in real time."
@@ -948,6 +971,17 @@
     "backToGlossary": "Glossary"
   },
   "tagArchive": {
+    "crumbHome": "Home",
+    "crumbTags": "Tags",
+    "description": "Every PaddockIntel article tagged {tag} — F1 economics, strategy, and data, verified against real sources.",
+    "articlesCount": "{count, plural, one {# article} other {# articles}}",
+    "since": "Since {date}",
+    "latestChip": "Latest {date}",
+    "latestKicker": "Latest · {date}",
+    "readArticle": "Read the article →",
+    "read": "Read →",
+    "oftenWith": "Often tagged with",
+    "pagesAria": "Pages",
     "kicker": "Tag",
     "title": "{tag} — PaddockIntel",
     "metaDescription": "Every PaddockIntel article tagged {tag} — F1 economics, strategy, and data, verified against real sources.",
