@@ -1,282 +1,278 @@
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, getFormatter } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
-
-export const metadata: Metadata = {
-  title: 'About — PaddockIntel',
-  description:
-    'F1 economic intelligence by Ismael Sandoval — applying Fortune 100 supply chain expertise to decode racing strategy and team economics.',
-};
+import { Link } from '@/lib/i18n/navigation';
+import { routing } from '@/lib/i18n/routing';
+import { SITE_URL, localeUrl } from '@/lib/site-url';
+import NewsletterBand from '@/components/home-dusk/NewsletterBand';
+import { duskSans } from '../(blog)/dusk-font';
+import '../(blog)/dusk.css';
 
 export const revalidate = 3600;
 
-async function getAuthorBio(): Promise<string | null> {
-  const supabase = createClient();
-  const { data } = await supabase
-    .from('authors')
-    .select('bio')
-    .eq('slug', 'ismael-sandoval')
-    .single();
-  return data?.bio ?? null;
+type PageParams = Promise<{ locale: string }>;
+type Stat = { value: string; label: string; unit?: string };
+type Principle = { title: string; body: string };
+type ReadItem = { name: string; desc: string; href: string };
+
+// The three numbers under "Why this perspective matters" come from our own published analysis,
+// read live from each article (in the reader's locale) -- never typed into this page.
+const WHY_SLUGS = [
+  'f1-cost-cap-midfield-podiums-vowles-data-2026',
+  'f1-team-principal-firing-cost-2026',
+  'f1-2026-qatar-abu-dhabi-hosting-fee-standoff',
+];
+
+export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'about' });
+  const languages: Record<string, string> = {};
+  for (const l of routing.locales) languages[l] = localeUrl(l, '/about/');
+  return {
+    title: t('metaTitle'),
+    description: t('metaDescription'),
+    alternates: {
+      canonical: localeUrl(locale, '/about/'),
+      languages: { ...languages, 'x-default': languages.en },
+    },
+  };
 }
 
-const PILLARS = [
-  {
-    label: 'F1 Economic Intelligence',
-    body: 'The financial architecture of Formula 1\'s $20 billion ecosystem. Team budgets. Sponsor deals. Cost cap strategies. Driver markets. Manufacturer investments. Revenue distribution.',
-  },
-  {
-    label: 'Operational Strategy',
-    body: 'Real-time decision-making under pressure. Tire strategies that turn P13 into P3. Pit stop coordination. Race weekend logistics. Risk calculations when milliseconds and millions collide.',
-  },
-  {
-    label: 'Supply Chain & Logistics',
-    body: 'The invisible infrastructure. Equipment transport across 24 countries. Spare parts management. Factory-to-track pipelines. Procurement efficiency. The logistics that keep teams racing.',
-  },
-];
+// Today as YYYY-MM-DD, kept out of the component body (react-hooks/purity).
+const today = () => new Date().toISOString().slice(0, 10);
 
-const PHILOSOPHY = [
-  {
-    num: '01',
-    title: 'Business First, Racing Context Second',
-    body: 'We analyze F1 as a $20 billion business where operational excellence and economic strategy determine competitive outcomes—not as a racing blog.',
-  },
-  {
-    num: '02',
-    title: 'Data-Driven Intelligence',
-    body: 'Every analysis is backed by numbers: dollar amounts, lap times, probability calculations, and ROI assessments. If we can\'t quantify it, we explain why.',
-  },
-  {
-    num: '03',
-    title: 'Operational Depth',
-    body: 'Most analysis stops at "great strategy call." We explain the logistics coordination, supply chain readiness, risk calculations, and economic incentives that made the call possible—or impossible.',
-  },
-  {
-    num: '04',
-    title: 'Insider Perspective',
-    body: 'We reconstruct the decision-making process using operational frameworks, economic incentives, and competitive dynamics—the analysis teams discuss internally but never share publicly.',
-  },
-];
+async function getData(locale: string) {
+  const supabase = createClient();
+  const count = async (q: PromiseLike<{ count: number | null }>) => (await q).count ?? 0;
+  const [author, articlesEn, articlesAll, enSources, feed, issues, firstIssue, races, results, glossary, whyEn] = await Promise.all([
+    supabase.from('authors').select('name, bio').eq('slug', 'ismael-sandoval').maybeSingle(),
+    count(supabase.from('articles').select('id', { count: 'exact', head: true }).eq('status', 'published').eq('locale', 'en')),
+    count(supabase.from('articles').select('id', { count: 'exact', head: true }).eq('status', 'published')),
+    supabase.from('articles').select('sources').eq('status', 'published').eq('locale', 'en'),
+    count(supabase.from('digest_items').select('id', { count: 'exact', head: true }).not('slug', 'is', null)),
+    count(supabase.from('digest_issues').select('id', { count: 'exact', head: true }).eq('status', 'published').eq('series', 'newsletter')),
+    supabase.from('digest_issues').select('published_at').eq('status', 'published').eq('series', 'newsletter').order('published_at').limit(1).maybeSingle(),
+    count(supabase.from('races').select('id', { count: 'exact', head: true }).lte('date', today())),
+    count(supabase.from('results').select('id', { count: 'exact', head: true })),
+    supabase.from('glossary_terms').select('slug').eq('locale', 'en').eq('status', 'published'),
+    supabase.from('articles').select('slug, translation_group_id').eq('locale', 'en').in('slug', WHY_SLUGS),
+  ]);
 
-const AUDIENCE = [
-  "F1's business and economic landscape",
-  'Operational strategy and decision-making under pressure',
-  'Supply chain and logistics in high-performance environments',
-  'Sports business and team valuation',
-  'Data-driven competitive analysis',
-];
+  const groups = (whyEn.data ?? []) as { slug: string; translation_group_id: string }[];
+  const { data: whyRows } = groups.length
+    ? await supabase
+        .from('articles')
+        .select('slug, title, stats, translation_group_id')
+        .eq('locale', locale)
+        .eq('status', 'published')
+        .in('translation_group_id', groups.map((g) => g.translation_group_id))
+    : { data: [] };
+  const why = WHY_SLUGS.map((s) => {
+    const group = groups.find((g) => g.slug === s)?.translation_group_id;
+    const row = (whyRows ?? []).find((r) => r.translation_group_id === group) as
+      | { slug: string; title: string; stats: Stat[] | null }
+      | undefined;
+    const stat = row?.stats?.[0];
+    return row && stat ? { slug: row.slug, title: row.title, stat } : null;
+  }).filter((w): w is { slug: string; title: string; stat: Stat } => Boolean(w));
 
-export default async function AboutPage() {
-  const tDisclaimer = await getTranslations('aboutDisclaimer');
-  const bio = await getAuthorBio();
+  return {
+    author: author.data as { name: string; bio: string | null } | null,
+    articlesEn,
+    articlesAll,
+    sourcesEn: ((enSources.data ?? []) as { sources: unknown[] | null }[]).reduce((n, a) => n + (a.sources?.length ?? 0), 0),
+    feed,
+    issues,
+    firstIssue: (firstIssue.data?.published_at as string | undefined) ?? null,
+    races,
+    results,
+    glossary: new Set(((glossary.data ?? []) as { slug: string }[]).map((g) => g.slug)).size,
+    why,
+  };
+}
+
+export default async function AboutPage({ params }: { params: PageParams }) {
+  const { locale } = await params;
+  const [t, tDisclaimer, tCrumbs, format, d] = await Promise.all([
+    getTranslations('about'),
+    getTranslations('aboutDisclaimer'),
+    getTranslations('articleDusk'),
+    getFormatter(),
+    getData(locale),
+  ]);
+
+  const n = (v: number) => format.number(v);
+  const name = d.author?.name ?? 'Ismael Sandoval';
+  // English reads the bio from the authors table (editable without a deploy); Spanish and
+  // Portuguese use the translated paragraphs in the locale files.
+  const bio: string[] =
+    locale === 'en' ? (d.author?.bio ?? '').split('\n\n').filter(Boolean) : (t.raw('who.bio') as string[]);
+  const principles = t.raw('how.principles') as Principle[];
+  const readItems = t.raw('read.items') as ReadItem[];
+  const pillars = t.raw('cover.pillars') as Principle[];
+
+  const stats = [
+    { v: n(d.articlesEn), l: t('stats.articles'), u: t('stats.articlesUnit', { count: n(d.articlesAll) }) },
+    { v: n(d.sourcesEn), l: t('stats.sources'), u: t('stats.sourcesUnit') },
+    { v: n(d.feed), l: t('stats.feed'), u: t('stats.feedUnit') },
+    {
+      v: n(d.issues),
+      l: t('stats.issues'),
+      u: d.firstIssue
+        ? t('stats.issuesUnit', { date: format.dateTime(new Date(`${d.firstIssue.slice(0, 10)}T12:00:00Z`), { month: 'long', year: 'numeric' }) })
+        : '',
+    },
+    { v: n(d.races), l: t('stats.races'), u: t('stats.racesUnit', { count: n(d.results) }) },
+    { v: n(d.glossary), l: t('stats.glossary'), u: t('stats.glossaryUnit') },
+  ];
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    url: localeUrl(locale, '/about/'),
+    name: t('metaTitle'),
+    mainEntity: {
+      '@type': 'Person',
+      name,
+      url: `${SITE_URL}/about`,
+      jobTitle: 'Onboarding & Estimating Coordinator',
+      worksFor: { '@type': 'Organization', name: 'Verst Logistics' },
+      knowsAbout: ['Formula 1', 'Supply chain operations', 'Sports business'],
+    },
+    publisher: { '@type': 'Organization', name: 'PaddockIntel', url: SITE_URL },
+  };
+
   return (
-    <main className="bg-bg min-h-screen px-5 py-12 max-w-2xl mx-auto">
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <main className={`theme-dusk ${duskSans.variable} min-h-screen`}>
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-5 pt-6 pb-16 flex flex-col gap-4">
+          <nav aria-label={tCrumbs('crumbsAria')} className="dusk-mono text-[11.5px] tracking-[0.04em] text-[color:var(--dusk-muted)]">
+            <Link href="/" className="hover:text-[color:var(--dusk-ink)]">{t('crumbHome')}</Link> / {t('crumb')}
+          </nav>
 
-      {/* 00 · Top label */}
-      <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-2 border-b border-border pb-3 mb-8">
-        00 · About PaddockIntel
-      </p>
-
-      {/* Hero */}
-      <h1 className="font-display text-[clamp(1.7rem,4.5vw,2.5rem)] uppercase text-text-1 leading-[0.93] tracking-[-0.03em]">
-        Formula 1 moves at<br />
-        200 miles per hour.<br />
-        The decisions that determine<br />
-        winners and losers happen faster.
-      </h1>
-
-      <p className="font-prose text-text-1 leading-relaxed mt-6">
-        Paddock Intel decodes the operational intelligence, strategic execution, and economic
-        calculations that transform grid positions into podium finishes—and racing teams into
-        billion-dollar businesses.
-      </p>
-
-      {/* 01 · What We Cover */}
-      <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-2 border-b border-border pb-3 mt-12 mb-0">
-        01 · What We Cover
-      </p>
-      <ul className="grid grid-cols-1 sm:grid-cols-3 border-l border-b border-border">
-        {PILLARS.map((p) => (
-          <li key={p.label} className="border-r border-t border-border p-5 flex flex-col gap-2">
-            <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2">
-              {p.label}
-            </span>
-            <p className="font-prose text-sm text-text-1 leading-relaxed">{p.body}</p>
-          </li>
-        ))}
-      </ul>
-
-      {/* 02 · Why This Perspective Matters */}
-      <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-2 border-b border-border pb-3 mt-12 mb-6">
-        02 · Why This Perspective Matters
-      </p>
-      <p className="font-prose text-sm text-text-2 leading-relaxed mb-5">
-        Most F1 media covers what happened. Paddock Intel explains why it happened and what it cost.
-      </p>
-
-      <div className="space-y-3">
-        <p className="font-prose text-sm text-text-1 leading-relaxed border-l-2 border-terracotta pl-4">
-          When a team executes a one-stop strategy while competitors commit to two stops, that&apos;s not
-          luck—it&apos;s calculated risk backed by operational execution, supply chain readiness, and
-          economic incentive structures.
-        </p>
-        <p className="font-prose text-sm text-text-1 leading-relaxed border-l-2 border-terracotta pl-4">
-          When a sponsor signs a $90 million deal with the grid&apos;s worst-performing team, that&apos;s not
-          irrational—it&apos;s defensive market positioning in a proxy war for consumer attention.
-        </p>
-        <p className="font-prose text-sm text-text-1 leading-relaxed border-l-2 border-terracotta pl-4">
-          When Red Bull invests $500 million to become an engine manufacturer, that&apos;s not
-          ambition—it&apos;s vertical integration to control competitive destiny and enterprise valuation.
-        </p>
-      </div>
-
-      <p className="font-prose text-sm text-text-2 leading-relaxed mt-5">
-        The numbers tell the real story. The operations determine the outcome.
-      </p>
-
-      {/* 03 · Who's Behind This */}
-      <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-2 border-b border-border pb-3 mt-12 mb-6">
-        03 · Who&apos;s Behind This
-      </p>
-
-      <p className="font-prose text-text-1 leading-relaxed mb-5">
-        I&apos;m Ismael, and I analyze Formula 1 through the lens of supply chain operations and
-        business strategy.
-      </p>
-
-      <div className="border border-border">
-        <div className="flex gap-4 px-4 py-3 border-b border-border-subtle">
-          <span className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-2 w-20 shrink-0">
-            Current
-          </span>
-          <span className="font-mono text-[11px] text-text-1">
-            Onboarding & Estimating Coordinator · Verst Logistics
-          </span>
-        </div>
-        <div className="flex gap-4 px-4 py-3 border-b border-border-subtle">
-          <span className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-2 w-20 shrink-0">
-            Previous
-          </span>
-          <span className="font-mono text-[11px] text-text-1">
-            Production Planner · Jabil (Fortune 500 Manufacturing)
-          </span>
-        </div>
-        <div className="flex gap-4 px-4 py-3">
-          <span className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-2 w-20 shrink-0">
-            Clients
-          </span>
-          <span className="font-mono text-[11px] text-text-1">
-            P&G · Unilever · Sazerac (Fortune 100 scale)
-          </span>
-        </div>
-      </div>
-
-      {bio?.split('\n\n').map((paragraph, i) => (
-        <p
-          key={i}
-          className={`font-prose text-sm text-text-2 leading-relaxed ${i === 0 ? 'mt-5' : 'mt-3'}`}
-        >
-          {paragraph}
-        </p>
-      ))}
-
-      {/* 04 · Philosophy */}
-      <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-2 border-b border-border pb-3 mt-12 mb-0">
-        04 · The Paddock Intel Philosophy
-      </p>
-      <ol className="border-b border-border">
-        {PHILOSOPHY.map((item) => (
-          <li key={item.num} className="py-5 border-b border-border-subtle flex gap-5 last:border-b-0">
-            <span className="font-mono text-[11px] text-text-3 tracking-[0.06em] mt-0.5 shrink-0">
-              {item.num} ·
-            </span>
-            <div>
-              <h3 className="font-display uppercase text-text-1 text-base leading-tight">
-                {item.title}
-              </h3>
-              <p className="font-prose text-sm text-text-2 leading-relaxed mt-1.5">{item.body}</p>
+          {/* Cover */}
+          <header className="dusk-card dusk-cover px-5 py-7 md:px-9 md:py-9 flex flex-col gap-4">
+            <p className="dusk-mono uppercase text-[12px] tracking-[0.12em] text-[color:var(--dusk-sunset)] m-0">{t('kicker')}</p>
+            <h1 className="dusk-display m-0 text-[clamp(2rem,4.6vw,3.6rem)] leading-[1.02] tracking-[-0.02em] max-w-[22ch] text-balance">{t('headline')}</h1>
+            <p className="dusk-hero-dek m-0 text-[16px] md:text-[18.5px] leading-[1.55] max-w-[64ch]">{t('dek')}</p>
+            <div className="flex flex-wrap items-center gap-x-[18px] gap-y-2 dusk-mono uppercase text-[11.5px] tracking-[0.05em] text-[#E2CEC6]">
+              <span>
+                {t('byline')} <span className="text-[color:var(--dusk-ink)] font-medium">{name}</span>
+              </span>
+              <span>{t('independent')}</span>
             </div>
-          </li>
-        ))}
-      </ol>
+          </header>
 
-      {/* 05 · What You Get */}
-      <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-2 border-b border-border pb-3 mt-12 mb-0">
-        05 · What You Get
-      </p>
-      <div className="border-b border-border">
-        <div className="py-5 border-b border-border-subtle">
-          <div className="flex items-baseline gap-3">
-            <span className="font-display uppercase text-text-1 text-base">Weekly Newsletter</span>
-            <span className="font-mono text-[10px] text-terracotta uppercase tracking-[0.08em]">Free</span>
+          {/* PaddockIntel in numbers -- live counts */}
+          <section aria-label={t('stats.aria')} className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            {stats.map((s) => (
+              <div key={s.l} className="dusk-card p-4 sm:p-6 flex flex-col gap-2.5 min-w-0">
+                <p className="dusk-display tabular-nums text-[clamp(1.6rem,4vw,2.4rem)] leading-none tracking-[-0.03em] m-0">{s.v}</p>
+                <p className="dusk-mono uppercase text-[11px] tracking-[0.07em] leading-[1.45] text-[color:var(--dusk-peach)] m-0">{s.l}</p>
+                {s.u && <p className="text-[13px] text-[color:var(--dusk-ink-2)] m-0">{s.u}</p>}
+              </div>
+            ))}
+          </section>
+
+          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-4 items-start">
+            <article className="dusk-sheet relative rounded-[24px] px-4 py-7 md:px-10 md:py-10 lg:px-14 lg:py-12 min-w-0">
+              <div className="max-w-[64ch] mx-auto">
+                <p className="dusk-mono uppercase text-[11px] tracking-[0.1em] text-[color:var(--text-3)] m-0 mb-2">{t('who.label')}</p>
+                <h2 className="dusk-display m-0 text-[clamp(1.35rem,2vw,1.6rem)] leading-tight tracking-[-0.01em]">{t('who.heading')}</h2>
+
+                <dl className="my-6 rounded-[14px] overflow-hidden border border-[color:var(--border)] bg-[color:var(--surface)] text-[15px]">
+                  {[
+                    [t('who.current'), t('who.currentValue')],
+                    [t('who.previous'), t('who.previousValue')],
+                    [t('who.clients'), t('who.clientsValue')],
+                  ].map(([k, v]) => (
+                    <div key={k} className="grid grid-cols-[100px_minmax(0,1fr)] sm:grid-cols-[110px_minmax(0,1fr)] gap-3 px-3.5 py-2.5 border-t border-[color:var(--border)] first:border-t-0">
+                      <dt className="dusk-mono uppercase text-[11px] tracking-[0.07em] text-[color:var(--text-3)] pt-0.5">{k}</dt>
+                      <dd className="m-0">{v}</dd>
+                    </div>
+                  ))}
+                </dl>
+
+                {bio.map((p, i) => (
+                  <p key={i} className="font-prose text-[clamp(17px,1.25vw,19px)] leading-[1.7] m-0 mb-4">{p}</p>
+                ))}
+
+                {d.why.length > 0 && (
+                  <section aria-labelledby="about-why" className="mt-10">
+                    <h2 id="about-why" className="dusk-display m-0 mb-2 text-[clamp(1.35rem,2vw,1.6rem)] leading-tight tracking-[-0.01em]">{t('why.heading')}</h2>
+                    <p className="font-prose text-[clamp(17px,1.25vw,19px)] leading-[1.7] m-0 mb-3">{t('why.intro')}</p>
+                    <ul className="m-0 p-0 list-none">
+                      {d.why.map((w) => (
+                        <li key={w.slug} className="grid grid-cols-1 sm:grid-cols-[120px_minmax(0,1fr)] gap-x-4 gap-y-1 py-3.5 border-t border-[color:var(--border)] first:border-t-0 items-baseline">
+                          <span className="dusk-display tabular-nums text-[1.35rem] leading-tight text-[color:var(--accent)]">{w.stat.value}</span>
+                          <div className="min-w-0">
+                            <p className="m-0 text-[16px] leading-[1.5] font-semibold">{w.title}</p>
+                            <p className="m-0 mt-1 dusk-mono uppercase text-[10.5px] tracking-[0.05em] text-[color:var(--text-3)]">
+                              {w.stat.label}{w.stat.unit ? ` · ${w.stat.unit}` : ''}
+                            </p>
+                            <Link href={`/${w.slug}`} className="inline-block mt-1.5 text-[14px] font-semibold text-[color:var(--accent)] hover:underline">{t('why.read')}</Link>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
+
+                <section aria-labelledby="about-how" className="mt-10">
+                  <h2 id="about-how" className="dusk-display m-0 mb-2 text-[clamp(1.35rem,2vw,1.6rem)] leading-tight tracking-[-0.01em]">{t('how.heading')}</h2>
+                  <ol className="m-0 p-0 list-none">
+                    {principles.map((p, i) => (
+                      <li key={p.title} className="grid grid-cols-[36px_minmax(0,1fr)] gap-2 py-3.5 border-t border-[color:var(--border)] first:border-t-0">
+                        <span className="dusk-mono text-[12px] text-[color:var(--accent)] pt-1">{String(i + 1).padStart(2, '0')}</span>
+                        <div>
+                          <p className="m-0 text-[16.5px] font-semibold">{p.title}</p>
+                          <p className="m-0 mt-1 text-[15.5px] leading-[1.55] text-[color:var(--text-2)]">{p.body}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+              </div>
+            </article>
+
+            <aside className="flex flex-col gap-4 lg:sticky lg:top-20">
+              <section className="dusk-card p-5 flex flex-col gap-2" aria-labelledby="about-read">
+                <h2 id="about-read" className="dusk-label m-0 font-normal">{t('read.title')}</h2>
+                <ul className="m-0 p-0 list-none">
+                  {readItems.map((r) => (
+                    <li key={r.name} className="py-3 border-t border-[color:var(--dusk-line)] first:border-t-0">
+                      <Link href={r.href} className="text-[15px] font-semibold hover:text-[color:var(--dusk-peach)]">{r.name}</Link>
+                      <p className="m-0 mt-1 text-[13.5px] text-[color:var(--dusk-ink-2)]">{r.desc}</p>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+              <NewsletterBand title={t('subTitle')} />
+            </aside>
           </div>
-          <p className="font-prose text-sm text-text-2 leading-relaxed mt-1.5">
-            Economic and operational analysis of major F1 business developments. Sponsor deals. Team
-            budgets. Market movements. Strategic decisions. Delivered to your inbox.
-          </p>
-        </div>
-        <div className="py-5 border-b border-border-subtle">
-          <div className="flex items-baseline gap-3">
-            <span className="font-display uppercase text-text-1 text-base">
-              Race Weekend Intelligence
-            </span>
-            <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.08em]">
-              Coming Soon
-            </span>
-          </div>
-          <p className="font-prose text-sm text-text-2 leading-relaxed mt-1.5">
-            Real-time operational analysis during Grand Prix weekends. Strategy execution. Pit stop
-            efficiency. Risk decisions. The paddock intelligence that explains how races are won in
-            the garage, not just on track.
-          </p>
-        </div>
-        <div className="py-5">
-          <div className="flex items-baseline gap-3">
-            <span className="font-display uppercase text-text-1 text-base">Premium Analysis</span>
-            <span className="font-mono text-[10px] text-text-3 uppercase tracking-[0.08em]">
-              Coming Soon
-            </span>
-          </div>
-          <p className="font-prose text-sm text-text-2 leading-relaxed mt-1.5">
-            Deep-dive reports. Team financial health assessments. Season-long strategy tracking.
-            Proprietary data tables. Institutional-grade intelligence for investors, analysts, and
-            industry professionals.
-          </p>
-        </div>
-      </div>
 
-      {/* 06 · Who This Is For */}
-      <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-2 border-b border-border pb-3 mt-12 mb-6">
-        06 · Who This Is For
-      </p>
-      <p className="font-prose text-sm text-text-2 leading-relaxed mb-4">
-        Paddock Intel is for people who want to understand Formula 1&apos;s invisible layer—the operations,
-        economics, and strategic execution that racing media doesn&apos;t cover because they require supply
-        chain expertise, financial analysis, and operational thinking to decode.
-      </p>
-      <ul className="space-y-2">
-        {AUDIENCE.map((item) => (
-          <li key={item} className="flex items-start gap-3">
-            <span className="font-mono text-[11px] text-terracotta mt-0.5 shrink-0">—</span>
-            <span className="font-prose text-sm text-text-1">{item}</span>
-          </li>
-        ))}
-      </ul>
+          <section aria-labelledby="about-cover" className="flex flex-col gap-4 mt-2">
+            <div className="pb-2 border-b border-[color:var(--dusk-line)]">
+              <h2 id="about-cover" className="dusk-display m-0 text-[1.35rem] leading-tight">{t('cover.heading')}</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {pillars.map((p) => (
+                <div key={p.title} className="dusk-card p-5 sm:p-[22px] flex flex-col gap-2">
+                  <h3 className="m-0 text-[17px] font-semibold">{p.title}</h3>
+                  <p className="m-0 text-[14.5px] text-[color:var(--dusk-ink-2)]">{p.body}</p>
+                </div>
+              ))}
+            </div>
+          </section>
 
-      {/* 07 · Disclaimer */}
-      <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-text-2 border-b border-border pb-3 mt-12 mb-6">
-        07 · {tDisclaimer('heading')}
-      </p>
-      <p className="font-prose text-sm text-text-2 leading-relaxed mb-4">
-        {tDisclaimer('affiliation')}
-      </p>
-      <p className="font-prose text-sm text-text-2 leading-relaxed">
-        {tDisclaimer('accuracy')}
-      </p>
-
-      <p className="mt-12 pt-6 border-t border-border-subtle font-mono text-[11px] uppercase tracking-[0.06em] text-text-3">
-        PaddockIntel · paddockintel.com
-      </p>
-    </main>
+          <section className="dusk-card p-5 sm:p-6 flex flex-col gap-3" aria-labelledby="about-disclaimer">
+            <h2 id="about-disclaimer" className="dusk-label m-0 font-normal">{tDisclaimer('heading')}</h2>
+            <p className="m-0 text-[13.5px] text-[color:var(--dusk-ink-2)]">{tDisclaimer('affiliation')}</p>
+            <p className="m-0 text-[13.5px] text-[color:var(--dusk-ink-2)]">{tDisclaimer('accuracy')}</p>
+          </section>
+        </div>
+      </main>
+    </>
   );
 }

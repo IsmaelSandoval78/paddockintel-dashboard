@@ -1045,6 +1045,116 @@
     "about": "Acerca de",
     "privacy": "Política de Privacidad"
   },
+  "about": {
+    "metaTitle": "Sobre PaddockIntel — Ismael Sandoval",
+    "metaDescription": "Inteligencia económica de la F1 por Ismael Sandoval: experiencia en operaciones y cadena de suministro Fortune 500 aplicada a la estrategia y la economía de los equipos.",
+    "crumbHome": "Inicio",
+    "crumb": "Sobre nosotros",
+    "kicker": "Sobre PaddockIntel",
+    "headline": "La Fórmula 1 va a más de 300 km/h. Las decisiones que la definen van más rápido.",
+    "dek": "PaddockIntel descifra la inteligencia operativa, la ejecución estratégica y los cálculos económicos que convierten posiciones de salida en podios — y equipos de carreras en negocios de miles de millones.",
+    "byline": "Escrito y editado por",
+    "independent": "Publicación independiente",
+    "stats": {
+      "aria": "PaddockIntel en números",
+      "articles": "Artículos publicados",
+      "articlesUnit": "{count} entre inglés, español y portugués",
+      "sources": "Fuentes citadas",
+      "sourcesUnit": "en los artículos en inglés, cada una enlazada",
+      "feed": "Historias del Feed",
+      "feedUnit": "cada una con nuestros propios datos encima",
+      "issues": "Números del Resumen Semanal",
+      "issuesUnit": "desde {date}",
+      "races": "Grandes Premios en nuestra base de datos",
+      "racesUnit": "{count} resultados de carrera, de 1950 a hoy",
+      "glossary": "Términos del glosario",
+      "glossaryUnit": "hasta tres profundidades cada uno, con fuentes"
+    },
+    "who": {
+      "label": "Quién está detrás",
+      "heading": "Soy Ismael, y analizo la Fórmula 1 desde las operaciones de cadena de suministro y la estrategia de negocio.",
+      "current": "Actual",
+      "currentValue": "Onboarding & Estimating Coordinator · Verst Logistics",
+      "previous": "Anterior",
+      "previousValue": "Production Planner · Jabil (Fortune 500)",
+      "clients": "Clientes",
+      "clientsValue": "P&G · Unilever · Sazerac",
+      "bio": [
+        "Sigo la Fórmula 1 desde la época de Schumacher y Montoya: el dominio de Ferrari desafiado, carrera tras carrera, por un piloto colombiano que se abría paso desde atrás, primero con Williams y después con McLaren. Esa fue mi puerta de entrada al deporte, y no he dejado de seguirlo desde entonces. En 2025 fui al Gran Premio de Las Vegas en persona.",
+        "Fuera de la pista, trabajo como Onboarding & Estimating Coordinator en Verst Logistics, una empresa de empaque por contrato y comanufactura, donde sigo trabajando con clientes como P&G, Unilever y Sazerac. Antes de Verst fui Production Planner en Jabil (Fortune 500), y antes trabajé en compras minoristas y en operaciones de almacén de Amazon.",
+        "Esa combinación — años siguiendo la F1 de cerca y una carrera construida sobre cotizaciones, modelos de costos operativos y hacer que los números cuadren para clientes de escala Fortune 500 — es de donde nace PaddockIntel: la misma disciplina analítica, puesta a entender la economía real detrás del deporte."
+      ]
+    },
+    "why": {
+      "heading": "Por qué importa esta perspectiva",
+      "intro": "La mayoría de los medios de F1 cuentan qué pasó. PaddockIntel explica por qué pasó y cuánto costó. Tres números de nuestros propios análisis publicados:",
+      "read": "Leer el análisis →"
+    },
+    "how": {
+      "heading": "Cómo trabajamos",
+      "principles": [
+        {
+          "title": "Primero el negocio, después el contexto de carrera",
+          "body": "Analizamos la F1 como un negocio en el que la excelencia operativa y la estrategia económica definen los resultados deportivos — no como un blog de carreras."
+        },
+        {
+          "title": "Cada número tiene una fuente",
+          "body": "Las cifras se rastrean hasta una fuente primaria o hasta nuestra propia base de datos, y las fuentes aparecen en cada artículo. Si no podemos verificar un número, no lo publicamos."
+        },
+        {
+          "title": "Profundidad operativa",
+          "body": "La mayoría de los análisis se quedan en \"gran decisión de estrategia\". Nosotros explicamos la logística, los incentivos y los cálculos de riesgo que hicieron posible esa decisión — o imposible."
+        },
+        {
+          "title": "Las correcciones son visibles",
+          "body": "Cuando nos equivocamos con un número, lo corregimos y lo decimos en la página, con la fecha y qué cambió."
+        }
+      ]
+    },
+    "read": {
+      "title": "Qué puedes leer",
+      "items": [
+        {
+          "name": "Resumen Semanal",
+          "desc": "La semana en la economía de la F1, gratis por correo.",
+          "href": "/weekly"
+        },
+        {
+          "name": "El Feed",
+          "desc": "Historias diarias con nuestros propios datos encima.",
+          "href": "/feed"
+        },
+        {
+          "name": "Reportes de carrera y análisis",
+          "desc": "Cada fin de semana de Gran Premio, con nuestros datos de carrera.",
+          "href": "/"
+        },
+        {
+          "name": "Glosario F1",
+          "desc": "Los términos detrás de las reglas y del dinero.",
+          "href": "/glossary"
+        }
+      ]
+    },
+    "subTitle": "Recibe el Resumen Semanal en tu correo.",
+    "cover": {
+      "heading": "Qué cubrimos",
+      "pillars": [
+        {
+          "title": "Inteligencia económica de la F1",
+          "body": "Presupuestos de los equipos, acuerdos de patrocinio, estrategia del tope de gastos, mercado de pilotos, inversión de los fabricantes y cómo se reparten los ingresos."
+        },
+        {
+          "title": "Estrategia operativa",
+          "body": "Decisiones bajo presión: neumáticos, paradas en boxes, logística del fin de semana de carrera y los cálculos de riesgo detrás."
+        },
+        {
+          "title": "Cadena de suministro y logística",
+          "body": "La infraestructura que nadie ve: transporte a lo largo del calendario, repuestos, del taller a la pista, compras."
+        }
+      ]
+    }
+  },
   "aboutDisclaimer": {
     "heading": "Descargo de responsabilidad",
     "affiliation": "PaddockIntel es una publicación independiente. No está afiliada, asociada, autorizada ni respaldada por Formula 1, Formula One Licensing B.V., la FIA, ni ningún equipo o piloto de Fórmula 1. F1, FORMULA 1, GRAND PRIX y las marcas relacionadas son marcas registradas de sus respectivos propietarios y se usan aquí únicamente con fines de identificación editorial.",
