@@ -158,7 +158,7 @@ Prototyped from the live rows and approved.
   now matches the summary, checked against the GPFans source.
 
 ## About (2026-10-13)
-Prototyped and approved. `app/[locale]/about/` on the dusk shell: cover, "PaddockIntel in numbers"
+Prototyped and reviewed with the founder. `app/[locale]/about/` on the dusk shell: cover, "PaddockIntel in numbers"
 (live counts: articles, cited sources, Feed stories, Weekly issues, races and results in the
 database, glossary terms), the bio and career table on the light sheet, "why this perspective
 matters" as three figures read live from our own published articles in the reader's locale, four
