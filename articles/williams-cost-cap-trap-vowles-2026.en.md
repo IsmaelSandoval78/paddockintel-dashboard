@@ -17,7 +17,7 @@ stats:
   - value: "5%"
     label: "PODIUM SHARE FOR TEAMS OUTSIDE THE TOP 4"
     unit: "down from 10% before the cost cap era"
-  - value: "238 pts"
+  - value: "261 pts"
     label: "WILLIAMS' GAP TO 4TH PLACE LAST SEASON"
     unit: "despite taking 3 podiums of its own"
 
@@ -52,7 +52,7 @@ The cost cap sets the same hard ceiling for every team regardless of where they'
 
 ## Economic impact
 
-The clearest number is Williams's own season: a 238-point gap to fourth place, despite the team taking three podiums of its own. That's not a team with no competitive pockets -- it's a team that can produce a great weekend but can't sustain the infrastructure to do it consistently against teams that don't have to spend on catching up. Multiply that gap across the whole non-top-four tier and Vowles's 83/17 points split and 5% podium share follow directly. But two of his peers read the same data differently. Ferrari's Fred Vasseur credits the cap with preventing "five or six teams in bankruptcy or almost in bankruptcy" before 2018 and with attracting new investment into the sport -- the same financial-sustainability goal Vowles agrees was met, framed as the real achievement rather than a consolation prize. Alpine's Flavio Briatore doesn't contest the competitive numbers at all; he blames how the cap is administered, pointing to loopholes between spending categories, and wants everything folded into one budget line rather than several that teams can shuffle between.
+The clearest number is Williams's own season: a 261-point gap to fourth place, despite the team taking three podiums of its own. That's not a team with no competitive pockets -- it's a team that can produce a great weekend but can't sustain the infrastructure to do it consistently against teams that don't have to spend on catching up. Multiply that gap across the whole non-top-four tier and Vowles's 83/17 points split and 5% podium share follow directly. But two of his peers read the same data differently. Ferrari's Fred Vasseur credits the cap with preventing "five or six teams in bankruptcy or almost in bankruptcy" before 2018 and with attracting new investment into the sport -- the same financial-sustainability goal Vowles agrees was met, framed as the real achievement rather than a consolation prize. Alpine's Flavio Briatore doesn't contest the competitive numbers at all; he blames how the cap is administered, pointing to loopholes between spending categories, and wants everything folded into one budget line rather than several that teams can shuffle between.
 
 ## The panorama
 
@@ -61,3 +61,5 @@ This is the same entry-fee economics playing out from the inside. [The anti-dilu
 ## Verdict
 
 Vowles isn't accusing F1 of a broken rule -- he's describing a rule that did exactly what a hard spending ceiling with no mechanism for closing starting-position gaps was always going to do: freeze relative advantage in place once imposed, rather than erode it over time. The financial-sustainability goal worked because it was the one goal a flat cap is naturally suited to deliver. Sporting equality and field compression needed something else entirely -- a floor-closing mechanism, not just a ceiling -- and neither Vasseur's nor Briatore's response actually disputes that gap; they're arguing about whether it's worth the trade, and how to patch the administration around it. The 83-17 split is the real number from this one. What happens to it is a decision F1's governance has to make deliberately, not a bug anyone can patch mid-season.
+
+*Correction, October 13, 2026: an earlier version of this article said Williams finished 238 points behind fourth place in 2025. The correct gap is 261 points (Ferrari 398, Williams 137, per our final 2025 constructors' standings). The figure has been corrected in the text and in the stat box.*
