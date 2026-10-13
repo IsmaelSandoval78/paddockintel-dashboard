@@ -17,7 +17,7 @@ stats:
   - value: "5%"
     label: "FATIA DE PÓDIOS DAS EQUIPES FORA DO TOP 4"
     unit: "antes era 10%, antes da era do cost cap"
-  - value: "238 pts"
+  - value: "261 pts"
     label: "DIFERENÇA DA WILLIAMS PARA O 4º LUGAR NA TEMPORADA PASSADA"
     unit: "apesar de somar 3 pódios próprios"
 
@@ -52,7 +52,7 @@ O teto de gastos impõe o mesmo limite rígido para todas as equipes, não impor
 
 ## Impacto econômico
 
-O número mais claro é a própria temporada da Williams: uma diferença de 238 pontos para o quarto lugar, apesar de a equipe ter somado três pódios próprios. Não é uma equipe sem momentos competitivos -- é uma equipe que consegue montar um ótimo fim de semana, mas não consegue sustentar a infraestrutura para fazer isso de forma consistente contra equipes que não precisam gastar para alcançar o nível dela. Multiplique essa diferença por todo o resto do pelotão fora do top 4 e saem direto a divisão de 83/17 em pontos e os 5% de pódios que Vowles menciona. Mas dois de seus colegas leem os mesmos dados de forma diferente. Fred Vasseur, da Ferrari, credita ao teto ter evitado que "cinco ou seis equipes" quebrassem ou chegassem perto da falência antes de 2018, e ter atraído novos investimentos para o esporte -- o mesmo objetivo de sustentabilidade financeira que Vowles admite ter sido cumprido, mas colocado como a verdadeira conquista, não como um prêmio de consolação. Flavio Briatore, da Alpine, não contesta em nada os números competitivos; ele culpa a forma como o teto é administrado, apontando brechas entre categorias de gasto, e pede que tudo entre numa única linha de orçamento em vez de várias entre as quais as equipes podem mover dinheiro.
+O número mais claro é a própria temporada da Williams: uma diferença de 261 pontos para o quarto lugar, apesar de a equipe ter somado três pódios próprios. Não é uma equipe sem momentos competitivos -- é uma equipe que consegue montar um ótimo fim de semana, mas não consegue sustentar a infraestrutura para fazer isso de forma consistente contra equipes que não precisam gastar para alcançar o nível dela. Multiplique essa diferença por todo o resto do pelotão fora do top 4 e saem direto a divisão de 83/17 em pontos e os 5% de pódios que Vowles menciona. Mas dois de seus colegas leem os mesmos dados de forma diferente. Fred Vasseur, da Ferrari, credita ao teto ter evitado que "cinco ou seis equipes" quebrassem ou chegassem perto da falência antes de 2018, e ter atraído novos investimentos para o esporte -- o mesmo objetivo de sustentabilidade financeira que Vowles admite ter sido cumprido, mas colocado como a verdadeira conquista, não como um prêmio de consolação. Flavio Briatore, da Alpine, não contesta em nada os números competitivos; ele culpa a forma como o teto é administrado, apontando brechas entre categorias de gasto, e pede que tudo entre numa única linha de orçamento em vez de várias entre as quais as equipes podem mover dinheiro.
 
 ## O panorama
 
@@ -61,3 +61,5 @@ O número mais claro é a própria temporada da Williams: uma diferença de 238 
 ## Veredito
 
 Vowles não está acusando a F1 de ter uma regra quebrada -- ele está descrevendo uma regra que fez exatamente o que um teto de gastos rígido, sem nenhum mecanismo para fechar as diferenças no ponto de partida, sempre iria fazer: congelar a vantagem relativa no lugar onde ela estava no momento em que o teto foi imposto, em vez de corroê-la com o tempo. O objetivo de sustentabilidade financeira funcionou porque era o único objetivo para o qual um teto plano é naturalmente feito. A equidade esportiva e a compressão do pelotão precisavam de outra coisa completamente diferente -- um mecanismo que feche o piso, não só um teto -- e nem a resposta de Vasseur nem a de Briatore realmente contesta essa diferença; eles discutem se vale a pena o trade-off, e como remendar a administração em volta disso. O 83-17 é o número real desta reportagem. O que fazer com ele é uma decisão que a governança da F1 precisa tomar de propósito, não um bug que alguém possa consertar no meio da temporada.
+
+*Correção, 13 de outubro de 2026: uma versão anterior deste artigo dizia que a Williams terminou 2025 a 238 pontos do quarto lugar. A diferença correta é de 261 pontos (Ferrari 398, Williams 137, segundo nossa classificação final de construtores de 2025). O número foi corrigido no texto e no quadro de dados.*
