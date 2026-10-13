@@ -1,5 +1,5 @@
 // Shared loading UI for the site's highest-traffic routes (Hub home,
-// Magazine home, an article, /feed, /glossary). Not a spinner -- DESIGN.md's
+// Magazine home). Not a spinner -- DESIGN.md's
 // "motion maps to meaning" rule means even a loading state should read as an
 // F1 concept, not a generic UI widget. "Reading telemetry" is what the data
 // layer is actually doing (a Supabase query resolving), so that's the copy.
