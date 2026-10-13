@@ -172,3 +172,22 @@ disclaimer. `/author/[slug]` keeps redirecting here.
 - All copy moved to `about` (EN/ES/PT); English reads the bio from `authors`, ES/PT use translated
   paragraphs. Added canonical + en/es/pt hreflang and AboutPage/Person JSON-LD (name, url, job,
   employer, no invented photo or social profiles).
+
+## Delta Ribbon methodology (2026-10-13)
+Prototyped and reviewed with the founder. `app/[locale]/methodology/delta-ribbon/` on the dusk shell:
+cover, live coverage counts across every load (races, pairings, stored samples, snaps/braids,
+defends), six sections on the light sheet, and a worked example read from the stored rows of the
+first load (Belgian GP 2026, Leclerc vs Verstappen): a server-rendered scatter of every sample on
+the same square-root scale as the ribbon width, the lead changes in order, defends by lap, and the
+last sample next to the official result.
+- Corrected the old copy: samples are placed by the position of whichever driver is ahead, not each
+  driver's own; the exact event rules (snap, 400 m braid, defend under 1.0s reopening by 0.3s) are
+  now documented from `scripts/load-delta-ribbon.ts`.
+- Three limits found in the data and now stated on the page: a snap can be a pit stop (Spa lap 18
+  follows Verstappen's lap-17 stop); laps where one of the two leads the race carry 0–3 samples
+  (gap to leader is undefined for the leader; Spa laps 29–33 have none); the Hub's "final gap" is
+  the last sample (+9.811s), not the official margin (+9.634s).
+- Known Hub follow-up, not changed here: the circuit page draws all race markers over the last lap.
+- All copy moved to `methodology` (EN/ES/PT); TechArticle JSON-LD; added to the sitemap in all three
+  locales; the Hub's methodology link and the ES/PT "snap" labels ("Rebase", "Ultrapassagem") now
+  go through i18n as "Cambio de líder" / "Troca de líder".

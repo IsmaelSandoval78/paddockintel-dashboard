@@ -212,13 +212,14 @@
     "deltaRibbon": {
       "title": "Fita de Delta",
       "methodology": "Delta de tempo histórico entre {driverA} e {driverB} em {raceName}. A largura da fita = tamanho da diferença, a cor = quem estava à frente.",
-      "snap": "Ultrapassagem",
+      "snap": "Troca de líder",
       "defend": "Defesa",
       "braid": "Trança",
       "corner": "Curva",
       "lap": "Volta",
       "finalGap": "Diferença final",
-      "vs": "vs"
+      "vs": "vs",
+      "methodologyLink": "Metodologia: histórico, não uma projeção"
     },
     "qualifying": {
       "title": "Qualificação",
@@ -1149,6 +1150,94 @@
           "body": "A infraestrutura que ninguém vê: frete ao longo do calendário, peças de reposição, da fábrica à pista, compras."
         }
       ]
+    }
+  },
+  "methodology": {
+    "metaTitle": "Metodologia da Fita de Delta: como o gráfico funciona",
+    "metaDescription": "Como a Fita de Delta é feita com os tempos da OpenF1: o que mede, como detecta trocas de líder, seus limites e o que ela não pretende afirmar.",
+    "crumbHome": "Início",
+    "crumbAbout": "Sobre",
+    "kicker": "Metodologia",
+    "headline": "Fita de Delta",
+    "dek": "Nosso gráfico para mostrar como a diferença entre dois pilotos abriu e fechou ao longo de uma volta. Esta página explica exatamente o que ele calcula, de onde vêm os dados, onde ele fica devendo e o que ele não pretende afirmar.",
+    "byline": "Criado e mantido por",
+    "source": "Dados: OpenF1",
+    "notProjection": "Histórico, não uma projeção",
+    "stats": {
+      "aria": "Cobertura da Fita de Delta",
+      "races": "Corridas carregadas",
+      "racesUnit": "{count, plural, one {# dupla de pilotos} other {# duplas de pilotos}}",
+      "samples": "Amostras de diferença",
+      "samplesUnit": "{count, plural, one {em # volta de corrida} other {em # voltas de corrida}}",
+      "snaps": "Trocas de líder",
+      "snapsUnit": "{count, plural, =0 {nenhuma trança} one {# trança} other {# tranças}}",
+      "defends": "Defesas",
+      "defendsUnit": "a menos de 1,0 s, sem ultrapassar"
+    },
+    "s1": {
+      "heading": "O que mostra",
+      "body": "A Fita de Delta é uma faixa desenhada sobre o traçado de um circuito. A <b>cor</b> mostra qual dos dois pilotos estava à frente em cada ponto da volta; a <b>largura</b> mostra o tamanho da diferença entre eles naquele ponto: fina significa uma disputa apertada, larga significa uma diferença grande. As marcas ao longo da faixa indicam os momentos em que os dados mostram uma troca de líder ou uma quase ultrapassagem."
+    },
+    "s2": {
+      "heading": "O que é medido",
+      "p1": "O dado base é a diferença oficial para o líder da corrida que a OpenF1 publica para cada carro, a cada poucos segundos. Em cada amostra, subtraímos a diferença do piloto A da do piloto B: o resultado é a diferença entre esses dois pilotos. Um valor positivo significa que A está à frente.",
+      "p2": "Cada amostra é posicionada na volta pela posição do piloto que está à frente naquele instante: somamos a distância entre os pontos de localização consecutivos daquele carro e dividimos pelo total daquela volta, o que dá uma posição de 0 a 100% independente do desenho do circuito. A largura usa escala de raiz quadrada, para que uma disputa de 0,3 s continue visível ao lado de uma diferença de 20 s; a escala chega no máximo à maior diferença da corrida ou a 8 s, o que for maior.",
+      "capExample": "Em {circuit}, são {cap} s.",
+      "p3": "A fita na página de um circuito desenha uma única volta: a última com dados, com o espaço entre as amostras preenchido para fechar o circuito. As marcas e as contagens ao lado cobrem a corrida inteira, então uma marca pode aparecer sobre a volta desenhada mesmo tendo acontecido em uma volta anterior."
+    },
+    "s3": {
+      "heading": "Como os eventos são detectados",
+      "intro": "Os eventos são encontrados depois, percorrendo em ordem de tempo a mesma série de diferenças armazenada. Nada é previsto.",
+      "snapTerm": "Troca de líder",
+      "snapDef": "O piloto à frente muda entre duas amostras consecutivas.",
+      "braidTerm": "Trança",
+      "braidDef": "Duas ou mais trocas de líder a menos de 400 metros uma da outra são agrupadas em uma única trança hachurada, em vez de marcas separadas.",
+      "defendTerm": "Defesa",
+      "defendDef": "O piloto de trás chega a menos de 1,0 s sem passar à frente, e depois a diferença volta a abrir mais de 0,3 s.",
+      "note": "Uma troca de líder significa que a ordem mudou nos dados de tempos, não necessariamente uma ultrapassagem na pista. Um pit stop muda a diferença em 20 segundos ou mais e também aparece como troca de líder."
+    },
+    "example": {
+      "heading": "Exemplo real: {circuit} {year}",
+      "raceLabel": "{race} {year}",
+      "intro": "O exemplo é o {race}, entre {a} e {b}. Todas as amostras armazenadas aparecem no gráfico.",
+      "ahead": "{driver} à frente",
+      "legendAhead": "{driver} à frente",
+      "legendLed": "Voltas em que um dos dois liderou a corrida",
+      "chartAria": "Diferença entre {a} e {b}, {race}, todas as amostras armazenadas",
+      "caption": "Diferença entre {a} e {b}, {race}, um ponto por amostra armazenada ({count}). Eixo vertical em escala de raiz quadrada, como a largura da fita. Fonte: OpenF1, via banco de dados da PaddockIntel.",
+      "snapsIntro": "{count, plural, one {A troca de líder:} other {As # trocas de líder, em ordem:}}",
+      "lap": "Volta {n}",
+      "snapAt": "{driver} à frente em {corner}, por {gap} s.",
+      "snap": "{driver} à frente, por {gap} s.",
+      "snapPit": "Não foi uma ultrapassagem na pista: {driver} fez um pit stop na volta {lap} ({secs} s no pit lane).",
+      "snapPitNoTime": "Não foi uma ultrapassagem na pista: {driver} fez um pit stop na volta {lap}.",
+      "defends": "{count, plural, one {A única defesa foi na volta {laps}.} other {As # defesas foram nas voltas {laps}.}}",
+      "gapIntro": "A última amostra da fita e o resultado oficial não coincidem exatamente, porque a última amostra não é tomada na linha de chegada:",
+      "lastSample": "Fita · última amostra, volta {lap}",
+      "official": "Resultado oficial",
+      "officialSub": "P{p1} e P{p2} na bandeirada"
+    },
+    "s5": {
+      "heading": "Fonte e cobertura",
+      "intro": "Tudo vem dos endpoints públicos da OpenF1 (voltas, localização do carro, dados do carro e intervalos), baixados uma vez por corrida por um script offline e armazenados no nosso banco de dados. As páginas nunca consultam a OpenF1 diretamente; elas leem o resultado armazenado. Disso saem três limites:",
+      "since": "<b>Só a partir de 2023.</b> A telemetria da OpenF1 começa na temporada 2023.",
+      "onePair": "<b>Uma corrida e uma dupla por vez.</b> Cada carga é preparada à mão. A página de um circuito sem carga não mostra a fita.",
+      "leader": "<b>Sem dados enquanto um dos dois lidera a corrida.</b> O dado base é a diferença para o líder, e o líder não tem diferença.",
+      "leaderExample": "Em {circuit}, as {count} voltas em que um dos dois liderou ({laps}) têm entre {minLed} e {maxLed} amostras cada, contra entre {minOther} e {maxOther} no restante.",
+      "leaderMissing": "{count, plural, one {A volta {laps} não tem nenhuma.} other {As voltas {laps} não têm nenhuma.}}",
+      "leaderEnd": "Por isso uma disputa pela liderança não pode ser desenhada assim."
+    },
+    "s6": {
+      "heading": "O que ela não é",
+      "body": "A Fita de Delta descreve uma sessão que já terminou. Ela não prevê, não projeta nem modela onde qualquer um dos pilotos poderia estar, e não traz nenhuma medida de incerteza. Cada cor, largura e marca é calculada a partir de telemetria registrada depois dos fatos."
+    },
+    "rail": {
+      "toc": "Nesta página",
+      "liveTitle": "Veja no Hub",
+      "liveBody": "{a} contra {b}, {race}, no Hub.",
+      "errorTitle": "Encontrou um erro?",
+      "errorBody": "As correções são feitas na própria página, com data e com o que mudou.",
+      "errorLink": "Como trabalhamos"
     }
   },
   "aboutDisclaimer": {

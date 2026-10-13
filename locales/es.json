@@ -212,13 +212,14 @@
     "deltaRibbon": {
       "title": "Cinta de Delta",
       "methodology": "Delta de tiempo histórico entre {driverA} y {driverB} en {raceName}. El grosor de la cinta = magnitud de la brecha, el color = quién iba adelante.",
-      "snap": "Rebase",
+      "snap": "Cambio de líder",
       "defend": "Defensa",
       "braid": "Trenza",
       "corner": "Curva",
       "lap": "Vuelta",
       "finalGap": "Brecha final",
-      "vs": "vs"
+      "vs": "vs",
+      "methodologyLink": "Metodología: histórico, no una proyección"
     },
     "qualifying": {
       "title": "Clasificación",
@@ -1153,6 +1154,94 @@
           "body": "La infraestructura que nadie ve: transporte a lo largo del calendario, repuestos, del taller a la pista, compras."
         }
       ]
+    }
+  },
+  "methodology": {
+    "metaTitle": "Metodología de la Cinta de Delta: cómo funciona",
+    "metaDescription": "Cómo se construye la Cinta de Delta con los tiempos de OpenF1: qué mide, cómo detecta cambios de líder, sus límites y lo que no pretende decir.",
+    "crumbHome": "Inicio",
+    "crumbAbout": "Acerca de",
+    "kicker": "Metodología",
+    "headline": "Cinta de Delta",
+    "dek": "Nuestro gráfico para mostrar cómo se abrió y se cerró la diferencia entre dos pilotos a lo largo de una vuelta. Esta página explica exactamente qué calcula, de dónde salen los datos, dónde se queda corto y qué no pretende decir.",
+    "byline": "Creado y mantenido por",
+    "source": "Datos: OpenF1",
+    "notProjection": "Histórico, no una proyección",
+    "stats": {
+      "aria": "Cobertura de la Cinta de Delta",
+      "races": "Carreras cargadas",
+      "racesUnit": "{count, plural, one {# pareja de pilotos} other {# parejas de pilotos}}",
+      "samples": "Muestras de diferencia",
+      "samplesUnit": "{count, plural, one {en # vuelta de carrera} other {en # vueltas de carrera}}",
+      "snaps": "Cambios de líder",
+      "snapsUnit": "{count, plural, =0 {ninguna trenza} one {# trenza} other {# trenzas}}",
+      "defends": "Defensas",
+      "defendsUnit": "a menos de 1,0 s, sin adelantar"
+    },
+    "s1": {
+      "heading": "Qué muestra",
+      "body": "La Cinta de Delta es una banda dibujada sobre el trazado de un circuito. Su <b>color</b> indica cuál de los dos pilotos iba adelante en cada punto de la vuelta; su <b>grosor</b> indica qué tan grande era la diferencia entre ellos en ese punto: fina significa una pelea cerrada, ancha significa una diferencia grande. Las marcas sobre la banda señalan los momentos en que los datos muestran un cambio de líder o un casi adelantamiento."
+    },
+    "s2": {
+      "heading": "Qué se mide",
+      "p1": "El dato base es la diferencia oficial con el líder de la carrera que OpenF1 publica para cada auto, cada pocos segundos. En cada muestra restamos la diferencia del piloto A a la del piloto B: el resultado es la diferencia entre esos dos pilotos. Un valor positivo significa que A va adelante.",
+      "p2": "Cada muestra se ubica en la vuelta según la posición del piloto que va adelante en ese instante: sumamos la distancia entre los puntos de ubicación consecutivos de ese auto y la dividimos por el total de esa vuelta, lo que da una posición de 0 a 100 % independiente del dibujo del circuito. El grosor usa una escala de raíz cuadrada, para que una pelea de 0,3 s se siga viendo junto a una diferencia de 20 s; la escala llega como máximo a la mayor diferencia de la carrera o a 8 s, lo que sea mayor.",
+      "capExample": "En {circuit} son {cap} s.",
+      "p3": "La cinta de la página de un circuito dibuja una sola vuelta: la última con datos, con el espacio entre muestras rellenado para cerrar el circuito. Las marcas y los conteos que la acompañan cubren toda la carrera, así que una marca puede aparecer sobre la vuelta dibujada aunque haya ocurrido en una vuelta anterior."
+    },
+    "s3": {
+      "heading": "Cómo se detectan los eventos",
+      "intro": "Los eventos se buscan después, recorriendo en orden de tiempo la misma serie de diferencias guardada. No se predice nada.",
+      "snapTerm": "Cambio de líder",
+      "snapDef": "El piloto que va adelante cambia entre dos muestras consecutivas.",
+      "braidTerm": "Trenza",
+      "braidDef": "Dos o más cambios de líder a menos de 400 metros entre sí se agrupan en una sola trenza rayada en lugar de marcas separadas.",
+      "defendTerm": "Defensa",
+      "defendDef": "El piloto de atrás se acerca a menos de 1,0 s sin pasar adelante, y después la diferencia vuelve a abrirse más de 0,3 s.",
+      "note": "Un cambio de líder significa que cambió el orden en los datos de tiempos, no necesariamente un adelantamiento en pista. Una parada en boxes mueve la diferencia 20 segundos o más y también aparece como cambio de líder."
+    },
+    "example": {
+      "heading": "Ejemplo real: {circuit} {year}",
+      "raceLabel": "{race} {year}",
+      "intro": "El ejemplo es el {race}, entre {a} y {b}. Aparecen todas las muestras guardadas.",
+      "ahead": "{driver} adelante",
+      "legendAhead": "{driver} adelante",
+      "legendLed": "Vueltas en que uno de los dos lideró la carrera",
+      "chartAria": "Diferencia entre {a} y {b}, {race}, todas las muestras guardadas",
+      "caption": "Diferencia entre {a} y {b}, {race}, un punto por muestra guardada ({count}). Eje vertical en escala de raíz cuadrada, como el grosor de la cinta. Fuente: OpenF1, a través de la base de datos de PaddockIntel.",
+      "snapsIntro": "{count, plural, one {El cambio de líder:} other {Los # cambios de líder, en orden:}}",
+      "lap": "Vuelta {n}",
+      "snapAt": "{driver} adelante en {corner}, por {gap} s.",
+      "snap": "{driver} adelante, por {gap} s.",
+      "snapPit": "No fue un adelantamiento en pista: {driver} paró en boxes en la vuelta {lap} ({secs} s en el pit lane).",
+      "snapPitNoTime": "No fue un adelantamiento en pista: {driver} paró en boxes en la vuelta {lap}.",
+      "defends": "{count, plural, one {La única defensa fue en la vuelta {laps}.} other {Las # defensas fueron en las vueltas {laps}.}}",
+      "gapIntro": "La última muestra de la cinta y el resultado oficial no coinciden exactamente, porque la última muestra no se toma en la línea de meta:",
+      "lastSample": "Cinta · última muestra, vuelta {lap}",
+      "official": "Resultado oficial",
+      "officialSub": "P{p1} y P{p2} en la bandera a cuadros"
+    },
+    "s5": {
+      "heading": "Fuente y cobertura",
+      "intro": "Todo sale de los endpoints públicos de OpenF1 (vueltas, ubicación del auto, datos del auto e intervalos), descargados una vez por carrera con un script fuera de línea y guardados en nuestra base de datos. Las páginas nunca consultan OpenF1 directamente; leen el resultado guardado. De ahí salen tres límites:",
+      "since": "<b>Solo desde 2023.</b> La telemetría de OpenF1 empieza en la temporada 2023.",
+      "onePair": "<b>Una carrera y una pareja a la vez.</b> Cada carga se prepara a mano. La página de un circuito sin carga no muestra cinta.",
+      "leader": "<b>Sin datos mientras uno de los dos lidera la carrera.</b> El dato base es la diferencia con el líder, y el líder no la tiene.",
+      "leaderExample": "En {circuit}, las {count} vueltas en que uno de los dos lideró ({laps}) tienen entre {minLed} y {maxLed} muestras cada una, frente a entre {minOther} y {maxOther} en el resto.",
+      "leaderMissing": "{count, plural, one {La vuelta {laps} no tiene ninguna.} other {Las vueltas {laps} no tienen ninguna.}}",
+      "leaderEnd": "Por eso una pelea por el primer lugar no se puede dibujar así."
+    },
+    "s6": {
+      "heading": "Lo que no es",
+      "body": "La Cinta de Delta describe una sesión que ya terminó. No pronostica, no proyecta ni modela dónde podría estar ninguno de los dos pilotos, y no incluye ninguna medida de incertidumbre. Cada color, grosor y marca se calcula a partir de telemetría registrada después de los hechos."
+    },
+    "rail": {
+      "toc": "En esta página",
+      "liveTitle": "Verla en el Hub",
+      "liveBody": "{a} contra {b}, {race}, en el Hub.",
+      "errorTitle": "¿Encontraste un error?",
+      "errorBody": "Las correcciones se hacen en la misma página, con fecha y con lo que cambió.",
+      "errorLink": "Cómo trabajamos"
     }
   },
   "aboutDisclaimer": {

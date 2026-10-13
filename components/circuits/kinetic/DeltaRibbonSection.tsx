@@ -193,7 +193,7 @@ export default function DeltaRibbonSection({
           href="/methodology/delta-ribbon"
           className="font-mono text-[10px] uppercase tracking-[0.06em] text-text-3 hover:text-terracotta transition-colors duration-150"
         >
-          Methodology — historical, not a projection
+          {t('methodologyLink')}
         </Link>
       </div>
     </div>
