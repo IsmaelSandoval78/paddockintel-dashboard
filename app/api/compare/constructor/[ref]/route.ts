@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { finaleRaceIdByYear } from '@/lib/seasonFinale';
 import type { CompareConstructorData } from '@/lib/types';
 
 export async function GET(
@@ -102,11 +103,13 @@ export async function GET(
     ])
   );
 
-  // Championships
+  // Championships -- P1 at the season's final round; a season still in progress has no
+  // standings there yet.
+  const finaleByYear = finaleRaceIdByYear([...(racesLegacyRes.data ?? []), ...(racesModernRes.data ?? [])]);
   let championships = 0;
-  for (const [, raceId] of lastRacePerYear.entries()) {
-    const standing = standingsByRaceId.get(raceId);
-    if (standing?.position === 1) championships++;
+  for (const year of lastRacePerYear.keys()) {
+    const finaleId = finaleByYear.get(year);
+    if (finaleId !== undefined && standingsByRaceId.get(finaleId)?.position === 1) championships++;
   }
 
   // Podiums per year from podium results
