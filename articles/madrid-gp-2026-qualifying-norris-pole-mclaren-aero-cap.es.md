@@ -65,7 +65,7 @@ La misma división aparece entre los dos Mercedes. Russell le ganó a Antonelli 
 
 El fin de semana de debut de Madring significa que todos los equipos llegaron a la clasificación con la misma hoja en blanco: sin datos previos de puesta a punto, sin modelo histórico de neumáticos, sin nada de respaldo más allá de tres sesiones de práctica. Esa es la razón mecánica de que el margen adelante se redujera a once milésimas de segundo —sin que ningún equipo tuviera una ventaja de datos construida a lo largo de años en el circuito, la ejecución en una sola vuelta del sábado pesó más de lo habitual.
 
-También es la razón por la que la pole de McLaren merece una segunda mirada. Como campeón de constructores 2025, McLaren entra a 2026 limitado al 70% de la asignación base de túnel de viento y CFD bajo la Restricción de Pruebas Aerodinámicas de la F1 —la más baja de cualquier equipo de la parrilla, [como encontró PaddockIntel al desglosar el mecanismo detrás de la decisión del ala H en Madrid](/mclaren-ala-h-restriccion-pruebas-aerodinamicas-2026). Menos tiempo de pruebas debería significar un auto menos afinado al llegar a un circuito nuevo sin ninguna confianza de simulador para compensar. El sábado, no se notó.
+También es la razón por la que la pole de McLaren merece una segunda mirada. Como campeón de constructores 2025, McLaren entra a 2026 limitado al 70% de la asignación base de túnel de viento y CFD bajo la Restricción de Pruebas Aerodinámicas de la F1 —la más baja de cualquier equipo de la parrilla, [como encontró PaddockIntel al desglosar el mecanismo detrás de la decisión del ala H en Madrid](/es/mclaren-ala-h-restriccion-pruebas-aerodinamicas-2026). Menos tiempo de pruebas debería significar un auto menos afinado al llegar a un circuito nuevo sin ninguna confianza de simulador para compensar. El sábado, no se notó.
 
 ## Impacto Económico
 
@@ -73,7 +73,7 @@ McLaren está tercero en el campeonato de constructores 2026 con 287 puntos, a 5
 
 La sesión de Ferrari fue más tranquila que su semana: Hamilton y Leclerc se quedaron con el cuarto y quinto puesto, un resultado sólido que pasó casi desapercibido frente a las secuelas de Monza y las quejas por el manejo de Hamilton en la FP1 de Madrid. Tranquilo no es lo mismo que seguro —cada punto que Ferrari saque este fin de semana es uno que McLaren no consigue para achicar la diferencia, y cada punto que no saque es uno que sí consigue McLaren.
 
-No todos los equipos tuvieron la misma hoja en blanco para trabajar. [Oliver Bearman directamente no llegó a clasificar](/bearman-haas-choque-cost-cap-madrid-2026), descartado después de que el choque del viernes en la práctica dejara a Haas sin tiempo para reparar su auto —arrancar el domingo desde el fondo tiene su propio costo, en un fin de semana donde la posición en pista en un circuito nuevo vale más de lo habitual, justamente porque nadie remontó todavía en este trazado.
+No todos los equipos tuvieron la misma hoja en blanco para trabajar. [Oliver Bearman directamente no llegó a clasificar](/es/bearman-haas-choque-cost-cap-madrid-2026), descartado después de que el choque del viernes en la práctica dejara a Haas sin tiempo para reparar su auto —arrancar el domingo desde el fondo tiene su propio costo, en un fin de semana donde la posición en pista en un circuito nuevo vale más de lo habitual, justamente porque nadie remontó todavía en este trazado.
 
 ## El Marco General
 

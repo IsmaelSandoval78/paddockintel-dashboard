@@ -1,3 +1,5 @@
+import { SITE_URL, HUB_URL } from '@/lib/site-url';
+
 export type Heading = { id: string; text: string; level: 2 | 3 };
 
 export function extractTOC(markdown: string): Heading[] {
@@ -180,8 +182,28 @@ function applyInline(text: string): string {
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     .replace(/`(.+?)`/g, '<code>$1</code>')
     .replace(/\[(.+?)\]\((.+?)\)/g, (_, linkText, href) => {
-      const safe = href.startsWith('http') || href.startsWith('/') ? href : '#';
+      const safe = href.startsWith('http') || href.startsWith('/') ? normalizeOwnHref(href) : '#';
       const external = href.startsWith('http') ? ' target="_blank" rel="noopener noreferrer"' : '';
       return `<a href="${safe}"${external}>${linkText}</a>`;
     });
+}
+
+// Internal links written in body_markdown as `/slug` (no trailing slash), against the apex, or
+// as a relative Hub entity path each cost a redirect hop (`trailingSlash: true` 308, apex → www
+// 308, magazine → hub 301 in middleware.ts), and Google was reporting the slashless URLs as
+// separate pages. Normalize at render time instead of editing every article.
+const HUB_ENTITY_PATH = /^\/(?:en\/)?((?:(?:es|pt)\/)?(?:circuits|drivers|constructors|compare|records)(?:[/?#]|$))/;
+
+function normalizeOwnHref(href: string): string {
+  const url = href
+    .replace(/^https?:\/\/paddockintel\.com(?=\/|$)/, SITE_URL)
+    .replace(HUB_ENTITY_PATH, `${HUB_URL}/$1`);
+  const own = url.startsWith('/') || url.startsWith(SITE_URL) || url.startsWith(HUB_URL);
+  if (!own) return url;
+  const match = url.match(/^([^?#]*)(.*)$/);
+  const path = match?.[1] ?? url;
+  const rest = match?.[2] ?? '';
+  const last = path.split('/').pop() ?? '';
+  if (path.endsWith('/') || last.includes('.') || path === SITE_URL || path === HUB_URL) return url;
+  return `${path}/${rest}`;
 }
