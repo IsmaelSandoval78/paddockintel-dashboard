@@ -45,7 +45,7 @@ sources:
   - name: "Crash.net — F1 drivers slam 2026 racing: 'We're waiting for it to go horribly wrong'"
     url: "https://www.crash.net/f1/news/1091047/1/f1-drivers-slam-2026-racing-were-waiting-it-go-horribly-wrong"
   - name: "PaddockIntel Glossary — Anti-Dilution Fee"
-    url: "https://paddockintel.com/glossary/anti-dilution-fee"
+    url: "https://www.paddockintel.com/glossary/anti-dilution-fee/"
 
 ---
 

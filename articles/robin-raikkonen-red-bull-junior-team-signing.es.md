@@ -40,7 +40,7 @@ sources:
   - name: "Formula1.com — Red Bull sign Verstappen to junior team"
     url: "https://www.formula1.com/en/latest/article/red-bull-sign-verstappen-to-junior-team.7cCqTAFsOXRt3udZHkKx5X"
   - name: "PaddockIntel — La Economía Real de las Academias Junior de F1"
-    url: "https://paddockintel.com/es/economia-academias-junior-f1"
+    url: "https://www.paddockintel.com/es/economia-academias-junior-f1/"
 
 ---
 

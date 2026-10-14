@@ -45,7 +45,7 @@ sources:
   - name: "Crash.net — Pilotos da F1 criticam a temporada 2026: 'Estamos esperando dar terrivelmente errado'"
     url: "https://www.crash.net/f1/news/1091047/1/f1-drivers-slam-2026-racing-were-waiting-it-go-horribly-wrong"
   - name: "Glossário PaddockIntel — Taxa Antidiluição"
-    url: "https://paddockintel.com/pt/glossario/taxa-antidiluicao"
+    url: "https://www.paddockintel.com/pt/glossary/anti-dilution-fee/"
 ---
 
 ## O Que Aconteceu
