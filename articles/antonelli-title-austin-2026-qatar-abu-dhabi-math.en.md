@@ -58,9 +58,13 @@ sources:
     url: "https://sports.yahoo.com/articles/abu-dhabi-promoters-dig-fom-070000590.html"
   - name: "F1 Salaries — Kimi Antonelli salary breakdown 2026"
     url: "https://f1salaries.com/driver-salaries/kimi-antonelli/"
+  - name: "GPblog — Qatar Emir warns of 'worst possibilities' as F1 plans to race in Qatar (October 14)"
+    url: "https://www.gpblog.com/en/news/worrying-news-as-qatar-emir-warns-of-worst-possibilities-as-f1-plans-to-race-in-qatar"
   - name: "PaddockIntel database — 2026 standings, results, grid positions and champions since 1950 (Ergast/jolpica lineage + FastF1)"
     url: "https://hub.paddockintel.com/"
 ---
+
+*Update, October 14, 2026: Qatar's emir, Sheikh Tamim bin Hamad Al Thani, told institutions and citizens on October 13 that "we must be prepared for the worst possibilities," according to Alaraby TV. He did not mention Formula 1. As of this update, the Qatar and Abu Dhabi races remain on the calendar and F1 has not announced its decision.*
 
 ## What happened
 
