@@ -72,6 +72,35 @@ function readArticle(filePath: string): { frontmatter: Frontmatter; body: string
   return { frontmatter: data as Frontmatter, body: content.trim() };
 }
 
+// Article links written as `/slug` resolve to the EN article; an ES/PT article linking its own
+// locale's sibling without the `/es/` or `/pt/` prefix 404s. That shipped in 51 links across 31
+// articles before this check (found via Search Console, 2026-10-14). Fail on it; only warn for a
+// slug not in the DB at all, since a batch may ingest the target right after this file.
+const SITE_ROUTES = new Set([
+  'about', 'account', 'author', 'charts', 'circuits', 'compare', 'constructors', 'drivers', 'feed',
+  'glossary', 'methodology', 'privacy', 'recaps', 'records', 'season', 'tag', 'unsubscribed',
+  'weekly', 'whos-who',
+]);
+
+async function checkInternalLinks(supabase: ReturnType<typeof createClient>, body: string) {
+  const links = [...body.matchAll(/\]\((\/[^)\s#?]*)/g)].map((m) => m[1]);
+  const problems: string[] = [];
+  for (const href of links) {
+    const parts = href.split('/').filter(Boolean);
+    const locale = parts[0] === 'es' || parts[0] === 'pt' ? parts.shift()! : 'en';
+    if (parts.length !== 1 || SITE_ROUTES.has(parts[0])) continue;
+    const { data } = await supabase.from('articles').select('locale').eq('slug', parts[0]);
+    const locales = (data ?? []).map((r) => r.locale as string);
+    if (locales.includes(locale)) continue;
+    if (locales.length) problems.push(`${href} -> slug exists only in [${locales.join(', ')}], link has no matching locale prefix`);
+    else console.warn(`⚠ internal link ${href}: no article with that slug yet`);
+  }
+  if (problems.length) {
+    console.error(`✗ Broken internal links:\n  ${problems.join('\n  ')}`);
+    process.exit(1);
+  }
+}
+
 async function main() {
   const filePath = process.argv[2];
   if (!filePath) {
@@ -97,6 +126,8 @@ async function main() {
     .eq('slug', frontmatter.slug)
     .maybeSingle();
   const isNew = !existing;
+
+  await checkInternalLinks(supabase, body);
 
   const { data: article, error } = await supabase
     .from('articles')

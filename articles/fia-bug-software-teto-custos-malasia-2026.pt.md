@@ -46,7 +46,7 @@ sources:
 
 O retorno da Fórmula 1 à Malásia, substituindo um GP do Bahrein realocado pela guerra do Irã de 2026, precisou de quase 100 minutos para a corrida realmente começar. Quarenta desses minutos foram chuva. O resto foi um programa de software exigido pela FIA que cortou potência na volta de formação e, em vários carros, não conseguiu devolvê-la.
 
-O pole position Max Verstappen ficou travado tentando acelerar na saída da curva 11. Outros carros reduziram quase até parar atrás dele. A direção de prova acionou a bandeira vermelha, e a FIA usou essa pausa para escrever e distribuir um patch de software às onze equipes antes que o grid pudesse tentar de novo. [Verstappen terminou vencendo depois que a corrida finalmente começou](/bahrain-gp-malasia-2026-vitoria-72-de-verstappen) -- mas a hora anterior já tinha ficado com as manchetes.
+O pole position Max Verstappen ficou travado tentando acelerar na saída da curva 11. Outros carros reduziram quase até parar atrás dele. A direção de prova acionou a bandeira vermelha, e a FIA usou essa pausa para escrever e distribuir um patch de software às onze equipes antes que o grid pudesse tentar de novo. [Verstappen terminou vencendo depois que a corrida finalmente começou](/pt/bahrain-gp-malasia-2026-vitoria-72-de-verstappen) -- mas a hora anterior já tinha ficado com as manchetes.
 
 ## Por que aconteceu
 
@@ -58,7 +58,7 @@ O próprio diretor de monopostos da FIA disse que o motivo de fundo era simples:
 
 Quase tudo que dá errado num carro de F1 é, no fim, uma história sobre qual equipe gastou melhor seu teto de custos de US$ 215 milhões. Esta não é. O software responsável roda igual nos carros das onze equipes, exigido pela FIA e não construído pela engenharia própria de nenhuma equipe -- o que significa que nenhum nível de gasto competitivo, nem o da Red Bull-Ford estreando naquela mesma tarde com uma unidade de potência própria, nem o de uma equipe com dez anos de desenvolvimento, poderia ter evitado ou resolvido isso. A fragilidade foi igual para todo o grid, imune à lógica normal de quem desenvolve melhor dentro do teto.
 
-O que o teto de custos não cobre é o custo que de fato apareceu: quase 100 minutos de uma janela de transmissão global dedicados a carros que não conseguiam saída do grid, pilotos criticando o esporte diante das câmeras, e um esporte que, no meio da negociação de [seus contratos de sede mais sensíveis comercialmente](/f1-2026-catar-abu-dhabi-impasse-taxas-sede), acabou dando uma demonstração bem pública de que os próprios carros não funcionavam. Nada disso aparece no balanço de uma equipe específica. Aparece no do esporte.
+O que o teto de custos não cobre é o custo que de fato apareceu: quase 100 minutos de uma janela de transmissão global dedicados a carros que não conseguiam saída do grid, pilotos criticando o esporte diante das câmeras, e um esporte que, no meio da negociação de [seus contratos de sede mais sensíveis comercialmente](/pt/f1-2026-catar-abu-dhabi-impasse-taxas-sede), acabou dando uma demonstração bem pública de que os próprios carros não funcionavam. Nada disso aparece no balanço de uma equipe específica. Aparece no do esporte.
 
 A resposta da FIA -- uma revisão completa prometida junto com as equipes e os fabricantes de unidades de potência -- é, ela mesma, um custo que fica fora do teto: horas de engenharia e de gestão, distribuídas entre onze organizações, dedicadas a diagnosticar um sistema compartilhado em vez de desenvolver um competitivo. É um gasto real, só que nenhuma auditoria do teto de custos vai registrar isso.
 

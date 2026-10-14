@@ -1,8 +1,8 @@
 ---
 slug: "max-verstappen-net-worth-2026"
-title: "Max Verstappen Net Worth 2026: Salary & Earnings"
+title: "Max Verstappen Net Worth 2026: $200M to $260M"
 locale: en
-meta_description: "Verstappen's net worth is estimated at $200-260M — before his new ~€92M/year Red Bull deal (2027+) fully compounds. Full 2026 breakdown."
+meta_description: "Three trackers put Verstappen's net worth at $200M to $260M. None counts his new Red Bull deal: ~€92M a year from 2027, up from a $70M base."
 status: published
 translation_group_id: "0d50d6e4-6067-403b-be07-7f7137c2c344"
 paywalled: false

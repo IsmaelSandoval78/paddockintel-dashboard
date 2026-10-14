@@ -65,7 +65,7 @@ A mesma divisão aparece entre as duas Mercedes. Russell venceu Antonelli em mai
 
 O fim de semana de estreia de Madri significa que todas as equipes chegaram à classificação com a mesma folha em branco: sem dados anteriores de acerto, sem modelo histórico de pneus, sem nada além de três treinos livres para recorrer. Essa é a razão mecânica de a diferença na ponta ter caído para onze milésimos de segundo — sem nenhuma equipe tendo uma vantagem de dados construída ao longo de anos no circuito, a execução em uma única volta de sábado pesou mais do que de costume.
 
-É também a razão pela qual a pole da McLaren merece um segundo olhar. Como campeã de construtores de 2025, a McLaren entra em 2026 limitada a 70% da alocação-base de túnel de vento e CFD sob a Restrição de Testes Aerodinâmicos da F1 — a mais baixa de qualquer equipe do grid, [como a PaddockIntel mostrou ao detalhar o mecanismo por trás da decisão da asa H em Madri](/mclaren-asa-h-restricao-testes-aerodinamicos-2026). Menos tempo de testes deveria significar um carro menos refinado ao chegar a um circuito novo sem nenhuma confiança de simulador para compensar. No sábado, isso não apareceu.
+É também a razão pela qual a pole da McLaren merece um segundo olhar. Como campeã de construtores de 2025, a McLaren entra em 2026 limitada a 70% da alocação-base de túnel de vento e CFD sob a Restrição de Testes Aerodinâmicos da F1 — a mais baixa de qualquer equipe do grid, [como a PaddockIntel mostrou ao detalhar o mecanismo por trás da decisão da asa H em Madri](/pt/mclaren-asa-h-restricao-testes-aerodinamicos-2026). Menos tempo de testes deveria significar um carro menos refinado ao chegar a um circuito novo sem nenhuma confiança de simulador para compensar. No sábado, isso não apareceu.
 
 ## Impacto Econômico
 
@@ -73,7 +73,7 @@ A McLaren está em terceiro no campeonato de construtores de 2026 com 287 pontos
 
 A sessão da Ferrari foi mais tranquila que sua semana: Hamilton e Leclerc ficaram com o quarto e o quinto lugar, um resultado sólido que passou quase despercebido diante dos desdobramentos de Monza e das reclamações sobre a pilotagem de Hamilton no TL1 de Madri. Tranquilo não é o mesmo que seguro — cada ponto que a Ferrari tirar deste fim de semana é um ponto que a McLaren não consegue para fechar a diferença, e cada ponto que ela não tirar é um que a McLaren consegue.
 
-Nem toda equipe teve a mesma folha em branco para trabalhar. [Oliver Bearman simplesmente não chegou a classificar](/bearman-haas-batida-teto-orcamentario-madri-2026), fora de ação depois que a batida de sexta-feira no treino livre deixou a Haas sem tempo para consertar o carro — largar domingo na última posição tem seu próprio custo, em um fim de semana em que a posição na pista em um circuito novo vale mais do que de costume, justamente porque ninguém ainda remontou nesse traçado.
+Nem toda equipe teve a mesma folha em branco para trabalhar. [Oliver Bearman simplesmente não chegou a classificar](/pt/bearman-haas-batida-teto-orcamentario-madri-2026), fora de ação depois que a batida de sexta-feira no treino livre deixou a Haas sem tempo para consertar o carro — largar domingo na última posição tem seu próprio custo, em um fim de semana em que a posição na pista em um circuito novo vale mais do que de costume, justamente porque ninguém ainda remontou nesse traçado.
 
 ## O Panorama Geral
 
