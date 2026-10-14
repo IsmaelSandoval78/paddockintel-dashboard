@@ -181,9 +181,12 @@ function applyInline(text: string): string {
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     .replace(/`(.+?)`/g, '<code>$1</code>')
-    .replace(/\[(.+?)\]\((.+?)\)/g, (_, linkText, href) => {
+    .replace(/\[(.+?)\]\((.+?)\)/g, (_, linkText, rawHref) => {
+      // `[text](<url>)` is a valid markdown destination (every Ghost-era article uses it); the
+      // brackets were escaped above, so unwrap them or the link falls through to '#'.
+      const href = rawHref.replace(/^&lt;(.*)&gt;$/, '$1');
       const safe = href.startsWith('http') || href.startsWith('/') ? normalizeOwnHref(href) : '#';
-      const external = href.startsWith('http') ? ' target="_blank" rel="noopener noreferrer"' : '';
+      const external = safe.startsWith('http') && !safe.startsWith(SITE_URL) ? ' target="_blank" rel="noopener noreferrer"' : '';
       return `<a href="${safe}"${external}>${linkText}</a>`;
     });
 }
@@ -191,15 +194,21 @@ function applyInline(text: string): string {
 // Internal links written in body_markdown as `/slug` (no trailing slash), against the apex, or
 // as a relative Hub entity path each cost a redirect hop (`trailingSlash: true` 308, apex → www
 // 308, magazine → hub 301 in middleware.ts), and Google was reporting the slashless URLs as
-// separate pages. Normalize at render time instead of editing every article.
+// separate pages. Ghost-era articles also link the old paddock-intel.ghost.io host (now a private
+// login page) with a `?ref=paddockintel.com` tag; slugs were kept in the migration, so those map
+// to the same path here. Normalize at render time instead of editing every article.
 const HUB_ENTITY_PATH = /^\/(?:en\/)?((?:(?:es|pt)\/)?(?:circuits|drivers|constructors|compare|records)(?:[/?#]|$))/;
 
 function normalizeOwnHref(href: string): string {
-  const url = href
-    .replace(/^https?:\/\/paddockintel\.com(?=\/|$)/, SITE_URL)
+  let url = href
+    .replace(/^https?:\/\/(?:paddockintel\.com|paddock-intel\.ghost\.io)(?=\/|$)/, SITE_URL)
     .replace(HUB_ENTITY_PATH, `${HUB_URL}/$1`);
   const own = url.startsWith('/') || url.startsWith(SITE_URL) || url.startsWith(HUB_URL);
   if (!own) return url;
+  // `&` is already escaped to `&amp;` by the time links are parsed.
+  url = url
+    .replace(/(\?|&amp;)ref=paddockintel\.com(&amp;)?/, (_, sep: string, next?: string) => (sep === '?' ? '?' : next ? '&amp;' : ''))
+    .replace(/\?(?=#|$)/, '');
   const match = url.match(/^([^?#]*)(.*)$/);
   const path = match?.[1] ?? url;
   const rest = match?.[2] ?? '';
