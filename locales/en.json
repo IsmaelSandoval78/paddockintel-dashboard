@@ -1353,6 +1353,7 @@
       "read": "Read the analysis"
     },
     "kpi": {
+      "fromArticle": "From the analysis",
       "speedTitle": "Top speed",
       "speedSub": "{driver}'s pole lap, {lapTime}",
       "speedUnit": "km/h",

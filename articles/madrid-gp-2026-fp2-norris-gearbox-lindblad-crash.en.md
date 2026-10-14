@@ -19,7 +19,7 @@ stats:
   - value: "0"
     label: "NORRIS'S TIMED LAPS BEFORE GEARBOX FAILURE"
     unit: "session ended early"
-  - value: "61"
+  - value: "59"
     label: "MCLAREN'S POINTS GAP TO FERRARI"
     unit: "P3 vs P2, constructors', 2026"
   - value: "P4"
@@ -34,7 +34,7 @@ faq:
   - q: "What caused the red flag in Madrid FP2?"
     a: "Racing Bulls rookie Arvid Lindblad crashed at Turn 13 — his first Formula 1 crash — after running as high as fourth on the timesheet, 0.228s off Antonelli's pace."
   - q: "Where does McLaren stand in the 2026 constructors' championship?"
-    a: "Third with 285 points, 61 behind second-placed Ferrari (346) and well back of championship leaders Mercedes (468), with Norris fourth in the drivers' standings on 171 points."
+    a: "Third with 287 points, 59 behind second-placed Ferrari (346) and well back of championship leaders Mercedes (468), with Norris fourth in the drivers' standings on 171 points."
 
 sources:
   - name: "Sky Sports F1 — Spanish GP: Kimi Antonelli edges Ferrari in Madrid practice as Arvid Lindblad suffers first F1 crash at challenging Madring circuit"
@@ -73,7 +73,7 @@ Lindblad's crash fits the same pattern from the other direction. He was quick �
 
 ## Economic Impact
 
-McLaren sit third in the 2026 constructors' championship on 285 points, 61 behind second-placed Ferrari's 346. That gap is the difference between two real payout tiers: PaddockIntel's [earlier reporting on Madring FP1](/madrid-gp-2026-fp1-mercedes-aston-martin) put the estimated gap between adjacent constructors' finishing positions at roughly $9 million, based on 2025 prize-money figures carried into 2026. [What losing to Ferrari already costs McLaren](/mclaren-2026-prize-money-ferrari-mercedes-cost) is the fuller math on that gap. Every point matters more with ten rounds still to run, and Norris personally sits fourth in the drivers' championship on 171 points — not a title threat this year, but a real marker of what he's worth in his next contract cycle.
+McLaren sit third in the 2026 constructors' championship on 287 points, 59 behind second-placed Ferrari's 346. That gap is the difference between two real payout tiers: PaddockIntel's [earlier reporting on Madring FP1](/madrid-gp-2026-fp1-mercedes-aston-martin) put the estimated gap between adjacent constructors' finishing positions at roughly $9 million, based on 2025 prize-money figures carried into 2026. [What losing to Ferrari already costs McLaren](/mclaren-2026-prize-money-ferrari-mercedes-cost) is the fuller math on that gap. Every point matters more with ten rounds still to run, and Norris personally sits fourth in the drivers' championship on 171 points — not a title threat this year, but a real marker of what he's worth in his next contract cycle.
 
 Losing track time at a circuit with no historical data is not the same cost as losing it at a track a team has raced ten times. At Silverstone, a shortened FP2 is an inconvenience a good simulator model absorbs. At Madring, it's the only data collection window before the sport turns knockout and cuts backup runs to almost nothing. Norris and McLaren's engineers now walk into FP3 Saturday morning needing to confirm a setup direction with roughly half the reference laps of the cars around them.
 
@@ -88,3 +88,5 @@ That's what makes Norris's gearbox failure sting more than an equivalent problem
 ## Verdict
 
 Mercedes' back-to-back Friday pace, split between two drivers, is the strongest form of dominance a team can show: it isn't one car working, it's the package. Ferrari's tight gap in both sessions is the encouraging read of their weekend so far. But the number that will matter most heading into Saturday is Norris's zero timed laps — at the one circuit this year where no amount of prior data can paper over missing track time. McLaren's championship position doesn't change from one bad Friday. Its qualifying preparation, this specific weekend, already has.
+
+*Correction, October 14, 2026: an earlier version of this article said McLaren had 285 points, 61 behind Ferrari. Our results database had Pierre Gasly third at the 2026 Monaco Grand Prix instead of his official seventh place. The correct figures are 287 points and a 59-point gap. They have been corrected in the text, stat box and FAQ.*

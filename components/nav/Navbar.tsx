@@ -1,5 +1,6 @@
 import { headers } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
+import { getLatestStandingsRaceId } from '@/lib/latestRace';
 import { Link } from '@/lib/i18n/navigation';
 import { isMagazineHost } from '@/lib/siteMode';
 import NavLinks from './NavLinks';
@@ -12,17 +13,12 @@ import AuthWidget, { type AuthUser } from './AuthWidget';
 async function getCurrentRound(): Promise<{ round: number; year: number } | null> {
   try {
     const supabase = createClient();
-    const { data: ds } = await supabase
-      .from('driver_standings')
-      .select('race_id')
-      .order('race_id', { ascending: false })
-      .limit(1)
-      .single();
-    if (!ds) return null;
+    const raceId = await getLatestStandingsRaceId(supabase);
+    if (raceId === null) return null;
     const { data: race } = await supabase
       .from('races')
       .select('round, year')
-      .eq('id', ds.race_id)
+      .eq('id', raceId)
       .single();
     return race ? { round: race.round as number, year: race.year as number } : null;
   } catch {

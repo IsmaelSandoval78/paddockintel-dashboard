@@ -191,3 +191,14 @@ last sample next to the official result.
 - All copy moved to `methodology` (EN/ES/PT); TechArticle JSON-LD; added to the sitemap in all three
   locales; the Hub's methodology link and the ES/PT "snap" labels ("Rebase", "Ultrapassagem") now
   go through i18n as "Cambio de líder" / "Troca de líder".
+
+## Home: race mode vs story mode (2026-10-14)
+The cover dashboard followed the latest race no matter what was featured, and the hero kicker used
+the publish date alone, so an Austin title-math piece published two days after Singapore was
+labelled "Singapore Grand Prix · Race" and sat on top of Singapore gauges.
+- A featured piece is a race piece if it is linked to the latest race (`articles.race_id`), or was
+  published that race week with a race tag (`race-analysis`, `race-weekend-economics`).
+- Race mode (unchanged): race header, race KPIs, race story, standings, sector duel, map, title trend.
+- Story mode: the hero carries the article alone (no pole-lap landscape), the article's own stats
+  2-4 become the KPI row, the title trend and standings follow, then next race and Latest; the race
+  data moves below under its own race header. Founder-approved, built straight to PR with preview.

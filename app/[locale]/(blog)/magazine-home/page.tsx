@@ -33,6 +33,9 @@ type SearchParams = Promise<{ page?: string; tag?: string }>;
 
 const PAGE_SIZE = 20;
 const FEATURED_TAG_SLUG = 'featured';
+// Tags that mark a piece as coverage of a race weekend (as opposed to a story that merely
+// happened to be published that week).
+const RACE_TAGS = new Set(['race-analysis', 'race-weekend-economics']);
 
 const HOME_URLS = {
   en: `${SITE_URL}/`,
@@ -195,13 +198,23 @@ export default async function MagazineHomePage({
     raceDay && d
       ? d.getTime() >= raceDay.getTime() - 3 * 86_400_000 && d.getTime() <= raceDay.getTime() + 7 * 86_400_000
       : false;
-  const featuredIsRaceWeek = inRaceWeek(featuredPublished);
+  // A race piece is linked to the latest race, or is race-weekend coverage published that week.
+  // The publish date alone isn't enough: a title-math or economics story published two days after
+  // a Grand Prix is not about that Grand Prix.
+  const isRacePiece = (a: { race_id: number | null; published_at: string | null; tags: TagRef[] }) =>
+    !!latestRace &&
+    (a.race_id === latestRace.raceId ||
+      (inRaceWeek(a.published_at ? new Date(a.published_at) : null) && a.tags.some((tg) => RACE_TAGS.has(tg.slug))));
+  // Race mode: the cover dashboard follows the latest race. Story mode: the featured piece isn't
+  // about that race, so its own numbers lead and the race data moves to its own labelled section.
+  const raceMode = !featured || isRacePiece(featured);
   const heroKicker =
-    latestRace && raceDay && featuredIsRaceWeek
+    latestRace && raceDay && raceMode
       ? t('kickerRace', { race: `${latestRace.name} ${latestRace.year}`, session: t('sessionRace'), date: shortDate(raceDay) })
       : t('kickerFeatured', { date: featuredPublished ? shortDate(featuredPublished) : '' });
 
-  const terrain: TerrainData | null = pole
+  // The pole-lap landscape belongs to the race; in story mode the hero carries the article alone.
+  const terrain: TerrainData | null = pole && raceMode
     ? {
         speeds: pole.speedKmh,
         caption: t('terrain.caption', {
@@ -223,7 +236,8 @@ export default async function MagazineHomePage({
   const topicTag = (tags: TagRef[] | undefined) => tags?.find((tg) => tg.slug !== FEATURED_TAG_SLUG)?.label;
   const featuredChip = topicTag(featured?.tags) ?? t('latest.tagOwn');
   const insightCandidates: InsightSlide[] = [
-    ...featuredStats.slice(1).map((s, i) => ({
+    // In story mode the featured piece's numbers become the KPI row instead.
+    ...(raceMode ? featuredStats.slice(1) : []).map((s, i) => ({
       key: `f-${i}`,
       chip: featuredChip,
       value: s.value,
@@ -242,6 +256,7 @@ export default async function MagazineHomePage({
       }),
   ];
   const insights = featured ? insightCandidates.slice(0, 3) : [];
+  const storyStats = raceMode ? [] : featuredStats.slice(1, 4);
 
   // ── 3 · KPI row ─────────────────────────────────────────────────────
   const led = highlights?.lapsLed;
@@ -319,12 +334,9 @@ export default async function MagazineHomePage({
 
   const sub = 'text-[13px] text-[color:var(--dusk-muted)] mt-0.5';
 
-  return (
-    <main className={`theme-dusk ${duskSans.variable} min-h-screen`}>
-      <h1 className="sr-only">{tMag('headline')}</h1>
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-5 pt-7 pb-16 flex flex-col gap-5">
-        {isFrontPage && latestRace && raceDay && (
-          <header className="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+  // ── Cover blocks, ordered below by mode ─────────────────────────────
+  const raceHeader = latestRace && raceDay ? (
+          <header className={`flex flex-wrap items-end justify-between gap-x-6 gap-y-4 ${raceMode ? '' : 'md:col-span-6 lg:col-span-12 mt-4'}`}>
             <div>
               <p className="dusk-label">
                 {t('header.eyebrow', {
@@ -345,11 +357,8 @@ export default async function MagazineHomePage({
               {raceLaps && <span className="dusk-chip">{t('header.chipLaps', { circuit: latestRace.circuitName, laps: raceLaps })}</span>}
             </div>
           </header>
-        )}
-
-        {isFrontPage && (
-          <div className="grid grid-cols-1 md:grid-cols-6 lg:grid-cols-12 gap-4">
-            {featured && (
+  ) : null;
+  const heroEl = featured ? (
               <HeroLandscape
                 className={`md:col-span-6 ${insights.length ? 'lg:col-span-8' : 'lg:col-span-12'}`}
                 kicker={heroKicker}
@@ -360,17 +369,18 @@ export default async function MagazineHomePage({
                 keyNumber={featuredStat ? { value: featuredStat.value, label: featuredStat.label } : null}
                 terrain={terrain}
               />
-            )}
-            {insights.length > 0 && (
+  ) : null;
+  const insightsBlock = insights.length > 0 ? (
               <InsightCarousel
                 className="md:col-span-6 lg:col-span-4"
                 slides={insights}
                 ariaLabel={t('insights.aria')}
                 pickLabels={insights.map((_, i) => t('insights.pick', { n: i + 1, total: insights.length }))}
               />
-            )}
-
-            {pole && (
+  ) : null;
+  const raceKpis = (
+    <>
+      {pole && (
               <SpeedKpi
                 className="md:col-span-2 lg:col-span-4"
                 title={t('kpi.speedTitle')}
@@ -382,8 +392,8 @@ export default async function MagazineHomePage({
                 ariaLabel={t('kpi.speedAria', { driver: surname(pole.driver), min: pole.minSpeedKmh, max: pole.topSpeedKmh })}
                 source={t('kpi.speedSource')}
               />
-            )}
-            {led && ledByLap && (
+      )}
+      {led && ledByLap && (
               <LapsLedKpi
                 className="md:col-span-2 lg:col-span-4"
                 title={t('kpi.ledTitle')}
@@ -398,8 +408,8 @@ export default async function MagazineHomePage({
                 ariaLabel={t('kpi.ledAria', { total: led.totalLaps, driver: surname(led.driver), laps: led.laps })}
                 source={t('kpi.ledSource')}
               />
-            )}
-            {latestRace && p2w && (
+      )}
+      {latestRace && p2w && (
               <PoleToWinKpi
                 className="md:col-span-2 lg:col-span-4"
                 title={t('kpi.p2wTitle')}
@@ -412,14 +422,27 @@ export default async function MagazineHomePage({
                 ariaLabel={t('kpi.p2wAria', { races: p2w.races, circuit: latestRace.circuitName, year: p2w.sinceYear, wins: p2w.poleWins })}
                 source={t('kpi.p2wSource')}
               />
-            )}
-
-            {trace && story && (
-              <RaceStoryCard className="md:col-span-6 lg:col-span-8" trace={trace} mover={story.mover} labels={story.labels} />
-            )}
-            {latestRace && topDrivers.length > 0 && (
+      )}
+    </>
+  );
+  const storyKpis = featured ? storyStats.map((st) => (
+    <Link
+      key={st.label}
+      href={`/${featured.slug}`}
+      className="dusk-card group p-5 sm:p-6 flex flex-col gap-2 md:col-span-2 lg:col-span-4 min-w-0"
+    >
+      <p className="dusk-mono uppercase text-[11px] tracking-[0.07em] leading-[1.45] text-[color:var(--dusk-peach)] m-0">{st.label}</p>
+      <p className="dusk-display tabular-nums text-[clamp(2.2rem,4vw,3rem)] leading-none tracking-[-0.03em] m-0">{st.value}</p>
+      {st.unit && <p className="text-[13px] text-[color:var(--dusk-ink-2)] m-0">{st.unit}</p>}
+      <p className="mt-auto pt-2 dusk-mono text-[10.5px] text-[color:var(--dusk-muted)] m-0 group-hover:text-[color:var(--dusk-ink)]">{t('kpi.fromArticle')} →</p>
+    </Link>
+  )) : [];
+  const storyEl = trace && story ? (
+              <RaceStoryCard className={`md:col-span-6 ${raceMode ? 'lg:col-span-8' : 'lg:col-span-6'}`} trace={trace} mover={story.mover} labels={story.labels} />
+  ) : null;
+  const standingsEl = latestRace && topDrivers.length > 0 ? (
               <StandingsCard
-                className="md:col-span-3 lg:col-span-4"
+                className={`${raceMode ? 'md:col-span-3' : 'md:col-span-6'} lg:col-span-4`}
                 title={t('standings.title')}
                 sub={t('standings.sub', { race: latestRace.name, left: racesLeft })}
                 leaderPoints={format.number(Number(topDrivers[0].points))}
@@ -439,9 +462,8 @@ export default async function MagazineHomePage({
                 linkLabel={t('standings.link')}
                 linkHref={hubLocaleUrl(locale, '/drivers/')}
               />
-            )}
-
-            {duel && (
+  ) : null;
+  const duelEl = duel ? (
               <SectorDuel
                 className="md:col-span-3 lg:col-span-3"
                 title={t('duel.title')}
@@ -473,8 +495,8 @@ export default async function MagazineHomePage({
                 pole={{ code: duel.pole.driver, sectors: duel.pole.sectors }}
                 challenger={{ code: duel.challenger.driver, sectors: duel.challenger.sectors }}
               />
-            )}
-            {pole && highlights?.trackMap && latestRace && (
+  ) : null;
+  const mapBlock = pole && highlights?.trackMap && latestRace ? (
               <section className="dusk-card flex flex-col gap-4 p-5 sm:p-6 md:col-span-3 lg:col-span-3" aria-labelledby="dusk-map-title">
                 <div>
                   <h2 id="dusk-map-title" className="text-[17px] font-semibold m-0">{latestRace.circuitName}</h2>
@@ -497,10 +519,10 @@ export default async function MagazineHomePage({
                   <span className="inline-flex items-center gap-1.5"><i className="dusk-dot dusk-dot-on w-[9px]" />{t('map.fast')}</span>
                 </div>
               </section>
-            )}
-            {trend && trendSeries.length > 0 && latestRace && (
+  ) : null;
+  const trendEl = trend && trendSeries.length > 0 && latestRace ? (
               <TitleTrend
-                className="md:col-span-6 lg:col-span-6"
+                className={`md:col-span-6 ${raceMode ? 'lg:col-span-6' : 'lg:col-span-8'}`}
                 title={t('trend.title')}
                 sub={t('trend.sub', { n: trend.rounds.length })}
                 roundLabel={t('trend.round', { n: '{n}' })}
@@ -510,9 +532,8 @@ export default async function MagazineHomePage({
                 rounds={trend.rounds}
                 series={trendSeries}
               />
-            )}
-
-            {nextRace && (
+  ) : null;
+  const nextRaceEl = nextRace ? (
               <NextRaceCard
                 className="md:col-span-6 lg:col-span-4"
                 kicker={t('nextRace.kicker', { round: nextRace.round })}
@@ -532,7 +553,8 @@ export default async function MagazineHomePage({
                     : []),
                 ]}
               />
-            )}
+  ) : null;
+  const latestEl = (
             <LatestList
               className="md:col-span-6 lg:col-span-8"
               title={t('latest.title')}
@@ -540,6 +562,43 @@ export default async function MagazineHomePage({
               linkHref="/feed"
               items={latestItems}
             />
+  );
+
+  return (
+    <main className={`theme-dusk ${duskSans.variable} min-h-screen`}>
+      <h1 className="sr-only">{tMag('headline')}</h1>
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-5 pt-7 pb-16 flex flex-col gap-5">
+        {isFrontPage && raceMode && raceHeader}
+
+        {isFrontPage && (
+          <div className="grid grid-cols-1 md:grid-cols-6 lg:grid-cols-12 gap-4">
+            {heroEl}
+            {insightsBlock}
+            {raceMode ? (
+              <>
+                {raceKpis}
+                {storyEl}
+                {standingsEl}
+                {duelEl}
+                {mapBlock}
+                {trendEl}
+                {nextRaceEl}
+                {latestEl}
+              </>
+            ) : (
+              <>
+                {storyKpis}
+                {trendEl}
+                {standingsEl}
+                {nextRaceEl}
+                {latestEl}
+                {raceHeader}
+                {raceKpis}
+                {storyEl}
+                {duelEl}
+                {mapBlock}
+              </>
+            )}
 
             <NewsletterBand className="md:col-span-6 lg:col-span-12" />
           </div>

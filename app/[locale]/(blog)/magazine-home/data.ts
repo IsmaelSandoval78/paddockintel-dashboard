@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { editorialToday } from '@/lib/dates';
+import { getLatestStandingsRaceId, latestStandingsRaceIds } from '@/lib/latestRace';
 import { getArticleIdsForTagSlug, getArticleTagSlugs, type TagRef } from '@/lib/blog/tags';
 import { entityCountsInWindow, weeklyEntityCounts, topEntity, type EntityCount } from '@/lib/entityMentions';
 import { getTranslations } from 'next-intl/server';
@@ -16,9 +17,10 @@ type ArticleRow = {
   published_at: string | null;
   stats: unknown;
   cover_image_url: string | null;
+  race_id: number | null;
 };
 
-const ARTICLE_SELECT = 'id, slug, title, meta_description, published_at, stats, cover_image_url';
+const ARTICLE_SELECT = 'id, slug, title, meta_description, published_at, stats, cover_image_url, race_id';
 
 async function attachTags(rows: Omit<ArticleRow, 'tags'>[]): Promise<ArticleRow[]> {
   if (!rows.length) return [];
@@ -208,24 +210,6 @@ export type Top5Constructor = {
   wins: number;
 };
 
-// The most recent race (by year, round) that driver_standings has rows for. Not max race_id:
-// ids aren't calendar order (2026 Bahrain R16 is id 1191, Singapore R17 is 1184), and not
-// `races` by date alone — a race can exist before its results are imported.
-export async function getLatestStandingsRaceId(supabase: ReturnType<typeof createClient>): Promise<number | null> {
-  const { data: recentRaces } = await supabase
-    .from('races')
-    .select('id')
-    .lte('date', editorialToday())
-    .order('year', { ascending: false })
-    .order('round', { ascending: false })
-    .limit(30);
-  const ids = (recentRaces ?? []).map((r) => r.id as number);
-  if (!ids.length) return null;
-  const { data: rows } = await supabase.from('driver_standings').select('race_id').in('race_id', ids);
-  const withStandings = new Set((rows ?? []).map((r) => r.race_id as number));
-  return ids.find((id) => withStandings.has(id)) ?? null;
-}
-
 export async function getStandings(): Promise<{ drivers: Top5Driver[]; constructors: Top5Constructor[] }> {
   const supabase = createClient();
 
@@ -352,13 +336,7 @@ function biggestDelta<T extends { positionDelta: number }>(rows: T[], direction:
 export async function getMovers(): Promise<MoversResult> {
   const supabase = createClient();
 
-  const { data: raceIdRows } = await supabase
-    .from('driver_standings')
-    .select('race_id')
-    .order('race_id', { ascending: false })
-    .limit(50);
-  const distinctRaceIds = [...new Set((raceIdRows ?? []).map((r) => r.race_id as number))];
-  const [currentRaceId, previousRaceId] = distinctRaceIds;
+  const [currentRaceId, previousRaceId] = await latestStandingsRaceIds(supabase, 2);
   if (!currentRaceId || !previousRaceId) return EMPTY_MOVERS;
 
   const [raceRes, curDriverRes, prevDriverRes, curConstructorRes, prevConstructorRes, resultsRes] =
@@ -495,12 +473,7 @@ const EMPTY_RACE_HIGHLIGHTS: RaceHighlights = {
 export async function getRaceHighlights(limit = 3): Promise<RaceHighlights> {
   const supabase = createClient();
 
-  const { data: raceIdRows } = await supabase
-    .from('driver_standings')
-    .select('race_id')
-    .order('race_id', { ascending: false })
-    .limit(1);
-  const currentRaceId = raceIdRows?.[0]?.race_id as number | undefined;
+  const currentRaceId = await getLatestStandingsRaceId(supabase);
   if (!currentRaceId) return EMPTY_RACE_HIGHLIGHTS;
 
   const [raceRes, resultsRes, pitRes, statusRes] = await Promise.all([

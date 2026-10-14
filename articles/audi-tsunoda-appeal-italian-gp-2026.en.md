@@ -2,7 +2,7 @@
 slug: "audi-tsunoda-appeal-italian-gp-2026"
 title: "Audi's Tsunoda Appeal Is Really About One Point's Price"
 locale: en
-meta_description: "Audi is appealing Yuki Tsunoda's non-penalty at Monza over a single point — but Racing Bulls, not Audi, has the most to lose from the ruling."
+meta_description: "Audi is appealing Yuki Tsunoda's non-penalty at Monza over a single point. Here's what the ruling would, and wouldn't, change in the standings."
 status: published
 paywalled: false
 published_at: "2026-09-10"
@@ -10,9 +10,9 @@ translation_group_id: "df7213e4-c5d1-452d-83b0-aa9c4228807a"
 tags: ["race-analysis", "economics", "regulations"]
 
 stats:
-  - value: "71"
+  - value: "75"
     label: "RACING BULLS POINTS"
-    unit: "P5, tied with Alpine"
+    unit: "P5, 13 ahead of Alpine"
   - value: "1"
     label: "POINT UNDER APPEAL"
     unit: "Tsunoda P10 vs. Bortoleto P11"
@@ -27,7 +27,7 @@ faq:
   - q: "Why is Audi appealing Yuki Tsunoda's Italian Grand Prix result?"
     a: "Stewards decided not to penalize Tsunoda for triggering an extra formation lap at Monza, ruling the delay came from the Race Director's judgment rather than a driver infringement. Audi disputes that reading of Article B5.9.4 because its own driver, Gabriel Bortoleto, finished one position behind Tsunoda."
   - q: "What happens to the standings if Audi wins the appeal?"
-    a: "Tsunoda's Monza result would be amended, most likely moving his point to Bortoleto and Audi. That single point drops Racing Bulls from 71 to 70 — enough to fall behind Alpine, also on 71, for 5th in the constructors' championship."
+    a: "Tsunoda's Monza result would be amended, most likely moving his point to Bortoleto and Audi. That single point would drop Racing Bulls from 75 to 74 — still fifth, 12 ahead of Alpine on the official standings."
   - q: "How much is a constructors' championship position actually worth?"
     a: "Based on F1's confirmed 2025 payouts, adjacent midfield positions were worth roughly $11-12 million apart — 5th paid about $130 million, 6th about $119 million. 2026's exact figures won't be confirmed until after the season."
   - q: "Why was Yuki Tsunoda driving for Racing Bulls at Monza instead of Red Bull?"
@@ -66,7 +66,7 @@ Tsunoda was even driving Racing Bulls' car at Monza rather than his own seat. Is
 
 ## Economic Impact
 
-Racing Bulls sit 5th in the constructors' championship on 71 points — tied on points with Alpine in 6th, ahead only on a tiebreaker, according to [PaddockIntel's live standings](https://hub.paddockintel.com/constructors/). Strip Tsunoda's Monza point and Racing Bulls drop to 70 — no longer tied with Alpine, but behind them. A single stewards' ruling, decided months after the fact by an appeal panel, would flip an actual championship position rather than just closing a gap.
+Racing Bulls sit 5th in the constructors' championship on 75 points, 13 ahead of Alpine in 6th, according to [PaddockIntel's standings](https://hub.paddockintel.com/constructors/). Strip Tsunoda's Monza point and Racing Bulls drop to 74 — still fifth, still clear of Alpine. On the official standings, this ruling would not flip a championship position for Racing Bulls; it would move one point between two teams.
 
 Audi itself gains less than the dispute suggests. Moving from 16 points to 17 keeps the team in 8th regardless — Haas sits 5 points clear in 7th on 21. The team fighting hardest for this point isn't the one with the most to gain from winning it.
 
@@ -74,10 +74,12 @@ What a position swing is worth in dollars isn't a 2026 number yet — this seaso
 
 ## The Framework
 
-Appeals over single points used to be rare because single points rarely decided anything — grids were spread wide enough that a one-point swing almost never crossed a real boundary. That's changing. The same week Audi filed its appeal, Max Verstappen argued publicly that the 2026 regulations have compressed the field to the point that stand-in drivers are immediately competitive in cars they've never raced. Racing Bulls and Alpine sitting level on points isn't a coincidence adjacent to that complaint — it's the same underlying convergence, visible in the standings instead of the lap times.
+Appeals over single points used to be rare because single points rarely decided anything — grids were spread wide enough that a one-point swing almost never crossed a real boundary. That's changing. The same week Audi filed its appeal, Max Verstappen argued publicly that the 2026 regulations have compressed the field to the point that stand-in drivers are immediately competitive in cars they've never raced. This specific case turned out not to be an example of it: on the official standings, Racing Bulls and Alpine are 13 points apart, not level.
 
 Under a $215 million cost cap, teams can no longer out-spend a tied rival into clear air — the same cap [PaddockIntel has covered as a rewrite of F1's underlying commercial priorities](/norris-f1-2026-regulations-commercial-priorities/), not just a technical ceiling. What's left to fight over is the marginal point — on track, and increasingly, in an appeal room. Audi contesting one position at Monza is a rational response to a grid where the money gap between adjacent spots is now measured in exactly this kind of decision.
 
 ## Verdict
 
-Audi's appeal reads at first as a technicality over a single position most fans won't remember by Madrid. It isn't. Under F1's current prize structure, one point is the difference between finishing a season ahead of or behind a direct rival — and this specific dispute could decide that outcome for Racing Bulls before Audi itself sees any real benefit from winning it. My read: as the midfield keeps compressing, expect more appeals that look this small on the surface, not fewer.
+Audi's appeal reads at first as a technicality over a single position most fans won't remember by Madrid. On the corrected standings, for Racing Bulls it largely is: the point would not change its position. The broader pattern holds: under F1's current prize structure, one point can be the difference between finishing a season ahead of or behind a direct rival. My read: as the midfield keeps compressing, expect more appeals that look this small on the surface, not fewer.
+
+*Correction, October 14, 2026: an earlier version of this article said Racing Bulls and Alpine were tied on 71 points and that removing Tsunoda's Monza point would drop Racing Bulls behind Alpine. Our results database had Pierre Gasly third at the 2026 Monaco Grand Prix instead of his official seventh place. With the official result, Racing Bulls had 75 points and Alpine 62 after the Italian Grand Prix, so the point at stake would not change Racing Bulls' position. The text, stat box, FAQ and description have been corrected, and the argument revised to match.*

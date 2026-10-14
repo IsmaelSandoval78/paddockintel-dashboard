@@ -2,7 +2,7 @@
 slug: "apelacion-audi-tsunoda-gp-italia-2026"
 title: "La apelación de Audi a Tsunoda: el precio de un punto"
 locale: es
-meta_description: "Audi apela la no sanción a Tsunoda en Monza por un solo punto — pero quien más pierde con el fallo es Racing Bulls, no Audi."
+meta_description: "Audi apela la no sanción a Tsunoda en Monza por un solo punto. Esto es lo que el fallo cambiaría, y lo que no, en la clasificación."
 status: published
 paywalled: false
 published_at: "2026-09-10"
@@ -10,9 +10,9 @@ translation_group_id: "df7213e4-c5d1-452d-83b0-aa9c4228807a"
 tags: ["race-analysis", "economics", "regulations"]
 
 stats:
-  - value: "71"
+  - value: "75"
     label: "PUNTOS DE RACING BULLS"
-    unit: "P5, empatado con Alpine"
+    unit: "P5, 13 por delante de Alpine"
   - value: "1"
     label: "PUNTO EN DISPUTA"
     unit: "Tsunoda P10 vs. Bortoleto P11"
@@ -27,7 +27,7 @@ faq:
   - q: "¿Por qué apela Audi el resultado de Yuki Tsunoda en el GP de Italia?"
     a: "Los comisarios decidieron no sancionar a Tsunoda por provocar una vuelta de formación extra en Monza, al considerar que la demora vino de una decisión del Director de Carrera y no de una infracción del piloto. Audi discute esa lectura del Artículo B5.9.4 porque su propio piloto, Gabriel Bortoleto, terminó justo una posición detrás de Tsunoda."
   - q: "¿Qué pasa con la tabla de posiciones si Audi gana la apelación?"
-    a: "El resultado de Tsunoda en Monza se modificaría, y lo más probable es que ese punto pase a Bortoleto y Audi. Ese único punto baja a Racing Bulls de 71 a 70 — lo suficiente para caer detrás de Alpine, también con 71, en el quinto puesto del campeonato de constructores."
+    a: "El resultado de Tsunoda en Monza se modificaría, y lo más probable es que ese punto pase a Bortoleto y Audi. Ese único punto bajaría a Racing Bulls de 75 a 74 — sigue quinto, 12 por delante de Alpine en la clasificación oficial."
   - q: "¿Cuánto vale en realidad una posición en el campeonato de constructores?"
     a: "Según los pagos confirmados de F1 para 2025, posiciones adyacentes en la mitad de la tabla valían entre $11 y $12 millones de diferencia — el quinto puesto pagó unos $130 millones, el sexto unos $119 millones. Las cifras exactas de 2026 no se confirman hasta que termine la temporada."
   - q: "¿Por qué Yuki Tsunoda manejaba para Racing Bulls en Monza y no para Red Bull?"
@@ -66,7 +66,7 @@ Tsunoda, además, ni siquiera manejaba su propio asiento en Monza. Isack Hadjar 
 
 ## Impacto económico
 
-Racing Bulls está quinto en el campeonato de constructores con 71 puntos — empatado en puntos con Alpine, sexto, y por delante solo por criterio de desempate, según la [tabla de posiciones en vivo de PaddockIntel](https://hub.paddockintel.com/constructors/). Si se le quita el punto de Monza a Tsunoda, Racing Bulls cae a 70 puntos — ya no empatado con Alpine, sino detrás. Un solo fallo de comisarios, decidido meses después por un tribunal de apelación, invertiría una posición real del campeonato, no solo achicaría una diferencia.
+Racing Bulls está quinto en el campeonato de constructores con 75 puntos, 13 por delante de Alpine, sexto, según la [tabla de posiciones de PaddockIntel](https://hub.paddockintel.com/constructors/). Si se le quita el punto de Monza a Tsunoda, Racing Bulls baja a 74 — sigue quinto y por delante de Alpine. Con la clasificación oficial, este fallo no cambiaría una posición del campeonato para Racing Bulls; solo movería un punto entre dos equipos.
 
 Audi, en cambio, gana menos de lo que sugiere la disputa. Pasar de 16 a 17 puntos no cambia su octavo puesto: Haas está quinto puntos por delante, en el séptimo lugar, con 21. El equipo que más pelea por este punto no es el que más tiene para ganar si lo consigue.
 
@@ -74,10 +74,12 @@ Cuánto vale en dólares un cambio de posición todavía no es un número de 202
 
 ## El marco
 
-Las apelaciones por un solo punto solían ser raras porque un solo punto rara vez decidía algo — las parrillas estaban lo bastante repartidas como para que un cambio de un punto casi nunca cruzara un límite real. Eso está cambiando. La misma semana en que Audi presentó su apelación, Max Verstappen argumentó públicamente que el reglamento 2026 comprimió tanto el campo que los pilotos suplentes son competitivos de inmediato en autos que nunca habían manejado. Que Racing Bulls y Alpine estén empatados en puntos no es una coincidencia al margen de ese reclamo — es la misma convergencia de fondo, visible en la tabla en lugar de en los tiempos de vuelta.
+Las apelaciones por un solo punto solían ser raras porque un solo punto rara vez decidía algo — las parrillas estaban lo bastante repartidas como para que un cambio de un punto casi nunca cruzara un límite real. Eso está cambiando. La misma semana en que Audi presentó su apelación, Max Verstappen argumentó públicamente que el reglamento 2026 comprimió tanto el campo que los pilotos suplentes son competitivos de inmediato en autos que nunca habían manejado. Este caso concreto resultó no ser un ejemplo de eso: con la clasificación oficial, Racing Bulls y Alpine están separados por 13 puntos, no empatados.
 
 Con un techo de gasto de $215 millones, los equipos ya no pueden gastar más que un rival empatado hasta sacarle ventaja — el mismo techo que [PaddockIntel analizó como una reescritura de las prioridades comerciales de fondo de la F1](/norris-f1-reglas-2026-prioridades-comerciales/), no solo un límite técnico. Lo que queda por disputar es el punto marginal — en pista, y cada vez más, en una sala de apelaciones. Que Audi discuta una sola posición en Monza es una respuesta racional a una parrilla donde la diferencia de dinero entre puestos consecutivos hoy se mide exactamente en este tipo de decisiones.
 
 ## Veredicto
 
-A primera vista, la apelación de Audi parece un tecnicismo por una sola posición que la mayoría de los hinchas ya habrá olvidado para Madrid. No lo es. Bajo la estructura de premios actual de la F1, un punto es la diferencia entre terminar una temporada por delante o por detrás de un rival directo — y esta disputa puntual podría decidir ese resultado para Racing Bulls antes de que Audi vea algún beneficio real por ganarla. Mi lectura: a medida que la mitad de la tabla se sigue comprimiendo, hay que esperar más apelaciones que a simple vista parecen así de chicas, no menos.
+A primera vista, la apelación de Audi parece un tecnicismo por una sola posición que la mayoría de los hinchas ya habrá olvidado para Madrid. Con la clasificación corregida, para Racing Bulls en buena medida lo es: ese punto no cambiaría su posición. El patrón de fondo se mantiene: bajo la estructura de premios actual de la F1, un punto puede ser la diferencia entre terminar una temporada por delante o por detrás de un rival directo. Mi lectura: a medida que la mitad de la tabla se sigue comprimiendo, hay que esperar más apelaciones que a simple vista parecen así de chicas, no menos.
+
+*Corrección, 14 de octubre de 2026: una versión anterior de este artículo decía que Racing Bulls y Alpine estaban empatados con 71 puntos y que quitarle a Tsunoda su punto de Monza dejaría a Racing Bulls detrás de Alpine. Nuestra base de resultados tenía a Pierre Gasly tercero en el Gran Premio de Mónaco 2026 en lugar de su séptimo puesto oficial. Con el resultado oficial, Racing Bulls tenía 75 puntos y Alpine 62 después del Gran Premio de Italia, así que el punto en juego no cambiaría la posición de Racing Bulls. Se corrigieron el texto, el recuadro de datos, las preguntas frecuentes y la descripción, y se ajustó el argumento.*

@@ -19,9 +19,9 @@ stats:
   - value: "900"
     label: "MENOS SIMULAÇÕES CFD QUE A ALPINE"
     unit: "1.400 vs. 2.300, S1 2026"
-  - value: "285"
+  - value: "287"
     label: "PONTOS DA MCLAREN EM 2026"
-    unit: "P3, a 183 da Mercedes"
+    unit: "P3, a 181 da Mercedes"
 
 faq:
   - q: "Por que a McLaren não usou sua asa H rotativa no GP de Madri?"
@@ -64,7 +64,7 @@ A diferença entre McLaren e Alpine não é cosmética: 144 rodadas de túnel de
 
 Essa é a lógica real por trás de guardar a asa H em Madri. Não é só que a peça renda menos ali. É que cada configuração adicional que uma equipe roda em um fim de semana é mais um dado que precisa estar modelado e validado com antecedência, contra um orçamento de testes que já é o mais apertado do grid. Rodar uma asa específica por pista em todas as corridas exigiria uma carga de validação que a alocação 2026 da McLaren não sustenta com folga. Usá-la só onde o ganho é maior — as retas de Baku, não o traçado técnico de MADRING — direciona essa capacidade de validação escassa para as pistas onde ela mais importa.
 
-Isso acontece enquanto a McLaren briga a partir da terceira posição no campeonato de construtores 2026 — 285 pontos, 61 atrás da Ferrari e 183 atrás de uma Mercedes dominante, com dez etapas ainda por disputar. Defender um título normalmente exige mais desenvolvimento, não menos. A McLaren precisa encontrá-lo com 224 rodadas de túnel de vento em vez das 320 que uma equipe de meio de tabela recebe, porque venceu justamente o título que agora tenta defender.
+Isso acontece enquanto a McLaren briga a partir da terceira posição no campeonato de construtores 2026 — 287 pontos, 59 atrás da Ferrari e 181 atrás de uma Mercedes dominante, com dez etapas ainda por disputar. Defender um título normalmente exige mais desenvolvimento, não menos. A McLaren precisa encontrá-lo com 224 rodadas de túnel de vento em vez das 320 que uma equipe de meio de tabela recebe, porque venceu justamente o título que agora tenta defender.
 
 A Mercedes não está muito melhor. Terminar em segundo em 2025 lhe dá uma alocação de 75% — 240 rodadas, 1.500 simulações — mais apertada que a de qualquer equipe além da McLaren, mesmo liderando o campeonato de 2026 por 122 pontos sobre a Ferrari. O topo da tabela é limitado em desenvolvimento por regulamento, não por orçamento. A ATR pesa sobre a mesma matemática competitiva do novo regulamento de motores da F1 — veja a análise da PaddockIntel sobre [o que a nova divisão de potência realmente custa para equipes e pilotos](/norris-f1-2026-regulations-commercial-priorities).
 
@@ -77,3 +77,5 @@ O padrão vai além dessa asa. Qualquer equipe que terminou 2025 na metade super
 ## Veredito
 
 A McLaren ter guardado a asa H em Madri não é uma decisão isolada de uma pista — é uma prévia de como será o resto de 2026 para toda equipe que a ATR pune por vencer. É esperar melhorias mais seletivas da McLaren e da Mercedes na segunda metade da temporada, e uma diferença maior em relação ao quanto a Ferrari, um degrau abaixo na escala móvel, pode se dar ao luxo de experimentar. A equipe mais bem posicionada para superar o resto em desenvolvimento em 2026 não é a que tem o maior orçamento. É a que tem mais espaço na escala móvel para usá-lo.
+
+*Correção, 14 de outubro de 2026: uma versão anterior deste artigo dizia que a McLaren tinha 285 pontos, 61 atrás da Ferrari e 183 atrás da Mercedes. Nosso banco de resultados tinha Pierre Gasly em terceiro no Grande Prêmio de Mônaco de 2026, em vez do sétimo lugar oficial. Os números corretos são 287 pontos, 59 atrás da Ferrari e 181 atrás da Mercedes. Foram corrigidos no texto e no quadro de dados.*

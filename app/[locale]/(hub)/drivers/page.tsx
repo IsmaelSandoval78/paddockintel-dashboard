@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { editorialToday } from '@/lib/dates';
+import { getLatestStandingsRaceId } from '@/lib/latestRace';
 import type {
   DriverSeasonRow,
   DriverAllTimeRow,
@@ -55,13 +56,8 @@ async function getDriversData(): Promise<{
   // can be in the past by calendar date before the post-race loader has run for it, same
   // pattern as the Hub's getHomeData(). Querying by date alone would find that race and then
   // fail to find any standings for it, blanking the whole page.
-  const [latestRaceRes, allStats, allDrivers, allRaces] = await Promise.all([
-    supabase
-      .from('driver_standings')
-      .select('race_id')
-      .order('race_id', { ascending: false })
-      .limit(1)
-      .single(),
+  const [latestRaceId, allStats, allDrivers, allRaces] = await Promise.all([
+    getLatestStandingsRaceId(supabase),
     fetchAllRows<{
       driver_id: number; nationality: string; first_year: number;
       last_year: number; wins: number; races: number;
@@ -175,10 +171,9 @@ async function getDriversData(): Promise<{
     champions,
   };
 
-  if (!latestRaceRes.data) {
+  if (latestRaceId === null) {
     return { season2026: [], allTime, totalCount: allTime.length, ...emptyExtras };
   }
-  const latestRaceId = latestRaceRes.data.race_id as number;
 
   // Batch 2: standings at latest race + all 2026 race IDs
   const [standingsRes, races2026Res] = await Promise.all([

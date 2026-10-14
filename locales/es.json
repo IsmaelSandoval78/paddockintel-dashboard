@@ -1357,6 +1357,7 @@
       "read": "Leer el análisis"
     },
     "kpi": {
+      "fromArticle": "Del análisis",
       "speedTitle": "Velocidad máxima",
       "speedSub": "Vuelta de la pole de {driver}, {lapTime}",
       "speedUnit": "km/h",

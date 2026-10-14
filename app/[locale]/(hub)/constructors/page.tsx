@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { getLatestStandingsRaceId } from '@/lib/latestRace';
 import type { ConstructorSeasonRow, ConstructorAllTimeRow } from '@/lib/types';
 import ConstructorsClient from '@/components/constructors/ConstructorsClient';
 
@@ -14,13 +15,8 @@ async function getConstructorsData(): Promise<{
   // be in the past by calendar date before the post-race loader has run for it, same pattern
   // as the Hub's/Drivers' getXData(). Querying by date alone would find that race and then
   // fail to find any standings for it, blanking the whole page (the "0 CONSTRUCTORS" bug).
-  const [latestRaceRes, constructorsRes, statsRes, allRacesRes] = await Promise.all([
-    supabase
-      .from('constructor_standings')
-      .select('race_id')
-      .order('race_id', { ascending: false })
-      .limit(1)
-      .single(),
+  const [latestRaceId, constructorsRes, statsRes, allRacesRes] = await Promise.all([
+    getLatestStandingsRaceId(supabase, 'constructor_standings'),
     supabase
       .from('constructors')
       .select('id, name, constructor_ref, nationality'),
@@ -90,10 +86,9 @@ async function getConstructorsData(): Promise<{
     ];
   });
 
-  if (!latestRaceRes.data) {
+  if (latestRaceId === null) {
     return { season2026: [], allTime, totalCount: allTime.length };
   }
-  const latestRaceId = latestRaceRes.data.race_id as number;
 
   // Batch 2: standings at latest race + all 2026 race IDs
   const [standingsRes, races2026Res] = await Promise.all([
