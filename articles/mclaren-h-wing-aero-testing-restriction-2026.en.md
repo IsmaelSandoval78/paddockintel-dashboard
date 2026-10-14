@@ -19,9 +19,9 @@ stats:
   - value: "900"
     label: "FEWER CFD SIMULATIONS THAN ALPINE"
     unit: "1,400 vs. 2,300, H1 2026"
-  - value: "285"
+  - value: "287"
     label: "MCLAREN'S 2026 POINTS"
-    unit: "P3, 183 behind Mercedes"
+    unit: "P3, 181 behind Mercedes"
 
 faq:
   - q: "Why did McLaren not use its rotating H-wing at the Madrid Grand Prix?"
@@ -64,7 +64,7 @@ The gap between McLaren and Alpine isn't cosmetic: 144 fewer wind tunnel runs, 9
 
 That's the real logic behind parking the H-wing at Madrid. It isn't just that the part helps less there. It's that every additional configuration a team runs at a race is another data point it has to have modeled and validated in advance, against a testing budget that's already the tightest in the field. Running a track-specific wing everywhere would demand a validation workload McLaren's 2026 allocation doesn't comfortably support. Running it only where the payoff is largest — Baku's long straights, not MADRING's tight infield — rations that scarce validation capacity toward the tracks where it matters most.
 
-This is happening while McLaren is fighting from third in the 2026 constructors' standings — 285 points, 61 behind Ferrari and 183 behind a dominant Mercedes, with ten rounds still to run. A title defense usually calls for more development, not less. McLaren has to find it with 224 wind tunnel runs instead of the 320 a mid-table team gets, because it won the thing it's now trying to defend.
+This is happening while McLaren is fighting from third in the 2026 constructors' standings — 287 points, 59 behind Ferrari and 181 behind a dominant Mercedes, with ten rounds still to run. A title defense usually calls for more development, not less. McLaren has to find it with 224 wind tunnel runs instead of the 320 a mid-table team gets, because it won the thing it's now trying to defend.
 
 Mercedes isn't much better off. Finishing 2025 second gives it a 75% allocation — 240 runs, 1,500 simulations — tighter than every team except McLaren, even as it leads the 2026 standings by 122 points over Ferrari. The top of the field is development-starved by rule, not by budget. ATR bites into the same competitive math as F1's 2026 engine rules — see PaddockIntel's breakdown of what the [new power-unit split actually costs teams and drivers](/norris-f1-2026-regulations-commercial-priorities).
 
@@ -77,3 +77,5 @@ The pattern extends past this one wing. Any team finishing 2025 in the top half 
 ## Verdict
 
 McLaren parking the H-wing at Madrid isn't a one-off track call — it's a preview of how the rest of 2026 will look for every team ATR punishes for winning. Expect more selective upgrade rollouts from McLaren and Mercedes through the back half of the season, and a wider gap in how freely Ferrari, sitting one place lower on the sliding scale, can afford to experiment. The team best positioned to out-develop the field in 2026 isn't the one with the biggest budget. It's the one with the most room left on the sliding scale to use it.
+
+*Correction, October 14, 2026: an earlier version of this article said McLaren had 285 points, 61 behind Ferrari and 183 behind Mercedes. Our results database had Pierre Gasly third at the 2026 Monaco Grand Prix instead of his official seventh place. The correct figures are 287 points, 59 behind Ferrari and 181 behind Mercedes. They have been corrected in the text and stat box.*

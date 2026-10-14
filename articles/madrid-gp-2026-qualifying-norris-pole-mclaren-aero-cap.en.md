@@ -17,7 +17,7 @@ stats:
   - value: "70%"
     label: "MCLAREN'S 2026 H1 AERO ALLOCATION"
     unit: "lowest in the field, as 2025 champion"
-  - value: "61"
+  - value: "59"
     label: "MCLAREN'S POINTS GAP TO FERRARI"
     unit: "constructors', with 9 rounds left"
   - value: "P7"
@@ -69,7 +69,7 @@ It's also the reason McLaren's pole is worth a second look. As 2025 constructors
 
 ## Economic Impact
 
-McLaren sits third in the 2026 constructors' championship on 285 points, 61 behind second-placed Ferrari's 346, with nine rounds still to run. Converting Saturday's grid slots — P1 and P7 — into Sunday's race points is a real chance to cut into that gap at a circuit where the historical setup advantage that normally protects a leading team doesn't exist for Ferrari either.
+McLaren sits third in the 2026 constructors' championship on 287 points, 59 behind second-placed Ferrari's 346, with nine rounds still to run. Converting Saturday's grid slots — P1 and P7 — into Sunday's race points is a real chance to cut into that gap at a circuit where the historical setup advantage that normally protects a leading team doesn't exist for Ferrari either.
 
 Ferrari's own session was quieter than its week: Hamilton and Leclerc locked out fourth and fifth, a solid result that got little attention next to their Monza fallout and Madrid FP1 complaints about Hamilton's driving. Quiet is not the same as safe — every point Ferrari takes from this weekend is one McLaren doesn't get to close the gap with, and every point it doesn't take is one McLaren does.
 
@@ -82,3 +82,5 @@ A pole margin this tight, at a circuit debut, is what F1's grid looks like when 
 ## Verdict
 
 One qualifying lap doesn't settle whether F1's aero testing restriction actually costs the reigning champion what the math suggests it should — Saturday at a data-less circuit was always going to be the moment least likely to expose that gap. My read: watch Sunday's race, and then the next few rounds after it, before deciding whether McLaren's smallest testing budget in the field is a real constraint or just a number that hasn't bitten yet.
+
+*Correction, October 14, 2026: an earlier version of this article said McLaren had 285 points, 61 behind Ferrari. Our results database had Pierre Gasly third at the 2026 Monaco Grand Prix instead of his official seventh place. The correct figures are 287 points and a 59-point gap. They have been corrected in the text and stat box.*

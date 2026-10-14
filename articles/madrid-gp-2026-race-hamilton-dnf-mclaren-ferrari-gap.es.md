@@ -13,9 +13,9 @@ stats:
   - value: "101"
     label: "PUNTOS DE HAMILTON DETRÁS DE ANTONELLI"
     unit: "después de Madrid, eran 76 antes"
-  - value: "54"
+  - value: "52"
     label: "NUEVA DIFERENCIA DE MCLAREN CON FERRARI"
-    unit: "constructores, bajó de 61"
+    unit: "constructores, bajó de 59"
   - value: "7"
     label: "VUELTA EN QUE ABANDONÓ HAMILTON"
     unit: "falla de frenos, la primera de Ferrari desde 2014"
@@ -27,7 +27,7 @@ faq:
   - q: "¿Por qué abandonó Lewis Hamilton en el Gran Premio de España 2026?"
     a: "Por una falla de frenos. Hamilton reportó que el pedal cambió de sensación frenando para la curva 5, rozó el muro, y abandonó en la vuelta 7 cuando el problema volvió a aparecer — su primer abandono por frenos desde el Gran Premio de Canadá 2014."
   - q: "¿Cómo cambió la diferencia de puntos de McLaren con Ferrari en constructores después del GP de España?"
-    a: "Se achicó de 61 a 54 puntos. McLaren sumó con los dos autos (Norris tercero, Piastri octavo) mientras que Hamilton de Ferrari no sumó nada pese a que Leclerc terminó cuarto."
+    a: "Se achicó de 59 a 52 puntos. McLaren sumó con los dos autos (Norris tercero, Piastri octavo) mientras que Hamilton de Ferrari no sumó nada pese a que Leclerc terminó cuarto."
   - q: "¿Lando Norris ganó el Gran Premio de España después de salir desde la pole?"
     a: "No. Norris terminó tercero. Kimi Antonelli convirtió el segundo lugar en la largada en la victoria, su octava de la temporada."
 
@@ -56,9 +56,9 @@ La falla de Hamilton es la historia mecánica: un sistema de frenos que cambió 
 
 ## Impacto Económico
 
-La diferencia de McLaren con Ferrari en el campeonato de constructores bajó de 61 a 54 puntos en esta sola carrera. No es porque Norris haya cumplido con la pole —terminó tercero, el mismo resultado que hubiera dado una buena largada desde un lugar mediocre de la parrilla. Es porque McLaren sumó con los dos autos (los 15 de Norris, los 4 de Piastri) mientras que Hamilton de Ferrari sumó cero desde una largada en P4 que el propio Hamilton dijo que valía una victoria.
+La diferencia de McLaren con Ferrari en el campeonato de constructores bajó de 59 a 52 puntos en esta sola carrera. No es porque Norris haya cumplido con la pole —terminó tercero, el mismo resultado que hubiera dado una buena largada desde un lugar mediocre de la parrilla. Es porque McLaren sumó con los dos autos (los 15 de Norris, los 4 de Piastri) mientras que Hamilton de Ferrari sumó cero desde una largada en P4 que el propio Hamilton dijo que valía una victoria.
 
-Si se corre el contrafáctico con un resultado en vez de un abandono: hasta un puntaje discreto —octavo, 4 puntos— hubiera mantenido la ventaja de Ferrari sobre McLaren más cerca de 58 puntos que de 54. Un resultado más fuerte, del nivel que Hamilton describió como ritmo para ganar, la hubiera agrandado, no achicado. Los cuatro puntos de diferencia entre "Hamilton termina octavo" y "Hamilton termina en cero" son un número chico aislado; acumulados en las diez fechas que quedan de 2026, son la diferencia entre un segundo puesto cómodo en la tabla de constructores y una pelea real por sostenerlo.
+Si se corre el contrafáctico con un resultado en vez de un abandono: hasta un puntaje discreto —octavo, 4 puntos— hubiera mantenido la ventaja de Ferrari sobre McLaren más cerca de 56 puntos que de 52. Un resultado más fuerte, del nivel que Hamilton describió como ritmo para ganar, la hubiera agrandado, no achicado. Los cuatro puntos de diferencia entre "Hamilton termina octavo" y "Hamilton termina en cero" son un número chico aislado; acumulados en las diez fechas que quedan de 2026, son la diferencia entre un segundo puesto cómodo en la tabla de constructores y una pelea real por sostenerlo.
 
 [PaddockIntel ya calculó cuánto vale realmente una posición del campeonato de constructores en premios reales](/audi-tsunoda-appeal-italian-gp-2026): unos $11 millones en el límite que peleaban Audi y Racing Bulls en septiembre. McLaren y Ferrari están peleando un escalón de premios bastante más grande —el P2 de constructores paga bastante más que el P3— y la falla de frenos del domingo movió esa pelea más que cualquier cosa que hicieran los pilotos de ambos equipos por mérito propio.
 
@@ -70,4 +70,6 @@ Es un tipo de vulnerabilidad distinto al déficit de pruebas aerodinámicas que 
 
 ## Veredicto
 
-Nadie le ganó a nadie en pista por los cuatro puntos que realmente se movieron el domingo. Mi lectura: la defensa de título de McLaren sigue corriendo con las mismas 224 corridas de túnel de viento que tenía el sábado a la mañana, y la posición de campeonato de Ferrari ahora depende de si la falla de frenos del domingo fue un hecho aislado o la primera señal de algo que Ferrari necesita resolver antes de que le cueste más de 54 puntos.
+Nadie le ganó a nadie en pista por los cuatro puntos que realmente se movieron el domingo. Mi lectura: la defensa de título de McLaren sigue corriendo con las mismas 224 corridas de túnel de viento que tenía el sábado a la mañana, y la posición de campeonato de Ferrari ahora depende de si la falla de frenos del domingo fue un hecho aislado o la primera señal de algo que Ferrari necesita resolver antes de que le cueste más de 52 puntos.
+
+*Corrección, 14 de octubre de 2026: una versión anterior de este artículo decía que la diferencia de McLaren con Ferrari bajó de 61 a 54 puntos, y situaba el contrafáctico en 58. Nuestra base de resultados tenía a Pierre Gasly tercero en el Gran Premio de Mónaco 2026 en lugar de su séptimo puesto oficial. La diferencia correcta bajó de 59 a 52 puntos, y el contrafáctico es 56. Se corrigieron las cifras en el texto, el recuadro de datos y las preguntas frecuentes; el argumento no cambia.*

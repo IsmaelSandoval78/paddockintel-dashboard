@@ -19,7 +19,7 @@ stats:
   - value: "0"
     label: "VUELTAS CRONOMETRADAS DE NORRIS ANTES DE LA FALLA"
     unit: "sesión terminada antes de tiempo"
-  - value: "61"
+  - value: "59"
     label: "DIFERENCIA DE PUNTOS DE MCLAREN CON FERRARI"
     unit: "P3 vs P2, constructores, 2026"
   - value: "P4"
@@ -34,7 +34,7 @@ faq:
   - q: "¿Qué causó la bandera roja en la FP2 de Madrid?"
     a: "El rookie de Racing Bulls Arvid Lindblad chocó en la curva 13 — su primer choque en Fórmula 1 — después de haber estado hasta cuarto en la tabla de tiempos, a 0.228s del ritmo de Antonelli."
   - q: "¿En qué posición está McLaren en el campeonato de constructores 2026?"
-    a: "Tercero con 285 puntos, 61 por detrás de Ferrari, segundo con 346, y lejos de Mercedes, líder con 468. Norris está cuarto en el campeonato de pilotos con 171 puntos."
+    a: "Tercero con 287 puntos, 59 por detrás de Ferrari, segundo con 346, y lejos de Mercedes, líder con 468. Norris está cuarto en el campeonato de pilotos con 171 puntos."
 
 sources:
   - name: "Sky Sports F1 — Spanish GP: Kimi Antonelli edges Ferrari in Madrid practice as Arvid Lindblad suffers first F1 crash at challenging Madring circuit"
@@ -73,7 +73,7 @@ El choque de Lindblad encaja en el mismo patrón, pero desde el otro lado. Iba r
 
 ## Impacto económico
 
-McLaren está tercero en el campeonato de constructores 2026 con 285 puntos, 61 por detrás del segundo, Ferrari, con 346. Esa diferencia es la distancia entre dos niveles reales de pago: [nuestro reporte anterior sobre la FP1 en Madring](/es/madrid-gp-2026-fp1-mercedes-aston-martin) situó la brecha estimada entre posiciones consecutivas del campeonato de constructores en unos $9 millones, según las cifras de premios de 2025 proyectadas a 2026. [Lo que ya le cuesta a McLaren perder contra Ferrari](/es/mclaren-2026-prize-money-ferrari-mercedes-cost) es la cuenta completa de esa diferencia. Cada punto pesa más con diez fechas por delante, y Norris está personalmente cuarto en el campeonato de pilotos con 171 puntos — no una amenaza al título este año, pero sí una marca real de lo que vale para su próximo ciclo de contrato.
+McLaren está tercero en el campeonato de constructores 2026 con 287 puntos, 59 por detrás del segundo, Ferrari, con 346. Esa diferencia es la distancia entre dos niveles reales de pago: [nuestro reporte anterior sobre la FP1 en Madring](/es/madrid-gp-2026-fp1-mercedes-aston-martin) situó la brecha estimada entre posiciones consecutivas del campeonato de constructores en unos $9 millones, según las cifras de premios de 2025 proyectadas a 2026. [Lo que ya le cuesta a McLaren perder contra Ferrari](/es/mclaren-2026-prize-money-ferrari-mercedes-cost) es la cuenta completa de esa diferencia. Cada punto pesa más con diez fechas por delante, y Norris está personalmente cuarto en el campeonato de pilotos con 171 puntos — no una amenaza al título este año, pero sí una marca real de lo que vale para su próximo ciclo de contrato.
 
 Perder tiempo en pista en un circuito sin datos históricos no es el mismo costo que perderlo en uno que un equipo ya corrió diez veces. En Silverstone, una FP2 recortada es una molestia que un buen modelo de simulador absorbe. En Madring es la única ventana de recolección de datos antes de que el deporte pase al formato de eliminación y reduzca casi a nada las vueltas de respaldo. Los ingenieros de Norris y McLaren llegan a la FP3 del sábado por la mañana necesitando confirmar una dirección de puesta a punto con aproximadamente la mitad de las vueltas de referencia que los autos a su alrededor.
 
@@ -88,3 +88,5 @@ Por eso la falla de caja de Norris duele más de lo que dolería un problema equ
 ## Veredicto
 
 El ritmo de Mercedes en dos viernes seguidos, repartido entre dos pilotos, es la forma más sólida de dominio que puede mostrar un equipo: no es un auto funcionando, es el paquete completo. La diferencia ajustada de Ferrari en ambas sesiones es la lectura más alentadora de su fin de semana hasta ahora. Pero el número que más va a pesar de cara al sábado es el cero de vueltas cronometradas de Norris — justo en el único circuito del año donde ningún dato previo puede compensar el tiempo en pista que falta. La posición de McLaren en el campeonato no cambia por un mal viernes. Su preparación para la clasificación, este fin de semana puntual, ya cambió.
+
+*Corrección, 14 de octubre de 2026: una versión anterior de este artículo decía que McLaren tenía 285 puntos, a 61 de Ferrari. Nuestra base de resultados tenía a Pierre Gasly tercero en el Gran Premio de Mónaco 2026 en lugar de su séptimo puesto oficial. Las cifras correctas son 287 puntos y una diferencia de 59. Se corrigieron en el texto, el recuadro de datos y las preguntas frecuentes.*

@@ -13,9 +13,9 @@ stats:
   - value: "101"
     label: "HAMILTON'S POINTS BEHIND ANTONELLI"
     unit: "after Madrid, was 76 before"
-  - value: "54"
+  - value: "52"
     label: "MCLAREN'S NEW GAP TO FERRARI"
-    unit: "constructors', down from 61"
+    unit: "constructors', down from 59"
   - value: "7"
     label: "LAP HAMILTON RETIRED ON"
     unit: "brake failure, Ferrari's first since 2014"
@@ -27,7 +27,7 @@ faq:
   - q: "Why did Lewis Hamilton retire from the 2026 Spanish Grand Prix?"
     a: "A brake failure. Hamilton reported the pedal changing feel under braking for Turn 5, clipped the barrier, and retired on lap 7 once the problem returned — his first brake-related DNF since the 2014 Canadian Grand Prix."
   - q: "How did McLaren's constructors' points gap to Ferrari change after the Spanish Grand Prix?"
-    a: "It narrowed from 61 points to 54. McLaren scored with both cars (Norris third, Piastri eighth) while Ferrari's Hamilton retired for zero points despite Leclerc finishing fourth."
+    a: "It narrowed from 59 points to 52. McLaren scored with both cars (Norris third, Piastri eighth) while Ferrari's Hamilton retired for zero points despite Leclerc finishing fourth."
   - q: "Did Lando Norris win the Spanish Grand Prix after taking pole?"
     a: "No. Norris finished third. Kimi Antonelli converted pole-adjacent second on the grid into the win, his eighth of the season."
 
@@ -56,9 +56,9 @@ Hamilton's failure is the mechanical story: a brake system that changed feel mid
 
 ## Economic Impact
 
-McLaren's gap to Ferrari in the constructors' championship fell from 61 points to 54 points over this one race. That's not because Norris delivered on his pole — he finished third, the same result a strong lap-one restart could have produced from a mediocre grid slot. It's because McLaren scored with both cars (Norris's 15, Piastri's 4) while Ferrari's Hamilton scored zero from a P4 start that Hamilton himself said was worth a win.
+McLaren's gap to Ferrari in the constructors' championship fell from 59 points to 52 points over this one race. That's not because Norris delivered on his pole — he finished third, the same result a strong lap-one restart could have produced from a mediocre grid slot. It's because McLaren scored with both cars (Norris's 15, Piastri's 4) while Ferrari's Hamilton scored zero from a P4 start that Hamilton himself said was worth a win.
 
-Run the counterfactual with a finish instead of a DNF: even a low-key points finish — eighth, worth 4 — would have kept Ferrari's cushion over McLaren closer to 58 points instead of 54. A stronger finish matching what Hamilton described as race-winning pace would have widened it, not narrowed it. The four-point swing between "Hamilton finishes eighth" and "Hamilton finishes zero" is a small number in isolation; compounded over the ten rounds still left in 2026, it's the difference between a comfortable second in the constructors' table and a real fight for it.
+Run the counterfactual with a finish instead of a DNF: even a low-key points finish — eighth, worth 4 — would have kept Ferrari's cushion over McLaren closer to 56 points instead of 52. A stronger finish matching what Hamilton described as race-winning pace would have widened it, not narrowed it. The four-point swing between "Hamilton finishes eighth" and "Hamilton finishes zero" is a small number in isolation; compounded over the ten rounds still left in 2026, it's the difference between a comfortable second in the constructors' table and a real fight for it.
 
 [PaddockIntel has already priced what a single constructors' position is worth in real prize money](/audi-tsunoda-appeal-italian-gp-2026): roughly $11 million at the boundary Audi and Racing Bulls were fighting over in September. McLaren and Ferrari are contesting a bigger prize-money tier entirely — P2 in the constructors' championship pays meaningfully more than P3 — and Sunday's brake failure did more to move that fight than anything either team's drivers did on merit.
 
@@ -70,4 +70,6 @@ That's a different kind of vulnerability than the aero-testing deficit PaddockIn
 
 ## Verdict
 
-Nobody outdrove anybody for the four points that actually moved on Sunday. My read: McLaren's title defense still runs on the same 224 wind tunnel runs it had Saturday morning, and Ferrari's championship position now runs on whether Sunday's brake failure was a one-off or the first sign of something Ferrari needs to find before it costs them more than 54 points.
+Nobody outdrove anybody for the four points that actually moved on Sunday. My read: McLaren's title defense still runs on the same 224 wind tunnel runs it had Saturday morning, and Ferrari's championship position now runs on whether Sunday's brake failure was a one-off or the first sign of something Ferrari needs to find before it costs them more than 52 points.
+
+*Correction, October 14, 2026: an earlier version of this article said McLaren's gap to Ferrari fell from 61 points to 54, and put the counterfactual at 58. Our results database had Pierre Gasly third at the 2026 Monaco Grand Prix instead of his official seventh place. The correct gap fell from 59 points to 52, and the counterfactual figure is 56. The figures have been corrected in the text, stat box and FAQ; the argument is unchanged.*

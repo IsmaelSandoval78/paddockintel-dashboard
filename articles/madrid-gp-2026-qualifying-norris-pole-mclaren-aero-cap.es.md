@@ -17,7 +17,7 @@ stats:
   - value: "70%"
     label: "ASIGNACIÓN AERODINÁMICA DE MCLAREN, H1 2026"
     unit: "la más baja del campo, por ser campeón 2025"
-  - value: "61"
+  - value: "59"
     label: "DIFERENCIA DE PUNTOS DE MCLAREN CON FERRARI"
     unit: "constructores, con 9 fechas por correr"
   - value: "P7"
@@ -69,7 +69,7 @@ También es la razón por la que la pole de McLaren merece una segunda mirada. C
 
 ## Impacto Económico
 
-McLaren está tercero en el campeonato de constructores 2026 con 285 puntos, a 61 del segundo puesto de Ferrari con 346, con nueve fechas todavía por correr. Convertir los lugares de largada del sábado —P1 y P7— en puntos de carrera el domingo es una oportunidad real de achicar esa diferencia, en un circuito donde la ventaja histórica de puesta a punto que normalmente protege a un equipo líder tampoco existe para Ferrari.
+McLaren está tercero en el campeonato de constructores 2026 con 287 puntos, a 59 del segundo puesto de Ferrari con 346, con nueve fechas todavía por correr. Convertir los lugares de largada del sábado —P1 y P7— en puntos de carrera el domingo es una oportunidad real de achicar esa diferencia, en un circuito donde la ventaja histórica de puesta a punto que normalmente protege a un equipo líder tampoco existe para Ferrari.
 
 La sesión de Ferrari fue más tranquila que su semana: Hamilton y Leclerc se quedaron con el cuarto y quinto puesto, un resultado sólido que pasó casi desapercibido frente a las secuelas de Monza y las quejas por el manejo de Hamilton en la FP1 de Madrid. Tranquilo no es lo mismo que seguro —cada punto que Ferrari saque este fin de semana es uno que McLaren no consigue para achicar la diferencia, y cada punto que no saque es uno que sí consigue McLaren.
 
@@ -82,3 +82,5 @@ Un margen de pole tan cerrado, en el debut de un circuito, es lo que se ve en la
 ## Veredicto
 
 Una sola vuelta de clasificación no resuelve si la restricción de pruebas aerodinámicas de la F1 realmente le cuesta al campeón vigente lo que dice la matemática —el sábado en un circuito sin datos siempre iba a ser el momento menos probable para exponer esa diferencia. Mi lectura: hay que mirar la carrera del domingo, y las próximas fechas después de esa, antes de decidir si el presupuesto de pruebas más chico de McLaren en la parrilla es una limitación real o solo un número que todavía no mordió.
+
+*Corrección, 14 de octubre de 2026: una versión anterior de este artículo decía que McLaren tenía 285 puntos, a 61 de Ferrari. Nuestra base de resultados tenía a Pierre Gasly tercero en el Gran Premio de Mónaco 2026 en lugar de su séptimo puesto oficial. Las cifras correctas son 287 puntos y una diferencia de 59. Se corrigieron en el texto y en el recuadro de datos.*
