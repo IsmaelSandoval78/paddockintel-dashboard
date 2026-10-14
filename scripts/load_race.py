@@ -539,7 +539,7 @@ def main() -> None:
 
             all_results = (
                 sb.table("results")
-                .select("driver_id, constructor_id, points, position")
+                .select("race_id, driver_id, constructor_id, points, position")
                 .in_("race_id", season_race_ids)
                 .execute()
             )
@@ -547,7 +547,7 @@ def main() -> None:
             # Sprint results — included in championship standings
             all_sprint = (
                 sb.table("sprint_results")
-                .select("driver_id, constructor_id, points, position")
+                .select("race_id, driver_id, constructor_id, points, position")
                 .in_("race_id", season_race_ids)
                 .execute()
             )
@@ -608,6 +608,23 @@ def main() -> None:
                 sb.table("constructor_standings").insert(constructor_standing_rows).execute()
                 print(f"  ✓ {len(driver_standing_rows)} driver standing rows")
                 print(f"  ✓ {len(constructor_standing_rows)} constructor standing rows")
+
+            # Per-race constructor points (Grand Prix + Sprint of this weekend), the convention
+            # constructor_results follows for 2021-2024 and that constructor_stats.total_points sums.
+            # This loader never wrote the table before, which left 2026 rounds 7-17 empty.
+            race_constr_pts: dict[int, float] = defaultdict(float)
+            for r in all_results.data + (all_sprint.data or []):
+                if r["race_id"] == race_id:
+                    race_constr_pts[r["constructor_id"]] += r["points"] or 0
+            if not dry_run and race_constr_pts:
+                sb.table("constructor_results").delete().eq("race_id", race_id).execute()
+                max_cres = sb.table("constructor_results").select("id").order("id", desc=True).limit(1).execute()
+                next_cres_id = (max_cres.data[0]["id"] if max_cres.data else 0) + 1
+                sb.table("constructor_results").insert([
+                    {"id": next_cres_id + i, "race_id": race_id, "constructor_id": cid, "points": pts, "status": None}
+                    for i, (cid, pts) in enumerate(sorted(race_constr_pts.items()))
+                ]).execute()
+                print(f"  ✓ {len(race_constr_pts)} constructor result rows")
 
             print("\n  Top 5 drivers:")
             for i, (did, pts) in enumerate(sorted_drivers[:5], 1):
