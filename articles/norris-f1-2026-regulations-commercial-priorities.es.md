@@ -45,7 +45,7 @@ sources:
   - name: "Crash.net — Los pilotos de F1 critican la temporada 2026: 'Estamos esperando que salga terriblemente mal'"
     url: "https://www.crash.net/f1/news/1091047/1/f1-drivers-slam-2026-racing-were-waiting-it-go-horribly-wrong"
   - name: "Glosario PaddockIntel — Cuota Anti-Dilución"
-    url: "https://paddockintel.com/es/glosario/cuota-anti-dilucion"
+    url: "https://www.paddockintel.com/es/glossary/anti-dilution-fee/"
 ---
 
 ## Qué Pasó

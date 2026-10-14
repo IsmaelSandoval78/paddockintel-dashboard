@@ -57,7 +57,7 @@ sources:
   - name: "theJudge13, citando al periodista de negocios de F1 Marc Limacher — el nuevo contrato de Verstappen con Red Bull valdría 460M€"
     url: "https://thejudge13.com/2026/08/21/max-verstappens-new-red-bull-contract-reportedly-worth-a-staggering-e460-million/?ref=paddockintel.com"
   - name: "PaddockIntel — Los frenos de Hamilton, no el ritmo de McLaren, movieron la tabla (resumen GP de España, en inglés)"
-    url: "https://paddockintel.com/madrid-gp-2026-race-hamilton-dnf-mclaren-ferrari-gap/?ref=paddockintel.com"
+    url: "https://www.paddockintel.com/madrid-gp-2026-race-hamilton-dnf-mclaren-ferrari-gap/"
   - name: "PaddockIntel — ¿Cuánto ganan los pilotos de F1 en 2026? Grilla salarial completa"
     url: "/es/how-much-do-f1-drivers-make-2026/"
   - name: "PaddockIntel — Verstappen a Mercedes 2026: por qué se quedó en Red Bull"
