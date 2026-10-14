@@ -2,6 +2,7 @@ export const revalidate = 3600;
 
 import { createClient } from '@/lib/supabase/server';
 import { editorialToday } from '@/lib/dates';
+import { getLatestStandingsRaceId } from '@/lib/latestRace';
 import { fetchTrackPathData } from '@/lib/trackSvg';
 import HomeExperience from '@/components/home/kinetic/HomeExperience';
 import type {
@@ -40,16 +41,10 @@ async function getHomeData(): Promise<{
   const today = editorialToday();
 
   // ── Batch 1 ─────────────────────────────────────────────────────
-  // NOTE: driver_standings max race_id — not races by date — because
-  // a race can exist in `races` before its results are imported.
-  const [latestStandingsRaceRes, nextRaceRes, constructorsRes, driverStatsRes, driversListRes, races2026CompletedRes] =
+  // Latest race with standings, by (year, round) — see lib/latestRace.ts.
+  const [latestRaceId, nextRaceRes, constructorsRes, driverStatsRes, driversListRes, races2026CompletedRes] =
     await Promise.all([
-      supabase
-        .from('driver_standings')
-        .select('race_id')
-        .order('race_id', { ascending: false })
-        .limit(1)
-        .single(),
+      getLatestStandingsRaceId(supabase),
       supabase
         .from('races')
         .select('id, round, name, date, circuit_id')
@@ -71,7 +66,6 @@ async function getHomeData(): Promise<{
         .order('round', { ascending: true }),
     ]);
 
-  const latestRaceId = (latestStandingsRaceRes.data?.race_id ?? null) as number | null;
   const nextRaceRaw = nextRaceRes.data;
   const races2026Completed = (races2026CompletedRes.data ?? []) as Array<{ id: number; round: number }>;
   const races2026Ids = races2026Completed.map((r) => r.id);

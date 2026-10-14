@@ -53,7 +53,7 @@ export async function GET(
       .select('race_id, position, points')
       .eq('driver_id', driverId)
       .order('race_id', { ascending: false })
-      .limit(5),
+      .limit(30),
     latestRaceId
       ? supabase
           .from('driver_standings')
@@ -68,8 +68,10 @@ export async function GET(
       .eq('driver_id', driverId),
   ]);
 
-  const last5 = last5Res.data ?? [];
-  const last5RaceIds = last5.map((r) => r.race_id as number);
+  // Fetched by race_id (a superset), cut to 5 by calendar order once raceMap is known — ids
+  // aren't calendar order (2026 Bahrain R16 is id 1191, Singapore R17 is 1184).
+  const recentResults = last5Res.data ?? [];
+  const last5RaceIds = recentResults.map((r) => r.race_id as number);
   const allStandings = allStandingsRes.data ?? [];
   const standingRaceIds = allStandings.map((s) => s.race_id as number);
   const raceIdsForLookup = [...new Set([...last5RaceIds, ...standingRaceIds])];
@@ -146,6 +148,13 @@ export async function GET(
     constructorName = conData ? (conData.name as string) : null;
   }
 
+  const calendarKey = (raceId: number) => {
+    const race = raceMap.get(raceId);
+    return race ? race.year * 100 + race.round : 0;
+  };
+  const last5 = [...recentResults]
+    .sort((a, b) => calendarKey(b.race_id as number) - calendarKey(a.race_id as number))
+    .slice(0, 5);
   const last5Results = last5.map((r) => {
     const race = raceMap.get(r.race_id as number);
     const rawPos = r.position;

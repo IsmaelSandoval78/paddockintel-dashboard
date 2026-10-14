@@ -70,7 +70,7 @@ export async function GET(
       .select('race_id, position, points')
       .eq('constructor_id', constructorId)
       .order('race_id', { ascending: false })
-      .limit(20),
+      .limit(60),
   ]);
 
   // Group results by race_id — best position + total points per race (both drivers)
@@ -98,23 +98,28 @@ export async function GET(
     }
   }
 
-  // Insertion order is race_id DESC — take first 5 unique races
-  const last5RaceIds = [...raceAgg.keys()].slice(0, 5);
-
-  // Batch 3: race names for last 5
-  const { data: racesData } = last5RaceIds.length
+  // Batch 3: race names + calendar order. The results above come by race_id DESC, a superset;
+  // ids aren't calendar order (2026 Bahrain R16 is id 1191, Singapore R17 is 1184), so the
+  // last 5 are cut by (year, round).
+  const recentRaceIds = [...raceAgg.keys()];
+  const { data: racesData } = recentRaceIds.length
     ? await supabase
         .from('races')
-        .select('id, name, year')
-        .in('id', last5RaceIds)
-    : { data: [] as { id: unknown; name: unknown; year: unknown }[] };
+        .select('id, name, year, round')
+        .in('id', recentRaceIds)
+    : { data: [] as { id: unknown; name: unknown; year: unknown; round: unknown }[] };
 
   const raceMap = new Map(
     (racesData ?? []).map((r) => [
       r.id as number,
-      { name: r.name as string, year: r.year as number },
+      { name: r.name as string, year: r.year as number, round: r.round as number },
     ])
   );
+  const calendarKey = (raceId: number) => {
+    const race = raceMap.get(raceId);
+    return race ? race.year * 100 + race.round : 0;
+  };
+  const last5RaceIds = recentRaceIds.sort((a, b) => calendarKey(b) - calendarKey(a)).slice(0, 5);
 
   const last_5_results = last5RaceIds.map((raceId) => {
     const race = raceMap.get(raceId);

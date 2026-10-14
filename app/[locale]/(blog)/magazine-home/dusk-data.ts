@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
-import { getLatestStandingsRaceId } from './data';
+import { getLatestStandingsRaceId } from '@/lib/latestRace';
 
 // The race the home is "about": the one driver_standings was last computed for — same
 // rule as getStandings(), so the hero, gauges and standings always describe one race.

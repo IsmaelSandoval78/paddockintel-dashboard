@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { getLatestStandingsRaceId } from '@/lib/latestRace';
 import { NextRequest, NextResponse } from 'next/server';
 
 export interface MiBoxSummaryDriver {
@@ -35,13 +36,7 @@ export async function GET(request: NextRequest) {
 
   const supabase = createClient();
 
-  const { data: latestStandingsRace } = await supabase
-    .from('driver_standings')
-    .select('race_id')
-    .order('race_id', { ascending: false })
-    .limit(1)
-    .single();
-  const raceId = latestStandingsRace?.race_id as number | undefined;
+  const raceId = (await getLatestStandingsRaceId(supabase)) ?? undefined;
 
   const [driversRes, constructorsRes] = await Promise.all([
     driverRefs.length
