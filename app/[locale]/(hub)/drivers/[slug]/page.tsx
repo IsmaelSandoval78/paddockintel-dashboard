@@ -8,6 +8,7 @@ import { routing } from '@/lib/i18n/routing';
 import { type CircuitRecord } from '@/components/drivers/CircuitRecordSection';
 import DriverDetailExperience from '@/components/drivers/kinetic/DriverDetailExperience';
 import { HUB_URL } from '@/lib/site-url';
+import { openGraphFor } from '@/lib/seo';
 
 type PageParams = Promise<{ locale: string; slug: string }>;
 
@@ -61,6 +62,7 @@ export async function generateMetadata({
         'x-default': localeUrl('en', `/drivers/${slug}`),
       },
     },
+    openGraph: openGraphFor(canonical),
   };
 }
 

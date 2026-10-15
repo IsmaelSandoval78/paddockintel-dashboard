@@ -6,6 +6,7 @@ import { Link } from '@/lib/i18n/navigation';
 import { SITE_URL } from '@/lib/site-url';
 import { duskSans } from '../../../(blog)/dusk-font';
 import '../../../(blog)/dusk.css';
+import { openGraphFor } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -78,6 +79,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
     title: t('detail.metaTitle', { n: recapNumber(slug) }),
     description: recap.intro_synthesis.slice(0, 145),
     alternates: { canonical },
+    openGraph: openGraphFor(canonical),
   };
 }
 

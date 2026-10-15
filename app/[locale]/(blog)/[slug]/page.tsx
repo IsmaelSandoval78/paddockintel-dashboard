@@ -115,7 +115,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
       canonical,
       ...(Object.keys(alternates).length ? { languages: alternates } : {}),
     },
-    openGraph: { images: [ogImage] },
+    openGraph: { url: canonical, images: [ogImage] },
     twitter: { card: 'summary_large_image', images: [ogImage] },
   };
 }

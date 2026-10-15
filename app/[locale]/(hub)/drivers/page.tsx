@@ -10,6 +10,8 @@ import type {
   ChampionYear,
 } from '@/lib/types';
 import DriversClient from '@/components/drivers/DriversClient';
+import { localizedPageMeta } from '@/lib/seo';
+import type { Metadata } from 'next';
 
 const FORM_GUIDE_RACES = 5;
 const BATTLE_DRIVERS = 5;
@@ -446,6 +448,12 @@ async function getDriversData(): Promise<{
   }
 
   return { season2026, allTime, totalCount: allTime.length, battle, formGuide, qualiDuels, champions };
+}
+
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return localizedPageMeta(locale, '/drivers/', 'hub');
 }
 
 export default async function DriversPage() {

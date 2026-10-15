@@ -8,6 +8,7 @@ import { getArticleIdsForTagSlug, getArticleTagSlugs } from '@/lib/blog/tags';
 import { localeUrl } from '@/lib/site-url';
 import { duskSans } from '../../dusk-font';
 import '../../dusk.css';
+import { openGraphFor } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -80,6 +81,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
       canonical: localeUrl(locale, `/tag/${slug}/`),
       languages: { ...languages, 'x-default': languages.en },
     },
+    openGraph: openGraphFor(localeUrl(locale, `/tag/${slug}/`)),
     ...(articles.length === 0 ? { robots: { index: false, follow: true } } : {}),
   };
 }

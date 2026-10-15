@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server';
 import { Link } from '@/lib/i18n/navigation';
 import { fetchClosestChampionships, formatGap } from '@/lib/records';
 import { PageHeader, SubBar } from '@/components/records/RecordPageChrome';
+import { localizedPageMeta } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -19,6 +20,7 @@ export async function generateMetadata({
   return {
     title: `${t('metaTitle', { title })} — PaddockIntel`,
     description: t('metaDescription', { title }),
+    ...localizedPageMeta(locale, '/records/closest-championships/', 'hub'),
   };
 }
 

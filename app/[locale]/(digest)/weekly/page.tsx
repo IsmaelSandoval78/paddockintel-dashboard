@@ -6,6 +6,7 @@ import { readFeaturedStats } from '@/lib/hookDeliver';
 import NewsletterBand from '@/components/home-dusk/NewsletterBand';
 import { duskSans } from '../../(blog)/dusk-font';
 import '../../(blog)/dusk.css';
+import { localizedPageMeta } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -22,11 +23,13 @@ type IssueItem = {
   published_at: string;
 };
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
   const t = await getTranslations('digest');
   return {
     title: t('metaTitle'),
     description: t('metaDescription'),
+    ...localizedPageMeta(locale, '/weekly/'),
   };
 }
 

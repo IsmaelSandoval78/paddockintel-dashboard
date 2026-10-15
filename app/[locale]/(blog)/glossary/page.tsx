@@ -6,6 +6,7 @@ import { duskSans } from '../dusk-font';
 import '../dusk.css';
 import { getGlossaryDepths, getGlossaryTerms } from './data';
 import type { GlossaryDepth } from './data';
+import { openGraphFor } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -38,13 +39,15 @@ function termUrl(locale: string, slug: string): string {
 export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'glossary' });
+  const canonical = GLOSSARY_URLS[locale as keyof typeof GLOSSARY_URLS] ?? GLOSSARY_URLS.en;
   return {
     title: `${t('title')} — PaddockIntel`,
     description: t('description'),
     alternates: {
-      canonical: GLOSSARY_URLS[locale as keyof typeof GLOSSARY_URLS] ?? GLOSSARY_URLS.en,
+      canonical,
       languages: { ...GLOSSARY_URLS, 'x-default': GLOSSARY_URLS.en },
     },
+    openGraph: openGraphFor(canonical),
   };
 }
 

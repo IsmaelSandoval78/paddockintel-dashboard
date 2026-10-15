@@ -14,6 +14,7 @@ import {
 } from './data';
 import { DepthNav } from './DepthNav';
 import type { GlossaryDepth } from './data';
+import { openGraphFor } from '@/lib/seo';
 
 export function termUrl(locale: string, slug: string, depth?: GlossaryDepth): string {
   const suffix = depth === 'technical' ? '/technical' : depth === 'fia' ? '/fia-regulation' : '';
@@ -41,6 +42,7 @@ export async function getTermMetadata(locale: string, slug: string, depth: Gloss
     title: `${term.term}${titleSuffix} — PaddockIntel Glossary`,
     description: term.short_definition,
     alternates: { canonical, languages },
+    openGraph: openGraphFor(canonical),
   };
 }
 

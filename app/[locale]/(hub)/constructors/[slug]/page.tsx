@@ -9,6 +9,7 @@ import { ConstructorScorecardButton } from '@/components/scorecards/ConstructorS
 import { flagGradient } from '@/lib/flagGradient';
 import FollowButton from '@/components/ui/FollowButton';
 import { HUB_URL } from '@/lib/site-url';
+import { openGraphFor } from '@/lib/seo';
 
 type PageParams = Promise<{ locale: string; slug: string }>;
 
@@ -135,6 +136,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
         'x-default': localeUrl('en', `/constructors/${slug}`),
       },
     },
+    openGraph: openGraphFor(canonical),
   };
 }
 

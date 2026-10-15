@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { SITE_URL } from '@/lib/site-url';
+import { openGraphFor } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -44,6 +45,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
         'x-default': localeUrl('en', `/season/${year}/`),
       },
     },
+    openGraph: openGraphFor(canonical),
   };
 }
 

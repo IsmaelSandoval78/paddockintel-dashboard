@@ -19,6 +19,7 @@ import {
 } from '@/lib/hookDeliver';
 import { duskSans } from '../../(blog)/dusk-font';
 import '../../(blog)/dusk.css';
+import { openGraphFor } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -80,6 +81,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       canonical,
       languages: { ...FEED_URLS, 'x-default': FEED_URLS.en },
     },
+    openGraph: openGraphFor(canonical),
   };
 }
 

@@ -5,6 +5,7 @@ import { Link } from '@/lib/i18n/navigation';
 import { SITE_URL } from '@/lib/site-url';
 import { duskSans } from '../../(blog)/dusk-font';
 import '../../(blog)/dusk.css';
+import { openGraphFor } from '@/lib/seo';
 
 const WHOS_WHO_URLS = {
   en: `${SITE_URL}/whos-who/`,
@@ -23,6 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       canonical,
       languages: { ...WHOS_WHO_URLS, 'x-default': WHOS_WHO_URLS.en },
     },
+    openGraph: openGraphFor(canonical),
   };
 }
 
