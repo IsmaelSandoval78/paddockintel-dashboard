@@ -8,6 +8,7 @@ import { routing } from '@/lib/i18n/routing';
 import { getAlternateLocaleHref, goToAlternateLocale } from '@/lib/i18n/switchLocale';
 import AuthWidget, { type AuthUser } from './AuthWidget';
 import SearchBar from './SearchBar';
+import { SITE_URL } from '@/lib/site-url';
 
 type NavKey = 'hub' | 'circuits' | 'drivers' | 'constructors' | 'compare' | 'records';
 
@@ -140,7 +141,7 @@ export default function MobileNav({
                 );
               })}
               <a
-                href="https://paddockintel.com"
+                href={`${SITE_URL}/`}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setOpen(false)}

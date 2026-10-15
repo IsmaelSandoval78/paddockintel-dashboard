@@ -230,7 +230,7 @@ export default async function DeltaRibbonMethodologyPage({ params }: { params: P
     url: localeUrl(locale, PATH),
     datePublished: DATE_PUBLISHED,
     dateModified: DATE_MODIFIED,
-    author: { '@type': 'Person', name, url: `${SITE_URL}/about` },
+    author: { '@type': 'Person', name, url: `${SITE_URL}/about/` },
     publisher: { '@type': 'Organization', name: 'PaddockIntel', url: SITE_URL },
     isBasedOn: { '@type': 'Dataset', name: 'OpenF1', url: 'https://openf1.org' },
   };

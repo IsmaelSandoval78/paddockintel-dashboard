@@ -61,6 +61,8 @@ jobs:
           CRON_SECRET=${{ secrets.CRON_SECRET }}
           DRAFT_SECRET=${{ secrets.DRAFT_SECRET }}
           RESEND_WEBHOOK_SECRET=${{ secrets.RESEND_WEBHOOK_SECRET }}
+          NEXT_PUBLIC_SITE_URL=https://www.paddockintel.com
+          NEXT_PUBLIC_HUB_URL=https://hub.paddockintel.com
           EOF
 
       - name: Build for Cloudflare (secrets stripped before packaging)

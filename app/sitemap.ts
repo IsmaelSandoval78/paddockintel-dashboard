@@ -1,12 +1,13 @@
 import type { MetadataRoute } from 'next';
 import { headers } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
+import { HUB_URL, SITE_URL } from '@/lib/site-url';
 
 export const revalidate = 3600;
 
-const HUB_BASE = 'https://hub.paddockintel.com';
+const HUB_BASE = HUB_URL;
 // Canonical magazine host. The apex 308s to www, so locs must not use the apex.
-const MAGAZINE_BASE = 'https://www.paddockintel.com';
+const MAGAZINE_BASE = SITE_URL;
 const MAGAZINE_HOSTS = new Set(['paddockintel.com', 'www.paddockintel.com']);
 
 function localeUrl(base: string, locale: string, path: string): string {

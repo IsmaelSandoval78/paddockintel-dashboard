@@ -12,7 +12,9 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
   return {
     rules: {
       userAgent: '*',
-      allow: '/',
+      // /api/og/ serves the per-article share images; Twitterbot honors robots.txt and drops
+      // the image from a card it isn't allowed to fetch.
+      allow: ['/', '/api/og/'],
       disallow: ['/api/'],
     },
     sitemap: `${base}/sitemap.xml`,
