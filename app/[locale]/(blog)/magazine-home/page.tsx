@@ -23,6 +23,7 @@ import { getFeaturedAndRecent, getStandings, getCircuitOfTheDay, getFeedTeaser }
 import { getLatestRace, getTitleTrend } from './dusk-data';
 import { duskSans } from '../dusk-font';
 import '../dusk.css';
+import { openGraphFor } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -57,6 +58,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
       canonical,
       languages: { ...HOME_URLS, 'x-default': HOME_URLS.en },
     },
+    openGraph: openGraphFor(canonical),
   };
 }
 

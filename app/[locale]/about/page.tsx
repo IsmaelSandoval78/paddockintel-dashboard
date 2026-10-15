@@ -7,6 +7,7 @@ import { SITE_URL, localeUrl } from '@/lib/site-url';
 import NewsletterBand from '@/components/home-dusk/NewsletterBand';
 import { duskSans } from '../(blog)/dusk-font';
 import '../(blog)/dusk.css';
+import { openGraphFor } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -35,6 +36,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
       canonical: localeUrl(locale, '/about/'),
       languages: { ...languages, 'x-default': languages.en },
     },
+    openGraph: openGraphFor(localeUrl(locale, '/about/')),
   };
 }
 

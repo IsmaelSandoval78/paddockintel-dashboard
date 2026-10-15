@@ -19,6 +19,7 @@ import {
 import { SITE_URL } from '@/lib/site-url';
 import { duskSans } from '../../../(blog)/dusk-font';
 import '../../../(blog)/dusk.css';
+import { openGraphFor } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -172,6 +173,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
         'x-default': localeUrl('en', `/feed/${slug}/`),
       },
     },
+    openGraph: openGraphFor(canonical),
   };
 }
 

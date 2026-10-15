@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/lib/i18n/navigation';
+import { localizedPageMeta } from '@/lib/seo';
 
 type PageParams = Promise<{ locale: string }>;
 
@@ -10,6 +11,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
   return {
     title: t('metaTitle'),
     description: t('metaDescription'),
+    ...localizedPageMeta(locale, '/privacy/'),
   };
 }
 

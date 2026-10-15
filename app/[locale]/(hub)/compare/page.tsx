@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
 import type { DriverSelectorRow, ConstructorSelectorRow } from '@/lib/types';
 import CompareClient from '@/components/compare/CompareClient';
+import { localizedPageMeta } from '@/lib/seo';
+import type { Metadata } from 'next';
 
 async function getSelectorData(): Promise<{
   drivers: DriverSelectorRow[];
@@ -66,6 +68,12 @@ async function getSelectorData(): Promise<{
   });
 
   return { drivers, constructors };
+}
+
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return localizedPageMeta(locale, '/compare/', 'hub');
 }
 
 export default async function ComparePage() {

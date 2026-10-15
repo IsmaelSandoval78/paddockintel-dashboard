@@ -6,6 +6,7 @@ import { RecordScorecardButton } from '@/components/records/RecordScorecard';
 import { RecordRankingDetail, type RecordRow } from '@/components/records/RecordRankingDetail';
 import { PageHeader, SubBar } from '@/components/records/RecordPageChrome';
 import ShareButton from '@/components/ui/ShareButton';
+import { localizedPageMeta } from '@/lib/seo';
 
 // First metric of the "pure data" vertical (roadmap step 7) — season
 // aggregate only for v1, see lib/qualifying-pace.ts and the migration that
@@ -24,6 +25,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
   return {
     title: `${t('qualifyingPaceDelta.metaTitle')} — PaddockIntel`,
     description: t('qualifyingPaceDelta.metaDescription'),
+    ...localizedPageMeta(locale, '/records/qualifying-pace-delta/', 'hub'),
   };
 }
 

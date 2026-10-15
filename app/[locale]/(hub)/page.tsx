@@ -12,6 +12,8 @@ import type {
   HomeStreaksData,
   DriverSelectorRow,
 } from '@/lib/types';
+import { localizedPageMeta } from '@/lib/seo';
+import type { Metadata } from 'next';
 
 // ─── Helpers ──────────────────────────────────────────────────────
 
@@ -939,6 +941,12 @@ async function getHomeData(): Promise<{
 }
 
 // ─── Page ─────────────────────────────────────────────────────────
+
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return localizedPageMeta(locale, '/', 'hub');
+}
 
 export default async function HomePage() {
   const {

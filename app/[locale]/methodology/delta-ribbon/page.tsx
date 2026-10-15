@@ -9,6 +9,7 @@ import { teamColor } from '@/components/home/kinetic/teamColors';
 import GapChart, { type GapEvent, type GapPoint } from './GapChart';
 import { duskSans } from '../../(blog)/dusk-font';
 import '../../(blog)/dusk.css';
+import { openGraphFor } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -40,6 +41,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
       canonical: localeUrl(locale, PATH),
       languages: { ...languages, 'x-default': languages.en },
     },
+    openGraph: openGraphFor(localeUrl(locale, PATH)),
   };
 }
 

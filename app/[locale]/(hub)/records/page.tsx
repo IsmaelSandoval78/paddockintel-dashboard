@@ -17,6 +17,7 @@ import {
 } from '@/lib/records';
 import { fetchQualifyingPace, formatPctGap } from '@/lib/qualifying-pace';
 import { RecordCard, type RecordCardRow } from '@/components/records/RecordCard';
+import { localizedPageMeta } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -42,6 +43,7 @@ export async function generateMetadata({
   return {
     title: `${t('indexMetaTitle')} — PaddockIntel`,
     description: t('indexMetaDescription'),
+    ...localizedPageMeta(locale, '/records/', 'hub'),
   };
 }
 

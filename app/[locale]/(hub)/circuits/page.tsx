@@ -4,6 +4,8 @@ import { editorialToday } from '@/lib/dates';
 import { fetchTrackPathData } from '@/lib/trackSvg';
 import { Link } from '@/lib/i18n/navigation';
 import EpicenterMap, { type EpicenterEvent } from '@/components/circuits/EpicenterMap';
+import { localizedPageMeta } from '@/lib/seo';
+import type { Metadata } from 'next';
 
 // PostgREST silently caps any single request at 1,000 rows regardless of .limit() — races is
 // past that (~1,200 rows). Same pagination pattern as app/[locale]/(hub)/drivers/page.tsx.
@@ -210,6 +212,12 @@ async function getHistoricalCircuits(activeCircuitIds: Set<number>): Promise<His
     .filter((c) => !activeCircuitIds.has(c.id as number))
     .map((c) => ({ circuitRef: c.circuit_ref as string, name: c.name as string, country: c.country as string }))
     .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return localizedPageMeta(locale, '/circuits/', 'hub');
 }
 
 export default async function CircuitsPage() {

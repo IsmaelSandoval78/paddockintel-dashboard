@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server';
 import { getLatestStandingsRaceId } from '@/lib/latestRace';
 import type { ConstructorSeasonRow, ConstructorAllTimeRow } from '@/lib/types';
 import ConstructorsClient from '@/components/constructors/ConstructorsClient';
+import { localizedPageMeta } from '@/lib/seo';
+import type { Metadata } from 'next';
 
 async function getConstructorsData(): Promise<{
   season2026: ConstructorSeasonRow[];
@@ -150,6 +152,12 @@ async function getConstructorsData(): Promise<{
   });
 
   return { season2026, allTime, totalCount: allTime.length };
+}
+
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return localizedPageMeta(locale, '/constructors/', 'hub');
 }
 
 export default async function ConstructorsPage() {

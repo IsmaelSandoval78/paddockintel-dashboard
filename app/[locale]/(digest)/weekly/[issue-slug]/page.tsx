@@ -8,6 +8,7 @@ import NewsletterBand from '@/components/home-dusk/NewsletterBand';
 import { SITE_URL } from '@/lib/site-url';
 import { duskSans } from '../../../(blog)/dusk-font';
 import '../../../(blog)/dusk.css';
+import { openGraphFor } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -82,6 +83,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
     title: `Digest Vol.${issueNumber(slug as string)} — PaddockIntel`,
     description: (issue.intro_synthesis as string).slice(0, 145),
     alternates: { canonical },
+    openGraph: openGraphFor(canonical),
   };
 }
 

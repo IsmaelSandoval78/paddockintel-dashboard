@@ -23,6 +23,7 @@ import { RecordScorecardButton } from '@/components/records/RecordScorecard';
 import { RecordRankingDetail, type RecordRow } from '@/components/records/RecordRankingDetail';
 import { PageHeader, SubBar, OtherRecordsNav, type T } from '@/components/records/RecordPageChrome';
 import ShareButton from '@/components/ui/ShareButton';
+import { localizedPageMeta } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -50,6 +51,7 @@ export async function generateMetadata({
   return {
     title: `${t('metaTitle', { title })} — PaddockIntel`,
     description: t('metaDescription', { title }),
+    ...localizedPageMeta(locale, `/records/${slug}/`, 'hub'),
   };
 }
 

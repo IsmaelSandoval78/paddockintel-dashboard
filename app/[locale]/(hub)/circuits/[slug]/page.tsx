@@ -12,6 +12,7 @@ import type { DriverSelectorRow, CircuitCorner } from '@/lib/types';
 import type { RibbonFrame } from '@/components/circuits/kinetic/deltaRibbon/geometry';
 import type { DeltaRibbonEventRow, DeltaRibbonDriver } from '@/components/circuits/kinetic/DeltaRibbonSection';
 import { SITE_URL, HUB_URL } from '@/lib/site-url';
+import { openGraphFor } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -73,6 +74,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
         'x-default': localeUrl('en', `/circuits/${slug}`),
       },
     },
+    openGraph: openGraphFor(canonical),
   };
 }
 

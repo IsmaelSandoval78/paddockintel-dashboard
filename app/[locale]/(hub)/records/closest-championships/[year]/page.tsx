@@ -8,6 +8,7 @@ import { PageHeader, SubBar } from '@/components/records/RecordPageChrome';
 import { SeasonBattleChart } from '@/components/records/SeasonBattleChart';
 import { SeasonBattleScorecardButton } from '@/components/records/SeasonBattleScorecard';
 import ShareButton from '@/components/ui/ShareButton';
+import { localizedPageMeta } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -29,6 +30,7 @@ export async function generateMetadata({
   return {
     title: `${t('metaTitle', { title })} — PaddockIntel`,
     description: t('metaDescription', { title }),
+    ...localizedPageMeta(locale, `/records/closest-championships/${year}/`, 'hub'),
   };
 }
 
