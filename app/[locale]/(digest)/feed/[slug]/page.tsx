@@ -225,12 +225,12 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
     datePublished: item.published_at,
     url: pageUrl,
     isBasedOn: item.source_url,
-    author: { '@type': 'Person', name: 'Ismael Sandoval', url: `${MAGAZINE_BASE}/about` },
+    author: { '@type': 'Person', name: 'Ismael Sandoval', url: `${MAGAZINE_BASE}/about/` },
     publisher: {
       '@type': 'Organization',
       name: 'PaddockIntel',
       url: MAGAZINE_BASE,
-      logo: { '@type': 'ImageObject', url: `${MAGAZINE_BASE}/opengraph-image` },
+      logo: { '@type': 'ImageObject', url: `${MAGAZINE_BASE}/og-image.png` },
     },
   };
 

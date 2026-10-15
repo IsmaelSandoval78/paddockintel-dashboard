@@ -1,9 +1,15 @@
 import { ImageResponse } from 'next/og';
 
-export const size = { width: 1200, height: 630 };
-export const contentType = 'image/png';
+// Site-wide default share image, set as og:image/twitter:image in app/layout.tsx. A route handler
+// at a path with an extension instead of the app/opengraph-image.tsx file convention: that
+// convention's URL (/opengraph-image?<hash>) 308s to /opengraph-image/ under trailingSlash, and
+// paths with a dot skip both the trailing-slash redirect and the middleware matcher, so
+// /og-image.png answers 200 directly. Outside /api/, which robots.txt disallows.
+export const dynamic = 'force-static';
 
-export default function OpengraphImage() {
+const size = { width: 1200, height: 630 };
+
+export function GET() {
   return new ImageResponse(
     (
       <div

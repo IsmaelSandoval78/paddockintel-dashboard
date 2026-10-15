@@ -134,7 +134,7 @@ export default async function AboutPage({ params }: { params: PageParams }) {
     mainEntity: {
       '@type': 'Person',
       name,
-      url: `${SITE_URL}/about`,
+      url: `${SITE_URL}/about/`,
       jobTitle: 'Onboarding & Estimating Coordinator',
       worksFor: { '@type': 'Organization', name: 'Verst Logistics' },
       knowsAbout: ['Formula 1', 'Supply chain operations', 'Sports business'],

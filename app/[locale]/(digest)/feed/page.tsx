@@ -233,12 +233,12 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
           url: itemUrl,
           ...(item.slug ? {} : { mainEntityOfPage: feedUrl }),
           isBasedOn: item.source_url,
-          author: { '@type': 'Person', name: 'Ismael Sandoval', url: `${SITE_URL}/about` },
+          author: { '@type': 'Person', name: 'Ismael Sandoval', url: `${SITE_URL}/about/` },
           publisher: {
             '@type': 'Organization',
             name: 'PaddockIntel',
             url: SITE_URL,
-            logo: { '@type': 'ImageObject', url: `${SITE_URL}/opengraph-image` },
+            logo: { '@type': 'ImageObject', url: `${SITE_URL}/og-image.png` },
           },
         },
       };

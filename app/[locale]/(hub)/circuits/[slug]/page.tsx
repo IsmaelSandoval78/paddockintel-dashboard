@@ -32,8 +32,10 @@ function formatCoord(lat: number, lng: number): string {
   return `${Math.abs(lat).toFixed(2)}°${ns} · ${Math.abs(lng).toFixed(2)}°${ew}`;
 }
 
+// trailingSlash: true -- a URL without the final slash 308s, so canonical/hreflang/JSON-LD carry it.
 function localeUrl(locale: string, path: string): string {
-  return locale === 'en' ? `${HUB_URL}${path}` : `${HUB_URL}/${locale}${path}`;
+  const p = path.endsWith('/') ? path : `${path}/`;
+  return locale === 'en' ? `${HUB_URL}${p}` : `${HUB_URL}/${locale}${p}`;
 }
 
 // ─── Static generation ────────────────────────────────────────────────────────
