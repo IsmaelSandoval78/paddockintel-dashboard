@@ -109,6 +109,34 @@ async function getItem(slug: string): Promise<FeedItem | null> {
   return data as FeedItem | null;
 }
 
+// internal_link_slug holds the EN article's slug, but ES/PT editions have their own slugs, so the
+// link is resolved through translation_group_id: this locale's edition when there is one, else the
+// EN article. A target with a path ("glossary/...", "feed/...") is the same slug in every locale.
+// No published EN article → no link, rather than a 404.
+async function getBriefLink(target: string, locale: string): Promise<{ href: string; en: boolean } | null> {
+  if (target.includes('/')) return { href: `/${target}`, en: false };
+  const supabase = createClient();
+  const { data: en } = await supabase
+    .from('articles')
+    .select('translation_group_id')
+    .eq('slug', target)
+    .eq('locale', 'en')
+    .eq('status', 'published')
+    .maybeSingle();
+  if (!en) return null;
+  if (locale !== 'en' && en.translation_group_id) {
+    const { data: local } = await supabase
+      .from('articles')
+      .select('slug')
+      .eq('translation_group_id', en.translation_group_id)
+      .eq('locale', locale)
+      .eq('status', 'published')
+      .maybeSingle();
+    if (local) return { href: `/${local.slug}`, en: false };
+  }
+  return { href: `/${target}`, en: locale !== 'en' };
+}
+
 // Published Feed items from the earlier of "a week ago" and "two days before this story": enough
 // for this week's mention counts and for the other stories of the same editorial day.
 async function getNearby(publishedAt: string): Promise<NearbyItem[]> {
@@ -165,10 +193,11 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
   const inCountWindow = itemDayKey >= easternDateKey(new Date(now - 7 * DAY_MS));
 
   const hookSpec = hookDeliverSpecForItem(item);
-  const [hook, nearby, beagleCounts] = await Promise.all([
+  const [hook, nearby, beagleCounts, briefLink] = await Promise.all([
     hookSpec ? resolveHookDeliver(hookSpec, locale, hookDeliverFallbacks(t)) : Promise.resolve(null),
     getNearby(item.published_at),
     inCountWindow ? getBeagleEntityCounts(createClient()) : Promise.resolve(new Map<string, number>()),
+    item.internal_link_slug ? getBriefLink(item.internal_link_slug, locale) : Promise.resolve(null),
   ]);
   const counts = inCountWindow ? mergeEntityCounts(weeklyEntityCounts(nearby), beagleCounts) : new Map<string, number>();
   const whoRows = item.entity_tags
@@ -316,11 +345,18 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
                   </div>
                 )}
 
-                {item.internal_link_slug && (
-                  <Link href={`/${item.internal_link_slug}`} className="inline-block dusk-mono uppercase text-[11px] tracking-[0.1em] text-[color:var(--accent)] hover:underline mb-6">
-                    {t('ourBrief')}
-                  </Link>
-                )}
+                {briefLink &&
+                  (briefLink.en ? (
+                    // EN fallback from another locale: a plain link to the unprefixed EN URL (next-intl's
+                    // Link with locale="en" renders /en/..., which 307s).
+                    <a href={`${briefLink.href}/`} hrefLang="en" className="inline-block dusk-mono uppercase text-[11px] tracking-[0.1em] text-[color:var(--accent)] hover:underline mb-6">
+                      {t('ourBrief')}
+                    </a>
+                  ) : (
+                    <Link href={briefLink.href} className="inline-block dusk-mono uppercase text-[11px] tracking-[0.1em] text-[color:var(--accent)] hover:underline mb-6">
+                      {t('ourBrief')}
+                    </Link>
+                  ))}
 
                 {text.faq.length > 0 && (
                   <section aria-labelledby="feed-faq-title">
