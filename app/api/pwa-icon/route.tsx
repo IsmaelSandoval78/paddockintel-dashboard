@@ -6,7 +6,11 @@ import type { NextRequest } from 'next/server';
 // for installability). Same "PI" mark as app/icon.tsx (the 32px browser-tab
 // favicon), just scaled up -- kept as a separate route because next/og
 // can't parameterize the file-convention icon.tsx by query string.
-export const runtime = 'edge';
+//
+// No `runtime = 'edge'`: OpenNext on Cloudflare Workers doesn't support the
+// edge runtime, and with it this route returned 500 on every request
+// (~13.8k in 30 days, every page load requests the manifest icons). The
+// default Node.js runtime renders next/og fine -- same as /api/og/article.
 
 export async function GET(request: NextRequest) {
   const sizeParam = Number(request.nextUrl.searchParams.get('size'));
