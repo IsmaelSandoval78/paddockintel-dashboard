@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   openGraph: { images: DEFAULT_OG_IMAGES },
   twitter: { card: 'summary_large_image', images: ['/og-image.png'] },
+  icons: { icon: [{ url: '/icon.png', type: 'image/png', sizes: '32x32' }] },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }): ReactNode {

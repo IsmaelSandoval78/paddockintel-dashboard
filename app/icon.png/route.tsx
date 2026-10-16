@@ -1,9 +1,13 @@
 import { ImageResponse } from 'next/og';
 
-export const size = { width: 32, height: 32 };
-export const contentType = 'image/png';
+// Favicon, declared in app/layout.tsx's metadata. A route handler at a path with an extension
+// rather than the app/icon.tsx convention: that convention's URL (/icon?<hash>) 308s to /icon/
+// under trailingSlash, a redirect on every page view; /icon.png answers 200 directly.
+export const dynamic = 'force-static';
 
-export default function Icon() {
+const size = { width: 32, height: 32 };
+
+export function GET() {
   return new ImageResponse(
     (
       <div
