@@ -1321,6 +1321,7 @@
     "scoreHint": "El número junto a cada historia = cuántas otras historias de esta semana tocan la misma entidad — una señal real, no un conteo de votos.",
     "itemPage": {
       "theNumbers": "Los Números",
+      "inIssue": "Del Resumen Semanal Vol. {n} →",
       "backToFeed": "← Volver al Feed"
     },
     "hookDeliver": {

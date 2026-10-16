@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 import { headers } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
 import { HUB_URL, SITE_URL } from '@/lib/site-url';
+import { isIndexableTag } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -69,11 +70,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // 2026-10-06), so the row set and the page's own validation agree.
     const { data: tags } = await supabase.from('tags').select('slug');
 
-    // (tag, locale) pairs with at least one published article. A tag with nothing published in a
-    // locale renders an empty page that is noindexed (tag/[slug]/page.tsx), so it stays out of here.
+    // Published-article count per (tag, locale). Only archives that isIndexableTag accepts are
+    // listed; the rest render noindexed (tag/[slug]/page.tsx), so they stay out of here.
     // article_tags is read in pages: it is past PostgREST's 1,000-row default cap.
     const localeById = new Map((articles ?? []).map((a) => [a.id as string, a.locale as string]));
-    const taggedPairs = new Set<string>();
+    const taggedCounts = new Map<string, number>();
     for (let from = 0; ; from += 1000) {
       const { data: rows } = await supabase
         .from('article_tags')
@@ -81,7 +82,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         .range(from, from + 999);
       for (const row of (rows as unknown as { article_id: string; tags: { slug: string } | null }[] | null) ?? []) {
         const locale = localeById.get(row.article_id);
-        if (locale && row.tags?.slug) taggedPairs.add(`${row.tags.slug}|${locale}`);
+        if (locale && row.tags?.slug) {
+          const key = `${row.tags.slug}|${locale}`;
+          taggedCounts.set(key, (taggedCounts.get(key) ?? 0) + 1);
+        }
       }
       if (!rows || rows.length < 1000) break;
     }
@@ -165,16 +169,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
     ]);
 
-    // URL segment per depth — 'eli5' has none (it's the base /glossary/[slug]
-    // URL), matching app/[locale]/(blog)/glossary/[slug]/[depth]/page.tsx's
-    // URL_DEPTH map exactly (note: 'fia-regulation' in the URL, not 'fia').
-    const DEPTH_PATH: Record<string, string> = { eli5: '', technical: '/technical', fia: '/fia-regulation' };
-    const glossaryRoutes: MetadataRoute.Sitemap = (glossaryTerms ?? []).map((g) => ({
-      url: localeUrl(
-        MAGAZINE_BASE,
-        g.locale as string,
-        `/glossary/${g.slug as string}${DEPTH_PATH[g.depth as string] ?? ''}/`
-      ),
+    // One URL per term and locale: the base /glossary/[slug]/ page (the eli5 depth). The technical
+    // and fia-regulation depths stay live, indexable and linked from the term page, but out of the
+    // sitemap -- Search Console, 2026-10-16: 0 of 159 depth pages indexed, nearly all "Discovered -
+    // currently not indexed", so the sitemap points Google at the 81 base pages instead.
+    const glossaryRoutes: MetadataRoute.Sitemap = (glossaryTerms ?? []).filter((g) => g.depth === 'eli5').map((g) => ({
+      url: localeUrl(MAGAZINE_BASE, g.locale as string, `/glossary/${g.slug as string}/`),
       lastModified: g.published_at ? new Date(g.published_at as string) : new Date(),
       changeFrequency: 'monthly' as const,
       priority: 0.6,
@@ -183,7 +183,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Tags aren't locale-paired rows -- one tag, three locale variants of the
     // same archive page (en/es/pt all validated live, 2026-10-06).
     const tagRoutes: MetadataRoute.Sitemap = (tags ?? []).flatMap((tg) =>
-      ['en', 'es', 'pt'].filter((locale) => taggedPairs.has(`${tg.slug as string}|${locale}`)).map((locale) => ({
+      ['en', 'es', 'pt']
+        .filter((locale) => isIndexableTag(tg.slug as string, taggedCounts.get(`${tg.slug as string}|${locale}`) ?? 0))
+        .map((locale) => ({
         url: localeUrl(MAGAZINE_BASE, locale, `/tag/${tg.slug as string}/`),
         lastModified: new Date(),
         changeFrequency: 'weekly' as const,

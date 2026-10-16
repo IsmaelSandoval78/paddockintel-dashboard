@@ -11,6 +11,15 @@ export function openGraphFor(url: string): NonNullable<Metadata['openGraph']> {
   return { url, images: DEFAULT_OG_IMAGES };
 }
 
+// A tag archive is indexable (and listed in app/sitemap.ts) only with at least this many published
+// articles in its locale. Search Console, 2026-10-16: 0 of 93 tag pages indexed, nearly all
+// "Discovered - currently not indexed"; thin archives spend crawl attention the articles need.
+// 'featured' is a home-page placement, not a topic, so it is never indexed.
+export const MIN_TAG_ARTICLES_TO_INDEX = 5;
+export function isIndexableTag(slug: string, articleCount: number): boolean {
+  return slug !== 'featured' && articleCount >= MIN_TAG_ARTICLES_TO_INDEX;
+}
+
 // canonical + hreflang (every locale, x-default = en) + og:url for a page that exists in all
 // locales at the same path, on the magazine host or the Hub host.
 export function localizedPageMeta(locale: string, path: string, host: 'site' | 'hub' = 'site'): Metadata {
