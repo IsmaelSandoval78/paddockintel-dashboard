@@ -46,6 +46,7 @@ type FeedItem = {
   faq: Faq[] | null;
   meta_description: string | null;
   meta_description_es: string | null;
+  digest_issues: { slug: string };
 };
 
 type NearbyItem = {
@@ -101,7 +102,7 @@ async function getItem(slug: string): Promise<FeedItem | null> {
       `id, slug, source_name, source_url, headline, headline_es, our_summary, our_summary_es,
        entity_tags, published_at, editor_note, editor_note_es, editor_take, editor_take_es,
        internal_link_slug, stats, hook_deliver, faq, meta_description, meta_description_es,
-       digest_issues!inner(status, series)`
+       digest_issues!inner(status, series, slug)`
     )
     .eq('slug', slug)
     .eq('digest_issues.status', 'published')
@@ -218,6 +219,7 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
   });
   const dayLabel = itemDayKey === todayKey ? t('today') : itemDayKey === yesterdayKey ? t('yesterday') : shortDate;
   const pageUrl = localeUrl(locale, `/feed/${slug}/`);
+  const issueVol = item.digest_issues.slug.match(/vol-(\d+)/i)?.[1]?.padStart(2, '0') ?? null;
 
   const jsonLd: Record<string, unknown> = {
     '@context': 'https://schema.org',
@@ -359,6 +361,17 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
                       {t('ourBrief')}
                     </Link>
                   ))}
+
+                {/* The issue this story ran in: the Weekly pages are otherwise linked only from /weekly/,
+                    and Search Console (2026-10-16) had 80 of 81 of them unindexed. */}
+                {issueVol && (
+                  <Link
+                    href={`/weekly/${item.digest_issues.slug}`}
+                    className="block w-fit dusk-mono uppercase text-[11px] tracking-[0.1em] text-[color:var(--accent)] hover:underline mb-6"
+                  >
+                    {t('itemPage.inIssue', { n: issueVol })}
+                  </Link>
+                )}
 
                 {text.faq.length > 0 && (
                   <section aria-labelledby="feed-faq-title">

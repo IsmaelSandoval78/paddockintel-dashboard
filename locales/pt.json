@@ -1298,7 +1298,7 @@
     "allFeed": "Todo o Feed →",
     "crumbHome": "Início",
     "readBrief": "Nota completa →",
-    "itemPage": {"theNumbers": "Os Números"},
+    "itemPage": {"theNumbers": "Os Números", "inIssue": "Do Resumo Semanal Vol. {n} →"},
     "kicker": "PaddockIntel Feed",
     "title": "Notícias de F1 Hoje",
     "description": "Cada história verificada da pesquisa do newsletter da PaddockIntel, em um único feed contínuo — fontes citadas, análise própria, sem copiar de agências.",

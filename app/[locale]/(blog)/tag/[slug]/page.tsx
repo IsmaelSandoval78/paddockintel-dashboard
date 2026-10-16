@@ -8,7 +8,7 @@ import { getArticleIdsForTagSlug, getArticleTagSlugs } from '@/lib/blog/tags';
 import { localeUrl } from '@/lib/site-url';
 import { duskSans } from '../../dusk-font';
 import '../../dusk.css';
-import { openGraphFor } from '@/lib/seo';
+import { isIndexableTag, openGraphFor } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -70,8 +70,8 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
   const label = tArticleTags(slug);
   const languages: Record<string, string> = {};
   for (const l of routing.locales) languages[l] = localeUrl(l, `/tag/${slug}/`);
-  // A tag with nothing published in this locale is an empty page: keep it reachable, keep it out
-  // of the index (app/sitemap.ts leaves it out too).
+  // A thin or empty archive (see isIndexableTag) stays reachable but out of the index; app/sitemap.ts
+  // leaves it out too.
   const articles = await getTaggedArticles(locale, slug);
 
   return {
@@ -82,7 +82,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
       languages: { ...languages, 'x-default': languages.en },
     },
     openGraph: openGraphFor(localeUrl(locale, `/tag/${slug}/`)),
-    ...(articles.length === 0 ? { robots: { index: false, follow: true } } : {}),
+    ...(isIndexableTag(slug, articles.length) ? {} : { robots: { index: false, follow: true } }),
   };
 }
 

@@ -12,6 +12,8 @@ import ArticleCharts, { type ChartSpec } from '@/components/blog/ArticleCharts';
 import NewsletterCard from '@/components/blog/NewsletterCard';
 import ArticlePaywallGate from '@/components/blog/ArticlePaywallGate';
 import { extractTOC, markdownToHtml, estimateReadTime, splitMarkdownAtSection } from '@/lib/markdown';
+import { linkGlossaryTerms } from '@/lib/glossaryLinks';
+import { getGlossaryTerms } from '../glossary/data';
 import { getArticleTagSlugs, getRelatedArticles, getArticleVoices } from '@/lib/blog/tags';
 import { getArticleRace } from '@/lib/blog/articleRace';
 import ArticleVoices from '@/components/blog/ArticleVoices';
@@ -126,7 +128,7 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
   const article = await getArticle(locale, slug, isDraft);
   if (!article) notFound();
 
-  const fullBody    = article.body_markdown as string;
+  const rawBody     = article.body_markdown as string;
   const title       = article.title as string;
   const dek         = (article.meta_description as string | null) ?? null;
   const publishedAt = article.published_at as string;
@@ -144,7 +146,6 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
   // Draft-mode preview (reached via /api/draft?secret=...) is already
   // trusted — never gate a piece Ismael is reviewing before it's even live.
   const isGated = Boolean(article.paywalled) && !isSubscribed && !isDraft;
-  const body = isGated ? splitMarkdownAtSection(fullBody, FREE_SECTIONS).free : fullBody;
 
   // Stat callouts, FAQ, and sources all draw from sections past the free
   // preview — hold them back too, not just the body text, or the KPI row
@@ -157,7 +158,7 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
   // Independent reads (no shared inputs) — run concurrently so their
   // latency doesn't stack, which is what turns a single slow round trip
   // into several on a page far from Supabase's region.
-  const [t, tTerrain, tTags, format, tagSlugsMap, relatedArticles, voicesMap, race] = await Promise.all([
+  const [t, tTerrain, tTags, format, tagSlugsMap, relatedArticles, voicesMap, race, glossaryTerms] = await Promise.all([
     getTranslations('articleDusk'),
     getTranslations('homeDusk.terrain'),
     getTranslations('articleTags'),
@@ -166,7 +167,11 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
     getRelatedArticles(createClient(), article.id as string, locale, 3),
     getArticleVoices(createClient(), [article.id as string]),
     raceId ? getArticleRace(createClient(), raceId) : Promise.resolve(null),
+    getGlossaryTerms(locale),
   ]);
+  // First mention of each glossary term links to its glossary page (lib/glossaryLinks.ts).
+  const fullBody = linkGlossaryTerms(rawBody, glossaryTerms, locale);
+  const body = isGated ? splitMarkdownAtSection(fullBody, FREE_SECTIONS).free : fullBody;
   const tagSlugs = tagSlugsMap.get(article.id as string) ?? [];
   const tags = tagSlugs.map((slug) => tTags(slug));
   // 'featured' is a placement, not a topic: the cover labels the piece by its first real tag.
