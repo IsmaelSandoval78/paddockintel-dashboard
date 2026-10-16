@@ -11,7 +11,7 @@ import { createClient } from '@/lib/supabase/server';
 // signature header, or a signature that doesn't verify all return 401 before
 // the body is ever parsed as an event. Until the Resend dashboard webhook is
 // actually created (Resend dashboard -> Webhooks -> Add Endpoint, URL
-// https://paddockintel.com/api/webhooks/resend, events: email.sent,
+// https://www.paddockintel.com/api/webhooks/resend, events: email.sent,
 // email.delivered, email.opened, email.clicked, email.bounced,
 // email.complained -- then paste its Signing Secret into the
 // RESEND_WEBHOOK_SECRET repo/env secret, see .env.example), nothing can send
@@ -40,7 +40,11 @@ type ResendWebhookPayload = {
   data: {
     email_id: string;
     to: string[];
-    tags?: ResendTag[];
+    // Sent as an array of {name, value} (app/api/digest/send), but webhook
+    // events deliver tags as a plain {name: value} object. Calling .find()
+    // on that object threw, so every event for a tagged digest email
+    // returned 500 and Resend kept retrying it.
+    tags?: ResendTag[] | Record<string, string>;
     click?: { link: string };
     bounce?: { message?: string };
   };
@@ -82,7 +86,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ ignored: payload.type });
   }
 
-  const issueIdTag = payload.data.tags?.find((t) => t.name === 'issue_id')?.value;
+  const tags = payload.data.tags;
+  const issueIdTag = Array.isArray(tags)
+    ? tags.find((t) => t.name === 'issue_id')?.value
+    : tags?.issue_id;
   const supabase = createClient();
   const { error } = await supabase.from('email_events').insert({
     resend_email_id: payload.data.email_id,
