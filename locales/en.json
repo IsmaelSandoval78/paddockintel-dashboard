@@ -1114,12 +1114,12 @@
         {
           "name": "Weekly Digest",
           "desc": "The week in F1 economics, free by email.",
-          "href": "/weekly"
+          "href": "/weekly/"
         },
         {
           "name": "The Feed",
           "desc": "Daily stories with our own data on top.",
-          "href": "/feed"
+          "href": "/feed/"
         },
         {
           "name": "Race reports & analysis",
@@ -1129,7 +1129,7 @@
         {
           "name": "F1 Glossary",
           "desc": "The terms behind the rules and the money.",
-          "href": "/glossary"
+          "href": "/glossary/"
         }
       ]
     },

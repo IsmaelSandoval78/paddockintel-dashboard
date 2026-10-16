@@ -1118,12 +1118,12 @@
         {
           "name": "Resumen Semanal",
           "desc": "La semana en la economía de la F1, gratis por correo.",
-          "href": "/weekly"
+          "href": "/weekly/"
         },
         {
           "name": "El Feed",
           "desc": "Historias diarias con nuestros propios datos encima.",
-          "href": "/feed"
+          "href": "/feed/"
         },
         {
           "name": "Reportes de carrera y análisis",
@@ -1133,7 +1133,7 @@
         {
           "name": "Glosario F1",
           "desc": "Los términos detrás de las reglas y del dinero.",
-          "href": "/glossary"
+          "href": "/glossary/"
         }
       ]
     },
