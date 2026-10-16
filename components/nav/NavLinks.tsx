@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { usePathname, Link } from '@/lib/i18n/navigation';
+import FeedLink from '@/components/ui/FeedLink';
 
 type NavKey = 'hub' | 'circuits' | 'drivers' | 'constructors' | 'compare' | 'records';
 
@@ -28,12 +29,12 @@ export default function NavLinks({ isMagazine }: { isMagazine: boolean }) {
         >
           {t('home')}
         </Link>
-        <Link
+        <FeedLink
           href="/feed"
           className="font-sans text-[13px] font-medium no-underline text-text-2 hover:text-text-1 transition-colors duration-150"
         >
           {t('feed')}
-        </Link>
+        </FeedLink>
         <Link
           href="/weekly"
           className="font-sans text-[13px] font-medium no-underline text-text-2 hover:text-text-1 transition-colors duration-150"
