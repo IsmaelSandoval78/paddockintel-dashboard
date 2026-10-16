@@ -120,7 +120,10 @@ export default function middleware(request: NextRequest) {
   // that already-resolved locale* the response points.
   const response = intlMiddleware(request);
 
-  if (MAGAZINE_HOSTS.has(host) && ROOT_PATHS.has(request.nextUrl.pathname)) {
+  // Only when next-intl is serving the page: a rewrite header on its redirect turned the redirect
+  // into a 404 (www.paddockintel.com/ for any es/pt browser while locale detection was on).
+  const isRedirect = response.headers.has('location');
+  if (MAGAZINE_HOSTS.has(host) && ROOT_PATHS.has(request.nextUrl.pathname) && !isRedirect) {
     const rewriteHeader = response.headers.get('x-middleware-rewrite');
     const target = rewriteHeader ? new URL(rewriteHeader) : request.nextUrl.clone();
     target.pathname = `${target.pathname}${target.pathname.endsWith('/') ? '' : '/'}magazine-home`;
