@@ -65,7 +65,7 @@ if [ ! -f .env.local ]; then
   echo "No .env.local found — nothing to strip for phase 2." >&2
 else
   cp .env.local .env.local.cloudflare-build-bak
-  grep -vE '^(SUPABASE_SERVICE_ROLE_KEY|RESEND_API_KEY|RESEND_FROM_EMAIL|CRON_SECRET|DRAFT_SECRET)=' \
+  grep -vE '^(SUPABASE_SERVICE_ROLE_KEY|RESEND_API_KEY|RESEND_FROM_EMAIL|CRON_SECRET|DRAFT_SECRET|RESEND_WEBHOOK_SECRET)=' \
     .env.local.cloudflare-build-bak > .env.local
 fi
 
