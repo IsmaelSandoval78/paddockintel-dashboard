@@ -56,6 +56,12 @@ const nextConfig: NextConfig = {
           permanent: true,
         }))
       ),
+      // 2026-10-16: the Feed is EN/ES only (EDITORIAL.md, "The Feed"), but /pt/feed/ and
+      // /pt/feed/<slug>/ answered 200 with the English text under a self-referencing pt canonical,
+      // a duplicate of the en page. They now go to the en page, the edition hreflang already
+      // names as x-default.
+      { source: '/pt/feed', destination: '/feed/', permanent: true },
+      { source: '/pt/feed/:slug', destination: '/feed/:slug/', permanent: true },
     ];
   },
   images: {

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { usePathname, Link, useRouter } from '@/lib/i18n/navigation';
+import FeedLink from '@/components/ui/FeedLink';
 import { useLocale } from 'next-intl';
 import { routing } from '@/lib/i18n/routing';
 import { getAlternateLocaleHref, goToAlternateLocale } from '@/lib/i18n/switchLocale';
@@ -83,13 +84,13 @@ export default function MobileNav({
               >
                 {t('home')}
               </Link>
-              <Link
+              <FeedLink
                 href="/feed"
                 onClick={() => setOpen(false)}
                 className="flex items-center h-12 px-5 border-b border-border font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 bg-bg"
               >
                 {t('feed')}
-              </Link>
+              </FeedLink>
               <Link
                 href="/weekly"
                 onClick={() => setOpen(false)}

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, getFormatter } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
+import FeedLink from '@/components/ui/FeedLink';
 import { readFeaturedStats } from '@/lib/hookDeliver';
 import NewsletterBand from '@/components/home-dusk/NewsletterBand';
 import { duskSans } from '../../(blog)/dusk-font';
@@ -148,7 +149,7 @@ export default async function DigestIndexPage({ params }: { params: Promise<{ lo
                         <li key={it.id} className="grid grid-cols-[28px_minmax(0,1fr)_auto] gap-2.5 items-baseline py-2.5 border-t border-[rgba(255,255,255,0.12)] first:border-t-0 text-[15px]">
                           <span className="dusk-mono text-[11px] text-[color:var(--dusk-peach)]">{String(i + 1).padStart(2, '0')}</span>
                           {href.internal ? (
-                            <Link href={href.internal} className={cls}>{headline}</Link>
+                            <FeedLink href={href.internal} className={cls}>{headline}</FeedLink>
                           ) : (
                             <a href={href.external} target="_blank" rel="noopener noreferrer" className={cls}>{headline}</a>
                           )}

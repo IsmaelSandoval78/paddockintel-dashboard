@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { getTranslations, getFormatter } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
+import FeedLink from '@/components/ui/FeedLink';
 import { readFeaturedStats } from '@/lib/hookDeliver';
 import NewsletterBand from '@/components/home-dusk/NewsletterBand';
 import { SITE_URL } from '@/lib/site-url';
@@ -171,7 +172,7 @@ export default async function DigestIssuePage({ params }: { params: PageParams }
                   </p>
                   <h2 id={`story-${s.n}-title`} className="dusk-display m-0 mb-2 text-[clamp(1.25rem,1.9vw,1.5rem)] leading-tight tracking-[-0.01em]">
                     {s.slug ? (
-                      <Link href={`/feed/${s.slug}`} className="hover:text-[color:var(--accent)]">{s.headline}</Link>
+                      <FeedLink href={`/feed/${s.slug}`} className="hover:text-[color:var(--accent)]">{s.headline}</FeedLink>
                     ) : (
                       <a href={s.source_url} target="_blank" rel="noopener noreferrer" className="hover:text-[color:var(--accent)]">{s.headline}</a>
                     )}
@@ -185,7 +186,7 @@ export default async function DigestIssuePage({ params }: { params: PageParams }
                   <p className="font-prose text-[clamp(17px,1.25vw,19px)] leading-[1.7] m-0 mb-4">{s.summary}</p>
                   <div className="flex flex-wrap gap-4 text-[14.5px] font-semibold">
                     {s.slug && (
-                      <Link href={`/feed/${s.slug}`} className="text-[color:var(--accent)] hover:underline">{t('ourBrief')}</Link>
+                      <FeedLink href={`/feed/${s.slug}`} className="text-[color:var(--accent)] hover:underline">{t('ourBrief')}</FeedLink>
                     )}
                     <a href={s.source_url} target="_blank" rel="noopener noreferrer" className="text-[color:var(--accent)] hover:underline">
                       {t('readSource', { source: s.source_name })}
