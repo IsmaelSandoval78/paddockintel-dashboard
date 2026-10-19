@@ -1455,6 +1455,58 @@
     },
     "archive": {
       "title": "Analysis archive"
+    },
+    "raceWeek": {
+      "eyebrow": "Race week · Round {round} of {total}",
+      "meta": "{circuit}, {location} · {dates}",
+      "raceTime": "Race on {weekday} at {time}, local time",
+      "days": "{days, plural, one {day to the race} other {days to the race}}",
+      "countAria": "{days, plural, one {# day} other {# days}} to the race",
+      "sessionPreview": "Preview",
+      "terrain": {
+        "caption": "{driver}'s {year} pole lap at {circuit} as a landscape · every peak a straight, every valley a corner · {lapTime} · {min}–{max} km/h · {source}",
+        "aria": "{driver}'s {year} pole lap at {circuit} drawn as a mountain range: every peak is a straight, every valley a corner. Speed ranges from {min} to {max} km/h."
+      },
+      "tiles": {
+        "editionsLabel": "{circuit} in F1",
+        "editionsText": "Grands Prix held here since {year}",
+        "topLabel": "Most wins here",
+        "topText": "{n, plural, one {win} other {wins}} for {drivers}",
+        "topNext": "; {drivers} {count, plural, one {has} other {have}} {n}",
+        "recordLabel": "Race lap record",
+        "recordText": "{driver}, {year}",
+        "source": "Supabase results"
+      },
+      "stakes": {
+        "label": "At stake in the race",
+        "title": "Can {leader} clinch the title in {place}?",
+        "rival": "Rival",
+        "gap": "Gap",
+        "need": "Swing needed",
+        "gapValue": "{n} back",
+        "needMore": "+{n} or more",
+        "needZero": "no points lost",
+        "needLess": "can drop up to {n}",
+        "bottom": "On the current calendar, <b>{points} points</b> remain after {place}. If {leader} wins, it's enough that <b>{conditions}</b>.",
+        "bottomAny": "On the current calendar, <b>{points} points</b> remain after {place}. If {leader} wins, <b>the title is settled whatever the others do</b>.",
+        "cond": "{driver} finishes {pos, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} or lower",
+        "condOut": "{driver} finishes outside the points",
+        "source": "Supabase standings after round {round} · points 25-18-15-12-10-8-6-4-2-1 · ties go to wins"
+      },
+      "map": {
+        "label": "The circuit",
+        "sub": "Drawn from {driver}'s {year} pole lap, coloured by speed",
+        "top": "{speed} km/h, top speed",
+        "min": "{speed} km/h, slowest corner",
+        "aria": "Map of {circuit} drawn from {driver}'s {year} pole lap, coloured by speed: {max} km/h at the fastest point, {min} km/h at the slowest corner.",
+        "source": "{source} position + car data · {year} qualifying"
+      },
+      "poleHistory": {
+        "title": "Did the pole-sitter win? {first}–{last}",
+        "bottomExample": "In {other} of {races} editions the winner didn't start first, like {driver} in {year}, from {grid, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} on the grid.",
+        "bottomOther": "In {other} of {races} editions the winner didn't start first.",
+        "bottomAll": "Every edition here was won from pole."
+      }
     }
   },
   "articleDusk": {

@@ -202,3 +202,23 @@ labelled "Singapore Grand Prix · Race" and sat on top of Singapore gauges.
 - Story mode: the hero carries the article alone (no pole-lap landscape), the article's own stats
   2-4 become the KPI row, the title trend and standings follow, then next race and Latest; the race
   data moves below under its own race header. Founder-approved, built straight to PR with preview.
+
+## Home: race week (2026-10-19)
+From Monday to Saturday before a Grand Prix (next race at most 6 days away, editorial timezone)
+the home switches on race week. Founder-approved from prototype v3 ("con colores de EE. UU."),
+built straight to PR with preview.
+- Strip on top: round of season, race name, circuit and city, weekend dates, race start in the
+  circuit's local time (timezone per circuit in `lib/raceWeekHost.ts`; hidden if unmapped) and a
+  countdown. It replaces the next-race card.
+- Hero: in story mode the landscape is the circuit's last pole lap (`content/race-highlights/`
+  for that edition; `scripts/highlights/openf1_pole_lap.py` when FastF1 timing is unavailable).
+  A featured piece linked to the coming race (`race_id`) gets a "Preview" kicker. Race mode is
+  unchanged.
+- Circuit section under the hero: editions, most wins and the race lap record (Supabase), title
+  stakes, the last edition's track map, and pole-to-win by year.
+- Title stakes (`lib/titleStakes.ts`) enumerate every result of the race against the standings
+  and the points left on the calendar; a tie on points goes to wins, and equal wins count as not
+  clinched, so a stated margin is never too small. The card shows only when the standings are
+  from the round just before, the weekend has no sprint, and the leader can still clinch.
+- Host colours: see DESIGN.md (decoration only, never data or team colours).
+

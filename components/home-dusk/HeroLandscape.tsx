@@ -46,7 +46,7 @@ export default function HeroLandscape({ kicker, title, dek, href, ctaLabel, keyN
     <section className={`dusk-card dusk-hero flex flex-col justify-between ${className}`} aria-labelledby="dusk-hero-title">
       <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] gap-5 px-5 pt-6 pb-10 sm:px-8 sm:pt-8 sm:pb-14">
         <div className="relative z-[3] min-w-0">
-          <p className="dusk-mono uppercase text-[12px] tracking-[0.12em] text-[color:var(--dusk-sunset)]">{kicker}</p>
+          <p className="dusk-kicker dusk-mono uppercase text-[12px] tracking-[0.12em] text-[color:var(--dusk-sunset)]">{kicker}</p>
           <h2
             id="dusk-hero-title"
             className="dusk-display mt-3 leading-[1.03] tracking-[-0.02em] text-balance [overflow-wrap:anywhere] text-[clamp(1.9rem,3.6vw,3rem)]"
