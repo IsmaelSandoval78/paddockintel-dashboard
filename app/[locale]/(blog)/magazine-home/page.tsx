@@ -14,13 +14,15 @@ import SectorDuel from '@/components/home-dusk/SectorDuel';
 import TrackMap from '@/components/home-dusk/TrackMap';
 import TitleTrend, { type TrendSeries } from '@/components/home-dusk/TitleTrend';
 import NextRaceCard from '@/components/home-dusk/NextRaceCard';
+import { CircuitTile, PoleHistoryCard, RaceWeekStrip, StakesCard } from '@/components/home-dusk/RaceWeek';
 import LatestList, { type LatestItem } from '@/components/home-dusk/LatestList';
 import NewsletterBand from '@/components/home-dusk/NewsletterBand';
 import DuskArticleCard from '@/components/home-dusk/DuskArticleCard';
 import { SITE_URL, hubLocaleUrl } from '@/lib/site-url';
 import { getRaceHighlightsFor } from '@/lib/raceHighlights';
 import { getFeaturedAndRecent, getStandings, getCircuitOfTheDay, getFeedTeaser } from './data';
-import { getLatestRace, getTitleTrend } from './dusk-data';
+import { getLatestRace, getRaceWeek, getTitleTrend } from './dusk-data';
+import { circuitTimeZone, hostPalette } from '@/lib/raceWeekHost';
 import { duskSans } from '../dusk-font';
 import '../dusk.css';
 import { openGraphFor } from '@/lib/seo';
@@ -166,11 +168,11 @@ export default async function MagazineHomePage({
     getArticles(locale, page, tag),
     getFeaturedAndRecent(locale),
     isFrontPage
-      ? Promise.all([getStandings(), getLatestRace(), getCircuitOfTheDay(), getFeedTeaser(locale, 6)])
+      ? Promise.all([getStandings(), getLatestRace(), getCircuitOfTheDay(), getFeedTeaser(locale, 6), getRaceWeek()])
       : Promise.resolve(null),
   ]);
 
-  const [standings, latestRace, nextRace, feedItems] = front ?? [{ drivers: [], constructors: [] }, null, null, []];
+  const [standings, latestRace, nextRace, feedItems, raceWeek] = front ?? [{ drivers: [], constructors: [] }, null, null, [], null];
   const { featured, recent } = featuredAndRecent;
   const topDrivers = standings.drivers;
   const trend =
@@ -210,12 +212,25 @@ export default async function MagazineHomePage({
   // Race mode: the cover dashboard follows the latest race. Story mode: the featured piece isn't
   // about that race, so its own numbers lead and the race data moves to its own labelled section.
   const raceMode = !featured || isRacePiece(featured);
+  // A piece linked to the coming race is its preview.
+  const isPreview = !!raceWeek && !!featured && featured.race_id === raceWeek.raceId;
   const heroKicker =
     latestRace && raceDay && raceMode
       ? t('kickerRace', { race: `${latestRace.name} ${latestRace.year}`, session: t('sessionRace'), date: shortDate(raceDay) })
-      : t('kickerFeatured', { date: featuredPublished ? shortDate(featuredPublished) : '' });
+      : raceWeek && isPreview
+        ? t('kickerRace', { race: `${raceWeek.name} ${raceWeek.year}`, session: t('raceWeek.sessionPreview'), date: featuredPublished ? shortDate(featuredPublished) : '' })
+        : t('kickerFeatured', { date: featuredPublished ? shortDate(featuredPublished) : '' });
 
-  // The pole-lap landscape belongs to the race; in story mode the hero carries the article alone.
+  // ── Race week: the coming Grand Prix, drawn from its circuit's last edition ──
+  const rwLast = raceWeek?.lastEdition ?? null;
+  const rwHighlights = rwLast ? getRaceHighlightsFor(rwLast.year, rwLast.round) : null;
+  const rwPole = rwHighlights?.poleLap;
+  const rwSurname = (code: string) => rwLast?.surnameByCode[code] ?? code;
+  // Generated files name their own source; the label is the provider's name only.
+  const sourceName = (source: string) => (source.startsWith('OpenF1') ? 'OpenF1' : 'FastF1');
+
+  // The pole-lap landscape belongs to the race. In story mode during race week it is the coming
+  // circuit's last pole lap; otherwise the hero carries the article alone.
   const terrain: TerrainData | null = pole && raceMode
     ? {
         speeds: pole.speedKmh,
@@ -231,7 +246,27 @@ export default async function MagazineHomePage({
           max: format.number(pole.topSpeedKmh),
         }),
       }
-    : null;
+    : raceWeek && rwLast && rwPole
+      ? {
+          speeds: rwPole.speedKmh,
+          caption: t('raceWeek.terrain.caption', {
+            driver: rwSurname(rwPole.driver),
+            year: rwLast.year,
+            circuit: raceWeek.circuit.name,
+            lapTime: rwPole.lapTime,
+            min: format.number(rwPole.minSpeedKmh),
+            max: format.number(rwPole.topSpeedKmh),
+            source: sourceName(rwPole.source),
+          }),
+          ariaLabel: t('raceWeek.terrain.aria', {
+            driver: rwSurname(rwPole.driver),
+            year: rwLast.year,
+            circuit: raceWeek.circuit.name,
+            min: format.number(rwPole.minSpeedKmh),
+            max: format.number(rwPole.topSpeedKmh),
+          }),
+        }
+      : null;
 
   // ── I · Insights: key numbers already published in our race-week analysis ──
   // The editorial 'featured' flag is a placement, not a topic: label by the first real tag.
@@ -535,7 +570,8 @@ export default async function MagazineHomePage({
                 series={trendSeries}
               />
   ) : null;
-  const nextRaceEl = nextRace ? (
+  // In race week the race-week section below takes this card's place.
+  const nextRaceEl = nextRace && !raceWeek ? (
               <NextRaceCard
                 className="md:col-span-6 lg:col-span-4"
                 kicker={t('nextRace.kicker', { round: nextRace.round })}
@@ -556,9 +592,167 @@ export default async function MagazineHomePage({
                 ]}
               />
   ) : null;
+  // ── Race week: strip on top, circuit section under the hero ─────────
+  const rwTz = raceWeek ? circuitTimeZone(raceWeek.circuit.ref) : null;
+  const rwStart = raceWeek?.time ? new Date(`${raceWeek.date}T${raceWeek.time}Z`) : null;
+  const rwPlace = raceWeek?.circuit.location ?? '';
+  const raceWeekStrip = raceWeek ? (
+    <RaceWeekStrip
+      eyebrow={t('raceWeek.eyebrow', { round: raceWeek.round, total: raceWeek.seasonRounds })}
+      title={raceWeek.name}
+      meta={[
+        t('raceWeek.meta', {
+          circuit: raceWeek.circuit.name,
+          location: raceWeek.circuit.location,
+          dates: format.dateTimeRange(dayDate(raceWeek.weekendStart), dayDate(raceWeek.date), { month: 'long', day: 'numeric', timeZone: 'UTC' }),
+        }),
+        ...(rwStart && rwTz
+          ? [
+              t('raceWeek.raceTime', {
+                weekday: format.dateTime(rwStart, { weekday: 'long', timeZone: rwTz }),
+                time: format.dateTime(rwStart, { hour: 'numeric', minute: '2-digit', timeZone: rwTz }),
+              }),
+            ]
+          : []),
+      ].join(' · ')}
+      days={raceWeek.daysUntil}
+      daysLabel={t('raceWeek.days', { days: raceWeek.daysUntil })}
+      countAria={t('raceWeek.countAria', { days: raceWeek.daysUntil })}
+    />
+  ) : null;
+
+  const rwP2w = raceWeek?.poleToWin ?? null;
+  const [rwTop, rwNext] = raceWeek?.topWinners ?? [];
+  const rwRecord = nextRace && raceWeek && nextRace.round === raceWeek.round ? nextRace.fastest_lap : null;
+  const rwTileClass = 'dusk-rw md:col-span-2 lg:col-span-4';
+  const rwTiles = raceWeek && rwP2w ? (
+    <>
+      <CircuitTile
+        className={rwTileClass}
+        label={t('raceWeek.tiles.editionsLabel', { circuit: rwPlace })}
+        value={format.number(rwP2w.races)}
+        text={t('raceWeek.tiles.editionsText', { year: rwP2w.sinceYear })}
+        source={t('raceWeek.tiles.source')}
+      />
+      {/* A tie among more than two drivers isn't a "most wins" story. */}
+      {rwTop && rwTop.surnames.length <= 2 && (
+        <CircuitTile
+          className={rwTileClass}
+          label={t('raceWeek.tiles.topLabel')}
+          value={format.number(rwTop.wins)}
+          text={
+            t('raceWeek.tiles.topText', { n: rwTop.wins, drivers: format.list(rwTop.surnames) }) +
+            (rwNext && rwNext.surnames.length <= 2
+              ? t('raceWeek.tiles.topNext', { drivers: format.list(rwNext.surnames), count: rwNext.surnames.length, n: rwNext.wins })
+              : '')
+          }
+          source={t('raceWeek.tiles.source')}
+        />
+      )}
+      {rwRecord && (
+        <CircuitTile
+          className={rwTileClass}
+          label={t('raceWeek.tiles.recordLabel')}
+          value={rwRecord.time}
+          text={t('raceWeek.tiles.recordText', { driver: rwRecord.surname, year: rwRecord.year })}
+          source={t('raceWeek.tiles.source')}
+        />
+      )}
+    </>
+  ) : null;
+
+  const stakes = raceWeek?.stakes ?? null;
+  const needText = (n: number) =>
+    n > 0 ? t('raceWeek.stakes.needMore', { n }) : n === 0 ? t('raceWeek.stakes.needZero') : t('raceWeek.stakes.needLess', { n: -n });
+  const winConditions = (stakes?.rivals ?? []).flatMap((r) =>
+    r.worstIfWin === null
+      ? []
+      : [r.worstIfWin === 11 ? t('raceWeek.stakes.condOut', { driver: r.surname }) : t('raceWeek.stakes.cond', { driver: r.surname, pos: r.worstIfWin })],
+  );
+  const stakesEl = raceWeek && stakes ? (
+    <StakesCard
+      className={`dusk-rw md:col-span-6 ${rwHighlights?.trackMap && rwPole ? 'lg:col-span-7' : 'lg:col-span-12'}`}
+      label={t('raceWeek.stakes.label')}
+      title={t('raceWeek.stakes.title', { leader: stakes.leader, place: rwPlace })}
+      headers={[t('raceWeek.stakes.rival'), t('raceWeek.stakes.gap'), t('raceWeek.stakes.need')]}
+      rows={stakes.rivals.map((r, i) => ({
+        key: `${i}-${r.surname}`,
+        driver: r.surname,
+        gap: t('raceWeek.stakes.gapValue', { n: format.number(r.gap) }),
+        need: needText(r.need),
+      }))}
+      bottomLine={t.rich(winConditions.length ? 'raceWeek.stakes.bottom' : 'raceWeek.stakes.bottomAny', {
+        b: (chunks) => <b>{chunks}</b>,
+        points: format.number(stakes.pointsAfter),
+        place: rwPlace,
+        leader: stakes.leader,
+        conditions: format.list(winConditions),
+      })}
+      source={t('raceWeek.stakes.source', { round: raceWeek.round - 1 })}
+    />
+  ) : null;
+
+  const rwMap = raceWeek && rwLast && rwPole && rwHighlights?.trackMap ? (
+    <section className="dusk-card dusk-rw flex flex-col gap-4 p-5 sm:p-6 md:col-span-6 lg:col-span-5" aria-labelledby="dusk-rwmap-title">
+      <div>
+        <p className="dusk-label m-0">{t('raceWeek.map.label')}</p>
+        <h2 id="dusk-rwmap-title" className="text-[17px] font-semibold m-0 mt-1">{raceWeek.circuit.name}</h2>
+        <p className={sub}>{t('raceWeek.map.sub', { driver: rwSurname(rwPole.driver), year: rwLast.year })}</p>
+      </div>
+      <TrackMap
+        map={rwHighlights.trackMap}
+        // The legend below names both markers; on-map labels would sit on the line here.
+        topLabel=""
+        minLabel=""
+        caption={t('raceWeek.map.source', { source: sourceName(rwHighlights.trackMap.source), year: rwLast.year })}
+        ariaLabel={t('raceWeek.map.aria', {
+          circuit: raceWeek.circuit.name,
+          driver: rwSurname(rwPole.driver),
+          year: rwLast.year,
+          max: format.number(rwPole.topSpeedKmh),
+          min: format.number(rwPole.minSpeedKmh),
+        })}
+      />
+      <div className="flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-[color:var(--dusk-muted)] mt-auto">
+        <span className="inline-flex items-center gap-1.5"><i className="dusk-dot dusk-mk-top w-[9px]" />{t('raceWeek.map.top', { speed: format.number(rwPole.topSpeedKmh) })}</span>
+        <span className="inline-flex items-center gap-1.5"><i className="dusk-dot dusk-mk-min w-[9px]" />{t('raceWeek.map.min', { speed: format.number(rwPole.minSpeedKmh) })}</span>
+      </div>
+    </section>
+  ) : null;
+
+  const rwNonPole = rwP2w ? rwP2w.history.filter((h) => h.grid !== 1) : [];
+  // Furthest back on the grid (grid 0 is a pit-lane start, not a grid slot), latest year on a tie.
+  const rwFurthest = rwNonPole.filter((h) => h.grid > 1).sort((a, b) => b.grid - a.grid || b.year - a.year)[0];
+  const poleHistoryEl = raceWeek && rwP2w ? (
+    <PoleHistoryCard
+      className={`dusk-rw md:col-span-6 ${rwMap && !stakesEl ? 'lg:col-span-7' : 'lg:col-span-12'}`}
+      label={t('kpi.p2wTitle')}
+      title={t('raceWeek.poleHistory.title', { first: rwP2w.history[0].year, last: rwP2w.history[rwP2w.history.length - 1].year })}
+      years={rwP2w.history.map((h) => ({ year: h.year, fromPole: h.grid === 1, title: t('kpi.p2wDot', { year: h.year, winner: h.winner, grid: h.grid }) }))}
+      ariaLabel={t('kpi.p2wAria', { races: rwP2w.races, circuit: raceWeek.circuit.name, year: rwP2w.sinceYear, wins: rwP2w.poleWins })}
+      bottomLine={
+        rwNonPole.length === 0
+          ? t('raceWeek.poleHistory.bottomAll')
+          : rwFurthest
+            ? t('raceWeek.poleHistory.bottomExample', { other: rwNonPole.length, races: rwP2w.races, driver: rwFurthest.winner, year: rwFurthest.year, grid: rwFurthest.grid })
+            : t('raceWeek.poleHistory.bottomOther', { other: rwNonPole.length, races: rwP2w.races })
+      }
+      source={t('kpi.p2wSource')}
+    />
+  ) : null;
+
+  const raceWeekSection = (
+    <>
+      {rwTiles}
+      {stakesEl}
+      {rwMap}
+      {poleHistoryEl}
+    </>
+  );
+
   const latestEl = (
             <LatestList
-              className="md:col-span-6 lg:col-span-8"
+              className={`md:col-span-6 ${nextRaceEl ? 'lg:col-span-8' : 'lg:col-span-12'}`}
               title={t('latest.title')}
               linkLabel={t('latest.link')}
               linkHref="/feed"
@@ -567,9 +761,13 @@ export default async function MagazineHomePage({
   );
 
   return (
-    <main className={`theme-dusk ${duskSans.variable} min-h-screen`}>
+    <main
+      className={`theme-dusk ${duskSans.variable} min-h-screen`}
+      data-host={isFrontPage && raceWeek ? (hostPalette(raceWeek.circuit.country) ?? undefined) : undefined}
+    >
       <h1 className="sr-only">{tMag('headline')}</h1>
       <div className="max-w-[1280px] mx-auto px-4 sm:px-5 pt-7 pb-16 flex flex-col gap-5">
+        {isFrontPage && raceWeekStrip}
         {isFrontPage && raceMode && raceHeader}
 
         {isFrontPage && (
@@ -585,10 +783,12 @@ export default async function MagazineHomePage({
                 {mapBlock}
                 {trendEl}
                 {nextRaceEl}
+                {raceWeekSection}
                 {latestEl}
               </>
             ) : (
               <>
+                {raceWeekSection}
                 {storyKpis}
                 {trendEl}
                 {standingsEl}

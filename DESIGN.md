@@ -195,6 +195,16 @@ the depth switch. Recaps (`/recaps`, `/recaps/[issue]`) follow the Weekly patter
 (`/tag/[slug]`) are a dusk index of article cards. Everything else on the site stays on this
 system until each surface is migrated deliberately. Do not copy dusk tokens or its gradient/glow exception into other routes.
 
+**Race week on the home — host colours (2026-10-19, founder decision from prototype v3):** from
+Monday to Saturday before a Grand Prix the home carries `data-host="<country>"` on `<main>` and the
+host flag's colours enter as decoration in fixed places only: the hero sky (night tones above the
+dusk horizon; stars for the US only), the race-week strip (flag band, border, countdown), a 3px rule
+on top of each card cycling through the flag colours, labels and the hero kicker, and inside the
+race-week section the pole-to-win dots and track markers. They never touch data: team colours,
+chart series and the speed bands of the track map keep their own values. Palettes live in
+`dusk.css` (`--host-1/2/3` are the flag colours lifted for contrast on the dark ground); the country
+mapping is `lib/raceWeekHost.ts`. A host without a palette keeps the plain dusk colours.
+
 ## What this replaces, explicitly
 
 - v3.0.0 "Vintage Editorial" (`#EDE3D0` kraft, terracotta, Archivo Black + Lora, 2-4px

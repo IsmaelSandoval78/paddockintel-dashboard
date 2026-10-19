@@ -72,11 +72,11 @@ export default function TrackMap({ map, topLabel, minLabel, caption, ariaLabel }
             }}
           />
         ))}
-        <circle cx={tx} cy={ty} r="16" fill="var(--dusk-warm)" className="dusk-glow-warm" />
+        <circle cx={tx} cy={ty} r="16" className="dusk-mk-top dusk-glow-warm" />
         <text x={tx + dx(tx)} y={ty - 24} textAnchor={anchor(tx)} fill="white" className="dusk-mono" fontSize="46">
           {topLabel}
         </text>
-        <circle cx={mx} cy={my} r="16" fill="var(--dusk-muted)" />
+        <circle cx={mx} cy={my} r="16" className="dusk-mk-min" />
         <text x={mx + dx(mx)} y={my + 60} textAnchor={anchor(mx)} fill="var(--dusk-ink-2)" className="dusk-mono" fontSize="46">
           {minLabel}
         </text>

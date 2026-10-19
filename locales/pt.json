@@ -1450,6 +1450,58 @@
     },
     "archive": {
       "title": "Arquivo de análises"
+    },
+    "raceWeek": {
+      "eyebrow": "Semana de corrida · Etapa {round} de {total}",
+      "meta": "{circuit}, {location} · {dates}",
+      "raceTime": "Corrida no {weekday} às {time}, horário local",
+      "days": "{days, plural, one {dia para a corrida} other {dias para a corrida}}",
+      "countAria": "{days, plural, one {Falta # dia} other {Faltam # dias}} para a corrida",
+      "sessionPreview": "Prévia",
+      "terrain": {
+        "caption": "A volta da pole de {driver} em {circuit} {year} como paisagem · cada pico é uma reta, cada vale uma curva · {lapTime} · {min}–{max} km/h · {source}",
+        "aria": "A velocidade da volta da pole de {driver} em {circuit} {year} desenhada como uma cordilheira: cada pico é uma reta, cada vale uma curva. A velocidade vai de {min} a {max} km/h."
+      },
+      "tiles": {
+        "editionsLabel": "{circuit} na F1",
+        "editionsText": "Grandes Prêmios disputados aqui desde {year}",
+        "topLabel": "Maior vencedor aqui",
+        "topText": "{n, plural, one {vitória} other {vitórias}} de {drivers}",
+        "topNext": "; {drivers} {count, plural, one {soma} other {somam}} {n}",
+        "recordLabel": "Recorde de volta em corrida",
+        "recordText": "{driver}, {year}",
+        "source": "Resultados do Supabase"
+      },
+      "stakes": {
+        "label": "O que está em jogo na corrida",
+        "title": "{leader} pode garantir o título em {place}?",
+        "rival": "Rival",
+        "gap": "Distância",
+        "need": "Diferença necessária",
+        "gapValue": "a {n}",
+        "needMore": "+{n} ou mais",
+        "needZero": "sem perder pontos",
+        "needLess": "pode ceder até {n}",
+        "bottom": "Com o calendário atual, restam <b>{points} pontos</b> depois de {place}. Se {leader} vencer, basta que <b>{conditions}</b>.",
+        "bottomAny": "Com o calendário atual, restam <b>{points} pontos</b> depois de {place}. Se {leader} vencer, <b>o título fica garantido com qualquer resultado dos outros</b>.",
+        "cond": "{driver} termine em {pos}º ou pior",
+        "condOut": "{driver} termine fora dos pontos",
+        "source": "Classificação do Supabase após a etapa {round} · pontos 25-18-15-12-10-8-6-4-2-1 · empate decidido por vitórias"
+      },
+      "map": {
+        "label": "O circuito",
+        "sub": "Traçado com a volta da pole de {driver} em {year}, cor conforme a velocidade",
+        "top": "{speed} km/h, velocidade máxima",
+        "min": "{speed} km/h, curva mais lenta",
+        "aria": "Mapa de {circuit} traçado com a volta da pole de {driver} em {year}, colorido conforme a velocidade: {max} km/h no ponto mais rápido, {min} km/h na curva mais lenta.",
+        "source": "Posição e telemetria do {source} · classificação {year}"
+      },
+      "poleHistory": {
+        "title": "Quem fez a pole venceu? {first}–{last}",
+        "bottomExample": "Em {other} de {races} edições venceu alguém que não largou em primeiro, como {driver} em {year}, largando em {grid}º.",
+        "bottomOther": "Em {other} de {races} edições venceu alguém que não largou em primeiro.",
+        "bottomAll": "Todas as edições aqui foram vencidas por quem largou na pole."
+      }
     }
   },
   "articleDusk": {
