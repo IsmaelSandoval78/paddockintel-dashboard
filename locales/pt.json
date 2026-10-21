@@ -989,7 +989,7 @@
     "metaDescription": "Como o PaddockIntel coleta e usa seu endereço de e-mail.",
     "kicker": "Legal",
     "title": "Política de Privacidade",
-    "updated": "Última atualização: setembro de 2026",
+    "updated": "Última atualização: outubro de 2026",
     "s1h": "O que coletamos",
     "s1p": "Quando você assina o Weekly Digest do PaddockIntel, coletamos seu endereço de e-mail e seu idioma preferido (inglês, espanhol ou português) — isso não mudou. Criar uma conta é algo separado e opcional: você nunca precisa de uma para ler o site. Se você entrar com o Google, recebemos seu nome, e-mail e foto de perfil do Google. Se você entrar com e-mail, recebemos apenas seu endereço de e-mail. Depois de logado, guardamos quais pilotos e construtores você escolhe seguir — nada mais. Não rastreamos seu histórico de leitura nem inferimos preferências que você não declarou explicitamente.",
     "s2h": "Como usamos",
@@ -1001,7 +1001,7 @@
     "s5h": "Exportar e excluir sua conta",
     "s5p": "Você pode baixar uma cópia dos dados da sua conta, ou excluir sua conta e todos os seus follows imediatamente, a partir da sua <account>página de conta</account> a qualquer momento — sem precisar nos escrever. Se preferir que façamos isso por você, entre em contato pelo <mail>info@paddockintel.com</mail>. Excluir sua conta não afeta uma assinatura de newsletter separada feita com o mesmo e-mail, que é cancelada à parte (veja acima).",
     "s6h": "Cookies e análises",
-    "s6p": "paddockintel.com não usa cookies de publicidade nem rastreadores de análise de terceiros. Nosso provedor de hospedagem (Cloudflare) mantém logs de servidor padrão e de curta duração (endereço IP, página solicitada) necessários para operar e proteger o serviço. Fazer login ativa um cookie de sessão para que o site saiba que você está logado — não é usado para rastreamento ou publicidade.",
+    "s6p": "paddockintel.com não usa cookies de publicidade nem rastreadores entre sites. Para contar as visitas usamos o Cloudflare Web Analytics, que não instala cookies, não guarda nada no seu dispositivo e não identifica visitantes por impressão digital: ele informa apenas dados agregados como a página vista, o site de origem, o país, o navegador, o tipo de dispositivo e a velocidade de carregamento. Para esses dados, a Cloudflare descarta seu endereço IP no data center mais próximo. Nosso provedor de hospedagem (Cloudflare) também mantém logs de servidor padrão e de curta duração (endereço IP, página solicitada) necessários para operar e proteger o serviço. Fazer login ativa um cookie de sessão para que o site saiba que você está logado — não é usado para rastreamento ou publicidade.",
     "s7h": "Contato",
     "s7p": "Dúvidas sobre esta política: <mail>info@paddockintel.com</mail> ou pela <about>página About</about>."
   },

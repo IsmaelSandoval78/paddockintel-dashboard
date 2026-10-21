@@ -63,6 +63,7 @@ jobs:
           RESEND_WEBHOOK_SECRET=${{ secrets.RESEND_WEBHOOK_SECRET }}
           NEXT_PUBLIC_SITE_URL=https://www.paddockintel.com
           NEXT_PUBLIC_HUB_URL=https://hub.paddockintel.com
+          NEXT_PUBLIC_CF_BEACON_TOKEN=${{ vars.CF_BEACON_TOKEN }}
           EOF
 
       - name: Build for Cloudflare (secrets stripped before packaging)
