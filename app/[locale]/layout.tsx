@@ -5,6 +5,7 @@ import { Archivo_Black, DM_Serif_Display, Inter, JetBrains_Mono, Lora } from 'ne
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import Script from 'next/script';
 import { routing } from '@/lib/i18n/routing';
 import { siteModeForHost } from '@/lib/siteMode';
 import { getCurrentAuthUser } from '@/lib/auth/getCurrentAuthUser';
@@ -15,6 +16,11 @@ import Footer from '@/components/nav/Footer';
 import PwaRegister from '@/components/PwaRegister';
 import { SITE_URL } from '@/lib/site-url';
 import '../globals.css';
+
+// Cloudflare Web Analytics site token (public: it ships in the HTML). Set only in the production
+// deploy (deploy-cloudflare.yml, repo variable CF_BEACON_TOKEN); empty elsewhere, so previews and
+// local builds render no beacon. Cookieless, disclosed in the privacy policy (s6).
+const CF_BEACON_TOKEN = process.env.NEXT_PUBLIC_CF_BEACON_TOKEN;
 
 const display = Archivo_Black({
   weight: ['400'],
@@ -109,6 +115,13 @@ export default async function LocaleLayout({
           </AuthProvider>
         </NextIntlClientProvider>
         <PwaRegister />
+        {CF_BEACON_TOKEN && (
+          <Script
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            strategy="afterInteractive"
+            data-cf-beacon={JSON.stringify({ token: CF_BEACON_TOKEN })}
+          />
+        )}
       </body>
     </html>
   );

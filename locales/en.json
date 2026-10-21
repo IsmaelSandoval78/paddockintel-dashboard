@@ -993,7 +993,7 @@
     "metaDescription": "How PaddockIntel collects and uses your email address.",
     "kicker": "Legal",
     "title": "Privacy Policy",
-    "updated": "Last updated: September 2026",
+    "updated": "Last updated: October 2026",
     "s1h": "What we collect",
     "s1p": "When you subscribe to the PaddockIntel Weekly Digest, we collect your email address and your preferred language (English, Spanish, or Portuguese) — no change there. Creating an account is separate and optional: you never need one to read the site. If you sign in with Google, we receive your name, email address, and profile picture from Google. If you sign in with email, we receive only your email address. Once signed in, we store which drivers and constructors you choose to follow — nothing else. We do not track your reading history or infer preferences you haven't explicitly set.",
     "s2h": "How we use it",
@@ -1005,7 +1005,7 @@
     "s5h": "Exporting and deleting your account",
     "s5p": "You can download a copy of your account data, or delete your account and all follow data immediately, from your <account>account page</account> at any time — no need to email us. If you'd rather we do it for you, contact <mail>info@paddockintel.com</mail>. Deleting your account does not affect a separate newsletter subscription made with the same email address, which is unsubscribed separately (see above).",
     "s6h": "Cookies & analytics",
-    "s6p": "paddockintel.com does not use advertising cookies or third-party analytics trackers. Our hosting provider (Cloudflare) keeps standard, short-lived server logs (IP address, requested page) needed to operate and secure the service. Signing in sets a session cookie so the site knows you're logged in — it isn't used for tracking or advertising.",
+    "s6p": "paddockintel.com does not use advertising cookies or cross-site trackers. To count visits we use Cloudflare Web Analytics, which sets no cookies, stores nothing on your device and does not fingerprint visitors: it reports only aggregate data such as the page viewed, the referring site, country, browser, device type and page load speed. For this data, Cloudflare discards your IP address at its nearest data center. Our hosting provider (Cloudflare) also keeps standard, short-lived server logs (IP address, requested page) needed to operate and secure the service. Signing in sets a session cookie so the site knows you're logged in — it isn't used for tracking or advertising.",
     "s7h": "Contact",
     "s7p": "Questions about this policy: <mail>info@paddockintel.com</mail> or via the <about>about page</about>."
   },
