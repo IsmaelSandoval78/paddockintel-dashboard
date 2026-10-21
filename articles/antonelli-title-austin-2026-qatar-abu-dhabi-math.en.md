@@ -2,7 +2,7 @@
 slug: "antonelli-title-austin-2026-qatar-abu-dhabi-math"
 title: "Can Antonelli Win the Title in Austin? The Calendar Decides"
 locale: en
-meta_description: "Antonelli needs an Austin win and Russell P9 or lower if Qatar and Abu Dhabi run. If Imola replaces them, almost any result crowns him."
+meta_description: "With the FIA saying Qatar and Abu Dhabi will run, Antonelli needs an Austin win and Russell P9 or lower. With Imola, almost any result works."
 status: published
 paywalled: false
 translation_group_id: "00266cc9-7410-452c-9f4b-30b9124ca65f"
@@ -31,7 +31,7 @@ faq:
   - q: "What does Antonelli need at the US Grand Prix to be champion?"
     a: "On the six-race calendar he needs to outscore Russell by 23 points, Hamilton by 14 and Max Verstappen by 6 in Austin, which in practice means a win with Russell ninth or lower and Hamilton fifth or lower. Charles Leclerc and Lando Norris can't stop an Austin win on their own."
   - q: "Are the Qatar and Abu Dhabi Grands Prix still happening in 2026?"
-    a: "Officially, yes. F1 CEO Stefano Domenicali said on October 3 that the calendar is confirmed with Qatar on November 29 and Abu Dhabi on December 6. On October 12 Motorsport.com reported that F1 was moving closer to activating its Imola contingency after attacks on Riyadh's airport; neither race has been cancelled."
+    a: "Yes, as of October 20. FIA president Mohammed Ben Sulayem said both races are going to happen, Qatar on November 29 and Abu Dhabi on December 6, while saying he cannot predict events in the region. F1 CEO Stefano Domenicali had said on October 3 that the calendar is confirmed. Imola remains the standby venue."
   - q: "Would Antonelli be the youngest F1 world champion ever?"
     a: "Yes. He will be 20 years and 61 days old in Austin, and 20 years and 103 days at the Abu Dhabi finale. Sebastian Vettel, the youngest champion so far, was 23 years and 134 days old when he won the 2010 title at the season's last race."
   - q: "Who was the last Italian Formula 1 world champion?"
@@ -60,9 +60,15 @@ sources:
     url: "https://f1salaries.com/driver-salaries/kimi-antonelli/"
   - name: "GPblog — Qatar Emir warns of 'worst possibilities' as F1 plans to race in Qatar (October 14)"
     url: "https://www.gpblog.com/en/news/worrying-news-as-qatar-emir-warns-of-worst-possibilities-as-f1-plans-to-race-in-qatar"
+  - name: "Motorsport.com — FIA expects F1 races in Qatar and Abu Dhabi to continue as planned (October 20)"
+    url: "https://www.motorsport.com/f1/news/fia-expects-f1-races-in-qatar-and-abu-dhabi-to-continue-as-planned/10866547/"
+  - name: "Arab News (Reuters) — FIA boss happy for F1 to race in Middle East (October 20)"
+    url: "https://www.arabnews.com/motorsport/fia-boss-happy-for-f1-to-race-in-middle-east-3007423"
   - name: "PaddockIntel database — 2026 standings, results, grid positions and champions since 1950 (Ergast/jolpica lineage + FastF1)"
     url: "https://hub.paddockintel.com/"
 ---
+
+*Update, October 21, 2026: On October 20, FIA president Mohammed Ben Sulayem said the Qatar and Abu Dhabi races "are going to happen," while adding that he cannot predict events in the region; Imola remains the standby venue, according to Reuters and Motorsport.com. The official six-race calendar is now the base case in this article, and the Imola numbers are kept as the contingency.*
 
 *Update, October 14, 2026: Qatar's emir, Sheikh Tamim bin Hamad Al Thani, told institutions and citizens on October 13 that "we must be prepared for the worst possibilities," according to Alaraby TV. He did not mention Formula 1. As of this update, the Qatar and Abu Dhabi races remain on the calendar and F1 has not announced its decision.*
 
@@ -70,7 +76,7 @@ sources:
 
 Kimi Antonelli left Singapore on 340 points, 102 clear of his Mercedes teammate George Russell (238). Lewis Hamilton is 111 behind on 229, Max Verstappen 119 behind on 221, Charles Leclerc 125 behind on 215 and Lando Norris 139 behind on 201. Six Grands Prix remain and none of them has a Sprint, so 150 points are still available. The next one is the United States Grand Prix in Austin on October 25.
 
-How many of those six races actually happen is still open. On October 3, F1 CEO Stefano Domenicali told Sky Sport Italia that "the calendar is confirmed: the last two grands prix will be in Qatar and Abu Dhabi," on November 29 and December 6. On October 12, Motorsport.com reported that F1 was moving closer to activating its contingency plan, a single finale at Imola on December 6, after a series of attacks on Riyadh's international airport. Neither Middle East race has been cancelled, and teams were told to expect a final call by mid-October.
+How many of those six races actually happen has been the open question. On October 3, F1 CEO Stefano Domenicali told Sky Sport Italia that "the calendar is confirmed: the last two grands prix will be in Qatar and Abu Dhabi," on November 29 and December 6. On October 12, Motorsport.com reported that F1 was moving closer to activating its contingency plan, a single finale at Imola on December 6, after a series of attacks on Riyadh's international airport. Neither Middle East race has been cancelled, and teams were told to expect a final call by mid-October. On October 20, FIA president Mohammed Ben Sulayem said the two races "are going to happen," adding: "I cannot predict this." Imola remains the standby venue.
 
 ## Why it happened
 
@@ -100,4 +106,4 @@ The season's numbers support the lead. Antonelli has averaged 20.0 points per ra
 
 The data points to Mexico City or later on the official calendar. An Austin title needs a win plus two specific results from other drivers, and Russell's deferred engine penalty removes the easiest route to one of them.
 
-My read: the real decider is F1's contract math, not Russell. If F1 keeps Qatar and Abu Dhabi, it keeps up to $100 million in fees and Austin becomes a long shot. If it triggers Imola, Austin becomes close to a formality.
+My read: the real decider is F1's contract math, not Russell. If F1 keeps Qatar and Abu Dhabi, as the FIA now expects, it keeps up to $100 million in fees and Austin becomes a long shot. If it triggers Imola, Austin becomes close to a formality.
