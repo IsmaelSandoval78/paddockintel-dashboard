@@ -2,7 +2,7 @@
 slug: "antonelli-titulo-austin-2026-cuentas-catar-abu-dabi"
 title: "¿Puede Antonelli ser campeón en Austin? Decide el calendario"
 locale: es
-meta_description: "Antonelli necesita ganar en Austin y que Russell sea 9º o peor si se corren Catar y Abu Dabi. Con Imola, casi cualquier resultado basta."
+meta_description: "La FIA dice que Catar y Abu Dabi se corren: Antonelli necesita ganar en Austin y que Russell sea 9º o peor. Con Imola, casi todo le alcanza."
 status: published
 paywalled: false
 translation_group_id: "00266cc9-7410-452c-9f4b-30b9124ca65f"
@@ -31,7 +31,7 @@ faq:
   - q: "¿Qué necesita Antonelli en el GP de Estados Unidos para ser campeón?"
     a: "Con el calendario de seis carreras, necesita sacarle en Austin 23 puntos a Russell, 14 a Hamilton y 6 a Max Verstappen. En la práctica, eso significa ganar con Russell noveno o peor y Hamilton quinto o peor. Charles Leclerc y Lando Norris no pueden impedir por sí solos que una victoria en Austin lo corone."
   - q: "¿Se van a correr los GP de Catar y Abu Dabi en 2026?"
-    a: "Oficialmente, sí. El CEO de la F1, Stefano Domenicali, dijo el 3 de octubre que el calendario está confirmado, con Catar el 29 de noviembre y Abu Dabi el 6 de diciembre. El 12 de octubre, Motorsport.com informó que la F1 estaba más cerca de activar su plan de contingencia en Imola tras los ataques al aeropuerto de Riad; ninguna de las dos carreras fue cancelada."
+    a: "Sí, al 20 de octubre. El presidente de la FIA, Mohammed Ben Sulayem, dijo que las dos carreras se van a hacer, Catar el 29 de noviembre y Abu Dabi el 6 de diciembre, aunque aclaró que no puede predecir lo que pase en la región. El CEO de la F1, Stefano Domenicali, ya había dicho el 3 de octubre que el calendario está confirmado. Imola sigue como sede de reserva."
   - q: "¿Antonelli sería el campeón de F1 más joven de la historia?"
     a: "Sí. Tendrá 20 años y 61 días en Austin, y 20 años y 103 días en la final de Abu Dabi. Sebastian Vettel, el campeón más joven hasta ahora, tenía 23 años y 134 días cuando ganó el título de 2010 en la última carrera de la temporada."
   - q: "¿Quién fue el último campeón italiano de Fórmula 1?"
@@ -60,9 +60,15 @@ sources:
     url: "https://f1salaries.com/driver-salaries/kimi-antonelli/"
   - name: "GPblog — Qatar Emir warns of 'worst possibilities' as F1 plans to race in Qatar (14 de octubre)"
     url: "https://www.gpblog.com/en/news/worrying-news-as-qatar-emir-warns-of-worst-possibilities-as-f1-plans-to-race-in-qatar"
+  - name: "Motorsport.com — FIA expects F1 races in Qatar and Abu Dhabi to continue as planned (20 de octubre)"
+    url: "https://www.motorsport.com/f1/news/fia-expects-f1-races-in-qatar-and-abu-dhabi-to-continue-as-planned/10866547/"
+  - name: "Arab News (Reuters) — FIA boss happy for F1 to race in Middle East (20 de octubre)"
+    url: "https://www.arabnews.com/motorsport/fia-boss-happy-for-f1-to-race-in-middle-east-3007423"
   - name: "Base de datos de PaddockIntel — clasificación 2026, resultados, posiciones de salida y campeones desde 1950 (linaje Ergast/jolpica + FastF1)"
     url: "https://hub.paddockintel.com/"
 ---
+
+*Actualización, 21 de octubre de 2026: el 20 de octubre, el presidente de la FIA, Mohammed Ben Sulayem, dijo que las carreras de Catar y Abu Dabi "se van a hacer", aunque aclaró que no puede predecir lo que pase en la región; Imola sigue como sede de reserva, según Reuters y Motorsport.com. El calendario oficial de seis carreras pasa a ser el escenario base de esta nota, y las cuentas con Imola quedan como plan de contingencia.*
 
 *Actualización, 14 de octubre de 2026: el emir de Catar, el jeque Tamim bin Hamad Al Thani, dijo el 13 de octubre a las instituciones y a los ciudadanos que "debemos estar preparados para las peores posibilidades", según Alaraby TV. No mencionó a la Fórmula 1. Al momento de esta actualización, las carreras de Catar y Abu Dabi siguen en el calendario y la F1 no anunció su decisión.*
 
@@ -70,7 +76,7 @@ sources:
 
 Kimi Antonelli salió de Singapur con 340 puntos, 102 por delante de su compañero en Mercedes, George Russell (238). Lewis Hamilton está a 111, con 229; Max Verstappen a 119, con 221; Charles Leclerc a 125, con 215, y Lando Norris a 139, con 201. Quedan seis Grandes Premios y ninguno tiene Sprint, así que todavía hay 150 puntos en juego. El próximo es el Gran Premio de Estados Unidos, en Austin, el 25 de octubre.
 
-Cuántas de esas seis carreras se van a correr de verdad sigue abierto. El 3 de octubre, el CEO de la F1, Stefano Domenicali, le dijo a Sky Sport Italia que "el calendario está confirmado: los dos últimos grandes premios serán en Catar y Abu Dabi", el 29 de noviembre y el 6 de diciembre. El 12 de octubre, Motorsport.com informó que la F1 estaba más cerca de activar su plan de contingencia, una única final en Imola el 6 de diciembre, tras una serie de ataques al aeropuerto internacional de Riad. Ninguna de las dos carreras de Medio Oriente fue cancelada, y a los equipos se les dijo que esperaran una decisión final a mediados de octubre.
+Cuántas de esas seis carreras se van a correr de verdad fue la pregunta abierta. El 3 de octubre, el CEO de la F1, Stefano Domenicali, le dijo a Sky Sport Italia que "el calendario está confirmado: los dos últimos grandes premios serán en Catar y Abu Dabi", el 29 de noviembre y el 6 de diciembre. El 12 de octubre, Motorsport.com informó que la F1 estaba más cerca de activar su plan de contingencia, una única final en Imola el 6 de diciembre, tras una serie de ataques al aeropuerto internacional de Riad. Ninguna de las dos carreras de Medio Oriente fue cancelada, y a los equipos se les dijo que esperaran una decisión final a mediados de octubre. El 20 de octubre, el presidente de la FIA, Mohammed Ben Sulayem, dijo que las dos carreras "se van a hacer", y agregó: "No puedo predecirlo". Imola sigue como sede de reserva.
 
 ## Por qué pasó
 
@@ -100,4 +106,4 @@ Los números de la temporada respaldan la ventaja. Antonelli promedia 20,0 punto
 
 Con el calendario oficial, los datos apuntan a México o más adelante. Un título en Austin exige una victoria y además dos resultados concretos de otros pilotos, y la penalización de motor que Russell dejó para más adelante le quita a Antonelli la vía más fácil para uno de ellos.
 
-Mi lectura: lo que realmente decide no es Russell, sino las cuentas contractuales de la F1. Si la F1 mantiene Catar y Abu Dabi, conserva hasta 100 millones de dólares en tarifas y Austin pasa a ser una posibilidad remota. Si activa Imola, Austin queda casi como un trámite.
+Mi lectura: lo que realmente decide no es Russell, sino las cuentas contractuales de la F1. Si la F1 mantiene Catar y Abu Dabi, como ahora espera la FIA, conserva hasta 100 millones de dólares en tarifas y Austin pasa a ser una posibilidad remota. Si activa Imola, Austin queda casi como un trámite.
