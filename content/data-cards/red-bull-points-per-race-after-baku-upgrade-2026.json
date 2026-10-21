@@ -57,6 +57,11 @@
     "es": "Tabla: Red Bull 15,6 puntos por carrera en las fechas 1-14 y 31,3 en las 15-17, más 15,7; Ferrari 22,1 y 24,3, más 2,2; Mercedes 31,6 y 23,3, menos 8,3; McLaren 18,1 y 10,7, menos 7,4.",
     "pt": "Tabela: Red Bull 15,6 pontos por corrida nas etapas 1-14 e 31,3 nas 15-17, mais 15,7; Ferrari 22,1 e 24,3, mais 2,2; Mercedes 31,6 e 23,3, menos 8,3; McLaren 18,1 e 10,7, menos 7,4."
   },
+  "imageSource": {
+    "en": "Source: PaddockIntel database (Ergast/jolpica-f1 history, FastF1 timing data).",
+    "es": "Fuente: base de datos de PaddockIntel (historial de Ergast/jolpica-f1, cronometraje de FastF1).",
+    "pt": "Fonte: base de dados do PaddockIntel (histórico Ergast/jolpica-f1, cronometragem do FastF1)."
+  },
   "columns": [
     {
       "key": "team",

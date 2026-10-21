@@ -27,7 +27,8 @@ loadEnv();
 type Localized = { en: string; es: string; pt: string };
 type Column = { key: string; label: Localized; numeric?: boolean; decimals?: number; signed?: boolean; kind?: 'finishOrLower' };
 type Row = Record<string, string | number>;
-type Computed = { asOf: Localized; columns: Column[]; rows: Row[]; highlightRow?: number };
+type Venue = { years: string; races: number; strip: Array<{ label: string; sub: string }>; tallies: Array<{ label: string; value: number }> };
+type Computed = { asOf: Localized; columns: Column[]; rows: Row[]; highlightRow?: number; venue?: Venue };
 type Supabase = ReturnType<typeof createClient>;
 
 const DIR = path.resolve(__dirname, '../../content/data-cards');
@@ -74,7 +75,57 @@ function pointsPerRace(s: Awaited<ReturnType<typeof season>>, from: number, to: 
 
 const TEAM: Localized = { en: 'Team', es: 'Equipo', pt: 'Equipe' };
 
+// Grand Prix wins at one circuit, every edition, with one team's wins pulled out for the venue
+// poster: its winning years (latest five) and the top four teams by wins.
+async function circuitWins(supabase: Supabase, circuitRef: string, teamRef: string): Promise<Computed> {
+  const { data: circuit } = await supabase.from('circuits').select('id, name').eq('circuit_ref', circuitRef).single();
+  if (!circuit) throw new Error(`circuit ${circuitRef} not found`);
+  const { data: races } = await supabase.from('races').select('id, year').eq('circuit_id', circuit.id).order('year');
+  const ids = (races ?? []).map((r) => r.id as number);
+  const { data: wins } = await supabase.from('results').select('race_id, driver_id, constructor_id').in('race_id', ids).eq('position', 1);
+  const byRace = new Map((wins ?? []).map((w) => [w.race_id as number, w]));
+  const held = (races ?? []).filter((r) => byRace.has(r.id as number));
+  const driverIds = [...new Set((wins ?? []).map((w) => w.driver_id as number))];
+  const { data: drivers } = await supabase.from('drivers').select('id, surname').in('id', driverIds);
+  const { data: cons } = await supabase.from('constructors').select('id, constructor_ref, name');
+  const surname = new Map((drivers ?? []).map((d) => [d.id as number, d.surname as string]));
+  const team = new Map((cons ?? []).map((c) => [c.id as number, { ref: c.constructor_ref as string, name: c.name as string }]));
+  const rows = held.map((r) => {
+    const w = byRace.get(r.id as number)!;
+    return { year: String(r.year), driver: surname.get(w.driver_id as number) ?? '', team: team.get(w.constructor_id as number)?.name ?? '' };
+  });
+  const counts = new Map<string, number>();
+  for (const r of rows) counts.set(r.team, (counts.get(r.team) ?? 0) + 1);
+  const teamName = [...team.values()].find((t) => t.ref === teamRef)?.name;
+  if (!teamName) throw new Error(`team ${teamRef} not found`);
+  const caps = (name: string) => name.toUpperCase().replace(/^MC/, 'Mc');
+  const tallies = [...counts]
+    .sort((a, b) => b[1] - a[1] || (a[0] === teamName ? -1 : b[0] === teamName ? 1 : a[0].localeCompare(b[0])))
+    .slice(0, 4)
+    .map(([name, value]) => ({ label: caps(name), value }));
+  const strip = rows.filter((r) => r.team === teamName).slice(-5).map((r) => ({ label: r.year, sub: r.driver }));
+  const first = rows[0]?.year;
+  const last = rows[rows.length - 1]?.year;
+  return {
+    asOf: {
+      en: `${circuit.name}, ${first}–${last}: ${rows.length} Grands Prix`,
+      es: `${circuit.name}, ${first}–${last}: ${rows.length} Grandes Premios`,
+      pt: `${circuit.name}, ${first}–${last}: ${rows.length} Grandes Prêmios`,
+    },
+    columns: [
+      { key: 'year', label: { en: 'Year', es: 'Año', pt: 'Ano' } },
+      { key: 'driver', label: { en: 'Winner', es: 'Ganador', pt: 'Vencedor' } },
+      { key: 'team', label: TEAM },
+    ],
+    rows,
+    venue: { years: `${first}–${last}`, races: rows.length, strip, tallies },
+  };
+}
+
 const SPECS: Record<string, (supabase: Supabase) => Promise<Computed>> = {
+  // Race-week venue poster, United States GP 2026: Red Bull's wins at COTA.
+  'red-bull-cota-wins-us-grand-prix': (supabase) => circuitWins(supabase, 'americas', 'red_bull'),
+
   // Mercedes' 2026 wins and how its points rate changed after its six-race opening run.
   'mercedes-2026-grand-prix-wins-by-team': async (supabase) => {
     const s = await season(supabase);
@@ -205,7 +256,10 @@ async function main() {
     const computed = await spec(supabase);
     const file = path.join(DIR, `${slug}.json`);
     const existing = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf-8')) : null;
-    const changed = !existing || JSON.stringify([existing.columns, existing.rows]) !== JSON.stringify([computed.columns, computed.rows]);
+    const changed =
+      !existing ||
+      JSON.stringify([existing.columns, existing.rows, existing.venue?.strip, existing.venue?.tallies]) !==
+        JSON.stringify([computed.columns, computed.rows, computed.venue?.strip, computed.venue?.tallies]);
     const card = {
       slug,
       publishedAt: existing?.publishedAt ?? today,
@@ -218,6 +272,9 @@ async function main() {
       context: existing?.context ?? emptyText(),
       method: existing?.method ?? { en: [], es: [], pt: [] },
       alt: existing?.alt ?? emptyText(),
+      imageSource: existing?.imageSource ?? emptyText(),
+      ...(existing?.layout ? { layout: existing.layout } : {}),
+      ...(existing?.theme ? { theme: existing.theme } : {}),
       columns: computed.columns,
       rows: computed.rows,
       ...(computed.highlightRow !== undefined && computed.highlightRow >= 0 ? { highlightRow: computed.highlightRow } : {}),
@@ -225,6 +282,17 @@ async function main() {
       ...(existing?.relatedArticle ? { relatedArticle: existing.relatedArticle } : {}),
       ...(existing?.hubLinks ? { hubLinks: existing.hubLinks } : {}),
       ...(existing?.xPostUrl ? { xPostUrl: existing.xPostUrl } : {}),
+      ...(computed.venue
+        ? {
+            venue: {
+              place: existing?.venue?.place ?? emptyText(),
+              line1: existing?.venue?.line1 ?? emptyText(),
+              line2: existing?.venue?.line2 ?? emptyText(),
+              footnote: existing?.venue?.footnote ?? emptyText(),
+              ...computed.venue,
+            },
+          }
+        : {}),
     };
     fs.writeFileSync(file, `${JSON.stringify(card, null, 2)}\n`);
     console.log(`${changed ? 'updated' : 'unchanged'} ${slug}`);

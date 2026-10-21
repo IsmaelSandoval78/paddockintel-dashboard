@@ -57,6 +57,11 @@
     "es": "Tabla: Russell 238 puntos, 102 detrás, Antonelli necesita un margen de 23, Russell P9 o peor si Antonelli gana; Hamilton 229, 111 detrás, 14, P5 o peor; Verstappen 221, 119 detrás, 6, cualquier resultado; Leclerc 215, 125 detrás, 0, cualquier resultado; Norris 201, 139 detrás, menos 14, cualquier resultado.",
     "pt": "Tabela: Russell 238 pontos, 102 atrás, Antonelli precisa de margem de 23, Russell P9 ou pior se Antonelli vencer; Hamilton 229, 111 atrás, 14, P5 ou pior; Verstappen 221, 119 atrás, 6, qualquer resultado; Leclerc 215, 125 atrás, 0, qualquer resultado; Norris 201, 139 atrás, menos 14, qualquer resultado."
   },
+  "imageSource": {
+    "en": "Source: PaddockIntel database (Ergast/jolpica-f1 history, FastF1 timing data).",
+    "es": "Fuente: base de datos de PaddockIntel (historial de Ergast/jolpica-f1, cronometraje de FastF1).",
+    "pt": "Fonte: base de dados do PaddockIntel (histórico Ergast/jolpica-f1, cronometragem do FastF1)."
+  },
   "columns": [
     {
       "key": "driver",

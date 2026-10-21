@@ -1,0 +1,262 @@
+{
+  "slug": "red-bull-cota-wins-us-grand-prix",
+  "publishedAt": "2026-10-21",
+  "updatedAt": "2026-10-21",
+  "asOf": {
+    "en": "Circuit of the Americas, 2012–2025: 13 Grands Prix",
+    "es": "Circuit of the Americas, 2012–2025: 13 Grandes Premios",
+    "pt": "Circuit of the Americas, 2012–2025: 13 Grandes Prêmios"
+  },
+  "title": {
+    "en": "Red Bull's 5 COTA Wins: Tied for the Most in Austin",
+    "es": "Red Bull suma 5 victorias en COTA, récord compartido",
+    "pt": "Red Bull tem 5 vitórias em COTA, recorde dividido"
+  },
+  "metaDescription": {
+    "en": "Red Bull has won 5 of the 13 US Grands Prix at COTA, level with Mercedes for the most. Every winner since 2012, by year and team.",
+    "es": "Red Bull ganó 5 de los 13 GP de Estados Unidos en COTA, igual que Mercedes. Todos los ganadores desde 2012, por año y equipo.",
+    "pt": "A Red Bull venceu 5 dos 13 GPs dos EUA em COTA, igual à Mercedes. Todos os vencedores desde 2012, por ano e equipe."
+  },
+  "headline": {
+    "en": "Not Red Bull's first rodeo: 5 COTA wins, tied for the most",
+    "es": "No es el primer rodeo de Red Bull: 5 victorias en COTA, récord compartido",
+    "pt": "Não é o primeiro rodeio da Red Bull: 5 vitórias em COTA, recorde dividido"
+  },
+  "subtitle": {
+    "en": "Every winner of the United States Grand Prix at the Circuit of the Americas, 2012–2025",
+    "es": "Todos los ganadores del Gran Premio de Estados Unidos en el Circuit of the Americas, 2012–2025",
+    "pt": "Todos os vencedores do GP dos Estados Unidos no Circuito das Américas, 2012–2025"
+  },
+  "context": {
+    "en": "Red Bull has won the United States Grand Prix at the Circuit of the Americas five times: Sebastian Vettel in 2013 and Max Verstappen in 2021, 2022, 2023 and 2025. That ties Mercedes, whose five wins came between 2014 and 2019, four of them with Lewis Hamilton. Hamilton is the circuit's most successful driver with five wins, one of them for McLaren in 2012. COTA has held 13 Grands Prix since 2012, with no race in 2020. A Red Bull win on Sunday would give the team the record outright.",
+    "es": "Red Bull ganó cinco veces el Gran Premio de Estados Unidos en el Circuit of the Americas: Sebastian Vettel en 2013 y Max Verstappen en 2021, 2022, 2023 y 2025. Eso lo iguala con Mercedes, que sumó sus cinco victorias entre 2014 y 2019, cuatro de ellas con Lewis Hamilton. Hamilton es el piloto más ganador del circuito, con cinco victorias, una de ellas con McLaren en 2012. COTA recibió 13 Grandes Premios desde 2012; en 2020 no hubo carrera. Una victoria de Red Bull el domingo le daría el récord en solitario.",
+    "pt": "A Red Bull venceu o GP dos Estados Unidos no Circuito das Américas cinco vezes: Sebastian Vettel em 2013 e Max Verstappen em 2021, 2022, 2023 e 2025. Isso a iguala à Mercedes, que somou suas cinco vitórias entre 2014 e 2019, quatro delas com Lewis Hamilton. Hamilton é o piloto mais vitorioso do circuito, com cinco vitórias, uma delas pela McLaren em 2012. COTA recebeu 13 Grandes Prêmios desde 2012; em 2020 não houve corrida. Uma vitória da Red Bull no domingo daria à equipe o recorde isolado."
+  },
+  "method": {
+    "en": [
+      "Grand Prix wins only; sprint races are not counted.",
+      "Winner = the driver classified first in the official result; team = the constructor credited with that win.",
+      "No United States Grand Prix was held at COTA in 2020.",
+      "The image shows Red Bull's winning years and the top four teams by wins at COTA."
+    ],
+    "es": [
+      "Solo victorias en Grandes Premios; los sprints no cuentan.",
+      "Ganador = el piloto clasificado primero en el resultado oficial; equipo = el constructor al que se le acredita esa victoria.",
+      "En 2020 no se disputó el Gran Premio de Estados Unidos en COTA.",
+      "La imagen muestra los años en que ganó Red Bull y los cuatro equipos con más victorias en COTA."
+    ],
+    "pt": [
+      "Apenas vitórias em Grandes Prêmios; as sprints não contam.",
+      "Vencedor = o piloto classificado em primeiro no resultado oficial; equipe = o construtor creditado com essa vitória.",
+      "Não houve GP dos Estados Unidos em COTA em 2020.",
+      "A imagem mostra os anos em que a Red Bull venceu e as quatro equipes com mais vitórias em COTA."
+    ]
+  },
+  "alt": {
+    "en": "Poster: Red Bull won the US Grand Prix at COTA in 2013 (Vettel) and in 2021, 2022, 2023 and 2025 (Verstappen). Wins at COTA by team: Red Bull 5, Mercedes 5, Ferrari 2, McLaren 1.",
+    "es": "Póster: Red Bull ganó el GP de Estados Unidos en COTA en 2013 (Vettel) y en 2021, 2022, 2023 y 2025 (Verstappen). Victorias en COTA por equipo: Red Bull 5, Mercedes 5, Ferrari 2, McLaren 1.",
+    "pt": "Pôster: a Red Bull venceu o GP dos EUA em COTA em 2013 (Vettel) e em 2021, 2022, 2023 e 2025 (Verstappen). Vitórias em COTA por equipe: Red Bull 5, Mercedes 5, Ferrari 2, McLaren 1."
+  },
+  "imageSource": {
+    "en": "Source: PaddockIntel database (Ergast/jolpica-f1 history, FastF1 timing data).",
+    "es": "Fuente: base de datos de PaddockIntel (historial de Ergast/jolpica-f1, cronometraje de FastF1).",
+    "pt": "Fonte: base de dados do PaddockIntel (histórico Ergast/jolpica-f1, cronometragem do FastF1)."
+  },
+  "layout": "venue",
+  "theme": "usa",
+  "columns": [
+    {
+      "key": "year",
+      "label": {
+        "en": "Year",
+        "es": "Año",
+        "pt": "Ano"
+      }
+    },
+    {
+      "key": "driver",
+      "label": {
+        "en": "Winner",
+        "es": "Ganador",
+        "pt": "Vencedor"
+      }
+    },
+    {
+      "key": "team",
+      "label": {
+        "en": "Team",
+        "es": "Equipo",
+        "pt": "Equipe"
+      }
+    }
+  ],
+  "rows": [
+    {
+      "year": "2012",
+      "driver": "Hamilton",
+      "team": "McLaren"
+    },
+    {
+      "year": "2013",
+      "driver": "Vettel",
+      "team": "Red Bull"
+    },
+    {
+      "year": "2014",
+      "driver": "Hamilton",
+      "team": "Mercedes"
+    },
+    {
+      "year": "2015",
+      "driver": "Hamilton",
+      "team": "Mercedes"
+    },
+    {
+      "year": "2016",
+      "driver": "Hamilton",
+      "team": "Mercedes"
+    },
+    {
+      "year": "2017",
+      "driver": "Hamilton",
+      "team": "Mercedes"
+    },
+    {
+      "year": "2018",
+      "driver": "Räikkönen",
+      "team": "Ferrari"
+    },
+    {
+      "year": "2019",
+      "driver": "Bottas",
+      "team": "Mercedes"
+    },
+    {
+      "year": "2021",
+      "driver": "Verstappen",
+      "team": "Red Bull"
+    },
+    {
+      "year": "2022",
+      "driver": "Verstappen",
+      "team": "Red Bull"
+    },
+    {
+      "year": "2023",
+      "driver": "Verstappen",
+      "team": "Red Bull"
+    },
+    {
+      "year": "2024",
+      "driver": "Leclerc",
+      "team": "Ferrari"
+    },
+    {
+      "year": "2025",
+      "driver": "Verstappen",
+      "team": "Red Bull"
+    }
+  ],
+  "sources": [
+    {
+      "name": "PaddockIntel database — Circuit of the Americas, every United States Grand Prix since 2012 (Ergast/jolpica lineage + FastF1)",
+      "url": "https://hub.paddockintel.com/circuits/americas/"
+    },
+    {
+      "name": "Formula1.com — 2025 race results",
+      "url": "https://www.formula1.com/en/results/2025/races"
+    }
+  ],
+  "relatedArticle": "texas-us-grand-prix-cota-state-funding-2026",
+  "hubLinks": [
+    {
+      "type": "circuits",
+      "ref": "americas",
+      "label": "Circuit of the Americas"
+    },
+    {
+      "type": "constructors",
+      "ref": "red_bull",
+      "label": "Red Bull"
+    },
+    {
+      "type": "constructors",
+      "ref": "mercedes",
+      "label": "Mercedes"
+    },
+    {
+      "type": "drivers",
+      "ref": "max_verstappen",
+      "label": "Max Verstappen"
+    },
+    {
+      "type": "drivers",
+      "ref": "hamilton",
+      "label": "Lewis Hamilton"
+    }
+  ],
+  "venue": {
+    "place": {
+      "en": "AUSTIN, TX · COTA · {years}",
+      "es": "AUSTIN, TX · COTA · {years}",
+      "pt": "AUSTIN, TX · COTA · {years}"
+    },
+    "line1": {
+      "en": "Not Red Bull's first rodeo.",
+      "es": "No es el primer rodeo de Red Bull.",
+      "pt": "Não é o primeiro rodeio da Red Bull."
+    },
+    "line2": {
+      "en": "5 COTA wins, tied for the most.",
+      "es": "5 victorias en COTA, récord compartido.",
+      "pt": "5 vitórias em COTA, recorde dividido."
+    },
+    "footnote": {
+      "en": "F1 Grand Prix wins at Circuit of the Americas, {races} races.",
+      "es": "Victorias en Grandes Premios de F1 en el Circuit of the Americas, {races} carreras.",
+      "pt": "Vitórias em Grandes Prêmios de F1 no Circuito das Américas, {races} corridas."
+    },
+    "years": "2012–2025",
+    "races": 13,
+    "strip": [
+      {
+        "label": "2013",
+        "sub": "Vettel"
+      },
+      {
+        "label": "2021",
+        "sub": "Verstappen"
+      },
+      {
+        "label": "2022",
+        "sub": "Verstappen"
+      },
+      {
+        "label": "2023",
+        "sub": "Verstappen"
+      },
+      {
+        "label": "2025",
+        "sub": "Verstappen"
+      }
+    ],
+    "tallies": [
+      {
+        "label": "RED BULL",
+        "value": 5
+      },
+      {
+        "label": "MERCEDES",
+        "value": 5
+      },
+      {
+        "label": "FERRARI",
+        "value": 2
+      },
+      {
+        "label": "McLAREN",
+        "value": 1
+      }
+    ]
+  }
+}

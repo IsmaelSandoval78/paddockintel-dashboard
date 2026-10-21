@@ -57,6 +57,11 @@
     "es": "Tabla: Mercedes 11 victorias, 22 podios, 35,0 puntos por carrera en las fechas 1-6 y 27,5 en las 7-17; Ferrari 2, 11, 22,8, 22,4; Red Bull 2, 11, 11,0, 22,4; McLaren 2, 7, 13,8, 18,4.",
     "pt": "Tabela: Mercedes 11 vitórias, 22 pódios, 35,0 pontos por corrida nas etapas 1-6 e 27,5 nas 7-17; Ferrari 2, 11, 22,8, 22,4; Red Bull 2, 11, 11,0, 22,4; McLaren 2, 7, 13,8, 18,4."
   },
+  "imageSource": {
+    "en": "Source: PaddockIntel database (Ergast/jolpica-f1 history, FastF1 timing data).",
+    "es": "Fuente: base de datos de PaddockIntel (historial de Ergast/jolpica-f1, cronometraje de FastF1).",
+    "pt": "Fonte: base de dados do PaddockIntel (histórico Ergast/jolpica-f1, cronometragem do FastF1)."
+  },
   "columns": [
     {
       "key": "team",

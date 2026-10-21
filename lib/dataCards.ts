@@ -24,6 +24,25 @@ export type DataCardColumn = {
 
 export type DataCardRow = Record<string, string | number>;
 
+// Image layouts. 'table' is the house card (Warm Studio). 'venue' is the race-week poster
+// (frame, Anton headline, a strip of years and the team tallies), drawn in the host's palette.
+export type DataCardLayout = 'table' | 'venue';
+// Host palettes for race-week cards only; every other card is Warm Studio.
+export type DataCardTheme = 'usa' | 'mexico' | 'brazil' | 'qatar' | 'uae';
+
+// The venue poster's content. strip/tallies/years/races come from the generator; place, line1,
+// line2 and footnote are written in the file. {years} and {races} are filled in at render time.
+export type DataCardVenue = {
+  place: Localized;
+  line1: Localized;
+  line2: Localized;
+  footnote: Localized;
+  years: string;
+  races: number;
+  strip: Array<{ label: string; sub: string }>;
+  tallies: Array<{ label: string; value: number }>;
+};
+
 export type DataCard = {
   slug: string;
   publishedAt: string;
@@ -46,6 +65,11 @@ export type DataCard = {
   relatedArticle?: string;
   hubLinks?: Array<{ type: 'drivers' | 'constructors' | 'circuits'; ref: string; label: string }>;
   xPostUrl?: string;
+  // Footer line of the image, crediting where the numbers come from.
+  imageSource: Localized;
+  layout?: DataCardLayout;
+  theme?: DataCardTheme;
+  venue?: DataCardVenue;
 };
 
 export const CARD_WIDTH = 1600;
@@ -53,6 +77,8 @@ export const CARD_HEIGHT = 900;
 export const TITLE_MAX = 60;
 export const META_MAX = 145;
 export const MAX_ROWS = 6;
+// A venue card's table lives on the page only, so it can list every edition.
+export const MAX_PAGE_ROWS = 40;
 
 export const LICENSE_NAME = 'CC BY 4.0';
 export const LICENSE_URL = 'https://creativecommons.org/licenses/by/4.0/';
@@ -64,7 +90,7 @@ export function validateDataCard(card: DataCard): DataCard {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(card.slug)) fail('slug must be lowercase words joined by hyphens');
   for (const date of [card.publishedAt, card.updatedAt]) if (Number.isNaN(Date.parse(date))) fail(`bad date ${date}`);
   for (const locale of routing.locales) {
-    for (const field of ['asOf', 'title', 'metaDescription', 'headline', 'subtitle', 'context', 'alt'] as const) {
+    for (const field of ['asOf', 'title', 'metaDescription', 'headline', 'subtitle', 'context', 'alt', 'imageSource'] as const) {
       if (!card[field]?.[locale]?.trim()) fail(`${field}.${locale} is empty`);
     }
     if (card.title[locale].length > TITLE_MAX) fail(`title.${locale} is over ${TITLE_MAX} characters`);
@@ -74,7 +100,20 @@ export function validateDataCard(card: DataCard): DataCard {
   }
   if (!card.sources.length || card.sources.some((s) => !s.name || !/^https:\/\//.test(s.url))) fail('every card needs sources with https URLs');
   if (!card.columns.length || !card.rows.length) fail('no columns or no rows');
-  if (card.rows.length > MAX_ROWS) fail(`more than ${MAX_ROWS} rows do not fit the image`);
+  const layout = card.layout ?? 'table';
+  if (layout === 'table' && card.rows.length > MAX_ROWS) fail(`more than ${MAX_ROWS} rows do not fit the image`);
+  if (card.rows.length > MAX_PAGE_ROWS) fail(`more than ${MAX_PAGE_ROWS} rows`);
+  if (layout === 'venue') {
+    const v = card.venue;
+    if (!v || !card.theme) fail('a venue card needs venue content and a host theme');
+    else {
+      for (const locale of routing.locales) {
+        for (const field of ['place', 'line1', 'line2', 'footnote'] as const) if (!v[field]?.[locale]?.trim()) fail(`venue.${field}.${locale} is empty`);
+      }
+      if (!v.strip.length || v.strip.length > 6) fail('venue strip needs 1-6 items');
+      if (!v.tallies.length || v.tallies.length > 5) fail('venue tallies need 1-5 items');
+    }
+  } else if (card.theme) fail('host themes are for venue (race-week) cards only');
   for (const row of card.rows) {
     for (const col of card.columns) {
       const value = row[col.key];
