@@ -17,6 +17,7 @@
     "compare": "Comparar",
     "records": "Récords",
     "magazine": "Magazine",
+    "data": "Datos",
     "glossary": "Glosario",
     "feed": "Feed",
     "weekly": "Digest Semanal",
@@ -1043,6 +1044,7 @@
   },
   "footer": {
     "disclaimer": "Publicación independiente. Sin afiliación con Formula 1 ni la FIA.",
+    "data": "Tarjetas de datos",
     "about": "Acerca de",
     "privacy": "Política de Privacidad"
   },
@@ -1559,5 +1561,28 @@
       "aria": "Posición de salida y de llegada de los {n} autos",
       "source": "Parrilla de salida y clasificación oficiales"
     }
+  },
+  "dataCards": {
+    "indexMetaTitle": "Tarjetas de datos de F1: cifras con fuente",
+    "indexMetaDescription": "Las tarjetas de datos de F1 de PaddockIntel: una tabla de cifras con fuente de nuestra base de carreras, una nota de método y la imagen.",
+    "indexKicker": "Datos de PaddockIntel",
+    "indexTitle": "Tarjetas de datos de F1",
+    "indexIntro": "Cada tarjeta es un hallazgo de nuestra base de datos de carreras o de una fuente pública con fecha: las cifras en una tabla, cómo las contamos, de dónde salen y la imagen que compartimos.",
+    "cardCount": "{count, plural, one {# tarjeta} other {# tarjetas}}",
+    "kicker": "Tarjeta de datos · {asOf}",
+    "by": "Por PaddockIntel",
+    "published": "Publicada el {date}",
+    "updated": "Actualizada el {date}",
+    "numbers": "Las cifras",
+    "context": "Contexto",
+    "method": "Método",
+    "sources": "Fuentes",
+    "readAnalysis": "Lee el análisis completo",
+    "readAnalysisEn": "Lee el análisis completo (en inglés)",
+    "onHub": "En el Hub",
+    "xPost": "Ver la publicación en X",
+    "allCards": "Todas las tarjetas de datos",
+    "crumbHome": "Inicio",
+    "crumbsAria": "Ruta de navegación"
   }
 }

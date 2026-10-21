@@ -3,6 +3,7 @@ import { headers } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
 import { HUB_URL, SITE_URL } from '@/lib/site-url';
 import { isIndexableTag } from '@/lib/seo';
+import { allDataCards } from '@/lib/dataCards';
 
 export const revalidate = 3600;
 
@@ -193,8 +194,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }))
     );
 
+    // Data cards (content/data-cards/, see lib/dataCards.ts): index and one page per card,
+    // all three locales. Their images are listed in /sitemap-images.xml.
+    const dataRoutes: MetadataRoute.Sitemap = ['en', 'es', 'pt'].flatMap((locale) => [
+      { url: localeUrl(MAGAZINE_BASE, locale, '/data/'), lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.6 },
+      ...allDataCards().map((c) => ({
+        url: localeUrl(MAGAZINE_BASE, locale, `/data/${c.slug}/`),
+        lastModified: new Date(c.updatedAt),
+        changeFrequency: 'monthly' as const,
+        priority: locale === 'en' ? 0.7 : 0.65,
+      })),
+    ]);
+
     return [
       ...staticRoutes,
+      ...dataRoutes,
       ...articleRoutes,
       ...issueRoutes,
       ...recapRoutes,

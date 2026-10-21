@@ -17,6 +17,7 @@
     "compare": "Compare",
     "records": "Records",
     "magazine": "Magazine",
+    "data": "Data",
     "glossary": "Glossary",
     "feed": "Feed",
     "weekly": "Weekly Digest",
@@ -1043,6 +1044,7 @@
   },
   "footer": {
     "disclaimer": "Independent publication. Not affiliated with Formula 1 or the FIA.",
+    "data": "Data cards",
     "about": "About",
     "privacy": "Privacy Policy"
   },
@@ -1555,5 +1557,28 @@
       "aria": "Starting and finishing position of all {n} cars",
       "source": "Official starting grid and classification"
     }
+  },
+  "dataCards": {
+    "indexMetaTitle": "F1 Data Cards: Sourced Numbers to Share",
+    "indexMetaDescription": "PaddockIntel's F1 data cards: each one a table of sourced numbers from our race database, a method note and the shareable image.",
+    "indexKicker": "PaddockIntel data",
+    "indexTitle": "F1 data cards",
+    "indexIntro": "Each card is one finding from our race database or a dated public source: the numbers as a table, how we counted them, where they come from, and the image we share.",
+    "cardCount": "{count, plural, one {# card} other {# cards}}",
+    "kicker": "Data card · {asOf}",
+    "by": "By PaddockIntel",
+    "published": "Published {date}",
+    "updated": "Updated {date}",
+    "numbers": "The numbers",
+    "context": "Context",
+    "method": "Method",
+    "sources": "Sources",
+    "readAnalysis": "Read the full analysis",
+    "readAnalysisEn": "Read the full analysis (in English)",
+    "onHub": "On the Hub",
+    "xPost": "See the post on X",
+    "allCards": "All data cards",
+    "crumbHome": "Home",
+    "crumbsAria": "Breadcrumb"
   }
 }

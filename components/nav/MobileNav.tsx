@@ -9,7 +9,7 @@ import { routing } from '@/lib/i18n/routing';
 import { getAlternateLocaleHref, goToAlternateLocale } from '@/lib/i18n/switchLocale';
 import AuthWidget, { type AuthUser } from './AuthWidget';
 import SearchBar from './SearchBar';
-import { SITE_URL } from '@/lib/site-url';
+import { SITE_URL, localeUrl } from '@/lib/site-url';
 
 type NavKey = 'hub' | 'circuits' | 'drivers' | 'constructors' | 'compare' | 'records';
 
@@ -141,6 +141,13 @@ export default function MobileNav({
                   </Link>
                 );
               })}
+              <a
+                href={localeUrl(locale, '/data/')}
+                onClick={() => setOpen(false)}
+                className="flex items-center h-12 px-5 border-b border-border font-mono text-[11px] uppercase tracking-[0.1em] text-text-2 bg-bg"
+              >
+                {t('data')}
+              </a>
               <a
                 href={`${SITE_URL}/`}
                 target="_blank"
