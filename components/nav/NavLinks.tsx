@@ -1,8 +1,9 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { usePathname, Link } from '@/lib/i18n/navigation';
 import FeedLink from '@/components/ui/FeedLink';
+import { localeUrl } from '@/lib/site-url';
 
 type NavKey = 'hub' | 'circuits' | 'drivers' | 'constructors' | 'compare' | 'records';
 
@@ -17,6 +18,7 @@ const links: { key: NavKey; href: string }[] = [
 
 export default function NavLinks({ isMagazine }: { isMagazine: boolean }) {
   const t = useTranslations('nav');
+  const locale = useLocale();
   const pathname = usePathname();
 
   if (isMagazine) {
@@ -82,6 +84,13 @@ export default function NavLinks({ isMagazine }: { isMagazine: boolean }) {
           </Link>
         );
       })}
+      {/* Data cards live on the magazine host (www), the Hub links across to them. */}
+      <a
+        href={localeUrl(locale, '/data/')}
+        className="font-sans text-[13px] font-medium no-underline text-text-2 hover:text-text-1 transition-colors duration-150"
+      >
+        {t('data')}
+      </a>
       <a
         href="https://paddockintel.com"
         target="_blank"

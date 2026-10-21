@@ -234,3 +234,6 @@ detour) — the old open question about Blueprint `#F4F4F0` vs. the live kraft t
 effectively resolved in spirit (the live substrate is light again), but the exact hex to
 use for exports (this system's `#EDE7E3`, or keep the historically-distinct Blueprint
 `#F4F4F0`) is still not explicitly decided. Flag before touching either.
+**Update 2026-10-21:** decided for scorecards: Warm Studio `#EDE7E3`, applied first to the
+data cards (`app/data-cards/[file]/route.tsx`: cream substrate, white table panel, teal
+`--accent` with an `--accent-dim` highlight row and no shadow). Remotion exports are still open.

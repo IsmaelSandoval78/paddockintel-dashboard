@@ -200,10 +200,11 @@ traced to exactly the two bugs below, which had spread to ~20 files by copy-past
 
 ## Scorecards (Shareable)
 
-- Generated client-side as canvas/PNG
+- **Data cards (`/data/[slug]/`, decided 2026-10-21):** every data scorecard posted on X gets its own indexable page. One file per card in `content/data-cards/<slug>.json`; the rows are written by `scripts/data-cards/generate.ts` from Supabase (never by hand), the text around them is edited in the file, and `lib/dataCards.ts` fails the build if a card is missing a locale, a source or a method note. The 1600x900 PNG is server-rendered with `next/og` from the same file (`app/data-cards/[file]/route.tsx`, prerendered at build) and is the og/twitter image, so the image on X and the table on the page can't disagree. EN/ES/PT, licensed CC BY 4.0 (`/data/license/`), listed in `app/sitemap.ts` and `/sitemap-images.xml`. To add a card: add a spec in the generator, run it, write the text, PR.
+- The older in-page scorecards (`components/scorecards/`) are still generated client-side as canvas/PNG
 - Always include paddockintel.com watermark + logo
-- Aspect ratios: 1:1 (Instagram), 9:16 (Stories/TikTok), 16:9 (X/Twitter)
-- Light background always — never a dark scorecard, matches the live site's light-substrate identity. **Open question, not yet decided:** whether that means the old Blueprint `#F4F4F0` (kept deliberately cold/distinct from the site) or the new kraft-paper `--bg: #EDE3D0` from DESIGN.md v3.0.0 (visual consistency with the live site) — this is the same undecided question DESIGN.md flags under "Motion pieces (Remotion)". Do not resolve it without asking; flag it if you touch scorecard generation before it's decided.
+- Aspect ratios: 1:1 (Instagram), 9:16 (Stories/TikTok), 16:9 (X/Twitter; data cards are 16:9 only)
+- Light background always — never a dark scorecard. **Decided 2026-10-21 (founder):** Warm Studio `--bg: #EDE7E3` (DESIGN.md v5.0.0), not the old Blueprint `#F4F4F0`; the data cards use it. The client-side canvas scorecards and the per-article OG image (`app/api/og/article/`) still carry the older kraft/terracotta palette until they get their own pass.
 
 ---
 

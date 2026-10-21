@@ -1,0 +1,160 @@
+{
+  "slug": "red-bull-points-per-race-after-baku-upgrade-2026",
+  "publishedAt": "2026-10-21",
+  "updatedAt": "2026-10-21",
+  "asOf": {
+    "en": "After round 17, Singapore Grand Prix 2026",
+    "es": "Tras la fecha 17, Singapore Grand Prix 2026",
+    "pt": "Após a etapa 17, Singapore Grand Prix 2026"
+  },
+  "title": {
+    "en": "Red Bull Doubled Its Points Per Race After Baku Upgrade",
+    "es": "Red Bull duplicó sus puntos por carrera desde Bakú",
+    "pt": "Red Bull dobrou seus pontos por corrida desde Baku"
+  },
+  "metaDescription": {
+    "en": "Red Bull scores 31.3 Grand Prix points per race since its Azerbaijan upgrade, up from 15.6. Mercedes fell from 31.6 to 23.3 in the same races.",
+    "es": "Red Bull suma 31,3 puntos de Gran Premio por carrera desde su mejora de Azerbaiyán, contra 15,6 antes. Mercedes bajó de 31,6 a 23,3.",
+    "pt": "A Red Bull soma 31,3 pontos de GP por corrida desde a atualização do Azerbaijão, contra 15,6 antes. A Mercedes caiu de 31,6 para 23,3."
+  },
+  "headline": {
+    "en": "Red Bull doubled its points per race after Baku: 15.6 to 31.3",
+    "es": "Red Bull duplicó sus puntos por carrera desde Bakú: de 15,6 a 31,3",
+    "pt": "A Red Bull dobrou seus pontos por corrida desde Baku: de 15,6 para 31,3"
+  },
+  "subtitle": {
+    "en": "Grand Prix points per race before and since the Azerbaijan Grand Prix, top four teams",
+    "es": "Puntos de Gran Premio por carrera antes y desde el Gran Premio de Azerbaiyán, cuatro mejores equipos",
+    "pt": "Pontos de Grande Prêmio por corrida antes e desde o GP do Azerbaijão, quatro melhores equipes"
+  },
+  "context": {
+    "en": "Red Bull brought an upgrade to the Azerbaijan Grand Prix, round 15, and has scored 31.3 Grand Prix points per race since, up from 15.6 over the first 14 rounds, with wins in the last two races. Over the same three races Mercedes fell from 31.6 to 23.3 and McLaren from 18.1 to 10.7, while Ferrari edged up. Three races is a small sample, and Mercedes' figure includes George Russell's power unit failure, so the table shows a shift in form, not a settled order. Technical director Pierre Waché has said almost nothing of this car will carry over to 2027.",
+    "es": "Red Bull llevó una mejora al Gran Premio de Azerbaiyán, la fecha 15, y desde entonces suma 31,3 puntos de Gran Premio por carrera, contra 15,6 en las 14 primeras fechas, con victorias en las dos últimas carreras. En esas mismas tres carreras Mercedes bajó de 31,6 a 23,3 y McLaren de 18,1 a 10,7, mientras Ferrari subió un poco. Tres carreras son una muestra pequeña, y el dato de Mercedes incluye la falla de la unidad de potencia de George Russell, así que la tabla muestra un cambio de forma, no un orden definitivo. El director técnico Pierre Waché dijo que casi nada de este auto pasará al de 2027.",
+    "pt": "A Red Bull levou uma atualização ao GP do Azerbaijão, a etapa 15, e desde então soma 31,3 pontos de Grande Prêmio por corrida, contra 15,6 nas 14 primeiras etapas, com vitórias nas duas últimas corridas. Nessas mesmas três corridas a Mercedes caiu de 31,6 para 23,3 e a McLaren de 18,1 para 10,7, enquanto a Ferrari subiu um pouco. Três corridas são uma amostra pequena, e o número da Mercedes inclui a falha da unidade de potência de George Russell, então a tabela mostra uma mudança de forma, não uma ordem definida. O diretor técnico Pierre Waché disse que quase nada deste carro passará para o de 2027."
+  },
+  "method": {
+    "en": [
+      "Grand Prix results only: sprint points are excluded.",
+      "Points per race = Grand Prix points scored by both cars, divided by the number of Grands Prix in the period.",
+      "The split at round 15 follows the upgrade Red Bull brought to the Azerbaijan Grand Prix, as reported by RacingNews365.",
+      "Rounds 15-17 are three races: a small sample. Teams shown are the top four by points per race since round 15."
+    ],
+    "es": [
+      "Solo resultados de Gran Premio: los puntos de sprint quedan afuera.",
+      "Puntos por carrera = puntos de Gran Premio de los dos autos, divididos por la cantidad de Grandes Premios del período.",
+      "El corte en la fecha 15 sigue la mejora que Red Bull llevó al Gran Premio de Azerbaiyán, según RacingNews365.",
+      "Las fechas 15-17 son tres carreras: una muestra pequeña. Se muestran los cuatro mejores equipos por puntos por carrera desde la fecha 15."
+    ],
+    "pt": [
+      "Apenas resultados de Grande Prêmio: os pontos de sprint ficam de fora.",
+      "Pontos por corrida = pontos de Grande Prêmio dos dois carros, divididos pelo número de GPs do período.",
+      "O corte na etapa 15 segue a atualização que a Red Bull levou ao GP do Azerbaijão, segundo o RacingNews365.",
+      "As etapas 15-17 são três corridas: uma amostra pequena. Aparecem as quatro melhores equipes em pontos por corrida desde a etapa 15."
+    ]
+  },
+  "alt": {
+    "en": "Table: Red Bull 15.6 points per race in rounds 1-14 and 31.3 in rounds 15-17, plus 15.7; Ferrari 22.1 and 24.3, plus 2.2; Mercedes 31.6 and 23.3, minus 8.3; McLaren 18.1 and 10.7, minus 7.4.",
+    "es": "Tabla: Red Bull 15,6 puntos por carrera en las fechas 1-14 y 31,3 en las 15-17, más 15,7; Ferrari 22,1 y 24,3, más 2,2; Mercedes 31,6 y 23,3, menos 8,3; McLaren 18,1 y 10,7, menos 7,4.",
+    "pt": "Tabela: Red Bull 15,6 pontos por corrida nas etapas 1-14 e 31,3 nas 15-17, mais 15,7; Ferrari 22,1 e 24,3, mais 2,2; Mercedes 31,6 e 23,3, menos 8,3; McLaren 18,1 e 10,7, menos 7,4."
+  },
+  "columns": [
+    {
+      "key": "team",
+      "label": {
+        "en": "Team",
+        "es": "Equipo",
+        "pt": "Equipe"
+      }
+    },
+    {
+      "key": "before",
+      "label": {
+        "en": "Pts/race R1-14",
+        "es": "Pts/carrera F1-14",
+        "pt": "Pts/corrida E1-14"
+      },
+      "numeric": true,
+      "decimals": 1
+    },
+    {
+      "key": "after",
+      "label": {
+        "en": "Pts/race R15-17",
+        "es": "Pts/carrera F15-17",
+        "pt": "Pts/corrida E15-17"
+      },
+      "numeric": true,
+      "decimals": 1
+    },
+    {
+      "key": "change",
+      "label": {
+        "en": "Change",
+        "es": "Cambio",
+        "pt": "Variação"
+      },
+      "numeric": true,
+      "decimals": 1,
+      "signed": true
+    }
+  ],
+  "rows": [
+    {
+      "team": "Red Bull",
+      "before": 15.6,
+      "after": 31.3,
+      "change": 15.7
+    },
+    {
+      "team": "Ferrari",
+      "before": 22.1,
+      "after": 24.3,
+      "change": 2.2
+    },
+    {
+      "team": "Mercedes",
+      "before": 31.6,
+      "after": 23.3,
+      "change": -8.3
+    },
+    {
+      "team": "McLaren",
+      "before": 18.1,
+      "after": 10.7,
+      "change": -7.4
+    }
+  ],
+  "highlightRow": 0,
+  "sources": [
+    {
+      "name": "PaddockIntel database — 2026 race results and standings (Ergast/jolpica lineage + FastF1)",
+      "url": "https://hub.paddockintel.com/season/2026/"
+    },
+    {
+      "name": "Formula1.com — 2026 race results",
+      "url": "https://www.formula1.com/en/results/2026/races"
+    },
+    {
+      "name": "RacingNews365 — Red Bull commit to major F1 overhaul in bid to win back titles (Pierre Waché interview, October 21, 2026)",
+      "url": "https://racingnews365.com/exclusive-red-bull-commit-to-major-f1-overhaul-in-bid-to-win-back-titles"
+    }
+  ],
+  "relatedArticle": "verstappen-sepang-pole-red-bull-ford-engine-2026",
+  "hubLinks": [
+    {
+      "type": "constructors",
+      "ref": "red_bull",
+      "label": "Red Bull"
+    },
+    {
+      "type": "constructors",
+      "ref": "mercedes",
+      "label": "Mercedes"
+    },
+    {
+      "type": "drivers",
+      "ref": "max_verstappen",
+      "label": "Max Verstappen"
+    }
+  ]
+}
