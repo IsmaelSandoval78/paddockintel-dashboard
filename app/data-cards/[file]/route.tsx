@@ -5,8 +5,8 @@ import { routing } from '@/lib/i18n/routing';
 import {
   CARD_HEIGHT,
   CARD_WIDTH,
-  LICENSE_NAME,
   allDataCards,
+  cardCopyright,
   cardImageFile,
   formatCell,
   getDataCard,
@@ -229,7 +229,7 @@ function TableCard({ card, locale }: { card: DataCard; locale: CardLocale }) {
           color: WARM.text2,
         }}
       >
-        <div style={{ display: 'flex' }}>{`${card.imageSource[locale]} ${LICENSE_NAME}.`}</div>
+        <div style={{ display: 'flex' }}>{`${card.imageSource[locale]} ${cardCopyright(card)}.`}</div>
         <div style={{ display: 'flex', color: WARM.accent }}>{siteLabel(locale)}</div>
       </div>
     </div>
@@ -315,7 +315,7 @@ function VenueCard({ card, locale }: { card: DataCard; locale: CardLocale }) {
           color: POSTER_MUTED,
         }}
       >
-        <div style={{ display: 'flex', maxWidth: 1100 }}>{`${fill(v.footnote[locale])} ${card.imageSource[locale]} ${LICENSE_NAME}.`}</div>
+        <div style={{ display: 'flex', maxWidth: 1100 }}>{`${fill(v.footnote[locale])} ${card.imageSource[locale]} ${cardCopyright(card)}.`}</div>
         <div style={{ display: 'flex', color: POSTER_INK }}>
           <Wordmark size={24} dot={accent} />
         </div>

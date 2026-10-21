@@ -8,7 +8,6 @@ import { localizedPageMeta } from '@/lib/seo';
 import {
   CARD_HEIGHT,
   CARD_WIDTH,
-  LICENSE_NAME,
   allDataCards,
   asCardLocale,
   cardImagePath,
@@ -88,9 +87,6 @@ export default async function DataIndexPage({ params }: { params: PageParams }) 
             </p>
             <h1 className="dusk-display m-0 text-[clamp(2rem,4.4vw,3.4rem)] leading-[1.04] tracking-[-0.02em]">{t('indexTitle')}</h1>
             <p className="dusk-hero-dek m-0 text-[16px] md:text-[18.5px] leading-[1.55] max-w-[64ch]">{t('indexIntro')}</p>
-            <p className="m-0 dusk-mono uppercase text-[11.5px] tracking-[0.05em] text-[#E2CEC6]">
-              <Link href="/data/license" className="hover:text-[color:var(--dusk-peach)]">{LICENSE_NAME} · {t('licenseLink')}</Link>
-            </p>
           </header>
 
           <ul className="m-0 p-0 list-none grid grid-cols-1 md:grid-cols-2 gap-4">

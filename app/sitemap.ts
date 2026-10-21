@@ -194,11 +194,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }))
     );
 
-    // Data cards (content/data-cards/, see lib/dataCards.ts): index, license and one page per card,
+    // Data cards (content/data-cards/, see lib/dataCards.ts): index and one page per card,
     // all three locales. Their images are listed in /sitemap-images.xml.
     const dataRoutes: MetadataRoute.Sitemap = ['en', 'es', 'pt'].flatMap((locale) => [
       { url: localeUrl(MAGAZINE_BASE, locale, '/data/'), lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.6 },
-      { url: localeUrl(MAGAZINE_BASE, locale, '/data/license/'), lastModified: new Date(), changeFrequency: 'yearly' as const, priority: 0.3 },
       ...allDataCards().map((c) => ({
         url: localeUrl(MAGAZINE_BASE, locale, `/data/${c.slug}/`),
         lastModified: new Date(c.updatedAt),

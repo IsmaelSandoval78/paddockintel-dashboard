@@ -11,11 +11,10 @@ import { localizedPageMeta } from '@/lib/seo';
 import {
   CARD_HEIGHT,
   CARD_WIDTH,
-  LICENSE_NAME,
-  LICENSE_URL,
   allDataCards,
   asCardLocale,
   cardImagePath,
+  cardCopyright,
   cardImageUrl,
   cardPageUrl,
   formatCardDate,
@@ -93,11 +92,9 @@ function jsonLd(card: DataCard, locale: ReturnType<typeof asCardLocale>, crumbs:
     width: CARD_WIDTH,
     height: CARD_HEIGHT,
     caption: card.alt[locale],
-    license: LICENSE_URL,
-    acquireLicensePage: localeUrl(locale, '/data/license/'),
     creditText: 'PaddockIntel',
     creator: org,
-    copyrightNotice: `© ${card.publishedAt.slice(0, 4)} PaddockIntel`,
+    copyrightNotice: cardCopyright(card),
   };
   return [
     {
@@ -113,7 +110,8 @@ function jsonLd(card: DataCard, locale: ReturnType<typeof asCardLocale>, crumbs:
       author: { ...org, url: `${SITE_URL}/about/` },
       publisher: { ...org, logo: { '@type': 'ImageObject', url: `${SITE_URL}/og-image.png` } },
       image,
-      license: LICENSE_URL,
+      copyrightHolder: org,
+      copyrightYear: Number(card.publishedAt.slice(0, 4)),
       isBasedOn: card.sources.map((s) => s.url),
       citation: card.sources.map((s) => ({ '@type': 'CreativeWork', name: s.name, url: s.url })),
     },
@@ -137,10 +135,6 @@ export default async function DataCardPage({ params }: { params: PageParams }) {
   const t = await getTranslations({ locale, namespace: 'dataCards' });
   const related = card.relatedArticle ? await relatedLink(card.relatedArticle, locale) : null;
 
-  const pageUrl = cardPageUrl(card.slug, locale);
-  const imageUrl = cardImageUrl(card, locale);
-  const credit = t('attributionText', { url: pageUrl });
-  const embed = `<a href="${pageUrl}"><img src="${imageUrl}" alt="${card.alt[locale].replace(/"/g, '&quot;')}" width="${CARD_WIDTH}" height="${CARD_HEIGHT}"></a>\n<p>${credit}</p>`;
   const updated = card.updatedAt.slice(0, 10) !== card.publishedAt.slice(0, 10);
 
   const sheetH2 = 'dusk-display text-[clamp(1.25rem,1.9vw,1.5rem)] leading-tight tracking-[-0.01em] mt-9 mb-3 first:mt-0';
@@ -287,24 +281,11 @@ export default async function DataCardPage({ params }: { params: PageParams }) {
                 </>
               )}
 
-              <section aria-labelledby="use-card" className="mt-10 rounded-2xl px-5 py-5 sm:px-6 bg-[color:var(--surface)] border border-[color:var(--border)]">
-                <h2 id="use-card" className="dusk-display text-[1.2rem] m-0 mb-2">{t('useTitle')}</h2>
-                <p className="m-0 mb-4 text-[15.5px] leading-[1.55] text-[color:var(--text-2)]">
-                  {t('useBody')}{' '}
-                  <Link href="/data/license" className={linkCls}>{t('licenseLink')}</Link>
-                  {' · '}
-                  <a href={LICENSE_URL} target="_blank" rel="license noopener noreferrer" className={linkCls}>{LICENSE_NAME}</a>
-                </p>
-                <p className="m-0 mb-1 font-mono text-[11px] uppercase tracking-[0.06em] text-[color:var(--text-3)]">{t('attribution')}</p>
-                <p className="m-0 mb-4 text-[15px] break-words">{credit}</p>
-                <p className="m-0 mb-1 font-mono text-[11px] uppercase tracking-[0.06em] text-[color:var(--text-3)]">{t('embed')}</p>
-                <pre className="m-0 p-3 rounded-[var(--radius-sm)] bg-[color:var(--bg)] text-[12.5px] leading-[1.5] whitespace-pre-wrap break-all font-mono">{embed}</pre>
-              </section>
 
               <p className="mt-10 pt-6 border-t border-[color:var(--border-subtle)] font-mono text-[11px] uppercase tracking-[0.06em] text-[color:var(--text-3)]">
                 <Link href="/data" className="text-[color:var(--text-1)] hover:text-[color:var(--accent)]">{t('allCards')}</Link>
                 {' · '}
-                <Link href="/about" className="text-[color:var(--text-1)] hover:text-[color:var(--accent)]">PaddockIntel</Link>
+                <Link href="/about" className="text-[color:var(--text-1)] hover:text-[color:var(--accent)]">{cardCopyright(card)}</Link>
               </p>
             </div>
           </article>

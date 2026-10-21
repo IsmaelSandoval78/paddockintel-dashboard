@@ -80,8 +80,12 @@ export const MAX_ROWS = 6;
 // A venue card's table lives on the page only, so it can list every edition.
 export const MAX_PAGE_ROWS = 40;
 
-export const LICENSE_NAME = 'CC BY 4.0';
-export const LICENSE_URL = 'https://creativecommons.org/licenses/by/4.0/';
+// No open licence for now (decided 2026-10-21): the database these cards are computed from still
+// carries upstream licence questions (Ergast/jolpica-f1 history, see CLAUDE.md). The cards are
+// "© PaddockIntel" with their sources cited, until the F1DB migration settles that.
+export function cardCopyright(card: DataCard): string {
+  return `© ${card.publishedAt.slice(0, 4)} PaddockIntel`;
+}
 
 export function validateDataCard(card: DataCard): DataCard {
   const fail = (msg: string) => {
