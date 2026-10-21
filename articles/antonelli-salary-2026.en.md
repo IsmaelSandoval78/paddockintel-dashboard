@@ -11,13 +11,13 @@ tags: ["driver-finance", "mercedes-amg-f1", "red-bull"]
 stats:
   - value: "8"
     label: "WINS — 2026 SEASON"
-    unit: "through round 14"
-  - value: "81"
+    unit: "through round 17"
+  - value: "102"
     label: "PTS LEAD OVER RUSSELL"
-    unit: "after the Spanish GP"
-  - value: "147"
+    unit: "340 vs. 238, after Singapore"
+  - value: "119"
     label: "PTS AHEAD OF VERSTAPPEN"
-    unit: "292 vs. 145"
+    unit: "340 vs. 221, after Singapore"
   - value: "$2M"
     label: "REPORTED BASE SALARY"
     unit: "disputed — see below"
@@ -29,7 +29,7 @@ faq:
   - q: "How much does Kimi Antonelli earn at Mercedes in 2026?"
     a: "Reports disagree: Spotrac and most English-language trackers cite a $2 million base salary, while Gazzetta dello Sport reported £2.6 million (roughly $3.3-3.5M) in July 2026. Mercedes has not confirmed either figure. On top of the base, performance bonuses are estimated at up to $12 million for 2026."
   - q: "Is Kimi Antonelli underpaid compared to other F1 drivers?"
-    a: "By output, yes: he leads the championship by 81 points over teammate George Russell and by 147 points over Max Verstappen, on a reported base roughly 1/13th to 1/40th of what Red Bull just committed to Verstappen for 2027. His contract was priced before he'd started a race, not after eight wins."
+    a: "By output, yes: after 17 rounds he leads the championship by 102 points over teammate George Russell and by 119 points over Max Verstappen, on a reported base roughly 1/13th to 1/40th of what Red Bull just committed to Verstappen for 2027. His contract was priced before he'd started a race, not after eight wins."
   - q: "How long is Kimi Antonelli's Mercedes contract?"
     a: "Confirmed publicly only through 2026 — Mercedes' October 2025 announcement covered just the 2026 line-up. Multiple outlets report Mercedes has tied him through 2029, but the team has never confirmed contract length itself."
   - q: "How much more does George Russell earn than Kimi Antonelli?"
@@ -67,6 +67,8 @@ sources:
   - name: "PaddockIntel Hub — Live 2026 Drivers' Standings"
     url: "https://hub.paddockintel.com/drivers/"
 ---
+
+*Update, October 21, 2026: The stat boxes and the FAQ now use the standings after round 17, the Singapore Grand Prix: Antonelli 340 points, Russell 238, Verstappen 221, with Antonelli still on eight wins. The body below was written after round 14, when the gaps were 81 and 147 points. The salary and contract figures are unchanged.*
 
 ## What Happened
 
