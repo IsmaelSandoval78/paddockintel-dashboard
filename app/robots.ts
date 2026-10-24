@@ -5,6 +5,8 @@ import { headers } from 'next/headers';
 // deployment, so /robots.txt points back at whichever host actually asked
 // for it, not a hardcoded one. Apex /robots.txt is 308'd to www in middleware
 // before this runs, so a magazine request that reaches here is already on www.
+const MAGAZINE_HOSTS = new Set(['paddockintel.com', 'www.paddockintel.com']);
+
 export default async function robots(): Promise<MetadataRoute.Robots> {
   const host = (await headers()).get('host')?.split(':')[0] ?? 'www.paddockintel.com';
   const base = `https://${host}`;
@@ -17,6 +19,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
       allow: ['/', '/api/og/'],
       disallow: ['/api/'],
     },
-    sitemap: `${base}/sitemap.xml`,
+    // The image sitemap only lists magazine pages (data cards), so the Hub doesn't advertise it.
+    sitemap: MAGAZINE_HOSTS.has(host) ? [`${base}/sitemap.xml`, `${base}/sitemap-images.xml`] : `${base}/sitemap.xml`,
   };
 }

@@ -222,6 +222,117 @@ body:has(.theme-dusk) nav a[aria-current="page"] {
 .theme-dusk .dusk-newsletter-input { border-color: rgba(255, 255, 255, 0.3); background: rgba(14, 13, 18, 0.45); }
 .theme-dusk .dusk-newsletter-input::placeholder { color: #CDB8B4; }
 
+/* ── Race week: strip, title stakes, track markers ──────────────────────── */
+.theme-dusk .dusk-strip {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1px solid var(--dusk-line);
+  background: linear-gradient(90deg, var(--dusk-strip-from) 0%, var(--dusk-panel) 70%);
+}
+.theme-dusk .dusk-strip-count { color: var(--dusk-sunset); }
+.theme-dusk .dusk-strip-band { display: none; }
+.theme-dusk .dusk-need {
+  font-family: var(--pi-mono), ui-monospace, monospace;
+  font-size: 12px;
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(240, 122, 69, 0.14);
+  color: var(--dusk-sunset);
+}
+/* On phones the longest margins ("can drop up to 14") wrap inside the chip instead of
+   pushing the table past the card. */
+@media (min-width: 640px) {
+  .theme-dusk .dusk-need { white-space: nowrap; }
+}
+.theme-dusk .dusk-mk-top { fill: var(--dusk-warm); background: var(--dusk-warm); }
+.theme-dusk .dusk-mk-min { fill: var(--dusk-muted); background: var(--dusk-muted); }
+
+/* ── Host colours (race week only) ────────────────────────────────────────
+   During race week <main> carries data-host="<country>" (lib/raceWeekHost.ts) and the host
+   flag's colours enter as decoration in fixed places only: the hero's sky, the strip (band,
+   border, count), a 3px rule on top of each card, labels and kickers, and inside the race-week
+   section the pole dots and track markers. They never touch data: team colours, chart series and
+   the speed bands on the track keep their own values. --host-1/2/3 are the flag's colours lifted
+   for contrast on the dark ground; the rule order follows the flag. */
+.theme-dusk { --dusk-strip-from: #1A2230; }
+.theme-dusk[data-host="usa"] {
+  --host-1: #E5485E; --host-2: #F3EFF2; --host-3: #6F7FD6;
+  --host-label: #B9C3E6; --host-sky-top: #101935; --host-sky-mid: #2A1F45;
+  --dusk-strip-from: #18224A; --host-line: #2E3870; --dusk-panel-hi: #1B2142;
+  --host-need-bg: rgba(229, 72, 94, 0.18); --host-need: #FFB8C2;
+}
+.theme-dusk[data-host="mexico"] {
+  --host-1: #2FA36B; --host-2: #F3EFF2; --host-3: #E5485E;
+  --host-label: #BFE3CF; --host-sky-top: #0E1F19; --host-sky-mid: #2B2420;
+  --dusk-strip-from: #12291F; --host-line: #24493A; --dusk-panel-hi: #1A2420;
+  --host-need-bg: rgba(47, 163, 107, 0.18); --host-need: #A8E6C4;
+}
+.theme-dusk[data-host="brazil"] {
+  --host-1: #2DBE64; --host-2: #FFDF00; --host-3: #4F7BE0;
+  --host-label: #CFE8B8; --host-sky-top: #0B1A2E; --host-sky-mid: #1F2A33;
+  --dusk-strip-from: #0F2A2A; --host-line: #1F4A3A; --dusk-panel-hi: #182425;
+  --host-need-bg: rgba(45, 190, 100, 0.18); --host-need: #B6F0C9;
+}
+.theme-dusk[data-host="qatar"] {
+  --host-1: #C2416B; --host-2: #F3EFF2; --host-3: #C2416B;
+  --host-label: #E3BFCB; --host-sky-top: #1E0E16; --host-sky-mid: #3A1426;
+  --dusk-strip-from: #2A1220; --host-line: #4A2134; --dusk-panel-hi: #22161D;
+  --host-need-bg: rgba(194, 65, 107, 0.2); --host-need: #F4B8CB;
+}
+.theme-dusk[data-host="uae"] {
+  --host-1: #E8454A; --host-2: #F3EFF2; --host-3: #2BA45E;
+  --host-label: #C9E4D2; --host-sky-top: #0E1A14; --host-sky-mid: #2A1D1E;
+  --dusk-strip-from: #13261C; --host-line: #24483A; --dusk-panel-hi: #1A221E;
+  --host-need-bg: rgba(43, 164, 94, 0.18); --host-need: #A8E6C4;
+}
+.theme-dusk[data-host] .dusk-hero {
+  background: linear-gradient(180deg, var(--host-sky-top) 0%, var(--host-sky-mid) 46%, #8A3A2C 78%, #C4573A 100%);
+}
+.theme-dusk[data-host] .dusk-strip { border-color: var(--host-line); padding-left: 28px; }
+.theme-dusk[data-host] .dusk-strip::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--host-1) 0 33.3%, var(--host-2) 33.3% 66.6%, var(--host-3) 66.6% 100%);
+}
+.theme-dusk[data-host] .dusk-strip-band { display: flex; flex-direction: column; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; }
+.theme-dusk[data-host] .dusk-strip-band i { flex: 1; }
+.theme-dusk[data-host] .dusk-strip-band i:nth-child(1) { background: var(--host-1); }
+.theme-dusk[data-host] .dusk-strip-band i:nth-child(2) { background: var(--host-2); }
+.theme-dusk[data-host] .dusk-strip-band i:nth-child(3) { background: var(--host-3); }
+.theme-dusk[data-host] .dusk-strip-count { color: var(--host-2); }
+.theme-dusk[data-host] .dusk-card:not(.dusk-hero):nth-child(3n+1) { border-top: 3px solid var(--host-1); }
+.theme-dusk[data-host] .dusk-card:not(.dusk-hero):nth-child(3n+2) { border-top: 3px solid var(--host-2); }
+.theme-dusk[data-host] .dusk-card:not(.dusk-hero):nth-child(3n) { border-top: 3px solid var(--host-3); }
+.theme-dusk[data-host] .dusk-label { color: var(--host-label); }
+.theme-dusk[data-host] .dusk-kicker { color: var(--host-2); }
+.theme-dusk[data-host] .dusk-need { background: var(--host-need-bg); color: var(--host-need); }
+.theme-dusk[data-host] .dusk-rw .dusk-dot { background: var(--host-line); }
+.theme-dusk[data-host] .dusk-rw .dusk-dot-on { background: var(--host-1); box-shadow: 0 0 6px color-mix(in srgb, var(--host-1) 60%, transparent); }
+.theme-dusk[data-host] .dusk-rw .dusk-mk-top { fill: var(--host-1); background: var(--host-1); }
+.theme-dusk[data-host] .dusk-rw .dusk-mk-min { fill: var(--host-3); background: var(--host-3); }
+/* Stars in the upper sky for the US only (the flag's own stars, as a night sky). */
+.theme-dusk[data-host="usa"] .dusk-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 55% 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.85;
+  background:
+    radial-gradient(1.6px 1.6px at 6% 18%, #fff 98%, transparent), radial-gradient(1.2px 1.2px at 14% 8%, #fff 98%, transparent),
+    radial-gradient(1.4px 1.4px at 23% 30%, #fff 98%, transparent), radial-gradient(1px 1px at 31% 12%, #fff 98%, transparent),
+    radial-gradient(1.6px 1.6px at 44% 22%, #fff 98%, transparent), radial-gradient(1.1px 1.1px at 52% 6%, #fff 98%, transparent),
+    radial-gradient(1.3px 1.3px at 61% 16%, #fff 98%, transparent), radial-gradient(1.7px 1.7px at 72% 9%, #fff 98%, transparent),
+    radial-gradient(1.1px 1.1px at 79% 27%, #fff 98%, transparent), radial-gradient(1.5px 1.5px at 88% 14%, #fff 98%, transparent),
+    radial-gradient(1px 1px at 94% 31%, #fff 98%, transparent), radial-gradient(1.2px 1.2px at 38% 36%, #fff 98%, transparent);
+}
+
 /* Line charts scale with their card; on phones their 11-unit labels would render ~6px, so they
    grow in viewBox units (end labels may spill into the card padding). */
 @media (max-width: 640px) {

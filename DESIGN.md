@@ -195,6 +195,16 @@ the depth switch. Recaps (`/recaps`, `/recaps/[issue]`) follow the Weekly patter
 (`/tag/[slug]`) are a dusk index of article cards. Everything else on the site stays on this
 system until each surface is migrated deliberately. Do not copy dusk tokens or its gradient/glow exception into other routes.
 
+**Race week on the home — host colours (2026-10-19, founder decision from prototype v3):** from
+Monday to Saturday before a Grand Prix the home carries `data-host="<country>"` on `<main>` and the
+host flag's colours enter as decoration in fixed places only: the hero sky (night tones above the
+dusk horizon; stars for the US only), the race-week strip (flag band, border, countdown), a 3px rule
+on top of each card cycling through the flag colours, labels and the hero kicker, and inside the
+race-week section the pole-to-win dots and track markers. They never touch data: team colours,
+chart series and the speed bands of the track map keep their own values. Palettes live in
+`dusk.css` (`--host-1/2/3` are the flag colours lifted for contrast on the dark ground); the country
+mapping is `lib/raceWeekHost.ts`. A host without a palette keeps the plain dusk colours.
+
 ## What this replaces, explicitly
 
 - v3.0.0 "Vintage Editorial" (`#EDE3D0` kraft, terracotta, Archivo Black + Lora, 2-4px
@@ -224,3 +234,15 @@ detour) — the old open question about Blueprint `#F4F4F0` vs. the live kraft t
 effectively resolved in spirit (the live substrate is light again), but the exact hex to
 use for exports (this system's `#EDE7E3`, or keep the historically-distinct Blueprint
 `#F4F4F0`) is still not explicitly decided. Flag before touching either.
+**Update 2026-10-21:** decided for scorecards: Warm Studio `#EDE7E3`, applied first to the
+data cards (`app/data-cards/[file]/route.tsx`: cream substrate, white table panel, teal
+`--accent` with an `--accent-dim` highlight row and no shadow). Remotion exports are still open.
+
+**Data cards — race-week venue posters (2026-10-21, founder decision):** a race-week data card
+may use the host's palette instead of Warm Studio, on paper `#F1E9D8` with ink `#141414` and
+muted `#6B6455`, in the `venue` poster layout (6px frame, Anton headline in ink + accent, no dot
+pattern). The dusk host colours (`--host-1/2/3`) are lifted for a dark ground, so the posters use
+light-ground flag colours instead — usa ink `#0A2A5E` / accent `#BF0A30` (from the founder's
+COTA card), mexico `#006847` / `#CE1126`, brazil `#002776` / `#009C3B`, qatar `#3A1426` /
+`#8A1538`, uae `#00632A` / `#C8102E`. Only usa has been seen on a real card; check the others
+the first time a card uses them. Values live in `app/data-cards/[file]/route.tsx`.

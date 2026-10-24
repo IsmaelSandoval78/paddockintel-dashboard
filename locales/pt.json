@@ -17,6 +17,7 @@
     "compare": "Comparar",
     "records": "Recordes",
     "magazine": "Magazine",
+    "data": "Dados",
     "glossary": "Glossário",
     "feed": "Feed",
     "weekly": "Digest Semanal",
@@ -989,7 +990,7 @@
     "metaDescription": "Como o PaddockIntel coleta e usa seu endereço de e-mail.",
     "kicker": "Legal",
     "title": "Política de Privacidade",
-    "updated": "Última atualização: setembro de 2026",
+    "updated": "Última atualização: outubro de 2026",
     "s1h": "O que coletamos",
     "s1p": "Quando você assina o Weekly Digest do PaddockIntel, coletamos seu endereço de e-mail e seu idioma preferido (inglês, espanhol ou português) — isso não mudou. Criar uma conta é algo separado e opcional: você nunca precisa de uma para ler o site. Se você entrar com o Google, recebemos seu nome, e-mail e foto de perfil do Google. Se você entrar com e-mail, recebemos apenas seu endereço de e-mail. Depois de logado, guardamos quais pilotos e construtores você escolhe seguir — nada mais. Não rastreamos seu histórico de leitura nem inferimos preferências que você não declarou explicitamente.",
     "s2h": "Como usamos",
@@ -1001,7 +1002,7 @@
     "s5h": "Exportar e excluir sua conta",
     "s5p": "Você pode baixar uma cópia dos dados da sua conta, ou excluir sua conta e todos os seus follows imediatamente, a partir da sua <account>página de conta</account> a qualquer momento — sem precisar nos escrever. Se preferir que façamos isso por você, entre em contato pelo <mail>info@paddockintel.com</mail>. Excluir sua conta não afeta uma assinatura de newsletter separada feita com o mesmo e-mail, que é cancelada à parte (veja acima).",
     "s6h": "Cookies e análises",
-    "s6p": "paddockintel.com não usa cookies de publicidade nem rastreadores de análise de terceiros. Nosso provedor de hospedagem (Cloudflare) mantém logs de servidor padrão e de curta duração (endereço IP, página solicitada) necessários para operar e proteger o serviço. Fazer login ativa um cookie de sessão para que o site saiba que você está logado — não é usado para rastreamento ou publicidade.",
+    "s6p": "paddockintel.com não usa cookies de publicidade nem rastreadores entre sites. Para contar as visitas usamos o Cloudflare Web Analytics, que não instala cookies, não guarda nada no seu dispositivo e não identifica visitantes por impressão digital: ele informa apenas dados agregados como a página vista, o site de origem, o país, o navegador, o tipo de dispositivo e a velocidade de carregamento. Para esses dados, a Cloudflare descarta seu endereço IP no data center mais próximo. Nosso provedor de hospedagem (Cloudflare) também mantém logs de servidor padrão e de curta duração (endereço IP, página solicitada) necessários para operar e proteger o serviço. O site também usa três cookies próprios e pequenos, lidos apenas pelo paddockintel.com e nunca compartilhados: NEXT_LOCALE lembra o idioma da página que você está lendo e é apagado quando você fecha o navegador; pi_box guarda, por um ano, um número aleatório de 2 a 99 e até 12 pilotos ou construtores que você segue sem conta, para que o site ordene o conteúdo para você (na primeira vez que você faz login, esses follows podem ser copiados para a sua conta); e pi_subscribed registra, por um ano, que você assinou a newsletter, para que os artigos para assinantes abram sem pedir de novo. Fazer login ativa um cookie de sessão para que o site saiba que você está logado — não é usado para rastreamento ou publicidade.",
     "s7h": "Contato",
     "s7p": "Dúvidas sobre esta política: <mail>info@paddockintel.com</mail> ou pela <about>página About</about>."
   },
@@ -1039,6 +1040,7 @@
   },
   "footer": {
     "disclaimer": "Publicação independente. Sem afiliação com a Formula 1 ou a FIA.",
+    "data": "Cartões de dados",
     "about": "Sobre",
     "privacy": "Política de Privacidade"
   },
@@ -1450,6 +1452,71 @@
     },
     "archive": {
       "title": "Arquivo de análises"
+    },
+    "raceWeek": {
+      "eyebrow": "Semana de corrida · Etapa {round} de {total}",
+      "meta": "{circuit}, {location} · {dates}",
+      "raceTime": "Corrida no {weekday} às {time}, horário local",
+      "days": "{days, plural, one {dia para a corrida} other {dias para a corrida}}",
+      "countAria": "{days, plural, one {Falta # dia} other {Faltam # dias}} para a corrida",
+      "sessionPreview": "Prévia",
+      "terrain": {
+        "caption": "A volta da pole de {driver} em {circuit} {year} como paisagem · cada pico é uma reta, cada vale uma curva · {lapTime} · {min}–{max} km/h · {source}",
+        "aria": "A velocidade da volta da pole de {driver} em {circuit} {year} desenhada como uma cordilheira: cada pico é uma reta, cada vale uma curva. A velocidade vai de {min} a {max} km/h."
+      },
+      "practice": {
+        "sessionName": "{session, select, FP1 {TL1} FP2 {TL2} FP3 {TL3} other {treino}}",
+        "terrainCaption": "A volta mais rápida de {driver} no {session}, {circuit}, como paisagem · cada pico é uma reta, cada vale uma curva · {lapTime} · {min}–{max} km/h · FastF1",
+        "terrainAria": "A velocidade da volta mais rápida de {driver} no {session}, {circuit}, desenhada como uma cordilheira: cada pico é uma reta, cada vale uma curva. A velocidade vai de {min} a {max} km/h.",
+        "label": "{session} · stints longos",
+        "title": "Os stints longos em {place}, pneu por pneu",
+        "compound": "{compound, select, SOFT {Macio} MEDIUM {Médio} HARD {Duro} other {{compound}}}",
+        "laps": "{laps} voltas",
+        "lapsDeleted": "{laps} voltas · {deleted} apagadas",
+        "deg": "{deg} s/volta",
+        "note": "Volta média de cada stint de pelo menos {minLaps} voltas com bandeira verde, sem voltas de entrada e saída dos boxes nem voltas mais de {pct}% mais lentas que a mediana do stint. As voltas apagadas por limites de pista são mantidas. As cargas de combustível não são divulgadas: compare dentro de um mesmo pneu, não entre pneus, e leia como treino, não como previsão de corrida.",
+        "source": "Cronometragem do FastF1 (cronometragem oficial da F1) · {session} · s/volta = inclinação por mínimos quadrados conforme a idade do pneu"
+      },
+      "tiles": {
+        "editionsLabel": "{circuit} na F1",
+        "editionsText": "Grandes Prêmios disputados aqui desde {year}",
+        "topLabel": "Maior vencedor aqui",
+        "topText": "{n, plural, one {vitória} other {vitórias}} de {drivers}",
+        "topNext": "; {drivers} {count, plural, one {soma} other {somam}} {n}",
+        "recordLabel": "Recorde de volta em corrida",
+        "recordText": "{driver}, {year}",
+        "source": "Resultados do Supabase"
+      },
+      "stakes": {
+        "label": "O que está em jogo na corrida",
+        "title": "{leader} pode garantir o título em {place}?",
+        "rival": "Rival",
+        "gap": "Distância",
+        "need": "Diferença necessária",
+        "gapValue": "a {n}",
+        "needMore": "+{n} ou mais",
+        "needZero": "sem perder pontos",
+        "needLess": "pode ceder até {n}",
+        "bottom": "Com o calendário atual, restam <b>{points} pontos</b> depois de {place}. Se {leader} vencer, basta que <b>{conditions}</b>.",
+        "bottomAny": "Com o calendário atual, restam <b>{points} pontos</b> depois de {place}. Se {leader} vencer, <b>o título fica garantido com qualquer resultado dos outros</b>.",
+        "cond": "{driver} termine em {pos}º ou pior",
+        "condOut": "{driver} termine fora dos pontos",
+        "source": "Classificação do Supabase após a etapa {round} · pontos 25-18-15-12-10-8-6-4-2-1 · empate decidido por vitórias"
+      },
+      "map": {
+        "label": "O circuito",
+        "sub": "Traçado com a volta da pole de {driver} em {year}, cor conforme a velocidade",
+        "top": "{speed} km/h, velocidade máxima",
+        "min": "{speed} km/h, curva mais lenta",
+        "aria": "Mapa de {circuit} traçado com a volta da pole de {driver} em {year}, colorido conforme a velocidade: {max} km/h no ponto mais rápido, {min} km/h na curva mais lenta.",
+        "source": "Posição e telemetria do {source} · classificação {year}"
+      },
+      "poleHistory": {
+        "title": "Quem fez a pole venceu? {first}–{last}",
+        "bottomExample": "Em {other} de {races} edições venceu alguém que não largou em primeiro, como {driver} em {year}, largando em {grid}º.",
+        "bottomOther": "Em {other} de {races} edições venceu alguém que não largou em primeiro.",
+        "bottomAll": "Todas as edições aqui foram vencidas por quem largou na pole."
+      }
     }
   },
   "articleDusk": {
@@ -1498,5 +1565,28 @@
       "aria": "Posição de largada e de chegada dos {n} carros",
       "source": "Grid de largada e classificação oficiais"
     }
+  },
+  "dataCards": {
+    "indexMetaTitle": "Cartões de dados de F1: números com fonte",
+    "indexMetaDescription": "Os cartões de dados de F1 do PaddockIntel: uma tabela de números com fonte da nossa base de corridas, uma nota de método e a imagem.",
+    "indexKicker": "Dados do PaddockIntel",
+    "indexTitle": "Cartões de dados de F1",
+    "indexIntro": "Cada cartão é um achado da nossa base de dados de corridas ou de uma fonte pública com data: os números numa tabela, como os contamos, de onde vêm e a imagem que compartilhamos.",
+    "cardCount": "{count, plural, one {# cartão} other {# cartões}}",
+    "kicker": "Cartão de dados · {asOf}",
+    "by": "Por PaddockIntel",
+    "published": "Publicado em {date}",
+    "updated": "Atualizado em {date}",
+    "numbers": "Os números",
+    "context": "Contexto",
+    "method": "Método",
+    "sources": "Fontes",
+    "readAnalysis": "Leia a análise completa",
+    "readAnalysisEn": "Leia a análise completa (em inglês)",
+    "onHub": "No Hub",
+    "xPost": "Ver a publicação no X",
+    "allCards": "Todos os cartões de dados",
+    "crumbHome": "Início",
+    "crumbsAria": "Navegação estrutural"
   }
 }

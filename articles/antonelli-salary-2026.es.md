@@ -11,13 +11,13 @@ tags: ["driver-finance", "mercedes-amg-f1", "red-bull"]
 stats:
   - value: "8"
     label: "VICTORIAS — TEMPORADA 2026"
-    unit: "hasta la ronda 14"
-  - value: "81"
+    unit: "hasta la ronda 17"
+  - value: "102"
     label: "PUNTOS DE VENTAJA SOBRE RUSSELL"
-    unit: "tras el GP de España"
-  - value: "147"
+    unit: "340 vs. 238, tras Singapur"
+  - value: "119"
     label: "PUNTOS POR DELANTE DE VERSTAPPEN"
-    unit: "292 vs. 145"
+    unit: "340 vs. 221, tras Singapur"
   - value: "$2M"
     label: "SALARIO BASE REPORTADO"
     unit: "cifra disputada — ver abajo"
@@ -29,7 +29,7 @@ faq:
   - q: "¿Cuánto gana Kimi Antonelli en Mercedes en 2026?"
     a: "Las fuentes no coinciden: Spotrac y la mayoría de los rastreadores en inglés citan un salario base de $2 millones, mientras que Gazzetta dello Sport reportó £2,6 millones (unos $3,3-3,5M) en julio de 2026. Mercedes no ha confirmado ninguna de las dos cifras. Además del base, los bonos por rendimiento se estiman en hasta $12 millones para 2026."
   - q: "¿Está Kimi Antonelli mal pagado en comparación con otros pilotos de F1?"
-    a: "Por rendimiento, sí: lidera el campeonato con 81 puntos de ventaja sobre su compañero George Russell y 147 sobre Max Verstappen, con un salario base reportado que equivale a apenas una fracción de lo que Red Bull acaba de comprometer con Verstappen para 2027. Su contrato se fijó antes de que corriera su primera carrera, no después de ocho victorias."
+    a: "Por rendimiento, sí: tras 17 fechas lidera el campeonato con 102 puntos de ventaja sobre su compañero George Russell y 119 sobre Max Verstappen, con un salario base reportado que equivale a apenas una fracción de lo que Red Bull acaba de comprometer con Verstappen para 2027. Su contrato se fijó antes de que corriera su primera carrera, no después de ocho victorias."
   - q: "¿Cuánto dura el contrato de Kimi Antonelli con Mercedes?"
     a: "Confirmado públicamente solo hasta 2026 — el anuncio de Mercedes de octubre de 2025 cubrió únicamente la alineación de ese año. Varios medios reportan que Mercedes lo aseguró hasta 2029, pero el equipo nunca ha confirmado la duración del contrato."
   - q: "¿Cuánto más gana George Russell que Kimi Antonelli?"
@@ -67,6 +67,8 @@ sources:
   - name: "PaddockIntel Hub — Clasificación de pilotos 2026 en vivo"
     url: "https://hub.paddockintel.com/es/drivers/"
 ---
+
+*Actualización, 21 de octubre de 2026: las estadísticas destacadas y las preguntas frecuentes ahora usan la clasificación tras la ronda 17, el Gran Premio de Singapur: Antonelli 340 puntos, Russell 238 y Verstappen 221, con Antonelli todavía en ocho victorias. El texto de abajo se escribió tras la ronda 14, cuando las diferencias eran de 81 y 147 puntos. Las cifras de salario y contrato no cambian.*
 
 ## Qué pasó
 
