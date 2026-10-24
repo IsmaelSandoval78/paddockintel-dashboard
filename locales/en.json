@@ -1469,6 +1469,19 @@
         "caption": "{driver}'s {year} pole lap at {circuit} as a landscape · every peak a straight, every valley a corner · {lapTime} · {min}–{max} km/h · {source}",
         "aria": "{driver}'s {year} pole lap at {circuit} drawn as a mountain range: every peak is a straight, every valley a corner. Speed ranges from {min} to {max} km/h."
       },
+      "practice": {
+        "sessionName": "{session, select, FP1 {FP1} FP2 {FP2} FP3 {FP3} other {practice}}",
+        "terrainCaption": "{driver}'s fastest {session} lap at {circuit} as a landscape · every peak a straight, every valley a corner · {lapTime} · {min}–{max} km/h · FastF1",
+        "terrainAria": "{driver}'s fastest {session} lap at {circuit} drawn as a mountain range: every peak is a straight, every valley a corner. Speed ranges from {min} to {max} km/h.",
+        "label": "{session} · long runs",
+        "title": "The long runs in {place}, tyre by tyre",
+        "compound": "{compound, select, SOFT {Soft} MEDIUM {Medium} HARD {Hard} other {{compound}}}",
+        "laps": "{laps} laps",
+        "lapsDeleted": "{laps} laps · {deleted} deleted",
+        "deg": "{deg} s/lap",
+        "note": "Average lap of each stint of at least {minLaps} green-flag laps, leaving out in- and out-laps and laps more than {pct}% off the stint median. Laps deleted for track limits are kept. Fuel loads aren't published: compare within a tyre, not across, and read it as practice, not a race forecast.",
+        "source": "FastF1 lap timing (official F1 timing) · {session} · s/lap = least-squares slope on tyre age"
+      },
       "tiles": {
         "editionsLabel": "{circuit} in F1",
         "editionsText": "Grands Prix held here since {year}",

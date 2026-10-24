@@ -3,9 +3,12 @@
 // scripts/highlights/openf1_pole_lap.py (OpenF1) — never hand-edited. Each block carries its own
 // `source`; a race without a file, or a file missing a block, hides that module instead of
 // showing a stale number.
+// Practice sessions of the coming race come from scripts/highlights/practice_from_export.py
+// (a FastF1 export of one session), one file per session.
 // Static imports (not fs) so this works on the Cloudflare Worker runtime too: add one line per race.
 import r2025_19 from '@/content/race-highlights/2025-19.json';
 import r2026_17 from '@/content/race-highlights/2026-17.json';
+import p2026_18_fp2 from '@/content/race-highlights/2026-18-fp2.json';
 
 export type PoleLap = {
   driver: string;
@@ -106,3 +109,52 @@ const REGISTRY: Record<string, RaceHighlights> = {
 export function getRaceHighlightsFor(year: number, round: number): RaceHighlights | null {
   return REGISTRY[`${year}-${round}`] ?? null;
 }
+
+export type PracticeFastestLap = PoleLap & { team: string; compound: string };
+
+export type LongRun = {
+  driver: string;
+  team: string;
+  teamColour: string | null;
+  compound: string;
+  laps: number;
+  deletedLaps: number;
+  meanSeconds: number;
+  degPerLap: number;
+  tyreLife: [number, number];
+};
+
+export type PracticeHighlights = {
+  year: number;
+  round: number;
+  event: string;
+  session: 'FP1' | 'FP2' | 'FP3';
+  fastestLap?: PracticeFastestLap;
+  trackMap?: TrackMap;
+  longRuns?: { runs: LongRun[]; minLaps: number; slowLapPct: number; source: string };
+};
+
+// One race's practice files, in session order.
+const PRACTICE: Record<string, PracticeHighlights[]> = {
+  '2026-18': [p2026_18_fp2 as unknown as PracticeHighlights],
+};
+
+/** The race's latest practice session with a file, or null. */
+export function getLatestPracticeFor(year: number, round: number): PracticeHighlights | null {
+  return PRACTICE[`${year}-${round}`]?.at(-1) ?? null;
+}
+
+// FastF1 team names -> Supabase constructor_ref, for the team colour tokens.
+export const FASTF1_TEAM_REF: Record<string, string> = {
+  McLaren: 'mclaren',
+  'Red Bull Racing': 'red_bull',
+  Ferrari: 'ferrari',
+  Mercedes: 'mercedes',
+  Alpine: 'alpine',
+  'Racing Bulls': 'rb',
+  Audi: 'audi',
+  'Aston Martin': 'aston_martin',
+  'Haas F1 Team': 'haas',
+  Williams: 'williams',
+  Cadillac: 'cadillac',
+};
