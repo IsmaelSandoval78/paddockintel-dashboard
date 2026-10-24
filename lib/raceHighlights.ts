@@ -10,6 +10,7 @@ import r2025_19 from '@/content/race-highlights/2025-19.json';
 import r2026_17 from '@/content/race-highlights/2026-17.json';
 import p2026_18_fp2 from '@/content/race-highlights/2026-18-fp2.json';
 import p2026_18_fp3 from '@/content/race-highlights/2026-18-fp3.json';
+import p2026_18_q from '@/content/race-highlights/2026-18-q.json';
 
 export type PoleLap = {
   driver: string;
@@ -138,16 +139,16 @@ export type PracticeHighlights = {
   year: number;
   round: number;
   event: string;
-  session: 'FP1' | 'FP2' | 'FP3';
+  session: 'FP1' | 'FP2' | 'FP3' | 'Q';
   fastestLap?: PracticeFastestLap;
   trackMap?: TrackMap;
   elevation?: ElevationProfile;
   longRuns?: { runs: LongRun[]; minLaps: number; slowLapPct: number; source: string };
 };
 
-// One race's practice files, in session order.
+// One race's practice and qualifying files, in session order.
 const PRACTICE: Record<string, PracticeHighlights[]> = {
-  '2026-18': [p2026_18_fp2 as unknown as PracticeHighlights, p2026_18_fp3 as unknown as PracticeHighlights],
+  '2026-18': [p2026_18_fp2 as unknown as PracticeHighlights, p2026_18_fp3 as unknown as PracticeHighlights, p2026_18_q as unknown as PracticeHighlights],
 };
 
 /** The race's latest practice session with a file, or null. */
