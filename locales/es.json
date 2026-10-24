@@ -1474,7 +1474,8 @@
         "aria": "La velocidad de la vuelta de la pole de {driver} en {circuit} {year} dibujada como una cordillera: cada pico es una recta, cada valle una curva. La velocidad va de {min} a {max} km/h."
       },
       "practice": {
-        "sessionName": "{session, select, FP1 {FP1} FP2 {FP2} FP3 {FP3} other {práctica}}",
+        "sessionName": "{session, select, FP1 {FP1} FP2 {FP2} FP3 {FP3} Q {clasificación} other {práctica}}",
+        "sessionIn": "{session, select, FP1 {en la FP1} FP2 {en la FP2} FP3 {en la FP3} Q {en la clasificación} other {en la práctica}}",
         "terrainCaption": "La vuelta más rápida de {driver} en la {session}, {circuit}, como paisaje · cada pico es una recta, cada valle una curva · {lapTime} · {min}–{max} km/h · FastF1",
         "terrainAria": "La velocidad de la vuelta más rápida de {driver} en la {session}, {circuit}, dibujada como una cordillera: cada pico es una recta, cada valle una curva. La velocidad va de {min} a {max} km/h.",
         "label": "{session} · tandas largas",

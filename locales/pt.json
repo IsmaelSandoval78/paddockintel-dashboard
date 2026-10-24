@@ -1465,9 +1465,10 @@
         "aria": "A velocidade da volta da pole de {driver} em {circuit} {year} desenhada como uma cordilheira: cada pico é uma reta, cada vale uma curva. A velocidade vai de {min} a {max} km/h."
       },
       "practice": {
-        "sessionName": "{session, select, FP1 {TL1} FP2 {TL2} FP3 {TL3} other {treino}}",
-        "terrainCaption": "A volta mais rápida de {driver} no {session}, {circuit}, como paisagem · cada pico é uma reta, cada vale uma curva · {lapTime} · {min}–{max} km/h · FastF1",
-        "terrainAria": "A velocidade da volta mais rápida de {driver} no {session}, {circuit}, desenhada como uma cordilheira: cada pico é uma reta, cada vale uma curva. A velocidade vai de {min} a {max} km/h.",
+        "sessionName": "{session, select, FP1 {TL1} FP2 {TL2} FP3 {TL3} Q {classificação} other {treino}}",
+        "sessionIn": "{session, select, FP1 {no TL1} FP2 {no TL2} FP3 {no TL3} Q {na classificação} other {no treino}}",
+        "terrainCaption": "A volta mais rápida de {driver} {sessionIn}, {circuit}, como paisagem · cada pico é uma reta, cada vale uma curva · {lapTime} · {min}–{max} km/h · FastF1",
+        "terrainAria": "A velocidade da volta mais rápida de {driver} {sessionIn}, {circuit}, desenhada como uma cordilheira: cada pico é uma reta, cada vale uma curva. A velocidade vai de {min} a {max} km/h.",
         "label": "{session} · stints longos",
         "title": "Os stints longos em {place}, pneu por pneu",
         "compound": "{compound, select, SOFT {Macio} MEDIUM {Médio} HARD {Duro} other {{compound}}}",
@@ -1480,9 +1481,9 @@
       "elevation": {
         "label": "{session} · altimetria",
         "title": "As subidas reais de {place}: {range} m de desnível",
-        "sub": "Altura acima do ponto mais baixo da volta, com a volta mais rápida de {driver} no {session}",
-        "subTop": "Altura acima do ponto mais baixo da volta, com a volta mais rápida de {driver} no {session} · a curva {corner} é o ponto mais alto",
-        "aria": "Perfil de altimetria de {circuit} com a volta mais rápida de {driver} no {session}: {range} m entre o ponto mais baixo e o mais alto, com cada curva marcada.",
+        "sub": "Altura acima do ponto mais baixo da volta, com a volta mais rápida de {driver} {sessionIn}",
+        "subTop": "Altura acima do ponto mais baixo da volta, com a volta mais rápida de {driver} {sessionIn} · a curva {corner} é o ponto mais alto",
+        "aria": "Perfil de altimetria de {circuit} com a volta mais rápida de {driver} {sessionIn}: {range} m entre o ponto mais baixo e o mais alto, com cada curva marcada.",
         "source": "Dados de posição do FastF1 (cronometragem oficial da F1) · {session} · curvas segundo as informações de circuito do FastF1",
         "kmTick": "{n} km",
         "mTick": "{n} m",

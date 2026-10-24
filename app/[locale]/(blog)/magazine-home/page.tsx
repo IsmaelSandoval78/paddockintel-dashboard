@@ -237,6 +237,7 @@ export default async function MagazineHomePage({
   const rwPractice = raceWeek ? getLatestPracticeFor(raceWeek.year, raceWeek.round) : null;
   const rwPracticeLap = rwPractice?.fastestLap;
   const sessionName = rwPractice ? t('raceWeek.practice.sessionName', { session: rwPractice.session }) : '';
+  const sessionIn = rwPractice ? t('raceWeek.practice.sessionIn', { session: rwPractice.session }) : '';
   // Generated files name their own source; the label is the provider's name only.
   const sourceName = (source: string) => (source.startsWith('OpenF1') ? 'OpenF1' : 'FastF1');
 
@@ -264,6 +265,7 @@ export default async function MagazineHomePage({
           caption: t('raceWeek.practice.terrainCaption', {
             driver: surname(rwPracticeLap.driver),
             session: sessionName,
+            sessionIn,
             circuit: raceWeek.circuit.name,
             lapTime: rwPracticeLap.lapTime,
             min: format.number(rwPracticeLap.minSpeedKmh),
@@ -272,6 +274,7 @@ export default async function MagazineHomePage({
           ariaLabel: t('raceWeek.practice.terrainAria', {
             driver: surname(rwPracticeLap.driver),
             session: sessionName,
+            sessionIn,
             circuit: raceWeek.circuit.name,
             min: format.number(rwPracticeLap.minSpeedKmh),
             max: format.number(rwPracticeLap.topSpeedKmh),
@@ -762,7 +765,7 @@ export default async function MagazineHomePage({
     const range = Math.round(top - Math.min(...elev.heightM));
     const topAt = (elev.heightM.indexOf(top) / (elev.heightM.length - 1)) * elev.lapLength;
     const topCorner = elev.corners.find((c) => Math.abs(c.distance - topAt) <= 100);
-    const vars = { driver: surname(elev.driver), session: sessionName, place: rwPlace, circuit: raceWeek.circuit.name, range };
+    const vars = { driver: surname(elev.driver), session: sessionName, sessionIn, place: rwPlace, circuit: raceWeek.circuit.name, range };
     return (
       <ElevationProfile
         className={`dusk-rw md:col-span-6 ${poleHistoryPaired || !rwP2w ? 'lg:col-span-12' : 'lg:col-span-5'}`}

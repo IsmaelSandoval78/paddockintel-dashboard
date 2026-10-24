@@ -1470,7 +1470,8 @@
         "aria": "{driver}'s {year} pole lap at {circuit} drawn as a mountain range: every peak is a straight, every valley a corner. Speed ranges from {min} to {max} km/h."
       },
       "practice": {
-        "sessionName": "{session, select, FP1 {FP1} FP2 {FP2} FP3 {FP3} other {practice}}",
+        "sessionName": "{session, select, FP1 {FP1} FP2 {FP2} FP3 {FP3} Q {qualifying} other {practice}}",
+        "sessionIn": "{session, select, FP1 {in FP1} FP2 {in FP2} FP3 {in FP3} Q {in qualifying} other {in practice}}",
         "terrainCaption": "{driver}'s fastest {session} lap at {circuit} as a landscape · every peak a straight, every valley a corner · {lapTime} · {min}–{max} km/h · FastF1",
         "terrainAria": "{driver}'s fastest {session} lap at {circuit} drawn as a mountain range: every peak is a straight, every valley a corner. Speed ranges from {min} to {max} km/h.",
         "label": "{session} · long runs",
