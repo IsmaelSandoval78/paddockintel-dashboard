@@ -20,7 +20,7 @@ import LatestList, { type LatestItem } from '@/components/home-dusk/LatestList';
 import NewsletterBand from '@/components/home-dusk/NewsletterBand';
 import DuskArticleCard from '@/components/home-dusk/DuskArticleCard';
 import { SITE_URL, hubLocaleUrl } from '@/lib/site-url';
-import { FASTF1_TEAM_REF, getLatestPracticeFor, getRaceHighlightsFor } from '@/lib/raceHighlights';
+import { FASTF1_TEAM_REF, getLatestPracticeFor, getLongRunPracticeFor, getRaceHighlightsFor } from '@/lib/raceHighlights';
 import { getFeaturedAndRecent, getStandings, getCircuitOfTheDay, getFeedTeaser } from './data';
 import { getLatestRace, getRaceWeek, getTitleTrend } from './dusk-data';
 import { circuitTimeZone, hostPalette } from '@/lib/raceWeekHost';
@@ -802,7 +802,10 @@ export default async function MagazineHomePage({
   ) : null;
 
   const LONG_RUN_ROWS = 5;
-  const runs = rwPractice?.longRuns;
+  // Long runs come from the session teams used for race simulations, not necessarily the latest one.
+  const rwRunsPractice = raceWeek ? getLongRunPracticeFor(raceWeek.year, raceWeek.round) : null;
+  const runsSessionName = rwRunsPractice ? t('raceWeek.practice.sessionName', { session: rwRunsPractice.session }) : '';
+  const runs = rwRunsPractice?.longRuns;
   const longRunColumns = runs
     ? (['SOFT', 'MEDIUM', 'HARD'] as const).flatMap((compound) => {
         const rows = runs.runs.filter((r) => r.compound === compound).slice(0, LONG_RUN_ROWS);
@@ -826,14 +829,14 @@ export default async function MagazineHomePage({
           : [];
       })
     : [];
-  const longRunsEl = raceWeek && rwPractice && runs && longRunColumns.length ? (
+  const longRunsEl = raceWeek && rwRunsPractice && runs && longRunColumns.length ? (
     <LongRunsCard
       className="dusk-rw md:col-span-6 lg:col-span-12"
-      label={t('raceWeek.practice.label', { session: sessionName })}
+      label={t('raceWeek.practice.label', { session: runsSessionName })}
       title={t('raceWeek.practice.title', { place: rwPlace })}
       columns={longRunColumns}
       note={t('raceWeek.practice.note', { minLaps: runs.minLaps, pct: runs.slowLapPct })}
-      source={t('raceWeek.practice.source', { session: sessionName })}
+      source={t('raceWeek.practice.source', { session: runsSessionName })}
     />
   ) : null;
 
