@@ -51,13 +51,15 @@ sources:
     url: "https://hub.paddockintel.com/season/2026/"
 ---
 
+*Correção, 24 de outubro de 2026: uma versão anterior dizia que 91 de 589 voltas cronometradas foram apagadas. 589 são todas as voltas registradas na sessão; 448 delas tiveram tempo de volta, então 91 de 448 foram apagadas.*
+
 ## What Happened
 
 Charles Leclerc foi o mais rápido do segundo treino livre do GP dos Estados Unidos, com 1:35.291 de pneus macios, 0,042 s à frente de Kimi Antonelli e 0,189 s à frente de Max Verstappen, segundo a cronometragem oficial. As três melhores voltas foram construídas em partes diferentes do circuito: Verstappen teve o primeiro setor mais rápido dos três, Antonelli o segundo, 0,374 s mais rápido que Leclerc, e Leclerc o terceiro. Lewis Hamilton foi o quarto, a 0,615 s, e George Russell o quinto, de médios.
 
 A ordem de uma volta não é a parte mais útil do TL2. É nessa sessão que as equipes fazem suas simulações de corrida, e o PaddockIntel analisou cada uma das voltas com o FastF1, que lê o canal oficial de cronometragem da F1. **Verstappen fez média de 1:41.481 em 11 voltas de macios e Leclerc 1:41.508 em 13: uma diferença de 0,027 s.** Antonelli usou o médio, um composto mais duro, e fez média de 1:41.704 em 10 voltas, 0,22 s mais lento que o stint de Verstappen com macios, com o menor desgaste entre os stints da ponta.
 
-A pista estava seca e sua temperatura chegou a 43,2 °C. Das 589 voltas cronometradas, 91 foram apagadas por limites de pista, a maioria nas curvas 12 e 20.
+A pista estava seca e sua temperatura chegou a 43,2 °C. Das 448 voltas cronometradas, 91 foram apagadas por limites de pista, a maioria nas curvas 12 e 20.
 
 ## Why It Happened
 
