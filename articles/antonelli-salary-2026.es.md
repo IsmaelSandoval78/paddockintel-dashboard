@@ -5,7 +5,7 @@ locale: es
 meta_description: "El sueldo base de $2M de Antonelli frente al nuevo contrato de ~92M€ de Verstappen en Red Bull: la brecha salarial real de 2026, explicada."
 status: published
 translation_group_id: "b1dbf5c6-ad14-4a94-8f80-b3e80231da1a"
-paywalled: true
+paywalled: false
 tags: ["driver-finance", "mercedes-amg-f1", "red-bull"]
 
 stats:

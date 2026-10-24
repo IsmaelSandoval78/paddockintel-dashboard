@@ -5,7 +5,7 @@ locale: en
 meta_description: "Antonelli's reported $2M Mercedes base vs. Red Bull's ~€92M Verstappen deal — the real 2026 F1 pay gap, in one number."
 status: published
 translation_group_id: "b1dbf5c6-ad14-4a94-8f80-b3e80231da1a"
-paywalled: true
+paywalled: false
 tags: ["driver-finance", "mercedes-amg-f1", "red-bull"]
 
 stats:
