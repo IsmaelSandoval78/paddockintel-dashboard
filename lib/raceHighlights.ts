@@ -124,6 +124,15 @@ export type LongRun = {
   tyreLife: [number, number];
 };
 
+// Height of one lap in metres above its own lowest point (FastF1 Z), evenly spaced by distance.
+export type ElevationProfile = {
+  driver: string;
+  lapLength: number;
+  heightM: number[];
+  corners: Array<{ number: string; distance: number }>;
+  source: string;
+};
+
 export type PracticeHighlights = {
   year: number;
   round: number;
@@ -131,6 +140,7 @@ export type PracticeHighlights = {
   session: 'FP1' | 'FP2' | 'FP3';
   fastestLap?: PracticeFastestLap;
   trackMap?: TrackMap;
+  elevation?: ElevationProfile;
   longRuns?: { runs: LongRun[]; minLaps: number; slowLapPct: number; source: string };
 };
 

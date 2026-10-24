@@ -12,6 +12,7 @@ import { buildRaceStory } from '@/components/home-dusk/raceStory';
 import StandingsCard, { teamVar } from '@/components/home-dusk/StandingsCard';
 import SectorDuel from '@/components/home-dusk/SectorDuel';
 import TrackMap from '@/components/home-dusk/TrackMap';
+import ElevationProfile from '@/components/home-dusk/ElevationProfile';
 import TitleTrend, { type TrendSeries } from '@/components/home-dusk/TitleTrend';
 import NextRaceCard from '@/components/home-dusk/NextRaceCard';
 import { CircuitTile, LongRunsCard, PoleHistoryCard, RaceWeekStrip, StakesCard } from '@/components/home-dusk/RaceWeek';
@@ -753,9 +754,38 @@ export default async function MagazineHomePage({
   const rwNonPole = rwP2w ? rwP2w.history.filter((h) => h.grid !== 1) : [];
   // Furthest back on the grid (grid 0 is a pit-lane start, not a grid slot), latest year on a tie.
   const rwFurthest = rwNonPole.filter((h) => h.grid > 1).sort((a, b) => b.grid - a.grid || b.year - a.year)[0];
+  // This weekend's lap height (FastF1 Z): beside the pole history, or full width when that row is taken.
+  const elev = rwPractice?.elevation;
+  const poleHistoryPaired = !!rwMap && !stakesEl;
+  const elevationEl = raceWeek && rwPractice && elev && elev.heightM.length > 1 ? (() => {
+    const top = Math.max(...elev.heightM);
+    const range = Math.round(top - Math.min(...elev.heightM));
+    const topAt = (elev.heightM.indexOf(top) / (elev.heightM.length - 1)) * elev.lapLength;
+    const topCorner = elev.corners.find((c) => Math.abs(c.distance - topAt) <= 100);
+    const vars = { driver: surname(elev.driver), session: sessionName, place: rwPlace, circuit: raceWeek.circuit.name, range };
+    return (
+      <ElevationProfile
+        className={`dusk-rw md:col-span-6 ${poleHistoryPaired || !rwP2w ? 'lg:col-span-12' : 'lg:col-span-5'}`}
+        label={t('raceWeek.elevation.label', vars)}
+        title={t('raceWeek.elevation.title', vars)}
+        sub={topCorner ? t('raceWeek.elevation.subTop', { ...vars, corner: topCorner.number }) : t('raceWeek.elevation.sub', vars)}
+        ariaLabel={t('raceWeek.elevation.aria', vars)}
+        source={t('raceWeek.elevation.source', vars)}
+        locale={locale}
+        heights={elev.heightM}
+        lapLength={elev.lapLength}
+        corners={elev.corners}
+        kmTick={t('raceWeek.elevation.kmTick')}
+        mTick={t('raceWeek.elevation.mTick')}
+        cornerTag={t('raceWeek.elevation.cornerTag')}
+        tip={t('raceWeek.elevation.tip')}
+      />
+    );
+  })() : null;
+
   const poleHistoryEl = raceWeek && rwP2w ? (
     <PoleHistoryCard
-      className={`dusk-rw md:col-span-6 ${rwMap && !stakesEl ? 'lg:col-span-7' : 'lg:col-span-12'}`}
+      className={`dusk-rw md:col-span-6 ${poleHistoryPaired || elevationEl ? 'lg:col-span-7' : 'lg:col-span-12'}`}
       label={t('kpi.p2wTitle')}
       title={t('raceWeek.poleHistory.title', { first: rwP2w.history[0].year, last: rwP2w.history[rwP2w.history.length - 1].year })}
       years={rwP2w.history.map((h) => ({ year: h.year, fromPole: h.grid === 1, title: t('kpi.p2wDot', { year: h.year, winner: h.winner, grid: h.grid }) }))}
@@ -814,6 +844,7 @@ export default async function MagazineHomePage({
       {stakesEl}
       {rwMap}
       {poleHistoryEl}
+      {elevationEl}
     </>
   );
 
