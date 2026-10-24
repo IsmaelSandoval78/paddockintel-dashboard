@@ -1464,6 +1464,19 @@
         "caption": "A volta da pole de {driver} em {circuit} {year} como paisagem · cada pico é uma reta, cada vale uma curva · {lapTime} · {min}–{max} km/h · {source}",
         "aria": "A velocidade da volta da pole de {driver} em {circuit} {year} desenhada como uma cordilheira: cada pico é uma reta, cada vale uma curva. A velocidade vai de {min} a {max} km/h."
       },
+      "practice": {
+        "sessionName": "{session, select, FP1 {TL1} FP2 {TL2} FP3 {TL3} other {treino}}",
+        "terrainCaption": "A volta mais rápida de {driver} no {session}, {circuit}, como paisagem · cada pico é uma reta, cada vale uma curva · {lapTime} · {min}–{max} km/h · FastF1",
+        "terrainAria": "A velocidade da volta mais rápida de {driver} no {session}, {circuit}, desenhada como uma cordilheira: cada pico é uma reta, cada vale uma curva. A velocidade vai de {min} a {max} km/h.",
+        "label": "{session} · stints longos",
+        "title": "Os stints longos em {place}, pneu por pneu",
+        "compound": "{compound, select, SOFT {Macio} MEDIUM {Médio} HARD {Duro} other {{compound}}}",
+        "laps": "{laps} voltas",
+        "lapsDeleted": "{laps} voltas · {deleted} apagadas",
+        "deg": "{deg} s/volta",
+        "note": "Volta média de cada stint de pelo menos {minLaps} voltas com bandeira verde, sem voltas de entrada e saída dos boxes nem voltas mais de {pct}% mais lentas que a mediana do stint. As voltas apagadas por limites de pista são mantidas. As cargas de combustível não são divulgadas: compare dentro de um mesmo pneu, não entre pneus, e leia como treino, não como previsão de corrida.",
+        "source": "Cronometragem do FastF1 (cronometragem oficial da F1) · {session} · s/volta = inclinação por mínimos quadrados conforme a idade do pneu"
+      },
       "tiles": {
         "editionsLabel": "{circuit} na F1",
         "editionsText": "Grandes Prêmios disputados aqui desde {year}",

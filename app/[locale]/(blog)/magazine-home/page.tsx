@@ -14,12 +14,12 @@ import SectorDuel from '@/components/home-dusk/SectorDuel';
 import TrackMap from '@/components/home-dusk/TrackMap';
 import TitleTrend, { type TrendSeries } from '@/components/home-dusk/TitleTrend';
 import NextRaceCard from '@/components/home-dusk/NextRaceCard';
-import { CircuitTile, PoleHistoryCard, RaceWeekStrip, StakesCard } from '@/components/home-dusk/RaceWeek';
+import { CircuitTile, LongRunsCard, PoleHistoryCard, RaceWeekStrip, StakesCard } from '@/components/home-dusk/RaceWeek';
 import LatestList, { type LatestItem } from '@/components/home-dusk/LatestList';
 import NewsletterBand from '@/components/home-dusk/NewsletterBand';
 import DuskArticleCard from '@/components/home-dusk/DuskArticleCard';
 import { SITE_URL, hubLocaleUrl } from '@/lib/site-url';
-import { getRaceHighlightsFor } from '@/lib/raceHighlights';
+import { FASTF1_TEAM_REF, getLatestPracticeFor, getRaceHighlightsFor } from '@/lib/raceHighlights';
 import { getFeaturedAndRecent, getStandings, getCircuitOfTheDay, getFeedTeaser } from './data';
 import { getLatestRace, getRaceWeek, getTitleTrend } from './dusk-data';
 import { circuitTimeZone, hostPalette } from '@/lib/raceWeekHost';
@@ -138,6 +138,12 @@ function dayDate(isoDay: string): Date {
 
 const pct = (part: number, whole: number) => Math.round((part / whole) * 100);
 
+// 101.481 -> "1:41.481", the timing-screen format the generated files use for lap times.
+function lapTime(seconds: number): string {
+  const minutes = Math.floor(seconds / 60);
+  return `${minutes}:${(seconds - minutes * 60).toFixed(3).padStart(6, '0')}`;
+}
+
 export default async function MagazineHomePage({
   params,
   searchParams,
@@ -226,11 +232,16 @@ export default async function MagazineHomePage({
   const rwHighlights = rwLast ? getRaceHighlightsFor(rwLast.year, rwLast.round) : null;
   const rwPole = rwHighlights?.poleLap;
   const rwSurname = (code: string) => rwLast?.surnameByCode[code] ?? code;
+  // This weekend's latest practice session, once its file exists: fresher than the last edition.
+  const rwPractice = raceWeek ? getLatestPracticeFor(raceWeek.year, raceWeek.round) : null;
+  const rwPracticeLap = rwPractice?.fastestLap;
+  const sessionName = rwPractice ? t('raceWeek.practice.sessionName', { session: rwPractice.session }) : '';
   // Generated files name their own source; the label is the provider's name only.
   const sourceName = (source: string) => (source.startsWith('OpenF1') ? 'OpenF1' : 'FastF1');
 
-  // The pole-lap landscape belongs to the race. In story mode during race week it is the coming
-  // circuit's last pole lap; otherwise the hero carries the article alone.
+  // The pole-lap landscape belongs to the race. In story mode during race week it is this weekend's
+  // fastest practice lap, or before practice the coming circuit's last pole lap; otherwise the hero
+  // carries the article alone.
   const terrain: TerrainData | null = pole && raceMode
     ? {
         speeds: pole.speedKmh,
@@ -246,6 +257,25 @@ export default async function MagazineHomePage({
           max: format.number(pole.topSpeedKmh),
         }),
       }
+    : raceWeek && rwPracticeLap
+      ? {
+          speeds: rwPracticeLap.speedKmh,
+          caption: t('raceWeek.practice.terrainCaption', {
+            driver: surname(rwPracticeLap.driver),
+            session: sessionName,
+            circuit: raceWeek.circuit.name,
+            lapTime: rwPracticeLap.lapTime,
+            min: format.number(rwPracticeLap.minSpeedKmh),
+            max: format.number(rwPracticeLap.topSpeedKmh),
+          }),
+          ariaLabel: t('raceWeek.practice.terrainAria', {
+            driver: surname(rwPracticeLap.driver),
+            session: sessionName,
+            circuit: raceWeek.circuit.name,
+            min: format.number(rwPracticeLap.minSpeedKmh),
+            max: format.number(rwPracticeLap.topSpeedKmh),
+          }),
+        }
     : raceWeek && rwLast && rwPole
       ? {
           speeds: rwPole.speedKmh,
@@ -741,8 +771,45 @@ export default async function MagazineHomePage({
     />
   ) : null;
 
+  const LONG_RUN_ROWS = 5;
+  const runs = rwPractice?.longRuns;
+  const longRunColumns = runs
+    ? (['SOFT', 'MEDIUM', 'HARD'] as const).flatMap((compound) => {
+        const rows = runs.runs.filter((r) => r.compound === compound).slice(0, LONG_RUN_ROWS);
+        return rows.length
+          ? [{
+              key: compound,
+              heading: t('raceWeek.practice.compound', { compound }),
+              rows: rows.map((r, i) => ({
+                key: `${r.driver}-${i}`,
+                driver: surname(r.driver),
+                teamColour: teamVar(FASTF1_TEAM_REF[r.team] ?? ''),
+                laps: r.deletedLaps
+                  ? t('raceWeek.practice.lapsDeleted', { laps: r.laps, deleted: r.deletedLaps })
+                  : t('raceWeek.practice.laps', { laps: r.laps }),
+                mean: lapTime(r.meanSeconds),
+                deg: t('raceWeek.practice.deg', {
+                  deg: format.number(r.degPerLap, { minimumFractionDigits: 3, maximumFractionDigits: 3, signDisplay: 'exceptZero' }),
+                }),
+              })),
+            }]
+          : [];
+      })
+    : [];
+  const longRunsEl = raceWeek && rwPractice && runs && longRunColumns.length ? (
+    <LongRunsCard
+      className="dusk-rw md:col-span-6 lg:col-span-12"
+      label={t('raceWeek.practice.label', { session: sessionName })}
+      title={t('raceWeek.practice.title', { place: rwPlace })}
+      columns={longRunColumns}
+      note={t('raceWeek.practice.note', { minLaps: runs.minLaps, pct: runs.slowLapPct })}
+      source={t('raceWeek.practice.source', { session: sessionName })}
+    />
+  ) : null;
+
   const raceWeekSection = (
     <>
+      {longRunsEl}
       {rwTiles}
       {stakesEl}
       {rwMap}

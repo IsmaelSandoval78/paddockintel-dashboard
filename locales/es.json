@@ -1473,6 +1473,19 @@
         "caption": "La vuelta de la pole de {driver} en {circuit} {year} como paisaje · cada pico es una recta, cada valle una curva · {lapTime} · {min}–{max} km/h · {source}",
         "aria": "La velocidad de la vuelta de la pole de {driver} en {circuit} {year} dibujada como una cordillera: cada pico es una recta, cada valle una curva. La velocidad va de {min} a {max} km/h."
       },
+      "practice": {
+        "sessionName": "{session, select, FP1 {FP1} FP2 {FP2} FP3 {FP3} other {práctica}}",
+        "terrainCaption": "La vuelta más rápida de {driver} en la {session}, {circuit}, como paisaje · cada pico es una recta, cada valle una curva · {lapTime} · {min}–{max} km/h · FastF1",
+        "terrainAria": "La velocidad de la vuelta más rápida de {driver} en la {session}, {circuit}, dibujada como una cordillera: cada pico es una recta, cada valle una curva. La velocidad va de {min} a {max} km/h.",
+        "label": "{session} · tandas largas",
+        "title": "Las tandas largas en {place}, neumático por neumático",
+        "compound": "{compound, select, SOFT {Blando} MEDIUM {Medio} HARD {Duro} other {{compound}}}",
+        "laps": "{laps} vueltas",
+        "lapsDeleted": "{laps} vueltas · {deleted} borradas",
+        "deg": "{deg} s/vuelta",
+        "note": "Vuelta promedio de cada tanda de al menos {minLaps} vueltas con bandera verde, sin vueltas de entrada ni de salida de boxes ni vueltas más de un {pct}% más lentas que la mediana de la tanda. Se mantienen las vueltas borradas por límites de pista. Las cargas de combustible no se publican: compara dentro de un mismo neumático, no entre neumáticos, y léelo como práctica, no como pronóstico de carrera.",
+        "source": "Cronometraje de FastF1 (cronometraje oficial de la F1) · {session} · s/vuelta = pendiente por mínimos cuadrados según la edad del neumático"
+      },
       "tiles": {
         "editionsLabel": "{circuit} en la F1",
         "editionsText": "Grandes Premios corridos aquí desde {year}",
