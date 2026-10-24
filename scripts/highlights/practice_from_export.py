@@ -14,6 +14,8 @@ F1 timing API. Writes only:
   - fastestLap: the session's fastest valid lap, speed trace (140 samples evenly spaced by distance)
                 and top/min speed from the unresampled telemetry
   - trackMap:   that lap's own X/Y positions (circuit rotation from the export), speed per point
+  - elevation:  that lap's height profile from the Z position (only when the export has a Z column),
+                in metres above the lap's lowest point, with the corners placed by distance
   - longRuns:   every long run in the session (method below), one row per run
 
 Long runs, descriptive only (fuel loads are not published, so these are not race-pace predictions):
@@ -39,6 +41,7 @@ import numpy as np
 SAMPLES = 140
 MAP_SAMPLES = 260
 MAP_SIZE = 1000
+ELEVATION_SAMPLES = 200
 MIN_RUN_LAPS = 5
 SLOW_LAP_FACTOR = 1.03
 REPO = Path(__file__).resolve().parents[2]
@@ -124,6 +127,33 @@ def track_map(lap: dict, tel: list[dict], rotation: float, label: str) -> dict |
     }
 
 
+def elevation(lap: dict, tel: list[dict], corners: list[dict], label: str) -> dict | None:
+    if not tel or "Z" not in tel[0]:
+        return None
+    rows = [r for r in tel if num(r["Z"]) is not None and num(r["Distance"]) is not None]
+    if len(rows) < len(tel) * 0.95:
+        return None
+    dist = np.array([num(r["Distance"]) for r in rows])
+    # FastF1 positions are in 1/10 m; the absolute Z has no published datum, so heights are relative.
+    z = np.array([num(r["Z"]) for r in rows]) / 10
+    grid = np.linspace(dist.min(), dist.max(), ELEVATION_SAMPLES)
+    height = np.interp(grid, dist, z) - z.min()
+    length = float(dist.max())
+    return {
+        "driver": lap["Driver"],
+        "lapLength": int(round(length)),
+        "heightM": [round(float(v), 1) for v in height],
+        "corners": [
+            {"number": f"{c['Number']}{c.get('Letter') or ''}", "distance": int(round(num(c["Distance"])))}
+            for c in corners
+            if num(c.get("Distance")) is not None and 0 <= num(c["Distance"]) <= length
+        ],
+        "source": f"FastF1 position data (official F1 timing API), {label}, {lap['Driver']} fastest lap; Z in metres above "
+                  f"the lap's lowest point, {ELEVATION_SAMPLES} samples evenly spaced by distance; corners from FastF1 "
+                  f"circuit info",
+    }
+
+
 def long_runs(laps: list[dict], colours: dict[str, str | None], label: str) -> dict:
     stints: dict[tuple[str, str], list[dict]] = {}
     for l in laps:
@@ -182,6 +212,7 @@ def main() -> None:
     results = read(args.dir / "results.csv")
     tel_all = read(args.dir / "fastest_lap_telemetry.csv")
     rotation = float((args.dir / "circuit_rotation.txt").read_text().strip() or 0)
+    corners = read(args.dir / "corners.csv") if (args.dir / "corners.csv").exists() else []
 
     out: dict = {"year": args.year, "round": args.round_num, "event": args.event, "session": args.session}
     best = fastest(laps)
@@ -192,6 +223,9 @@ def main() -> None:
             track = track_map(best, tel, rotation, label)
             if track:
                 out["trackMap"] = track
+            profile = elevation(best, tel, corners, label)
+            if profile:
+                out["elevation"] = profile
     runs = long_runs(laps, team_colours(results), label)
     if runs["runs"]:
         out["longRuns"] = runs

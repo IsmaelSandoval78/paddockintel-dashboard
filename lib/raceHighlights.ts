@@ -9,6 +9,7 @@
 import r2025_19 from '@/content/race-highlights/2025-19.json';
 import r2026_17 from '@/content/race-highlights/2026-17.json';
 import p2026_18_fp2 from '@/content/race-highlights/2026-18-fp2.json';
+import p2026_18_fp3 from '@/content/race-highlights/2026-18-fp3.json';
 
 export type PoleLap = {
   driver: string;
@@ -124,6 +125,15 @@ export type LongRun = {
   tyreLife: [number, number];
 };
 
+// Height of one lap in metres above its own lowest point (FastF1 Z), evenly spaced by distance.
+export type ElevationProfile = {
+  driver: string;
+  lapLength: number;
+  heightM: number[];
+  corners: Array<{ number: string; distance: number }>;
+  source: string;
+};
+
 export type PracticeHighlights = {
   year: number;
   round: number;
@@ -131,17 +141,24 @@ export type PracticeHighlights = {
   session: 'FP1' | 'FP2' | 'FP3';
   fastestLap?: PracticeFastestLap;
   trackMap?: TrackMap;
+  elevation?: ElevationProfile;
   longRuns?: { runs: LongRun[]; minLaps: number; slowLapPct: number; source: string };
 };
 
 // One race's practice files, in session order.
 const PRACTICE: Record<string, PracticeHighlights[]> = {
-  '2026-18': [p2026_18_fp2 as unknown as PracticeHighlights],
+  '2026-18': [p2026_18_fp2 as unknown as PracticeHighlights, p2026_18_fp3 as unknown as PracticeHighlights],
 };
 
 /** The race's latest practice session with a file, or null. */
 export function getLatestPracticeFor(year: number, round: number): PracticeHighlights | null {
   return PRACTICE[`${year}-${round}`]?.at(-1) ?? null;
+}
+
+/** The race's practice session with the most long runs: the one teams used for race simulations. */
+export function getLongRunPracticeFor(year: number, round: number): PracticeHighlights | null {
+  const sessions = (PRACTICE[`${year}-${round}`] ?? []).filter((s) => s.longRuns?.runs.length);
+  return sessions.reduce<PracticeHighlights | null>((best, s) => (!best || s.longRuns!.runs.length > best.longRuns!.runs.length ? s : best), null);
 }
 
 // FastF1 team names -> Supabase constructor_ref, for the team colour tokens.

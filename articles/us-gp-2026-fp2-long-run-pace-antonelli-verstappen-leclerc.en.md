@@ -51,13 +51,15 @@ sources:
     url: "https://hub.paddockintel.com/season/2026/"
 ---
 
+*Correction, October 24, 2026: an earlier version said 91 of 589 timed laps were deleted. 589 is every lap recorded in the session; 448 of them set a lap time, so 91 of 448 were deleted.*
+
 ## What Happened
 
 Charles Leclerc topped second practice for the United States Grand Prix with a 1:35.291 on soft tyres, 0.042s ahead of Kimi Antonelli and 0.189s ahead of Max Verstappen, according to the official timing. The three best laps were set on different parts of the lap: Verstappen had the quickest first sector of the three, Antonelli the quickest second sector, 0.374s faster than Leclerc, and Leclerc the quickest third sector. Lewis Hamilton was fourth, 0.615s back, and George Russell fifth on mediums.
 
 The one-lap order is not the useful part of FP2. The session is where teams run their race simulations, and PaddockIntel analysed every lap of it with FastF1, which reads the official F1 timing feed. **Verstappen averaged 1:41.481 over 11 laps on soft tyres and Leclerc 1:41.508 over 13: a gap of 0.027s.** Antonelli ran the medium tyre, a harder compound, and averaged 1:41.704 over 10 laps, 0.22s off Verstappen's soft run, with the lowest tyre wear of the leading runs.
 
-Conditions were dry, with the track temperature peaking at 43.2°C. Of 589 laps timed, 91 were deleted for track limits, most of them at Turns 12 and 20.
+Conditions were dry, with the track temperature peaking at 43.2°C. Of 448 timed laps, 91 were deleted for track limits, most of them at Turns 12 and 20.
 
 ## Why It Happened
 

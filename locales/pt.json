@@ -1477,6 +1477,18 @@
         "note": "Volta média de cada stint de pelo menos {minLaps} voltas com bandeira verde, sem voltas de entrada e saída dos boxes nem voltas mais de {pct}% mais lentas que a mediana do stint. As voltas apagadas por limites de pista são mantidas. As cargas de combustível não são divulgadas: compare dentro de um mesmo pneu, não entre pneus, e leia como treino, não como previsão de corrida.",
         "source": "Cronometragem do FastF1 (cronometragem oficial da F1) · {session} · s/volta = inclinação por mínimos quadrados conforme a idade do pneu"
       },
+      "elevation": {
+        "label": "{session} · altimetria",
+        "title": "As subidas reais de {place}: {range} m de desnível",
+        "sub": "Altura acima do ponto mais baixo da volta, com a volta mais rápida de {driver} no {session}",
+        "subTop": "Altura acima do ponto mais baixo da volta, com a volta mais rápida de {driver} no {session} · a curva {corner} é o ponto mais alto",
+        "aria": "Perfil de altimetria de {circuit} com a volta mais rápida de {driver} no {session}: {range} m entre o ponto mais baixo e o mais alto, com cada curva marcada.",
+        "source": "Dados de posição do FastF1 (cronometragem oficial da F1) · {session} · curvas segundo as informações de circuito do FastF1",
+        "kmTick": "{n} km",
+        "mTick": "{n} m",
+        "cornerTag": "T{n}",
+        "tip": "{km} km · {m} m"
+      },
       "tiles": {
         "editionsLabel": "{circuit} na F1",
         "editionsText": "Grandes Prêmios disputados aqui desde {year}",

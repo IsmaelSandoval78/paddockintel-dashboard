@@ -1486,6 +1486,18 @@
         "note": "Vuelta promedio de cada tanda de al menos {minLaps} vueltas con bandera verde, sin vueltas de entrada ni de salida de boxes ni vueltas más de un {pct}% más lentas que la mediana de la tanda. Se mantienen las vueltas borradas por límites de pista. Las cargas de combustible no se publican: compara dentro de un mismo neumático, no entre neumáticos, y léelo como práctica, no como pronóstico de carrera.",
         "source": "Cronometraje de FastF1 (cronometraje oficial de la F1) · {session} · s/vuelta = pendiente por mínimos cuadrados según la edad del neumático"
       },
+      "elevation": {
+        "label": "{session} · altimetría",
+        "title": "Las subidas reales de {place}: {range} m de desnivel",
+        "sub": "Altura sobre el punto más bajo de la vuelta, con la vuelta más rápida de {driver} en la {session}",
+        "subTop": "Altura sobre el punto más bajo de la vuelta, con la vuelta más rápida de {driver} en la {session} · la curva {corner} es el punto más alto",
+        "aria": "Perfil de altimetría de {circuit} con la vuelta más rápida de {driver} en la {session}: {range} m entre el punto más bajo y el más alto, con cada curva marcada.",
+        "source": "Datos de posición de FastF1 (cronometraje oficial de la F1) · {session} · curvas según la información de circuito de FastF1",
+        "kmTick": "{n} km",
+        "mTick": "{n} m",
+        "cornerTag": "T{n}",
+        "tip": "{km} km · {m} m"
+      },
       "tiles": {
         "editionsLabel": "{circuit} en la F1",
         "editionsText": "Grandes Premios corridos aquí desde {year}",

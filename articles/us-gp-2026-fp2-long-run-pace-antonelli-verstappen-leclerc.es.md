@@ -51,13 +51,15 @@ sources:
     url: "https://hub.paddockintel.com/season/2026/"
 ---
 
+*Corrección, 24 de octubre de 2026: una versión anterior decía que se borraron 91 de 589 vueltas cronometradas. 589 son todas las vueltas registradas en la sesión; 448 de ellas tuvieron un tiempo de vuelta, así que se borraron 91 de 448.*
+
 ## What Happened
 
 Charles Leclerc fue el más rápido de la segunda práctica del Gran Premio de Estados Unidos con 1:35.291 con neumáticos blandos, 0,042 s por delante de Kimi Antonelli y 0,189 s por delante de Max Verstappen, según el cronometraje oficial. Las tres mejores vueltas se construyeron en partes distintas del circuito: Verstappen tuvo el primer sector más rápido de los tres, Antonelli el segundo, 0,374 s más rápido que Leclerc, y Leclerc el tercero. Lewis Hamilton fue cuarto, a 0,615 s, y George Russell quinto con medios.
 
 El orden a una vuelta no es lo más útil de la FP2. En esa sesión los equipos hacen sus simulaciones de carrera, y PaddockIntel analizó cada una de sus vueltas con FastF1, que lee el canal oficial de cronometraje de la F1. **Verstappen promedió 1:41.481 en 11 vueltas con blandos y Leclerc 1:41.508 en 13: una diferencia de 0,027 s.** Antonelli usó el medio, un compuesto más duro, y promedió 1:41.704 en 10 vueltas, 0,22 s más lento que la tanda de Verstappen con blandos, con el menor desgaste de las tandas de punta.
 
-La pista estuvo seca y su temperatura llegó a 43,2 °C. De 589 vueltas cronometradas, 91 se borraron por límites de pista, la mayoría en las curvas 12 y 20.
+La pista estuvo seca y su temperatura llegó a 43,2 °C. De 448 vueltas cronometradas, 91 se borraron por límites de pista, la mayoría en las curvas 12 y 20.
 
 ## Why It Happened
 
