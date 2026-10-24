@@ -310,7 +310,7 @@ export default async function MagazineHomePage({
       value: s.value,
       label: s.label,
       context: s.unit ?? null,
-      href: `/${featured?.slug}`,
+      href: `/${featured?.slug}/`,
       linkLabel: t('insights.read'),
     })),
     ...recent
@@ -318,7 +318,7 @@ export default async function MagazineHomePage({
       .flatMap((a) => {
         const s = ((a.stats as Stat[] | undefined) ?? [])[0];
         return s
-          ? [{ key: `r-${a.slug}`, chip: topicTag(a.tags) ?? t('latest.tagOwn'), value: s.value, label: s.label, context: s.unit ?? null, href: `/${a.slug}`, linkLabel: t('insights.read') }]
+          ? [{ key: `r-${a.slug}`, chip: topicTag(a.tags) ?? t('latest.tagOwn'), value: s.value, label: s.label, context: s.unit ?? null, href: `/${a.slug}/`, linkLabel: t('insights.read') }]
           : [];
       }),
   ];
@@ -364,7 +364,7 @@ export default async function MagazineHomePage({
     ...feedItems.map((f) => ({
       key: `feed-${f.id}`,
       title: f.headline,
-      href: f.slug ? `/feed/${f.slug}` : '/feed',
+      href: f.slug ? `/feed/${f.slug}/` : '/feed/',
       meta: `${f.source_name} · ${shortDate(new Date(f.published_at))}`,
       tag: t('latest.tagFeed'),
       own: false,
@@ -373,7 +373,7 @@ export default async function MagazineHomePage({
     ...recent.slice(0, 4).map((a) => ({
       key: `article-${a.slug}`,
       title: a.title,
-      href: `/${a.slug}`,
+      href: `/${a.slug}/`,
       meta: `${t('latest.ownSource')} · ${a.published_at ? shortDate(new Date(a.published_at)) : ''}`,
       tag: t('latest.tagOwn'),
       own: true,
