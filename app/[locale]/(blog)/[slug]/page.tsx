@@ -56,7 +56,7 @@ async function getArticle(locale: string, slug: string, isDraft: boolean) {
   let query = supabase
     .from('articles')
     .select(
-      'id, title, meta_description, body_markdown, published_at, translation_group_id, paywalled, cover_image_url, stats, faq_items, sources, charts, race_id'
+      'id, title, meta_description, body_markdown, published_at, updated_at, translation_group_id, paywalled, cover_image_url, stats, faq_items, sources, charts, race_id'
     )
     .eq('locale', locale)
     .eq('slug', slug);
@@ -132,6 +132,10 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
   const title       = article.title as string;
   const dek         = (article.meta_description as string | null) ?? null;
   const publishedAt = article.published_at as string;
+  // updated_at is stamped by every ingest, so it can sit a few seconds before a published_at
+  // set in frontmatter; dateModified never goes earlier than the publish date.
+  const updatedAt   = article.updated_at as string | null;
+  const modifiedAt  = updatedAt && Date.parse(updatedAt) > Date.parse(publishedAt) ? updatedAt : publishedAt;
   const raceId      = (article.race_id as number | null) ?? null;
   const allStats    = (article.stats as Stat[]) ?? [];
   const allFaqItems = (article.faq_items as FAQ[]) ?? [];
@@ -209,6 +213,7 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
     '@type': 'NewsArticle',
     headline: title,
     datePublished: publishedAt,
+    dateModified: modifiedAt,
     image: (article.cover_image_url as string | null) ?? `${SITE_URL}/api/og/article/${locale}/${slug}`,
     author: { '@type': 'Person', name: 'Ismael Sandoval', url: `${SITE_URL}/about/` },
     publisher: {
