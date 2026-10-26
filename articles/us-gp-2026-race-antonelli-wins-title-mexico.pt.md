@@ -34,9 +34,13 @@ faq:
   - q: "Quando é o GP da Cidade do México de 2026?"
     a: "O GP da Cidade do México é no domingo, 1º de novembro de 2026, com largada às 20:00 UTC. Se Antonelli garantir o título lá, será o campeão mundial mais jovem da F1, com 20 anos e 68 dias."
   - q: "Por que George Russell foi punido no GP dos Estados Unidos de 2026?"
-    a: "Os comissários deram a Russell uma punição de cinco segundos por sair da pista e ganhar vantagem na curva 13 da primeira volta, quando defendia o sexto lugar de Oscar Piastri e Lando Norris. Ele terminou em oitavo."
+    a: "Os comissários deram a Russell uma punição de cinco segundos por sair da pista na curva 12 da primeira volta, quando se defendia de Oscar Piastri, e voltar à frente dele com uma vantagem duradoura. A punição normal é de dez segundos; eles a reduziram à metade por ser um incidente de primeira volta. Ele terminou em oitavo."
 
 sources:
+  - name: "Comissários da FIA — Documento 53, infração do carro 63, sair da pista e ganhar vantagem (25 de outubro de 2026)"
+    url: "https://www.fia.com/system/files/decision-document/2026_united_states_grand_prix_-_infringement_-_car_63_-_leaving_the_track_and_gaining_an_advantage.pdf"
+  - name: "FIA — Documento 54, classificação provisória da corrida (25 de outubro de 2026)"
+    url: "https://www.fia.com/system/files/decision-document/2026_united_states_grand_prix_-_provisional_race_classification.pdf"
   - name: "FastF1 — pacote Python para os dados de cronometragem da F1 (API oficial de cronometragem ao vivo), dados da corrida do GP dos Estados Unidos de 2026, incluindo as mensagens da direção de prova da FIA"
     url: "https://docs.fastf1.dev/"
   - name: "Motorsport-Total — Kimi Antonelli gewinnt in Austin: Jetzt fehlen nur noch zwei Punkte! (25 de outubro de 2026)"
@@ -59,7 +63,7 @@ sources:
     url: "https://hub.paddockintel.com/pt/season/2026/"
 ---
 
-*Correção, 26 de outubro de 2026: uma versão anterior dizia que Antonelli cedeu a liderança a Leclerc por um momento durante as paradas; foi Verstappen quem liderou da volta 25 à 31. Também situava a punição de Russell na curva 12; a decisão dos comissários cita a curva 13. A vantagem após a primeira volta, antes 2,2 segundos segundo o Motorsport.com, agora vem da cronometragem oficial, da qual também foi acrescentada a margem de vitória.*
+*Correção, 26 de outubro de 2026: uma versão anterior dizia que Antonelli cedeu a liderança a Leclerc por um momento durante as paradas; foi Verstappen quem liderou da volta 25 à 31. A vantagem após a primeira volta, antes 2,2 segundos segundo o Motorsport.com, agora vem da cronometragem oficial, e a margem de vitória foi acrescentada a partir da classificação da FIA. A punição de Russell agora é descrita a partir da decisão dos comissários, o Documento 53, que a situa na curva 12; durante alguns minutos de 26 de outubro este artigo a transferiu por engano para a curva 13, com base numa mensagem da direção de prova.*
 
 ## What Happened
 
@@ -71,7 +75,7 @@ A conta para o próximo domingo é simples. Pelo cálculo do PaddockIntel com a 
 
 Antonelli fez sua parte desde os primeiros metros. Largou com pneus médios, com Verstappen ao lado no composto mais macio, manteve a liderança na curva 1 e fechou a primeira volta com 2,4 segundos de vantagem na cronometragem oficial, enquanto Leclerc e Verstappen trocavam de posição atrás. A Red Bull se mexeu primeiro, com uma estratégia de duas paradas para Verstappen. A Mercedes esticou o primeiro stint de Antonelli, colocou pneus duros na volta 25 e apostou numa só parada. Essa parada o deixou em terceiro, atrás de Verstappen e Leclerc, e na volta 32, enquanto Verstappen fazia sua segunda parada, ele passou Leclerc e retomou a liderança de vez. Liderou 49 das 56 voltas e venceu por 13,078 segundos. Leclerc tirou o segundo lugar de Verstappen na volta 49 e fez a volta mais rápida, 1:37.976 com pneus duros novos.
 
-O título se decidiu mais atrás. Russell largou em sexto e, na primeira volta, abriu entre as curvas 12 e 13 enquanto segurava as McLaren de Oscar Piastri e Norris. Os comissários deram a ele uma punição de cinco segundos por sair da pista e ganhar vantagem na curva 13, cumprida em sua única parada, na volta 22. Ele terminou em oitavo, 1,6 segundo atrás de Piastri: uma posição acima da linha que teria coroado o companheiro. Hamilton, que na volta 12 disse à equipe que tinha dificuldade para fazer o carro virar, passou Norris na curva 1 na reta final e terminou em quarto, um resultado que sozinho manteve o título aberto.
+O título se decidiu mais atrás. Russell largou em sexto e, na primeira volta, defendendo-se de Oscar Piastri na chegada à curva 12, saiu da pista e voltou à frente dele antes da curva 13. A punição normal para isso é de dez segundos; os comissários a reduziram para cinco porque foi um incidente de primeira volta e porque o ataque anterior de Russell a Hadjar tinha colocado Piastri em posição de ataque. Ele a cumpriu em sua única parada, na volta 22. Ele terminou em oitavo, 1,6 segundo atrás de Piastri: uma posição acima da linha que teria coroado o companheiro. Hamilton, que na volta 12 disse à equipe que tinha dificuldade para fazer o carro virar, passou Norris na curva 1 na reta final e terminou em quarto, um resultado que sozinho manteve o título aberto.
 
 ## Economic Impact
 
