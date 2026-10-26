@@ -14,8 +14,8 @@ F1DB staging schema (step 2 of docs/PLAN-2026-10-26-f1db-migration.md).
 The dump is F1DB's PostgreSQL release asset (f1db-sql-postgresql.zip). Every statement it runs is
 rewritten to name schema f1db explicitly, and its DROP statements are discarded, so nothing
 outside f1db can be created, changed or dropped. `load` empties the f1db tables first, so it can
-be re-run, sends the inserts in chunks through `supabase db query` (Management API: needs
-SUPABASE_ACCESS_TOKEN; --db-url rehearses on any other Postgres), and then checks every table's row count against the dump.
+be re-run, sends the inserts in chunks through the Supabase Management API (needs SUPABASE_ACCESS_TOKEN;
+--db-url rehearses on any other Postgres through `supabase db query`), and then checks every table's row count against the dump.
 """
 
 import argparse
@@ -25,6 +25,8 @@ import re
 import subprocess
 import sys
 import tempfile
+import urllib.error
+import urllib.request
 from collections import Counter, OrderedDict
 from pathlib import Path
 
@@ -95,7 +97,22 @@ grant select on all tables in schema {SCHEMA} to service_role;
     print(f"wrote {args.out} ({len(tables)} tables, {len(CREATE_VIEW.findall(ddl))} views)")
 
 
-def run_sql(sql: str, target: list[str]) -> str:
+def run_sql(sql: str, target: list[str] | None) -> str:
+    # target None: the Supabase Management API (POST /v1/projects/{ref}/database/query), which
+    # needs only SUPABASE_ACCESS_TOKEN over HTTPS. `supabase db query --linked` opens a direct
+    # Postgres connection (port 5432) instead, which cloud sessions can't reach.
+    if target is None:
+        req = urllib.request.Request(
+            f"https://api.supabase.com/v1/projects/{PROJECT_REF}/database/query",
+            data=json.dumps({"query": sql}).encode(),
+            headers={"Authorization": f"Bearer {os.environ['SUPABASE_ACCESS_TOKEN']}", "Content-Type": "application/json"},
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=600) as resp:
+                return json.dumps({"rows": json.loads(resp.read() or b"[]")})
+        except urllib.error.HTTPError as exc:
+            sys.exit(f"Management API query failed: HTTP {exc.code}\n{exc.read()[:2000].decode(errors='replace')}")
     with tempfile.NamedTemporaryFile("w", suffix=".sql", delete=False, encoding="utf-8") as fh:
         fh.write(sql)
         path = fh.name
@@ -145,7 +162,7 @@ def cmd_load(args) -> None:
     if args.dry_run:
         return
 
-    target = ["--db-url", args.db_url] if args.db_url else ["--project-ref", PROJECT_REF]
+    target = ["--db-url", args.db_url] if args.db_url else None
     truncate = "TRUNCATE " + ", ".join(f'{SCHEMA}."{t}"' for t in tables) + ";"
     run_sql(truncate, target)
     for i, chunk in enumerate(chunks, 1):
