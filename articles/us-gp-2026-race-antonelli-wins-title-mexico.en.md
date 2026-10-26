@@ -75,7 +75,11 @@ The arithmetic for next Sunday is simple. PaddockIntel's count from the standing
 
 Antonelli did his part from the first metres. Starting on the medium tyre, with Verstappen alongside on the softer compound, he kept the lead at Turn 1 and was 2.4 seconds clear after one lap in the official timing, while Leclerc and Verstappen swapped places behind. Red Bull moved first with a two-stop plan for Verstappen. Mercedes kept Antonelli out for a long first stint, fitted hard tyres on lap 25 and committed to one stop. That stop dropped him to third, behind Verstappen and Leclerc, and on lap 32, as Verstappen made his second stop, he passed Leclerc to take the lead back for good. He led 49 of the 56 laps and won by 13.078 seconds. Leclerc took second from Verstappen on lap 49 and set the fastest lap, 1:37.976 on fresh hard tyres.
 
+[[figure:race-story]]
+
 The title was decided further back. Russell started sixth and, on the opening lap, defending from Oscar Piastri into Turn 12, left the track and rejoined ahead of him before Turn 13. The stewards' normal penalty for that is ten seconds; they cut it to five because it was a first-lap incident and because Russell's earlier attack on Hadjar had put Piastri in the attacking position. He served it at his only stop, on lap 22. He finished eighth, 1.6 seconds behind Piastri: one place above the line that would have crowned his teammate. Hamilton, who told his team on lap 12 that he was struggling to turn the car, passed Norris into Turn 1 late in the race for fourth, a result that on its own kept the title open.
+
+[[figure:grid-to-flag]]
 
 ## Economic Impact
 

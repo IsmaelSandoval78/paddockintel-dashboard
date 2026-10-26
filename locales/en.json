@@ -1396,7 +1396,7 @@
       "lap": "L{lap}",
       "pit": "{driver} pits",
       "pitVsc": "{driver} pits under VSC",
-      "tip": "Lap {lap} · {driver} +{gap}s",
+      "tip": "Lap {lap} · {driver} {gap}s",
       "ariaGap": "{leader}'s lead over {chaser} lap by lap, {gap}s at the flag",
       "ariaOrder": "Running order of the top {n} finishers lap by lap",
       "source": "FastF1 lap timing · official classification"

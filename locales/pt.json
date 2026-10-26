@@ -1391,7 +1391,7 @@
       "lap": "V{lap}",
       "pit": "{driver} para",
       "pitVsc": "{driver} para sob VSC",
-      "tip": "Volta {lap} · {driver} +{gap}s",
+      "tip": "Volta {lap} · {driver} {gap}s",
       "ariaGap": "Vantagem de {leader} sobre {chaser} volta a volta, {gap}s na bandeirada",
       "ariaOrder": "Ordem de corrida dos {n} primeiros, volta a volta",
       "source": "Tempos por volta do FastF1 · classificação oficial"

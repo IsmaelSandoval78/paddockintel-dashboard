@@ -75,7 +75,11 @@ La cuenta para el próximo domingo es sencilla. Según el cálculo de PaddockInt
 
 Antonelli hizo su parte desde los primeros metros. Salió con neumáticos medios, con Verstappen a su lado con el compuesto más blando, conservó el liderato en la curva 1 y completó la primera vuelta con 2,4 segundos de ventaja en el cronometraje oficial, mientras Leclerc y Verstappen intercambiaban posiciones por detrás. Red Bull movió primero con una estrategia a dos paradas para Verstappen. Mercedes alargó el primer relevo de Antonelli, le montó duros en la vuelta 25 y apostó por una sola parada. Esa parada lo dejó tercero, detrás de Verstappen y Leclerc, y en la vuelta 32, mientras Verstappen hacía su segunda parada, superó a Leclerc y recuperó el liderato para no soltarlo. Lideró 49 de las 56 vueltas y ganó por 13,078 segundos. Leclerc le quitó el segundo puesto a Verstappen en la vuelta 49 y marcó la vuelta rápida, 1:37.976 con duros nuevos.
 
+[[figure:race-story]]
+
 El título se definió más atrás. Russell salió sexto y, en la primera vuelta, mientras se defendía de Oscar Piastri en la llegada a la curva 12, se salió de la pista y volvió por delante de él antes de la curva 13. La sanción normal por eso es de diez segundos; los comisarios la redujeron a cinco porque fue un incidente de primera vuelta y porque el ataque previo de Russell sobre Hadjar había puesto a Piastri en posición de atacar. La cumplió en su única parada, en la vuelta 22. Terminó octavo, a 1,6 segundos de Piastri: un puesto por encima de la línea que habría coronado a su compañero. Hamilton, que en la vuelta 12 le dijo a su equipo que le costaba hacer girar el auto, superó a Norris en la curva 1 en el tramo final y terminó cuarto, un resultado que por sí solo mantuvo abierto el título.
+
+[[figure:grid-to-flag]]
 
 ## Economic Impact
 

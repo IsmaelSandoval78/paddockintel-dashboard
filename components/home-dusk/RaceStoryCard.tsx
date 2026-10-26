@@ -42,6 +42,8 @@ const R = 72;
 const T = 18;
 const B = 34;
 const fill = (s: string, v: Record<string, string | number>) => s.replace(/\{(\w+)\}/g, (_, k: string) => String(v[k] ?? ''));
+// The winner can trail P2 for a few laps around the stops (Austin 2026: laps 25-31), so gaps are signed.
+const signed = (v: number, digits: number) => `${v < 0 ? '\u2212' : '+'}${Math.abs(v).toFixed(digits)}`;
 
 function runs(laps: number[]): Array<[number, number]> {
   const out: Array<[number, number]> = [];
@@ -78,16 +80,18 @@ export default function RaceStoryCard({ trace, labels, mover, className = '' }: 
   function gapChart() {
     if (!gap) return null;
     const g = gap.seconds;
-    const top = Math.max(...g);
-    const step = top <= 12 ? 2 : 10;
-    const gmax = Math.ceil(top / step) * step;
-    const y = (v: number) => T + (1 - v / gmax) * (H - T - B);
+    const lo = Math.min(0, ...g);
+    const hi = Math.max(0, ...g);
+    const step = hi - lo <= 12 ? 2 : 10;
+    const gmin = Math.floor(lo / step) * step;
+    const gmax = Math.ceil(hi / step) * step;
+    const y = (v: number) => T + ((gmax - v) / (gmax - gmin)) * (H - T - B);
     const pts = g.map((v, i) => `${x(i + 1).toFixed(1)},${y(v).toFixed(1)}`);
     const pitNotes = trace.drivers
       .filter((d) => d.driver === gap.leader || d.driver === gap.chaser)
       .flatMap((d) => d.pitLaps.map((lap) => ({ driver: d.driver, lap, leader: d.driver === gap.leader })))
       .filter((p) => p.lap >= 1 && p.lap <= n);
-    const ticks = Array.from({ length: gmax / step + 1 }, (_, i) => i * step);
+    const ticks = Array.from({ length: (gmax - gmin) / step + 1 }, (_, i) => gmin + i * step);
 
     function onMove(e: PointerEvent<SVGRectElement>) {
       const box = e.currentTarget.ownerSVGElement?.getBoundingClientRect();
@@ -107,7 +111,7 @@ export default function RaceStoryCard({ trace, labels, mover, className = '' }: 
         {ticks.map((v) => (
           <g key={`g-${v}`}>
             <line x1={L} x2={W - R} y1={y(v)} y2={y(v)} stroke="var(--dusk-line)" strokeDasharray={v ? '3 5' : undefined} />
-            <text x={L - 8} y={y(v) + 4} textAnchor="end" fontSize="10.5" fill="var(--dusk-muted)">{v ? `+${v}s` : '0'}</text>
+            <text x={L - 8} y={y(v) + 4} textAnchor="end" fontSize="10.5" fill="var(--dusk-muted)">{v ? `${signed(v, 0)}s` : '0'}</text>
           </g>
         ))}
         {bands(T, H - B)}
@@ -133,7 +137,7 @@ export default function RaceStoryCard({ trace, labels, mover, className = '' }: 
           );
         })}
         <circle cx={x(n)} cy={y(g[n - 1])} r="5" fill="var(--dusk-warm)" className="dusk-glow-warm" />
-        <text x={x(n) + 10} y={y(g[n - 1]) + 4} fontSize="12" fontWeight="500" fill="var(--dusk-ink)">+{g[n - 1].toFixed(3)}s</text>
+        <text x={x(n) + 10} y={y(g[n - 1]) + 4} fontSize="12" fontWeight="500" fill="var(--dusk-ink)">{signed(g[n - 1], 3)}s</text>
         {axis}
         {hover !== null && (
           <g pointerEvents="none">
@@ -142,7 +146,7 @@ export default function RaceStoryCard({ trace, labels, mover, className = '' }: 
             <g transform={`translate(${Math.min(Math.max(x(hover), L + 70), W - R - 70)},${Math.max(y(g[hover - 1]) - 18, T + 14)})`}>
               <rect x="-82" y="-16" width="164" height="24" rx="8" fill="rgba(14,13,18,.94)" stroke="var(--dusk-line)" />
               <text x="0" y="0" textAnchor="middle" fontSize="11.5" fill="var(--dusk-ink)">
-                {fill(labels.tip, { lap: hover, driver: gap.leader, gap: g[hover - 1].toFixed(3) })}
+                {fill(labels.tip, { lap: hover, driver: gap.leader, gap: signed(g[hover - 1], 3) })}
               </text>
             </g>
           </g>
