@@ -357,6 +357,18 @@ def main() -> None:
             except Exception:
                 pass
 
+            # Pit-lane starters: FastF1's GridPosition can carry the slot the car left empty
+            # (Austin 2026: Stroll came through as 22), while results keep the Ergast convention
+            # of grid 0. A pit-lane starter's first lap is an out-lap, so lap 1 has a PitOutTime.
+            pit_lane_starters: set[str] = set()
+            try:
+                first_laps = race_session.laps[race_session.laps["LapNumber"] == 1]
+                pit_lane_starters = {str(d) for d in first_laps[first_laps["PitOutTime"].notna()]["Driver"]}
+                for code in sorted(pit_lane_starters):
+                    print(f"  {code} started from the pit lane (grid 0)")
+            except Exception:
+                print("  WARN: lap data unavailable, pit-lane starters not checked (grid = FastF1 GridPosition)")
+
             result_rows: list[dict] = []
             if args.skip_results:
                 print("  (--skip-results: classification/points not synced yet, skipping results table)")
@@ -379,7 +391,7 @@ def main() -> None:
                         "race_id": race_id,
                         "driver_id": driver["id"],
                         "constructor_id": constructor["id"],
-                        "grid": safe_int(row.get("GridPosition")),
+                        "grid": 0 if row.get("Abbreviation") in pit_lane_starters else safe_int(row.get("GridPosition")),
                         "position": c["position"],
                         "position_text": c["position_text"],
                         "position_order": pos_order,
