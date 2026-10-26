@@ -1400,7 +1400,7 @@
       "lap": "V{lap}",
       "pit": "{driver} para",
       "pitVsc": "{driver} para con VSC",
-      "tip": "Vuelta {lap} · {driver} +{gap}s",
+      "tip": "Vuelta {lap} · {driver} {gap}s",
       "ariaGap": "Ventaja de {leader} sobre {chaser} vuelta por vuelta, {gap}s en la bandera",
       "ariaOrder": "Orden de carrera de los {n} primeros, vuelta por vuelta",
       "source": "Tiempos por vuelta de FastF1 · clasificación oficial"

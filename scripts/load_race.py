@@ -56,6 +56,7 @@ TEAM_TO_CONSTRUCTOR_REF: dict[str, str] = {
     "Kick Sauber": "sauber",
     "Kick Sauber ORLEN": "sauber",
     "Cadillac": "cadillac",
+    "Cadillac F1 Team": "cadillac",
     "Audi": "audi",
 }
 
