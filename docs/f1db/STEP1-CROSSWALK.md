@@ -64,7 +64,7 @@ ambiguous matches.
    - 2024 Las Vegas: ours 2024-11-23 (local), F1DB 2024-11-24 (UTC).
    - Proposal: keep ours in both cases.
 6. **13 driver dates of birth differ.**
-   - All before 1970 except Sospiri (2 days) and Langes (a year).
+   - All drivers who raced before 1970, except Sospiri (2 days apart) and Langes (a year apart), who raced in the 1990s.
    - Most are Indianapolis 500 drivers, where the sources disagree by exactly one or two years.
    - Not shown on any data card. To settle in step 3.
 7. **Constructor identity changes with the era.**
