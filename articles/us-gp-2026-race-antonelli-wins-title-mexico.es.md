@@ -34,9 +34,11 @@ faq:
   - q: "¿Cuándo es el Gran Premio de la Ciudad de México 2026?"
     a: "El Gran Premio de la Ciudad de México se corre el domingo 1 de noviembre de 2026 y la carrera empieza a las 20:00 UTC. Si Antonelli asegura el título allí, sería el campeón del mundo más joven de la F1, con 20 años y 68 días."
   - q: "¿Por qué sancionaron a George Russell en el GP de Estados Unidos 2026?"
-    a: "Los comisarios le impusieron cinco segundos de sanción por salirse de la pista y ganar ventaja en la curva 12 de la primera vuelta, cuando defendía el sexto puesto de Oscar Piastri y Lando Norris. Terminó octavo."
+    a: "Los comisarios le impusieron cinco segundos de sanción por salirse de la pista y ganar ventaja en la curva 13 de la primera vuelta, cuando defendía el sexto puesto de Oscar Piastri y Lando Norris. Terminó octavo."
 
 sources:
+  - name: "FastF1 — paquete de Python para los datos de cronometraje de la F1 (API oficial de cronometraje en vivo), datos de la carrera del GP de Estados Unidos 2026, incluidos los mensajes de dirección de carrera de la FIA"
+    url: "https://docs.fastf1.dev/"
   - name: "Motorsport-Total — Kimi Antonelli gewinnt in Austin: Jetzt fehlen nur noch zwei Punkte! (25 de octubre de 2026)"
     url: "https://www.motorsport-total.com/formel-1/news/kimi-antonelli-gewinnt-in-austin-jetzt-fehlen-nur-noch-zwei-punkte-26102523"
   - name: "PlanetF1 — United States GP: Antonelli wins but title celebrations on hold (25 de octubre de 2026)"
@@ -57,6 +59,8 @@ sources:
     url: "https://hub.paddockintel.com/es/season/2026/"
 ---
 
+*Corrección, 26 de octubre de 2026: una versión anterior decía que Antonelli cedió por un momento el liderato a Leclerc durante las paradas; fue Verstappen quien lideró de la vuelta 25 a la 31. También situaba la sanción de Russell en la curva 12; la decisión de los comisarios cita la curva 13. La ventaja tras la primera vuelta, antes 2,2 segundos según Motorsport.com, sale ahora del cronometraje oficial, del que también se agregó el margen de victoria.*
+
 ## What Happened
 
 Kimi Antonelli ganó el Gran Premio de Estados Unidos desde la pole, su novena victoria de 2026, pero el título tendrá que esperar a Ciudad de México. Para ser campeón en Austin necesitaba que George Russell terminara noveno o más abajo y Lewis Hamilton quinto o más abajo. Hamilton terminó cuarto y Russell octavo, a un puesto de cada umbral. Charles Leclerc fue segundo con Ferrari tras superar a Max Verstappen en el tramo final, y Verstappen completó el podio, por delante de Hamilton, Lando Norris, Isack Hadjar, Oscar Piastri y Russell; Liam Lawson y Pierre Gasly se llevaron los últimos puntos.
@@ -65,9 +69,9 @@ La cuenta para el próximo domingo es sencilla. Según el cálculo de PaddockInt
 
 ## Why It Happened
 
-Antonelli hizo su parte desde los primeros metros. Salió con neumáticos medios, con Verstappen a su lado con el compuesto más blando, conservó el liderato en la curva 1 y completó la primera vuelta con 2,2 segundos de ventaja, según Motorsport.com, mientras Leclerc y Verstappen intercambiaban posiciones por detrás. Red Bull movió primero con una estrategia a dos paradas para Verstappen. Mercedes alargó el primer relevo de Antonelli, le montó duros en la vuelta 25 y apostó por una sola parada; cedió por un momento el liderato a Leclerc durante las paradas, lo recuperó en pista y ya no lo amenazaron. Leclerc le quitó el segundo puesto a Verstappen en la vuelta 49.
+Antonelli hizo su parte desde los primeros metros. Salió con neumáticos medios, con Verstappen a su lado con el compuesto más blando, conservó el liderato en la curva 1 y completó la primera vuelta con 2,4 segundos de ventaja en el cronometraje oficial, mientras Leclerc y Verstappen intercambiaban posiciones por detrás. Red Bull movió primero con una estrategia a dos paradas para Verstappen. Mercedes alargó el primer relevo de Antonelli, le montó duros en la vuelta 25 y apostó por una sola parada. Esa parada lo dejó tercero, detrás de Verstappen y Leclerc, y en la vuelta 32, mientras Verstappen hacía su segunda parada, superó a Leclerc y recuperó el liderato para no soltarlo. Lideró 49 de las 56 vueltas y ganó por 13,078 segundos. Leclerc le quitó el segundo puesto a Verstappen en la vuelta 49 y marcó la vuelta rápida, 1:37.976 con duros nuevos.
 
-El título se definió más atrás. Russell salió sexto y, en la primera vuelta, se abrió en la curva 12 mientras contenía a los McLaren de Oscar Piastri y Norris. Los comisarios le impusieron cinco segundos de sanción por salirse de la pista y ganar ventaja, y terminó octavo: un puesto por encima de la línea que habría coronado a su compañero. Hamilton, que en la vuelta 12 le dijo a su equipo que le costaba hacer girar el auto, superó a Norris en la curva 1 en el tramo final y terminó cuarto, un resultado que por sí solo mantuvo abierto el título.
+El título se definió más atrás. Russell salió sexto y, en la primera vuelta, se abrió entre las curvas 12 y 13 mientras contenía a los McLaren de Oscar Piastri y Norris. Los comisarios le impusieron cinco segundos de sanción por salirse de la pista y ganar ventaja en la curva 13, que cumplió en su única parada, en la vuelta 22. Terminó octavo, a 1,6 segundos de Piastri: un puesto por encima de la línea que habría coronado a su compañero. Hamilton, que en la vuelta 12 le dijo a su equipo que le costaba hacer girar el auto, superó a Norris en la curva 1 en el tramo final y terminó cuarto, un resultado que por sí solo mantuvo abierto el título.
 
 ## Economic Impact
 
