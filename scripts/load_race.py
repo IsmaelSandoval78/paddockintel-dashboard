@@ -381,6 +381,7 @@ def main() -> None:
                         continue
 
                     c = classification(row, winner_laps, winner_ms, status_map)
+                    grid = 0 if row.get("Abbreviation") in pit_lane_starters else safe_int(row.get("GridPosition"))
 
                     fl_time = td_to_str(best_lap_by_code.get(row.get("Abbreviation")))
                     fl_speed_f = safe_float(row.get("FastestLapSpeed"))
@@ -391,7 +392,10 @@ def main() -> None:
                         "race_id": race_id,
                         "driver_id": driver["id"],
                         "constructor_id": constructor["id"],
-                        "grid": 0 if row.get("Abbreviation") in pit_lane_starters else safe_int(row.get("GridPosition")),
+                        "grid": grid,
+                        # Pole as the official records count it: the car that starts from the front
+                        # of the grid, after grid penalties (supabase/migrations/20261027130000_*).
+                        "pole": grid == 1,
                         "position": c["position"],
                         "position_text": c["position_text"],
                         "position_order": pos_order,
@@ -470,6 +474,11 @@ def main() -> None:
                 print(f"  {len(lap_rows)} lap time rows extracted")
             except Exception as exc:
                 print(f"  WARN: lap time extraction failed — {exc}")
+
+            if result_rows and sum(1 for r in result_rows if r["pole"]) != 1:
+                for r in result_rows:
+                    r["pole"] = False
+                print("  WARN: no single grid-1 starter, pole not set; set results.pole by hand from the official grid")
 
             if not dry_run:
                 if result_rows:
