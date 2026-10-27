@@ -135,7 +135,7 @@ export default async function DriverDetailPage({
       .single(),
     supabase
       .from('results')
-      .select('race_id, constructor_id, position, points, fastest_lap_time, rank, status_id, pole')
+      .select('race_id, constructor_id, position, position_text, points, fastest_lap_time, rank, status_id, pole')
       .eq('driver_id', driver.id)
       .limit(500),
     supabase
@@ -146,6 +146,10 @@ export default async function DriverDetailPage({
 
   const stats = statsRes.data;
   const allResults = resultsRes.data ?? [];
+  // A start, as driver_stats.races counts it: entries that failed to qualify (F), withdrew (W)
+  // or were excluded (E) never took the start.
+  const isStart = (r: { position_text: unknown }) =>
+    r.position_text !== 'F' && r.position_text !== 'W' && r.position_text !== 'E';
   const allQuali = qualiRes.data ?? [];
 
   // Collect race IDs from both results and qualifying
@@ -350,13 +354,19 @@ export default async function DriverDetailPage({
     { starts: number; wins: number; podiums: number; best: number | null; dnfs: number; fl: number }
   >();
 
+  // Starts only, one per race (as driver_stats.races).
+  const startedRaces = new Set<number>();
   for (const r of allResults) {
+    if (!isStart(r)) continue;
     const circuitId = raceCircuitMap.get(r.race_id as number);
     if (!circuitId) continue;
     const pos      = r.position !== null ? Number(r.position) : null;
     const statusId = r.status_id as number | null;
     const cur = circuitStatsMap.get(circuitId) ?? { starts: 0, wins: 0, podiums: 0, best: null, dnfs: 0, fl: 0 };
-    cur.starts += 1;
+    if (!startedRaces.has(r.race_id as number)) {
+      startedRaces.add(r.race_id as number);
+      cur.starts += 1;
+    }
     if (pos === 1) cur.wins += 1;
     if (pos !== null && pos <= 3) cur.podiums += 1;
     if (cur.best === null || (pos !== null && pos < cur.best)) cur.best = pos;
@@ -438,7 +448,7 @@ export default async function DriverDetailPage({
       podiums: 0,
       lastConstructorId: null,
     };
-    cur.races += 1;
+    if (isStart(r)) cur.races += 1;
     if (pos === 1) cur.wins += 1;
     if (pos !== null && pos <= 3) cur.podiums += 1;
     if (isLastRace) cur.lastConstructorId = r.constructor_id as number;
@@ -570,7 +580,7 @@ export default async function DriverDetailPage({
       podiums: 0,
       years: new Set<number>(),
     };
-    cur.races += 1;
+    if (isStart(r)) cur.races += 1;
     if (pos === 1) cur.wins += 1;
     if (pos !== null && pos <= 3) cur.podiums += 1;
     cur.years.add(race.year);
