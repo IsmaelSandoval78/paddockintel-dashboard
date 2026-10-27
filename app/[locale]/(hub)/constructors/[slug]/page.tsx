@@ -210,7 +210,7 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
   ] = await Promise.all([
       supabase
         .from('constructor_stats')
-        .select('races, wins, first_year, last_year, fastest_pit_stop_ms, fastest_pit_stop_race_id')
+        .select('races, wins, first_year, last_year, pole_positions, fastest_pit_stop_ms, fastest_pit_stop_race_id')
         .eq('constructor_id', constructor.id)
         .single(),
       // race_id < 908: 2009 back to 1950 (≤ 838 rows for Ferrari, ≤ 709 for McLaren)
@@ -339,16 +339,14 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
     );
   }
 
-  // Batch 3 — race metadata + driver names + qualifying (parallel)
+  // Batch 3 — race metadata + driver names (parallel)
   //
   // Races: fetch ALL races in two era splits (no IN clause) to avoid the 1000-row cap.
   // race_id < 908 covers 1-907 (≤ 907 rows); race_id >= 908 covers 2014-onward (≤ 270 rows).
-  // Qualifying: filter to position = 1 only — reduces ~10k rows to ~hundreds.
   const [
     racesLegacyRes,
     racesModernRes,
     driversRes,
-    qualiRes,
     circuitsRes,
     rivalConstructorRes,
     rivalStandingsLegacyRes,
@@ -366,16 +364,6 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
       .from('drivers')
       .select('id, forename, surname, driver_ref')
       .in('id', allDriverIds),
-    allDriverIds.length
-      ? supabase
-          .from('qualifying')
-          .select('race_id, driver_id')
-          .in('driver_id', allDriverIds)
-          .eq('position', 1)
-      : Promise.resolve({
-          data: [] as { race_id: unknown; driver_id: unknown }[],
-          error: null,
-        }),
     // Whole table — ~77 circuits, small, no cap risk.
     supabase.from('circuits').select('id, name, circuit_ref, country'),
     rivalId !== null
@@ -479,14 +467,6 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
         return d ? `${d.forename} ${d.surname}` : null;
       })()
     : null;
-
-  // Poles: cross-reference qualifying P1s against races where the driver drove for this constructor.
-  // Source is podium results (not all results), so drivers who had poles but never a podium are
-  // missed — an accepted trade-off given the row-cap constraint.
-  const constructorDriverRaceSet = new Set<string>();
-  for (const r of allPodiumResults) {
-    constructorDriverRaceSet.add(`${r.race_id as number}_${r.driver_id as number}`);
-  }
 
   // Find last race per year from constructor_standings (one row per race participated in)
   const lastRacePerYear = new Map<number, number>(); // year → race_id
@@ -597,13 +577,8 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
     driverStatsMap.set(driverId, dEntry);
   }
 
-  // Pole count — qualifying P1s already filtered server-side; cross-reference with constructor races
-  let poleCount = 0;
-  for (const q of (qualiRes.data ?? [])) {
-    if (constructorDriverRaceSet.has(`${q.race_id as number}_${q.driver_id as number}`)) {
-      poleCount++;
-    }
-  }
+  // Pole count: official pole sitters (results.pole), counted by constructor_stats.
+  const poleCount = (stats.pole_positions as number | null) ?? 0;
 
   const winPct =
     (stats.races as number) > 0
