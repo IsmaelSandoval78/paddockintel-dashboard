@@ -135,7 +135,7 @@ export default async function DriverDetailPage({
       .single(),
     supabase
       .from('results')
-      .select('race_id, constructor_id, position, points, fastest_lap_time, rank, status_id')
+      .select('race_id, constructor_id, position, points, fastest_lap_time, rank, status_id, pole')
       .eq('driver_id', driver.id)
       .limit(500),
     supabase
@@ -365,11 +365,11 @@ export default async function DriverDetailPage({
     circuitStatsMap.set(circuitId, cur);
   }
 
-  // Aggregate poles from qualifying
+  // Aggregate poles: official pole sitter (results.pole), every season
   const circuitPolesMap = new Map<number, number>();
-  for (const q of allQuali) {
-    if (Number(q.position) !== 1) continue;
-    const circuitId = raceCircuitMap.get(q.race_id as number);
+  for (const r of allResults) {
+    if (r.pole !== true) continue;
+    const circuitId = raceCircuitMap.get(r.race_id as number);
     if (!circuitId) continue;
     circuitPolesMap.set(circuitId, (circuitPolesMap.get(circuitId) ?? 0) + 1);
   }
@@ -526,10 +526,14 @@ export default async function DriverDetailPage({
     qualiSum += pos;
     qualiCount += 1;
     if (pos <= 2) frontRowCount += 1;
-    if (pos === 1) {
-      const race = raceById.get(q.race_id as number);
-      if (race) poleRows.push({ year: race.year, raceName: race.name });
-    }
+  }
+
+  // Poles: official pole sitter (results.pole), not qualifying P1 — they differ after a grid
+  // penalty, and qualifying P1 is what the front-row and average figures above use.
+  for (const r of allResults) {
+    if (r.pole !== true) continue;
+    const race = raceById.get(r.race_id as number);
+    if (race) poleRows.push({ year: race.year, raceName: race.name });
   }
 
   poleRows.sort((a, b) => b.year - a.year);
