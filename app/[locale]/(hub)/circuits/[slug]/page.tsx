@@ -510,9 +510,9 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
     return [{ driver_id: s.driver_id as number, driver_ref: d.driver_ref as string, forename: d.forename as string, surname: d.surname as string, nationality: s.nationality as string, wins: s.wins as number }];
   });
 
-  // ─── Batch 5: Race 2026 result + qualifying poles (parallel) ─────────────────
+  // ─── Batch 5: Race 2026 result + pole sitters (parallel) ─────────────────────
 
-  const [race2026Res, qualiPolesRes] = await Promise.all([
+  const [race2026Res, polesRes] = await Promise.all([
     race2026
       ? supabase
           .from('results')
@@ -522,20 +522,35 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
           .lte('position', 10)
           .order('position', { ascending: true })
       : Promise.resolve({ data: [] as Array<{ position: unknown; driver_id: unknown; constructor_id: unknown; points: unknown }> }),
+    // Official pole sitters (results.pole, every season), one row per race.
     raceIds.length > 0
       ? supabase
-          .from('qualifying')
-          .select('driver_id, constructor_id, q1, q2, q3, race_id')
-          .eq('position', 1)
+          .from('results')
+          .select('driver_id, constructor_id, race_id')
+          .eq('pole', true)
           .in('race_id', raceIds)
-      : Promise.resolve({ data: [] as Array<{ driver_id: unknown; constructor_id: unknown; q1: unknown; q2: unknown; q3: unknown; race_id: unknown }> }),
+      : Promise.resolve({ data: [] as Array<{ driver_id: unknown; constructor_id: unknown; race_id: unknown }> }),
   ]);
+
+  // The pole sitters' qualifying laps. Our qualifying table starts in 1994 and has gaps, so a pole
+  // without a recorded lap is left out of the lap-time records (never a filler time).
+  const poleRows = polesRes.data ?? [];
+  const poleTimesRes = poleRows.length > 0
+    ? await supabase
+        .from('qualifying')
+        .select('race_id, driver_id, q1, q2, q3')
+        .in('race_id', [...new Set(poleRows.map((p) => p.race_id as number))])
+        .in('driver_id', [...new Set(poleRows.map((p) => p.driver_id as number))])
+    : { data: [] as Array<{ race_id: unknown; driver_id: unknown; q1: unknown; q2: unknown; q3: unknown }> };
+  const poleLapByRaceDriver = new Map(
+    (poleTimesRes.data ?? []).map((q) => [`${q.race_id as number}_${q.driver_id as number}`, q])
+  );
 
   // Extend constructorMap with any constructor IDs not already resolved
   const newConstructorIds = [
     ...new Set([
       ...(race2026Res.data ?? []).map((r) => r.constructor_id as number),
-      ...(qualiPolesRes.data ?? []).map((q) => q.constructor_id as number),
+      ...poleRows.map((q) => q.constructor_id as number),
     ].filter((id): id is number => id != null && !constructorMap.has(id))),
   ];
   if (newConstructorIds.length > 0) {
@@ -554,12 +569,14 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
     return [{ position: r.position as number, forename: d.forename as string, surname: d.surname as string, constructor: con, points: r.points as number }];
   });
 
-  // ─── Assemble: qualifying pole records ───────────────────────────────────────
+  // ─── Assemble: pole lap records ──────────────────────────────────────────────
 
   type PoleRow = { time: string; ms: number; forename: string; surname: string; constructor: string; year: number };
 
-  const qualiPoles: PoleRow[] = (qualiPolesRes.data ?? []).flatMap((q) => {
-    const raw = [q.q3, q.q2, q.q1].find((t) => t && typeof t === 'string' && (t as string).includes(':'));
+  const qualiPoles: PoleRow[] = poleRows.flatMap((q) => {
+    const lap = poleLapByRaceDriver.get(`${q.race_id as number}_${q.driver_id as number}`);
+    if (!lap) return [];
+    const raw = [lap.q3, lap.q2, lap.q1].find((t) => t && typeof t === 'string' && (t as string).includes(':'));
     if (!raw || typeof raw !== 'string') return [];
     const ms = parseTime(raw);
     if (!isFinite(ms)) return [];
@@ -633,7 +650,7 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
 
   // 3 · Pole → Win conversion
   const poleDriverByRaceId = new Map<number, number>(
-    (qualiPolesRes.data ?? []).map((q) => [q.race_id as number, q.driver_id as number])
+    poleRows.map((q) => [q.race_id as number, q.driver_id as number])
   );
   const winnerByRaceId = new Map<number, number>(
     winners.map((w) => [w.race_id as number, w.driver_id as number])

@@ -85,11 +85,12 @@ export async function GET(
       .gt('milliseconds', 0)
       .order('milliseconds', { ascending: true })
       .limit(1),
+    // Official pole sitters (results.pole, every season); qualifying only starts in 1994.
     supabase
-      .from('qualifying')
+      .from('results')
       .select('race_id, driver_id')
       .in('race_id', raceIds)
-      .eq('position', 1),
+      .eq('pole', true),
     fetchTrackPathData(circuit.circuit_ref as string),
     supabase
       .from('circuit_corners')
