@@ -1,0 +1,4502 @@
+{
+ "compared": {
+  "results": 27541,
+  "sprint_results": 612,
+  "qualifying": 11351,
+  "pit_stops": 22615,
+  "driver_standings": 21605,
+  "constructor_standings": 10427
+ },
+ "counts": {
+  "results": {
+   "grid-pit-lane": 174,
+   "laps": 286,
+   "position": 353,
+   "classification": 652,
+   "grid": 524,
+   "only-f1db-non-starter": 119,
+   "time": 368,
+   "only-ours": 93,
+   "only-f1db": 27,
+   "constructor": 4,
+   "points": 4,
+   "fastest-lap": 2
+  },
+  "sprint_results": {
+   "position": 25
+  },
+  "qualifying": {
+   "only-f1db": 52,
+   "q2-time": 30,
+   "only-ours": 15,
+   "q3-time": 17,
+   "position": 360,
+   "q1-time": 162
+  },
+  "pit_stops": {
+   "lap": 72,
+   "only-ours": 120,
+   "duration": 404,
+   "only-f1db": 40
+  },
+  "driver_standings": {
+   "position-tie-order": 1938,
+   "only-ours-zero-points": 14159,
+   "position": 16,
+   "points": 20
+  },
+  "constructor_standings": {
+   "only-ours": 262,
+   "only-ours-zero-points": 3140,
+   "points": 200,
+   "constructor-at-position": 239
+  }
+ },
+ "by_era": {
+  "constructor_standings.constructor-at-position": {
+   "1980-2009": 189,
+   "1950-1979": 46,
+   "2010-2026": 4
+  },
+  "constructor_standings.only-ours": {
+   "1980-2009": 169,
+   "1950-1979": 93
+  },
+  "constructor_standings.only-ours-zero-points": {
+   "1980-2009": 1641,
+   "1950-1979": 1482,
+   "2010-2026": 17
+  },
+  "constructor_standings.points": {
+   "1980-2009": 181,
+   "1950-1979": 19
+  },
+  "driver_standings.only-ours-zero-points": {
+   "1980-2009": 4536,
+   "1950-1979": 9453,
+   "2010-2026": 170
+  },
+  "driver_standings.points": {
+   "1950-1979": 20
+  },
+  "driver_standings.position": {
+   "1980-2009": 1,
+   "1950-1979": 15
+  },
+  "driver_standings.position-tie-order": {
+   "1980-2009": 843,
+   "1950-1979": 1078,
+   "2010-2026": 17
+  },
+  "pit_stops.duration": {
+   "2010-2026": 404
+  },
+  "pit_stops.lap": {
+   "1980-2009": 48,
+   "2010-2026": 24
+  },
+  "pit_stops.only-f1db": {
+   "2010-2026": 40
+  },
+  "pit_stops.only-ours": {
+   "1980-2009": 2,
+   "2010-2026": 118
+  },
+  "qualifying.only-ours": {
+   "1980-2009": 3,
+   "2010-2026": 12
+  },
+  "qualifying.position": {
+   "1980-2009": 137,
+   "2010-2026": 223
+  },
+  "qualifying.q1-time": {
+   "1980-2009": 131,
+   "2010-2026": 31
+  },
+  "qualifying.q2-time": {
+   "1980-2009": 5,
+   "2010-2026": 25
+  },
+  "qualifying.q3-time": {
+   "1980-2009": 4,
+   "2010-2026": 13
+  },
+  "results.classification": {
+   "1980-2009": 376,
+   "1950-1979": 249,
+   "2010-2026": 27
+  },
+  "results.constructor": {
+   "1950-1979": 4
+  },
+  "results.fastest-lap": {
+   "2010-2026": 2
+  },
+  "results.grid": {
+   "1980-2009": 200,
+   "1950-1979": 257,
+   "2010-2026": 67
+  },
+  "results.grid-pit-lane": {
+   "1980-2009": 82,
+   "1950-1979": 3,
+   "2010-2026": 89
+  },
+  "results.laps": {
+   "1980-2009": 75,
+   "1950-1979": 194,
+   "2010-2026": 17
+  },
+  "results.only-f1db": {
+   "1950-1979": 27
+  },
+  "results.only-ours": {
+   "1980-2009": 3,
+   "1950-1979": 88,
+   "2010-2026": 2
+  },
+  "results.points": {
+   "1950-1979": 4
+  },
+  "results.position": {
+   "1980-2009": 39,
+   "1950-1979": 193,
+   "2010-2026": 121
+  },
+  "results.time": {
+   "1980-2009": 144,
+   "1950-1979": 192,
+   "2010-2026": 32
+  },
+  "sprint_results.position": {
+   "2010-2026": 25
+  }
+ },
+ "samples": {
+  "results.grid-pit-lane": [
+   {
+    "year": 2008,
+    "round": 1,
+    "driver": "sutil",
+    "ours": 22,
+    "f1db": "PL"
+   },
+   {
+    "year": 2008,
+    "round": 7,
+    "driver": "vettel",
+    "ours": 19,
+    "f1db": "PL"
+   },
+   {
+    "year": 2008,
+    "round": 7,
+    "driver": "button",
+    "ours": 20,
+    "f1db": "PL"
+   },
+   {
+    "year": 2008,
+    "round": 9,
+    "driver": "rosberg",
+    "ours": 20,
+    "f1db": "PL"
+   },
+   {
+    "year": 2008,
+    "round": 12,
+    "driver": "barrichello",
+    "ours": 19,
+    "f1db": "PL"
+   },
+   {
+    "year": 2008,
+    "round": 12,
+    "driver": "sutil",
+    "ours": 20,
+    "f1db": "PL"
+   },
+   {
+    "year": 2008,
+    "round": 14,
+    "driver": "nakajima",
+    "ours": 18,
+    "f1db": "PL"
+   },
+   {
+    "year": 2008,
+    "round": 14,
+    "driver": "button",
+    "ours": 19,
+    "f1db": "PL"
+   },
+   {
+    "year": 2008,
+    "round": 14,
+    "driver": "bourdais",
+    "ours": 4,
+    "f1db": "PL"
+   },
+   {
+    "year": 2008,
+    "round": 15,
+    "driver": "fisichella",
+    "ours": 20,
+    "f1db": "PL"
+   },
+   {
+    "year": 2008,
+    "round": 18,
+    "driver": "kubica",
+    "ours": 13,
+    "f1db": "PL"
+   },
+   {
+    "year": 2007,
+    "round": 6,
+    "driver": "albers",
+    "ours": 21,
+    "f1db": "PL"
+   },
+   {
+    "year": 2003,
+    "round": 1,
+    "driver": "raikkonen",
+    "ours": 15,
+    "f1db": "PL"
+   },
+   {
+    "year": 2003,
+    "round": 1,
+    "driver": "verstappen",
+    "ours": 20,
+    "f1db": "PL"
+   },
+   {
+    "year": 2007,
+    "round": 9,
+    "driver": "massa",
+    "ours": 4,
+    "f1db": "PL"
+   },
+   {
+    "year": 2007,
+    "round": 9,
+    "driver": "sato",
+    "ours": 21,
+    "f1db": "PL"
+   },
+   {
+    "year": 2007,
+    "round": 15,
+    "driver": "liuzzi",
+    "ours": 14,
+    "f1db": "PL"
+   },
+   {
+    "year": 2006,
+    "round": 1,
+    "driver": "monteiro",
+    "ours": 19,
+    "f1db": "PL"
+   },
+   {
+    "year": 2006,
+    "round": 3,
+    "driver": "fisichella",
+    "ours": 2,
+    "f1db": "PL"
+   },
+   {
+    "year": 2006,
+    "round": 7,
+    "driver": "michael_schumacher",
+    "ours": 22,
+    "f1db": "PL"
+   },
+   {
+    "year": 2006,
+    "round": 10,
+    "driver": "trulli",
+    "ours": 22,
+    "f1db": "PL"
+   },
+   {
+    "year": 2006,
+    "round": 12,
+    "driver": "yamamoto",
+    "ours": 22,
+    "f1db": "PL"
+   },
+   {
+    "year": 2005,
+    "round": 1,
+    "driver": "raikkonen",
+    "ours": 10,
+    "f1db": "PL"
+   },
+   {
+    "year": 2005,
+    "round": 7,
+    "driver": "fisichella",
+    "ours": 9,
+    "f1db": "PL"
+   },
+   {
+    "year": 2005,
+    "round": 8,
+    "driver": "barrichello",
+    "ours": 20,
+    "f1db": "PL"
+   }
+  ],
+  "results.laps": [
+   {
+    "year": 2008,
+    "round": 3,
+    "driver": "sutil",
+    "ours": 56,
+    "f1db": 55
+   },
+   {
+    "year": 2008,
+    "round": 7,
+    "driver": "piquet_jr",
+    "ours": 43,
+    "f1db": 39
+   },
+   {
+    "year": 2008,
+    "round": 9,
+    "driver": "fisichella",
+    "ours": 16,
+    "f1db": 26
+   },
+   {
+    "year": 2007,
+    "round": 5,
+    "driver": "liuzzi",
+    "ours": 2,
+    "f1db": 1
+   },
+   {
+    "year": 2007,
+    "round": 7,
+    "driver": "heidfeld",
+    "ours": 56,
+    "f1db": 55
+   },
+   {
+    "year": 2006,
+    "round": 11,
+    "driver": "webber",
+    "ours": 55,
+    "f1db": 53
+   },
+   {
+    "year": 2006,
+    "round": 11,
+    "driver": "barrichello",
+    "ours": 28,
+    "f1db": 18
+   },
+   {
+    "year": 2006,
+    "round": 12,
+    "driver": "monteiro",
+    "ours": 66,
+    "f1db": 65
+   },
+   {
+    "year": 2005,
+    "round": 1,
+    "driver": "friesacher",
+    "ours": 55,
+    "f1db": 53
+   },
+   {
+    "year": 2005,
+    "round": 12,
+    "driver": "raikkonen",
+    "ours": 32,
+    "f1db": 35
+   },
+   {
+    "year": 2005,
+    "round": 19,
+    "driver": "albers",
+    "ours": 50,
+    "f1db": 51
+   },
+   {
+    "year": 2005,
+    "round": 19,
+    "driver": "michael_schumacher",
+    "ours": 20,
+    "f1db": 22
+   },
+   {
+    "year": 2004,
+    "round": 9,
+    "driver": "heidfeld",
+    "ours": 40,
+    "f1db": 43
+   },
+   {
+    "year": 2004,
+    "round": 10,
+    "driver": "bruni",
+    "ours": 66,
+    "f1db": 65
+   },
+   {
+    "year": 2003,
+    "round": 3,
+    "driver": "barrichello",
+    "ours": 47,
+    "f1db": 46
+   },
+   {
+    "year": 2003,
+    "round": 3,
+    "driver": "button",
+    "ours": 33,
+    "f1db": 32
+   },
+   {
+    "year": 2003,
+    "round": 3,
+    "driver": "verstappen",
+    "ours": 31,
+    "f1db": 30
+   },
+   {
+    "year": 2003,
+    "round": 3,
+    "driver": "michael_schumacher",
+    "ours": 27,
+    "f1db": 26
+   },
+   {
+    "year": 2003,
+    "round": 3,
+    "driver": "montoya",
+    "ours": 25,
+    "f1db": 24
+   },
+   {
+    "year": 2003,
+    "round": 3,
+    "driver": "pizzonia",
+    "ours": 25,
+    "f1db": 24
+   },
+   {
+    "year": 2003,
+    "round": 3,
+    "driver": "panis",
+    "ours": 18,
+    "f1db": 17
+   },
+   {
+    "year": 2003,
+    "round": 3,
+    "driver": "firman",
+    "ours": 18,
+    "f1db": 17
+   },
+   {
+    "year": 2003,
+    "round": 3,
+    "driver": "wilson",
+    "ours": 16,
+    "f1db": 15
+   },
+   {
+    "year": 2003,
+    "round": 8,
+    "driver": "pizzonia",
+    "ours": 64,
+    "f1db": 66
+   },
+   {
+    "year": 2003,
+    "round": 10,
+    "driver": "button",
+    "ours": 23,
+    "f1db": 21
+   }
+  ],
+  "results.position": [
+   {
+    "year": 2003,
+    "round": 1,
+    "driver": "fisichella",
+    "ours": null,
+    "f1db": 12
+   },
+   {
+    "year": 2003,
+    "round": 1,
+    "driver": "pizzonia",
+    "ours": null,
+    "f1db": 13
+   },
+   {
+    "year": 2005,
+    "round": 1,
+    "driver": "button",
+    "ours": null,
+    "f1db": 11
+   },
+   {
+    "year": 2005,
+    "round": 1,
+    "driver": "sato",
+    "ours": null,
+    "f1db": 14
+   },
+   {
+    "year": 2002,
+    "round": 9,
+    "driver": "rosa",
+    "ours": 10,
+    "f1db": 11
+   },
+   {
+    "year": 2002,
+    "round": 9,
+    "driver": "bernoldi",
+    "ours": 11,
+    "f1db": 10
+   },
+   {
+    "year": 2001,
+    "round": 1,
+    "driver": "button",
+    "ours": null,
+    "f1db": 14
+   },
+   {
+    "year": 1998,
+    "round": 12,
+    "driver": "wurz",
+    "ours": null,
+    "f1db": 16
+   },
+   {
+    "year": 1997,
+    "round": 16,
+    "driver": "damon_hill",
+    "ours": 11,
+    "f1db": 12
+   },
+   {
+    "year": 1997,
+    "round": 16,
+    "driver": "diniz",
+    "ours": 12,
+    "f1db": 13
+   },
+   {
+    "year": 1997,
+    "round": 16,
+    "driver": "verstappen",
+    "ours": 13,
+    "f1db": 14
+   },
+   {
+    "year": 1995,
+    "round": 6,
+    "driver": "brundle",
+    "ours": 10,
+    "f1db": null
+   },
+   {
+    "year": 1995,
+    "round": 6,
+    "driver": "berger",
+    "ours": 11,
+    "f1db": null
+   },
+   {
+    "year": 1995,
+    "round": 10,
+    "driver": "irvine",
+    "ours": null,
+    "f1db": 13
+   },
+   {
+    "year": 1993,
+    "round": 15,
+    "driver": "cesaris",
+    "ours": null,
+    "f1db": 18
+   },
+   {
+    "year": 1991,
+    "round": 1,
+    "driver": "hakkinen",
+    "ours": 13,
+    "f1db": null
+   },
+   {
+    "year": 2009,
+    "round": 16,
+    "driver": "kovalainen",
+    "ours": 9,
+    "f1db": 12
+   },
+   {
+    "year": 2009,
+    "round": 16,
+    "driver": "kobayashi",
+    "ours": 10,
+    "f1db": 9
+   },
+   {
+    "year": 2009,
+    "round": 16,
+    "driver": "fisichella",
+    "ours": 11,
+    "f1db": 10
+   },
+   {
+    "year": 2009,
+    "round": 16,
+    "driver": "liuzzi",
+    "ours": 12,
+    "f1db": 11
+   },
+   {
+    "year": 1989,
+    "round": 1,
+    "driver": "patrese",
+    "ours": 15,
+    "f1db": null
+   },
+   {
+    "year": 1988,
+    "round": 14,
+    "driver": "arnoux",
+    "ours": null,
+    "f1db": 19
+   },
+   {
+    "year": 1987,
+    "round": 8,
+    "driver": "prost",
+    "ours": 7,
+    "f1db": null
+   },
+   {
+    "year": 1987,
+    "round": 10,
+    "driver": "streiff",
+    "ours": null,
+    "f1db": 25
+   },
+   {
+    "year": 1986,
+    "round": 3,
+    "driver": "alboreto",
+    "ours": 10,
+    "f1db": null
+   }
+  ],
+  "results.classification": [
+   {
+    "year": 2003,
+    "round": 1,
+    "driver": "fisichella",
+    "ours": "R",
+    "f1db": "12"
+   },
+   {
+    "year": 2003,
+    "round": 1,
+    "driver": "pizzonia",
+    "ours": "R",
+    "f1db": "13"
+   },
+   {
+    "year": 2006,
+    "round": 12,
+    "driver": "webber",
+    "ours": "R",
+    "f1db": "NC"
+   },
+   {
+    "year": 2006,
+    "round": 12,
+    "driver": "sato",
+    "ours": "R",
+    "f1db": "NC"
+   },
+   {
+    "year": 2005,
+    "round": 18,
+    "driver": "pizzonia",
+    "ours": "R",
+    "f1db": "NC"
+   },
+   {
+    "year": 2003,
+    "round": 2,
+    "driver": "villeneuve",
+    "ours": "R",
+    "f1db": "DNS"
+   },
+   {
+    "year": 2001,
+    "round": 1,
+    "driver": "button",
+    "ours": "R",
+    "f1db": "14"
+   },
+   {
+    "year": 2000,
+    "round": 7,
+    "driver": "rosa",
+    "ours": "R",
+    "f1db": "DNS"
+   },
+   {
+    "year": 1999,
+    "round": 8,
+    "driver": "michael_schumacher",
+    "ours": "R",
+    "f1db": "DNS"
+   },
+   {
+    "year": 1998,
+    "round": 12,
+    "driver": "wurz",
+    "ours": "R",
+    "f1db": "16"
+   },
+   {
+    "year": 1998,
+    "round": 15,
+    "driver": "tuero",
+    "ours": "R",
+    "f1db": "NC"
+   },
+   {
+    "year": 1997,
+    "round": 2,
+    "driver": "magnussen",
+    "ours": "R",
+    "f1db": "DNS"
+   },
+   {
+    "year": 1996,
+    "round": 1,
+    "driver": "herbert",
+    "ours": "R",
+    "f1db": "DNS"
+   },
+   {
+    "year": 1996,
+    "round": 6,
+    "driver": "montermini",
+    "ours": "F",
+    "f1db": "DNS"
+   },
+   {
+    "year": 1995,
+    "round": 1,
+    "driver": "martini",
+    "ours": "R",
+    "f1db": "DNS"
+   },
+   {
+    "year": 1995,
+    "round": 2,
+    "driver": "badoer",
+    "ours": "R",
+    "f1db": "DNS"
+   },
+   {
+    "year": 1995,
+    "round": 6,
+    "driver": "brundle",
+    "ours": "10",
+    "f1db": "DNF"
+   },
+   {
+    "year": 1995,
+    "round": 6,
+    "driver": "berger",
+    "ours": "11",
+    "f1db": "DNF"
+   },
+   {
+    "year": 1995,
+    "round": 10,
+    "driver": "irvine",
+    "ours": "R",
+    "f1db": "13"
+   },
+   {
+    "year": 1995,
+    "round": 12,
+    "driver": "montermini",
+    "ours": "R",
+    "f1db": "DNS"
+   },
+   {
+    "year": 1995,
+    "round": 12,
+    "driver": "moreno",
+    "ours": "R",
+    "f1db": "DNS"
+   },
+   {
+    "year": 1994,
+    "round": 5,
+    "driver": "montermini",
+    "ours": "W",
+    "f1db": "DNQ"
+   },
+   {
+    "year": 1993,
+    "round": 15,
+    "driver": "cesaris",
+    "ours": "R",
+    "f1db": "18"
+   },
+   {
+    "year": 1992,
+    "round": 4,
+    "driver": "moreno",
+    "ours": "F",
+    "f1db": "DNPQ"
+   },
+   {
+    "year": 1992,
+    "round": 4,
+    "driver": "mccarthy",
+    "ours": "F",
+    "f1db": "DNPQ"
+   }
+  ],
+  "results.grid": [
+   {
+    "year": 2003,
+    "round": 1,
+    "driver": "wilson",
+    "ours": 19,
+    "f1db": "20"
+   },
+   {
+    "year": 2007,
+    "round": 9,
+    "driver": "albers",
+    "ours": 22,
+    "f1db": "21"
+   },
+   {
+    "year": 2006,
+    "round": 8,
+    "driver": "sato",
+    "ours": 20,
+    "f1db": "21"
+   },
+   {
+    "year": 2006,
+    "round": 8,
+    "driver": "montagny",
+    "ours": 21,
+    "f1db": "20"
+   },
+   {
+    "year": 2006,
+    "round": 11,
+    "driver": "rosberg",
+    "ours": 18,
+    "f1db": "19"
+   },
+   {
+    "year": 2006,
+    "round": 11,
+    "driver": "monteiro",
+    "ours": 19,
+    "f1db": "18"
+   },
+   {
+    "year": 2004,
+    "round": 7,
+    "driver": "fisichella",
+    "ours": 19,
+    "f1db": "18"
+   },
+   {
+    "year": 2004,
+    "round": 7,
+    "driver": "bruni",
+    "ours": 20,
+    "f1db": "19"
+   },
+   {
+    "year": 2004,
+    "round": 7,
+    "driver": "coulthard",
+    "ours": 18,
+    "f1db": "20"
+   },
+   {
+    "year": 2003,
+    "round": 12,
+    "driver": "fisichella",
+    "ours": 13,
+    "f1db": "12"
+   },
+   {
+    "year": 2003,
+    "round": 16,
+    "driver": "trulli",
+    "ours": 20,
+    "f1db": "19"
+   },
+   {
+    "year": 2003,
+    "round": 16,
+    "driver": "ralf_schumacher",
+    "ours": 19,
+    "f1db": "20"
+   },
+   {
+    "year": 2002,
+    "round": 4,
+    "driver": "rosa",
+    "ours": 22,
+    "f1db": "21"
+   },
+   {
+    "year": 2002,
+    "round": 5,
+    "driver": "irvine",
+    "ours": 22,
+    "f1db": "20"
+   },
+   {
+    "year": 2002,
+    "round": 7,
+    "driver": "heidfeld",
+    "ours": 15,
+    "f1db": "17"
+   },
+   {
+    "year": 2002,
+    "round": 7,
+    "driver": "irvine",
+    "ours": 19,
+    "f1db": "21"
+   },
+   {
+    "year": 2002,
+    "round": 7,
+    "driver": "rosa",
+    "ours": 17,
+    "f1db": "20"
+   },
+   {
+    "year": 2002,
+    "round": 7,
+    "driver": "webber",
+    "ours": 20,
+    "f1db": "19"
+   },
+   {
+    "year": 2002,
+    "round": 7,
+    "driver": "bernoldi",
+    "ours": 21,
+    "f1db": "15"
+   },
+   {
+    "year": 2002,
+    "round": 17,
+    "driver": "webber",
+    "ours": 19,
+    "f1db": "18"
+   },
+   {
+    "year": 2002,
+    "round": 17,
+    "driver": "yoong",
+    "ours": 20,
+    "f1db": "19"
+   },
+   {
+    "year": 1999,
+    "round": 2,
+    "driver": "rosa",
+    "ours": 17,
+    "f1db": "18"
+   },
+   {
+    "year": 1999,
+    "round": 2,
+    "driver": "sarrazin",
+    "ours": 18,
+    "f1db": "17"
+   },
+   {
+    "year": 1999,
+    "round": 3,
+    "driver": "villeneuve",
+    "ours": 14,
+    "f1db": "5"
+   },
+   {
+    "year": 1999,
+    "round": 3,
+    "driver": "trulli",
+    "ours": 5,
+    "f1db": "14"
+   }
+  ],
+  "results.time": [
+   {
+    "year": 1997,
+    "round": 2,
+    "driver": "fisichella",
+    "ours": 5767629,
+    "f1db": 5827629
+   },
+   {
+    "year": 1997,
+    "round": 2,
+    "driver": "frentzen",
+    "ours": 5782392,
+    "f1db": 5842392
+   },
+   {
+    "year": 1995,
+    "round": 1,
+    "driver": "coulthard",
+    "ours": 5925214,
+    "f1db": 5922214
+   },
+   {
+    "year": 1995,
+    "round": 3,
+    "driver": "damon_hill",
+    "ours": 6102522,
+    "f1db": 6102552
+   },
+   {
+    "year": 1995,
+    "round": 3,
+    "driver": "alesi",
+    "ours": 6121032,
+    "f1db": 6121062
+   },
+   {
+    "year": 1995,
+    "round": 3,
+    "driver": "berger",
+    "ours": 6145638,
+    "f1db": 6145668
+   },
+   {
+    "year": 1995,
+    "round": 3,
+    "driver": "coulthard",
+    "ours": 6154412,
+    "f1db": 6154442
+   },
+   {
+    "year": 1995,
+    "round": 6,
+    "driver": "barrichello",
+    "ours": 6325858,
+    "f1db": 6325648
+   },
+   {
+    "year": 1995,
+    "round": 6,
+    "driver": "irvine",
+    "ours": 6327441,
+    "f1db": 6330151
+   },
+   {
+    "year": 1995,
+    "round": 6,
+    "driver": "panis",
+    "ours": 6330677,
+    "f1db": 6335485
+   },
+   {
+    "year": 1995,
+    "round": 6,
+    "driver": "michael_schumacher",
+    "ours": 6331231,
+    "f1db": 6338847
+   },
+   {
+    "year": 1995,
+    "round": 11,
+    "driver": "herbert",
+    "ours": 5861918,
+    "f1db": 5861923
+   },
+   {
+    "year": 1994,
+    "round": 1,
+    "driver": "michael_schumacher",
+    "ours": 5739200,
+    "f1db": 5738759
+   },
+   {
+    "year": 1994,
+    "round": 4,
+    "driver": "michael_schumacher",
+    "ours": 6595300,
+    "f1db": 6595372
+   },
+   {
+    "year": 1994,
+    "round": 4,
+    "driver": "brundle",
+    "ours": 6632578,
+    "f1db": 6632650
+   },
+   {
+    "year": 1994,
+    "round": 4,
+    "driver": "berger",
+    "ours": 6672124,
+    "f1db": 6672196
+   },
+   {
+    "year": 1994,
+    "round": 5,
+    "driver": "damon_hill",
+    "ours": 5774300,
+    "f1db": 5774374
+   },
+   {
+    "year": 1994,
+    "round": 5,
+    "driver": "michael_schumacher",
+    "ours": 5798466,
+    "f1db": 5798540
+   },
+   {
+    "year": 1994,
+    "round": 5,
+    "driver": "blundell",
+    "ours": 5861269,
+    "f1db": 5861343
+   },
+   {
+    "year": 1994,
+    "round": 6,
+    "driver": "michael_schumacher",
+    "ours": 6272100,
+    "f1db": 6271887
+   },
+   {
+    "year": 1994,
+    "round": 6,
+    "driver": "damon_hill",
+    "ours": 6311760,
+    "f1db": 6311547
+   },
+   {
+    "year": 1994,
+    "round": 6,
+    "driver": "alesi",
+    "ours": 6345438,
+    "f1db": 6345275
+   },
+   {
+    "year": 1994,
+    "round": 6,
+    "driver": "berger",
+    "ours": 6347709,
+    "f1db": 6347496
+   },
+   {
+    "year": 1994,
+    "round": 7,
+    "driver": "michael_schumacher",
+    "ours": 5916200,
+    "f1db": 5915704
+   },
+   {
+    "year": 1994,
+    "round": 7,
+    "driver": "damon_hill",
+    "ours": 5928842,
+    "f1db": 5928346
+   }
+  ],
+  "results.only-ours": [
+   {
+    "year": 1982,
+    "round": 1,
+    "driver": "guerrero",
+    "position_text": "F"
+   },
+   {
+    "year": 1981,
+    "round": 4,
+    "driver": "angelis",
+    "position_text": "W"
+   },
+   {
+    "year": 1981,
+    "round": 4,
+    "driver": "mansell",
+    "position_text": "W"
+   },
+   {
+    "year": 1979,
+    "round": 14,
+    "driver": "lauda",
+    "position_text": "W"
+   },
+   {
+    "year": 1965,
+    "round": 1,
+    "driver": "reed",
+    "position_text": "W"
+   },
+   {
+    "year": 1965,
+    "round": 1,
+    "driver": "clapham",
+    "position_text": "W"
+   },
+   {
+    "year": 1965,
+    "round": 1,
+    "driver": "blignaut",
+    "position_text": "W"
+   },
+   {
+    "year": 1964,
+    "round": 1,
+    "driver": "andre_pilette",
+    "position_text": "W"
+   },
+   {
+    "year": 1964,
+    "round": 1,
+    "driver": "baghetti",
+    "position_text": "W"
+   },
+   {
+    "year": 1964,
+    "round": 1,
+    "driver": "maggs",
+    "position_text": "W"
+   },
+   {
+    "year": 1963,
+    "round": 1,
+    "driver": "phil_hill",
+    "position_text": "W"
+   },
+   {
+    "year": 1963,
+    "round": 1,
+    "driver": "baghetti",
+    "position_text": "W"
+   },
+   {
+    "year": 1963,
+    "round": 1,
+    "driver": "campbell-jones",
+    "position_text": "W"
+   },
+   {
+    "year": 1963,
+    "round": 1,
+    "driver": "burgess",
+    "position_text": "W"
+   },
+   {
+    "year": 1963,
+    "round": 1,
+    "driver": "settember",
+    "position_text": "W"
+   },
+   {
+    "year": 1963,
+    "round": 1,
+    "driver": "estefano",
+    "position_text": "W"
+   },
+   {
+    "year": 1963,
+    "round": 1,
+    "driver": "bandini",
+    "position_text": "W"
+   },
+   {
+    "year": 1963,
+    "round": 1,
+    "driver": "beaufort",
+    "position_text": "W"
+   },
+   {
+    "year": 1963,
+    "round": 2,
+    "driver": "arundell",
+    "position_text": "W"
+   },
+   {
+    "year": 1963,
+    "round": 2,
+    "driver": "scarfiotti",
+    "position_text": "W"
+   },
+   {
+    "year": 1963,
+    "round": 2,
+    "driver": "bandini",
+    "position_text": "W"
+   },
+   {
+    "year": 1963,
+    "round": 2,
+    "driver": "burgess",
+    "position_text": "W"
+   },
+   {
+    "year": 1963,
+    "round": 3,
+    "driver": "settember",
+    "position_text": "W"
+   },
+   {
+    "year": 1963,
+    "round": 3,
+    "driver": "burgess",
+    "position_text": "W"
+   },
+   {
+    "year": 1963,
+    "round": 4,
+    "driver": "baghetti",
+    "position_text": "W"
+   }
+  ],
+  "results.only-f1db": [
+   {
+    "year": 1977,
+    "round": 11,
+    "driver": "clay-regazzoni",
+    "position_text": "DNF"
+   },
+   {
+    "year": 1971,
+    "round": 4,
+    "driver": "nanni-galli",
+    "position_text": "DNF"
+   },
+   {
+    "year": 1969,
+    "round": 7,
+    "driver": "henri-pescarolo",
+    "position_text": "5"
+   },
+   {
+    "year": 1969,
+    "round": 7,
+    "driver": "richard-attwood",
+    "position_text": "6"
+   },
+   {
+    "year": 1969,
+    "round": 7,
+    "driver": "kurt-ahrens-jr",
+    "position_text": "7"
+   },
+   {
+    "year": 1969,
+    "round": 7,
+    "driver": "rolf-stommelen",
+    "position_text": "8"
+   },
+   {
+    "year": 1969,
+    "round": 7,
+    "driver": "peter-westbury",
+    "position_text": "9"
+   },
+   {
+    "year": 1969,
+    "round": 7,
+    "driver": "xavier-perrot",
+    "position_text": "10"
+   },
+   {
+    "year": 1969,
+    "round": 7,
+    "driver": "francois-cevert",
+    "position_text": "DNF"
+   },
+   {
+    "year": 1969,
+    "round": 7,
+    "driver": "johnny-servoz-gavin",
+    "position_text": "DNF"
+   },
+   {
+    "year": 1967,
+    "round": 7,
+    "driver": "gerhard-mitter",
+    "position_text": "DNF"
+   },
+   {
+    "year": 1966,
+    "round": 6,
+    "driver": "jean-pierre-beltoise",
+    "position_text": "8"
+   },
+   {
+    "year": 1966,
+    "round": 6,
+    "driver": "hubert-hahne",
+    "position_text": "9"
+   },
+   {
+    "year": 1966,
+    "round": 6,
+    "driver": "jo-schlesser",
+    "position_text": "10"
+   },
+   {
+    "year": 1966,
+    "round": 6,
+    "driver": "hans-herrmann",
+    "position_text": "11"
+   },
+   {
+    "year": 1966,
+    "round": 6,
+    "driver": "pedro-rodriguez",
+    "position_text": "DNF"
+   },
+   {
+    "year": 1966,
+    "round": 6,
+    "driver": "alan-rees",
+    "position_text": "DNF"
+   },
+   {
+    "year": 1966,
+    "round": 6,
+    "driver": "piers-courage",
+    "position_text": "DNF"
+   },
+   {
+    "year": 1966,
+    "round": 6,
+    "driver": "kurt-ahrens-jr",
+    "position_text": "DNF"
+   },
+   {
+    "year": 1966,
+    "round": 6,
+    "driver": "jacky-ickx",
+    "position_text": "DNF"
+   },
+   {
+    "year": 1964,
+    "round": 9,
+    "driver": "mike-spence",
+    "position_text": "DNF"
+   },
+   {
+    "year": 1956,
+    "round": 5,
+    "driver": "piero-taruffi",
+    "position_text": "DNF"
+   },
+   {
+    "year": 1956,
+    "round": 7,
+    "driver": "peter-collins",
+    "position_text": "DNF"
+   },
+   {
+    "year": 1956,
+    "round": 7,
+    "driver": "eugenio-castellotti",
+    "position_text": "DNF"
+   },
+   {
+    "year": 1954,
+    "round": 2,
+    "driver": "bill-homeier",
+    "position_text": "33"
+   }
+  ],
+  "results.constructor": [
+   {
+    "year": 1961,
+    "round": 5,
+    "driver": "moss",
+    "ours": "ferguson",
+    "f1db": "lotus"
+   },
+   {
+    "year": 1961,
+    "round": 5,
+    "driver": "moss",
+    "ours": "lotus-climax",
+    "f1db": "ferguson"
+   },
+   {
+    "year": 1954,
+    "round": 2,
+    "driver": "homeier",
+    "ours": "kurtis_kraft",
+    "f1db": "nichels"
+   },
+   {
+    "year": 1950,
+    "round": 3,
+    "driver": "agabashian",
+    "ours": "kurtis_kraft",
+    "f1db": "maserati"
+   }
+  ],
+  "results.points": [
+   {
+    "year": 1956,
+    "round": 2,
+    "driver": "fangio",
+    "ours": 1.5,
+    "f1db": null
+   },
+   {
+    "year": 1954,
+    "round": 5,
+    "driver": "moss",
+    "ours": 0.0,
+    "f1db": 0.14
+   },
+   {
+    "year": 1954,
+    "round": 5,
+    "driver": "behra",
+    "ours": 0.0,
+    "f1db": 0.14
+   },
+   {
+    "year": 1954,
+    "round": 5,
+    "driver": "ascari",
+    "ours": 0.0,
+    "f1db": 0.14
+   }
+  ],
+  "results.fastest-lap": [
+   {
+    "year": 2024,
+    "round": 8,
+    "driver": "hamilton",
+    "ours_rank": 0,
+    "f1db": true
+   },
+   {
+    "year": 2026,
+    "round": 18,
+    "driver": "leclerc",
+    "ours_rank": null,
+    "f1db": true
+   }
+  ],
+  "sprint_results.position": [
+   {
+    "year": 2021,
+    "round": 10,
+    "driver": "perez",
+    "ours": null,
+    "f1db": 20
+   },
+   {
+    "year": 2023,
+    "round": 17,
+    "driver": "stroll",
+    "ours": 13,
+    "f1db": 15
+   },
+   {
+    "year": 2023,
+    "round": 17,
+    "driver": "kevin_magnussen",
+    "ours": 14,
+    "f1db": 13
+   },
+   {
+    "year": 2023,
+    "round": 17,
+    "driver": "zhou",
+    "ours": 15,
+    "f1db": 14
+   },
+   {
+    "year": 2024,
+    "round": 6,
+    "driver": "stroll",
+    "ours": 19,
+    "f1db": null
+   },
+   {
+    "year": 2024,
+    "round": 6,
+    "driver": "norris",
+    "ours": 20,
+    "f1db": null
+   },
+   {
+    "year": 2024,
+    "round": 21,
+    "driver": "hulkenberg",
+    "ours": 20,
+    "f1db": null
+   },
+   {
+    "year": 2025,
+    "round": 6,
+    "driver": "alonso",
+    "ours": 18,
+    "f1db": null
+   },
+   {
+    "year": 2025,
+    "round": 6,
+    "driver": "sainz",
+    "ours": 19,
+    "f1db": null
+   },
+   {
+    "year": 2025,
+    "round": 6,
+    "driver": "leclerc",
+    "ours": 20,
+    "f1db": null
+   },
+   {
+    "year": 2025,
+    "round": 13,
+    "driver": "gasly",
+    "ours": 20,
+    "f1db": null
+   },
+   {
+    "year": 2025,
+    "round": 19,
+    "driver": "ocon",
+    "ours": 16,
+    "f1db": null
+   },
+   {
+    "year": 2025,
+    "round": 19,
+    "driver": "stroll",
+    "ours": 17,
+    "f1db": null
+   },
+   {
+    "year": 2025,
+    "round": 19,
+    "driver": "norris",
+    "ours": 18,
+    "f1db": null
+   },
+   {
+    "year": 2025,
+    "round": 19,
+    "driver": "piastri",
+    "ours": 19,
+    "f1db": null
+   },
+   {
+    "year": 2025,
+    "round": 19,
+    "driver": "alonso",
+    "ours": 20,
+    "f1db": null
+   },
+   {
+    "year": 2025,
+    "round": 21,
+    "driver": "piastri",
+    "ours": 19,
+    "f1db": null
+   },
+   {
+    "year": 2025,
+    "round": 21,
+    "driver": "colapinto",
+    "ours": 20,
+    "f1db": null
+   },
+   {
+    "year": 2026,
+    "round": 2,
+    "driver": "hulkenberg",
+    "ours": 20,
+    "f1db": null
+   },
+   {
+    "year": 2026,
+    "round": 2,
+    "driver": "bottas",
+    "ours": 21,
+    "f1db": null
+   },
+   {
+    "year": 2026,
+    "round": 2,
+    "driver": "arvid_lindblad",
+    "ours": 22,
+    "f1db": null
+   },
+   {
+    "year": 2026,
+    "round": 4,
+    "driver": "hulkenberg",
+    "ours": 20,
+    "f1db": null
+   },
+   {
+    "year": 2026,
+    "round": 4,
+    "driver": "arvid_lindblad",
+    "ours": 21,
+    "f1db": null
+   },
+   {
+    "year": 2026,
+    "round": 4,
+    "driver": "bortoleto",
+    "ours": 22,
+    "f1db": null
+   },
+   {
+    "year": 2026,
+    "round": 5,
+    "driver": "alonso",
+    "ours": 22,
+    "f1db": null
+   }
+  ],
+  "qualifying.q2-time": [
+   {
+    "year": 2008,
+    "round": 2,
+    "driver": "trulli",
+    "ours": "1:34.960",
+    "f1db": "1:34.825"
+   },
+   {
+    "year": 2008,
+    "round": 5,
+    "driver": "heidfeld",
+    "ours": "1:27.607",
+    "f1db": "1:26.607"
+   },
+   {
+    "year": 2007,
+    "round": 3,
+    "driver": "hamilton",
+    "ours": "1:31.752",
+    "f1db": "1:31.732"
+   },
+   {
+    "year": 2007,
+    "round": 12,
+    "driver": "kovalainen",
+    "ours": "1:27.039",
+    "f1db": "1:27.784"
+   },
+   {
+    "year": 2006,
+    "round": 16,
+    "driver": "barrichello",
+    "ours": "1:45.228",
+    "f1db": "1:45.288"
+   },
+   {
+    "year": 2010,
+    "round": 1,
+    "driver": "liuzzi",
+    "ours": "1:55.623",
+    "f1db": "1:55.653"
+   },
+   {
+    "year": 2010,
+    "round": 15,
+    "driver": "kobayashi",
+    "ours": "1:47.559",
+    "f1db": "1:47.599"
+   },
+   {
+    "year": 2012,
+    "round": 1,
+    "driver": "webber",
+    "ours": "1:26.597",
+    "f1db": "1:26.297"
+   },
+   {
+    "year": 2013,
+    "round": 13,
+    "driver": "webber",
+    "ours": "1:43.272",
+    "f1db": "1:43.727"
+   },
+   {
+    "year": 2013,
+    "round": 16,
+    "driver": "gutierrez",
+    "ours": "1:26.366",
+    "f1db": "1:26.336"
+   },
+   {
+    "year": 2014,
+    "round": 1,
+    "driver": "vettel",
+    "ours": "1:44.688",
+    "f1db": "1:44.668"
+   },
+   {
+    "year": 2019,
+    "round": 3,
+    "driver": "hulkenberg",
+    "ours": "1:33.968",
+    "f1db": "1:32.968"
+   },
+   {
+    "year": 2019,
+    "round": 15,
+    "driver": "perez",
+    "ours": "1:38.520",
+    "f1db": "1:38.620"
+   },
+   {
+    "year": 2019,
+    "round": 19,
+    "driver": "vettel",
+    "ours": "1:33.782",
+    "f1db": "1:32.782"
+   },
+   {
+    "year": 2020,
+    "round": 16,
+    "driver": "bottas",
+    "ours": "0:53.803",
+    "f1db": "53.803"
+   },
+   {
+    "year": 2020,
+    "round": 16,
+    "driver": "russell",
+    "ours": "0:53.819",
+    "f1db": "53.819"
+   },
+   {
+    "year": 2020,
+    "round": 16,
+    "driver": "max_verstappen",
+    "ours": "0:53.647",
+    "f1db": "53.647"
+   },
+   {
+    "year": 2020,
+    "round": 16,
+    "driver": "leclerc",
+    "ours": "0:53.825",
+    "f1db": "53.825"
+   },
+   {
+    "year": 2020,
+    "round": 16,
+    "driver": "perez",
+    "ours": "0:53.787",
+    "f1db": "53.787"
+   },
+   {
+    "year": 2020,
+    "round": 16,
+    "driver": "kvyat",
+    "ours": "0:53.856",
+    "f1db": "53.856"
+   },
+   {
+    "year": 2020,
+    "round": 16,
+    "driver": "ricciardo",
+    "ours": "0:53.871",
+    "f1db": "53.871"
+   },
+   {
+    "year": 2020,
+    "round": 16,
+    "driver": "sainz",
+    "ours": "0:53.818",
+    "f1db": "53.818"
+   },
+   {
+    "year": 2020,
+    "round": 16,
+    "driver": "gasly",
+    "ours": "0:53.941",
+    "f1db": "53.941"
+   },
+   {
+    "year": 2020,
+    "round": 16,
+    "driver": "stroll",
+    "ours": "0:53.840",
+    "f1db": "53.840"
+   },
+   {
+    "year": 2020,
+    "round": 16,
+    "driver": "ocon",
+    "ours": "0:53.995",
+    "f1db": "53.995"
+   }
+  ],
+  "qualifying.only-ours": [
+   {
+    "year": 2008,
+    "round": 7,
+    "driver": "vettel"
+   },
+   {
+    "year": 2018,
+    "round": 7,
+    "driver": "grosjean"
+   },
+   {
+    "year": 2009,
+    "round": 15,
+    "driver": "webber"
+   },
+   {
+    "year": 2010,
+    "round": 6,
+    "driver": "alonso"
+   },
+   {
+    "year": 2003,
+    "round": 7,
+    "driver": "button"
+   },
+   {
+    "year": 2011,
+    "round": 6,
+    "driver": "karthikeyan"
+   },
+   {
+    "year": 2011,
+    "round": 6,
+    "driver": "liuzzi"
+   },
+   {
+    "year": 2018,
+    "round": 5,
+    "driver": "brendon_hartley"
+   },
+   {
+    "year": 2018,
+    "round": 6,
+    "driver": "max_verstappen"
+   },
+   {
+    "year": 2018,
+    "round": 10,
+    "driver": "brendon_hartley"
+   },
+   {
+    "year": 2021,
+    "round": 11,
+    "driver": "mick_schumacher"
+   },
+   {
+    "year": 2022,
+    "round": 5,
+    "driver": "ocon"
+   },
+   {
+    "year": 2024,
+    "round": 15,
+    "driver": "sargeant"
+   },
+   {
+    "year": 2026,
+    "round": 14,
+    "driver": "stroll"
+   },
+   {
+    "year": 2026,
+    "round": 14,
+    "driver": "bearman"
+   }
+  ],
+  "qualifying.q3-time": [
+   {
+    "year": 2007,
+    "round": 2,
+    "driver": "kubica",
+    "ours": "1:36.839",
+    "f1db": "1:36.896"
+   },
+   {
+    "year": 2006,
+    "round": 5,
+    "driver": "alonso",
+    "ours": "1:29.816",
+    "f1db": "1:29.819"
+   },
+   {
+    "year": 2006,
+    "round": 5,
+    "driver": "villeneuve",
+    "ours": "1:31.542",
+    "f1db": "1:36.998"
+   },
+   {
+    "year": 2009,
+    "round": 11,
+    "driver": "hamilton",
+    "ours": "1:39.489",
+    "f1db": "1:39.498"
+   },
+   {
+    "year": 2010,
+    "round": 4,
+    "driver": "webber",
+    "ours": "1:34.808",
+    "f1db": "1:34.806"
+   },
+   {
+    "year": 2015,
+    "round": 3,
+    "driver": "rosberg",
+    "ours": "1:35.828",
+    "f1db": "1:35.824"
+   },
+   {
+    "year": 2020,
+    "round": 16,
+    "driver": "bottas",
+    "ours": "0:53.377",
+    "f1db": "53.377"
+   },
+   {
+    "year": 2020,
+    "round": 16,
+    "driver": "russell",
+    "ours": "0:53.403",
+    "f1db": "53.403"
+   },
+   {
+    "year": 2020,
+    "round": 16,
+    "driver": "max_verstappen",
+    "ours": "0:53.433",
+    "f1db": "53.433"
+   },
+   {
+    "year": 2020,
+    "round": 16,
+    "driver": "leclerc",
+    "ours": "0:53.613",
+    "f1db": "53.613"
+   },
+   {
+    "year": 2020,
+    "round": 16,
+    "driver": "perez",
+    "ours": "0:53.790",
+    "f1db": "53.790"
+   },
+   {
+    "year": 2020,
+    "round": 16,
+    "driver": "kvyat",
+    "ours": "0:53.906",
+    "f1db": "53.906"
+   },
+   {
+    "year": 2020,
+    "round": 16,
+    "driver": "ricciardo",
+    "ours": "0:53.957",
+    "f1db": "53.957"
+   },
+   {
+    "year": 2020,
+    "round": 16,
+    "driver": "sainz",
+    "ours": "0:54.010",
+    "f1db": "54.010"
+   },
+   {
+    "year": 2020,
+    "round": 16,
+    "driver": "gasly",
+    "ours": "0:54.154",
+    "f1db": "54.154"
+   },
+   {
+    "year": 2020,
+    "round": 16,
+    "driver": "stroll",
+    "ours": "0:54.200",
+    "f1db": "54.200"
+   },
+   {
+    "year": 2021,
+    "round": 20,
+    "driver": "max_verstappen",
+    "ours": "1:21.282",
+    "f1db": "1:21.424"
+   }
+  ],
+  "qualifying.position": [
+   {
+    "year": 2007,
+    "round": 5,
+    "driver": "wurz",
+    "ours": 11,
+    "f1db": 12
+   },
+   {
+    "year": 2007,
+    "round": 5,
+    "driver": "liuzzi",
+    "ours": 12,
+    "f1db": 13
+   },
+   {
+    "year": 2007,
+    "round": 5,
+    "driver": "coulthard",
+    "ours": 13,
+    "f1db": 11
+   },
+   {
+    "year": 2007,
+    "round": 6,
+    "driver": "wurz",
+    "ours": 19,
+    "f1db": 20
+   },
+   {
+    "year": 2007,
+    "round": 6,
+    "driver": "sutil",
+    "ours": 20,
+    "f1db": 21
+   },
+   {
+    "year": 2007,
+    "round": 6,
+    "driver": "albers",
+    "ours": 21,
+    "f1db": 22
+   },
+   {
+    "year": 2007,
+    "round": 6,
+    "driver": "kovalainen",
+    "ours": 22,
+    "f1db": 19
+   },
+   {
+    "year": 2007,
+    "round": 8,
+    "driver": "davidson",
+    "ours": 19,
+    "f1db": 20
+   },
+   {
+    "year": 2007,
+    "round": 8,
+    "driver": "albers",
+    "ours": 20,
+    "f1db": 21
+   },
+   {
+    "year": 2007,
+    "round": 8,
+    "driver": "sutil",
+    "ours": 21,
+    "f1db": 22
+   },
+   {
+    "year": 2007,
+    "round": 8,
+    "driver": "sato",
+    "ours": 22,
+    "f1db": 19
+   },
+   {
+    "year": 2019,
+    "round": 11,
+    "driver": "vettel",
+    "ours": 20,
+    "f1db": null
+   },
+   {
+    "year": 2007,
+    "round": 12,
+    "driver": "wurz",
+    "ours": 14,
+    "f1db": 16
+   },
+   {
+    "year": 2007,
+    "round": 12,
+    "driver": "liuzzi",
+    "ours": 15,
+    "f1db": 17
+   },
+   {
+    "year": 2007,
+    "round": 12,
+    "driver": "ralf_schumacher",
+    "ours": 16,
+    "f1db": 18
+   },
+   {
+    "year": 2007,
+    "round": 12,
+    "driver": "sato",
+    "ours": 17,
+    "f1db": 19
+   },
+   {
+    "year": 2007,
+    "round": 12,
+    "driver": "vettel",
+    "ours": 18,
+    "f1db": 20
+   },
+   {
+    "year": 2007,
+    "round": 12,
+    "driver": "sutil",
+    "ours": 19,
+    "f1db": 21
+   },
+   {
+    "year": 2007,
+    "round": 12,
+    "driver": "yamamoto",
+    "ours": 20,
+    "f1db": 22
+   },
+   {
+    "year": 2007,
+    "round": 12,
+    "driver": "button",
+    "ours": 21,
+    "f1db": 15
+   },
+   {
+    "year": 2007,
+    "round": 12,
+    "driver": "barrichello",
+    "ours": 22,
+    "f1db": 14
+   },
+   {
+    "year": 2007,
+    "round": 14,
+    "driver": "rosberg",
+    "ours": 5,
+    "f1db": 6
+   },
+   {
+    "year": 2007,
+    "round": 14,
+    "driver": "heidfeld",
+    "ours": 6,
+    "f1db": 7
+   },
+   {
+    "year": 2007,
+    "round": 14,
+    "driver": "webber",
+    "ours": 7,
+    "f1db": 8
+   },
+   {
+    "year": 2007,
+    "round": 14,
+    "driver": "trulli",
+    "ours": 8,
+    "f1db": 9
+   }
+  ],
+  "qualifying.q1-time": [
+   {
+    "year": 2007,
+    "round": 9,
+    "driver": "albers",
+    "ours": "1:22.586",
+    "f1db": "1:22.589"
+   },
+   {
+    "year": 2007,
+    "round": 14,
+    "driver": "yamamoto",
+    "ours": "1:49.557",
+    "f1db": "1:49.577"
+   },
+   {
+    "year": 2007,
+    "round": 15,
+    "driver": "sato",
+    "ours": "1:28.762",
+    "f1db": "1:28.792"
+   },
+   {
+    "year": 2006,
+    "round": 5,
+    "driver": "liuzzi",
+    "ours": "1:32.651",
+    "f1db": "1:32.621"
+   },
+   {
+    "year": 2004,
+    "round": 15,
+    "driver": "bruni",
+    "ours": "1:24.910",
+    "f1db": "1:24.940"
+   },
+   {
+    "year": 2001,
+    "round": 16,
+    "driver": "hakkinen",
+    "ours": "1:12.309",
+    "f1db": "1:11.945"
+   },
+   {
+    "year": 2000,
+    "round": 3,
+    "driver": "barrichello",
+    "ours": "1:25.871",
+    "f1db": "1:25.242"
+   },
+   {
+    "year": 1998,
+    "round": 1,
+    "driver": "panis",
+    "ours": "1:35.215",
+    "f1db": "1:33.851"
+   },
+   {
+    "year": 1998,
+    "round": 3,
+    "driver": "diniz",
+    "ours": "1:29.617",
+    "f1db": "1:30.022"
+   },
+   {
+    "year": 1997,
+    "round": 2,
+    "driver": "frentzen",
+    "ours": "1:16.971",
+    "f1db": "1:16.924"
+   },
+   {
+    "year": 1997,
+    "round": 3,
+    "driver": "diniz",
+    "ours": "1:28.696",
+    "f1db": "1:28.969"
+   },
+   {
+    "year": 1997,
+    "round": 4,
+    "driver": "irvine",
+    "ours": "1:24.862",
+    "f1db": "1:24.861"
+   },
+   {
+    "year": 1997,
+    "round": 4,
+    "driver": "larini",
+    "ours": "1:25.554",
+    "f1db": "1:25.544"
+   },
+   {
+    "year": 1997,
+    "round": 8,
+    "driver": "nakano",
+    "ours": "1:15.876",
+    "f1db": "1:15.857"
+   },
+   {
+    "year": 1995,
+    "round": 1,
+    "driver": "verstappen",
+    "ours": "1:27.323",
+    "f1db": "1:26.323"
+   },
+   {
+    "year": 1995,
+    "round": 10,
+    "driver": "irvine",
+    "ours": "1:19.499",
+    "f1db": "1:21.246"
+   },
+   {
+    "year": 1994,
+    "round": 1,
+    "driver": "bernard",
+    "ours": "1:19.398",
+    "f1db": "1:19.396"
+   },
+   {
+    "year": 1994,
+    "round": 2,
+    "driver": "ratzenberger",
+    "ours": "1:16.536",
+    "f1db": "1:16.356"
+   },
+   {
+    "year": 1994,
+    "round": 9,
+    "driver": "panis",
+    "ours": "1:46.185",
+    "f1db": "1:46.165"
+   },
+   {
+    "year": 1994,
+    "round": 14,
+    "driver": "brabham",
+    "ours": "1:27.201",
+    "f1db": "1:26.065"
+   },
+   {
+    "year": 2009,
+    "round": 4,
+    "driver": "trulli",
+    "ours": "1:32.799",
+    "f1db": "1:32.779"
+   },
+   {
+    "year": 2009,
+    "round": 12,
+    "driver": "alguersuari",
+    "ours": "1:46.302",
+    "f1db": "1:46.032"
+   },
+   {
+    "year": 2009,
+    "round": 15,
+    "driver": "raikkonen",
+    "ours": "1:31.288",
+    "f1db": "1:31.228"
+   },
+   {
+    "year": 2009,
+    "round": 17,
+    "driver": "sutil",
+    "ours": "1:41.836",
+    "f1db": "1:41.863"
+   },
+   {
+    "year": 2010,
+    "round": 1,
+    "driver": "bruno_senna",
+    "ours": "2:03.204",
+    "f1db": "2:03.240"
+   }
+  ],
+  "pit_stops.lap": [
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "michael_schumacher",
+    "stop": 1,
+    "ours": 12,
+    "f1db": 8
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "cesaris",
+    "stop": 1,
+    "ours": 14,
+    "f1db": 10
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "berger",
+    "stop": 1,
+    "ours": 15,
+    "f1db": 11
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "herbert",
+    "stop": 1,
+    "ours": 15,
+    "f1db": 11
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "hakkinen",
+    "stop": 1,
+    "ours": 19,
+    "f1db": 15
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "blundell",
+    "stop": 1,
+    "ours": 19,
+    "f1db": 15
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "bernard",
+    "stop": 1,
+    "ours": 19,
+    "f1db": 15
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "gachot",
+    "stop": 1,
+    "ours": 19,
+    "f1db": 15
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "morbidelli",
+    "stop": 1,
+    "ours": 20,
+    "f1db": 16
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "katayama",
+    "stop": 1,
+    "ours": 20,
+    "f1db": 16
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "panis",
+    "stop": 1,
+    "ours": 21,
+    "f1db": 17
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "fittipaldi",
+    "stop": 1,
+    "ours": 22,
+    "f1db": 18
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "martini",
+    "stop": 1,
+    "ours": 22,
+    "f1db": 18
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "frentzen",
+    "stop": 1,
+    "ours": 23,
+    "f1db": 19
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "alboreto",
+    "stop": 1,
+    "ours": 26,
+    "f1db": 22
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "larini",
+    "stop": 1,
+    "ours": 29,
+    "f1db": 25
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "frentzen",
+    "stop": 2,
+    "ours": 29,
+    "f1db": 25
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "michael_schumacher",
+    "stop": 2,
+    "ours": 30,
+    "f1db": 26
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "martini",
+    "stop": 2,
+    "ours": 32,
+    "f1db": 28
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "panis",
+    "stop": 2,
+    "ours": 31,
+    "f1db": 27
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "cesaris",
+    "stop": 2,
+    "ours": 35,
+    "f1db": 31
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "wendlinger",
+    "stop": 1,
+    "ours": 36,
+    "f1db": 32
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "herbert",
+    "stop": 2,
+    "ours": 36,
+    "f1db": 32
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "hakkinen",
+    "stop": 2,
+    "ours": 37,
+    "f1db": 33
+   },
+   {
+    "year": 1994,
+    "round": 3,
+    "driver": "bernard",
+    "stop": 2,
+    "ours": 37,
+    "f1db": 33
+   }
+  ],
+  "pit_stops.only-ours": [
+   {
+    "year": 1994,
+    "round": 10,
+    "driver": "gounon",
+    "stop": 1
+   },
+   {
+    "year": 1994,
+    "round": 10,
+    "driver": "alliot",
+    "stop": 1
+   },
+   {
+    "year": 2015,
+    "round": 14,
+    "driver": "hulkenberg",
+    "stop": 3
+   },
+   {
+    "year": 2025,
+    "round": 8,
+    "driver": "russell",
+    "stop": 1
+   },
+   {
+    "year": 2025,
+    "round": 10,
+    "driver": "alonso",
+    "stop": 3
+   },
+   {
+    "year": 2025,
+    "round": 10,
+    "driver": "hulkenberg",
+    "stop": 2
+   },
+   {
+    "year": 2025,
+    "round": 10,
+    "driver": "russell",
+    "stop": 3
+   },
+   {
+    "year": 2025,
+    "round": 10,
+    "driver": "max_verstappen",
+    "stop": 3
+   },
+   {
+    "year": 2025,
+    "round": 10,
+    "driver": "antonelli",
+    "stop": 3
+   },
+   {
+    "year": 2025,
+    "round": 10,
+    "driver": "ocon",
+    "stop": 2
+   },
+   {
+    "year": 2025,
+    "round": 10,
+    "driver": "sainz",
+    "stop": 2
+   },
+   {
+    "year": 2025,
+    "round": 10,
+    "driver": "leclerc",
+    "stop": 3
+   },
+   {
+    "year": 2025,
+    "round": 10,
+    "driver": "tsunoda",
+    "stop": 2
+   },
+   {
+    "year": 2025,
+    "round": 10,
+    "driver": "colapinto",
+    "stop": 2
+   },
+   {
+    "year": 2025,
+    "round": 10,
+    "driver": "bortoleto",
+    "stop": 2
+   },
+   {
+    "year": 2025,
+    "round": 10,
+    "driver": "gasly",
+    "stop": 2
+   },
+   {
+    "year": 2025,
+    "round": 10,
+    "driver": "hamilton",
+    "stop": 3
+   },
+   {
+    "year": 2025,
+    "round": 10,
+    "driver": "alonso",
+    "stop": 4
+   },
+   {
+    "year": 2025,
+    "round": 10,
+    "driver": "hulkenberg",
+    "stop": 3
+   },
+   {
+    "year": 2025,
+    "round": 10,
+    "driver": "russell",
+    "stop": 4
+   },
+   {
+    "year": 2025,
+    "round": 10,
+    "driver": "max_verstappen",
+    "stop": 4
+   },
+   {
+    "year": 2025,
+    "round": 10,
+    "driver": "antonelli",
+    "stop": 4
+   },
+   {
+    "year": 2025,
+    "round": 10,
+    "driver": "ocon",
+    "stop": 3
+   },
+   {
+    "year": 2025,
+    "round": 10,
+    "driver": "sainz",
+    "stop": 3
+   },
+   {
+    "year": 2025,
+    "round": 10,
+    "driver": "piastri",
+    "stop": 4
+   }
+  ],
+  "pit_stops.duration": [
+   {
+    "year": 2023,
+    "round": 18,
+    "driver": "ricciardo",
+    "stop": 1,
+    "ours": 23963,
+    "f1db": 24364
+   },
+   {
+    "year": 2026,
+    "round": 3,
+    "driver": "albon",
+    "stop": 3,
+    "ours": 24103,
+    "f1db": 24337
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "norris",
+    "stop": 1,
+    "ours": 21820,
+    "f1db": 21791
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "norris",
+    "stop": 2,
+    "ours": 21992,
+    "f1db": 22041
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "gasly",
+    "stop": 1,
+    "ours": 22760,
+    "f1db": 22682
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "gasly",
+    "stop": 2,
+    "ours": 23292,
+    "f1db": 23310
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "perez",
+    "stop": 1,
+    "ours": 24854,
+    "f1db": 24805
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "perez",
+    "stop": 2,
+    "ours": 24429,
+    "f1db": 24432
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "perez",
+    "stop": 3,
+    "ours": 23848,
+    "f1db": 23912
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "antonelli",
+    "stop": 1,
+    "ours": 21906,
+    "f1db": 22038
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "antonelli",
+    "stop": 2,
+    "ours": 22251,
+    "f1db": 22210
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "alonso",
+    "stop": 1,
+    "ours": 22203,
+    "f1db": 22220
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "leclerc",
+    "stop": 1,
+    "ours": 22195,
+    "f1db": 22249
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "leclerc",
+    "stop": 2,
+    "ours": 22136,
+    "f1db": 22125
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "albon",
+    "stop": 1,
+    "ours": 23957,
+    "f1db": 24005
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "albon",
+    "stop": 2,
+    "ours": 22067,
+    "f1db": 22027
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "hulkenberg",
+    "stop": 1,
+    "ours": 22833,
+    "f1db": 22869
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "max_verstappen",
+    "stop": 1,
+    "ours": 22130,
+    "f1db": 22273
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "max_verstappen",
+    "stop": 2,
+    "ours": 24200,
+    "f1db": 24189
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "max_verstappen",
+    "stop": 3,
+    "ours": 22729,
+    "f1db": 22786
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "lawson",
+    "stop": 1,
+    "ours": 25863,
+    "f1db": 25983
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "lawson",
+    "stop": 2,
+    "ours": 23154,
+    "f1db": 23172
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "ocon",
+    "stop": 1,
+    "ours": 23284,
+    "f1db": 23256
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "ocon",
+    "stop": 2,
+    "ours": 26480,
+    "f1db": 26449
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "ocon",
+    "stop": 3,
+    "ours": 23067,
+    "f1db": 22965
+   }
+  ],
+  "pit_stops.only-f1db": [
+   {
+    "year": 2011,
+    "round": 1,
+    "driver": "timo-glock",
+    "stop": 2
+   },
+   {
+    "year": 2011,
+    "round": 7,
+    "driver": "jarno-trulli",
+    "stop": 4
+   },
+   {
+    "year": 2012,
+    "round": 3,
+    "driver": "heikki-kovalainen",
+    "stop": 4
+   },
+   {
+    "year": 2014,
+    "round": 9,
+    "driver": "max-chilton",
+    "stop": 1
+   },
+   {
+    "year": 2018,
+    "round": 13,
+    "driver": "daniel-ricciardo",
+    "stop": 1
+   },
+   {
+    "year": 2019,
+    "round": 15,
+    "driver": "carlos-sainz-jr",
+    "stop": 1
+   },
+   {
+    "year": 2019,
+    "round": 18,
+    "driver": "lando-norris",
+    "stop": 1
+   },
+   {
+    "year": 2019,
+    "round": 21,
+    "driver": "pierre-gasly",
+    "stop": 1
+   },
+   {
+    "year": 2026,
+    "round": 6,
+    "driver": "sergio-perez",
+    "stop": 3
+   },
+   {
+    "year": 2026,
+    "round": 6,
+    "driver": "gabriel-bortoleto",
+    "stop": 4
+   },
+   {
+    "year": 2026,
+    "round": 7,
+    "driver": "alexander-albon",
+    "stop": 4
+   },
+   {
+    "year": 2026,
+    "round": 12,
+    "driver": "fernando-alonso",
+    "stop": 2
+   },
+   {
+    "year": 2026,
+    "round": 12,
+    "driver": "lance-stroll",
+    "stop": 3
+   },
+   {
+    "year": 2026,
+    "round": 12,
+    "driver": "arvid-lindblad",
+    "stop": 3
+   },
+   {
+    "year": 2026,
+    "round": 12,
+    "driver": "esteban-ocon",
+    "stop": 3
+   },
+   {
+    "year": 2026,
+    "round": 12,
+    "driver": "george-russell",
+    "stop": 3
+   },
+   {
+    "year": 2026,
+    "round": 12,
+    "driver": "yuki-tsunoda",
+    "stop": 3
+   },
+   {
+    "year": 2026,
+    "round": 12,
+    "driver": "franco-colapinto",
+    "stop": 4
+   },
+   {
+    "year": 2026,
+    "round": 12,
+    "driver": "lando-norris",
+    "stop": 3
+   },
+   {
+    "year": 2026,
+    "round": 12,
+    "driver": "pierre-gasly",
+    "stop": 3
+   },
+   {
+    "year": 2026,
+    "round": 12,
+    "driver": "liam-lawson",
+    "stop": 3
+   },
+   {
+    "year": 2026,
+    "round": 12,
+    "driver": "nico-hulkenberg",
+    "stop": 3
+   },
+   {
+    "year": 2026,
+    "round": 12,
+    "driver": "alexander-albon",
+    "stop": 3
+   },
+   {
+    "year": 2026,
+    "round": 12,
+    "driver": "valtteri-bottas",
+    "stop": 3
+   },
+   {
+    "year": 2026,
+    "round": 12,
+    "driver": "sergio-perez",
+    "stop": 3
+   }
+  ],
+  "driver_standings.position-tie-order": [
+   {
+    "year": 2008,
+    "round": 5,
+    "driver": "alonso",
+    "ours": 8,
+    "f1db": 9
+   },
+   {
+    "year": 2008,
+    "round": 5,
+    "driver": "trulli",
+    "ours": 9,
+    "f1db": 8
+   },
+   {
+    "year": 2007,
+    "round": 2,
+    "driver": "massa",
+    "ours": 6,
+    "f1db": 5
+   },
+   {
+    "year": 2005,
+    "round": 2,
+    "driver": "montoya",
+    "ours": 6,
+    "f1db": 5
+   },
+   {
+    "year": 2002,
+    "round": 2,
+    "driver": "webber",
+    "ours": 8,
+    "f1db": 7
+   },
+   {
+    "year": 2002,
+    "round": 2,
+    "driver": "irvine",
+    "ours": 6,
+    "f1db": 5
+   },
+   {
+    "year": 2001,
+    "round": 2,
+    "driver": "raikkonen",
+    "ours": 8,
+    "f1db": 7
+   },
+   {
+    "year": 2001,
+    "round": 2,
+    "driver": "coulthard",
+    "ours": 3,
+    "f1db": 2
+   },
+   {
+    "year": 2001,
+    "round": 3,
+    "driver": "raikkonen",
+    "ours": 11,
+    "f1db": 10
+   },
+   {
+    "year": 2000,
+    "round": 2,
+    "driver": "villeneuve",
+    "ours": 7,
+    "f1db": 6
+   },
+   {
+    "year": 2000,
+    "round": 3,
+    "driver": "frentzen",
+    "ours": 8,
+    "f1db": 7
+   },
+   {
+    "year": 2000,
+    "round": 3,
+    "driver": "salo",
+    "ours": 12,
+    "f1db": 11
+   },
+   {
+    "year": 1999,
+    "round": 3,
+    "driver": "alesi",
+    "ours": 10,
+    "f1db": 12
+   },
+   {
+    "year": 1999,
+    "round": 3,
+    "driver": "panis",
+    "ours": 12,
+    "f1db": 11
+   },
+   {
+    "year": 1999,
+    "round": 3,
+    "driver": "rosa",
+    "ours": 11,
+    "f1db": 10
+   },
+   {
+    "year": 1999,
+    "round": 4,
+    "driver": "alesi",
+    "ours": 11,
+    "f1db": 12
+   },
+   {
+    "year": 1999,
+    "round": 4,
+    "driver": "wurz",
+    "ours": 10,
+    "f1db": 13
+   },
+   {
+    "year": 1999,
+    "round": 4,
+    "driver": "panis",
+    "ours": 13,
+    "f1db": 11
+   },
+   {
+    "year": 1999,
+    "round": 4,
+    "driver": "rosa",
+    "ours": 12,
+    "f1db": 10
+   },
+   {
+    "year": 1999,
+    "round": 5,
+    "driver": "trulli",
+    "ours": 11,
+    "f1db": 14
+   },
+   {
+    "year": 1999,
+    "round": 5,
+    "driver": "alesi",
+    "ours": 13,
+    "f1db": 12
+   },
+   {
+    "year": 1999,
+    "round": 5,
+    "driver": "wurz",
+    "ours": 10,
+    "f1db": 13
+   },
+   {
+    "year": 1999,
+    "round": 5,
+    "driver": "panis",
+    "ours": 14,
+    "f1db": 11
+   },
+   {
+    "year": 1999,
+    "round": 5,
+    "driver": "rosa",
+    "ours": 12,
+    "f1db": 10
+   },
+   {
+    "year": 1999,
+    "round": 6,
+    "driver": "trulli",
+    "ours": 12,
+    "f1db": 15
+   }
+  ],
+  "driver_standings.only-ours-zero-points": [
+   {
+    "year": 2005,
+    "round": 4,
+    "driver": "davidson"
+   },
+   {
+    "year": 2005,
+    "round": 5,
+    "driver": "davidson"
+   },
+   {
+    "year": 2005,
+    "round": 6,
+    "driver": "davidson"
+   },
+   {
+    "year": 2005,
+    "round": 7,
+    "driver": "davidson"
+   },
+   {
+    "year": 2005,
+    "round": 8,
+    "driver": "davidson"
+   },
+   {
+    "year": 2005,
+    "round": 9,
+    "driver": "davidson"
+   },
+   {
+    "year": 2005,
+    "round": 10,
+    "driver": "davidson"
+   },
+   {
+    "year": 2005,
+    "round": 11,
+    "driver": "davidson"
+   },
+   {
+    "year": 2005,
+    "round": 12,
+    "driver": "davidson"
+   },
+   {
+    "year": 2005,
+    "round": 13,
+    "driver": "davidson"
+   },
+   {
+    "year": 2005,
+    "round": 14,
+    "driver": "davidson"
+   },
+   {
+    "year": 2005,
+    "round": 15,
+    "driver": "zonta"
+   },
+   {
+    "year": 2005,
+    "round": 15,
+    "driver": "davidson"
+   },
+   {
+    "year": 2005,
+    "round": 16,
+    "driver": "zonta"
+   },
+   {
+    "year": 2005,
+    "round": 16,
+    "driver": "davidson"
+   },
+   {
+    "year": 2005,
+    "round": 17,
+    "driver": "zonta"
+   },
+   {
+    "year": 2005,
+    "round": 17,
+    "driver": "davidson"
+   },
+   {
+    "year": 2005,
+    "round": 18,
+    "driver": "zonta"
+   },
+   {
+    "year": 2005,
+    "round": 18,
+    "driver": "davidson"
+   },
+   {
+    "year": 2005,
+    "round": 19,
+    "driver": "zonta"
+   },
+   {
+    "year": 2005,
+    "round": 19,
+    "driver": "davidson"
+   },
+   {
+    "year": 1999,
+    "round": 1,
+    "driver": "michael_schumacher"
+   },
+   {
+    "year": 1999,
+    "round": 1,
+    "driver": "takagi"
+   },
+   {
+    "year": 1999,
+    "round": 2,
+    "driver": "gene"
+   },
+   {
+    "year": 1999,
+    "round": 2,
+    "driver": "wurz"
+   }
+  ],
+  "driver_standings.position": [
+   {
+    "year": 1997,
+    "round": 17,
+    "driver": "michael_schumacher",
+    "ours": 26,
+    "f1db": null
+   },
+   {
+    "year": 1956,
+    "round": 2,
+    "driver": "fangio",
+    "ours": 1,
+    "f1db": 2
+   },
+   {
+    "year": 1956,
+    "round": 2,
+    "driver": "behra",
+    "ours": 2,
+    "f1db": 1
+   },
+   {
+    "year": 1956,
+    "round": 3,
+    "driver": "fangio",
+    "ours": 1,
+    "f1db": 2
+   },
+   {
+    "year": 1956,
+    "round": 3,
+    "driver": "behra",
+    "ours": 2,
+    "f1db": 1
+   },
+   {
+    "year": 1956,
+    "round": 4,
+    "driver": "fangio",
+    "ours": 3,
+    "f1db": 4
+   },
+   {
+    "year": 1956,
+    "round": 4,
+    "driver": "behra",
+    "ours": 4,
+    "f1db": 3
+   },
+   {
+    "year": 1956,
+    "round": 5,
+    "driver": "fangio",
+    "ours": 2,
+    "f1db": 3
+   },
+   {
+    "year": 1956,
+    "round": 5,
+    "driver": "behra",
+    "ours": 3,
+    "f1db": 2
+   },
+   {
+    "year": 1956,
+    "round": 6,
+    "driver": "fangio",
+    "ours": 1,
+    "f1db": 2
+   },
+   {
+    "year": 1956,
+    "round": 6,
+    "driver": "collins",
+    "ours": 2,
+    "f1db": 1
+   },
+   {
+    "year": 1954,
+    "round": 5,
+    "driver": "moss",
+    "ours": 11,
+    "f1db": 10
+   },
+   {
+    "year": 1954,
+    "round": 6,
+    "driver": "moss",
+    "ours": 12,
+    "f1db": 10
+   },
+   {
+    "year": 1954,
+    "round": 7,
+    "driver": "moss",
+    "ours": 13,
+    "f1db": 11
+   },
+   {
+    "year": 1954,
+    "round": 8,
+    "driver": "moss",
+    "ours": 13,
+    "f1db": 11
+   },
+   {
+    "year": 1954,
+    "round": 9,
+    "driver": "moss",
+    "ours": 15,
+    "f1db": 13
+   }
+  ],
+  "driver_standings.points": [
+   {
+    "year": 1956,
+    "round": 2,
+    "driver": "fangio",
+    "ours": 10.5,
+    "f1db": 9.0
+   },
+   {
+    "year": 1956,
+    "round": 3,
+    "driver": "fangio",
+    "ours": 10.5,
+    "f1db": 9.0
+   },
+   {
+    "year": 1956,
+    "round": 4,
+    "driver": "fangio",
+    "ours": 10.5,
+    "f1db": 9.0
+   },
+   {
+    "year": 1956,
+    "round": 5,
+    "driver": "fangio",
+    "ours": 14.5,
+    "f1db": 13.0
+   },
+   {
+    "year": 1956,
+    "round": 6,
+    "driver": "fangio",
+    "ours": 22.5,
+    "f1db": 21.0
+   },
+   {
+    "year": 1954,
+    "round": 5,
+    "driver": "ascari",
+    "ours": 0.0,
+    "f1db": 0.14
+   },
+   {
+    "year": 1954,
+    "round": 5,
+    "driver": "behra",
+    "ours": 0.0,
+    "f1db": 0.14
+   },
+   {
+    "year": 1954,
+    "round": 5,
+    "driver": "moss",
+    "ours": 4.0,
+    "f1db": 4.14
+   },
+   {
+    "year": 1954,
+    "round": 6,
+    "driver": "ascari",
+    "ours": 0.0,
+    "f1db": 0.14
+   },
+   {
+    "year": 1954,
+    "round": 6,
+    "driver": "behra",
+    "ours": 0.0,
+    "f1db": 0.14
+   },
+   {
+    "year": 1954,
+    "round": 6,
+    "driver": "moss",
+    "ours": 4.0,
+    "f1db": 4.14
+   },
+   {
+    "year": 1954,
+    "round": 7,
+    "driver": "ascari",
+    "ours": 0.0,
+    "f1db": 0.14
+   },
+   {
+    "year": 1954,
+    "round": 7,
+    "driver": "behra",
+    "ours": 0.0,
+    "f1db": 0.14
+   },
+   {
+    "year": 1954,
+    "round": 7,
+    "driver": "moss",
+    "ours": 4.0,
+    "f1db": 4.14
+   },
+   {
+    "year": 1954,
+    "round": 8,
+    "driver": "ascari",
+    "ours": 0.0,
+    "f1db": 0.14
+   },
+   {
+    "year": 1954,
+    "round": 8,
+    "driver": "behra",
+    "ours": 0.0,
+    "f1db": 0.14
+   },
+   {
+    "year": 1954,
+    "round": 8,
+    "driver": "moss",
+    "ours": 4.0,
+    "f1db": 4.14
+   },
+   {
+    "year": 1954,
+    "round": 9,
+    "driver": "ascari",
+    "ours": 1.0,
+    "f1db": 1.14
+   },
+   {
+    "year": 1954,
+    "round": 9,
+    "driver": "behra",
+    "ours": 0.0,
+    "f1db": 0.14
+   },
+   {
+    "year": 1954,
+    "round": 9,
+    "driver": "moss",
+    "ours": 4.0,
+    "f1db": 4.14
+   }
+  ],
+  "constructor_standings.only-ours": [
+   {
+    "year": 2007,
+    "round": 3,
+    "constructor": "mclaren",
+    "position": 11
+   },
+   {
+    "year": 2007,
+    "round": 4,
+    "constructor": "mclaren",
+    "position": 11
+   },
+   {
+    "year": 2007,
+    "round": 5,
+    "constructor": "mclaren",
+    "position": 11
+   },
+   {
+    "year": 2007,
+    "round": 6,
+    "constructor": "mclaren",
+    "position": 11
+   },
+   {
+    "year": 2007,
+    "round": 7,
+    "constructor": "mclaren",
+    "position": 11
+   },
+   {
+    "year": 2007,
+    "round": 8,
+    "constructor": "mclaren",
+    "position": 11
+   },
+   {
+    "year": 2007,
+    "round": 9,
+    "constructor": "mclaren",
+    "position": 11
+   },
+   {
+    "year": 2007,
+    "round": 10,
+    "constructor": "mclaren",
+    "position": 11
+   },
+   {
+    "year": 2007,
+    "round": 11,
+    "constructor": "mclaren",
+    "position": 11
+   },
+   {
+    "year": 2007,
+    "round": 12,
+    "constructor": "mclaren",
+    "position": 11
+   },
+   {
+    "year": 2007,
+    "round": 13,
+    "constructor": "mclaren",
+    "position": 11
+   },
+   {
+    "year": 2007,
+    "round": 14,
+    "constructor": "mclaren",
+    "position": 11
+   },
+   {
+    "year": 2007,
+    "round": 15,
+    "constructor": "mclaren",
+    "position": 11
+   },
+   {
+    "year": 2007,
+    "round": 16,
+    "constructor": "mclaren",
+    "position": 11
+   },
+   {
+    "year": 2007,
+    "round": 17,
+    "constructor": "mclaren",
+    "position": 11
+   },
+   {
+    "year": 1999,
+    "round": 3,
+    "constructor": "sauber",
+    "position": 9
+   },
+   {
+    "year": 1999,
+    "round": 3,
+    "constructor": "prost",
+    "position": 8
+   },
+   {
+    "year": 1999,
+    "round": 4,
+    "constructor": "sauber",
+    "position": 9
+   },
+   {
+    "year": 1999,
+    "round": 4,
+    "constructor": "prost",
+    "position": 8
+   },
+   {
+    "year": 1999,
+    "round": 5,
+    "constructor": "sauber",
+    "position": 9
+   },
+   {
+    "year": 1999,
+    "round": 6,
+    "constructor": "sauber",
+    "position": 8
+   },
+   {
+    "year": 1999,
+    "round": 7,
+    "constructor": "sauber",
+    "position": 8
+   },
+   {
+    "year": 1996,
+    "round": 3,
+    "constructor": "footwork",
+    "position": 8
+   },
+   {
+    "year": 1996,
+    "round": 4,
+    "constructor": "footwork",
+    "position": 8
+   },
+   {
+    "year": 1996,
+    "round": 5,
+    "constructor": "footwork",
+    "position": 8
+   }
+  ],
+  "constructor_standings.only-ours-zero-points": [
+   {
+    "year": 2006,
+    "round": 15,
+    "constructor": "spyker_mf1",
+    "position": 12
+   },
+   {
+    "year": 2006,
+    "round": 16,
+    "constructor": "spyker_mf1",
+    "position": 12
+   },
+   {
+    "year": 2006,
+    "round": 17,
+    "constructor": "spyker_mf1",
+    "position": 12
+   },
+   {
+    "year": 2006,
+    "round": 18,
+    "constructor": "spyker_mf1",
+    "position": 12
+   },
+   {
+    "year": 1999,
+    "round": 3,
+    "constructor": "bar",
+    "position": 10
+   },
+   {
+    "year": 1999,
+    "round": 2,
+    "constructor": "minardi",
+    "position": 9
+   },
+   {
+    "year": 1999,
+    "round": 3,
+    "constructor": "minardi",
+    "position": 11
+   },
+   {
+    "year": 1999,
+    "round": 4,
+    "constructor": "bar",
+    "position": 10
+   },
+   {
+    "year": 1999,
+    "round": 4,
+    "constructor": "minardi",
+    "position": 11
+   },
+   {
+    "year": 1999,
+    "round": 5,
+    "constructor": "bar",
+    "position": 10
+   },
+   {
+    "year": 1999,
+    "round": 5,
+    "constructor": "minardi",
+    "position": 11
+   },
+   {
+    "year": 1999,
+    "round": 6,
+    "constructor": "bar",
+    "position": 10
+   },
+   {
+    "year": 1999,
+    "round": 6,
+    "constructor": "minardi",
+    "position": 11
+   },
+   {
+    "year": 1999,
+    "round": 7,
+    "constructor": "bar",
+    "position": 10
+   },
+   {
+    "year": 1999,
+    "round": 7,
+    "constructor": "minardi",
+    "position": 11
+   },
+   {
+    "year": 1999,
+    "round": 8,
+    "constructor": "bar",
+    "position": 10
+   },
+   {
+    "year": 1999,
+    "round": 8,
+    "constructor": "minardi",
+    "position": 11
+   },
+   {
+    "year": 1999,
+    "round": 9,
+    "constructor": "bar",
+    "position": 10
+   },
+   {
+    "year": 1999,
+    "round": 9,
+    "constructor": "minardi",
+    "position": 11
+   },
+   {
+    "year": 1999,
+    "round": 10,
+    "constructor": "bar",
+    "position": 10
+   },
+   {
+    "year": 1999,
+    "round": 10,
+    "constructor": "minardi",
+    "position": 11
+   },
+   {
+    "year": 1999,
+    "round": 11,
+    "constructor": "bar",
+    "position": 10
+   },
+   {
+    "year": 1999,
+    "round": 11,
+    "constructor": "minardi",
+    "position": 11
+   },
+   {
+    "year": 1999,
+    "round": 12,
+    "constructor": "bar",
+    "position": 10
+   },
+   {
+    "year": 1999,
+    "round": 12,
+    "constructor": "minardi",
+    "position": 11
+   }
+  ],
+  "constructor_standings.points": [
+   {
+    "year": 2000,
+    "round": 10,
+    "constructor": "ferrari",
+    "position": 2,
+    "ours": 92.0,
+    "f1db": 88.0,
+    "f1db_constructor": "mclaren"
+   },
+   {
+    "year": 2000,
+    "round": 10,
+    "constructor": "mclaren",
+    "position": 1,
+    "ours": 98.0,
+    "f1db": 92.0,
+    "f1db_constructor": "ferrari"
+   },
+   {
+    "year": 2000,
+    "round": 11,
+    "constructor": "ferrari",
+    "position": 2,
+    "ours": 102.0,
+    "f1db": 98.0,
+    "f1db_constructor": "mclaren"
+   },
+   {
+    "year": 2000,
+    "round": 11,
+    "constructor": "mclaren",
+    "position": 1,
+    "ours": 108.0,
+    "f1db": 102.0,
+    "f1db_constructor": "ferrari"
+   },
+   {
+    "year": 2000,
+    "round": 12,
+    "constructor": "mclaren",
+    "position": 1,
+    "ours": 122.0,
+    "f1db": 112.0,
+    "f1db_constructor": "mclaren"
+   },
+   {
+    "year": 2000,
+    "round": 13,
+    "constructor": "mclaren",
+    "position": 1,
+    "ours": 135.0,
+    "f1db": 125.0,
+    "f1db_constructor": "mclaren"
+   },
+   {
+    "year": 2000,
+    "round": 14,
+    "constructor": "mclaren",
+    "position": 1,
+    "ours": 141.0,
+    "f1db": 131.0,
+    "f1db_constructor": "mclaren"
+   },
+   {
+    "year": 2000,
+    "round": 15,
+    "constructor": "mclaren",
+    "position": 2,
+    "ours": 143.0,
+    "f1db": 133.0,
+    "f1db_constructor": "mclaren"
+   },
+   {
+    "year": 2000,
+    "round": 16,
+    "constructor": "mclaren",
+    "position": 2,
+    "ours": 153.0,
+    "f1db": 143.0,
+    "f1db_constructor": "mclaren"
+   },
+   {
+    "year": 2000,
+    "round": 17,
+    "constructor": "mclaren",
+    "position": 2,
+    "ours": 162.0,
+    "f1db": 152.0,
+    "f1db_constructor": "mclaren"
+   },
+   {
+    "year": 1995,
+    "round": 1,
+    "constructor": "williams",
+    "position": 2,
+    "ours": 6.0,
+    "f1db": 4.0,
+    "f1db_constructor": "mclaren"
+   },
+   {
+    "year": 1995,
+    "round": 1,
+    "constructor": "benetton",
+    "position": 1,
+    "ours": 10.0,
+    "f1db": 6.0,
+    "f1db_constructor": "ferrari"
+   },
+   {
+    "year": 1995,
+    "round": 2,
+    "constructor": "ferrari",
+    "position": 3,
+    "ours": 13.0,
+    "f1db": 7.0,
+    "f1db_constructor": "benetton"
+   },
+   {
+    "year": 1995,
+    "round": 2,
+    "constructor": "williams",
+    "position": 2,
+    "ours": 16.0,
+    "f1db": 10.0,
+    "f1db_constructor": "williams"
+   },
+   {
+    "year": 1995,
+    "round": 2,
+    "constructor": "benetton",
+    "position": 1,
+    "ours": 17.0,
+    "f1db": 13.0,
+    "f1db_constructor": "ferrari"
+   },
+   {
+    "year": 1995,
+    "round": 3,
+    "constructor": "williams",
+    "position": 1,
+    "ours": 29.0,
+    "f1db": 23.0,
+    "f1db_constructor": "williams"
+   },
+   {
+    "year": 1995,
+    "round": 3,
+    "constructor": "benetton",
+    "position": 3,
+    "ours": 17.0,
+    "f1db": 7.0,
+    "f1db_constructor": "benetton"
+   },
+   {
+    "year": 1995,
+    "round": 4,
+    "constructor": "ferrari",
+    "position": 3,
+    "ours": 27.0,
+    "f1db": 23.0,
+    "f1db_constructor": "benetton"
+   },
+   {
+    "year": 1995,
+    "round": 4,
+    "constructor": "williams",
+    "position": 2,
+    "ours": 32.0,
+    "f1db": 26.0,
+    "f1db_constructor": "williams"
+   },
+   {
+    "year": 1995,
+    "round": 4,
+    "constructor": "benetton",
+    "position": 1,
+    "ours": 33.0,
+    "f1db": 27.0,
+    "f1db_constructor": "ferrari"
+   },
+   {
+    "year": 1995,
+    "round": 5,
+    "constructor": "williams",
+    "position": 2,
+    "ours": 38.0,
+    "f1db": 32.0,
+    "f1db_constructor": "williams"
+   },
+   {
+    "year": 1995,
+    "round": 5,
+    "constructor": "benetton",
+    "position": 1,
+    "ours": 46.0,
+    "f1db": 36.0,
+    "f1db_constructor": "benetton"
+   },
+   {
+    "year": 1995,
+    "round": 6,
+    "constructor": "ferrari",
+    "position": 2,
+    "ours": 41.0,
+    "f1db": 38.0,
+    "f1db_constructor": "benetton"
+   },
+   {
+    "year": 1995,
+    "round": 6,
+    "constructor": "williams",
+    "position": 3,
+    "ours": 38.0,
+    "f1db": 32.0,
+    "f1db_constructor": "williams"
+   },
+   {
+    "year": 1995,
+    "round": 6,
+    "constructor": "benetton",
+    "position": 1,
+    "ours": 48.0,
+    "f1db": 41.0,
+    "f1db_constructor": "ferrari"
+   }
+  ],
+  "constructor_standings.constructor-at-position": [
+   {
+    "year": 2000,
+    "round": 10,
+    "constructor": "ferrari",
+    "position": 2,
+    "f1db": "mclaren"
+   },
+   {
+    "year": 2000,
+    "round": 10,
+    "constructor": "mclaren",
+    "position": 1,
+    "f1db": "ferrari"
+   },
+   {
+    "year": 2000,
+    "round": 11,
+    "constructor": "ferrari",
+    "position": 2,
+    "f1db": "mclaren"
+   },
+   {
+    "year": 2000,
+    "round": 11,
+    "constructor": "mclaren",
+    "position": 1,
+    "f1db": "ferrari"
+   },
+   {
+    "year": 1995,
+    "round": 1,
+    "constructor": "williams",
+    "position": 2,
+    "f1db": "mclaren"
+   },
+   {
+    "year": 1995,
+    "round": 1,
+    "constructor": "benetton",
+    "position": 1,
+    "f1db": "ferrari"
+   },
+   {
+    "year": 1995,
+    "round": 2,
+    "constructor": "ferrari",
+    "position": 3,
+    "f1db": "benetton"
+   },
+   {
+    "year": 1995,
+    "round": 2,
+    "constructor": "benetton",
+    "position": 1,
+    "f1db": "ferrari"
+   },
+   {
+    "year": 1995,
+    "round": 4,
+    "constructor": "ferrari",
+    "position": 3,
+    "f1db": "benetton"
+   },
+   {
+    "year": 1995,
+    "round": 4,
+    "constructor": "benetton",
+    "position": 1,
+    "f1db": "ferrari"
+   },
+   {
+    "year": 1995,
+    "round": 6,
+    "constructor": "ferrari",
+    "position": 2,
+    "f1db": "benetton"
+   },
+   {
+    "year": 1995,
+    "round": 6,
+    "constructor": "benetton",
+    "position": 1,
+    "f1db": "ferrari"
+   },
+   {
+    "year": 1995,
+    "round": 7,
+    "constructor": "ferrari",
+    "position": 3,
+    "f1db": "williams"
+   },
+   {
+    "year": 1995,
+    "round": 7,
+    "constructor": "williams",
+    "position": 2,
+    "f1db": "ferrari"
+   },
+   {
+    "year": 1995,
+    "round": 8,
+    "constructor": "ferrari",
+    "position": 3,
+    "f1db": "williams"
+   },
+   {
+    "year": 1995,
+    "round": 8,
+    "constructor": "williams",
+    "position": 2,
+    "f1db": "ferrari"
+   },
+   {
+    "year": 1995,
+    "round": 9,
+    "constructor": "ferrari",
+    "position": 3,
+    "f1db": "williams"
+   },
+   {
+    "year": 1995,
+    "round": 9,
+    "constructor": "williams",
+    "position": 2,
+    "f1db": "ferrari"
+   },
+   {
+    "year": 1993,
+    "round": 2,
+    "constructor": "mclaren",
+    "position": 1,
+    "f1db": "williams"
+   },
+   {
+    "year": 1993,
+    "round": 3,
+    "constructor": "benetton",
+    "position": 4,
+    "f1db": "ligier"
+   },
+   {
+    "year": 1993,
+    "round": 3,
+    "constructor": "ligier",
+    "position": 5,
+    "f1db": "benetton"
+   },
+   {
+    "year": 1992,
+    "round": 7,
+    "constructor": "ligier",
+    "position": 10,
+    "f1db": "venturi"
+   },
+   {
+    "year": 1992,
+    "round": 15,
+    "constructor": "minardi",
+    "position": 11,
+    "f1db": "venturi"
+   },
+   {
+    "year": 1992,
+    "round": 16,
+    "constructor": "jordan",
+    "position": 11,
+    "f1db": "venturi"
+   },
+   {
+    "year": 1991,
+    "round": 10,
+    "constructor": "lola",
+    "position": 11,
+    "f1db": "leyton-house"
+   }
+  ]
+ }
+}

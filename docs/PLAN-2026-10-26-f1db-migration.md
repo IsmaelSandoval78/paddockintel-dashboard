@@ -74,6 +74,10 @@ F1DB also includes 2026 through round 17 and the 1950–1960 Indianapolis 500s (
 6. **Post-race pipeline.**
    - F1DB publishes "as soon as possible after every race", typically a day or two later.
    - Proposal: keep FastF1 for the Sunday result, reconcile with the F1DB release when it lands, and have the post-race loader flag any difference.
+   - The reconciliation also covers three columns added on 2026-10-27 (#139, #141):
+     - `races.circuit_layout`. A race added to the calendar (e.g. the 2027 season) has no layout until it is set from F1DB's `circuit_layout_id`. Until then, the circuit page leaves that circuit's pole record out. Set it as soon as F1DB lists the race, and flag any calendar race still without one.
+     - `results.pole`. The loader sets it on the grid-1 starter. Check it against F1DB's `race_pole_position`, which differs on sprint-set grids.
+     - `qualifying`. Compare the loader's rows (FastF1) with F1DB's qualifying results for the race.
 7. **Attribution.**
    - The data card source line becomes "Source: PaddockIntel database (built on F1DB)".
    - Add the F1DB credit with a link to CC BY 4.0 on `/about` and the methodology page, as its licence requires.
