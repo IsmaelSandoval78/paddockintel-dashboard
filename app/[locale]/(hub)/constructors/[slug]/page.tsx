@@ -252,16 +252,19 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
         .not('fastest_lap_time', 'is', null)
         .order('fastest_lap_time', { ascending: true })
         .limit(1),
-      // Count-only queries — bypass the row cap, used for DNF rate.
+      // Count-only queries — bypass the row cap, used for DNF rate. Starts only: entries that
+      // failed to qualify (F), withdrew (W) or were excluded (E) never took the start.
       supabase
         .from('results')
         .select('id', { count: 'exact', head: true })
         .eq('constructor_id', constructor.id)
-        .is('position', null),
+        .is('position', null)
+        .not('position_text', 'in', '(F,W,E)'),
       supabase
         .from('results')
         .select('id', { count: 'exact', head: true })
-        .eq('constructor_id', constructor.id),
+        .eq('constructor_id', constructor.id)
+        .not('position_text', 'in', '(F,W,E)'),
   ]);
 
   const stats = statsRes.data;

@@ -6,7 +6,8 @@ import type { CompareH2HData } from '@/lib/types';
 // Rule: both classified → lower position wins; one classified + one DNF → the
 // classified driver wins; both DNF → no point. Qualifying compared by position.
 // A non-start is not a race: results also carry entries that failed to (pre-)qualify (F),
-// withdrew before the start (W) or were excluded from the meeting (E, no grid slot).
+// withdrew before the start (W) or were excluded from the meeting (E). Same rule as the
+// races column of driver_stats / constructor_stats.
 export async function GET(
   _req: Request,
   { params }: { params: Promise<{ refA: string; refB: string }> }
@@ -26,16 +27,15 @@ export async function GET(
   // One query per driver per table — a combined .in() for two 400-race careers
   // would brush against the PostgREST 1,000-row cap
   const [resARes, resBRes, qualARes, qualBRes] = await Promise.all([
-    supabase.from('results').select('race_id, position, position_text, grid').eq('driver_id', idA),
-    supabase.from('results').select('race_id, position, position_text, grid').eq('driver_id', idB),
+    supabase.from('results').select('race_id, position, position_text').eq('driver_id', idA),
+    supabase.from('results').select('race_id, position, position_text').eq('driver_id', idB),
     supabase.from('qualifying').select('race_id, position').eq('driver_id', idA),
     supabase.from('qualifying').select('race_id, position').eq('driver_id', idB),
   ]);
 
   type Slot = { a?: number | null; b?: number | null };
-  type ResultRow = { race_id: unknown; position: unknown; position_text: unknown; grid: unknown };
-  const started = (r: ResultRow) =>
-    r.position_text !== 'F' && r.position_text !== 'W' && !(r.position_text === 'E' && Number(r.grid) === 0);
+  type ResultRow = { race_id: unknown; position: unknown; position_text: unknown };
+  const started = (r: ResultRow) => r.position_text !== 'F' && r.position_text !== 'W' && r.position_text !== 'E';
   // Best classified position per race (a 1950s shared drive gives a driver two rows), or null
   // when every car the driver started in retired.
   const bestPosition = (rows: ResultRow[]) => {
