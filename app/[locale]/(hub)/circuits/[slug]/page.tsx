@@ -136,7 +136,7 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
   const [{ data: racesRaw }, trackPathData, { data: cornersRaw }] = await Promise.all([
     supabase
       .from('races')
-      .select('id, year, round, name, date')
+      .select('id, year, round, name, date, circuit_layout')
       .eq('circuit_id', circuit.id)
       .order('year', { ascending: true }),
     fetchTrackPathData(circuit.circuit_ref),
@@ -160,6 +160,12 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
   const races = racesRaw ?? [];
   const raceIds = races.map((r) => r.id as number);
   const raceYearMap = new Map(races.map((r) => [r.id as number, r.year as number]));
+  // The layout of the circuit's latest race on the calendar: lap-time records compare only laps on it.
+  const raceLayoutMap = new Map(races.map((r) => [r.id as number, (r.circuit_layout as string | null) ?? null]));
+  const latestRace = [...races].sort(
+    (a, b) => (a.year as number) - (b.year as number) || (a.round as number) - (b.round as number)
+  ).at(-1);
+  const currentLayout = (latestRace?.circuit_layout as string | null | undefined) ?? null;
 
   const years = races.map((r) => r.year as number);
   const firstYear = years.length ? Math.min(...years) : null;
@@ -573,7 +579,7 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
 
   type PoleRow = { time: string; ms: number; forename: string; surname: string; constructor: string; year: number };
 
-  const qualiPoles: PoleRow[] = poleRows.flatMap((q) => {
+  const qualiPolesWithLayout: { pole: PoleRow; layout: string | null }[] = poleRows.flatMap((q) => {
     const lap = poleLapByRaceDriver.get(`${q.race_id as number}_${q.driver_id as number}`);
     if (!lap) return [];
     const raw = [lap.q3, lap.q2, lap.q1].find((t) => t && typeof t === 'string' && (t as string).includes(':'));
@@ -584,12 +590,20 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
     const con = constructorMap.get(q.constructor_id as number);
     const year = raceYearMap.get(q.race_id as number);
     if (!d || !con || !year) return [];
-    return [{ time: raw, ms, forename: d.forename as string, surname: d.surname as string, constructor: con, year }];
+    return [{
+      pole: { time: raw, ms, forename: d.forename as string, surname: d.surname as string, constructor: con, year },
+      layout: raceLayoutMap.get(q.race_id as number) ?? null,
+    }];
   });
+  const qualiPoles: PoleRow[] = qualiPolesWithLayout.map((p) => p.pole);
 
-  const allTimePole: PoleRow | null = qualiPoles.reduce<PoleRow | null>(
-    (best, p) => (!best || p.ms < best.ms ? p : best), null
-  );
+  // Pole record on the current layout only (Silverstone has had 8): a lap on another layout isn't
+  // comparable, and with no known layout there is no record to show.
+  const allTimePole: PoleRow | null = currentLayout
+    ? qualiPolesWithLayout
+        .filter((p) => p.layout === currentLayout)
+        .reduce<PoleRow | null>((best, { pole }) => (!best || pole.ms < best.ms ? pole : best), null)
+    : null;
   const recentPoles: PoleRow[] = [...qualiPoles].sort((a, b) => b.year - a.year).slice(0, 5);
 
   // ─── Batch 6: Intel data (parallel) ──────────────────────────────────────────

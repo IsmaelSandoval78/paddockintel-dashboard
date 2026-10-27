@@ -21,8 +21,8 @@ export async function GET(
 
   const driverId = driverRaw.id as number;
 
-  // Batch 2 — career stats + all standings + all results + qualifying poles (parallel)
-  const [statsRes, standingsRes, resultsRes, polesRes] = await Promise.all([
+  // Batch 2 — career stats + all standings + all results (parallel)
+  const [statsRes, standingsRes, resultsRes] = await Promise.all([
     supabase
       .from('driver_stats')
       .select('races, wins, podiums, poles, fastest_laps, first_year, last_year')
@@ -36,11 +36,6 @@ export async function GET(
       .from('results')
       .select('race_id, constructor_id, position')
       .eq('driver_id', driverId),
-    supabase
-      .from('qualifying')
-      .select('race_id')
-      .eq('driver_id', driverId)
-      .eq('position', 1),
   ]);
 
   if (!statsRes.data) return NextResponse.json(null, { status: 404 });
@@ -181,7 +176,8 @@ export async function GET(
     races,
     wins,
     podiums: stats.podiums as number,
-    poles: (polesRes.data ?? []).length,
+    // Official pole sitter count (driver_stats, from results.pole), not qualifying P1s.
+    poles: stats.poles as number,
     fastest_laps: stats.fastest_laps as number,
     championships,
     win_pct: races > 0 ? Math.round((wins / races) * 1000) / 10 : 0,
