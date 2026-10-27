@@ -201,12 +201,13 @@ async function getHomeData(): Promise<{
           }>,
           error: null,
         }),
+    // Official pole sitters (results.pole): after grid penalties, unlike qualifying P1.
     races2026Ids.length > 0
       ? supabase
-          .from('qualifying')
+          .from('results')
           .select('driver_id, race_id')
           .in('race_id', races2026Ids)
-          .eq('position', 1)
+          .eq('pole', true)
       : Promise.resolve({ data: [] as Array<{ driver_id: number; race_id: number }>, error: null }),
     races2026Ids.length > 0
       ? supabase
