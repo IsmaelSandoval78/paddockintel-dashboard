@@ -232,12 +232,13 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
         .eq('constructor_id', constructor.id)
         .lte('position', 3)
         .not('position', 'is', null),
-      // Count query — returns no rows, bypasses the row cap
+      // Count query — returns no rows, bypasses the row cap. Fastest lap of the race only
+      // (rank 1, as constructor_stats counts it): fastest_lap is every driver's own best lap.
       supabase
         .from('results')
         .select('id', { count: 'exact', head: true })
         .eq('constructor_id', constructor.id)
-        .not('fastest_lap', 'is', null),
+        .eq('rank', 1),
       // Whole table, one row per constructor — small, no cap risk. Used to pick a rival.
       supabase
         .from('constructor_stats')
