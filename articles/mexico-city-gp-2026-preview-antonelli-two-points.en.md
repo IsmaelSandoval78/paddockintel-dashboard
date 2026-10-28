@@ -3,9 +3,9 @@ slug: "mexico-city-gp-2026-preview-antonelli-two-points"
 title: "Antonelli Needs Two Points in Mexico. What Could Stop Him"
 locale: en
 meta_description: "Antonelli needs two points at the 2026 Mexico City GP to be F1's youngest champion. Only a Russell or Hamilton win could make him wait."
-status: draft
+status: published
 paywalled: false
-published_at: "2026-10-29T12:00:00+00:00"
+published_at: "2026-10-28T13:39:00+00:00"
 translation_group_id: "1378d43b-9586-4b8f-8277-a5571e2b75ac"
 tags: ["featured", "race-intel", "data-desk"]
 

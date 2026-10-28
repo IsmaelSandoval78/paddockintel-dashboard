@@ -3,9 +3,9 @@ slug: "gp-ciudad-de-mexico-2026-previa-antonelli-dos-puntos"
 title: "Antonelli necesita dos puntos en México: qué podría frenarlo"
 locale: es
 meta_description: "A Antonelli le bastan dos puntos en Ciudad de México para ser el campeón más joven. Solo una victoria de Russell o Hamilton lo haría esperar."
-status: draft
+status: published
 paywalled: false
-published_at: "2026-10-29T12:00:00+00:00"
+published_at: "2026-10-28T13:39:00+00:00"
 translation_group_id: "1378d43b-9586-4b8f-8277-a5571e2b75ac"
 tags: ["featured", "race-intel", "data-desk"]
 
