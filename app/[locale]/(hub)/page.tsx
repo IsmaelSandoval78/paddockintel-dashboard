@@ -1,972 +1,472 @@
 export const revalidate = 3600;
 
-import { createClient } from '@/lib/supabase/server';
-import { editorialToday } from '@/lib/dates';
-import { getLatestStandingsRaceId } from '@/lib/latestRace';
-import { fetchTrackPathData } from '@/lib/trackSvg';
-import HomeExperience from '@/components/home/kinetic/HomeExperience';
-import type {
-  HomeNextRace,
-  HomeDriverRow,
-  HomeLastRaceData,
-  HomeStreaksData,
-  DriverSelectorRow,
-} from '@/lib/types';
-import { localizedPageMeta } from '@/lib/seo';
 import type { Metadata } from 'next';
-
-// ─── Helpers ──────────────────────────────────────────────────────
-
-function daysUntil(dateStr: string): number {
-  const race = new Date(dateStr + 'T00:00:00');
-  const now = new Date();
-  now.setHours(0, 0, 0, 0);
-  return Math.max(0, Math.round((race.getTime() - now.getTime()) / 86400000));
-}
-
-// ─── Data fetching ────────────────────────────────────────────────
-
-async function getHomeData(): Promise<{
-  nextRace: HomeNextRace | null;
-  topDrivers: HomeDriverRow[];
-  lastRaceData: HomeLastRaceData | null;
-  allDrivers: DriverSelectorRow[];
-  currentRound: number | null;
-  currentYear: number | null;
-  streaksData: HomeStreaksData | null;
-  formGuideData: import('@/lib/types').HomeFormGuideData;
-  seasonShapeData: import('@/lib/types').HomeSeasonShapeData;
-  championshipGapData: import('@/lib/types').HomeChampionshipGapData;
-  leaderPodiumsSeason: number;
-}> {
-  const supabase = createClient();
-  const today = editorialToday();
-
-  // ── Batch 1 ─────────────────────────────────────────────────────
-  // Latest race with standings, by (year, round) — see lib/latestRace.ts.
-  const [latestRaceId, nextRaceRes, constructorsRes, driverStatsRes, driversListRes, races2026CompletedRes] =
-    await Promise.all([
-      getLatestStandingsRaceId(supabase),
-      supabase
-        .from('races')
-        .select('id, round, name, date, circuit_id')
-        .gt('date', today)
-        .order('date', { ascending: true })
-        .limit(1)
-        .single(),
-      supabase.from('constructors').select('id, name, constructor_ref, nationality'),
-      supabase
-        .from('driver_stats')
-        .select('driver_id, wins, nationality, podiums, races')
-        .order('wins', { ascending: false }),
-      supabase.from('drivers').select('id, driver_ref, forename, surname'),
-      supabase
-        .from('races')
-        .select('id, round')
-        .eq('year', 2026)
-        .lte('date', today)
-        .order('round', { ascending: true }),
-    ]);
-
-  const nextRaceRaw = nextRaceRes.data;
-  const races2026Completed = (races2026CompletedRes.data ?? []) as Array<{ id: number; round: number }>;
-  const races2026Ids = races2026Completed.map((r) => r.id);
-  const totalRounds2026 = races2026Ids.length;
-
-  // ── Latest race info (lightweight single-row lookup) ─────────────
-  let latestRaceRound: number | null = null;
-  let latestRaceYear: number | null = null;
-  let latestRaceName: string | null = null;
-  let latestRaceDate: string | null = null;
-  let latestCircuitId: number | null = null;
-
-  if (latestRaceId !== null) {
-    const { data: raceInfo } = await supabase
-      .from('races')
-      .select('round, year, name, date, circuit_id')
-      .eq('id', latestRaceId)
-      .single();
-    latestRaceRound  = (raceInfo?.round      ?? null) as number | null;
-    latestRaceYear   = (raceInfo?.year       ?? null) as number | null;
-    latestRaceName   = (raceInfo?.name       ?? null) as string | null;
-    latestRaceDate   = (raceInfo?.date       ?? null) as string | null;
-    latestCircuitId  = (raceInfo?.circuit_id ?? null) as number | null;
-  }
-
-  // ── Batch 2 ─────────────────────────────────────────────────────
-  const [
-    circuitRes,
-    driverStandRes,
-    pastCircuitRacesRes,
-    lastRaceCircuitRes,
-    lastRaceResultsRes,
-    lastRacePitRes,
-    statusRes,
-    winners2026Res,
-    allTimeDriverRes,
-    allTimeConstructorRes,
-    nextRaceQualiRes,
-    poles2026Res,
-    podiums2026Res,
-    fastestLaps2026Res,
-    constructorStandRes,
-    leaderPerRound2026Res,
-  ] = await Promise.all([
-    nextRaceRaw
-      ? supabase
-          .from('circuits')
-          .select('name, location, country, circuit_ref')
-          .eq('id', nextRaceRaw.circuit_id as number)
-          .single()
-      : Promise.resolve({ data: null, error: null }),
-    latestRaceId !== null
-      ? supabase
-          .from('driver_standings')
-          .select('driver_id, position, points, wins')
-          .eq('race_id', latestRaceId)
-          .order('position', { ascending: true })
-          .limit(10)
-      : Promise.resolve({ data: [], error: null }),
-    nextRaceRaw
-      ? supabase
-          .from('races')
-          .select('id, year')
-          .eq('circuit_id', nextRaceRaw.circuit_id as number)
-          .lte('date', today)
-          .order('date', { ascending: false })
-          .limit(100)
-      : Promise.resolve({ data: [] as Array<{ id: number; year: number }>, error: null }),
-    latestCircuitId !== null
-      ? supabase
-          .from('circuits')
-          .select('name, circuit_ref')
-          .eq('id', latestCircuitId)
-          .single()
-      : Promise.resolve({ data: null, error: null }),
-    latestRaceId !== null
-      ? supabase
-          .from('results')
-          .select(
-            'position, position_text, position_order, driver_id, constructor_id, laps, time, fastest_lap_time, rank, status_id'
-          )
-          .eq('race_id', latestRaceId)
-          .order('position_order', { ascending: true })
-      : Promise.resolve({ data: [], error: null }),
-    latestRaceId !== null
-      ? supabase
-          .from('pit_stops')
-          .select('driver_id, duration, milliseconds')
-          .eq('race_id', latestRaceId)
-          .not('milliseconds', 'is', null)
-          .gt('milliseconds', 0)
-          .order('milliseconds', { ascending: true })
-          .limit(1)
-      : Promise.resolve({ data: [], error: null }),
-    supabase.from('status').select('id, status'),
-    races2026Ids.length > 0
-      ? supabase
-          .from('results')
-          .select('driver_id, constructor_id, race_id')
-          .eq('position', 1)
-          .in('race_id', races2026Ids)
-      : Promise.resolve({ data: [] as Array<{ driver_id: number; constructor_id: number; race_id: number }>, error: null }),
-    supabase
-      .from('driver_win_streaks')
-      .select('driver_id, forename, surname, streak_len, end_year')
-      .order('streak_len', { ascending: false })
-      .limit(1)
-      .maybeSingle(),
-    supabase
-      .from('constructor_win_streaks')
-      .select('constructor_id, name, constructor_ref, streak_len, end_year')
-      .order('streak_len', { ascending: false })
-      .limit(1)
-      .maybeSingle(),
-    nextRaceRaw
-      ? supabase
-          .from('qualifying')
-          .select('position, driver_id, constructor_id, q1, q2, q3')
-          .eq('race_id', nextRaceRaw.id as number)
-          .not('position', 'is', null)
-          .order('position', { ascending: true })
-          .limit(10)
-      : Promise.resolve({
-          data: [] as Array<{
-            position: number;
-            driver_id: number;
-            constructor_id: number;
-            q1: string | null;
-            q2: string | null;
-            q3: string | null;
-          }>,
-          error: null,
-        }),
-    // Official pole sitters (results.pole): after grid penalties, unlike qualifying P1.
-    races2026Ids.length > 0
-      ? supabase
-          .from('results')
-          .select('driver_id, race_id')
-          .in('race_id', races2026Ids)
-          .eq('pole', true)
-      : Promise.resolve({ data: [] as Array<{ driver_id: number; race_id: number }>, error: null }),
-    races2026Ids.length > 0
-      ? supabase
-          .from('results')
-          .select('driver_id, constructor_id, race_id')
-          .in('race_id', races2026Ids)
-          .lte('position', 3)
-          .not('position', 'is', null)
-      : Promise.resolve({ data: [] as Array<{ driver_id: number; constructor_id: number; race_id: number }>, error: null }),
-    races2026Ids.length > 0
-      ? supabase
-          .from('results')
-          .select('driver_id, constructor_id, race_id')
-          .in('race_id', races2026Ids)
-          .eq('rank', 1)
-      : Promise.resolve({ data: [] as Array<{ driver_id: number; constructor_id: number; race_id: number }>, error: null }),
-    latestRaceId !== null
-      ? supabase
-          .from('constructor_standings')
-          .select('constructor_id, points, position')
-          .eq('race_id', latestRaceId)
-          .order('position', { ascending: true })
-          .limit(5)
-      : Promise.resolve({ data: [] as Array<{ constructor_id: number; points: number; position: number }>, error: null }),
-    races2026Ids.length > 0
-      ? supabase
-          .from('driver_standings')
-          .select('race_id, driver_id, points')
-          .in('race_id', races2026Ids)
-          .eq('position', 1)
-      : Promise.resolve({ data: [] as Array<{ race_id: number; driver_id: number; points: number }>, error: null }),
-  ]);
-
-  // ── Build base lookup maps ───────────────────────────────────────
-  const constructorMap = new Map(
-    (constructorsRes.data ?? []).map((c) => [
-      c.id as number,
-      { name: c.name as string, constructor_ref: c.constructor_ref as string },
-    ])
-  );
-
-  type LastRaceResult = {
-    position: number | null;
-    position_text: string;
-    position_order: number;
-    driver_id: number;
-    constructor_id: number;
-    laps: number;
-    time: string | null;
-    fastest_lap_time: string | null;
-    rank: number | null;
-    status_id: number;
-  };
-  const lastRaceResults = (lastRaceResultsRes.data ?? []) as LastRaceResult[];
-
-  const resultConstructorMap = new Map(
-    lastRaceResults.map((r) => [r.driver_id, r.constructor_id])
-  );
-  const statusMap = new Map(
-    (statusRes.data ?? []).map((s) => [s.id as number, s.status as string])
-  );
-
-  type QualiRow = { position: number; driver_id: number; constructor_id: number; q1: string | null; q2: string | null; q3: string | null };
-  const qualifyingRows = (nextRaceQualiRes.data ?? []) as QualiRow[];
-
-  const driverIds = (driverStandRes.data ?? []).map((s) => s.driver_id as number);
-  const lastRaceDriverIds = [...new Set(lastRaceResults.map((r) => r.driver_id))];
-  const qualiDriverIds = qualifyingRows.map((q) => q.driver_id);
-  const podium2026DriverIds = (podiums2026Res.data ?? []).map((r) => r.driver_id as number);
-  const fl2026DriverIds = (fastestLaps2026Res.data ?? []).map((r) => r.driver_id as number);
-  const allNeededDriverIds = [...new Set([...driverIds, ...lastRaceDriverIds, ...qualiDriverIds, ...podium2026DriverIds, ...fl2026DriverIds])];
-
-  const pastCircuitRaces = (pastCircuitRacesRes.data ?? []) as Array<{ id: number; year: number }>;
-  const pastCircuitRaceIds = pastCircuitRaces.map((r) => r.id);
-  const lastPastRace = pastCircuitRaces[0] ?? null;
-
-  // ── Batch 3: drivers + historical circuit stats + SVG fetches ────
-  const nextCircuitRef = (circuitRes.data?.circuit_ref as string | undefined) ?? null;
-  const lastCircuitRef = (lastRaceCircuitRes.data?.circuit_ref as string | undefined) ?? null;
-
-  const [
-    driversRes,
-    lastWinnerResultRes,
-    rankLapHomeRes,
-    winnerLapsHomeRes,
-    nextCircuitSvg,
-    lastCircuitSvg,
-  ] = await Promise.all([
-    allNeededDriverIds.length
-      ? supabase.from('drivers').select('id, forename, surname, code, number').in('id', allNeededDriverIds)
-      : Promise.resolve({ data: [], error: null }),
-    lastPastRace
-      ? supabase
-          .from('results')
-          .select('driver_id, constructor_id')
-          .eq('race_id', lastPastRace.id)
-          .eq('position', 1)
-          .single()
-      : Promise.resolve({ data: null, error: null }),
-    pastCircuitRaceIds.length > 0
-      ? supabase
-          .from('results')
-          .select('fastest_lap_time, driver_id, race_id')
-          .in('race_id', pastCircuitRaceIds)
-          .eq('rank', 1)
-          .not('fastest_lap_time', 'is', null)
-          .neq('fastest_lap_time', '\\N')
-          .gt('fastest_lap_time', '')
-          .order('fastest_lap_time', { ascending: true })
-          .limit(1)
-      : Promise.resolve({
-          data: [] as Array<{ fastest_lap_time: string; driver_id: number; race_id: number }>,
-          error: null,
-        }),
-    pastCircuitRaceIds.length > 0
-      ? supabase
-          .from('results')
-          .select('laps')
-          .in('race_id', pastCircuitRaceIds)
-          .eq('position', 1)
-          .not('laps', 'is', null)
-          .gt('laps', 0)
-      : Promise.resolve({ data: [] as Array<{ laps: number }>, error: null }),
-    nextCircuitRef ? fetchTrackPathData(nextCircuitRef) : Promise.resolve(null),
-    lastCircuitRef ? fetchTrackPathData(lastCircuitRef) : Promise.resolve(null),
-  ]);
-
-  // ── Batch 4: historical circuit driver name lookups ──────────────
-  const lastWinnerResult = lastWinnerResultRes.data as {
-    driver_id: number;
-    constructor_id: number;
-  } | null;
-  const rankLapHomeRow = (
-    (rankLapHomeRes.data ?? []) as Array<{
-      fastest_lap_time: string;
-      driver_id: number;
-      race_id: number;
-    }>
-  )[0] ?? null;
-
-  // Seed homeDriverNameMap from already-fetched drivers
-  const homeDriverNameMap = new Map<number, { forename: string; surname: string }>();
-  for (const d of driversRes.data ?? []) {
-    homeDriverNameMap.set(d.id as number, {
-      forename: d.forename as string,
-      surname: d.surname as string,
-    });
-  }
-
-  // Extra lookup for historical circuit winners + qualifying drivers not in current grid
-  const extraIds = new Set<number>();
-  if (lastWinnerResult && !homeDriverNameMap.has(lastWinnerResult.driver_id))
-    extraIds.add(lastWinnerResult.driver_id);
-  if (rankLapHomeRow && !homeDriverNameMap.has(rankLapHomeRow.driver_id))
-    extraIds.add(rankLapHomeRow.driver_id);
-  for (const q of qualifyingRows) {
-    if (!homeDriverNameMap.has(q.driver_id)) extraIds.add(q.driver_id);
-  }
-
-  if (extraIds.size > 0) {
-    const { data: extraDrivers } = await supabase
-      .from('drivers')
-      .select('id, forename, surname')
-      .in('id', [...extraIds]);
-    for (const d of extraDrivers ?? []) {
-      homeDriverNameMap.set(d.id as number, {
-        forename: d.forename as string,
-        surname: d.surname as string,
-      });
-    }
-  }
-
-  const winnerForename = lastWinnerResult
-    ? (homeDriverNameMap.get(lastWinnerResult.driver_id)?.forename ?? null)
-    : null;
-  const winnerSurname = lastWinnerResult
-    ? (homeDriverNameMap.get(lastWinnerResult.driver_id)?.surname ?? null)
-    : null;
-
-  // Standard laps — mode of winner laps at next circuit
-  const lapsFreqHome = new Map<number, number>();
-  for (const r of (winnerLapsHomeRes.data ?? []) as Array<{ laps: number }>) {
-    if (r.laps > 0) lapsFreqHome.set(r.laps, (lapsFreqHome.get(r.laps) ?? 0) + 1);
-  }
-  const homeStandardLaps: number | null =
-    lapsFreqHome.size > 0
-      ? [...lapsFreqHome.entries()].sort((a, b) => b[1] - a[1])[0][0]
-      : null;
-
-  // Rank-1 lap record for next circuit
-  const rankLapHomeDriver = rankLapHomeRow
-    ? (homeDriverNameMap.get(rankLapHomeRow.driver_id) ?? null)
-    : null;
-  const pastCircuitRacesById = new Map(pastCircuitRaces.map((r) => [r.id, r.year]));
-  const rankLapHomeYear = rankLapHomeRow
-    ? (pastCircuitRacesById.get(rankLapHomeRow.race_id) ?? null)
-    : null;
-  const homeCircuitLapRecord: HomeNextRace['circuit_lap_record'] =
-    rankLapHomeRow && rankLapHomeDriver && rankLapHomeYear
-      ? {
-          time: rankLapHomeRow.fastest_lap_time,
-          forename: rankLapHomeDriver.forename,
-          surname: rankLapHomeDriver.surname,
-          year: rankLapHomeYear,
-        }
-      : null;
-
-  // ── Assemble top 10 drivers ──────────────────────────────────────
-  const driverMap = new Map(
-    (driversRes.data ?? []).map((d) => [
-      d.id as number,
-      {
-        forename: d.forename as string,
-        surname:  d.surname as string,
-        code:     (d.code   as string | null) ?? null,
-        number:   (d.number as number | null) ?? null,
-      },
-    ])
-  );
-
-  const driverRefMap = new Map(
-    (driversListRes.data ?? []).map((d) => [d.id as number, d.driver_ref as string])
-  );
-
-  const driverCareerMap = new Map(
-    (driverStatsRes.data ?? []).map((s) => [
-      s.driver_id as number,
-      {
-        podiums: (s.podiums as number) ?? 0,
-        wins: s.wins as number,
-        races: s.races as number,
-        nationality: (s.nationality as string | null) ?? '',
-      },
-    ])
-  );
-
-  const poles2026Map = new Map<number, number>();
-  for (const q of (poles2026Res.data ?? []) as Array<{ driver_id: number }>) {
-    poles2026Map.set(q.driver_id, (poles2026Map.get(q.driver_id) ?? 0) + 1);
-  }
-
-  const topDrivers: HomeDriverRow[] = (driverStandRes.data ?? []).flatMap((s) => {
-    const d = driverMap.get(s.driver_id as number);
-    if (!d) return [];
-    const cid = resultConstructorMap.get(s.driver_id as number);
-    const c = cid !== undefined ? constructorMap.get(cid) : undefined;
-    const career = driverCareerMap.get(s.driver_id as number);
-    return [
-      {
-        driver_id: s.driver_id as number,
-        driver_ref: driverRefMap.get(s.driver_id as number) ?? '',
-        position: s.position as number,
-        forename: d.forename,
-        surname:  d.surname,
-        code:     d.code,
-        number:   d.number,
-        points:   s.points as number,
-        wins: s.wins as number,
-        constructor_ref: c?.constructor_ref ?? '',
-        constructor_name: c?.name ?? '',
-        podiums: career?.podiums ?? 0,
-        win_rate: career && career.races > 0 ? career.wins / career.races : 0,
-        nationality: career?.nationality ?? '',
-        poles_2026: poles2026Map.get(s.driver_id as number) ?? 0,
-      },
-    ];
-  });
-
-  // Leader's season podium count — reuses podiums2026Res (already fetched for the
-  // season-wide podium set), scoped to the current championship leader only. Deliberately
-  // not reusing HomeDriverRow.podiums here: that field is career-wide (driver_stats),
-  // same scope as win_rate's documented "career wins / career races" — a season claim
-  // needs a season-scoped count, not the career one.
-  const leaderId = topDrivers[0]?.driver_id ?? null;
-  const leaderPodiumsSeason =
-    leaderId !== null
-      ? podium2026DriverIds.filter((id) => id === leaderId).length
-      : 0;
-
-  // ── Assemble next race ───────────────────────────────────────────
-  const lastWinnerConstructorId = lastWinnerResult?.constructor_id ?? null;
-  const lastWinner: HomeNextRace['last_winner'] =
-    lastPastRace && lastWinnerResult && winnerForename && winnerSurname
-      ? {
-          year: lastPastRace.year,
-          forename: winnerForename,
-          surname: winnerSurname,
-          constructor: constructorMap.get(lastWinnerConstructorId!)?.name ?? '—',
-        }
-      : null;
-
-  // ── Assemble qualifying grid ─────────────────────────────────────
-  const qualifyingGrid: HomeNextRace['qualifying_grid'] =
-    qualifyingRows.length > 0
-      ? qualifyingRows.map((q) => {
-          const d = homeDriverNameMap.get(q.driver_id);
-          const c = constructorMap.get(q.constructor_id);
-          const rawTime = q.q3 || q.q2 || q.q1 || null;
-          const qTime =
-            rawTime && rawTime !== '\\N' && rawTime.trim() !== '' ? rawTime : null;
-          return {
-            position: q.position,
-            forename: d?.forename ?? '?',
-            surname: d?.surname ?? '?',
-            constructor_ref: c?.constructor_ref ?? '',
-            constructor_name: c?.name ?? '?',
-            q_time: qTime,
-          };
-        })
-      : null;
-
-  let nextRace: HomeNextRace | null = null;
-  if (nextRaceRaw && circuitRes.data) {
-    nextRace = {
-      round: nextRaceRaw.round as number,
-      name: nextRaceRaw.name as string,
-      date: nextRaceRaw.date as string,
-      circuit_name: circuitRes.data.name as string,
-      location: circuitRes.data.location as string,
-      country: circuitRes.data.country as string,
-      circuit_ref: circuitRes.data.circuit_ref as string,
-      days_remaining: daysUntil(nextRaceRaw.date as string),
-      last_winner: lastWinner,
-      circuit_laps: homeStandardLaps,
-      circuit_lap_record: homeCircuitLapRecord,
-      circuit_svg: nextCircuitSvg,
-      qualifying_grid: qualifyingGrid,
-    };
-  }
-
-  // ── Assemble last race data ──────────────────────────────────────
-  let lastRaceData: HomeLastRaceData | null = null;
-  if (latestRaceId !== null && latestRaceName && latestRaceDate && lastRaceCircuitRes.data) {
-    const circuitName = lastRaceCircuitRes.data.name as string;
-    const circuitRef = lastRaceCircuitRes.data.circuit_ref as string;
-
-    const podium = lastRaceResults
-      .filter((r) => r.position !== null && (r.position as number) <= 3)
-      .slice(0, 3)
-      .map((r) => ({
-        position: r.position as number,
-        forename: driverMap.get(r.driver_id)?.forename ?? '?',
-        surname: driverMap.get(r.driver_id)?.surname ?? '?',
-        constructor_name: constructorMap.get(r.constructor_id)?.name ?? '?',
-        constructor_ref: constructorMap.get(r.constructor_id)?.constructor_ref ?? '',
-        time: r.time ?? null,
-      }));
-
-    const fastestLapResult = lastRaceResults.find((r) => r.rank === 1);
-    const fastestLap = fastestLapResult
-      ? {
-          forename: driverMap.get(fastestLapResult.driver_id)?.forename ?? '?',
-          surname: driverMap.get(fastestLapResult.driver_id)?.surname ?? '?',
-          time: fastestLapResult.fastest_lap_time ?? '—',
-        }
-      : null;
-
-    const fastestPitRow = (lastRacePitRes.data ?? [])[0] ?? null;
-    const fastestPit = fastestPitRow
-      ? {
-          forename: driverMap.get(fastestPitRow.driver_id as number)?.forename ?? '?',
-          surname: driverMap.get(fastestPitRow.driver_id as number)?.surname ?? '?',
-          constructor_name:
-            constructorMap.get(
-              resultConstructorMap.get(fastestPitRow.driver_id as number) ?? -1
-            )?.name ?? '?',
-          duration: fastestPitRow.duration as string,
-        }
-      : null;
-
-    const retirements = lastRaceResults
-      .filter((r) => r.position_text === 'R')
-      .map((r) => ({
-        forename: driverMap.get(r.driver_id)?.forename ?? '?',
-        surname: driverMap.get(r.driver_id)?.surname ?? '?',
-        constructor_name: constructorMap.get(r.constructor_id)?.name ?? '?',
-        lap: r.laps ?? 0,
-        status: statusMap.get(r.status_id) ?? 'Retired',
-      }));
-
-    lastRaceData = {
-      race_id: latestRaceId,
-      round: latestRaceRound ?? 0,
-      year: latestRaceYear ?? 0,
-      name: latestRaceName,
-      date: latestRaceDate,
-      circuit_name: circuitName,
-      circuit_ref: circuitRef,
-      circuit_svg: lastCircuitSvg,
-      podium,
-      fastest_lap: fastestLap,
-      fastest_pit: fastestPit,
-      retirements,
-    };
-  }
-
-  // ── Assemble driver selector list ────────────────────────────────
-  const driversNameMap = new Map(
-    (driversListRes.data ?? []).map((d) => [
-      d.id as number,
-      {
-        driver_ref: d.driver_ref as string,
-        forename: d.forename as string,
-        surname: d.surname as string,
-      },
-    ])
-  );
-
-  const allDrivers: DriverSelectorRow[] = (driverStatsRes.data ?? []).flatMap((s) => {
-    const d = driversNameMap.get(s.driver_id as number);
-    if (!d) return [];
-    return [
-      {
-        driver_id: s.driver_id as number,
-        driver_ref: d.driver_ref,
-        forename: d.forename,
-        surname: d.surname,
-        nationality: s.nationality as string,
-        wins: s.wins as number,
-      },
-    ];
-  });
-
-  // ── Assemble streaks ─────────────────────────────────────────────
-  type Winner2026 = { driver_id: number; constructor_id: number; race_id: number };
-  const raceRoundMap2026 = new Map(races2026Completed.map((r) => [r.id, r.round]));
-  const winners2026Sorted = ((winners2026Res.data ?? []) as Winner2026[])
-    .slice()
-    .sort((a, b) => (raceRoundMap2026.get(a.race_id) ?? 0) - (raceRoundMap2026.get(b.race_id) ?? 0));
-  const winners2026Rev = [...winners2026Sorted].reverse();
-
-  let activeDriverStreak = 0;
-  const lastDriverWinnerId = winners2026Rev[0]?.driver_id ?? null;
-  if (lastDriverWinnerId !== null) {
-    for (const w of winners2026Rev) {
-      if (w.driver_id === lastDriverWinnerId) activeDriverStreak++;
-      else break;
-    }
-  }
-
-  let activeConstructorStreak = 0;
-  const lastConstrWinnerId = winners2026Rev[0]?.constructor_id ?? null;
-  if (lastConstrWinnerId !== null) {
-    for (const w of winners2026Rev) {
-      if (w.constructor_id === lastConstrWinnerId) activeConstructorStreak++;
-      else break;
-    }
-  }
-
-  const streaksData: HomeStreaksData | null =
-    winners2026Sorted.length > 0
-      ? {
-          totalRounds2026,
-          driverActive: lastDriverWinnerId !== null
-            ? {
-                driver_id: lastDriverWinnerId,
-                forename:
-                  driverMap.get(lastDriverWinnerId)?.forename ??
-                  homeDriverNameMap.get(lastDriverWinnerId)?.forename ?? '?',
-                surname:
-                  driverMap.get(lastDriverWinnerId)?.surname ??
-                  homeDriverNameMap.get(lastDriverWinnerId)?.surname ?? '?',
-                constructor_ref:
-                  constructorMap.get(winners2026Rev[0].constructor_id)?.constructor_ref ?? '',
-                streak: activeDriverStreak,
-              }
-            : null,
-          constructorActive: lastConstrWinnerId !== null
-            ? {
-                constructor_id: lastConstrWinnerId,
-                name: constructorMap.get(lastConstrWinnerId)?.name ?? '?',
-                constructor_ref: constructorMap.get(lastConstrWinnerId)?.constructor_ref ?? '',
-                streak: activeConstructorStreak,
-              }
-            : null,
-          driverAllTime: allTimeDriverRes.data
-            ? {
-                forename: allTimeDriverRes.data.forename as string,
-                surname:  allTimeDriverRes.data.surname as string,
-                streak:   allTimeDriverRes.data.streak_len as number,
-                year:     allTimeDriverRes.data.end_year as number,
-              }
-            : null,
-          constructorAllTime: allTimeConstructorRes.data
-            ? {
-                name:   allTimeConstructorRes.data.name as string,
-                streak: allTimeConstructorRes.data.streak_len as number,
-                year:   allTimeConstructorRes.data.end_year as number,
-              }
-            : null,
-        }
-      : null;
-
-  // ── Assemble form guide (podium streak + fastest lap streak) ────
-  type Podium2026Row = { driver_id: number; constructor_id: number; race_id: number };
-  const podiums2026 = (podiums2026Res.data ?? []) as Podium2026Row[];
-  const fl2026 = (fastestLaps2026Res.data ?? []) as Podium2026Row[];
-
-  function computeActiveStreak(
-    rows: Podium2026Row[],
-    roundMap: Map<number, number>,
-    racesDesc: Array<{ id: number; round: number }>
-  ): { driver_id: number; constructor_id: number; streak: number } | null {
-    if (racesDesc.length === 0 || rows.length === 0) return null;
-    const byRound = new Map<number, { driver_id: number; constructor_id: number }[]>();
-    for (const r of rows) {
-      const rnd = roundMap.get(r.race_id) ?? 0;
-      if (!byRound.has(rnd)) byRound.set(rnd, []);
-      byRound.get(rnd)!.push({ driver_id: r.driver_id, constructor_id: r.constructor_id });
-    }
-    // Find the driver with the longest current streak counting back from last race
-    const allDriverIds = [...new Set(rows.map((r) => r.driver_id))];
-    let best: { driver_id: number; constructor_id: number; streak: number } | null = null;
-    for (const did of allDriverIds) {
-      let streak = 0;
-      for (const race of racesDesc) {
-        const inRace = byRound.get(race.round)?.some((r) => r.driver_id === did);
-        if (inRace) streak++;
-        else break;
-      }
-      if (streak > 0 && (!best || streak > best.streak)) {
-        const lastCid = [...rows].reverse().find((r) => r.driver_id === did)?.constructor_id ?? 0;
-        best = { driver_id: did, constructor_id: lastCid, streak };
-      }
-    }
-    return best;
-  }
-
-  const races2026Desc = [...races2026Completed].sort((a, b) => b.round - a.round);
-  const podiumStreakRaw = computeActiveStreak(podiums2026, raceRoundMap2026, races2026Desc);
-  const flStreakRaw = computeActiveStreak(fl2026, raceRoundMap2026, races2026Desc);
-
-  const formGuideData: import('@/lib/types').HomeFormGuideData = {
-    podiumStreak: podiumStreakRaw
-      ? {
-          driver_id: podiumStreakRaw.driver_id,
-          forename: homeDriverNameMap.get(podiumStreakRaw.driver_id)?.forename ?? '?',
-          surname: homeDriverNameMap.get(podiumStreakRaw.driver_id)?.surname ?? '?',
-          constructor_ref: constructorMap.get(podiumStreakRaw.constructor_id)?.constructor_ref ?? '',
-          streak: podiumStreakRaw.streak,
-        }
-      : null,
-    fastestLapStreak: flStreakRaw
-      ? {
-          driver_id: flStreakRaw.driver_id,
-          forename: homeDriverNameMap.get(flStreakRaw.driver_id)?.forename ?? '?',
-          surname: homeDriverNameMap.get(flStreakRaw.driver_id)?.surname ?? '?',
-          constructor_ref: constructorMap.get(flStreakRaw.constructor_id)?.constructor_ref ?? '',
-          streak: flStreakRaw.streak,
-        }
-      : null,
-  };
-
-  // ── Assemble season shape ────────────────────────────────────────
-  const uniqueWinners = new Set(winners2026Sorted.map((w) => w.driver_id)).size;
-
-  type Pole2026Row = { driver_id: number; race_id: number };
-  const poles2026WithRace = (poles2026Res.data ?? []) as Pole2026Row[];
-  const polesMap2026 = new Map(poles2026WithRace.map((p) => [p.race_id, p.driver_id]));
-  const winners2026Map = new Map(winners2026Sorted.map((w) => [w.race_id, w.driver_id]));
-  let poleWins = 0;
-  for (const [raceId, poleDid] of polesMap2026) {
-    if (winners2026Map.get(raceId) === poleDid) poleWins++;
-  }
-  const poleToWinPct = polesMap2026.size > 0 ? Math.round((poleWins / polesMap2026.size) * 100) : 0;
-
-  type LeaderRow = { race_id: number; driver_id: number; points: number };
-  const leaderPerRound2026 = (leaderPerRound2026Res.data ?? []) as LeaderRow[];
-  const leaderPerRoundSorted = leaderPerRound2026
-    .map((l) => ({ ...l, round: raceRoundMap2026.get(l.race_id) ?? 0 }))
-    .sort((a, b) => a.round - b.round);
-  const currentLeaderId = topDrivers[0]?.driver_id ?? null;
-  let roundsLedByLeader = 0;
-  if (currentLeaderId !== null) {
-    for (const l of [...leaderPerRoundSorted].reverse()) {
-      if (l.driver_id === currentLeaderId) roundsLedByLeader++;
-      else break;
-    }
-  }
-  const leaderSurname = topDrivers[0]?.surname ?? '';
-
-  const seasonShapeData: import('@/lib/types').HomeSeasonShapeData = {
-    totalRaces: totalRounds2026,
-    uniqueWinners,
-    poleToWinPct,
-    roundsLedByLeader,
-    leaderSurname,
-  };
-
-  // ── Assemble championship gap ────────────────────────────────────
-  const p1Driver = topDrivers[0] ?? null;
-  const p2Driver = topDrivers[1] ?? null;
-
-  type ConstrStandRow = { constructor_id: number; points: number; position: number };
-  const constrStands = (constructorStandRes.data ?? []) as ConstrStandRow[];
-  const p1Constr = constrStands.find((c) => c.position === 1) ?? null;
-  const p2Constr = constrStands.find((c) => c.position === 2) ?? null;
-
-  // ── Championship gap history — cumulative points per round, P1 vs P2 only ──
-  // (compact BattleChart under each gap panel; not the top-5 battle Drivers computes)
-  const gapDriverIds = p1Driver && p2Driver ? [p1Driver.driver_id, p2Driver.driver_id] : [];
-  const gapConstructorIds = p1Constr && p2Constr ? [p1Constr.constructor_id, p2Constr.constructor_id] : [];
-
-  const [gapDriverStandRes, gapConstructorStandRes] = await Promise.all([
-    gapDriverIds.length && races2026Ids.length
-      ? supabase
-          .from('driver_standings')
-          .select('race_id, driver_id, points')
-          .in('race_id', races2026Ids)
-          .in('driver_id', gapDriverIds)
-      : Promise.resolve({ data: [] as Array<{ race_id: number; driver_id: number; points: number }> }),
-    gapConstructorIds.length && races2026Ids.length
-      ? supabase
-          .from('constructor_standings')
-          .select('race_id, constructor_id, points')
-          .in('race_id', races2026Ids)
-          .in('constructor_id', gapConstructorIds)
-      : Promise.resolve({ data: [] as Array<{ race_id: number; constructor_id: number; points: number }> }),
-  ]);
-
-  const gapRounds = races2026Completed
-    .slice()
-    .sort((a, b) => a.round - b.round)
-    .map((r) => ({ round: r.round, race_name: '' }));
-
-  function cumulativeByEntity<TId extends number>(
-    rows: Array<{ race_id: number; points: number }> & Array<Record<string, unknown>>,
-    idKey: string,
-    id: TId
-  ): number[] {
-    const byRace = new Map<number, number>();
-    for (const row of rows) {
-      if ((row[idKey] as number) === id) byRace.set(row.race_id as number, row.points as number);
-    }
-    let prev = 0;
-    return races2026Completed
-      .slice()
-      .sort((a, b) => a.round - b.round)
-      .map((r) => {
-        const v = byRace.get(r.id);
-        if (v !== undefined) prev = v;
-        return prev;
-      });
-  }
-
-  const gapDriverRows = (gapDriverStandRes.data ?? []) as Array<{ race_id: number; driver_id: number; points: number }>;
-  const gapConstructorRows = (gapConstructorStandRes.data ?? []) as Array<{ race_id: number; constructor_id: number; points: number }>;
-
-  const historyDriverSeries =
-    p1Driver && p2Driver && gapRounds.length > 1
-      ? [
-          {
-            driver_id: p1Driver.driver_id,
-            surname: p1Driver.surname,
-            code: p1Driver.code,
-            constructor_ref: p1Driver.constructor_ref,
-            points: cumulativeByEntity(gapDriverRows, 'driver_id', p1Driver.driver_id),
-          },
-          {
-            driver_id: p2Driver.driver_id,
-            surname: p2Driver.surname,
-            code: p2Driver.code,
-            constructor_ref: p2Driver.constructor_ref,
-            points: cumulativeByEntity(gapDriverRows, 'driver_id', p2Driver.driver_id),
-          },
-        ]
-      : null;
-
-  const historyConstructorSeries =
-    p1Constr && p2Constr && gapRounds.length > 1
-      ? [
-          {
-            constructor_id: p1Constr.constructor_id,
-            name: constructorMap.get(p1Constr.constructor_id)?.name ?? '?',
-            constructor_ref: constructorMap.get(p1Constr.constructor_id)?.constructor_ref ?? '',
-            points: cumulativeByEntity(gapConstructorRows, 'constructor_id', p1Constr.constructor_id),
-          },
-          {
-            constructor_id: p2Constr.constructor_id,
-            name: constructorMap.get(p2Constr.constructor_id)?.name ?? '?',
-            constructor_ref: constructorMap.get(p2Constr.constructor_id)?.constructor_ref ?? '',
-            points: cumulativeByEntity(gapConstructorRows, 'constructor_id', p2Constr.constructor_id),
-          },
-        ]
-      : null;
-
-  const championshipGapData: import('@/lib/types').HomeChampionshipGapData = {
-    driver:
-      p1Driver && p2Driver
-        ? {
-            p1: { surname: p1Driver.surname, constructor_ref: p1Driver.constructor_ref, points: p1Driver.points },
-            p2: { surname: p2Driver.surname, constructor_ref: p2Driver.constructor_ref, points: p2Driver.points },
-            gap: p1Driver.points - p2Driver.points,
-          }
-        : null,
-    constructor:
-      p1Constr && p2Constr
-        ? {
-            p1: {
-              name: constructorMap.get(p1Constr.constructor_id)?.name ?? '?',
-              constructor_ref: constructorMap.get(p1Constr.constructor_id)?.constructor_ref ?? '',
-              points: p1Constr.points,
-            },
-            p2: {
-              name: constructorMap.get(p2Constr.constructor_id)?.name ?? '?',
-              constructor_ref: constructorMap.get(p2Constr.constructor_id)?.constructor_ref ?? '',
-              points: p2Constr.points,
-            },
-            gap: p1Constr.points - p2Constr.points,
-          }
-        : null,
-    history: {
-      rounds: gapRounds,
-      driverSeries: historyDriverSeries,
-      constructorSeries: historyConstructorSeries,
-    },
-  };
-
-  return {
-    nextRace,
-    topDrivers,
-    lastRaceData,
-    allDrivers,
-    currentRound: latestRaceRound,
-    currentYear: latestRaceYear,
-    streaksData,
-    formGuideData,
-    seasonShapeData,
-    championshipGapData,
-    leaderPodiumsSeason,
-  };
-}
-
-// ─── Page ─────────────────────────────────────────────────────────
-
+import type { ReactNode } from 'react';
+import { getFormatter, getTranslations } from 'next-intl/server';
+import { Link } from '@/lib/i18n/navigation';
+import { localizedPageMeta } from '@/lib/seo';
+import { localeUrl } from '@/lib/site-url';
+import { getHubSeason } from '@/lib/hubSeason';
+import SeasonTerrain from '@/components/hub-dusk/SeasonTerrain';
+import SeasonStrip from '@/components/hub-dusk/SeasonStrip';
+import TitleRace from '@/components/hub-dusk/TitleRace';
+import FormBars from '@/components/hub-dusk/FormBars';
+import GridToFlag, { type GridToFlagRow } from '@/components/home-dusk/GridToFlag';
+import { teamVar } from '@/components/home-dusk/StandingsCard';
+import { duskSans } from '../(blog)/dusk-font';
+import '../(blog)/dusk.css';
+
+// Hub home, "the season so far" in the Telemetry at Dusk look (docs/DECISION-2026-10-11-home-dusk.md,
+// Hub section): the title fight, how the season got here, the last race, what's at stake next, who's
+// in form, the standings, and the way into the archive. Server-rendered; every chapter hides when
+// its data is missing.
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   return localizedPageMeta(locale, '/', 'hub');
 }
 
-export default async function HomePage() {
-  const {
-    nextRace, topDrivers, lastRaceData, currentRound, currentYear,
-    streaksData, formGuideData, seasonShapeData, championshipGapData, leaderPodiumsSeason,
-  } = await getHomeData();
+function Section({ n, title, sub, children }: { n: string; title: string; sub?: string; children: ReactNode }) {
+  return (
+    <section className="flex flex-col gap-3.5">
+      <div className="flex flex-wrap items-baseline gap-x-3.5 gap-y-1 mt-7">
+        <span className="dusk-label">{n}</span>
+        <h2 className="m-0 text-[clamp(22px,2.6vw,30px)] leading-[1.15] font-semibold tracking-[-0.01em]">{title}</h2>
+        {sub && <span className="text-[14px] text-[color:var(--dusk-muted)]">{sub}</span>}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function Stat({ kicker, big, text, tone }: { kicker: string; big: ReactNode; text: ReactNode; tone?: 'warm' | 'good' }) {
+  return (
+    <div className="dusk-card soft-card p-5 flex flex-col gap-1.5">
+      <span className="dusk-label">{kicker}</span>
+      <span
+        className={`dusk-display text-[clamp(28px,3.2vw,40px)] leading-none mt-1 ${
+          tone === 'warm' ? 'text-[color:var(--dusk-sunset)]' : tone === 'good' ? 'text-[color:var(--dusk-good)]' : ''
+        }`}
+      >
+        {big}
+      </span>
+      <p className="m-0 text-[13.5px] text-[color:var(--dusk-ink-2)]">{text}</p>
+    </div>
+  );
+}
+
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const [t, tFlag, format, season] = await Promise.all([
+    getTranslations('hubSeason'),
+    getTranslations('articleDusk.flag'),
+    getFormatter(),
+    getHubSeason(locale),
+  ]);
+  // Calendar dates are date-only values: format them in UTC so the day never shifts.
+  const day = (iso: string) => format.dateTime(new Date(`${iso}T12:00:00Z`), { day: 'numeric', month: 'short', timeZone: 'UTC' });
+
+  if (!season) {
+    return (
+      <main className={`theme-dusk ${duskSans.variable} min-h-screen`}>
+        <h1 className="sr-only">{t('srTitle', { year: new Date().getFullYear() })}</h1>
+      </main>
+    );
+  }
+
+  const { leader, rival, nextRace, lastRace, year, lastRound, totalRounds, pointsLeft } = season;
+  const gap = rival ? leader.points - rival.points : 0;
+  const rivalMax = rival && pointsLeft > 0 ? rival.points + pointsLeft : null;
+
+  const headline =
+    season.title.state === 'decided'
+      ? t('hero.titleDecided', { name: leader.surname, year })
+      : season.title.state === 'clinchable' && nextRace
+        ? season.title.points === 25
+          ? t('hero.titleNeedsWin', { name: leader.surname, location: nextRace.location })
+          : t('hero.titleClinchable', { name: leader.surname, points: season.title.points })
+        : gap > 0
+          ? t('hero.titleOpen', { name: leader.surname, gap })
+          : t('hero.titleTied', { name: leader.surname });
+  const dek = [
+    rival && gap > 0 ? t('hero.dekLead', { since: leader.leadSince, gap, rival: rival.surname }) : '',
+    rival && rivalMax !== null && season.title.state !== 'decided' ? t('hero.dekCeiling', { left: pointsLeft, rival: rival.surname, max: rivalMax }) : '',
+    season.title.state === 'clinchable' && season.title.points < 25 && nextRace
+      ? t('hero.dekClinch', { location: nextRace.location, points: season.title.points })
+      : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  // ── 03 · Last race ──
+  const flagRows: GridToFlagRow[] = [];
+  let climber: { surname: string; from: number; to: number } | null = null;
+  let fastest: { surname: string; time: string } | null = null;
+  let winnerRow: NonNullable<typeof lastRace>['rows'][number] | null = null;
+  let secondRow: NonNullable<typeof lastRace>['rows'][number] | null = null;
+  if (lastRace) {
+    const slot = new Map(
+      [...lastRace.rows]
+        .sort((a, b) => (a.grid || 1000 + a.positionOrder) - (b.grid || 1000 + b.positionOrder))
+        .map((r, i) => [r.code, i + 1]),
+    );
+    for (const r of lastRace.rows) {
+      flagRows.push({
+        code: r.code,
+        grid: slot.get(r.code) ?? r.positionOrder,
+        gridLabel: r.grid > 0 ? `P${r.grid}` : tFlag('pitLane'),
+        finish: r.positionOrder,
+        finishLabel: r.classified
+          ? `P${r.positionOrder}`
+          : tFlag(r.positionText === 'D' ? 'dsq' : r.positionText === 'W' ? 'dns' : 'dnf'),
+        classified: r.classified,
+        colour: teamVar(r.teamRef),
+      });
+    }
+    const best = lastRace.rows
+      .filter((r) => r.classified && r.grid > 0)
+      .sort((a, b) => b.grid - b.positionOrder - (a.grid - a.positionOrder))[0];
+    if (best && best.grid > best.positionOrder) climber = { surname: best.surname, from: best.grid, to: best.positionOrder };
+    const fl = lastRace.rows.find((r) => r.rank === 1 && r.fastestLap);
+    if (fl) fastest = { surname: fl.surname, time: fl.fastestLap! };
+    winnerRow = lastRace.rows.find((r) => r.positionOrder === 1 && r.classified) ?? null;
+    secondRow = lastRace.rows.find((r) => r.positionOrder === 2 && r.classified) ?? null;
+  }
+  const retired = lastRace ? lastRace.rows.filter((r) => r.positionText === 'R').length : 0;
+
+  // ── 04 · Stakes: the next five behind the leader ──
+  const rivals = season.standings.slice(1, 6).map((s) => ({ surname: s.surname, teamRef: s.teamRef, points: s.points }));
+
+  // ── 05 · Form ──
+  const formTop = season.form.slice(0, 6);
+  const formLeader = season.form.find((f) => f.code === leader.code);
+  const constructorTies = new Set(
+    season.constructors.filter((c, _, all) => all.some((o) => o.ref !== c.ref && o.points === c.points)).map((c) => c.ref),
+  );
 
   return (
-    <HomeExperience
-      nextRace={nextRace}
-      lastRace={lastRaceData}
-      topDrivers={topDrivers}
-      streaksData={streaksData}
-      formGuideData={formGuideData}
-      seasonShapeData={seasonShapeData}
-      championshipGapData={championshipGapData}
-      leaderPodiumsSeason={leaderPodiumsSeason}
-      round={currentRound ?? 0}
-      year={currentYear ?? 2026}
-    />
+    <main className={`theme-dusk ${duskSans.variable} min-h-screen`}>
+      <h1 className="sr-only">{t('srTitle', { year })}</h1>
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-5 pt-7 pb-16 flex flex-col gap-4">
+        {/* Strip: where the season stands */}
+        <div className="dusk-card soft-card border-l-[3px] border-l-[color:var(--dusk-warm)] px-5 py-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="min-w-0">
+            <div className="dusk-label">{t('strip.season', { year, round: lastRound, total: totalRounds })}</div>
+            {nextRace && (
+              <div className="text-[17px] font-semibold mt-1">
+                {t('strip.next', { name: nextRace.name, location: nextRace.location, date: day(nextRace.date) })}
+              </div>
+            )}
+          </div>
+          <div className="dusk-mono text-[13px] text-[color:var(--dusk-ink-2)]">
+            {season.racesLeft > 0 ? t('strip.left', { races: season.racesLeft, points: pointsLeft }) : t('strip.over', { races: totalRounds })}
+          </div>
+        </div>
+
+        {/* 01 · Hero: the title fight as terrain */}
+        <section className="dusk-card dusk-hero p-5 sm:p-8 pb-4 flex flex-col gap-3">
+          <span className="dusk-label text-[color:var(--dusk-sunset)]">{t('hero.kicker')}</span>
+          <p className="dusk-display m-0 text-[clamp(34px,5vw,64px)] leading-none tracking-[-0.02em] max-w-[16ch]">{headline}</p>
+          {dek && <p className="dusk-hero-dek m-0 text-[clamp(15px,1.5vw,18px)] max-w-[60ch]">{dek}</p>}
+          <SeasonTerrain
+            series={season.series}
+            totalRounds={totalRounds}
+            leaderCode={leader.code}
+            rivalCode={rival?.code ?? null}
+            rivalMax={rivalMax}
+            labels={{
+              aria: t('hero.aria'),
+              ceiling: rival && rivalMax !== null ? t('hero.ceiling', { code: rival.code, max: rivalMax }) : '',
+              pending: t('hero.pending'),
+              round: (n) => t('hero.round', { n }),
+            }}
+          />
+          <p className="dusk-mono dusk-terrain-caption m-0 text-[10.5px] tracking-[0.06em] uppercase">{t('hero.source', { round: lastRound })}</p>
+        </section>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <Stat kicker={t('kpi.points')} big={leader.points} text={t('kpi.pointsSub', { name: leader.surname })} tone="warm" />
+          {rival && <Stat kicker={t('kpi.lead')} big={`+${gap}`} text={t('kpi.leadSub', { rival: rival.surname })} />}
+          <Stat
+            kicker={t('kpi.wins')}
+            big={<>{leader.wins}<span className="text-[0.5em] text-[color:var(--dusk-muted)]"> / {lastRound}</span></>}
+            text={rival ? t('kpi.winsSub', { rival: rival.surname, n: rival.wins }) : ''}
+          />
+          <Stat
+            kicker={t('kpi.led')}
+            big={<>{leader.roundsLed}<span className="text-[0.5em] text-[color:var(--dusk-muted)]"> / {lastRound}</span></>}
+            text={rival && rival.roundsLed > 0 ? t('kpi.ledSub', { rival: rival.surname, n: rival.roundsLed }) : t('kpi.ledSince', { n: leader.leadSince })}
+          />
+        </div>
+
+        {/* 02 · How we got here */}
+        <Section n="02" title={t('story.title')} sub={t('story.sub')}>
+          <div className="dusk-card soft-card p-4 sm:p-5">
+            <SeasonStrip
+              rounds={season.rounds}
+              lastRound={lastRound}
+              leaderCode={leader.code}
+              labels={{
+                round: (n) => t('story.round', { n }),
+                date: day,
+                fromPole: t('story.fromPole'),
+                ledBy: (code) => t('story.ledBy', { code }),
+                winner: (name, round) => t('story.winner', { name, round }),
+              }}
+            />
+            <div className="flex flex-wrap gap-x-5 gap-y-1.5 mt-3 text-[12px] text-[color:var(--dusk-muted)]">
+              <span className="inline-flex items-center gap-1.5"><i className="w-2.5 h-2.5 rounded-full bg-[color:var(--dusk-sunset)]" />{t('story.fromPole')}</span>
+              <span className="inline-flex items-center gap-1.5"><i className="w-2.5 h-2.5 rounded-sm bg-[color:var(--dusk-warm)]" />{t('story.leader', { code: leader.code })}</span>
+              <span className="inline-flex items-center gap-1.5"><i className="w-2.5 h-2.5 rounded-sm bg-[color:var(--dusk-ice)]" />{t('story.otherLeader')}</span>
+              <span>{t('story.teamNote')}</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <Stat
+              kicker={t('story.leadKicker', { n: leader.leadSince, location: season.rounds[leader.leadSince - 1]?.location ?? '' })}
+              big={t('story.leadBig')}
+              text={t('story.leadText', { name: leader.surname })}
+            />
+            {season.facts.deepest && (
+              <Stat
+                kicker={t('story.deepKicker', { n: season.facts.deepest.round, location: season.facts.deepest.location })}
+                big={`P${season.facts.deepest.grid} → P1`}
+                text={t('story.deepText', { name: season.facts.deepest.surname, grid: season.facts.deepest.grid })}
+              />
+            )}
+            {season.facts.topTeam && (
+              <Stat
+                kicker={t('story.winnersKicker')}
+                big={season.facts.winners}
+                text={t('story.winnersText', { team: season.facts.topTeam.name, wins: season.facts.topTeam.wins, total: lastRound })}
+              />
+            )}
+            <Stat kicker={t('story.poleKicker')} big={`${season.facts.poleWins}/${lastRound}`} text={t('story.poleText')} />
+          </div>
+        </Section>
+
+        {/* 03 · The last race */}
+        {lastRace && flagRows.length > 1 && (
+          <Section n="03" title={t('last.title', { name: lastRace.name })} sub={`${day(lastRace.date)} · ${lastRace.location}`}>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+              <div className="lg:col-span-7 [&>figure]:my-0">
+                <GridToFlag
+                  rows={flagRows}
+                  labels={{
+                    title: tFlag('title'),
+                    sub: tFlag('sub'),
+                    badge: retired ? tFlag('badge', { n: retired }) : null,
+                    grid: tFlag('grid'),
+                    flag: tFlag('flag'),
+                    caption: '',
+                    aria: tFlag('aria', { n: flagRows.length }),
+                    source: tFlag('source'),
+                  }}
+                />
+              </div>
+              <div className="lg:col-span-5 grid gap-4">
+                {winnerRow && (
+                  <Stat
+                    kicker={t('last.winner')}
+                    big={winnerRow.surname}
+                    text={
+                      secondRow?.time
+                        ? t('last.winnerText', { grid: winnerRow.grid, gap: secondRow.time, p2: secondRow.surname })
+                        : `P${winnerRow.grid}`
+                    }
+                  />
+                )}
+                {climber && (
+                  <Stat
+                    kicker={t('last.climber')}
+                    big={`+${climber.from - climber.to}`}
+                    text={t('last.climberText', { name: climber.surname, from: climber.from, to: climber.to })}
+                    tone="good"
+                  />
+                )}
+                {fastest && <Stat kicker={t('last.fastest')} big={<span className="dusk-mono">{fastest.time}</span>} text={fastest.surname} />}
+                <div className="flex flex-wrap gap-x-5 gap-y-2 dusk-mono text-[12px] uppercase tracking-[0.06em]">
+                  {lastRace.report && (
+                    <a className="dusk-link no-underline" href={localeUrl(locale, `/${lastRace.report.slug}/`)}>{t('last.report')} →</a>
+                  )}
+                  {lastRace.circuitRef && (
+                    <Link className="dusk-link no-underline" href={`/circuits/${lastRace.circuitRef}/`}>{t('last.circuit')} →</Link>
+                  )}
+                </div>
+              </div>
+            </div>
+          </Section>
+        )}
+
+        {/* 04 · What's at stake next */}
+        {nextRace && (
+          <Section
+            n="04"
+            title={t('stakes.title', { location: nextRace.location })}
+            sub={t('stakes.sub', { date: day(nextRace.date), races: season.racesLeft })}
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+              {rivals.length > 0 && (
+                <div className="dusk-card soft-card p-5 lg:col-span-7 flex flex-col gap-3">
+                  <span className="dusk-label">{t('stakes.kicker', { name: leader.surname })}</span>
+                  <TitleRace
+                    leaderPoints={leader.points}
+                    pointsLeft={pointsLeft}
+                    rivals={rivals}
+                    labels={{
+                      gap: (n) => t('stakes.gap', { n }),
+                      alive: (max) => t('stakes.alive', { max }),
+                      out: (max) => t('stakes.out', { max }),
+                    }}
+                  />
+                  <p className="m-0 text-[14px] text-[color:var(--dusk-ink-2)]">{t('stakes.note', { name: leader.surname, points: leader.points })}</p>
+                  <p className="dusk-mono m-0 text-[10.5px] tracking-[0.04em] uppercase text-[color:var(--dusk-muted)]">{t('stakes.source', { round: lastRound })}</p>
+                </div>
+              )}
+              {nextRace.editions > 0 && (
+                <div className="dusk-card soft-card p-5 lg:col-span-5 flex flex-col gap-3">
+                  <span className="dusk-label">{t('stakes.circuitKicker', { name: nextRace.circuitName })}</span>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <div className="dusk-display text-[34px] leading-none">{nextRace.editions}</div>
+                      <p className="m-0 mt-1 text-[13px] text-[color:var(--dusk-ink-2)]">
+                        {t('stakes.editions', { n: nextRace.editions, year: nextRace.sinceYear ?? '' })}
+                      </p>
+                    </div>
+                    {nextRace.topWinners[0] && (
+                      <div>
+                        <div className="dusk-display text-[34px] leading-none">{nextRace.topWinners[0].wins}</div>
+                        <p className="m-0 mt-1 text-[13px] text-[color:var(--dusk-ink-2)]">
+                          {t('stakes.topWins', { n: nextRace.topWinners[0].wins, names: format.list(nextRace.topWinners[0].surnames) })}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  {nextRace.recentWinners.length > 0 && (
+                    <>
+                      <span className="dusk-label mt-2">{t('stakes.recent')}</span>
+                      <ul className="list-none m-0 p-0 dusk-mono text-[13px] leading-[1.9]">
+                        {nextRace.recentWinners.map((w) => (
+                          <li key={w.year}>{t('stakes.recentRow', { year: w.year, name: w.surname, grid: w.grid })}</li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                  <Link className="dusk-link no-underline dusk-mono text-[12px] uppercase tracking-[0.06em]" href={`/circuits/${nextRace.circuitRef}/`}>
+                    {t('last.circuit')} →
+                  </Link>
+                </div>
+              )}
+            </div>
+          </Section>
+        )}
+
+        {/* 05 · Who's in form */}
+        {formTop.length > 1 && (
+          <Section
+            n="05"
+            title={t('form.title')}
+            sub={t('form.sub', { n: lastRound - season.formFrom + 1, from: season.formFrom, to: lastRound })}
+          >
+            <div className="dusk-card soft-card p-5 flex flex-col gap-3">
+              <FormBars rows={formTop} resultsLabel={t('form.results')} />
+              <p className="m-0 text-[14px] text-[color:var(--dusk-ink-2)]">
+                {formTop[0].code === leader.code
+                  ? t('form.summaryLeader', { best: formTop[0].surname, points: formTop[0].points })
+                  : t('form.summaryOther', { best: formTop[0].surname, points: formTop[0].points, leaderPoints: formLeader?.points ?? 0 })}
+              </p>
+            </div>
+          </Section>
+        )}
+
+        {/* 06 · The grid */}
+        <Section n="06" title={t('grid.title')}>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+            <div className="dusk-card soft-card p-5 lg:col-span-7">
+              <span className="dusk-label">{t('grid.drivers')}</span>
+              <ol className="list-none m-0 mt-2 p-0">
+                {season.standings.slice(0, 10).map((s, i) => (
+                  <li key={s.id} className="border-t border-[color:var(--dusk-line)]">
+                    <Link
+                      href={`/drivers/${s.ref}/`}
+                      className="grid grid-cols-[28px_4px_minmax(0,1fr)_56px_48px] items-center gap-2.5 py-2 text-[14px] no-underline hover:text-[color:var(--dusk-sunset)]"
+                    >
+                      <span className="dusk-mono text-[color:var(--dusk-muted)]">{String(s.position).padStart(2, '0')}</span>
+                      <span className="h-4 rounded-sm" style={{ background: teamVar(s.teamRef) }} />
+                      <span className="truncate">{s.surname}</span>
+                      <span className="dusk-mono text-right text-[color:var(--dusk-muted)]">{i === 0 ? '' : `−${leader.points - s.points}`}</span>
+                      <span className="dusk-mono text-right">{s.points}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ol>
+              <Link className="dusk-link no-underline dusk-mono text-[12px] uppercase tracking-[0.06em] inline-block mt-3" href="/drivers/">
+                {t('grid.allDrivers')} →
+              </Link>
+            </div>
+            <div className="dusk-card soft-card p-5 lg:col-span-5">
+              <span className="dusk-label">{t('grid.constructors')}</span>
+              <ol className="list-none m-0 mt-2 p-0">
+                {season.constructors.slice(0, 6).map((c, i) => (
+                  <li key={c.ref} className="border-t border-[color:var(--dusk-line)]">
+                    <Link
+                      href={`/constructors/${c.ref}/`}
+                      className="grid grid-cols-[28px_4px_minmax(0,1fr)_56px_48px] items-center gap-2.5 py-2 text-[14px] no-underline hover:text-[color:var(--dusk-sunset)]"
+                    >
+                      <span className="dusk-mono text-[color:var(--dusk-muted)]">{String(c.position).padStart(2, '0')}</span>
+                      <span className="h-4 rounded-sm" style={{ background: teamVar(c.ref) }} />
+                      <span className="truncate">
+                        {c.name}
+                        {constructorTies.has(c.ref) && (
+                          <em className="dusk-mono not-italic uppercase text-[10px] ml-2 text-[color:var(--dusk-sunset)]">{t('grid.tied')}</em>
+                        )}
+                      </span>
+                      <span className="dusk-mono text-right text-[color:var(--dusk-muted)]">{i === 0 ? '' : `−${season.constructors[0].points - c.points}`}</span>
+                      <span className="dusk-mono text-right">{c.points}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ol>
+              <Link className="dusk-link no-underline dusk-mono text-[12px] uppercase tracking-[0.06em] inline-block mt-3" href="/constructors/">
+                {t('grid.allConstructors')} →
+              </Link>
+            </div>
+          </div>
+        </Section>
+
+        {/* 07 · Explore the archive */}
+        {season.archive && (
+          <Section
+            n="07"
+            title={t('explore.title', { n: season.archive.seasons })}
+            sub={t('explore.sub', {
+              races: format.number(season.archive.races),
+              year: season.archive.firstYear,
+              results: format.number(season.archive.results),
+            })}
+          >
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+              {[
+                { href: '/circuits/', kicker: t('explore.circuits'), big: format.number(season.archive.circuits), text: t('explore.circuitsText') },
+                { href: '/drivers/', kicker: t('explore.drivers'), big: format.number(season.archive.drivers), text: t('explore.driversText') },
+                {
+                  href: '/constructors/',
+                  kicker: t('explore.constructors'),
+                  big: format.number(season.archive.constructors),
+                  text: t('explore.constructorsText', { year: season.archive.firstYear }),
+                },
+                ...(rival
+                  ? [{ href: `/compare/?type=drivers&a=${leader.ref}&b=${rival.ref}`, kicker: t('explore.compare'), big: `${leader.code} vs ${rival.code}`, text: t('explore.compareText') }]
+                  : []),
+                { href: '/records/', kicker: t('explore.records'), big: `${season.archive.firstYear}–${year}`, text: t('explore.recordsText') },
+              ].map((c) => (
+                <Link key={c.href} href={c.href} className="no-underline hover:[&_.dusk-label]:text-[color:var(--dusk-sunset)]">
+                  <Stat kicker={c.kicker} big={c.big} text={c.text} />
+                </Link>
+              ))}
+            </div>
+          </Section>
+        )}
+      </div>
+    </main>
   );
 }
