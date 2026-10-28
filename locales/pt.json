@@ -502,7 +502,8 @@
       "podiums": "Pódios",
       "fastestLaps": "Voltas Rápidas",
       "poles": "Poles",
-      "winPct": "% Vit"
+      "winPct": "% Vit",
+      "dnfRate": "% Abandonos"
     },
     "seasons": {
       "title": "Por Temporada",
@@ -514,12 +515,6 @@
       "championships": "Campeonatos",
       "wins": "Vitórias",
       "races": "Corridas"
-    },
-    "pitWall": {
-      "title": "Pit Wall",
-      "fastestPit": "Parada Mais Rápida",
-      "fastestLap": "Volta Mais Rápida",
-      "dnfRate": "% Abandonos"
     },
     "circuitDomination": {
       "title": "Domínio por Circuito",

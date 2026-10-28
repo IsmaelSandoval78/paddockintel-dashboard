@@ -502,7 +502,8 @@
       "podiums": "Podiums",
       "fastestLaps": "Fastest Laps",
       "poles": "Poles",
-      "winPct": "Win%"
+      "winPct": "Win%",
+      "dnfRate": "DNF Rate"
     },
     "seasons": {
       "title": "Season by Season",
@@ -514,12 +515,6 @@
       "championships": "Championships",
       "wins": "Wins",
       "races": "Races"
-    },
-    "pitWall": {
-      "title": "Pit Wall",
-      "fastestPit": "Fastest Pit Stop",
-      "fastestLap": "Fastest Lap Ever",
-      "dnfRate": "DNF Rate"
     },
     "circuitDomination": {
       "title": "Circuit Domination",
