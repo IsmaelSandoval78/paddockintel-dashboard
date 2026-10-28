@@ -433,7 +433,7 @@ export default function CircuitDetailExperience({
                   {t('nextRace.date')}
                 </p>
                 <p className="font-mono text-[18px] text-text-1 leading-none tabular-nums">
-                  {format.dateTime(new Date(nextRace.date), { day: '2-digit', month: 'short', year: 'numeric' })}
+                  {format.dateTime(new Date(nextRace.date), { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' })}
                 </p>
               </div>
               <div>
