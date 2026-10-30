@@ -1605,5 +1605,116 @@
     "allCards": "Todas las tarjetas de datos",
     "crumbHome": "Inicio",
     "crumbsAria": "Ruta de navegación"
+  },
+  "hubSeason": {
+    "srTitle": "La temporada {year} de Fórmula 1 hasta hoy",
+    "strip": {
+      "season": "Temporada {year} · ronda {round} de {total}",
+      "next": "Próxima: {name} · {location} · {date}",
+      "left": "{races, plural, one {# carrera} other {# carreras}} · {points} puntos por disputar",
+      "over": "Temporada terminada · {races} rondas"
+    },
+    "hero": {
+      "kicker": "01 · La temporada hasta hoy",
+      "titleClinchable": "{name}, a {points, plural, one {un punto} other {# puntos}} del título",
+      "titleNeedsWin": "{name} puede cerrar el título en {location} con una victoria",
+      "titleDecided": "{name} gana el título de {year}",
+      "titleOpen": "{name} lidera por {gap, plural, one {un punto} other {# puntos}}",
+      "titleTied": "{name} lidera por desempate",
+      "dekLead": "Líder desde la ronda {since}, con {gap, plural, one {un punto} other {# puntos}} de ventaja sobre {rival}.",
+      "dekCeiling": "Con {left} puntos por disputar, lo máximo que puede sumar {rival} es {max}.",
+      "dekClinch": "En {location} le {points, plural, one {basta un punto} other {bastan # puntos}}, hagan lo que hagan los demás.",
+      "aria": "Puntos acumulados del campeonato tras cada ronda, los cinco primeros",
+      "ceiling": "máx. {code} {max}",
+      "pending": "POR DISPUTAR",
+      "round": "R{n}",
+      "source": "Rayado: rondas por disputar · Puntos tras cada ronda · Supabase driver_standings, rondas 1–{round}"
+    },
+    "kpi": {
+      "points": "Puntos",
+      "pointsSub": "{name}, líder",
+      "lead": "Ventaja",
+      "leadSub": "sobre {rival}",
+      "wins": "Victorias",
+      "winsSub": "{rival} suma {n}",
+      "led": "Rondas como líder",
+      "ledSub": "{rival} lideró {n}",
+      "ledSince": "desde la ronda {n}"
+    },
+    "story": {
+      "title": "Cómo llegamos aquí",
+      "sub": "El ganador de cada ronda, si salió desde la pole y quién lideraba el campeonato después",
+      "round": "R{n}",
+      "fromPole": "ganó desde la pole",
+      "leader": "líder: {code}",
+      "otherLeader": "líder: otro piloto",
+      "teamNote": "color del código = equipo del ganador",
+      "ledBy": "Líder del campeonato tras esta ronda: {code}",
+      "winner": "Ronda {round}: ganó {name}",
+      "leadKicker": "Ronda {n} · {location}",
+      "leadBig": "Al frente",
+      "leadText": "{name} toma el liderato del campeonato y no lo ha perdido desde entonces.",
+      "deepKicker": "Ronda {n} · {location}",
+      "deepText": "La remontada de la temporada: {name} gana saliendo P{grid}.",
+      "winnersKicker": "Ganadores",
+      "winnersText": "pilotos distintos; {team} ganó {wins} de {total}.",
+      "poleKicker": "Desde la pole",
+      "poleText": "carreras las ganó quien salió primero.",
+      "source": "Resultados y clasificaciones oficiales · Supabase"
+    },
+    "last": {
+      "title": "La última carrera: {name}",
+      "winner": "Ganador",
+      "winnerText": "Desde P{grid} · {gap} sobre {p2}",
+      "climber": "Mayor remontada",
+      "climberText": "{name}, de P{from} a P{to}",
+      "fastest": "Vuelta rápida",
+      "report": "Lee la crónica",
+      "circuit": "Historia del circuito"
+    },
+    "stakes": {
+      "title": "Lo que está en juego en {location}",
+      "sub": "{date} · {races, plural, one {queda # carrera} other {quedan # carreras}}",
+      "kicker": "¿Quién puede alcanzar todavía a {name}?",
+      "gap": "−{n}",
+      "alive": "sigue vivo · máx. {max}",
+      "out": "fuera · máx. {max}",
+      "note": "La línea naranja marca los {points} puntos de {name}. La barra sólida son los puntos de hoy de cada piloto; la punteada, lo máximo que puede sumar ganando todas las carreras que quedan.",
+      "source": "Supabase driver_standings tras la ronda {round} · 25 por victoria, 8 por victoria en sprint",
+      "circuitKicker": "El circuito · {name}",
+      "editions": "{n, plural, one {Gran Premio} other {Grandes Premios}} desde {year}",
+      "topWins": "{n, plural, one {victoria} other {victorias}} de {names}, el máximo",
+      "recent": "Últimos ganadores",
+      "recentRow": "{year} {name} · desde P{grid}"
+    },
+    "form": {
+      "title": "Quién llega en forma",
+      "sub": "Puntos en {n, plural, one {la última ronda} other {las últimas # rondas}} ({from}–{to})",
+      "results": "Resultados",
+      "summaryOther": "{best} es quien más suma últimamente ({points}), por delante del líder ({leaderPoints}).",
+      "summaryLeader": "{best} también lidera en forma reciente ({points})."
+    },
+    "grid": {
+      "title": "La parrilla",
+      "drivers": "Pilotos",
+      "constructors": "Constructores",
+      "tied": "empate",
+      "allDrivers": "Todos los pilotos",
+      "allConstructors": "Todos los constructores"
+    },
+    "explore": {
+      "title": "Explora {n} temporadas",
+      "sub": "{races} Grandes Premios desde {year} · {results} resultados",
+      "circuits": "Circuitos",
+      "circuitsText": "en el mapa, cada uno con su historia",
+      "drivers": "Pilotos",
+      "driversText": "carreras completas, Gran Premio a Gran Premio",
+      "constructors": "Constructores",
+      "constructorsText": "todos los equipos desde {year}",
+      "compare": "Comparar",
+      "compareText": "cara a cara, temporada a temporada",
+      "records": "Récords",
+      "recordsText": "récords históricos, actualizados tras cada Gran Premio"
+    }
   }
 }

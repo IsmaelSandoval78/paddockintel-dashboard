@@ -66,7 +66,7 @@ export async function getLatestRace(): Promise<LatestRace | null> {
 }
 
 type Client = ReturnType<typeof createClient>;
-type PoleToWin = {
+export type PoleToWin = {
   poleWins: number;
   races: number;
   sinceYear: number;
@@ -74,7 +74,7 @@ type PoleToWin = {
 };
 
 // Every Grand Prix won at a circuit (grid and winner per year), from `results` (position 1).
-async function poleToWinAt(supabase: Client, circuitRaces: Array<{ id: unknown; year: unknown }>): Promise<PoleToWin | null> {
+export async function poleToWinAt(supabase: Client, circuitRaces: Array<{ id: unknown; year: unknown }>): Promise<PoleToWin | null> {
   if (!circuitRaces.length) return null;
   const { data: winners } = await supabase
     .from('results')
