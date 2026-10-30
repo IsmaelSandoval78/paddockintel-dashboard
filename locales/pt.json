@@ -1707,5 +1707,101 @@
       "records": "Recordes",
       "recordsText": "recordes históricos, atualizados após cada Grande Prêmio"
     }
+  },
+  "circuitStory": {
+    "strip": {
+      "kicker": "Circuitos · {country}",
+      "thisWeek": "Esta semana: {name} · {date} · etapa {round} de {total}",
+      "next": "No calendário de {year}: {name} · {date}",
+      "lastRaced": "Último Grande Prêmio aqui: {year}",
+      "season": "A temporada até aqui"
+    },
+    "hero": {
+      "kicker": "01 · A história de um traçado · {location}",
+      "editions": "{n, plural, one {# Grande Prêmio, em {first}} other {# Grandes Prêmios desde {first}}}",
+      "layouts": ", em {k} traçados diferentes",
+      "highest": "A {metres} m acima do nível do mar, é o circuito mais alto do calendário de {year}; o seguinte é {next}, a {nextMetres} m.",
+      "highestAlone": "A {metres} m acima do nível do mar, é o circuito mais alto do calendário de {year}.",
+      "altitude": "Altitude",
+      "trackAria": "Traçado atual de {name}"
+    },
+    "kpi": {
+      "editions": "Grandes Prêmios",
+      "editionsSince": "desde {first}",
+      "editionsNext": "desde {first} · o {n}º será em {date}",
+      "fromPole": "Da pole",
+      "fromPoleSub": "corridas vencidas por quem largou na pole",
+      "mostWins": "Maior vencedor",
+      "mostWinsSub": "{names}",
+      "retire": "Abandonos",
+      "retireCurrent": "Abandonos · traçado atual",
+      "retireVs": "dos que largaram, contra {old}% nos traçados anteriores",
+      "retireAll": "dos que largaram, em todas as edições"
+    },
+    "eras": {
+      "titleMany": "{k} traçados com o mesmo nome",
+      "titleOne": "Todas as edições",
+      "sub": "Cada ponto é uma corrida, na cor da equipe vencedora",
+      "aria": "Edições por ano",
+      "gap": "{n} anos sem Grande Prêmio",
+      "missing": "sem corrida",
+      "winner": "{year} · {name}",
+      "original": "Traçado original",
+      "current": "Traçado atual",
+      "nth": "Traçado {n}",
+      "gps": "Grandes Prêmios",
+      "fromPole": "vencidos da pole",
+      "retire": "de abandonos",
+      "top": "Mais vitórias: {names} ({n})."
+    },
+    "rule": {
+      "title": "Quem manda aqui",
+      "sub": "Vitórias neste circuito, {from}–{to}",
+      "drivers": "Pilotos",
+      "teams": "Construtores",
+      "note": "{name} venceu aqui em {years}."
+    },
+    "win": {
+      "title": "Como se vence aqui",
+      "sub": "De onde largou cada vencedor",
+      "aria": "Posição de largada de cada vencedor, por ano",
+      "bar": "{year} · {name} de {grid}",
+      "pitLane": "PL",
+      "legend": "Cada barra é a posição de largada do vencedor: mais longa, de mais atrás. Laranja-claro: venceu da pole.",
+      "comeback": "A maior escalada: {name} venceu em {year} largando em P{grid}.",
+      "current": "No traçado atual, ninguém venceu largando de mais atrás que P{grid}."
+    },
+    "rec": {
+      "title": "Os recordes do traçado atual",
+      "sub": "Desde {year}",
+      "raceLap": "Volta em corrida",
+      "pole": "Pole",
+      "quali": "Volta mais rápida na classificação",
+      "holder": "{name}, {year}",
+      "qualiNote": "{name}, {year} · a pole oficial ficou com {pole}"
+    },
+    "weekend": {
+      "title": "Este fim de semana",
+      "sub": "Etapa {round} · {date}",
+      "last": "A última edição · {year}",
+      "titleKicker": "O título",
+      "clinch": "{points, plural, one {# ponto} other {# pontos}}",
+      "clinchText": "bastam para {name} ser campeão aqui, não importa o que os outros façam.",
+      "lead": "de vantagem de {name}, com {left} pontos em disputa."
+    },
+    "all": {
+      "title": "Todos os vencedores",
+      "sub": "{n, plural, one {# edição} other {# edições}}",
+      "year": "Ano",
+      "winner": "Vencedor",
+      "team": "Equipe",
+      "start": "Largada",
+      "pole": "Pole",
+      "fastest": "Volta mais rápida"
+    },
+    "telemetry": {
+      "title": "Telemetria PaddockIntel",
+      "sub": "Delta Ribbon · {race}"
+    }
   }
 }

@@ -1716,5 +1716,101 @@
       "records": "Récords",
       "recordsText": "récords históricos, actualizados tras cada Gran Premio"
     }
+  },
+  "circuitStory": {
+    "strip": {
+      "kicker": "Circuitos · {country}",
+      "thisWeek": "Esta semana: {name} · {date} · ronda {round} de {total}",
+      "next": "En el calendario {year}: {name} · {date}",
+      "lastRaced": "Último Gran Premio aquí: {year}",
+      "season": "La temporada hasta hoy"
+    },
+    "hero": {
+      "kicker": "01 · La historia de un trazado · {location}",
+      "editions": "{n, plural, one {# Gran Premio, en {first}} other {# Grandes Premios desde {first}}}",
+      "layouts": ", en {k} trazados distintos",
+      "highest": "A {metres} m sobre el nivel del mar, es el circuito más alto del calendario {year}; el siguiente es {next}, a {nextMetres} m.",
+      "highestAlone": "A {metres} m sobre el nivel del mar, es el circuito más alto del calendario {year}.",
+      "altitude": "Altitud",
+      "trackAria": "Trazado actual de {name}"
+    },
+    "kpi": {
+      "editions": "Grandes Premios",
+      "editionsSince": "desde {first}",
+      "editionsNext": "desde {first} · el {n}.º será el {date}",
+      "fromPole": "Desde la pole",
+      "fromPoleSub": "carreras ganadas por quien salió en la pole",
+      "mostWins": "Máximo ganador",
+      "mostWinsSub": "{names}",
+      "retire": "Abandonos",
+      "retireCurrent": "Abandonos · trazado actual",
+      "retireVs": "de los que salieron, frente al {old}% de los trazados anteriores",
+      "retireAll": "de los que salieron, en todas las ediciones"
+    },
+    "eras": {
+      "titleMany": "{k} trazados con un mismo nombre",
+      "titleOne": "Todas las ediciones",
+      "sub": "Cada punto es una carrera, en el color del equipo ganador",
+      "aria": "Ediciones por año",
+      "gap": "{n} años sin Gran Premio",
+      "missing": "sin carrera",
+      "winner": "{year} · {name}",
+      "original": "Trazado original",
+      "current": "Trazado actual",
+      "nth": "Trazado {n}",
+      "gps": "Grandes Premios",
+      "fromPole": "ganados desde la pole",
+      "retire": "de abandonos",
+      "top": "Más victorias: {names} ({n})."
+    },
+    "rule": {
+      "title": "Quién manda aquí",
+      "sub": "Victorias en este circuito, {from}–{to}",
+      "drivers": "Pilotos",
+      "teams": "Constructores",
+      "note": "{name} ganó aquí en {years}."
+    },
+    "win": {
+      "title": "Cómo se gana aquí",
+      "sub": "Desde dónde salió cada ganador",
+      "aria": "Posición de salida de cada ganador, por año",
+      "bar": "{year} · {name} desde {grid}",
+      "pitLane": "PL",
+      "legend": "Cada barra es la posición de salida del ganador: más larga, desde más atrás. Naranja claro: ganó desde la pole.",
+      "comeback": "La mayor remontada: {name} ganó en {year} saliendo P{grid}.",
+      "current": "En el trazado actual nadie ganó saliendo más atrás de P{grid}."
+    },
+    "rec": {
+      "title": "Los récords del trazado actual",
+      "sub": "Desde {year}",
+      "raceLap": "Vuelta en carrera",
+      "pole": "Pole",
+      "quali": "Vuelta más rápida en clasificación",
+      "holder": "{name}, {year}",
+      "qualiNote": "{name}, {year} · la pole oficial fue para {pole}"
+    },
+    "weekend": {
+      "title": "Este fin de semana",
+      "sub": "Ronda {round} · {date}",
+      "last": "La última edición · {year}",
+      "titleKicker": "El título",
+      "clinch": "{points, plural, one {# punto} other {# puntos}}",
+      "clinchText": "le bastan a {name} aquí para ser campeón, hagan lo que hagan los demás.",
+      "lead": "de ventaja de {name}, con {left} puntos por disputar."
+    },
+    "all": {
+      "title": "Todos los ganadores",
+      "sub": "{n, plural, one {# edición} other {# ediciones}}",
+      "year": "Año",
+      "winner": "Ganador",
+      "team": "Equipo",
+      "start": "Salida",
+      "pole": "Pole",
+      "fastest": "Vuelta rápida"
+    },
+    "telemetry": {
+      "title": "Telemetría PaddockIntel",
+      "sub": "Delta Ribbon · {race}"
+    }
   }
 }

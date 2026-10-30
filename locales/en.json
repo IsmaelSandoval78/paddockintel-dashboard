@@ -1712,5 +1712,101 @@
       "records": "Records",
       "recordsText": "all-time records, updated after every Grand Prix"
     }
+  },
+  "circuitStory": {
+    "strip": {
+      "kicker": "Circuits · {country}",
+      "thisWeek": "This week: {name} · {date} · round {round} of {total}",
+      "next": "On the {year} calendar: {name} · {date}",
+      "lastRaced": "Last Grand Prix here: {year}",
+      "season": "The season so far"
+    },
+    "hero": {
+      "kicker": "01 · The story of a track · {location}",
+      "editions": "{n, plural, one {# Grand Prix, in {first}} other {# Grands Prix since {first}}}",
+      "layouts": ", on {k} different layouts",
+      "highest": "At {metres} m above sea level it is the highest circuit on the {year} calendar; the next is {next}, at {nextMetres} m.",
+      "highestAlone": "At {metres} m above sea level it is the highest circuit on the {year} calendar.",
+      "altitude": "Altitude",
+      "trackAria": "Current layout of {name}"
+    },
+    "kpi": {
+      "editions": "Grands Prix",
+      "editionsSince": "since {first}",
+      "editionsNext": "since {first} · No. {n} is on {date}",
+      "fromPole": "From pole",
+      "fromPoleSub": "races won by the pole sitter",
+      "mostWins": "Most wins",
+      "mostWinsSub": "{names}",
+      "retire": "Retirements",
+      "retireCurrent": "Retirements · current layout",
+      "retireVs": "of starters, against {old}% on the earlier layouts",
+      "retireAll": "of starters, every edition"
+    },
+    "eras": {
+      "titleMany": "{k} layouts under one name",
+      "titleOne": "Every edition",
+      "sub": "Each dot is a race, in the winning team's colour",
+      "aria": "Editions by year",
+      "gap": "{n} years without a Grand Prix",
+      "missing": "no race",
+      "winner": "{year} · {name}",
+      "original": "Original layout",
+      "current": "Current layout",
+      "nth": "Layout {n}",
+      "gps": "Grands Prix",
+      "fromPole": "won from pole",
+      "retire": "retirements",
+      "top": "Most wins: {names} ({n})."
+    },
+    "rule": {
+      "title": "Who rules here",
+      "sub": "Wins at this circuit, {from}–{to}",
+      "drivers": "Drivers",
+      "teams": "Constructors",
+      "note": "{name} won here in {years}."
+    },
+    "win": {
+      "title": "How races are won here",
+      "sub": "Where each winner started",
+      "aria": "Each winner's starting position, by year",
+      "bar": "{year} · {name} from {grid}",
+      "pitLane": "PL",
+      "legend": "Each bar is the winner's starting position, longer from further back. Sunset: won from pole.",
+      "comeback": "The biggest comeback: {name} won in {year} from P{grid}.",
+      "current": "On the current layout, nobody has won from further back than P{grid}."
+    },
+    "rec": {
+      "title": "Records on the current layout",
+      "sub": "Since {year}",
+      "raceLap": "Race lap",
+      "pole": "Pole",
+      "quali": "Fastest lap in qualifying",
+      "holder": "{name}, {year}",
+      "qualiNote": "{name}, {year} · the official pole went to {pole}"
+    },
+    "weekend": {
+      "title": "This weekend",
+      "sub": "Round {round} · {date}",
+      "last": "Last edition · {year}",
+      "titleKicker": "The title",
+      "clinch": "{points, plural, one {# point} other {# points}}",
+      "clinchText": "is all {name} needs here to be champion, whatever the others do.",
+      "lead": "{name}'s lead, with {left} points to play for."
+    },
+    "all": {
+      "title": "Every winner",
+      "sub": "{n, plural, one {# edition} other {# editions}}",
+      "year": "Year",
+      "winner": "Winner",
+      "team": "Team",
+      "start": "Start",
+      "pole": "Pole",
+      "fastest": "Fastest lap"
+    },
+    "telemetry": {
+      "title": "PaddockIntel telemetry",
+      "sub": "Delta Ribbon · {race}"
+    }
   }
 }
