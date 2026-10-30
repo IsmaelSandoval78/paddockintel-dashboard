@@ -19,10 +19,14 @@ export type Edition = {
   podium: Array<{ position: number; surname: string; teamRef: string }>;
 };
 
-export type Era = {
+// A run of consecutive editions on one layout (the timeline's bands).
+export type Era = { layout: string | null; from: number; to: number; editions: Edition[] };
+
+// Every edition on one layout, which a circuit can leave and come back to (Monza used its 1955
+// layout again in 1960-61): the era cards and the layout count.
+export type Layout = {
   layout: string | null;
-  from: number;
-  to: number;
+  runs: Array<{ from: number; to: number }>;
   editions: Edition[];
   poleWins: number;
   retirementPct: number | null;
@@ -35,6 +39,7 @@ export type CircuitStory = {
   circuit: { id: number; ref: string; name: string; location: string; country: string; lat: number | null; lng: number | null; alt: number | null };
   editions: Edition[];
   eras: Era[];
+  layouts: Layout[];
   // The circuit's race on the calendar that hasn't been run yet, if any.
   upcoming: { raceId: number; year: number; round: number; name: string; date: string; seasonRounds: number; isNext: boolean; daysUntil: number } | null;
   // Highest circuit on the latest calendar, with the runner-up for scale.
@@ -168,20 +173,28 @@ export async function getCircuitStory(slug: string): Promise<CircuitStory | null
     return best > 0 ? { wins: best, surnames: [...tally.entries()].filter(([, n]) => n === best).map(([s]) => s) } : null;
   };
 
-  // Eras: consecutive editions on the same layout.
+  // Runs of consecutive editions on the same layout, then the same editions grouped by layout.
   const eras: Era[] = [];
   for (const e of editions) {
     const last = eras[eras.length - 1];
-    if (last && last.layout === e.layout) last.editions.push(e);
-    else eras.push({ layout: e.layout, from: e.year, to: e.year, editions: [e], poleWins: 0, retirementPct: null, topWinners: null });
+    if (last && last.layout === e.layout) {
+      last.editions.push(e);
+      last.to = e.year;
+    } else eras.push({ layout: e.layout, from: e.year, to: e.year, editions: [e] });
   }
+  const layouts: Layout[] = [];
   for (const era of eras) {
-    era.from = era.editions[0].year;
-    era.to = era.editions[era.editions.length - 1].year;
-    era.poleWins = era.editions.filter(wonFromPole).length;
-    const starters = era.editions.reduce((s, e) => s + e.starters, 0);
-    era.retirementPct = starters > 0 ? Math.round((100 * era.editions.reduce((s, e) => s + e.retirements, 0)) / starters) : null;
-    era.topWinners = topOf(era.editions);
+    const known = layouts.find((l) => l.layout === era.layout);
+    if (known) {
+      known.runs.push({ from: era.from, to: era.to });
+      known.editions.push(...era.editions);
+    } else layouts.push({ layout: era.layout, runs: [{ from: era.from, to: era.to }], editions: [...era.editions], poleWins: 0, retirementPct: null, topWinners: null });
+  }
+  for (const l of layouts) {
+    l.poleWins = l.editions.filter(wonFromPole).length;
+    const starters = l.editions.reduce((s, e) => s + e.starters, 0);
+    l.retirementPct = starters > 0 ? Math.round((100 * l.editions.reduce((s, e) => s + e.retirements, 0)) / starters) : null;
+    l.topWinners = topOf(l.editions);
   }
 
   const driverTally = new Map<string, { surname: string; teamRef: string; wins: number; years: number[] }>();
@@ -283,6 +296,7 @@ export async function getCircuitStory(slug: string): Promise<CircuitStory | null
     circuit,
     editions,
     eras,
+    layouts,
     upcoming,
     altitude,
     poleWins: editions.filter(wonFromPole).length,

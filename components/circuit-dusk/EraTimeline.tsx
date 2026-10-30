@@ -31,7 +31,7 @@ export default function EraTimeline({ eras, labels }: Props) {
       {eras.map((era) => (
         <g key={`${era.from}-${era.layout}`}>
           <rect x={X(era.from) - 8} y={30} width={X(era.to) - X(era.from) + 16} height={36} rx={10} fill="var(--dusk-panel-hi)" stroke="var(--dusk-line)" />
-          {eras.length > 1 && (
+          {eras.length > 1 && X(era.to) - X(era.from) >= 60 && (
             <text x={(X(era.from) + X(era.to)) / 2} y={20} textAnchor="middle" fontSize={11} fill="var(--dusk-muted)">
               {era.from === era.to ? era.from : `${era.from}–${era.to}`}
             </text>

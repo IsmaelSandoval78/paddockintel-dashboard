@@ -9,7 +9,7 @@ import { getFormatter } from 'next-intl/server';
 import { teamColor } from '@/components/home/kinetic/teamColors';
 import type { RibbonFrame } from '@/components/circuits/kinetic/deltaRibbon/geometry';
 import DeltaRibbonSection, { type DeltaRibbonEventRow, type DeltaRibbonDriver } from '@/components/circuits/kinetic/DeltaRibbonSection';
-import { getCircuitStory, type Era } from '@/lib/circuitStory';
+import { getCircuitStory, type Layout } from '@/lib/circuitStory';
 import { getHubSeason } from '@/lib/hubSeason';
 import { Section, Stat } from '@/components/hub-dusk/Blocks';
 import { teamVar } from '@/components/home-dusk/StandingsCard';
@@ -89,7 +89,7 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
   ]);
   if (!story) notFound();
   const supabase = createClient();
-  const { circuit, editions, eras, upcoming, altitude, records } = story;
+  const { circuit, editions, eras, layouts, upcoming, altitude, records } = story;
 
   const circuitUrl = localeUrl(locale, `/circuits/${circuit.ref}`);
   const breadcrumbJsonLd = {
@@ -234,9 +234,10 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
 
   const first = editions[0]?.year ?? null;
   const last = editions[editions.length - 1]?.year ?? null;
-  const multiEra = eras.length > 1;
-  const currentEra: Era | undefined = eras[eras.length - 1];
-  const earlier = eras.slice(0, -1).flatMap((e) => e.editions);
+  // The current layout is the one of the latest edition; it may have been used before (Monza).
+  const multiEra = layouts.length > 1;
+  const currentEra: Layout | undefined = layouts.find((l) => l.layout === editions[editions.length - 1]?.layout);
+  const earlier = layouts.filter((l) => l !== currentEra).flatMap((l) => l.editions);
   const earlierStarters = earlier.reduce((s, e) => s + e.starters, 0);
   const earlierPct = earlierStarters > 0 ? Math.round((100 * earlier.reduce((s, e) => s + e.retirements, 0)) / earlierStarters) : null;
   const allStarters = editions.reduce((s, e) => s + e.starters, 0);
@@ -244,13 +245,14 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
   const deepest = [...editions].filter((e) => e.winner.grid > 0).sort((a, b) => b.winner.grid - a.winner.grid)[0];
   const comeback = deepest && deepest.winner.grid >= 4 ? deepest : null;
   const currentBack = currentEra && currentEra.editions.length >= 3 ? Math.max(...currentEra.editions.map((e) => e.winner.grid)) : null;
-  const eraName = (i: number) => (i === 0 ? t('eras.original') : i === eras.length - 1 ? t('eras.current') : t('eras.nth', { n: i + 1 }));
+  const eraName = (l: Layout, i: number) => (l === currentEra ? t('eras.current') : i === 0 ? t('eras.original') : t('eras.nth', { n: i + 1 }));
+  const runsLabel = (l: Layout) => l.runs.map((r) => (r.from === r.to ? String(r.from) : `${r.from}–${r.to}`)).join(', ');
   const lastEdition = editions[editions.length - 1];
   const topDriver = story.topDrivers[0];
   const topTied = story.topDrivers.filter((d) => d.wins === topDriver?.wins);
 
   const dek = [
-    first !== null ? t('hero.editions', { n: editions.length, first }) + (multiEra ? t('hero.layouts', { k: eras.length }) : '') + '.' : '',
+    first !== null ? t('hero.editions', { n: editions.length, first }) + (multiEra ? t('hero.layouts', { k: layouts.length }) : '') + '.' : '',
     altitude?.highestOnCalendar
       ? altitude.highestOnCalendar.next
         ? t('hero.highest', {
@@ -347,7 +349,7 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
 
           {/* 02 · Eras */}
           {editions.length > 1 && (
-            <Section n="02" title={multiEra ? t('eras.titleMany', { k: eras.length }) : t('eras.titleOne')} sub={t('eras.sub')}>
+            <Section n="02" title={multiEra ? t('eras.titleMany', { k: layouts.length }) : t('eras.titleOne')} sub={t('eras.sub')}>
               <div className="dusk-card soft-card p-4 sm:p-5">
                 <EraTimeline
                   eras={eras}
@@ -361,9 +363,9 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
               </div>
               {multiEra && (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                  {eras.map((era, i) => (
-                    <div key={`${era.from}-${era.layout}`} className="dusk-card soft-card p-5 flex flex-col gap-3">
-                      <span className="dusk-label">{`${era.from === era.to ? era.from : `${era.from}–${era.to}`} · ${eraName(i)}`}</span>
+                  {layouts.map((era, i) => (
+                    <div key={`${era.runs[0].from}-${era.layout}`} className="dusk-card soft-card p-5 flex flex-col gap-3">
+                      <span className="dusk-label">{`${runsLabel(era)} · ${eraName(era, i)}`}</span>
                       <div className="grid grid-cols-3 gap-2.5">
                         <div>
                           <div className="dusk-display text-[28px] leading-none">{era.editions.length}</div>
@@ -455,7 +457,7 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
 
           {/* 05 · Records on the current layout */}
           {records && currentEra && (
-            <Section n="05" title={t('rec.title')} sub={t('rec.sub', { year: currentEra.from })}>
+            <Section n="05" title={t('rec.title')} sub={t('rec.sub', { year: currentEra.editions[0].year })}>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {records.raceLap && (
                   <Stat kicker={t('rec.raceLap')} big={<span className="dusk-mono">{records.raceLap.time}</span>} text={t('rec.holder', { name: records.raceLap.surname, year: records.raceLap.year })} />
