@@ -1749,6 +1749,7 @@
       "sub": "Each dot is a race, in the winning team's colour",
       "aria": "Editions by year",
       "gap": "{n} years without a Grand Prix",
+      "gapShort": "{n} years",
       "missing": "no race",
       "winner": "{year} · {name}",
       "original": "Original layout",

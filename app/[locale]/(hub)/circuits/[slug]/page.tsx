@@ -356,6 +356,7 @@ export default async function CircuitDetailPage({ params }: { params: PageParams
                   labels={{
                     aria: t('eras.aria'),
                     gap: (n) => t('eras.gap', { n }),
+                    gapShort: (n) => t('eras.gapShort', { n }),
                     missing: t('eras.missing'),
                     winner: (year, name) => t('eras.winner', { year, name }),
                   }}

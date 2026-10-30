@@ -1744,6 +1744,7 @@
       "sub": "Cada ponto é uma corrida, na cor da equipe vencedora",
       "aria": "Edições por ano",
       "gap": "{n} anos sem Grande Prêmio",
+      "gapShort": "{n} anos",
       "missing": "sem corrida",
       "winner": "{year} · {name}",
       "original": "Traçado original",
