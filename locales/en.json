@@ -1460,6 +1460,7 @@
       "days": "{days, plural, one {day to the race} other {days to the race}}",
       "countAria": "{days, plural, one {# day} other {# days}} to the race",
       "sessionPreview": "Preview",
+      "sessionWeekend": "Race weekend",
       "terrain": {
         "caption": "{driver}'s {year} pole lap at {circuit} as a landscape · every peak a straight, every valley a corner · {lapTime} · {min}–{max} km/h · {source}",
         "aria": "{driver}'s {year} pole lap at {circuit} drawn as a mountain range: every peak is a straight, every valley a corner. Speed ranges from {min} to {max} km/h."

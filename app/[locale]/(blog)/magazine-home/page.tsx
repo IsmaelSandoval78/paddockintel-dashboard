@@ -209,23 +209,32 @@ export default async function MagazineHomePage({
     raceDay && d
       ? d.getTime() >= raceDay.getTime() - 3 * 86_400_000 && d.getTime() <= raceDay.getTime() + 7 * 86_400_000
       : false;
-  // A race piece is linked to the latest race, or is race-weekend coverage published that week.
-  // The publish date alone isn't enough: a title-math or economics story published two days after
-  // a Grand Prix is not about that Grand Prix.
+  // A race piece is linked to the latest race, or is unlinked race-weekend coverage published that
+  // week. The publish date alone isn't enough: a title-math or economics story published two days
+  // after a Grand Prix is not about that Grand Prix, and the week after a race overlaps the next
+  // race weekend, whose coverage is linked to that next race.
   const isRacePiece = (a: { race_id: number | null; published_at: string | null; tags: TagRef[] }) =>
     !!latestRace &&
     (a.race_id === latestRace.raceId ||
-      (inRaceWeek(a.published_at ? new Date(a.published_at) : null) && a.tags.some((tg) => RACE_TAGS.has(tg.slug))));
+      (a.race_id == null &&
+        inRaceWeek(a.published_at ? new Date(a.published_at) : null) &&
+        a.tags.some((tg) => RACE_TAGS.has(tg.slug))));
   // Race mode: the cover dashboard follows the latest race. Story mode: the featured piece isn't
   // about that race, so its own numbers lead and the race data moves to its own labelled section.
   const raceMode = !featured || isRacePiece(featured);
-  // A piece linked to the coming race is its preview.
+  // A piece linked to the coming race is its preview, or, once tagged as race-weekend coverage
+  // (practice, qualifying), part of that weekend.
   const isPreview = !!raceWeek && !!featured && featured.race_id === raceWeek.raceId;
+  const isWeekendPiece = isPreview && !!featured?.tags.some((tg) => RACE_TAGS.has(tg.slug));
   const heroKicker =
     latestRace && raceDay && raceMode
       ? t('kickerRace', { race: `${latestRace.name} ${latestRace.year}`, session: t('sessionRace'), date: shortDate(raceDay) })
       : raceWeek && isPreview
-        ? t('kickerRace', { race: `${raceWeek.name} ${raceWeek.year}`, session: t('raceWeek.sessionPreview'), date: featuredPublished ? shortDate(featuredPublished) : '' })
+        ? t('kickerRace', {
+            race: `${raceWeek.name} ${raceWeek.year}`,
+            session: t(isWeekendPiece ? 'raceWeek.sessionWeekend' : 'raceWeek.sessionPreview'),
+            date: featuredPublished ? shortDate(featuredPublished) : '',
+          })
         : t('kickerFeatured', { date: featuredPublished ? shortDate(featuredPublished) : '' });
 
   // ── Race week: the coming Grand Prix, drawn from its circuit's last edition ──
