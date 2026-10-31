@@ -1455,6 +1455,7 @@
       "days": "{days, plural, one {dia para a corrida} other {dias para a corrida}}",
       "countAria": "{days, plural, one {Falta # dia} other {Faltam # dias}} para a corrida",
       "sessionPreview": "Prévia",
+      "sessionWeekend": "Fim de semana de corrida",
       "terrain": {
         "caption": "A volta da pole de {driver} em {circuit} {year} como paisagem · cada pico é uma reta, cada vale uma curva · {lapTime} · {min}–{max} km/h · {source}",
         "aria": "A velocidade da volta da pole de {driver} em {circuit} {year} desenhada como uma cordilheira: cada pico é uma reta, cada vale uma curva. A velocidade vai de {min} a {max} km/h."
