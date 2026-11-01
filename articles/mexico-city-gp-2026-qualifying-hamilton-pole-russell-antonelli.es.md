@@ -33,14 +33,20 @@ faq:
     a: "En la base de datos de PaddockIntel, cinco de los 10 Grandes Premios disputados en el trazado actual entre 2015 y 2025 se ganaron desde la pole, y ningún ganador salió más atrás del tercer puesto. Hamilton ganó allí desde la pole en 2016."
   - q: "¿Por qué hubo bandera roja en la clasificación de México?"
     a: "El Aston Martin de Fernando Alonso se detuvo en la curva 14 en la Q1 tras perder presión de agua, según RaceFans. Los comisarios lo amonestaron porque dejó el auto sin volver a colocar el volante, que los comisarios de pista necesitan para moverlo."
-  - q: "¿Puede cambiar todavía la parrilla del Gran Premio de la Ciudad de México?"
-    a: "Sí. Después de la clasificación, los comisarios investigaban a Hamilton, Gabriel Bortoleto, Valtteri Bottas y Sergio Pérez por superar el tiempo delta máximo en la Q1, y a Isack Hadjar por lo mismo en la Q3. Verstappen y Liam Lawson ya pierden un puesto cada uno, y Bottas, 50."
+  - q: "¿Sancionaron a Lewis Hamilton después de la clasificación en México?"
+    a: "No. Los comisarios no tomaron medidas contra Hamilton, Gabriel Bortoleto, Valtteri Bottas, Sergio Pérez e Isack Hadjar, que superaron el tiempo máximo entre las líneas del auto de seguridad, porque todos frenaron para dejar pasar a otros pilotos. Hamilton conserva la pole. Liam Lawson fue descalificado de la clasificación por una infracción técnica y sale último, 22.º."
 
 sources:
   - name: "Formula1.com — Live coverage: qualifying in Mexico City 2026 (31 de octubre de 2026); tiempos por sector y mensajes de dirección de carrera del canal de cronometraje en vivo de la F1, grabados por PaddockIntel"
     url: "https://www.formula1.com/en/latest/article/live-coverage-qualifying-in-mexico-city-2026.7rsM0FXrllMkwPI44GSR58"
   - name: "RaceFans — Hamilton claims first pole position for three years ahead of Russell in Mexico (31 de octubre de 2026)"
     url: "https://www.racefans.net/2026/10/31/hamilton-claims-first-pole-position-for-three-years-ahead-of-russell-in-mexico/"
+  - name: "FIA — Decisión de los comisarios, documento 50: tiempos SC2-SC1 de la clasificación, sin más medidas (31 de octubre de 2026)"
+    url: "https://www.fia.com/system/files/decision-document/2026_mexico_city_grand_prix_-_decision_-_qualifying_sc2-sc1_times.pdf"
+  - name: "FIA — Decisión de los comisarios, documento 57: auto 30, incumplimiento técnico (31 de octubre de 2026)"
+    url: "https://www.fia.com/system/files/decision-document/2026_mexico_city_grand_prix_-_infringement_-_car_30_-_technical_nonconformity.pdf"
+  - name: "FIA — Parrilla de salida provisional, documento 60 (31 de octubre de 2026)"
+    url: "https://www.fia.com/system/files/decision-document/2026_mexico_city_grand_prix_-_provisional_starting_grid.pdf"
   - name: "FIA — Decisión de los comisarios, documento 45: auto 14, no volvió a colocar el volante (31 de octubre de 2026)"
     url: "https://www.fia.com/system/files/decision-document/2026_mexico_city_grand_prix_-_infringement_-_car_14_-_failed_to_replace_the_steering_wheel_after_leaving_the_car.pdf"
   - name: "FIA — Decisión de los comisarios, documento 33: auto 3, incidente en la curva 14 con el auto 30 (30 de octubre de 2026)"
@@ -50,6 +56,8 @@ sources:
   - name: "Base de datos de PaddockIntel — poles de Hamilton, clasificación de 2026 tras la ronda 18 y resultados del GP de la Ciudad de México en el trazado actual, 2015-2025"
     url: "https://hub.paddockintel.com/circuits/rodriguez/"
 ---
+
+*Actualización, 1 de noviembre de 2026: los comisarios no tomaron medidas en las investigaciones por vueltas lentas, así que Hamilton conserva la pole, y descalificaron a Liam Lawson de la clasificación por una infracción técnica. Este análisis se actualizó con la parrilla oficial.*
 
 ## What Happened
 
@@ -75,8 +83,8 @@ Ciudad de México convirtió la pole en victoria la mitad de las veces. En la ba
 
 La aritmética del título pasa ahora por la primera fila. Antonelli tiene 365 puntos, frente a 242 de Russell y 241 de Hamilton, con 125 en juego. Necesita dos puntos, un noveno puesto, hagan lo que hagan ellos. La única forma de que se vaya de México sin el título es que gane Russell o Hamilton y él termine fuera de los nueve primeros, o de los diez primeros si el ganador es Hamilton. El domingo, los dos pilotos que pueden frenarlo salen primero y segundo, y él sale cuarto. En 2026 terminó noveno o mejor en 16 de 18 carreras.
 
-La parrilla todavía es provisional. Después de la sesión, los comisarios investigaban a Hamilton, Gabriel Bortoleto, Bottas y Sergio Pérez por superar el tiempo delta máximo en la Q1, y a Isack Hadjar por lo mismo en la Q3. Bottas ya pierde 50 puestos por sus cambios de unidad de potencia, y Lawson, octavo más rápido, intercambia su puesto con Arvid Lindblad por su propia sanción de un puesto.
+Los comisarios confirmaron la parte delantera de la parrilla. Hamilton, Gabriel Bortoleto, Bottas, Sergio Pérez e Isack Hadjar superaron el tiempo máximo entre las líneas del auto de seguridad en vueltas lentas, pero los comisarios no tomaron medidas porque todos frenaron para dejar pasar a otros pilotos. Liam Lawson, octavo más rápido, fue descalificado de la clasificación porque la entrega del MGU-K no se redujo como exige el reglamento técnico tras cruzar la línea en su mejor vuelta de la Q2; sale 22.º y último, detrás de Bottas, que pierde 50 puestos por sus cambios de unidad de potencia. Arvid Lindblad sale octavo y Pierre Gasly noveno.
 
 ## Verdict
 
-Los datos dicen que Hamilton se ganó esta pole con la vuelta más limpia de la sesión, no con el auto más rápido: Verstappen, Leclerc y Russell tuvieron más ritmo en sus sectores. Mi lectura: el domingo es la primera carrera en semanas en la que el título de Antonelli depende de verdad de otros al momento de la salida, porque los dos pilotos que pueden aplazarlo salen por delante de él. Aun así, hace falta una victoria de uno de ellos y una mala tarde de Antonelli, que tuvo dos en 18 carreras. Si los comisarios no tocan la primera fila, la mejor oportunidad de Hamilton de ganar con Ferrari en este circuito es también la mejor oportunidad de que el título espere otra semana.
+Los datos dicen que Hamilton se ganó esta pole con la vuelta más limpia de la sesión, no con el auto más rápido: Verstappen, Leclerc y Russell tuvieron más ritmo en sus sectores. Mi lectura: el domingo es la primera carrera en semanas en la que el título de Antonelli depende de verdad de otros al momento de la salida, porque los dos pilotos que pueden aplazarlo salen por delante de él. Aun así, hace falta una victoria de uno de ellos y una mala tarde de Antonelli, que tuvo dos en 18 carreras. Con la primera fila confirmada, la mejor oportunidad de Hamilton de ganar con Ferrari en este circuito es también la mejor oportunidad de que el título espere otra semana.
