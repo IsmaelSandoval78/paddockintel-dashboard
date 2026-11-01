@@ -54,8 +54,14 @@ export async function GET(request: Request, { params }: { params: Promise<{ loca
   const tall = height >= 900;
   const pad = tall ? 72 : 56;
   const headSize = fitSize(headline, WIDTH - 2 * pad, tall ? 3 : 2, 0.62, tall ? 76 : 58);
-  const valueSize = height === 1200 ? 64 : tall ? 54 : 44;
-  const rowPad = height === 1200 ? 26 : tall ? 20 : 12;
+  const square = height === 1200;
+  // One fixed-width value column so the labels line up; a long value ("350kW to 0") shrinks to fit it
+  // (JetBrains Mono glyphs are 0.6em wide).
+  const valueCol = tall ? 400 : 340;
+  const longest = Math.max(1, ...stats.map((s) => [...s.value].length));
+  const valueSize = Math.min(square ? 72 : tall ? 58 : 46, Math.floor(valueCol / (longest * 0.6)));
+  const rowPad = square ? 30 : tall ? 22 : 14;
+  const labelSize = square ? 24 : tall ? 22 : 20;
 
   return new ImageResponse(
     (
@@ -65,10 +71,9 @@ export async function GET(request: Request, { params }: { params: Promise<{ loca
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
-          position: 'relative',
           background: WARM.bg,
           color: WARM.text1,
-          padding: `${pad - 8}px ${pad}px`,
+          padding: `${pad - 8}px ${pad}px ${tall ? 40 : 28}px`,
           fontFamily: 'Lora',
         }}
       >
@@ -86,71 +91,70 @@ export async function GET(request: Request, { params }: { params: Promise<{ loca
             {`Feed · ${date}`}
           </div>
         </div>
-        <div
-          style={{
-            display: 'flex',
-            marginTop: tall ? 40 : 26,
-            fontFamily: 'Archivo Black',
-            fontSize: headSize,
-            lineHeight: 1.05,
-            letterSpacing: '-0.03em',
-          }}
-        >
-          {headline}
-        </div>
-
-        {stats.length > 0 && (
+        {/* Headline and stats share the space between masthead and footer, centred in it. */}
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: 1, paddingBottom: 12 }}>
           <div
             style={{
               display: 'flex',
-              flexDirection: 'column',
-              marginTop: tall ? 40 : 24,
-              background: WARM.surface,
-              border: `1px solid ${WARM.border}`,
-              borderRadius: 24,
-              padding: '8px 24px',
+              marginTop: tall ? 24 : 16,
+              fontFamily: 'Archivo Black',
+              fontSize: headSize,
+              lineHeight: 1.05,
+              letterSpacing: '-0.03em',
             }}
           >
-            {stats.map((s, i) => (
-              <div
-                key={i}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 28,
-                  padding: `${rowPad}px 12px`,
-                  borderBottom: i === stats.length - 1 ? 'none' : `1px solid ${WARM.borderSubtle}`,
-                  background: i === 0 ? WARM.accentDim : 'transparent',
-                  borderRadius: i === 0 ? 12 : 0,
-                }}
-              >
+            {headline}
+          </div>
+
+          {stats.length > 0 && (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                marginTop: tall ? 40 : 24,
+                background: WARM.surface,
+                border: `1px solid ${WARM.border}`,
+                borderRadius: 24,
+                padding: '8px 24px',
+              }}
+            >
+              {stats.map((s, i) => (
                 <div
+                  key={i}
                   style={{
                     display: 'flex',
-                    flexShrink: 0,
-                    minWidth: 300,
-                    fontFamily: 'JetBrains Mono',
-                    fontSize: valueSize,
-                    color: i === 0 ? WARM.accent : WARM.text1,
+                    alignItems: 'center',
+                    gap: 28,
+                    padding: `${rowPad}px 12px`,
+                    borderBottom: i === stats.length - 1 ? 'none' : `1px solid ${WARM.borderSubtle}`,
+                    background: i === 0 ? WARM.accentDim : 'transparent',
+                    borderRadius: i === 0 ? 12 : 0,
                   }}
                 >
-                  {s.value}
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexShrink: 0,
+                      width: valueCol,
+                      fontFamily: 'JetBrains Mono',
+                      fontSize: valueSize,
+                      color: i === 0 ? WARM.accent : WARM.text1,
+                    }}
+                  >
+                    {s.value}
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                    <div style={{ display: 'flex', fontFamily: 'Archivo Black', fontSize: labelSize, letterSpacing: '0.02em' }}>{s.label}</div>
+                    {s.unit ? <div style={{ display: 'flex', marginTop: 4, fontSize: labelSize - 1, color: WARM.text2 }}>{s.unit}</div> : null}
+                  </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                  <div style={{ display: 'flex', fontFamily: 'Archivo Black', fontSize: 20, letterSpacing: '0.02em' }}>{s.label}</div>
-                  {s.unit ? <div style={{ display: 'flex', marginTop: 4, fontSize: 19, color: WARM.text2 }}>{s.unit}</div> : null}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
 
         <div
           style={{
-            position: 'absolute',
-            left: pad,
-            right: pad,
-            bottom: tall ? 40 : 28,
             display: 'flex',
             justifyContent: 'space-between',
             fontFamily: 'JetBrains Mono',
