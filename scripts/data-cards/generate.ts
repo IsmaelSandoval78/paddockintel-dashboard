@@ -122,7 +122,164 @@ async function circuitWins(supabase: Supabase, circuitRef: string, teamRef: stri
   };
 }
 
+// Supabase returns at most 1,000 rows per request; this pages through a query until it runs out.
+async function fetchAll<T>(page: (from: number, to: number) => PromiseLike<{ data: T[] | null }>): Promise<T[]> {
+  const out: T[] = [];
+  for (let from = 0; ; from += 1000) {
+    const { data } = await page(from, from + 999);
+    out.push(...(data ?? []));
+    if (!data || data.length < 1000) return out;
+  }
+}
+
+// The most points one driver could score at a race: a Grand Prix win, plus the fastest-lap point
+// (2019-2024), plus a sprint win, with the 2014 finale's double points. Valid from 1991, the
+// first season in which every result counted.
+function maxRacePoints(year: number, round: number, lastRound: number, sprint: boolean): number {
+  const win = year >= 2010 ? 25 : 10;
+  const double = year === 2014 && round === lastRound ? 2 : 1;
+  const fastestLap = year >= 2019 && year <= 2024 ? 1 : 0;
+  const sprintWin = sprint ? (year === 2021 ? 3 : SPRINT_WIN_POINTS) : 0;
+  return win * double + fastestLap + sprintWin;
+}
+
+function ageOn(dob: string, date: string): { years: number; days: number } {
+  const birth = new Date(`${dob}T00:00:00Z`);
+  const day = new Date(`${date}T00:00:00Z`);
+  let years = day.getUTCFullYear() - birth.getUTCFullYear();
+  const birthday = (y: number) => Date.UTC(y, birth.getUTCMonth(), birth.getUTCDate());
+  if (day.getTime() < birthday(day.getUTCFullYear())) years -= 1;
+  const days = Math.round((day.getTime() - birthday(birth.getUTCFullYear() + years)) / 86400000);
+  return { years, days };
+}
+
+// The youngest drivers to win the world title, by age at the race that decided it: the first race
+// after which the champion's lead was larger than the most points anyone could still score. Each
+// driver's first title only. Computed for 1991 onwards; every earlier champion is checked to have
+// been older, already at the first race of his title season, than the last driver on the card.
+// The current season counts only once the leader has clinched. ASSUME_CLINCH_ROUND=<round> renders
+// a preview as if the current leader had clinched at that round; its "as of" line says so, and a
+// card generated that way is not for publishing.
+async function youngestChampions(supabase: Supabase, highlightRef: string, size: number): Promise<Computed> {
+  type Race = { id: number; year: number; round: number; name: string; date: string; sprint_date: string | null };
+  type Standing = { race_id: number; driver_id: number; points: number; position: number };
+  const races = await fetchAll<Race>((from, to) =>
+    supabase.from('races').select('id, year, round, name, date, sprint_date').order('year').order('round').range(from, to),
+  );
+  const standings = await fetchAll<Standing>((from, to) =>
+    supabase.from('driver_standings').select('race_id, driver_id, points, position').lte('position', 2).order('id').range(from, to),
+  );
+  const byRace = new Map<number, Standing[]>();
+  for (const s of standings) byRace.set(s.race_id, [...(byRace.get(s.race_id) ?? []), s]);
+  const seasons = new Map<number, Race[]>();
+  for (const r of races) seasons.set(r.year, [...(seasons.get(r.year) ?? []), r]);
+
+  const assume = process.env.ASSUME_CLINCH_ROUND ? Number(process.env.ASSUME_CLINCH_ROUND) : null;
+  const titles: Array<{ driverId: number; year: number; race: Race; preview: boolean }> = [];
+  const before1991: Array<{ driverId: number; year: number; first: Race }> = [];
+  for (const [year, list] of seasons) {
+    const lastRound = list[list.length - 1].round;
+    const run = list.filter((r) => byRace.has(r.id));
+    if (!run.length) continue;
+    const complete = run.length === list.length;
+    if (year < 1991) {
+      const p1 = byRace.get(run[run.length - 1].id)?.find((s) => s.position === 1);
+      if (complete && p1) before1991.push({ driverId: p1.driver_id, year, first: list[0] });
+      continue;
+    }
+    let clinch: { race: Race; driverId: number } | null = null;
+    for (const r of run) {
+      const top = byRace.get(r.id) ?? [];
+      const p1 = top.find((s) => s.position === 1);
+      const p2 = top.find((s) => s.position === 2);
+      if (!p1 || !p2) continue;
+      const left = list.filter((x) => x.round > r.round).reduce((sum, x) => sum + maxRacePoints(year, x.round, lastRound, !!x.sprint_date), 0);
+      if (Number(p1.points) - Number(p2.points) > left || (complete && r.round === lastRound)) {
+        clinch = { race: r, driverId: p1.driver_id };
+        break;
+      }
+    }
+    if (clinch) titles.push({ ...clinch, year, preview: false });
+    else if (year === YEAR && assume !== null) {
+      const race = list.find((x) => x.round === assume);
+      const leader = byRace.get(run[run.length - 1].id)?.find((s) => s.position === 1);
+      if (!race || !leader) throw new Error(`cannot preview a clinch at round ${assume}`);
+      titles.push({ driverId: leader.driver_id, year, race, preview: true });
+    }
+  }
+
+  const driverIds = [...new Set([...titles, ...before1991].map((t) => t.driverId))];
+  const { data: drivers } = await supabase.from('drivers').select('id, driver_ref, surname, dob').in('id', driverIds);
+  const who = new Map((drivers ?? []).map((d) => [d.id as number, { ref: d.driver_ref as string, surname: d.surname as string, dob: d.dob as string }]));
+  const first = new Map<number, (typeof titles)[number]>();
+  for (const t of titles) if (!first.has(t.driverId)) first.set(t.driverId, t);
+  const ranked = [...first.values()]
+    .map((t) => ({ ...t, age: ageOn(who.get(t.driverId)!.dob, t.race.date) }))
+    .sort((a, b) => a.age.years - b.age.years || a.age.days - b.age.days)
+    .slice(0, size);
+  const highlight = ranked.find((t) => who.get(t.driverId)?.ref === highlightRef);
+  if (!highlight) throw new Error(`${highlightRef} is not among the ${size} youngest champions: has he clinched yet?`);
+  const cutoff = ranked[ranked.length - 1].age;
+  for (const p of before1991) {
+    const a = ageOn(who.get(p.driverId)!.dob, p.first.date);
+    if (a.years < cutoff.years || (a.years === cutoff.years && a.days <= cutoff.days))
+      throw new Error(`${who.get(p.driverId)?.surname} (${p.year}) may be younger than the card's cut-off; extend the clinch maths before 1991`);
+  }
+
+  const { data: wins } = await supabase
+    .from('results')
+    .select('race_id, driver_id, constructor_id')
+    .in('race_id', ranked.map((t) => t.race.id))
+    .in('driver_id', ranked.map((t) => t.driverId));
+  const { data: cons } = await supabase.from('constructors').select('id, name');
+  const teamName = new Map((cons ?? []).map((c) => [c.id as number, c.name as string]));
+  // A preview's title race has no result yet, so its team comes from the driver's latest race.
+  const { data: latest } = await supabase
+    .from('results')
+    .select('constructor_id')
+    .eq('driver_id', highlight.driverId)
+    .order('race_id', { ascending: false })
+    .limit(1);
+  const teamOf = (t: (typeof ranked)[number]) => {
+    const own = (wins ?? []).find((w) => w.race_id === t.race.id && w.driver_id === t.driverId)?.constructor_id;
+    const id = own ?? (t.preview ? latest?.[0]?.constructor_id : undefined);
+    const name = teamName.get(id as number);
+    if (!name) throw new Error(`no team for ${who.get(t.driverId)?.surname} at ${t.race.name} ${t.year}`);
+    return name;
+  };
+  const rows = ranked.map((t) => ({
+    driver: who.get(t.driverId)!.surname,
+    team: teamOf(t),
+    season: String(t.year),
+    race: t.race.name.replace(/ Grand Prix$/, ' GP').replace(/^United States /, 'US ').replace(/^Mexico City /, 'Mexico '),
+    years: t.age.years,
+    days: t.age.days,
+  }));
+  const r = highlight.race;
+  const pv = highlight.preview;
+  return {
+    asOf: {
+      en: `${pv ? 'PREVIEW · Title assumed' : 'Title clinched'} at round ${r.round}, ${r.name} ${r.year} · age on race day`,
+      es: `${pv ? 'VISTA PREVIA · Título supuesto' : 'Título'} en la fecha ${r.round}, ${r.name} ${r.year} · edad ese día`,
+      pt: `${pv ? 'PRÉVIA · Título suposto' : 'Título'} na etapa ${r.round}, ${r.name} ${r.year} · idade nesse dia`,
+    },
+    columns: [
+      { key: 'driver', label: { en: 'Champion', es: 'Campeón', pt: 'Campeão' } },
+      { key: 'team', label: TEAM },
+      { key: 'season', label: { en: 'Season', es: 'Temporada', pt: 'Temporada' } },
+      { key: 'race', label: { en: 'Title race', es: 'Carrera del título', pt: 'Corrida do título' } },
+      { key: 'years', label: { en: 'Years', es: 'Años', pt: 'Anos' }, numeric: true },
+      { key: 'days', label: { en: 'Days', es: 'Días', pt: 'Dias' }, numeric: true },
+    ],
+    rows,
+    highlightRow: ranked.indexOf(highlight),
+  };
+}
+
 const SPECS: Record<string, (supabase: Supabase) => Promise<Computed>> = {
+  // Antonelli against the youngest world champions, by age on the day the title was decided.
+  'youngest-f1-world-champions-antonelli-vettel-record': (supabase) => youngestChampions(supabase, 'antonelli', 5),
+
   // Race-week venue poster, United States GP 2026: Red Bull's wins at COTA.
   'red-bull-cota-wins-us-grand-prix': (supabase) => circuitWins(supabase, 'americas', 'red_bull'),
 
