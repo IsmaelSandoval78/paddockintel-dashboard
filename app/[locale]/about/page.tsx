@@ -18,6 +18,10 @@ type ReadItem = { name: string; desc: string; href: string };
 
 // The three numbers under "Why this perspective matters" come from our own published analysis,
 // read live from each article (in the reader's locale) -- never typed into this page.
+// The publication's contact address, also on the privacy page; Google News looks for one on a
+// publisher's About page.
+const CONTACT_EMAIL = 'info@paddockintel.com';
+
 const WHY_SLUGS = [
   'f1-cost-cap-midfield-podiums-vowles-data-2026',
   'f1-team-principal-firing-cost-2026',
@@ -141,7 +145,13 @@ export default async function AboutPage({ params }: { params: PageParams }) {
       worksFor: { '@type': 'Organization', name: 'Verst Logistics' },
       knowsAbout: ['Formula 1', 'Supply chain operations', 'Sports business'],
     },
-    publisher: { '@type': 'Organization', name: 'PaddockIntel', url: SITE_URL },
+    publisher: {
+      '@type': 'Organization',
+      name: 'PaddockIntel',
+      url: SITE_URL,
+      email: CONTACT_EMAIL,
+      contactPoint: { '@type': 'ContactPoint', contactType: 'editorial', email: CONTACT_EMAIL },
+    },
   };
 
   return (
@@ -239,6 +249,13 @@ export default async function AboutPage({ params }: { params: PageParams }) {
             </article>
 
             <aside className="flex flex-col gap-4 lg:sticky lg:top-20">
+              <section id="contact" className="dusk-card p-5 flex flex-col gap-2 scroll-mt-20" aria-labelledby="about-contact">
+                <h2 id="about-contact" className="dusk-label m-0 font-normal">{t('contact.title')}</h2>
+                <p className="m-0 text-[13.5px] text-[color:var(--dusk-ink-2)]">{t('contact.body')}</p>
+                <a href={`mailto:${CONTACT_EMAIL}`} className="text-[15px] font-semibold hover:text-[color:var(--dusk-peach)] break-all">
+                  {CONTACT_EMAIL}
+                </a>
+              </section>
               <section className="dusk-card p-5 flex flex-col gap-2" aria-labelledby="about-read">
                 <h2 id="about-read" className="dusk-label m-0 font-normal">{t('read.title')}</h2>
                 <ul className="m-0 p-0 list-none">
