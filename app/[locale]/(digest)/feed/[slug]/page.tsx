@@ -19,7 +19,6 @@ import {
 import { SITE_URL } from '@/lib/site-url';
 import { duskSans } from '../../../(blog)/dusk-font';
 import '../../../(blog)/dusk.css';
-import { openGraphFor } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -36,6 +35,7 @@ type FeedItem = {
   our_summary_es: string | null;
   entity_tags: string[];
   published_at: string;
+  created_at: string;
   editor_note: string | null;
   editor_note_es: string | null;
   editor_take: string | null;
@@ -71,6 +71,14 @@ function localeUrl(locale: string, path: string): string {
   return locale === 'en' ? `${MAGAZINE_BASE}${path}` : `${MAGAZINE_BASE}/${locale}${path}`;
 }
 
+// The item's scorecard image (app/api/og/feed/[locale]/[slug]): 16:9 for og/twitter, and the three
+// ratios Google lists for a NewsArticle image.
+const CARD_RATIOS = ['16x9', '4x3', '1x1'] as const;
+function cardUrl(locale: string, slug: string, ratio: (typeof CARD_RATIOS)[number] = '16x9'): string {
+  const base = `${MAGAZINE_BASE}/api/og/feed/${locale}/${slug}`;
+  return ratio === '16x9' ? base : `${base}?ratio=${ratio}`;
+}
+
 // Same one-row-two-locale-columns shape as the /feed index page -- see
 // 20260915180000_digest_items_es_columns.sql. Numbers in `stats` don't get a
 // locale switch (EDITORIAL.md: numbers don't translate), only their labels do.
@@ -100,7 +108,7 @@ async function getItem(slug: string): Promise<FeedItem | null> {
     .from('digest_items')
     .select(
       `id, slug, source_name, source_url, headline, headline_es, our_summary, our_summary_es,
-       entity_tags, published_at, editor_note, editor_note_es, editor_take, editor_take_es,
+       entity_tags, published_at, created_at, editor_note, editor_note_es, editor_take, editor_take_es,
        internal_link_slug, stats, hook_deliver, faq, meta_description, meta_description_es,
        digest_issues!inner(status, series, slug)`
     )
@@ -174,7 +182,8 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
         'x-default': localeUrl('en', `/feed/${slug}/`),
       },
     },
-    openGraph: openGraphFor(canonical),
+    openGraph: { url: canonical, images: [{ url: cardUrl(locale, slug), width: 1200, height: 675, alt: text.headline }] },
+    twitter: { card: 'summary_large_image', images: [cardUrl(locale, slug)] },
   };
 }
 
@@ -227,6 +236,9 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
     headline: text.headline,
     description: text.meta_description ?? text.our_summary,
     datePublished: item.published_at,
+    // Re-ingesting an issue rewrites its rows, so created_at is the item's last edit.
+    dateModified: item.created_at > item.published_at ? item.created_at : item.published_at,
+    image: CARD_RATIOS.map((r) => cardUrl(locale, slug, r)),
     url: pageUrl,
     isBasedOn: item.source_url,
     author: { '@type': 'Person', name: 'Ismael Sandoval', url: `${MAGAZINE_BASE}/about/` },
