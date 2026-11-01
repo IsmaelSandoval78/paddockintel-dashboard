@@ -214,7 +214,10 @@ export default async function ArticlePage({ params }: { params: PageParams }) {
     headline: title,
     datePublished: publishedAt,
     dateModified: modifiedAt,
-    image: (article.cover_image_url as string | null) ?? `${SITE_URL}/api/og/article/${locale}/${slug}`,
+    // Without a cover, the scorecard in the three ratios Google lists for an article image.
+    image:
+      (article.cover_image_url as string | null) ??
+      ['16x9', '4x3', '1x1'].map((r) => `${SITE_URL}/api/og/article/${locale}/${slug}?ratio=${r}`),
     author: { '@type': 'Person', name: 'Ismael Sandoval', url: `${SITE_URL}/about/` },
     publisher: {
       '@type': 'Organization',

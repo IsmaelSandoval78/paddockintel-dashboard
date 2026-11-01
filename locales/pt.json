@@ -1131,6 +1131,10 @@
       ]
     },
     "subTitle": "Receba o Resumo Semanal no seu e-mail.",
+    "contact": {
+      "title": "Contato",
+      "body": "Dicas de pauta, correções e contatos de imprensa."
+    },
     "cover": {
       "heading": "O que cobrimos",
       "pillars": [

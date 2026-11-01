@@ -1135,6 +1135,10 @@
       ]
     },
     "subTitle": "Recibe el Resumen Semanal en tu correo.",
+    "contact": {
+      "title": "Contacto",
+      "body": "Pistas, correcciones y consultas de prensa."
+    },
     "cover": {
       "heading": "Qué cubrimos",
       "pillars": [
