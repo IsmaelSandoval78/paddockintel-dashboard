@@ -22,7 +22,7 @@ stats:
     unit: "récord; nadie más tiene más de dos"
   - value: "16"
     label: "VUELTAS LIDERADAS POR ANTONELLI"
-    unit: "vueltas 28-43, antes de su única parada"
+    unit: "vueltas 27-42, antes de su única parada prevista"
 
 faq:
   - q: "¿Quién ganó el Gran Premio de la Ciudad de México 2026?"
@@ -34,11 +34,13 @@ faq:
   - q: "¿Qué le pasó a Valtteri Bottas en México?"
     a: "Bottas sufrió un fuerte accidente en la curva 1 tras romperse la suspensión delantera izquierda de su Cadillac, lo que provocó el auto de seguridad y luego una bandera roja para reparar las barreras. No sufrió lesiones, según The Race."
   - q: "¿Está decidido el título de constructores 2026?"
-    a: "Todavía no. En el recuento provisional de PaddockIntel, Mercedes le lleva 126 puntos a Ferrari con 129 en juego en las tres últimas carreras, así que necesita sumar al menos cuatro puntos más que Ferrari en Brasil para asegurarlo allí."
+    a: "Todavía no. Según la clasificación final de la FIA, Mercedes le lleva 126 puntos a Ferrari con 129 en juego en las tres últimas carreras, así que necesita sumar al menos cuatro puntos más que Ferrari en Brasil para asegurarlo allí."
 
 sources:
   - name: "Formula1.com — Live coverage: Antonelli crowned youngest ever F1 World Champion (1 de noviembre de 2026); clasificación, diferencias, tandas, vueltas lideradas y mensajes de dirección de carrera del canal de cronometraje en vivo de la F1, grabados por PaddockIntel"
     url: "https://www.formula1.com/en/latest/article/live-coverage-formula-1-gran-premio-de-la-ciudad-de-mexico-2026.5CheEK7oQK2jf98nrc6i8Y"
+  - name: "FIA — Gran Premio de la Ciudad de México 2026, clasificación final de la carrera (1 de noviembre de 2026)"
+    url: "https://www.fia.com/system/files/decision-document/2026_mexico_city_grand_prix_-_final_race_classification.pdf"
   - name: "RacingNews365 — Max Verstappen survives almighty Lewis Hamilton pressure as Kimi Antonelli seals world title (1 de noviembre de 2026)"
     url: "https://racingnews365.com/max-verstappen-survives-almighty-lewis-hamilton-pressure-as-kimi-antonelli-seals-world-title"
   - name: "RaceFans — Antonelli clinches 2026 title and smashes record for youngest Formula 1 world champion (1 de noviembre de 2026)"
@@ -55,13 +57,15 @@ sources:
     url: "https://hub.paddockintel.com/season/2026/"
 ---
 
+*Actualización, 2 de noviembre de 2026: tras la carrera, los comisarios sancionaron a Oscar Piastri, Franco Colapinto y Pierre Gasly, así que la clasificación final desde el séptimo puesto difiere de la provisional: Liam Lawson es séptimo, Gabriel Bortoleto octavo, Isack Hadjar noveno y Ryo Hirakawa décimo, un punto en su debut. Red Bull ahora le lleva a McLaren 382 a 365. Las vueltas lideradas ahora salen del orden oficial vuelta a vuelta: Antonelli lideró de la vuelta 27 a la 42, no de la 28 a la 43. Los seis primeros y el título no cambian.*
+
 ## What Happened
 
 Kimi Antonelli es el campeón del mundo de Fórmula 1 2026. Terminó tercero en el Gran Premio de la Ciudad de México, detrás de Max Verstappen y Lewis Hamilton, y con 20 años y 68 días es el campeón más joven de la historia: Sebastian Vettel tenía 23 años y 134 días cuando ganó el título de 2010. Antonelli es el primer campeón italiano desde Alberto Ascari en 1953, y lo consiguió con cuatro carreras por delante.
 
 Verstappen ganó por 0,799 s sobre Hamilton, según el cronometraje de la F1, su sexta victoria en el Autódromo Hermanos Rodríguez. Ningún otro piloto ganó el Gran Premio de México más de dos veces. Charles Leclerc fue cuarto, Lando Norris quinto y George Russell sexto.
 
-La carrera tuvo tres partes. En la primera vuelta, Leclerc y Hamilton, que salía desde la pole, se salieron de la pista en la curva 4, y Leclerc volvió como líder; los comisarios le dieron cinco segundos. Antonelli, que hizo su única parada prevista más tarde que los punteros, lideró de la vuelta 28 a la 43. Una vuelta después de su parada, Valtteri Bottas se estrelló en la curva 1 tras romperse la suspensión delantera izquierda, y la carrera se detuvo 40 minutos. Verstappen lideró la nueva salida desde parado y aguantó a Hamilton hasta la bandera a cuadros.
+La carrera tuvo tres partes. En la primera vuelta, Leclerc y Hamilton, que salía desde la pole, se salieron de la pista en la curva 4, y Leclerc volvió como líder; los comisarios le dieron cinco segundos. Antonelli, que hizo su única parada prevista más tarde que los punteros, lideró de la vuelta 27 a la 42. Una vuelta después de su parada, Valtteri Bottas se estrelló en la curva 1 tras romperse la suspensión delantera izquierda, y la carrera se detuvo 40 minutos. Verstappen lideró la nueva salida desde parado y aguantó a Hamilton hasta la bandera a cuadros.
 
 ## Why It Happened
 
@@ -75,7 +79,7 @@ La sanción de Leclerc fue la discusión de la carrera. Los comisarios dijeron q
 
 Un título cambia lo que vale un piloto. F1 Salaries sitúa el salario base de Antonelli en Mercedes en 2026 en unos 2 millones de dólares, más bonificaciones por resultados; un título mundial es la mejor posición de negociación que un piloto puede llevar a su siguiente contrato. Para Mercedes es el primer título de pilotos desde el de Hamilton en 2020 y el retorno de un piloto que fichó como junior.
 
-La pelea de constructores no terminó, y tiene premios en juego. En el recuento provisional de PaddockIntel, Mercedes tiene 630 puntos y Ferrari 504: una ventaja de 126 con 129 en juego en las tres últimas carreras. Mercedes necesitaba sumar 39 puntos más que Ferrari en México para cerrar el título aquí y, en cambio, sumó siete menos, así que lo antes que puede ganarlo es en Brasil, si allí suma al menos cuatro puntos más que Ferrari. Detrás, Red Bull volvió a superar a McLaren en la pelea por el tercer puesto, 380 a 371 puntos, a la espera del resultado de una investigación posterior a la carrera sobre Oscar Piastri.
+La pelea de constructores no terminó, y tiene premios en juego. Según la clasificación final de la FIA, Mercedes tiene 630 puntos y Ferrari 504: una ventaja de 126 con 129 en juego en las tres últimas carreras. Mercedes necesitaba sumar 39 puntos más que Ferrari en México para cerrar el título aquí y, en cambio, sumó siete menos, así que lo antes que puede ganarlo es en Brasil, si allí suma al menos cuatro puntos más que Ferrari. Detrás, Red Bull volvió a superar a McLaren en la pelea por el tercer puesto, 382 a 365 puntos, después de que los comisarios le dieran a Oscar Piastri diez segundos de sanción tras la carrera que lo dejaron fuera de los puntos.
 
 ## The Framework
 
