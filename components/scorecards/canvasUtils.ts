@@ -43,9 +43,9 @@ export async function loadFontsForCanvas(): Promise<void> {
   // variants are in the font cache before canvas uses them.
   try {
     await Promise.all([
-      document.fonts.load('400 96px "DM Serif Display"'),
-      document.fonts.load('500 24px Inter'),
-      document.fonts.load('400 20px "JetBrains Mono"'),
+      document.fonts.load(`400 96px ${serifFamily()}`),
+      document.fonts.load(`500 24px ${sansFamily()}`),
+      document.fonts.load(`400 20px ${monoFamily()}`),
     ]);
   } catch {
     // Canvas will fall back to system fonts if unavailable
@@ -121,7 +121,7 @@ function drawSharedChrome(
 
   // "paddockintel.com" watermark — bottom-left
   const wmSize = ref * 0.016;
-  ctx.font = `400 ${wmSize}px "JetBrains Mono", monospace`;
+  ctx.font = `400 ${wmSize}px ${monoFamily()}`;
   ctx.fillStyle = COLORS.text3;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'bottom';
@@ -153,7 +153,7 @@ function drawPortrait(
 
   // Section label
   const labelSize = ref * 0.019;
-  ctx.font = `400 ${labelSize}px "JetBrains Mono", monospace`;
+  ctx.font = `400 ${labelSize}px ${monoFamily()}`;
   ctx.fillStyle = COLORS.text3;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'alphabetic';
@@ -161,25 +161,25 @@ function drawPortrait(
 
   // Primary name
   const nameSize = ref * 0.089;
-  ctx.font = `400 ${nameSize}px "DM Serif Display", Georgia, serif`;
+  ctx.font = `400 ${nameSize}px ${serifFamily()}`;
   ctx.fillStyle = COLORS.text1;
   ctx.fillText(primaryLine, pad, h * 0.20 + nameSize * 1.2);
 
   // Secondary (forename / nationality)
   const metaSize = ref * 0.023;
-  ctx.font = `500 ${metaSize}px Inter, sans-serif`;
+  ctx.font = `500 ${metaSize}px ${sansFamily()}`;
   ctx.fillStyle = COLORS.text2;
   ctx.fillText(secondaryLine, pad, h * 0.20 + nameSize * 1.2 + metaSize * 1.8);
 
   // Era / meta
   const eraSize = ref * 0.019;
-  ctx.font = `400 ${eraSize}px "JetBrains Mono", monospace`;
+  ctx.font = `400 ${eraSize}px ${monoFamily()}`;
   ctx.fillStyle = COLORS.text3;
   ctx.fillText(metaLine, pad, h * 0.20 + nameSize * 1.2 + metaSize * 1.8 + eraSize * 2.0);
 
   // Hero number — right-aligned, vertically centred in the mid zone
   const heroSize = ref * 0.148;
-  ctx.font = `400 ${heroSize}px "DM Serif Display", Georgia, serif`;
+  ctx.font = `400 ${heroSize}px ${serifFamily()}`;
   ctx.fillStyle = COLORS.text1;
   ctx.textAlign = 'right';
   ctx.textBaseline = 'middle';
@@ -187,7 +187,7 @@ function drawPortrait(
 
   // Hero label
   const heroLabelSize = ref * 0.019;
-  ctx.font = `400 ${heroLabelSize}px "JetBrains Mono", monospace`;
+  ctx.font = `400 ${heroLabelSize}px ${monoFamily()}`;
   ctx.fillStyle = COLORS.text3;
   ctx.textBaseline = 'alphabetic';
   ctx.fillText(heroLabel, w - pad, h * 0.625 + heroSize * 0.55 + heroLabelSize * 2);
@@ -201,11 +201,11 @@ function drawPortrait(
   ctx.textAlign = 'left';
   stats.forEach(({ value, label }, i) => {
     const x = pad + i * colW;
-    ctx.font = `400 ${secNumSize}px "DM Serif Display", Georgia, serif`;
+    ctx.font = `400 ${secNumSize}px ${serifFamily()}`;
     ctx.fillStyle = COLORS.text1;
     ctx.textBaseline = 'alphabetic';
     ctx.fillText(value, x, secY);
-    ctx.font = `400 ${secLabelSize}px "JetBrains Mono", monospace`;
+    ctx.font = `400 ${secLabelSize}px ${monoFamily()}`;
     ctx.fillStyle = COLORS.text3;
     ctx.fillText(label, x, secY + secLabelSize * 2.8);
   });
@@ -236,25 +236,25 @@ function drawLandscape(
   ctx.textAlign = 'left';
 
   const labelSize = ref * 0.019;
-  ctx.font = `400 ${labelSize}px "JetBrains Mono", monospace`;
+  ctx.font = `400 ${labelSize}px ${monoFamily()}`;
   ctx.fillStyle = COLORS.text3;
   ctx.textBaseline = 'alphabetic';
   ctx.fillText(entityLabel, pad, h * 0.30);
 
   const nameSize = ref * 0.089;
-  ctx.font = `400 ${nameSize}px "DM Serif Display", Georgia, serif`;
+  ctx.font = `400 ${nameSize}px ${serifFamily()}`;
   ctx.fillStyle = COLORS.text1;
   const nameY = h * 0.30 + nameSize * 1.2;
   ctx.fillText(primaryLine, pad, nameY);
 
   const metaSize = ref * 0.023;
-  ctx.font = `500 ${metaSize}px Inter, sans-serif`;
+  ctx.font = `500 ${metaSize}px ${sansFamily()}`;
   ctx.fillStyle = COLORS.text2;
   const subY = nameY + metaSize * 1.8;
   ctx.fillText(secondaryLine, pad, subY);
 
   const eraSize = ref * 0.019;
-  ctx.font = `400 ${eraSize}px "JetBrains Mono", monospace`;
+  ctx.font = `400 ${eraSize}px ${monoFamily()}`;
   ctx.fillStyle = COLORS.text3;
   ctx.fillText(metaLine, pad, subY + eraSize * 2.0);
 
@@ -265,11 +265,11 @@ function drawLandscape(
   const colW = (divider - pad) / stats.length;
   stats.forEach(({ value, label }, i) => {
     const x = pad + i * colW;
-    ctx.font = `400 ${secNumSize}px "DM Serif Display", Georgia, serif`;
+    ctx.font = `400 ${secNumSize}px ${serifFamily()}`;
     ctx.fillStyle = COLORS.text1;
     ctx.textBaseline = 'alphabetic';
     ctx.fillText(value, x, secY);
-    ctx.font = `400 ${secLabelSize}px "JetBrains Mono", monospace`;
+    ctx.font = `400 ${secLabelSize}px ${monoFamily()}`;
     ctx.fillStyle = COLORS.text3;
     ctx.fillText(label, x, secY + secLabelSize * 2.8);
   });
@@ -280,14 +280,14 @@ function drawLandscape(
 
   // Right column — hero number centred
   const heroSize = ref * 0.148;
-  ctx.font = `400 ${heroSize}px "DM Serif Display", Georgia, serif`;
+  ctx.font = `400 ${heroSize}px ${serifFamily()}`;
   ctx.fillStyle = COLORS.text1;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(heroValue, divider + (w - divider) / 2, h * 0.48);
 
   const heroLabelSize = ref * 0.019;
-  ctx.font = `400 ${heroLabelSize}px "JetBrains Mono", monospace`;
+  ctx.font = `400 ${heroLabelSize}px ${monoFamily()}`;
   ctx.fillStyle = COLORS.text3;
   ctx.textBaseline = 'alphabetic';
   ctx.fillText(heroLabel, divider + (w - divider) / 2, h * 0.48 + heroSize * 0.57 + heroLabelSize * 2);
@@ -320,6 +320,19 @@ export interface ScorecardRecordData {
 }
 
 // next/font hashes family names — resolve the real family list from the CSS var
+// (the family next/font generates, e.g. "mono", not "JetBrains Mono").
+function monoFamily(): string {
+  return cssFontFamily('--pi-mono', '"JetBrains Mono", monospace');
+}
+
+function serifFamily(): string {
+  return cssFontFamily('--pi-serif', '"DM Serif Display", Georgia, serif');
+}
+
+function sansFamily(): string {
+  return cssFontFamily('--pi-sans', 'Inter, sans-serif');
+}
+
 function cssFontFamily(varName: string, fallback: string): string {
   if (typeof document === 'undefined') return fallback;
   const v = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
