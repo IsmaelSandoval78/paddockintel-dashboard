@@ -1,5 +1,3 @@
-import { readFile } from 'node:fs/promises';
-import path from 'node:path';
 import { ImageResponse } from 'next/og';
 import { routing } from '@/lib/i18n/routing';
 import {
@@ -16,6 +14,7 @@ import {
   type DataCardTheme,
 } from '@/lib/dataCards';
 import { ANTON_ADVANCE } from '@/lib/antonMetrics';
+import { WARM, Wordmark, fitSize, loadCardFonts } from '@/lib/cardImage';
 
 // The 1600x900 PNG of a data card, drawn from the same content/data-cards/<slug>.json as its page,
 // so the image posted on X and the table on /data/<slug>/ can't disagree. One file per card and
@@ -28,20 +27,9 @@ import { ANTON_ADVANCE } from '@/lib/antonMetrics';
 // - 'venue': the race-week poster (rodeo.html): frame, Anton headline in two colours, a strip of
 //   years and the team tallies, in the host's palette. The dot pattern of the original is left out.
 //
-// next/og takes inline styles only, so the colours are restated here as hex values: the Warm
-// Studio ones mirror globals.css :root, the host ones are the light-ground flag colours listed in
-// DESIGN.md ("Data cards"). Keep both in step with those files.
-const WARM = {
-  bg: '#EDE7E3',
-  surface: '#FFFFFF',
-  border: '#DFD8D2',
-  borderSubtle: '#E7E1DB',
-  text1: '#12303A',
-  text2: '#6E7C7E',
-  accent: '#1A6B78',
-  accentDim: '#DDEEF0',
-};
-
+// next/og takes inline styles only: the Warm Studio colours and the fonts are shared with the Feed
+// cards in lib/cardImage.tsx; the host ones are the light-ground flag colours listed in DESIGN.md
+// ("Data cards"). Keep them in step with that file.
 const PAPER = '#F1E9D8';
 const POSTER_INK = '#141414';
 const POSTER_MUTED = '#6B6455';
@@ -53,27 +41,6 @@ const HOST: Record<DataCardTheme, { ink: string; accent: string }> = {
   uae: { ink: '#00632A', accent: '#C8102E' },
 };
 
-// Fonts (SIL OFL, licences next to the files in public/fonts/cards/). Read from disk when the
-// PNG is prerendered at build; on the Cloudflare Worker, where there is no filesystem, fetched
-// from the site's own static assets.
-const FONT_FILES = {
-  Anton: 'Anton-Regular.ttf',
-  'Archivo Black': 'ArchivoBlack-Regular.ttf',
-  'JetBrains Mono': 'JetBrainsMono-Regular.ttf',
-  Lora: 'Lora-Regular.ttf',
-} as const;
-
-async function loadFont(file: string, origin: string): Promise<ArrayBuffer> {
-  try {
-    const buf = await readFile(path.join(process.cwd(), 'public', 'fonts', 'cards', file));
-    return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer;
-  } catch {
-    const res = await fetch(new URL(`/fonts/cards/${file}`, origin));
-    if (!res.ok) throw new Error(`font ${file}: HTTP ${res.status}`);
-    return res.arrayBuffer();
-  }
-}
-
 export const dynamic = 'force-static';
 export const dynamicParams = false;
 
@@ -83,21 +50,6 @@ export function generateStaticParams() {
 
 function siteLabel(locale: CardLocale): string {
   return `paddockintel.com${locale === 'en' ? '' : `/${locale}`}/data`;
-}
-
-function Wordmark({ size, dot }: { size: number; dot: string }) {
-  return (
-    <div style={{ display: 'flex', fontFamily: 'Archivo Black', fontSize: size }}>
-      <span>PADDOCK</span>
-      <span style={{ color: dot }}>·</span>
-      <span>INTEL</span>
-    </div>
-  );
-}
-
-// Headline size that keeps `lines` lines for a font whose average glyph is `em` wide.
-function fitSize(text: string, width: number, lines: number, em: number, max: number): number {
-  return Math.min(max, Math.floor((width * lines) / Math.max(1, text.length * em)));
 }
 
 // Largest Anton size (up to `max`) at which the widest of `lines` fits `width` on one line,
@@ -331,9 +283,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ file
   if (!parsed || !card) return new Response('Not found', { status: 404 });
 
   const origin = new URL(request.url).origin;
-  const fonts = await Promise.all(
-    Object.entries(FONT_FILES).map(async ([name, f]) => ({ name, data: await loadFont(f, origin), weight: 400 as const, style: 'normal' as const })),
-  );
+  const fonts = await loadCardFonts(origin);
 
   return new ImageResponse(
     card.layout === 'venue' ? <VenueCard card={card} locale={parsed.locale} /> : <TableCard card={card} locale={parsed.locale} />,

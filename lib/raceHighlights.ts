@@ -13,6 +13,7 @@ import r2026_18 from '@/content/race-highlights/2026-18.json';
 import p2026_18_fp2 from '@/content/race-highlights/2026-18-fp2.json';
 import p2026_18_fp3 from '@/content/race-highlights/2026-18-fp3.json';
 import p2026_18_q from '@/content/race-highlights/2026-18-q.json';
+import p2026_19_fp2 from '@/content/race-highlights/2026-19-fp2.json';
 
 export type PoleLap = {
   driver: string;
@@ -152,6 +153,7 @@ export type PracticeHighlights = {
 // One race's practice and qualifying files, in session order.
 const PRACTICE: Record<string, PracticeHighlights[]> = {
   '2026-18': [p2026_18_fp2 as unknown as PracticeHighlights, p2026_18_fp3 as unknown as PracticeHighlights, p2026_18_q as unknown as PracticeHighlights],
+  '2026-19': [p2026_19_fp2 as unknown as PracticeHighlights],
 };
 
 /** The race's latest practice session with a file, or null. */
