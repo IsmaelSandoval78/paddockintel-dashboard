@@ -158,14 +158,17 @@ export default function RaceStoryCard({ trace, labels, mover, className = '' }: 
 
   function orderChart() {
     const drivers = trace.drivers;
-    const count = drivers.length;
+    // Post-race penalties can promote a driver who crossed the line lower than the number of drivers
+    // shown (Mexico 2026: Lawson 9th and Bortoleto 11th on the road, 7th and 8th classified), so the
+    // axis runs down to the lowest finishing position on the road.
+    const count = Math.max(drivers.length, ...drivers.map((d) => d.positions[d.positions.length - 1] ?? 0));
     const y = (p: number) => T + 6 + ((p - 1) / (count - 1)) * (H - T - B - 12);
     const seenTeam = new Set<string>();
     const leader = drivers[0]?.driver;
     return (
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={labels.ariaOrder} className="block w-full h-auto overflow-visible min-w-[640px] md:min-w-0">
         {bands(T - 4, H - B + 4)}
-        {drivers.map((_, i) => (
+        {Array.from({ length: count }, (_, i) => (
           <text key={`p-${i}`} x={L - 10} y={y(i + 1) + 4} textAnchor="end" fontSize="10.5" fill="var(--dusk-muted)">P{i + 1}</text>
         ))}
         {drivers.map((d) => {
