@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { headers } from 'next/headers';
-import { Archivo_Black, DM_Serif_Display, Inter, JetBrains_Mono, Lora } from 'next/font/google';
+import localFont from 'next/font/local';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -22,41 +22,56 @@ import '../globals.css';
 // local builds render no beacon. Cookieless, disclosed in the privacy policy (s6).
 const CF_BEACON_TOKEN = process.env.NEXT_PUBLIC_CF_BEACON_TOKEN;
 
-const display = Archivo_Black({
-  weight: ['400'],
-  subsets: ['latin'],
+// Self-hosted from app/fonts/ (SIL OFL, licences alongside), so the build never downloads from
+// Google Fonts: next/font/google fetched them at build time and a bad response from Google failed
+// the production deploy twice (#153, #154). Same faces and weights as before; the variable files
+// are Google Fonts' own latin subsets, declared once per weight as Google's CSS did. Lora (a
+// Reserved Font Name) is the unmodified family from google/fonts, only converted to WOFF2.
+const display = localFont({
+  src: [{ path: '../fonts/ArchivoBlack-Regular-latin.woff2', weight: '400', style: 'normal' }],
   variable: '--pi-display',
   display: 'swap',
 });
 
-const serif = DM_Serif_Display({
-  weight: ['400'],
-  style: ['normal', 'italic'],
-  subsets: ['latin'],
+const serif = localFont({
+  src: [
+    { path: '../fonts/DMSerifDisplay-Regular-latin.woff2', weight: '400', style: 'normal' },
+    { path: '../fonts/DMSerifDisplay-Italic-latin.woff2', weight: '400', style: 'italic' },
+  ],
   variable: '--pi-serif',
   display: 'swap',
+  adjustFontFallback: 'Times New Roman',
 });
 
-const sans = Inter({
-  weight: ['400', '500', '600'],
-  subsets: ['latin'],
+const sans = localFont({
+  src: [
+    { path: '../fonts/Inter-Variable-latin.woff2', weight: '400', style: 'normal' },
+    { path: '../fonts/Inter-Variable-latin.woff2', weight: '500', style: 'normal' },
+    { path: '../fonts/Inter-Variable-latin.woff2', weight: '600', style: 'normal' },
+  ],
   variable: '--pi-sans',
   display: 'swap',
 });
 
-const mono = JetBrains_Mono({
-  weight: ['400', '500'],
-  subsets: ['latin'],
+const mono = localFont({
+  src: [
+    { path: '../fonts/JetBrainsMono-Variable-latin.woff2', weight: '400', style: 'normal' },
+    { path: '../fonts/JetBrainsMono-Variable-latin.woff2', weight: '500', style: 'normal' },
+  ],
   variable: '--pi-mono',
   display: 'swap',
 });
 
-const prose = Lora({
-  weight: ['400', '500'],
-  style: ['normal', 'italic'],
-  subsets: ['latin'],
+const prose = localFont({
+  src: [
+    { path: '../fonts/Lora-Variable.woff2', weight: '400', style: 'normal' },
+    { path: '../fonts/Lora-Variable.woff2', weight: '500', style: 'normal' },
+    { path: '../fonts/Lora-Italic-Variable.woff2', weight: '400', style: 'italic' },
+    { path: '../fonts/Lora-Italic-Variable.woff2', weight: '500', style: 'italic' },
+  ],
   variable: '--pi-prose',
   display: 'swap',
+  adjustFontFallback: 'Times New Roman',
 });
 
 export const metadata: Metadata = {
