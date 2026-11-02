@@ -140,7 +140,7 @@ function CircuitCard({
       const footer = document.createElement('div');
       footer.style.cssText = `
         padding: 8px 0 4px 0;
-        font-family: 'JetBrains Mono', monospace;
+        font-family: var(--pi-mono), monospace;
         font-size: 11px;
         color: #6B6B6B;
         letter-spacing: 0.08em;
