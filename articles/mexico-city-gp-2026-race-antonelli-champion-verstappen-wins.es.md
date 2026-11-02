@@ -22,7 +22,7 @@ stats:
     unit: "récord; nadie más tiene más de dos"
   - value: "16"
     label: "VUELTAS LIDERADAS POR ANTONELLI"
-    unit: "vueltas 27-42, antes de su única parada prevista"
+    unit: "vueltas 28-43, antes de su única parada prevista"
 
 faq:
   - q: "¿Quién ganó el Gran Premio de la Ciudad de México 2026?"
@@ -57,7 +57,7 @@ sources:
     url: "https://hub.paddockintel.com/season/2026/"
 ---
 
-*Actualización, 2 de noviembre de 2026: tras la carrera, los comisarios sancionaron a Oscar Piastri, Franco Colapinto y Pierre Gasly, así que la clasificación final desde el séptimo puesto difiere de la provisional: Liam Lawson es séptimo, Gabriel Bortoleto octavo, Isack Hadjar noveno y Ryo Hirakawa décimo, un punto en su debut. Red Bull ahora le lleva a McLaren 382 a 365. Las vueltas lideradas ahora salen del orden oficial vuelta a vuelta: Antonelli lideró de la vuelta 27 a la 42, no de la 28 a la 43. Los seis primeros y el título no cambian.*
+*Actualización, 2 de noviembre de 2026: tras la carrera, los comisarios sancionaron a Oscar Piastri, Franco Colapinto y Pierre Gasly, así que la clasificación final desde el séptimo puesto difiere de la provisional: Liam Lawson es séptimo, Gabriel Bortoleto octavo, Isack Hadjar noveno y Ryo Hirakawa décimo, un punto en su debut. Red Bull ahora le lleva a McLaren 382 a 365. Una versión anterior de esta nota decía que Antonelli lideró de la vuelta 27 a la 42; ese dato salía de un registro de cronometraje que no incluye la primera vuelta. Contrastado con la clasificación de la FIA, lideró de la 28 a la 43, como se publicó en un principio. Los seis primeros y el título no cambian.*
 
 ## What Happened
 
@@ -65,7 +65,7 @@ Kimi Antonelli es el campeón del mundo de Fórmula 1 2026. Terminó tercero en 
 
 Verstappen ganó por 0,799 s sobre Hamilton, según el cronometraje de la F1, su sexta victoria en el Autódromo Hermanos Rodríguez. Ningún otro piloto ganó el Gran Premio de México más de dos veces. Charles Leclerc fue cuarto, Lando Norris quinto y George Russell sexto.
 
-La carrera tuvo tres partes. En la primera vuelta, Leclerc y Hamilton, que salía desde la pole, se salieron de la pista en la curva 4, y Leclerc volvió como líder; los comisarios le dieron cinco segundos. Antonelli, que hizo su única parada prevista más tarde que los punteros, lideró de la vuelta 27 a la 42. Una vuelta después de su parada, Valtteri Bottas se estrelló en la curva 1 tras romperse la suspensión delantera izquierda, y la carrera se detuvo 40 minutos. Verstappen lideró la nueva salida desde parado y aguantó a Hamilton hasta la bandera a cuadros.
+La carrera tuvo tres partes. En la primera vuelta, Leclerc y Hamilton, que salía desde la pole, se salieron de la pista en la curva 4, y Leclerc volvió como líder; los comisarios le dieron cinco segundos. Antonelli, que hizo su única parada prevista más tarde que los punteros, lideró de la vuelta 28 a la 43. Una vuelta después de su parada, Valtteri Bottas se estrelló en la curva 1 tras romperse la suspensión delantera izquierda, y la carrera se detuvo 40 minutos. Verstappen lideró la nueva salida desde parado y aguantó a Hamilton hasta la bandera a cuadros.
 
 ## Why It Happened
 

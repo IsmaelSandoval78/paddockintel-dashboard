@@ -22,7 +22,7 @@ stats:
     unit: "a record; no one else has more than two"
   - value: "16"
     label: "LAPS LED BY ANTONELLI"
-    unit: "laps 27-42, before his only scheduled stop"
+    unit: "laps 28-43, before his only scheduled stop"
 
 faq:
   - q: "Who won the 2026 Mexico City Grand Prix?"
@@ -57,7 +57,7 @@ sources:
     url: "https://hub.paddockintel.com/season/2026/"
 ---
 
-*Update, November 2, 2026: after the race the stewards penalised Oscar Piastri, Franco Colapinto and Pierre Gasly, so the final classification from seventh place down differs from the provisional one: Liam Lawson is seventh, Gabriel Bortoleto eighth, Isack Hadjar ninth and Ryo Hirakawa tenth, a point on his debut. Red Bull now leads McLaren 382 to 365. Laps led are now taken from the official lap-by-lap order: Antonelli led laps 27 to 42, not 28 to 43. The top six and the title are unchanged.*
+*Update, November 2, 2026: after the race the stewards penalised Oscar Piastri, Franco Colapinto and Pierre Gasly, so the final classification from seventh place down differs from the provisional one: Liam Lawson is seventh, Gabriel Bortoleto eighth, Isack Hadjar ninth and Ryo Hirakawa tenth, a point on his debut. Red Bull now leads McLaren 382 to 365. An earlier version of this note said Antonelli led laps 27 to 42; that came from a timing export that leaves out the opening lap. Checked against the FIA classification, he led laps 28 to 43, as first published. The top six and the title are unchanged.*
 
 ## What Happened
 
@@ -65,7 +65,7 @@ Kimi Antonelli is the 2026 Formula 1 world champion. He finished third in the Me
 
 Verstappen won by 0.799s from Hamilton, according to Formula 1's timing, his sixth win at the Autódromo Hermanos Rodríguez. No other driver has won the Mexican Grand Prix more than twice. Charles Leclerc was fourth, Lando Norris fifth and George Russell sixth.
 
-The race had three parts. On lap one Leclerc and pole sitter Hamilton both ran off at Turn 4, and Leclerc rejoined in the lead; the stewards gave him five seconds. Antonelli, who made his only scheduled stop later than the leaders, led laps 27 to 42. One lap after he pitted, Valtteri Bottas crashed at Turn 1 after a front-left suspension failure, and the race was stopped for 40 minutes. Verstappen led the restart from a standing start and held off Hamilton to the flag.
+The race had three parts. On lap one Leclerc and pole sitter Hamilton both ran off at Turn 4, and Leclerc rejoined in the lead; the stewards gave him five seconds. Antonelli, who made his only scheduled stop later than the leaders, led laps 28 to 43. One lap after he pitted, Valtteri Bottas crashed at Turn 1 after a front-left suspension failure, and the race was stopped for 40 minutes. Verstappen led the restart from a standing start and held off Hamilton to the flag.
 
 ## Why It Happened
 
