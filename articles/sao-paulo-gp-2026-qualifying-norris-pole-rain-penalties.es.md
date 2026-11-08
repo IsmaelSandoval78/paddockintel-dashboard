@@ -45,6 +45,8 @@ sources:
     url: "https://www.motorsport.com/f1/news/f1-brazilian-gp-lando-norris-takes-pole-in-soaking-wet-qualifying/10872707/"
   - name: "RacingNews365 — Rafael Camara sparks second qualifying red flag after home Sao Paulo crash (7 de noviembre de 2026)"
     url: "https://racingnews365.com/rafael-camara-sparks-second-qualifying-red-flag-after-home-sao-paulo-crash"
+  - name: "FIA — Parrilla de salida provisional, documento 51 (7 de noviembre de 2026)"
+    url: "https://www.fia.com/system/files/decision-document/2026_sao_paulo_grand_prix_-_provisional_starting_grid.pdf"
   - name: "FIA — Decisión de los comisarios: auto 63, cambio de elemento de la unidad de potencia, cinco puestos (6 de noviembre de 2026)"
     url: "https://www.fia.com/system/files/decision-document/2026_sao_paulo_grand_prix_-_infringement_-_car_63_-_changes_to_pu_element.pdf"
   - name: "FIA — Decisión de los comisarios: auto 16, cambio de elemento de la unidad de potencia, diez puestos (7 de noviembre de 2026)"
@@ -63,7 +65,7 @@ sources:
 
 Lando Norris hizo la pole del Gran Premio de São Paulo con 1:27.470 con neumáticos intermedios, 0,204 s por delante de George Russell, según el cronometraje de la F1. Es su cuarta pole de 2026 y, en la base de datos de PaddockIntel, la número 20 de su carrera. Kimi Antonelli, el nuevo campeón, fue tercero, a 0,625 s, Charles Leclerc cuarto y Liam Lawson quinto, con Nico Hülkenberg sexto con Audi, Isack Hadjar séptimo, Oliver Bearman octavo, Fernando Alonso noveno y Alex Albon décimo.
 
-La parrilla será otra. Russell tiene una sanción de cinco puestos por su sexto motor de la temporada y Leclerc una de diez por el quinto, así que Antonelli acompaña a Norris en la primera fila, Lawson sale tercero y Hülkenberg cuarto, según RaceFans y Motorsport.com. Lewis Hamilton, eliminado en la Q2 en el 11.º puesto, sale desde el fondo después de que Ferrari le cambiara casi toda la unidad de potencia durante la sesión, lo que suma 65 puestos a los diez que ya tenía. Max Verstappen, que no salió a pista en la Q2 y quedó 16.º, también sale al fondo con una sanción de 30 puestos, igual que Sergio Pérez.
+La parrilla será otra. Russell tiene una sanción de cinco puestos por su sexto motor de la temporada y Leclerc una de diez por el quinto, así que Antonelli acompaña a Norris en la primera fila, Lawson sale tercero y Hülkenberg cuarto, según RaceFans y Motorsport.com. Lewis Hamilton, eliminado en la Q2 en el 11.º puesto, sale desde el fondo después de que Ferrari le cambiara casi toda la unidad de potencia durante la sesión, lo que suma 65 puestos a los diez que ya tenía. Max Verstappen, que no salió a pista en la Q2 y quedó 16.º, también sale al fondo con una sanción de 30 puestos, igual que Sergio Pérez. La parrilla provisional de la FIA deja a Hamilton 20.º, a Verstappen 21.º y a Pérez 22.º.
 
 ## Why It Happened
 

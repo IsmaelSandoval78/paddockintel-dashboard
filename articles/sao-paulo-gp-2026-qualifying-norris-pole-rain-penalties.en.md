@@ -45,6 +45,8 @@ sources:
     url: "https://www.motorsport.com/f1/news/f1-brazilian-gp-lando-norris-takes-pole-in-soaking-wet-qualifying/10872707/"
   - name: "RacingNews365 — Rafael Camara sparks second qualifying red flag after home Sao Paulo crash (November 7, 2026)"
     url: "https://racingnews365.com/rafael-camara-sparks-second-qualifying-red-flag-after-home-sao-paulo-crash"
+  - name: "FIA — Provisional starting grid, document 51 (November 7, 2026)"
+    url: "https://www.fia.com/system/files/decision-document/2026_sao_paulo_grand_prix_-_provisional_starting_grid.pdf"
   - name: "FIA — Stewards' decision: Car 63, changes to PU element, five-place drop (November 6, 2026)"
     url: "https://www.fia.com/system/files/decision-document/2026_sao_paulo_grand_prix_-_infringement_-_car_63_-_changes_to_pu_element.pdf"
   - name: "FIA — Stewards' decision: Car 16, changes to PU element, ten-place drop (November 7, 2026)"
@@ -63,7 +65,7 @@ sources:
 
 Lando Norris took pole position for the São Paulo Grand Prix with 1:27.470 on intermediate tyres, 0.204s ahead of George Russell, according to Formula 1's timing. It is his fourth pole of 2026 and, in PaddockIntel's database, the 20th of his career. Kimi Antonelli, the new champion, was third, 0.625s back, Charles Leclerc fourth and Liam Lawson fifth, with Nico Hülkenberg sixth for Audi, Isack Hadjar seventh, Oliver Bearman eighth, Fernando Alonso ninth and Alex Albon tenth.
 
-The grid will look different. Russell takes a five-place penalty for his sixth engine of the season and Leclerc a ten-place penalty for his fifth, so Antonelli joins Norris on the front row, Lawson starts third and Hülkenberg fourth, RaceFans and Motorsport.com report. Lewis Hamilton, eliminated in Q2 in 11th, starts from the back after Ferrari changed most of his power unit during the session, adding 65 places to the ten he already had. Max Verstappen, who did not run in Q2 and was classified 16th, also starts at the back with a 30-place penalty, as does Sergio Pérez.
+The grid will look different. Russell takes a five-place penalty for his sixth engine of the season and Leclerc a ten-place penalty for his fifth, so Antonelli joins Norris on the front row, Lawson starts third and Hülkenberg fourth, RaceFans and Motorsport.com report. Lewis Hamilton, eliminated in Q2 in 11th, starts from the back after Ferrari changed most of his power unit during the session, adding 65 places to the ten he already had. Max Verstappen, who did not run in Q2 and was classified 16th, also starts at the back with a 30-place penalty, as does Sergio Pérez. The FIA's provisional starting grid puts Hamilton 20th, Verstappen 21st and Pérez 22nd.
 
 ## Why It Happened
 
