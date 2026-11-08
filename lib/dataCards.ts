@@ -19,7 +19,8 @@ export type DataCardColumn = {
   // Prefix positive numbers with "+" (a change, not a total).
   signed?: boolean;
   // A finishing position read as "P9 or lower"; 0 means any finish, 11 means outside the points.
-  kind?: 'finishOrLower';
+  // A starting position ('grid'): 0 means the car started from the pit lane.
+  kind?: 'finishOrLower' | 'grid';
 };
 
 export type DataCardRow = Record<string, string | number>;
@@ -151,8 +152,11 @@ const FINISH: Record<CardLocale, { any: string; outside: string; orLower: (p: nu
   pt: { any: 'Qualquer resultado', outside: 'Fora dos pontos', orLower: (p) => `P${p} ou pior` },
 };
 
+const PIT_LANE: Record<CardLocale, string> = { en: 'Pit lane', es: 'Pit lane', pt: 'Pit lane' };
+
 export function formatCell(value: string | number, col: DataCardColumn, locale: CardLocale): string {
   if (typeof value === 'string') return value;
+  if (col.kind === 'grid' && value === 0) return PIT_LANE[locale];
   if (col.kind === 'finishOrLower') {
     const f = FINISH[locale];
     return value === 0 ? f.any : value >= 11 ? f.outside : f.orLower(value);

@@ -25,7 +25,7 @@ function loadEnv() {
 loadEnv();
 
 type Localized = { en: string; es: string; pt: string };
-type Column = { key: string; label: Localized; numeric?: boolean; decimals?: number; signed?: boolean; kind?: 'finishOrLower' };
+type Column = { key: string; label: Localized; numeric?: boolean; decimals?: number; signed?: boolean; kind?: 'finishOrLower' | 'grid' };
 type Row = Record<string, string | number>;
 type Venue = { years: string; races: number; strip: Array<{ label: string; sub: string }>; tallies: Array<{ label: string; value: number }> };
 type Computed = { asOf: Localized; columns: Column[]; rows: Row[]; highlightRow?: number; venue?: Venue };
@@ -276,7 +276,105 @@ async function youngestChampions(supabase: Supabase, highlightRef: string, size:
   };
 }
 
+// Podiums at one circuit from deep on the grid: every top-three finish from `minGrid` or further
+// back, pit-lane starts (grid 0) first, then by starting position, deepest first.
+async function podiumsFromBack(supabase: Supabase, circuitRef: string, minGrid: number): Promise<Computed> {
+  const { data: circuit } = await supabase.from('circuits').select('id, name').eq('circuit_ref', circuitRef).single();
+  if (!circuit) throw new Error(`circuit ${circuitRef} not found`);
+  const { data: races } = await supabase.from('races').select('id, year').eq('circuit_id', circuit.id).order('year');
+  const year = new Map((races ?? []).map((r) => [r.id as number, r.year as number]));
+  const { data: podiums } = await supabase
+    .from('results')
+    .select('race_id, driver_id, constructor_id, grid, position')
+    .in('race_id', [...year.keys()])
+    .lte('position', 3);
+  const held = new Set((podiums ?? []).map((p) => p.race_id as number));
+  const deep = (podiums ?? []).filter((p) => p.grid === 0 || (p.grid as number) >= minGrid);
+  const depth = (grid: number) => (grid === 0 ? Infinity : grid);
+  deep.sort((a, b) => depth(b.grid as number) - depth(a.grid as number) || (a.position as number) - (b.position as number) || year.get(b.race_id)! - year.get(a.race_id)!);
+  const { data: drivers } = await supabase.from('drivers').select('id, surname').in('id', deep.map((p) => p.driver_id));
+  const { data: cons } = await supabase.from('constructors').select('id, name');
+  const surname = new Map((drivers ?? []).map((d) => [d.id as number, d.surname as string]));
+  const team = new Map((cons ?? []).map((c) => [c.id as number, c.name as string]));
+  const seasons = [...held].map((id) => year.get(id)!).sort((a, b) => a - b);
+  const first = seasons[0];
+  const last = seasons[seasons.length - 1];
+  return {
+    asOf: {
+      en: `${circuit.name}, ${first}–${last}: ${held.size} Grands Prix`,
+      es: `${circuit.name}, ${first}–${last}: ${held.size} Grandes Premios`,
+      pt: `${circuit.name}, ${first}–${last}: ${held.size} Grandes Prêmios`,
+    },
+    columns: [
+      { key: 'year', label: { en: 'Year', es: 'Año', pt: 'Ano' } },
+      { key: 'driver', label: { en: 'Driver', es: 'Piloto', pt: 'Piloto' } },
+      { key: 'team', label: TEAM },
+      { key: 'grid', label: { en: 'Started', es: 'Salida', pt: 'Largada' }, numeric: true, kind: 'grid' },
+      { key: 'finish', label: { en: 'Finished', es: 'Llegada', pt: 'Chegada' }, numeric: true },
+    ],
+    rows: deep.map((p) => ({
+      year: String(year.get(p.race_id)),
+      driver: surname.get(p.driver_id as number) ?? '',
+      team: team.get(p.constructor_id as number) ?? '',
+      grid: p.grid as number,
+      finish: p.position as number,
+    })),
+  };
+}
+
+// The constructors' standings before the next Grand Prix, with what the leader needs there to be
+// champion: after that race it must lead every rival by at least the points still left (two cars,
+// 25 + 18 per Grand Prix), with the tie-break (most wins) already out of the rival's reach.
+async function constructorsTitleNext(supabase: Supabase): Promise<Computed> {
+  const s = await season(supabase);
+  const next = s.all.find((r) => r.round === s.last.round + 1);
+  if (!next) throw new Error('no next race');
+  const left = s.all.filter((r) => r.round >= next.round);
+  if (left.some((r) => r.sprint_date)) throw new Error('constructors\' stakes are only modelled with no sprint left');
+  const perRace = GP_POINTS[0] + GP_POINTS[1];
+  const pointsAfter = perRace * (left.length - 1);
+  const { data: st } = await supabase.from('constructor_standings').select('constructor_id, points, wins').eq('race_id', s.last.id);
+  const standings = (st ?? [])
+    .map((r) => ({ id: r.constructor_id as number, points: Number(r.points), wins: r.wins as number }))
+    .sort((a, b) => b.points - a.points || b.wins - a.wins);
+  const [leader, ...rivals] = standings;
+  const alive = rivals.filter((r) => r.points + perRace * left.length >= leader.points);
+  if (!alive.length) throw new Error('the constructors\' title is already decided');
+  // A tie after the next race could still go to the rival only if it can match the leader's wins
+  // by winning every race left, the next one included.
+  const need = Math.max(...alive.map((r) => pointsAfter - (leader.points - r.points) + (r.wins + left.length >= leader.wins ? 1 : 0)));
+  if (need > perRace) throw new Error('the leader cannot clinch at the next race');
+  const name = (id: number) => s.consById.get(id)?.name ?? String(id);
+  const rows = standings.slice(0, 4).map((r) => ({
+    team: name(r.id),
+    points: r.points,
+    gap: leader.points - r.points,
+    best: r.points + perRace * left.length,
+  }));
+  return {
+    asOf: {
+      en: `After round ${s.last.round}, ${s.last.name} ${YEAR} · ${perRace * left.length} points left · ${name(leader.id)} needs +${need} in round ${next.round}`,
+      es: `Tras la fecha ${s.last.round}, ${s.last.name} ${YEAR} · quedan ${perRace * left.length} puntos · ${name(leader.id)} necesita +${need} en la fecha ${next.round}`,
+      pt: `Após a etapa ${s.last.round}, ${s.last.name} ${YEAR} · restam ${perRace * left.length} pontos · ${name(leader.id)} precisa de +${need} na etapa ${next.round}`,
+    },
+    columns: [
+      { key: 'team', label: TEAM },
+      { key: 'points', label: { en: 'Points', es: 'Puntos', pt: 'Pontos' }, numeric: true },
+      { key: 'gap', label: { en: `Behind ${name(leader.id)}`, es: `Detrás de ${name(leader.id)}`, pt: `Atrás da ${name(leader.id)}` }, numeric: true },
+      { key: 'best', label: { en: 'Best possible total', es: 'Máximo posible', pt: 'Máximo possível' }, numeric: true },
+    ],
+    rows,
+    highlightRow: 0,
+  };
+}
+
 const SPECS: Record<string, (supabase: Supabase) => Promise<Computed>> = {
+  // Race day at Interlagos, 2026: the deepest starts that still reached the podium there.
+  'interlagos-podiums-from-the-back-brazilian-gp': (supabase) => podiumsFromBack(supabase, 'interlagos', 14),
+
+  // What Mercedes needs at the 2026 Brazilian GP to clinch the constructors' title.
+  'mercedes-constructors-title-brazil-2026-what-it-needs': constructorsTitleNext,
+
   // Antonelli against the youngest world champions, by age on the day the title was decided.
   'youngest-f1-world-champions-antonelli-vettel-record': (supabase) => youngestChampions(supabase, 'antonelli', 5),
 
