@@ -1,0 +1,214 @@
+/* Qualifying template — only what differs from the race page (style.css). */
+
+/* Small label above the huge margin number when the chapter title differs. */
+.q-kicker {
+  font-family: 'Anton', 'Arial Narrow', sans-serif;
+  font-size: min(4cqw, 4.2cqh);
+  color: var(--navy);
+  letter-spacing: 0.02em;
+  transform: skewX(-10deg);
+  margin-bottom: 1cqh;
+}
+
+/* --- live gap readout, bottom right ------------------------------------- */
+.q-gap {
+  position: absolute;
+  right: 4cqw;
+  bottom: calc(4cqh + 2.6em);
+  font-size: max(11px, min(1.25cqw, 2cqh));
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  text-transform: uppercase;
+  min-width: 17em;
+  padding: 0.9em 1.1em 0.8em;
+  background: rgba(243, 236, 221, 0.82);
+  border: 1px solid rgba(22, 36, 79, 0.18);
+  visibility: hidden;
+  opacity: 0;
+}
+
+.q-gap-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.6em;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid rgba(22, 36, 79, 0.18);
+}
+
+.q-gap-sector {
+  color: #b38a00;
+}
+
+.q-gap-clock {
+  font-size: 1.5em;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.q-gap-row {
+  display: grid;
+  grid-template-columns: 0.8em 4em 1fr;
+  align-items: center;
+  gap: 0.7em;
+  padding: 0.22em 0;
+  opacity: 0.62;
+  transition: opacity 0.25s;
+}
+
+.q-gap-row.lead {
+  opacity: 1;
+}
+
+.q-chip {
+  width: 0.8em;
+  height: 0.8em;
+  border-radius: 50%;
+}
+
+.q-delta {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+body.clean .q-gap {
+  bottom: 4cqh;
+}
+
+/* --- labels that ride along with the 3D scene --------------------------- */
+.q-labels {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.q-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  visibility: hidden;
+  font-size: max(10px, min(1.05cqw, 1.8cqh));
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+.q-in {
+  position: absolute;
+  display: block;
+  color: var(--navy);
+}
+
+.q-label small {
+  font-size: 0.85em;
+  opacity: 0.6;
+}
+
+/* Car tags float above each glowing head. */
+.q-car .q-in {
+  transform: translate(-50%, calc(-100% - var(--lift, 1.3em)));
+  padding: 0.25em 0.55em;
+  background: var(--c);
+  color: #fff;
+  border-radius: 1em;
+  letter-spacing: 0.1em;
+}
+
+/* Sector times above each lifted piece. */
+.q-sector .q-in {
+  transform: translate(-50%, -100%);
+  padding: 0.45em 0.8em;
+  background: rgba(243, 236, 221, 0.9);
+  border-left: 0.45em solid var(--c);
+  font-size: 1.15em;
+  letter-spacing: 0.08em;
+}
+
+.q-sector b {
+  color: var(--c);
+}
+
+/* Grid: two short lines per car, on the slot's side of the track. */
+.q-grid .q-in {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.35;
+  padding: 0.3em 0.55em;
+  background: rgba(243, 236, 221, 0.88);
+  border-top: 0.32em solid var(--c);
+}
+
+.q-grid .q-in span {
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+.q-grid.left .q-in {
+  transform: translate(-50%, -100%);
+}
+
+.q-grid.right .q-in {
+  transform: translate(-50%, 0);
+}
+
+body.tall .q-grid.left .q-in {
+  transform: translate(-100%, -50%);
+}
+
+body.tall .q-grid.right .q-in {
+  transform: translate(0, -50%);
+}
+
+/* Tall frame: chapter text keeps to the top, panels to the bottom. */
+body.quali.vertical .chapter.low-left {
+  padding-bottom: 13cqh;
+}
+
+/* --- vertical video: everything must read on a phone ---------------------
+   Twice the desktop sizes (body, gap readout, scene labels). */
+body.quali.vertical .chapter .inner {
+  max-width: 86cqw;
+}
+
+body.quali.vertical .body {
+  font-size: 3.5cqw;
+  line-height: 1.45;
+  max-width: 30ch;
+  opacity: 0.95;
+}
+
+body.quali.vertical .q-kicker {
+  font-size: 7cqw;
+}
+
+body.quali.vertical .q-gap {
+  font-size: 2.5cqw;
+  min-width: 0;
+  width: 46cqw;
+  right: 4cqw;
+  bottom: 4cqh;
+}
+
+body.quali.vertical .q-gap-row {
+  grid-template-columns: 0.8em 3.6em 1fr;
+}
+
+body.quali.vertical .q-label {
+  font-size: 2.1cqw;
+}
+
+/* Grid tags on a phone: "P1 NOR" on one line, the gap under it. */
+body.quali.vertical .q-grid .q-in {
+  display: grid;
+  grid-template-columns: auto auto;
+  column-gap: 0.45em;
+  justify-items: center;
+  line-height: 1.3;
+}
+
+body.quali.vertical .q-grid .q-in span {
+  grid-column: 1 / -1;
+}

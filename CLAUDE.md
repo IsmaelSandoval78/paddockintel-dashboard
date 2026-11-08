@@ -174,6 +174,26 @@ All data lives in Supabase. Never use mock data — always query real tables.
 
 ---
 
+## Media Pipeline (media/)
+
+`media/` holds the video tooling (live-timing recorder, decode pipeline, 3D template,
+kinetic typography kit). Full weekend flow: `docs/MEDIA-PIPELINE.md`. Rules:
+
+- `media/` is **code only** — excluded from the website build, lint and type-check.
+  All data (recordings, decoded sessions, finished videos, music, FastF1 cache) lives
+  outside the repo in `$PI_DATA_DIR` (default `~/PaddockIntel-Data`).
+- Never commit recordings, `.mp4`/`.mov`/`.wav`, `node_modules`, `dist`, or caches —
+  `.gitignore` enforces this; do not loosen it.
+- F1 TV tokens stay in the home folder (`~/.f1tv_token`, `~/.local/share/fastf1/f1auth.json`) —
+  never in the repo, never referenced with their contents.
+- Same data-integrity rules as everything else: no invented figures — every number in a
+  video comes from the recording or verified sources; provisional results are marked
+  provisional (post-session FIA penalties via `--penalties`, only once published).
+- This pipeline feeds videos, not the Hub's database — Supabase ingestion stays
+  `scripts/load_race.py`.
+
+---
+
 ## Critique Gate
 
 Before declaring any component, page, or feature done, score these five dimensions.

@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // media tools (recorder/pipeline/3d/kinetic) are not part of the website build
+    "media/**",
   ]),
 ]);
 

@@ -60,3 +60,15 @@ next-env.d.ts
 supabase/.temp/
 __pycache__/
 .dev.vars
+
+# media tools (media/) — only code lives in the repo; data stays in ~/PaddockIntel-Data
+media/**/node_modules/
+media/**/dist/
+media/**/recordings/
+media/**/exports/
+media/**/cache/
+media/**/.venv/
+*.mp4
+*.mov
+*.wav
+*.webm

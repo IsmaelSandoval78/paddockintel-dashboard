@@ -1,0 +1,69 @@
+<html><head><meta charset="utf-8"><style>
+@font-face{font-family:G;font-weight:900;src:url(inter-tight-latin-900-normal.woff2)}@font-face{font-family:G;font-weight:500;src:url(inter-tight-latin-500-normal.woff2)}
+body{margin:0}</style></head><body><canvas id=c width=1080 height=1920 style="height:100vh;width:auto"></canvas><script>
+const c=document.getElementById('c'), x=c.getContext('2d');
+const off=document.createElement('canvas'); off.width=1080; off.height=1920; const o=off.getContext('2d');
+const INK='#0E0E0E', PAPER='#F4F2EE', TEAL='#00A19B', GREY='#BDB8AE';
+const BEAT=60/106.06, cl=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)), E=t=>1-Math.pow(1-cl(t),3), EI=t=>Math.pow(cl(t),3), IO=t=>{t=cl(t);return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2}, mix=(a,b,k)=>a+(b-a)*k;
+const F=(w,s)=>`${w} ${s}px G`;
+function T(g,s,txt,X,Y,w=900,col=INK,al='left'){ g.font=F(w,s); g.fillStyle=col; g.textAlign=al; g.fillText(txt,X,Y); }
+// ---------- the posters, in world coordinates ----------
+function poster1(g,t){ // the 9
+  T(g,150,'MERCEDES',60,300); T(g,34,"CONSTRUCTORS' CHAMPIONS",64,360,500);
+  T(g,1500,'9',20,1500,900,INK); T(g,170,'TITLES.',60,1720); T(g,30,'São Paulo · 8 November 2026',64,1790,500);
+  T(g,30,'Round 20 / 23',1016,360,500,INK,'right'); T(g,30,'paddockintel.com',1016,1790,500,INK,'right'); }
+const Y8=[['2014','HAM'],['2015','HAM'],['2016','ROS'],['2017','HAM'],['2018','HAM'],['2019','HAM'],['2020','HAM'],['2021','VER*']];
+function poster2(g,t){ // the streak (world y 0..1920) and the wait (world y 2000..3900)
+  T(g,34,'2014 — 2021',64,170,500); T(g,120,'EIGHT IN A ROW.',60,300);
+  Y8.forEach(([y,d],i)=>{ const a0=0.25+i*BEAT*0.5; const k=E((t-a0)/0.45); const dir=i%2?1:-1; const X=60+dir*(1-k)*1100;
+    T(g,190,y,X,560+i*172); T(g,40,d,X+520,520+i*172,500); });
+  T(g,26,"* 2021: constructors' title for Mercedes, drivers' title to Verstappen",64,1900-40,500);
+  // the wait
+  T(g,34,'2022 — 2025',64,2170,500); T(g,190,'THE WAIT.',60,2380);
+  [['2022','RED BULL'],['2023','RED BULL'],['2024','McLAREN'],['2025','McLAREN']].forEach(([y,w],i)=>{ g.lineWidth=3; g.strokeStyle=GREY; g.font=F(900,230); g.textAlign='left'; g.strokeText(y,60,2680+i*260); T(g,44,w,640,2640+i*260,500,GREY); }); }
+function poster3(g,t){ // 2026
+  T(g,34,'2026',64,170,500); T(g,440,'2026',28,700);
+  const k=E((t-0.6)/0.5); T(g,184,'ANTONELLI',mix(1100,44,k),1010); T(g,36,'Drivers\' champion at 20 · Constructors\' title in São Paulo',64,1090,500);
+  T(g,420,'12',40,1600,900,TEAL); T(g,90,'/ 20',560,1590); T(g,40,'wins this season',570,1650,500); }
+function poster4(g,t){ // the table
+  T(g,34,"MOST CONSTRUCTORS' TITLES",64,300,500);
+  [['FERRARI','16',INK],['McLAREN','10',INK],['MERCEDES','9',TEAL],['WILLIAMS','9',INK]].forEach(([n,v,col],i)=>{ const k=E((t-0.3-i*BEAT*0.6)/0.4);
+    g.globalAlpha=k; T(g,118,n,60+(1-k)*-300,560+i*300,900,col); T(g,200,v,1020,580+i*300,900,col,'right'); g.globalAlpha=1; g.fillStyle=col; g.fillRect(60,600+i*300,960*k,8); });
+  T(g,70,'Level with Williams.',60,1760,900); T(g,30,'paddockintel.com',1016,1860,500,INK,'right'); }
+// ---------- timeline with camera moves ----------
+// world points to dive into: a point inside the stroke of the 9, and the hole of the 0 in 2026
+let P9=null, P0=null;
+function scene(g,t){
+  g.setTransform(1,0,0,1,0,0); let bg=PAPER;
+  if(t<3.4){ // poster 1, push in, then dive into the 9
+    const dive=EI((t-2.4)/1.0); const z=mix(1,1.06,cl(t/2.4))*Math.pow(60,dive);
+    g.fillStyle=bg; g.fillRect(0,0,1080,1920); g.translate(540,960); g.scale(z,z); g.translate(-mix(540,P9[0],cl(dive*3)),-mix(960,P9[1],cl(dive*3))); poster1(g,t); return; }
+  if(t<10.6){ const lt=t-3.4; // the streak, then pull out and tilt down to the wait
+    const out=IO((lt-4.4)/1.6); const z=mix(1,0.85,out), cy=mix(960,2900,out);
+    g.fillStyle=bg; g.fillRect(0,0,1080,1920); g.translate(540,960); g.scale(z,z); g.translate(-540,-cy); poster2(g,lt);
+    if(lt<0.25){ g.setTransform(1,0,0,1,0,0); g.fillStyle=INK; g.globalAlpha=1-lt/0.25; g.fillRect(0,0,1080,1920); g.globalAlpha=1; } return; }
+  if(t<17.0){ const lt=t-10.6; // 2026 slams in, then dive through the hole of the 0
+    const slam=E(lt/0.35), dive=EI((lt-5.2)/1.2); const z=mix(1.5,1,slam)*Math.pow(40,dive);
+    g.fillStyle=bg; g.fillRect(0,0,1080,1920); g.translate(540,960); g.scale(z,z); g.translate(-mix(540,P0[0],cl(dive*3)),-mix(960,P0[1],cl(dive*3))); poster3(g,lt); return; }
+  const lt=t-17.0; const z=mix(1.25,1,E(lt/0.6)); g.fillStyle=bg; g.fillRect(0,0,1080,1920); g.translate(540,960); g.scale(z,z); g.translate(-540,-960); poster4(g,lt);
+}
+function cam(t){ // rough camera speed, to decide how much motion blur
+  const a=t, b=t-1/60; const s=f=>{ if(f<3.4) return Math.pow(60,EI((f-2.4)/1.0)); if(f<10.6) return 1+IO((f-3.4-4.4)/1.6)*4; if(f<17) return Math.pow(40,EI((f-10.6-5.2)/1.2))*mix(1.5,1,E((f-10.6)/0.35)); return mix(1.25,1,E((f-17)/0.6)); };
+  return Math.abs(Math.log(s(a)/s(b)));
+}
+window.draw=function(t){
+  const v=cam(t); const K=v>0.02?8:1; x.setTransform(1,0,0,1,0,0);
+  for(let k=0;k<K;k++){ scene(o,t-(K>1?k*(1/30)/K:0)); x.globalAlpha=k===0?1:1/(k+1); x.drawImage(off,0,0); } x.globalAlpha=1;
+  // grain
+  x.fillStyle='rgba(0,0,0,.05)'; for(let i=0;i<3500;i++){ const px=(i*7919+Math.floor(t*30)*131)%1080, py=(i*104729+Math.floor(t*30)*71)%1920; x.fillRect(px,py,2,2); }
+};
+Promise.all(['900 100px G','500 30px G'].map(f=>document.fonts.load(f))).then(()=>{
+  // locate a point inside the 9's stroke and inside the 0's hole by reading pixels
+  const p=document.createElement('canvas'); p.width=1080; p.height=1920; const q=p.getContext('2d'); q.fillStyle='#fff'; q.fillRect(0,0,1080,1920);
+  q.font=F(900,1500); q.fillStyle='#000'; q.textAlign='left'; q.fillText('9',20,1500); const m=q.measureText('9');
+  let best=null; for(let yy=900;yy<1300;yy+=6){ const xx=20+m.width*0.82; const d=q.getImageData(xx,yy,1,1).data; if(d[0]<30){ best=[xx,yy]; break; } } P9=best||[20+m.width*0.8,1100];
+  q.fillStyle='#fff'; q.fillRect(0,0,1080,1920); q.font=F(900,440); q.fillStyle='#000'; q.fillText('2026',28,700); const w2=q.measureText('2').width, w0=q.measureText('0').width;
+  P0=[28+w2+w0/2, 700-440*0.36];
+  window.ready=true; draw(0);
+  if(new URLSearchParams(location.search).get('play')){ const t0=performance.now(); const loop=()=>{ draw(((performance.now()-t0)/1000)%24); requestAnimationFrame(loop); }; requestAnimationFrame(loop); } });
+</script></body></html>

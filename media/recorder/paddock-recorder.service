@@ -1,0 +1,18 @@
+# systemd unit: records every session of the next race weekend, then exits.
+# A timer (below) starts it again each Monday so it picks up the following event.
+[Unit]
+Description=PaddockIntel live timing recorder
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=CHANGE_ME
+WorkingDirectory=/home/CHANGE_ME/paddockintel-dashboard/media/recorder
+Environment=PI_DATA_DIR=/home/CHANGE_ME/PaddockIntel-Data
+ExecStart=/home/CHANGE_ME/paddockintel-dashboard/media/recorder/.venv/bin/python race_weekend.py
+Restart=on-failure
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target

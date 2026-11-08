@@ -1,0 +1,81 @@
+{
+  "title": "Mercedes — 9 títulos, Interlagos",
+  "bpm": 106.06,
+  "seconds": 24,
+  "colors": {
+    "ink": "#0E0E0E", "paper": "#F4F2EE", "grey": "#BDB8AE",
+    "accent": "#00A19B", "silver": "#AEB6BC",
+    "red": "#E4002B", "blue": "#1E41FF", "green": "#00B140",
+    "br_green": "#009C3B", "br_yellow": "#FFDF00", "br_blue": "#002776"
+  },
+  "scenes": [
+    {
+      "beats": 23,
+      "float": 1,
+      "exit": { "type": "dive", "target": "anios", "char": 3, "aim": "hole", "zoom": 45, "beats": 1.8, "tilt": 14 },
+      "elements": [
+        { "text": "MERCEDES", "size": 120, "x": 60, "y": 230, "z": 140, "anim": { "from": "left", "at": 0, "dur": 0.8 } },
+        { "text": "CONSTRUCTORS' TITLES", "size": 34, "weight": 500, "x": 64, "y": 290, "z": 140 },
+        { "id": "anios", "type": "wheel", "x": 860, "y": 1000, "size": 54, "radius": 560, "spacing": 10,
+          "big": { "x": 50, "y": 1040, "size": 250, "subSize": 44, "subDy": 90,
+                   "trace": { "dur": 1.1, "width": 9 },
+                   "counter": { "x": 1016, "y": 290, "label": "TITLE ", "size": 30 } },
+          "items": [
+            ["2014", "Hamilton · Rosberg"], ["2015", "Hamilton · Rosberg"], ["2016", "Rosberg · Hamilton"],
+            ["2017", "Hamilton · Bottas"], ["2018", "Hamilton · Bottas"], ["2019", "Hamilton · Bottas"],
+            ["2020", "Hamilton · Bottas"], ["2021", "Hamilton · Bottas"],
+            ["2022", "Red Bull", "grey"], ["2023", "Red Bull", "grey"], ["2024", "McLaren", "grey"], ["2025", "McLaren", "grey"],
+            ["2026", "Antonelli · Russell"]
+          ],
+          "steps": [
+            { "at": 0.3,  "index": 0, "color": "red", "move": 0.5 },
+            { "at": 2.3,  "index": 1, "color": "blue", "move": 0.5 },
+            { "at": 4.3,  "index": 2, "color": "green", "move": 0.5 },
+            { "at": 6.3,  "index": 3, "color": "red", "move": 0.5 },
+            { "at": 8.3,  "index": 4, "color": "blue", "move": 0.5 },
+            { "at": 10.3, "index": 5, "color": "green", "move": 0.5 },
+            { "at": 12.3, "index": 6, "color": "red", "move": 0.5 },
+            { "at": 14.3, "index": 7, "color": "blue", "move": 0.5 },
+            { "at": 19,   "index": 12, "color": "accent", "move": 3.4 }
+          ] },
+        { "text": "2014 — 2026", "size": 30, "weight": 500, "x": 64, "y": 1790, "z": 140 },
+        { "text": "paddockintel.com", "size": 30, "weight": 500, "x": 1016, "y": 1790, "align": "right", "z": 140 }
+      ]
+    },
+    {
+      "beats": 9.5,
+      "float": 1.2,
+      "enter": { "type": "settle", "from": 1.3, "beats": 1.2 },
+      "camera": [ { "at": 0, "zoom": 0.95, "rx": 34 }, { "at": 3.5, "zoom": 1, "rx": 0, "ease": "out" } ],
+      "elements": [
+        { "text": "INTERLAGOS", "size": 150, "x": 60, "y": 300, "z": 160, "anim": { "from": "left", "at": 0.4, "dur": 0.8 } },
+        { "text": "Autódromo José Carlos Pace · São Paulo", "size": 34, "weight": 500, "x": 64, "y": 360, "z": 160 },
+        { "type": "track", "x": 70, "y": 520, "scale": 0.92,
+          "colors": ["br_green", "br_yellow", "br_blue"], "widths": [60, 36, 14], "at": 0.8, "dur": 3, "gap": 0.5,
+          "dot": { "at": 4.4, "lap": 4.5, "color": "accent", "r": 15 },
+          "points": [[820,120],[560,95],[300,80],[230,95],[205,150],[260,205],[230,265],[180,330],[150,450],[140,620],
+                     [170,720],[260,760],[330,700],[420,640],[520,650],[560,600],[520,520],[470,470],[520,410],[600,420],
+                     [650,480],[620,560],[700,600],[760,560],[720,480],[780,420],[860,450],[900,520],[950,460],[960,320],[920,180],[870,135]] },
+        { "text": "4.309", "size": 230, "x": 60, "y": 1560, "z": 80, "anim": { "from": "flip", "at": 2.2, "dur": 0.8 } },
+        { "text": "KM", "size": 60, "weight": 500, "x": 700, "y": 1560, "z": 80, "anim": { "from": "fade", "at": 2.6 } },
+        { "text": "71 LAPS · 8 NOVEMBER 2026", "size": 34, "weight": 500, "x": 64, "y": 1640, "z": 80, "anim": { "from": "fade", "at": 2.8 } },
+        { "text": "paddockintel.com", "size": 30, "weight": 500, "x": 1016, "y": 1790, "align": "right", "z": 160 }
+      ]
+    },
+    {
+      "beats": 10,
+      "float": 1.2,
+      "enter": { "type": "tiles", "beats": 2.2, "cols": 3, "rows": 5 },
+      "camera": [ { "at": 0, "zoom": 1 }, { "at": 10, "zoom": 1.05, "ease": "linear" } ],
+      "elements": [
+        { "text": "MERCEDES", "size": 150, "x": 60, "y": 300, "z": 220 },
+        { "text": "CONSTRUCTORS' CHAMPIONS", "size": 34, "weight": 500, "x": 64, "y": 360, "z": 220 },
+        { "text": "9", "size": 1500, "x": 20, "y": 1500,
+          "trace": { "colors": ["accent", "silver"], "at": 0, "dur": 1.8, "gap": 0.35, "width": 26, "fillAt": 2.4, "fillDur": 0.6 } },
+        { "text": "TITLES.", "size": 170, "x": 60, "y": 1720, "z": 140, "anim": { "from": "right", "at": 2.8, "dur": 0.8 } },
+        { "text": "São Paulo · 8 November 2026", "size": 30, "weight": 500, "x": 64, "y": 1790, "z": 140 },
+        { "text": "paddockintel.com", "size": 30, "weight": 500, "x": 1016, "y": 1790, "align": "right", "z": 140 }
+      ]
+    }
+  ]
+}

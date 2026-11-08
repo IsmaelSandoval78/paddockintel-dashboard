@@ -1,0 +1,74 @@
+{
+  "title": "Mercedes — 9 títulos (versión 3D)",
+  "bpm": 106.06,
+  "seconds": 24,
+  "colors": { "ink": "#0E0E0E", "paper": "#F4F2EE", "accent": "#00A19B", "grey": "#BDB8AE" },
+  "scenes": [
+    {
+      "beats": 6,
+      "float": 1.2,
+      "camera": [ { "at": 0, "zoom": 1 }, { "at": 4.24, "zoom": 1.06, "ease": "linear" } ],
+      "exit": { "type": "dive", "target": "nueve", "char": 0, "aim": "ink", "zoom": 60, "beats": 1.77, "roll": 14 },
+      "elements": [
+        { "text": "MERCEDES", "size": 150, "x": 60, "y": 300, "z": 260 },
+        { "text": "CONSTRUCTORS' CHAMPIONS", "size": 34, "weight": 500, "x": 64, "y": 360, "z": 260 },
+        { "text": "Round 20 / 23", "size": 30, "weight": 500, "x": 1016, "y": 360, "align": "right", "z": 260 },
+        { "id": "nueve", "text": "9", "size": 1500, "x": 20, "y": 1500 },
+        { "text": "TITLES.", "size": 170, "x": 60, "y": 1720, "z": 160 },
+        { "text": "São Paulo · 8 November 2026", "size": 30, "weight": 500, "x": 64, "y": 1790, "z": 160 },
+        { "text": "paddockintel.com", "size": 30, "weight": 500, "x": 1016, "y": 1790, "align": "right", "z": 160 }
+      ]
+    },
+    {
+      "beats": 12.75,
+      "enter": { "type": "ink", "beats": 0.44 },
+      "camera": [
+        { "at": 0, "zoom": 1, "y": 960 },
+        { "at": 7.78, "zoom": 1, "y": 960 },
+        { "at": 9.2, "zoom": 0.62, "y": 1930, "rx": 32, "ry": -10 },
+        { "at": 10.6, "zoom": 0.85, "y": 2900, "rx": 0, "ry": 0, "ease": "out" }
+      ],
+      "elements": [
+        { "text": "2014 — 2021", "size": 34, "weight": 500, "x": 64, "y": 170, "z": 140 },
+        { "text": "EIGHT IN A ROW.", "size": 120, "x": 60, "y": 300, "z": 140 },
+        { "type": "rows", "x": 60, "y": 560, "step": 172, "size": 190,
+          "sub": { "size": 40, "dx": 520, "dy": -40 },
+          "from": "alternate", "at": 0.44, "every": 0.5, "dur": 0.8,
+          "items": [["2014","HAM"],["2015","HAM"],["2016","ROS"],["2017","HAM"],["2018","HAM"],["2019","HAM"],["2020","HAM"],["2021","VER*"]] },
+        { "text": "* 2021: constructors' title for Mercedes, drivers' title to Verstappen", "size": 26, "weight": 500, "x": 64, "y": 1860 },
+        { "text": "2022 — 2025", "size": 34, "weight": 500, "x": 64, "y": 2170, "z": 140 },
+        { "text": "THE WAIT.", "size": 190, "x": 60, "y": 2380, "z": 140 },
+        { "type": "rows", "x": 60, "y": 2680, "step": 260, "size": 230, "outline": 3, "color": "grey",
+          "sub": { "size": 44, "dx": 580, "dy": -40, "color": "grey" },
+          "items": [["2022","RED BULL"],["2023","RED BULL"],["2024","McLAREN"],["2025","McLAREN"]] }
+      ]
+    },
+    {
+      "beats": 11.25,
+      "float": 1.2,
+      "enter": { "type": "cube", "dir": "left", "beats": 1.6 },
+      "exit": { "type": "dive", "target": "anio", "char": 1, "aim": "hole", "zoom": 40, "beats": 2.12, "tilt": 18 },
+      "elements": [
+        { "text": "2026", "size": 34, "weight": 500, "x": 64, "y": 170, "z": 120 },
+        { "id": "anio", "text": "2026", "size": 440, "x": 28, "y": 700 },
+        { "text": "ANTONELLI", "size": 184, "x": 44, "y": 1010, "z": 120, "anim": { "from": "right", "dist": 1056, "at": 1.4, "dur": 0.88 } },
+        { "text": "Drivers' champion at 20 · Constructors' title in São Paulo", "size": 36, "weight": 500, "x": 64, "y": 1090, "z": 120 },
+        { "text": "12", "size": 420, "x": 40, "y": 1600, "color": "accent", "z": -120 },
+        { "text": "/ 20", "size": 90, "x": 560, "y": 1590, "z": 120 },
+        { "text": "wins this season", "size": 40, "weight": 500, "x": 570, "y": 1650, "z": 120 }
+      ]
+    },
+    {
+      "beats": 12.5,
+      "float": 1,
+      "enter": { "type": "fly", "beats": 1.8, "twist": 8, "depth": 3200 },
+      "elements": [
+        { "text": "MOST CONSTRUCTORS' TITLES", "size": 34, "weight": 500, "x": 64, "y": 300, "z": 150 },
+        { "type": "table", "x": 60, "right": 1020, "y": 560, "step": 300, "size": 118, "valueSize": 200, "at": 0.15, "every": 0.45, "dur": 0.71,
+          "items": [["FERRARI","16"],["McLAREN","10"],["MERCEDES","9","accent"],["WILLIAMS","9"]] },
+        { "text": "Level with Williams.", "size": 70, "x": 60, "y": 1760, "z": 150, "anim": { "from": "flip", "at": 3.6, "dur": 0.8 } },
+        { "text": "paddockintel.com", "size": 30, "weight": 500, "x": 1016, "y": 1860, "align": "right", "z": 150 }
+      ]
+    }
+  ]
+}

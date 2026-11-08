@@ -1,0 +1,775 @@
+:root {
+  --cream: #f3ecdd;
+  --navy: #16244f;
+  --blue: #2b4aa0;
+  --red: #e23a3a;
+  --teal: #00a19b;
+  --yellow: #f5c518;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background: #e4d9c3;
+  color: var(--navy);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  overscroll-behavior: none;
+}
+
+/* The fixed viewport that holds the canvas + text. In vertical mode it
+   becomes a centred 9:16 frame instead of the full window. */
+#frame {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--cream);
+}
+
+/* ?vertical=1 — a centred 9:16 stage for screen-recording a vertical video. */
+body.vertical {
+  background: #0e1530;
+}
+
+body.vertical #frame {
+  inset: auto;
+  top: 0;
+  left: 50%;
+  height: 100vh;
+  width: calc(100vh * 9 / 16);
+  transform: translateX(-50%);
+  box-shadow: 0 0 80px rgba(0, 0, 0, 0.45);
+}
+
+#webgl {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* The tall invisible element that gives the page something to scroll. */
+#scroll-track {
+  height: 800vh;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------- overlay */
+/* Everything inside the frame is sized against the frame itself, so the
+   9:16 recording layout scales exactly like the full-window one. */
+#frame {
+  container-type: size;
+  container-name: stage;
+}
+
+#overlay {
+  color: var(--navy);
+}
+
+.hud {
+  position: absolute;
+  font-size: max(11px, min(1.25cqw, 2cqh));
+  letter-spacing: 0.22em;
+  font-weight: 700;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.hud-brand {
+  top: 4cqh;
+  left: 4cqw;
+}
+
+/* Weather strip, top left under the brand. */
+.hud-weather {
+  top: calc(4cqh + 2.2em);
+  left: 4cqw;
+  right: 30cqw;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4em 1.6em;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  opacity: 0.8;
+}
+
+.wx {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  white-space: nowrap;
+}
+
+.wx b {
+  font-weight: 700;
+  text-transform: none;
+}
+
+.wx-spark {
+  position: relative;
+  display: inline-block;
+  width: 5em;
+  height: 1.1em;
+}
+
+.wx-spark svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.wx-spark path {
+  fill: none;
+  stroke: var(--red);
+  stroke-width: 1.5;
+  opacity: 0.7;
+}
+
+.wx-dot {
+  position: absolute;
+  width: 0.5em;
+  height: 0.5em;
+  margin: -0.25em 0 0 -0.25em;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 0 2px var(--cream);
+}
+
+.wx-arrow {
+  display: inline-block;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.wx[hidden] {
+  display: none;
+}
+
+.wx-rain {
+  color: var(--blue);
+  font-weight: 700;
+}
+
+/* Vertical: drop the pressure, the strip has to fit in two short lines. */
+body.vertical .hud-weather {
+  right: 4cqw;
+}
+
+body.vertical .wx-pressure {
+  display: none;
+}
+
+.hud-counter {
+  top: 4cqh;
+  right: 4cqw;
+}
+
+.hud-race {
+  bottom: 4cqh;
+  right: 4cqw;
+  display: flex;
+  align-items: center;
+  gap: 0.9em;
+  opacity: 1;
+}
+
+/* Tyre panel, bottom right above the lap readout. */
+.hud-tyres {
+  --progress: 0;
+  --bar-left: 4.2em;
+  --bar-right: 4.6em;
+  bottom: calc(4cqh + 3em);
+  right: 4cqw;
+  width: 27em;
+  opacity: 1;
+  letter-spacing: 0.14em;
+}
+
+.tyre-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.7em;
+  opacity: 0.75;
+}
+
+.tyre-key {
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+}
+
+.tyre-key .tyre-chip {
+  margin: 0 0.35em 0 0.9em;
+  text-transform: uppercase;
+}
+
+.tyre-row {
+  display: flex;
+  align-items: center;
+  height: 1.7em;
+}
+
+.tyre-name {
+  width: var(--bar-left);
+  flex: none;
+}
+
+.tyre-bar {
+  position: relative;
+  flex: 1;
+  height: 0.55em;
+  border-radius: 0.3em;
+  background: rgba(22, 36, 79, 0.08);
+  overflow: hidden;
+}
+
+/* Each stint: a block in its compound colour, a hairline of paper between. */
+.stint {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  box-shadow: inset -1.5px 0 0 #f3ecdd;
+}
+
+.stint[data-compound='SOFT'],
+.tyre-chip[data-compound='SOFT'] {
+  background: #e23a3a;
+}
+
+.stint[data-compound='MEDIUM'],
+.tyre-chip[data-compound='MEDIUM'] {
+  background: #f5c518;
+}
+
+.stint[data-compound='HARD'],
+.tyre-chip[data-compound='HARD'] {
+  background: #fbf8f1;
+  box-shadow: inset 0 0 0 1px rgba(22, 36, 79, 0.35);
+}
+
+.tyre-now {
+  width: var(--bar-right);
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.45em;
+  font-weight: 400;
+}
+
+.tyre-chip {
+  display: inline-grid;
+  place-items: center;
+  width: 1.45em;
+  height: 1.45em;
+  border-radius: 50%;
+  font-size: 0.85em;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: var(--navy);
+}
+
+.tyre-chip:empty {
+  visibility: hidden;
+}
+
+.tyre-age {
+  min-width: 2.2em;
+  text-align: right;
+  opacity: 0.75;
+}
+
+/* The race so far: everything left of the cursor is lit, the rest waits. */
+.tyre-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--progress) * 100%);
+  right: 0;
+  background: rgba(243, 236, 221, 0.72);
+}
+
+.tyre-cursor {
+  position: absolute;
+  top: 2em;
+  bottom: -0.2em;
+  left: calc(var(--bar-left) + (100% - var(--bar-left) - var(--bar-right)) * var(--progress));
+  width: 1.5px;
+  background: var(--navy);
+}
+
+/* Speedometer, top right under the chapter counter. */
+.hud-speed {
+  top: calc(4cqh + 2.8em);
+  right: 4cqw;
+  width: 11em;
+  opacity: 1;
+  text-shadow:
+    0 0 6px rgba(243, 236, 221, 0.95),
+    0 0 14px rgba(243, 236, 221, 0.8);
+}
+
+.spd-dial {
+  display: block;
+  width: 11em;
+  height: 11em;
+  overflow: visible;
+}
+
+.spd-track,
+.spd-fill {
+  fill: none;
+  stroke-width: 7;
+  stroke-linecap: round;
+}
+
+.spd-track {
+  stroke: rgba(22, 36, 79, 0.1);
+}
+
+.spd-fill {
+  stroke-dasharray: 0 1;
+}
+
+.spd-read {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 11em;
+  height: 11em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.spd-who {
+  margin-bottom: 0.4em;
+}
+
+.spd-num {
+  font-family: 'Anton', 'Arial Narrow', sans-serif;
+  font-weight: 400;
+  font-size: 3.4em;
+  letter-spacing: 0.01em;
+  color: var(--blue);
+  font-variant-numeric: tabular-nums;
+}
+
+.spd-unit {
+  margin-top: 0.35em;
+  font-weight: 400;
+  text-transform: lowercase;
+  opacity: 0.6;
+}
+
+.spd-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.9em;
+  margin-top: -1.2em;
+}
+
+.spd-row small {
+  display: block;
+  margin-bottom: 0.35em;
+  font-size: 0.8em;
+  font-weight: 400;
+  opacity: 0.6;
+}
+
+.spd-gear b {
+  display: block;
+  font-family: 'Anton', 'Arial Narrow', sans-serif;
+  font-weight: 400;
+  font-size: 1.9em;
+  line-height: 1;
+  color: var(--navy);
+}
+
+.spd-pedal {
+  flex: 1;
+}
+
+.spd-pedal > span {
+  display: block;
+  height: 0.55em;
+  border-radius: 0.3em;
+  background: rgba(22, 36, 79, 0.1);
+  overflow: hidden;
+}
+
+.spd-pedal i {
+  display: block;
+  height: 100%;
+  transform-origin: left;
+  transform: scaleX(0);
+  background: var(--teal);
+}
+
+.spd-pedal[data-pedal='brake'] i {
+  background: var(--red);
+}
+
+/* Vertical frame: no room for the dial, so it becomes one line in the
+   bottom-right stack, above the stewards. */
+body.vertical .hud-speed {
+  top: auto;
+  bottom: calc(4cqh + 19.6em);
+  width: 27em;
+  display: flex;
+  align-items: flex-end;
+  gap: 1.2em;
+}
+
+body.vertical .spd-dial {
+  display: none;
+}
+
+body.vertical .spd-read {
+  position: static;
+  width: auto;
+  height: auto;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 0.5em;
+}
+
+body.vertical .spd-who {
+  margin: 0;
+}
+
+body.vertical .spd-num {
+  font-size: 2.2em;
+  min-width: 1.6em;
+  text-align: right;
+}
+
+body.vertical .spd-row {
+  flex: 1;
+  margin: 0;
+}
+
+/* Stewards' log, stacked above the tyre panel. */
+.hud-stewards {
+  bottom: calc(4cqh + 11.4em);
+  right: 4cqw;
+  width: 27em;
+  opacity: 1;
+  letter-spacing: 0.14em;
+}
+
+/* (the box itself is faded in by GSAP, so hide its contents instead) */
+.hud-stewards.empty > * {
+  visibility: hidden;
+}
+
+/* Same paper halo as the chapter text, for when the panels cross the ribbon. */
+.hud-stewards,
+.hud-tyres {
+  text-shadow:
+    0 0 6px rgba(243, 236, 221, 0.95),
+    0 0 14px rgba(243, 236, 221, 0.8);
+}
+
+.stew-head {
+  margin-bottom: 0.5em;
+  opacity: 0.75;
+}
+
+.stew-list {
+  list-style: none;
+}
+
+.stew {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  height: 1.65em;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+}
+
+.stew-lap {
+  width: 2.6em;
+  flex: none;
+  opacity: 0.55;
+}
+
+.stew-who {
+  flex: none;
+}
+
+.stew-who b {
+  font-weight: 700;
+}
+
+.stew-why {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-transform: lowercase;
+  opacity: 0.75;
+}
+
+/* +5s / +10s: a red pill; once served it goes hollow and says so. */
+.stew-tag {
+  flex: none;
+  padding: 0.3em 0.55em 0.25em;
+  border-radius: 0.2em;
+  line-height: 1;
+  font-weight: 700;
+  text-transform: none;
+  text-shadow: none;
+  color: #f3ecdd;
+  background: #e23a3a;
+}
+
+.stew[data-served] .stew-tag {
+  color: #e23a3a;
+  background: none;
+  box-shadow: inset 0 0 0 1px #e23a3a;
+}
+
+.stew[data-served] .stew-tag::after {
+  content: ' \2713';
+  font-weight: 400;
+}
+
+.stew[data-kind='clear'] .stew-tag {
+  color: var(--navy);
+  background: none;
+  box-shadow: inset 0 0 0 1px rgba(22, 36, 79, 0.4);
+  font-weight: 400;
+  text-transform: lowercase;
+}
+
+/* A decision that just came in slides down and flashes once. */
+.stew.fresh {
+  animation: stew-in 0.9s ease-out;
+}
+
+@keyframes stew-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-0.6em);
+    background: rgba(245, 197, 24, 0.55);
+  }
+  30% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    background: rgba(245, 197, 24, 0);
+  }
+}
+
+/* In the narrow vertical frame there is no room beside the circuit credit,
+   so the readout sits one line above it. */
+body.vertical .hud-race {
+  bottom: calc(4cqh + 2.6em);
+}
+
+body.vertical .hud-tyres {
+  bottom: calc(4cqh + 5.6em);
+}
+
+/* Vertical: only the two newest decisions fit. */
+body.vertical .hud-stewards {
+  bottom: calc(4cqh + 14em);
+}
+
+body.vertical .stew:nth-child(n + 3) {
+  display: none;
+}
+
+.race-lap {
+  opacity: 0.75;
+}
+
+/* Track status pill. Empty under green, so it simply disappears. */
+.race-flag {
+  padding: 0.35em 0.7em 0.3em;
+  border-radius: 0.2em;
+  line-height: 1;
+  color: var(--navy);
+  background: #f5c518;
+}
+
+.race-flag:empty {
+  display: none;
+}
+
+.race-flag[data-status='5'] {
+  color: #f3ecdd;
+  background: #e23a3a;
+}
+
+.race-flag[data-status='7'] {
+  background: #f5c518;
+  opacity: 0.6;
+}
+
+/* Chequered: navy pill led by a little black-and-white check. */
+.race-flag[data-status='chequered'] {
+  color: #f3ecdd;
+  background: #16244f;
+}
+
+.race-flag[data-status='chequered']::before {
+  content: '';
+  display: inline-block;
+  width: 0.8em;
+  height: 0.8em;
+  margin-right: 0.55em;
+  vertical-align: -0.05em;
+  background: repeating-conic-gradient(#f3ecdd 0 25%, #16244f 0 50%) 0 0 / 0.4em 0.4em;
+  outline: 1px solid #f3ecdd;
+}
+
+.hud-circuit {
+  bottom: 4cqh;
+  left: 4cqw;
+  font-weight: 400;
+  opacity: 0.45;
+  letter-spacing: 0.14em;
+}
+
+/* Each chapter owns the whole stage and parks its text in one corner of it,
+   which keeps a lot of empty space around the type. */
+.chapter {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  padding: 13cqh 7cqw;
+}
+
+.chapter.top-left {
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+/* Vertical frame: speed, stewards, tyres and lap readout fill the bottom right, so
+   bottom-parked chapter text rises above them (23.5 HUD lines up). */
+body.vertical .chapter.low-left {
+  padding-bottom: calc(4cqh + 23.5 * max(11px, min(1.25cqw, 2cqh)));
+}
+
+.chapter.mid-left {
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.chapter.low-left {
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+
+.chapter.center {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+ /* Chapter 6: the number sits in the sky band above the chase cam's road. */
+.chapter.top-center {
+  align-items: flex-start;
+  justify-content: center;
+  text-align: center;
+  padding-top: 12cqh;
+}
+
+.chapter .inner {
+  visibility: hidden;
+  max-width: 78cqw;
+}
+
+.title {
+  position: relative;
+  display: inline-block;
+  font-family: 'Anton', 'Arial Narrow', sans-serif;
+  font-weight: 400;
+  font-size: min(12cqw, 9.5cqh);
+  line-height: 0.94;
+  letter-spacing: 0.005em;
+  transform: skewX(-10deg);
+}
+
+/* Riso misregistration: a red plate sitting slightly off the blue one. */
+.title .back {
+  position: absolute;
+  inset: 0;
+  color: var(--red);
+  transform: translate(0.055em, 0.05em);
+  mix-blend-mode: multiply;
+}
+
+.title .front {
+  position: relative;
+  color: var(--blue);
+}
+
+/* A faint paper halo keeps the type legible when it crosses the ribbon. */
+.title .front,
+.body {
+  text-shadow:
+    0 0 12px rgba(243, 236, 221, 0.85),
+    0 0 30px rgba(243, 236, 221, 0.6);
+}
+
+.chapter.huge .title {
+  font-size: min(21cqw, 17cqh);
+}
+
+.body {
+  margin-top: 2.4cqh;
+  font-size: max(12px, min(1.75cqw, 2.9cqh));
+  line-height: 1.65;
+  letter-spacing: 0.02em;
+  max-width: 34ch;
+  opacity: 0.88;
+}
+
+.chapter.top-center .body,
+.chapter.center .body {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ?clean=1 — recording mode. Every panel goes except the chapter text and a
+   shrunken speedometer tucked into the top-right corner. */
+body.clean .hud:not(.hud-speed) {
+  display: none !important;
+}
+
+body.clean .hud-speed {
+  top: 4cqh;
+  transform: scale(0.62);
+  transform-origin: top right;
+}
+
+/* Nothing sits at the bottom any more, so the text keeps its normal margin. */
+body.clean.vertical .chapter.low-left {
+  padding-bottom: 13cqh;
+}

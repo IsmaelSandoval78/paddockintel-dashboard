@@ -16,6 +16,7 @@ on:
       - "docs/**"
       - "articles/**"
       - "digests/**"
+      - "media/**"
       - "**/*.md"
   workflow_dispatch: {}
 
