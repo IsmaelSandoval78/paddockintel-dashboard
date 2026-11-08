@@ -368,7 +368,70 @@ async function constructorsTitleNext(supabase: Supabase): Promise<Computed> {
   };
 }
 
+// One driver's career by team, with a total row, for a Grand Prix milestone: every Grand Prix in
+// which the driver appears in the results. Throws unless the count has reached the milestone, so
+// the card can't go out before the race that brings it; PREVIEW=1 renders it anyway, marked so.
+async function careerByTeam(supabase: Supabase, driverRef: string, milestone: number): Promise<Computed> {
+  const { data: driver } = await supabase.from('drivers').select('id, surname').eq('driver_ref', driverRef).single();
+  if (!driver) throw new Error(`driver ${driverRef} not found`);
+  const { data: res } = await supabase.from('results').select('race_id, constructor_id, position').eq('driver_id', driver.id);
+  const results = res ?? [];
+  const { data: races } = await supabase.from('races').select('id, year, round, name').in('id', results.map((r) => r.race_id));
+  const race = new Map((races ?? []).map((r) => [r.id as number, r]));
+  const preview = process.env.PREVIEW === '1';
+  if (results.length !== milestone && !preview)
+    throw new Error(`${driver.surname} has ${results.length} Grands Prix in Supabase, not ${milestone}`);
+  const { data: cons } = await supabase.from('constructors').select('id, name');
+  const teamName = new Map((cons ?? []).map((c) => [c.id as number, c.name as string]));
+  type Tally = { team: string; first: number; last: number; gps: number; wins: number; podiums: number };
+  const byTeam = new Map<number, Tally>();
+  for (const r of results) {
+    const year = race.get(r.race_id as number)!.year as number;
+    const t = byTeam.get(r.constructor_id as number) ?? { team: teamName.get(r.constructor_id as number) ?? '', first: year, last: year, gps: 0, wins: 0, podiums: 0 };
+    t.first = Math.min(t.first, year);
+    t.last = Math.max(t.last, year);
+    t.gps += 1;
+    if (r.position === 1) t.wins += 1;
+    if (r.position !== null && (r.position as number) <= 3) t.podiums += 1;
+    byTeam.set(r.constructor_id as number, t);
+  }
+  const teams = [...byTeam.values()].sort((a, b) => a.first - b.first);
+  const total = teams.reduce((sum, t) => ({ ...sum, gps: sum.gps + t.gps, wins: sum.wins + t.wins, podiums: sum.podiums + t.podiums }), {
+    team: 'Total', first: teams[0].first, last: teams[teams.length - 1].last, gps: 0, wins: 0, podiums: 0,
+  });
+  const rows = [...teams, total].map((t) => ({
+    team: t.team,
+    seasons: `${t.first}–${t.last}`,
+    gps: t.gps,
+    wins: t.wins,
+    podiums: t.podiums,
+    winRate: Math.round((t.wins / t.gps) * 1000) / 10,
+  }));
+  const latest = [...(races ?? [])].sort((a, b) => (b.year as number) - (a.year as number) || (b.round as number) - (a.round as number))[0];
+  const pv = preview && results.length !== milestone ? 'PREVIEW · ' : '';
+  return {
+    asOf: {
+      en: `${pv}Through round ${latest.round}, ${latest.name} ${latest.year} · ${results.length} Grands Prix`,
+      es: `${pv}Hasta la fecha ${latest.round}, ${latest.name} ${latest.year} · ${results.length} Grandes Premios`,
+      pt: `${pv}Até a etapa ${latest.round}, ${latest.name} ${latest.year} · ${results.length} Grandes Prêmios`,
+    },
+    columns: [
+      { key: 'team', label: TEAM },
+      { key: 'seasons', label: { en: 'Seasons', es: 'Temporadas', pt: 'Temporadas' } },
+      { key: 'gps', label: { en: 'Grands Prix', es: 'Grandes Premios', pt: 'GPs' }, numeric: true },
+      { key: 'wins', label: { en: 'Wins', es: 'Victorias', pt: 'Vitórias' }, numeric: true },
+      { key: 'podiums', label: { en: 'Podiums', es: 'Podios', pt: 'Pódios' }, numeric: true },
+      { key: 'winRate', label: { en: 'Win %', es: '% victorias', pt: '% vitórias' }, numeric: true, decimals: 1 },
+    ],
+    rows,
+    highlightRow: rows.length - 1,
+  };
+}
+
 const SPECS: Record<string, (supabase: Supabase) => Promise<Computed>> = {
+  // Hamilton's 400th Grand Prix (2026 Brazilian GP): his career by team.
+  'lewis-hamilton-400-grands-prix-by-team': (supabase) => careerByTeam(supabase, 'hamilton', 400),
+
   // Race day at Interlagos, 2026: the deepest starts that still reached the podium there.
   'interlagos-podiums-from-the-back-brazilian-gp': (supabase) => podiumsFromBack(supabase, 'interlagos', 14),
 
