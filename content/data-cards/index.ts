@@ -2,8 +2,11 @@
 // Cloudflare Worker that serves the site cannot read content/data-cards/ at runtime.
 import type { DataCard } from '@/lib/dataCards';
 import card_antonelli_title_austin_2026_what_rivals_need from './antonelli-title-austin-2026-what-rivals-need.json';
+import card_interlagos_podiums_from_the_back_brazilian_gp from './interlagos-podiums-from-the-back-brazilian-gp.json';
 import card_mercedes_2026_grand_prix_wins_by_team from './mercedes-2026-grand-prix-wins-by-team.json';
+import card_mercedes_constructors_title_brazil_2026_what_it_needs from './mercedes-constructors-title-brazil-2026-what-it-needs.json';
 import card_red_bull_cota_wins_us_grand_prix from './red-bull-cota-wins-us-grand-prix.json';
 import card_red_bull_points_per_race_after_baku_upgrade_2026 from './red-bull-points-per-race-after-baku-upgrade-2026.json';
+import card_youngest_f1_world_champions_antonelli_vettel_record from './youngest-f1-world-champions-antonelli-vettel-record.json';
 
-export const DATA_CARD_FILES = [card_antonelli_title_austin_2026_what_rivals_need, card_mercedes_2026_grand_prix_wins_by_team, card_red_bull_cota_wins_us_grand_prix, card_red_bull_points_per_race_after_baku_upgrade_2026] as unknown as DataCard[];
+export const DATA_CARD_FILES = [card_antonelli_title_austin_2026_what_rivals_need, card_interlagos_podiums_from_the_back_brazilian_gp, card_mercedes_2026_grand_prix_wins_by_team, card_mercedes_constructors_title_brazil_2026_what_it_needs, card_red_bull_cota_wins_us_grand_prix, card_red_bull_points_per_race_after_baku_upgrade_2026, card_youngest_f1_world_champions_antonelli_vettel_record] as unknown as DataCard[];
