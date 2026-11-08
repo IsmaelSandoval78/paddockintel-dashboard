@@ -39,6 +39,9 @@ const CONSTRUCTOR_DUELS: Array<[string, string]> = [
   ['red_bull', 'mercedes'],
   ['williams', 'ferrari'],
 ];
+// A bare /compare/ opens on a duel instead of an empty page — both pairs come from the lists above.
+const DEFAULT_DRIVER_DUEL: [string, string] = ['antonelli', 'russell'];
+const DEFAULT_CONSTRUCTOR_DUEL: [string, string] = ['red_bull', 'mercedes'];
 
 const Loader = () => (
   <span className="font-mono text-[11px] text-text-3 animate-pulse">···</span>
@@ -312,14 +315,16 @@ export default function CompareClient({
   // Initialise from URL on mount
   useEffect(() => {
     const type = searchParams.get('type') as Mode | null;
-    const aRef = searchParams.get('a');
-    const bRef = searchParams.get('b');
+    const urlA = searchParams.get('a');
+    const urlB = searchParams.get('b');
     if (type === 'constructors') {
+      const [aRef, bRef] = urlA || urlB ? [urlA, urlB] : DEFAULT_CONSTRUCTOR_DUEL;
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setMode('constructors');
       if (aRef) setConstructorA(constructors.find((c) => c.constructor_ref === aRef) ?? null);
       if (bRef) setConstructorB(constructors.find((c) => c.constructor_ref === bRef) ?? null);
     } else {
+      const [aRef, bRef] = urlA || urlB ? [urlA, urlB] : DEFAULT_DRIVER_DUEL;
       if (aRef) setDriverA(drivers.find((d) => d.driver_ref === aRef) ?? null);
       if (bRef) setDriverB(drivers.find((d) => d.driver_ref === bRef) ?? null);
     }
@@ -377,6 +382,14 @@ export default function CompareClient({
     setMode(newMode);
     setDataA(null);
     setDataB(null);
+    if (newMode === 'constructors' && !constructorA && !constructorB) {
+      setConstructorA(constructors.find((c) => c.constructor_ref === DEFAULT_CONSTRUCTOR_DUEL[0]) ?? null);
+      setConstructorB(constructors.find((c) => c.constructor_ref === DEFAULT_CONSTRUCTOR_DUEL[1]) ?? null);
+    }
+    if (newMode === 'drivers' && !driverA && !driverB) {
+      setDriverA(drivers.find((d) => d.driver_ref === DEFAULT_DRIVER_DUEL[0]) ?? null);
+      setDriverB(drivers.find((d) => d.driver_ref === DEFAULT_DRIVER_DUEL[1]) ?? null);
+    }
   }
 
   // Selector items

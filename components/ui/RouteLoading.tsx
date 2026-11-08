@@ -6,9 +6,11 @@
 // A blinking cursor stands in for the blinking readout in the reference
 // aesthetic (2011 earthquake-infographic style, kraft substrate) rather than
 // a rotating spinner, which never appears anywhere else on this site.
+// Full viewport height on purpose: at 70vh the footer showed above the fold while the page
+// streamed in, then got pushed off-screen when it arrived -- the home's main layout shift (CLS).
 export default function RouteLoading() {
   return (
-    <main className="min-h-[70vh] bg-bg flex items-center justify-center px-5">
+    <main className="min-h-screen bg-bg flex items-center justify-center px-5">
       <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-text-3">
         Reading telemetry
         <span className="rl-cursor" aria-hidden="true">

@@ -36,11 +36,6 @@ function teamColor(ref: string): string {
 
 // ─── Flag gradient (nationality → 3-stripe) ───────────────────────
 
-function cleanLapTime(t: string | null | undefined): string | null {
-  if (!t || t === '\\N' || t.trim() === '') return null;
-  return t;
-}
-
 // trailingSlash: true -- a URL without the final slash 308s, so canonical/hreflang/JSON-LD carry it.
 function localeUrl(locale: string, path: string): string {
   const p = path.endsWith('/') ? path : `${path}/`;
@@ -204,13 +199,12 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
     podiumResultsRes,
     fastestLapsCountRes,
     allConstructorStatsRes,
-    fastestLapEverRes,
     dnfCountRes,
     totalResultsCountRes,
   ] = await Promise.all([
       supabase
         .from('constructor_stats')
-        .select('races, wins, first_year, last_year, fastest_pit_stop_ms, fastest_pit_stop_race_id')
+        .select('races, wins, first_year, last_year, pole_positions')
         .eq('constructor_id', constructor.id)
         .single(),
       // race_id < 908: 2009 back to 1950 (≤ 838 rows for Ferrari, ≤ 709 for McLaren)
@@ -232,35 +226,30 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
         .eq('constructor_id', constructor.id)
         .lte('position', 3)
         .not('position', 'is', null),
-      // Count query — returns no rows, bypasses the row cap
+      // Count query — returns no rows, bypasses the row cap. Fastest lap of the race only
+      // (rank 1, as constructor_stats counts it): fastest_lap is every driver's own best lap.
       supabase
         .from('results')
         .select('id', { count: 'exact', head: true })
         .eq('constructor_id', constructor.id)
-        .not('fastest_lap', 'is', null),
+        .eq('rank', 1),
       // Whole table, one row per constructor — small, no cap risk. Used to pick a rival.
       supabase
         .from('constructor_stats')
         .select('constructor_id, races, wins, first_year, last_year'),
-      // Fastest-lap-of-the-race rows are ≤1/race — well under the cap even for Ferrari.
-      supabase
-        .from('results')
-        .select('race_id, driver_id, fastest_lap_time')
-        .eq('constructor_id', constructor.id)
-        .eq('rank', 1)
-        .not('fastest_lap_time', 'is', null)
-        .order('fastest_lap_time', { ascending: true })
-        .limit(1),
-      // Count-only queries — bypass the row cap, used for DNF rate.
+      // Count-only queries — bypass the row cap, used for DNF rate. Starts only: entries that
+      // failed to qualify (F), withdrew (W) or were excluded (E) never took the start.
       supabase
         .from('results')
         .select('id', { count: 'exact', head: true })
         .eq('constructor_id', constructor.id)
-        .is('position', null),
+        .is('position', null)
+        .not('position_text', 'in', '(F,W,E)'),
       supabase
         .from('results')
         .select('id', { count: 'exact', head: true })
-        .eq('constructor_id', constructor.id),
+        .eq('constructor_id', constructor.id)
+        .not('position_text', 'in', '(F,W,E)'),
   ]);
 
   const stats = statsRes.data;
@@ -271,19 +260,11 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
   const allPodiumResults = podiumResultsRes.data ?? [];
   const totalFastestLaps = fastestLapsCountRes.count ?? 0;
 
-  const fastestLapEver = fastestLapEverRes.data?.[0] ?? null;
-  const fastestLapDriverId = fastestLapEver ? (fastestLapEver.driver_id as number) : undefined;
-
   const totalResultsCount = totalResultsCountRes.count ?? 0;
   const dnfCount = dnfCountRes.count ?? 0;
   const dnfRate = totalResultsCount > 0 ? ((dnfCount / totalResultsCount) * 100).toFixed(1) : '0.0';
 
-  const allDriverIds = [
-    ...new Set([
-      ...allPodiumResults.map((r) => r.driver_id as number),
-      ...(fastestLapDriverId !== undefined ? [fastestLapDriverId] : []),
-    ]),
-  ];
+  const allDriverIds = [...new Set(allPodiumResults.map((r) => r.driver_id as number))];
 
   const rivalId = stats
     ? computeRivalId(
@@ -338,16 +319,14 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
     );
   }
 
-  // Batch 3 — race metadata + driver names + qualifying (parallel)
+  // Batch 3 — race metadata + driver names (parallel)
   //
   // Races: fetch ALL races in two era splits (no IN clause) to avoid the 1000-row cap.
   // race_id < 908 covers 1-907 (≤ 907 rows); race_id >= 908 covers 2014-onward (≤ 270 rows).
-  // Qualifying: filter to position = 1 only — reduces ~10k rows to ~hundreds.
   const [
     racesLegacyRes,
     racesModernRes,
     driversRes,
-    qualiRes,
     circuitsRes,
     rivalConstructorRes,
     rivalStandingsLegacyRes,
@@ -365,16 +344,6 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
       .from('drivers')
       .select('id, forename, surname, driver_ref')
       .in('id', allDriverIds),
-    allDriverIds.length
-      ? supabase
-          .from('qualifying')
-          .select('race_id, driver_id')
-          .in('driver_id', allDriverIds)
-          .eq('position', 1)
-      : Promise.resolve({
-          data: [] as { race_id: unknown; driver_id: unknown }[],
-          error: null,
-        }),
     // Whole table — ~77 circuits, small, no cap risk.
     supabase.from('circuits').select('id, name, circuit_ref, country'),
     rivalId !== null
@@ -458,34 +427,6 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
       },
     ])
   );
-
-  // ─── Pit Wall ───────────────────────────────────────────────────────────
-
-  const fastestPitMs = (stats.fastest_pit_stop_ms as number | null) ?? null;
-  const fastestPitRaceId = (stats.fastest_pit_stop_race_id as number | null) ?? null;
-  const fastestPitYear = fastestPitRaceId ? raceById.get(fastestPitRaceId)?.year ?? null : null;
-  const fastestPitSeconds = fastestPitMs != null ? (fastestPitMs / 1000).toFixed(2) : null;
-
-  const fastestLapTimeEver = fastestLapEver
-    ? cleanLapTime(fastestLapEver.fastest_lap_time as string | null)
-    : null;
-  const fastestLapYearEver = fastestLapEver
-    ? raceById.get(fastestLapEver.race_id as number)?.year ?? null
-    : null;
-  const fastestLapDriverName = fastestLapDriverId
-    ? (() => {
-        const d = driverById.get(fastestLapDriverId);
-        return d ? `${d.forename} ${d.surname}` : null;
-      })()
-    : null;
-
-  // Poles: cross-reference qualifying P1s against races where the driver drove for this constructor.
-  // Source is podium results (not all results), so drivers who had poles but never a podium are
-  // missed — an accepted trade-off given the row-cap constraint.
-  const constructorDriverRaceSet = new Set<string>();
-  for (const r of allPodiumResults) {
-    constructorDriverRaceSet.add(`${r.race_id as number}_${r.driver_id as number}`);
-  }
 
   // Find last race per year from constructor_standings (one row per race participated in)
   const lastRacePerYear = new Map<number, number>(); // year → race_id
@@ -596,13 +537,8 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
     driverStatsMap.set(driverId, dEntry);
   }
 
-  // Pole count — qualifying P1s already filtered server-side; cross-reference with constructor races
-  let poleCount = 0;
-  for (const q of (qualiRes.data ?? [])) {
-    if (constructorDriverRaceSet.has(`${q.race_id as number}_${q.driver_id as number}`)) {
-      poleCount++;
-    }
-  }
+  // Pole count: official pole sitters (results.pole), counted by constructor_stats.
+  const poleCount = (stats.pole_positions as number | null) ?? 0;
 
   const winPct =
     (stats.races as number) > 0
@@ -801,7 +737,7 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
 
       {/* ── 01 · Stat band ───────────────────────────────────────── */}
       <div className="border-b border-border" style={{ background: 'var(--navy)' }}>
-        <div className="grid grid-cols-3 md:grid-cols-5">
+        <div className="grid grid-cols-3 md:grid-cols-6">
           {[
             {
               label: t('stats.championships'),
@@ -813,6 +749,7 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
             { label: t('stats.fastestLaps'), value: String(totalFastestLaps),    sub: null, red: false },
             { label: t('stats.poles'),       value: String(poleCount),           sub: null, red: false },
             { label: t('stats.winPct'),      value: `${winPct}%`,                sub: null, red: parseFloat(winPct) > 20 },
+            { label: t('stats.dnfRate'),     value: `${dnfRate}%`,               sub: null, red: false },
           ].map(({ label, value, sub, red }, i) => (
             <div
               key={label}
@@ -905,67 +842,14 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
         </section>
       )}
 
-      {/* ── 03 · Pit Wall ─────────────────────────────────────────── */}
-      <section className="border-b border-border">
-        <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
-          <span className="font-mono text-xs text-text-2 leading-none">03 ·</span>
-          <h2 className="text-[13px] font-medium text-text-2">{t('pitWall.title')}</h2>
-        </div>
-        <div style={{ background: 'var(--navy)' }}>
-          <div className="grid grid-cols-1 md:grid-cols-3">
-            {[
-              {
-                label: t('pitWall.fastestPit'),
-                value: fastestPitSeconds ? `${fastestPitSeconds}s` : '—',
-                sub: fastestPitYear ? String(fastestPitYear) : null,
-                red: true,
-              },
-              {
-                label: t('pitWall.fastestLap'),
-                value: fastestLapTimeEver ?? '—',
-                sub: [fastestLapDriverName, fastestLapYearEver].filter(Boolean).join(' · ') || null,
-                red: true,
-              },
-              {
-                label: t('pitWall.dnfRate'),
-                value: `${dnfRate}%`,
-                sub: null,
-                red: false,
-              },
-            ].map(({ label, value, sub, red }, i) => (
-              <div
-                key={label}
-                className="flex flex-col items-center justify-center py-6 px-3 text-center"
-                style={{ borderLeft: i > 0 ? '1px solid var(--border-on-accent)' : undefined, borderTop: '1px solid var(--border-on-accent)' }}
-              >
-                <p className="font-mono text-[10px] uppercase tracking-[0.1em] mb-2" style={{ color: 'var(--text-2-on-accent)' }}>
-                  {label}
-                </p>
-                <p
-                  className="font-sans font-black tabular-nums leading-none"
-                  style={{ fontSize: '2rem', color: red ? 'var(--terracotta)' : 'var(--bg)' }}
-                >
-                  {value}
-                </p>
-                {sub && (
-                  <p className="font-mono text-[10px] mt-1.5 leading-relaxed" style={{ color: 'var(--text-2-on-accent)' }}>
-                    {sub}
-                  </p>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ── Two-column grid: Seasons | Circuit Domination ─────── */}
       <div className="grid grid-cols-1 md:grid-cols-2 border-b border-border" style={{ borderTop: '1px solid var(--border-subtle)' }}>
 
-        {/* LEFT: 04 · Season by Season */}
+        {/* LEFT: 03 · Season by Season */}
         {seasonRows.length > 0 && (
           <section style={{ borderRight: '1px solid var(--border-subtle)' }}>
             <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
-              <span className="font-mono text-xs text-text-2 leading-none">04 ·</span>
+              <span className="font-mono text-xs text-text-2 leading-none">03 ·</span>
               <h2 className="text-[13px] font-medium text-text-2">{t('seasons.title')}</h2>
               <span className="font-mono text-[11px] text-text-3 ml-1 tabular-nums">{seasonRows.length}</span>
             </div>
@@ -1007,10 +891,10 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
           </section>
         )}
 
-        {/* RIGHT: 05 · Circuit Domination */}
+        {/* RIGHT: 04 · Circuit Domination */}
         <section>
           <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
-            <span className="font-mono text-xs text-text-2 leading-none">05 ·</span>
+            <span className="font-mono text-xs text-text-2 leading-none">04 ·</span>
             <h2 className="text-[13px] font-medium text-text-2">{t('circuitDomination.title')}</h2>
             <span className="font-mono text-[11px] text-text-3 ml-1 tabular-nums">{circuitDomRows.length}</span>
           </div>
@@ -1053,11 +937,11 @@ export default async function ConstructorDetailPage({ params }: { params: PagePa
 
       </div>
 
-      {/* ── 06 · Drivers ─────────────────────────────────────────── */}
+      {/* ── 05 · Drivers ─────────────────────────────────────────── */}
       {driverRows.length > 0 && (
         <section className="border-b border-border">
           <div className="px-6 py-3 border-b border-border flex items-baseline gap-2">
-            <span className="font-mono text-xs text-text-2 leading-none">06 ·</span>
+            <span className="font-mono text-xs text-text-2 leading-none">05 ·</span>
             <h2 className="text-[13px] font-medium text-text-2">{t('drivers.title')}</h2>
             <span className="font-mono text-[11px] text-text-3 ml-1 tabular-nums">{driverRows.length}</span>
           </div>

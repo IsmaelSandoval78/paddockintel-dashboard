@@ -152,3 +152,58 @@ export function PoleHistoryCard({
     </section>
   );
 }
+
+// A practice session's long runs, one column per tyre compound: averages are only comparable
+// within a compound, so the card never ranks across them.
+export function LongRunsCard({
+  label,
+  title,
+  columns,
+  note,
+  source,
+  className = '',
+}: {
+  label: string;
+  title: string;
+  columns: Array<{
+    key: string;
+    heading: string;
+    rows: Array<{ key: string; driver: string; teamColour: string; laps: string; mean: string; deg: string }>;
+  }>;
+  note: string;
+  source: string;
+  className?: string;
+}) {
+  return (
+    <section className={`dusk-card flex flex-col p-5 sm:p-6 ${className}`} aria-labelledby="dusk-longruns-title">
+      <p className="dusk-label m-0">{label}</p>
+      <h2 id="dusk-longruns-title" className="mt-1 mb-3.5 text-[19px] font-semibold tracking-[-0.01em]">{title}</h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
+        {columns.map((c) => (
+          <table key={c.key} className="w-full self-start border-collapse tabular-nums text-left">
+            <caption className="dusk-label !text-[10px] text-left pb-1.5">{c.heading}</caption>
+            <tbody>
+              {c.rows.map((r) => (
+                <tr key={r.key} className="border-t border-[color:var(--dusk-line)]">
+                  <th scope="row" className="py-2 font-semibold text-left">
+                    <span className="inline-flex items-center gap-2">
+                      <i className="block w-[3px] h-[14px] rounded-full" style={{ background: r.teamColour }} aria-hidden="true" />
+                      {r.driver}
+                    </span>
+                    <span className="block dusk-mono text-[10.5px] font-normal text-[color:var(--dusk-muted)]">{r.laps}</span>
+                  </th>
+                  <td className="py-2 pl-3 text-right align-top">
+                    <span className="block dusk-mono text-[13px]">{r.mean}</span>
+                    <span className="block dusk-mono text-[10.5px] text-[color:var(--dusk-muted)]">{r.deg}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ))}
+      </div>
+      <p className="mt-3.5 text-[14px] text-[color:var(--dusk-ink-2)]">{note}</p>
+      <p className="dusk-mono mt-auto pt-3 text-[10.5px] tracking-[0.03em] text-[color:var(--dusk-muted)] m-0">{source}</p>
+    </section>
+  );
+}

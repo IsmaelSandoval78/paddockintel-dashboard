@@ -1,9 +1,13 @@
 import { ImageResponse } from 'next/og';
+import { getFormatter, getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
+import { routing } from '@/lib/i18n/routing';
+import { ScoreCard, loadCardFonts } from '@/lib/cardImage';
 
-// Per-article hero-number card, auto-generated from the article's own real
-// `stats` (EDITORIAL.md already requires these on every article) -- no
-// per-article manual image work, no stock photography.
+// Per-article image, auto-generated from the article's own real `stats` (EDITORIAL.md already
+// requires these on every article) -- no per-article manual image work, no stock photography.
+// The same scorecard as the Feed items (lib/cardImage.tsx): Wordmark masthead, the title in
+// Archivo Black, up to three stats in JetBrains Mono, Warm Studio.
 //
 // This is a plain Route Handler, not the app/[locale]/(blog)/[slug]/
 // opengraph-image.tsx file convention -- that convention appends an
@@ -12,149 +16,67 @@ import { createClient } from '@/lib/supabase/server';
 // /[locale]/[slug]/opengraph-image-1o9wtw, not .../opengraph-image), which
 // breaks a JSON-LD `image` field that has to be a fixed, known URL. A route
 // handler's URL is exactly what we write here -- no surprises.
+//
+// Sizes: 1200x630 by default, the link-unfurl ratio Twitter/Facebook expect for og:image; and
+// ?ratio=16x9, 4x3 or 1x1, the ratios Google lists for an article image, all 1200 wide.
+// ?square=1 stays as an alias of 1x1 for any old link to it.
 
-export const size = { width: 1200, height: 630 };
-// Same card, taller canvas -- for the magazine-home Featured square, which
-// wraps this in an aspect-square box. Reusing the 1200x630 size there
-// center-crops the sides off (confirmed against production: it cut the "1"
-// off "101" and the "4" off "54"), because the layout spreads to the full
-// landscape width. The OG/social-share size above must stay 1200x630 -- that
-// ratio is what Twitter/Facebook/schema.org expect for a link unfurl.
-const squareSize = { width: 1200, height: 1200 };
+const RATIOS = { og: 630, '16x9': 675, '4x3': 900, '1x1': 1200 } as const;
+type Ratio = keyof typeof RATIOS;
 
 type Stat = { value: string; label: string; unit?: string };
 
-const KRAFT = '#EDE3D0';
-const TERRACOTTA = '#C1502E';
-const INK = '#2B2620';
-const MUTED = '#6B5F4E';
-const GHOST = '#A69A82';
-
-function BrandCard() {
-  return (
-    <div
-      style={{
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: KRAFT,
-        fontFamily: 'sans-serif',
-      }}
-    >
-      <div style={{ display: 'flex', fontWeight: 900, fontSize: 180, letterSpacing: '-0.04em' }}>
-        <span style={{ color: TERRACOTTA }}>P</span>
-        <span style={{ color: INK }}>I</span>
-      </div>
-      <div style={{ display: 'flex', marginTop: 24, fontWeight: 700, fontSize: 44, letterSpacing: '0.08em', color: INK }}>
-        PADDOCKINTEL.COM
-      </div>
-    </div>
-  );
+function siteLabel(locale: string): string {
+  return `paddockintel.com${locale === 'en' ? '' : `/${locale}`}`;
 }
 
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ locale: string; slug: string }> }
-) {
+export async function GET(request: Request, { params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = await params;
-  const isSquare = new URL(request.url).searchParams.get('square') === '1';
-  const activeSize = isSquare ? squareSize : size;
-  const supabase = createClient();
-  const { data } = await supabase
+  const url = new URL(request.url);
+  const ratioParam = url.searchParams.get('square') === '1' ? '1x1' : url.searchParams.get('ratio') ?? 'og';
+  if (!(routing.locales as readonly string[]).includes(locale) || !(ratioParam in RATIOS)) {
+    return new Response('Not found', { status: 404 });
+  }
+  const height = RATIOS[ratioParam as Ratio];
+
+  const { data: article } = await createClient()
     .from('articles')
-    .select('stats')
+    .select('title, stats, sources, published_at')
     .eq('locale', locale)
     .eq('slug', slug)
     .eq('status', 'published')
     .single();
+  if (!article) return new Response('Not found', { status: 404 });
 
-  const stats = (data?.stats as Stat[] | null) ?? [];
-  const hero = stats[0];
-  const second = stats[1];
+  const stats = ((article.stats as Stat[] | null) ?? []).slice(0, 3);
+  const sourceCount = Array.isArray(article.sources) ? article.sources.length : 0;
 
-  if (!hero) {
-    return new ImageResponse(<BrandCard />, { ...activeSize });
-  }
-
-  // Two stats side by side is the default whenever the article has both —
-  // one number reads as an isolated fact, two next to each other read as
-  // the actual comparison the article is making (chosen over the older
-  // single-number layout after reviewing both against a real article).
-  if (second) {
-    return new ImageResponse(
-      (
-        <div
-          style={{
-            width: '100%',
-            height: '100%',
-            position: 'relative',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: KRAFT,
-            fontFamily: 'sans-serif',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 100, padding: '0 80px' }}>
-            {[hero, second].map((s, i) => (
-              <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', maxWidth: 460 }}>
-                <div style={{ display: 'flex', fontWeight: 900, fontSize: 150, letterSpacing: '-0.03em', color: TERRACOTTA, lineHeight: 1 }}>
-                  {s.value}
-                </div>
-                <div style={{ display: 'flex', width: 140, borderTop: `2px solid ${INK}`, marginTop: 20, marginBottom: 20 }} />
-                <div style={{ display: 'flex', fontWeight: 700, fontSize: 22, color: INK, textAlign: 'center' }}>
-                  {s.label}
-                </div>
-              </div>
-            ))}
-          </div>
-          <div style={{ display: 'flex', position: 'absolute', bottom: 40, right: 48, fontWeight: 700, fontSize: 22, letterSpacing: '0.14em', color: GHOST }}>
-            PADDOCKINTEL.COM
-          </div>
-        </div>
-      ),
-      { ...activeSize }
-    );
-  }
+  const [t, format, fonts] = await Promise.all([
+    getTranslations({ locale, namespace: 'articleDusk' }),
+    getFormatter({ locale }),
+    loadCardFonts(url.origin),
+  ]);
+  const date = article.published_at
+    ? format.dateTime(new Date(article.published_at as string), { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
+    : '';
 
   return new ImageResponse(
     (
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          position: 'relative',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: KRAFT,
-          fontFamily: 'sans-serif',
-          padding: '0 100px',
-          textAlign: 'center',
-        }}
-      >
-        <div style={{ display: 'flex', fontWeight: 900, fontSize: 240, letterSpacing: '-0.03em', color: TERRACOTTA, lineHeight: 1 }}>
-          {hero.value}
-        </div>
-        <div style={{ display: 'flex', width: 220, borderTop: `2px solid ${INK}`, marginTop: 32, marginBottom: 32 }} />
-        <div style={{ display: 'flex', fontWeight: 700, fontSize: 32, letterSpacing: '0.03em', color: INK }}>
-          {hero.label}
-        </div>
-        {hero.unit ? (
-          <div style={{ display: 'flex', marginTop: 12, fontSize: 22, letterSpacing: '0.02em', color: MUTED }}>
-            {hero.unit}
-          </div>
-        ) : null}
-        <div style={{ display: 'flex', position: 'absolute', bottom: 40, right: 48, fontWeight: 700, fontSize: 22, letterSpacing: '0.14em', color: GHOST }}>
-          PADDOCKINTEL.COM
-        </div>
-      </div>
+      <ScoreCard
+        height={height}
+        kicker={date}
+        headline={article.title as string}
+        stats={stats}
+        footerLeft={sourceCount > 0 ? `${t('sourcesTitle')}: ${sourceCount}` : ''}
+        footerRight={siteLabel(locale)}
+      />
     ),
-    { ...activeSize }
+    {
+      width: 1200,
+      height,
+      fonts,
+      // An updated article can change its stats: a day at the edge instead of next/og's one-year default.
+      headers: { 'Cache-Control': 'public, max-age=3600, s-maxage=86400' },
+    },
   );
 }

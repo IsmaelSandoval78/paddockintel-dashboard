@@ -19,7 +19,9 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
       allow: ['/', '/api/og/'],
       disallow: ['/api/'],
     },
-    // The image sitemap only lists magazine pages (data cards), so the Hub doesn't advertise it.
-    sitemap: MAGAZINE_HOSTS.has(host) ? [`${base}/sitemap.xml`, `${base}/sitemap-images.xml`] : `${base}/sitemap.xml`,
+    // The image and news sitemaps only list magazine pages, so the Hub doesn't advertise them.
+    sitemap: MAGAZINE_HOSTS.has(host)
+      ? [`${base}/sitemap.xml`, `${base}/sitemap-images.xml`, `${base}/sitemap-news.xml`]
+      : `${base}/sitemap.xml`,
   };
 }

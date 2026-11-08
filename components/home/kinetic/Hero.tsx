@@ -7,6 +7,7 @@ import { gsap } from 'gsap';
 import { SplitText } from 'gsap/SplitText';
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 import { teamColor } from './teamColors';
+import { fitToWidth, observeFit } from './fitText';
 import type { HomeDriverRow, HomeChampionshipGapData } from '@/lib/types';
 
 gsap.registerPlugin(SplitText, ScrambleTextPlugin);
@@ -44,6 +45,17 @@ export default function Hero({
   const color = teamColor(leader.constructor_ref);
   const metaText = `F1 INTELLIGENCE · ${year} CHAMPIONSHIP · RD.${String(round).padStart(2, '0')}`;
   const leaderNumber = leader.number ?? leader.position;
+
+  // Surname never wraps or clips: shrink it to its column (long names on phones)
+  useEffect(() => {
+    let cleanup: (() => void) | undefined;
+    document.fonts.ready.then(() => {
+      if (!surnameRef.current) return;
+      fitToWidth(surnameRef.current);
+      cleanup = observeFit(surnameRef.current);
+    });
+    return () => cleanup?.();
+  }, [leader.surname]);
 
   useEffect(() => {
     if (!motionOk) return;
@@ -221,10 +233,9 @@ export default function Hero({
               <div className="kinetic-mask -my-[0.06em] py-[0.06em] min-w-0">
                 <h1
                   ref={surnameRef}
-                  className="uppercase leading-[0.85] whitespace-nowrap will-change-transform"
+                  className="uppercase leading-[0.85] whitespace-nowrap will-change-transform text-[clamp(40px,8vw,130px)]"
                   style={{
                     fontFamily:    'var(--pi-display)',
-                    fontSize:      'clamp(40px, 8vw, 130px)',
                     letterSpacing: '-0.04em',
                     color:         'var(--text-1)',
                     opacity:       motionOk ? 0 : 1,

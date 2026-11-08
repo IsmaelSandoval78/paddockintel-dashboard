@@ -33,6 +33,28 @@ type Outcome = { points: number; won: boolean };
 // P1..P10 and "no points" (P11 or lower, or not classified).
 const OUTCOMES: Outcome[] = [...GP_POINTS.map((points, i) => ({ points, won: i === 0 })), { points: 0, won: false }];
 
+// After this race, given the leader's result `l` and this rival's `r`: is the rival beaten for good?
+function beaten(leader: StandingRow, rival: StandingRow, l: Outcome, r: Outcome, pointsAfter: number, racesAfter: number) {
+  const after = leader.points - rival.points + l.points - r.points;
+  const leaderWins = leader.wins + (l.won ? 1 : 0);
+  const rivalWins = rival.wins + (r.won ? 1 : 0) + racesAfter;
+  return after > pointsAfter || (after === pointsAfter && leaderWins > rivalWins);
+}
+
+// Fewest points the leader must score at this race to be champion whatever every rival does,
+// or null when not even a win is enough. Same rule and caveats as titleStakes below.
+export function clinchPoints(standings: StandingRow[], pointsAfter: number, racesAfter: number): number | null {
+  const [leader, ...others] = [...standings].sort((a, b) => b.points - a.points || b.wins - a.wins);
+  if (!leader) return null;
+  const byPoints = [...OUTCOMES].sort((a, b) => a.points - b.points);
+  const enough = byPoints.find((l) =>
+    others.every((rival) =>
+      OUTCOMES.filter((r) => r.points === 0 || r.points !== l.points).every((r) => beaten(leader, rival, l, r, pointsAfter, racesAfter)),
+    ),
+  );
+  return enough ? enough.points : null;
+}
+
 export function titleStakes(standings: StandingRow[], pointsAfter: number, racesAfter: number): TitleStakes | null {
   const sorted = [...standings].sort((a, b) => b.points - a.points || b.wins - a.wins);
   const [leader, ...others] = sorted;
@@ -41,12 +63,7 @@ export function titleStakes(standings: StandingRow[], pointsAfter: number, races
   const rivals: TitleStakes['rivals'] = [];
   for (const rival of others) {
     const gap = leader.points - rival.points;
-    const clinched = (l: Outcome, r: Outcome) => {
-      const after = gap + l.points - r.points;
-      const leaderWins = leader.wins + (l.won ? 1 : 0);
-      const rivalWins = rival.wins + (r.won ? 1 : 0) + racesAfter;
-      return after > pointsAfter || (after === pointsAfter && leaderWins > rivalWins);
-    };
+    const clinched = (l: Outcome, r: Outcome) => beaten(leader, rival, l, r, pointsAfter, racesAfter);
     const combos = OUTCOMES.flatMap((l) =>
       OUTCOMES.filter((r) => r.points === 0 || r.points !== l.points).map((r) => ({ swing: l.points - r.points, ok: clinched(l, r) })),
     );

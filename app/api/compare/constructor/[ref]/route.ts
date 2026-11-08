@@ -49,7 +49,8 @@ export async function GET(
         .from('results')
         .select('id', { count: 'exact', head: true })
         .eq('constructor_id', constructorId)
-        .not('fastest_lap', 'is', null),
+        // Fastest lap of the race (rank 1); fastest_lap is every driver's own best lap.
+        .eq('rank', 1),
     ]);
 
   if (!statsRes.data) return NextResponse.json(null, { status: 404 });

@@ -64,6 +64,7 @@ export function RecordCard({
                 </span>
                 <span className="font-sans text-[13px] font-medium text-text-1 uppercase self-center truncate">
                   {e.name}
+                  {e.era && <span className="font-mono text-[10px] text-text-3 tracking-[0.1em]"> · {e.era}</span>}
                 </span>
                 <span className="font-mono text-[13px] text-text-1 tabular-nums ml-auto self-center">
                   {e.valueDisplay}

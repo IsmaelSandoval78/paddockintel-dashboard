@@ -11,6 +11,9 @@ export const metadata: Metadata = {
   openGraph: { images: DEFAULT_OG_IMAGES },
   twitter: { card: 'summary_large_image', images: ['/og-image.png'] },
   icons: { icon: [{ url: '/icon.png', type: 'image/png', sizes: '32x32' }] },
+  // Lets Google show large images in Discover and Top Stories. A page that sets its own robots
+  // (noindex) replaces this whole object, which is fine: it isn't shown there anyway.
+  robots: { index: true, follow: true, 'max-image-preview': 'large' },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }): ReactNode {

@@ -119,6 +119,8 @@ export default async function RecordsPage({ params }: { params: PageParams }) {
             rank: e.rank,
             name: e.name,
             valueDisplay: formatRecordValue(slug, e.value, locale),
+            // A streak is one run, so the same driver can hold several rows — the year tells them apart
+            era: slug === 'longest-win-streak' ? e.era : null,
           }));
           return (
             <RecordCard
@@ -161,6 +163,7 @@ export default async function RecordsPage({ params }: { params: PageParams }) {
             rank: e.rank,
             name: e.name,
             valueDisplay: formatConstructorRecordValue(slug, e.value, locale),
+            era: slug === 'constructors-longest-win-streak' ? e.era : null,
           }));
           return (
             <RecordCard
@@ -268,6 +271,7 @@ export default async function RecordsPage({ params }: { params: PageParams }) {
             rank: e.rank,
             name: e.name,
             valueDisplay: formatRecordValue('most-wins', e.value, locale),
+            era: e.era,
           }))}
         />
       </div>
