@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import { useMiBox } from '@/lib/useMiBox';
-import { useAuthUser, useInitialFollows } from '@/lib/auth/AuthContext';
+import { useAuthLoaded, useAuthUser, useInitialFollows } from '@/lib/auth/AuthContext';
 import { toggleFollowed, type MiBoxState } from '@/lib/miBox';
 import { toggleFollow, type FollowKind } from './actions';
 
@@ -13,14 +13,16 @@ import { toggleFollow, type FollowKind } from './actions';
 // Signed out: delegates entirely to useMiBox() (the pi_box cookie).
 // Signed in: drivers/constructors come from the account (driver_follows/
 // constructor_follows via Server Actions in lib/follows/actions.ts), seeded
-// from the server-rendered initialFollows (lib/auth/AuthContext.tsx) so
-// there's no loading flash. `number` (the personal car-number flourish)
+// from initialFollows once AuthContext has fetched them (/api/auth/me);
+// `ready` stays false until then, so no consumer shows the cookie's follows
+// to a signed-in reader in the meantime. `number` (the personal car-number flourish)
 // always comes from the cookie regardless of login state — it was never
 // part of what the privacy policy discloses storing on an account (see
 // docs/advisors/EEAT-EXPERT.md), so it's guest-only by design, not a gap.
 export function useFollows() {
   const user = useAuthUser();
   const initialFollows = useInitialFollows();
+  const authLoaded = useAuthLoaded();
   const miBox = useMiBox();
 
   const [dbState, setDbState] = useState<MiBoxState>({
@@ -28,6 +30,15 @@ export function useFollows() {
     drivers: initialFollows.drivers,
     constructors: initialFollows.constructors,
   });
+
+  // The follows arrive after the first render (AuthContext fetches them in the
+  // browser), so take them over when they do (React's "adjust state when a
+  // prop changes" pattern, during render rather than in an effect).
+  const [seededFrom, setSeededFrom] = useState(initialFollows);
+  if (seededFrom !== initialFollows) {
+    setSeededFrom(initialFollows);
+    setDbState((prev) => ({ ...prev, drivers: initialFollows.drivers, constructors: initialFollows.constructors }));
+  }
 
   const signedIn = user !== null;
   const state: MiBoxState = useMemo(
@@ -38,7 +49,7 @@ export function useFollows() {
     }),
     [signedIn, dbState, miBox.state],
   );
-  const ready = signedIn ? true : miBox.ready;
+  const ready = !authLoaded ? false : signedIn ? true : miBox.ready;
 
   const isFollowed = useCallback(
     (kind: FollowKind, ref: string) => state[kind === 'driver' ? 'drivers' : 'constructors'].includes(ref),

@@ -1,14 +1,6 @@
-import { headers } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
 import { getLatestStandingsRaceId } from '@/lib/latestRace';
-import { Link } from '@/lib/i18n/navigation';
-import { isMagazineHost } from '@/lib/siteMode';
-import NavLinks from './NavLinks';
-import SearchBar from './SearchBar';
-import LocaleSwitcher from './LocaleSwitcher';
-import MobileNav from './MobileNav';
-import MiBoxIndicator from './MiBoxIndicator';
-import AuthWidget, { type AuthUser } from './AuthWidget';
+import NavbarShell from './NavbarShell';
 
 async function getCurrentRound(): Promise<{ round: number; year: number } | null> {
   try {
@@ -26,40 +18,9 @@ async function getCurrentRound(): Promise<{ round: number; year: number } | null
   }
 }
 
-export default async function Navbar({ authUser }: { authUser: AuthUser | null }) {
-  const host = (await headers()).get('host') ?? '';
-  const isMagazine = isMagazineHost(host);
-  const current = isMagazine ? null : await getCurrentRound();
-
-  return (
-    <nav className="bg-surface sticky top-0 z-50 shrink-0" style={{ boxShadow: 'var(--shadow-card)' }}>
-      {/* Desktop — hidden below lg breakpoint (md/768 doesn't have room for brand + links + Vol/Rd + locale switcher) */}
-      <div className="h-12 px-5 gap-8 hidden lg:flex items-center">
-        <Link href="/" className="shrink-0 flex items-center">
-          <span className="font-sans font-bold text-sm tracking-wider text-text-1">PADDOCK</span>
-          <span className="font-sans font-bold text-sm text-accent">·</span>
-          <span className="font-sans font-bold text-sm tracking-wider text-text-1">INTEL</span>
-        </Link>
-
-        <NavLinks isMagazine={isMagazine} />
-
-        <div className="flex items-center gap-5 shrink-0">
-          {isMagazine && <SearchBar />}
-          {!isMagazine && (
-            <>
-              <span className="font-mono text-xs text-text-3 tracking-[0.04em]">
-                Vol.01 · Rd.{current ? String(current.round).padStart(2, '0') : '—'} · {current?.year ?? '—'}
-              </span>
-              <MiBoxIndicator />
-            </>
-          )}
-          <LocaleSwitcher />
-          <AuthWidget user={authUser} />
-        </div>
-      </div>
-
-      {/* Mobile — hidden above md breakpoint */}
-      <MobileNav isMagazine={isMagazine} authUser={authUser} />
-    </nav>
-  );
+// Server half of the navbar: only the current round (cacheable, no request data). The rest,
+// including which chrome to show and the signed-in state, is NavbarShell (client).
+export default async function Navbar() {
+  const current = await getCurrentRound();
+  return <NavbarShell current={current} />;
 }

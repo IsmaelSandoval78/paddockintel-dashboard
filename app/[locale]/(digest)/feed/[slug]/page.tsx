@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { getTranslations, getFormatter } from 'next-intl/server';
+import { getTranslations, getFormatter, setRequestLocale } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
 import ShareButton from '@/components/ui/ShareButton';
@@ -20,7 +20,16 @@ import { SITE_URL } from '@/lib/site-url';
 import { duskSans } from '../../../(blog)/dusk-font';
 import '../../../(blog)/dusk.css';
 
-export const revalidate = 3600;
+// Served from the ISR cache and re-rendered at most every five minutes, so an ingested
+// correction is live within that window (decided 2026-11-09, mobile LCP).
+export const revalidate = 300;
+
+// No paths at build time: each one renders on its first request and is then served from the
+// ISR cache (Next: an empty generateStaticParams opts a dynamic route into on-demand ISR;
+// without it the route is rendered per request).
+export function generateStaticParams() {
+  return [];
+}
 
 type Faq = { q: string; a: string; q_es?: string | null; a_es?: string | null };
 
@@ -189,6 +198,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
 
 export default async function FeedItemPage({ params }: { params: PageParams }) {
   const { locale, slug } = await params;
+  setRequestLocale(locale);
   const item = await getItem(slug);
   if (!item) notFound();
 

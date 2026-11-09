@@ -1,23 +1,33 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from '@/lib/i18n/navigation';
 import { Link } from '@/lib/i18n/navigation';
+import { useAuthLoaded, useSubscribed } from '@/lib/auth/AuthContext';
 
 type Status = 'idle' | 'loading' | 'success' | 'error';
 
 // Free registration wall: reader gives an email (POST /api/subscribe, which
-// sets the pi_subscribed cookie on success), then router.refresh() re-runs
-// the article page's server component — it reads the now-present cookie and
-// renders past the cut this time. No client-side content to reveal/hide;
-// the gated markdown was never sent to the browser in the first place.
-export default function ArticlePaywallGate() {
+// sets the pi_subscribed cookie on success). On the cached article page
+// (membersPath set) the reader is then sent to the per-request twin at
+// /members/<slug>/, which reads that cookie and renders past the cut; a reader
+// who is already registered or signed in is sent there as soon as
+// AuthContext knows. On the twin itself, router.refresh() re-runs the page.
+// No client-side content to reveal/hide: the gated markdown is never sent to
+// a browser that hasn't passed the gate.
+export default function ArticlePaywallGate({ membersPath }: { membersPath?: string }) {
   const t = useTranslations('articlePaywall');
   const locale = useLocale();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<Status>('idle');
+  const authLoaded = useAuthLoaded();
+  const subscribed = useSubscribed();
+
+  useEffect(() => {
+    if (membersPath && authLoaded && subscribed) router.replace(membersPath);
+  }, [membersPath, authLoaded, subscribed, router]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -30,7 +40,8 @@ export default function ArticlePaywallGate() {
       });
       if (res.ok) {
         setStatus('success');
-        router.refresh();
+        if (membersPath) router.replace(membersPath);
+        else router.refresh();
       } else {
         setStatus('error');
       }
