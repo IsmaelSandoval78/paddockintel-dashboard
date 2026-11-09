@@ -1,11 +1,12 @@
 import { getTranslations } from 'next-intl/server';
+import { PREFERRED_SOURCE_URL } from '@/lib/seo';
 
 // Google's "preferred sources" deeplink (developers.google.com/search/docs/appearance/preferred-sources):
 // it opens Google's source preferences tool on our domain, where a reader can pick PaddockIntel so
 // our stories show up more often for them in Top Stories. The deeplink, not Google's JavaScript
 // button: that would load a third-party script (news.google.com/swg) on every page, against the
 // privacy policy's "no cross-site trackers" and the performance budget. Google allows a custom badge.
-export const PREFERRED_SOURCE_URL = 'https://www.google.com/preferences/source?q=paddockintel.com';
+export { PREFERRED_SOURCE_URL };
 
 export default async function PreferredSourceLink() {
   const t = await getTranslations('preferredSource');

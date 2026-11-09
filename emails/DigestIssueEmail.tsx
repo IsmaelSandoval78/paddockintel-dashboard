@@ -9,6 +9,7 @@ import {
   Link,
 } from '@react-email/components';
 import { SITE_URL } from '@/lib/site-url';
+import { PREFERRED_SOURCE_URL } from '@/lib/seo';
 
 export type DigestItem = {
   id: string;
@@ -97,6 +98,21 @@ export default function DigestIssueEmail({
               </Text>
             </Section>
           ))}
+
+          {/* Google preferred source: readers who pick PaddockIntel see our stories more often in
+              Top Stories. The newsletter is where the most loyal readers are. */}
+          <Section style={{ padding: '16px 24px', borderBottom: borderSubtle }}>
+            <Text style={{ margin: '0 0 8px', fontSize: '13px', color: muted, lineHeight: '1.55', fontFamily: sans }}>
+              Want more PaddockIntel in your Google results? Add us as a preferred source and our
+              stories will show up more often in Top Stories.
+            </Text>
+            <Link
+              href={PREFERRED_SOURCE_URL}
+              style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', color: ink, fontFamily: mono, textDecoration: 'underline' }}
+            >
+              Add on Google →
+            </Link>
+          </Section>
 
           {/* Footer */}
           <Section style={{ borderTop: border, padding: '16px 24px' }}>

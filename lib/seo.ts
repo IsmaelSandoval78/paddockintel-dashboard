@@ -11,6 +11,11 @@ export const PUBLISHER_LOGO = { '@type': 'ImageObject', url: `${SITE_URL}/api/pw
 export const ORGANIZATION_ID = `${SITE_URL}/#organization`;
 export const CONTACT_EMAIL = 'info@paddockintel.com';
 
+// Google's "preferred sources" deeplink (developers.google.com/search/docs/appearance/preferred-sources):
+// opens Google's source preferences tool on our domain. Used on articles, Feed items, the footer
+// (components/blog/PreferredSourceLink.tsx) and the weekly digest email.
+export const PREFERRED_SOURCE_URL = 'https://www.google.com/preferences/source?q=paddockintel.com';
+
 // WebSite + Organization for a home page (the magazine's, in each locale).
 export function siteJsonLd(homeUrl: string, locale: string): Record<string, unknown> {
   return {
