@@ -6,13 +6,15 @@ import { Link } from '@/lib/i18n/navigation';
 // resolved (e.g. a blog [slug] page's generateMetadata sets an "Article"
 // title before finding out the slug doesn't exist) — without this the browser
 // tab keeps that stale title even though the page itself renders this 404.
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('notFound');
-  return {
-    title: `${t('label')} — PaddockIntel`,
-    robots: { index: false, follow: true },
-  };
-}
+// Static and language-neutral on purpose: not-found metadata gets no params, so
+// a translated title had next-intl read the locale from the request headers,
+// and inside a cached (ISR) article or Feed route that turned every unknown
+// slug into a 500 instead of a 404 (2026-11-09). The page body below still
+// renders translated, in the locale the layout set.
+export const metadata: Metadata = {
+  title: '404 — PaddockIntel',
+  robots: { index: false, follow: true },
+};
 
 export default async function NotFound() {
   const t = await getTranslations('notFound');
