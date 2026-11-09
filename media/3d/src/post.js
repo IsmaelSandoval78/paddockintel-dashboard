@@ -54,7 +54,7 @@ const risoShader = {
     uTint: { value: 0 },
     uVignette: { value: 0.75 },
     uPaper: { value: new THREE.Color('#f3ecdd') },
-    uRed: { value: new THREE.Color('#bc171c') },
+    uRed: { value: new THREE.Color('#a08415') },
     // Safe zone: inside this uv rect (x0, y0, x1, y1) the scene washes back
     // to the bare page, so text laid over it never sits on the track.
     tBg: { value: null },

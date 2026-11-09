@@ -28,7 +28,7 @@ from datetime import datetime
 SRC = sys.argv[1]
 OUT = sys.argv[2] if len(sys.argv) > 2 else 'data/cars.json'
 HZ = 1  # samples per second in the output
-TELEMETRY = ['VER']  # drivers whose car telemetry is kept
+TELEMETRY = ['NOR', 'VER']  # drivers whose car telemetry is kept
 TEL_HZ = 4
 
 

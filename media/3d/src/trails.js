@@ -13,7 +13,7 @@ import {
 const TRAIL_LENGTH = 0.04
 
 /** The three drivers the story is about; everyone else is background. */
-export const HEROES = ['VER', 'ANT', 'HAM']
+export const HEROES = ['VER', 'NOR', 'ANT']
 
 /** Cars alternate sides of the ribbon by running position, like the grid. */
 const LANE = 0.38

@@ -6,8 +6,14 @@ import { sweepProfile } from './sweep.js'
 export const SCALE = 100
 /** The ribbon floats this high above the ground plane. */
 export const BASE_Y = 9
-/** Elevation in the data is tiny (0 - 0.0018); lift it so the relief reads. */
-const ELEV_AMP = 14
+/**
+ * Flat circuits (Mexico: 0 - 0.0018) need their relief lifted to read at all;
+ * genuinely hilly ones (Interlagos: 0 - 0.066) must stay at true scale or the
+ * ribbon turns into a roller coaster. Amplify toward ~7 world units of relief,
+ * never below true scale (1x) and never past the old flat-circuit boost (14x).
+ */
+const ELEV_MAX = Math.max(...race.track.map((p) => p[2]))
+const ELEV_AMP = THREE.MathUtils.clamp(7 / Math.max(0.001, ELEV_MAX * SCALE), 1, 14)
 /** Half-width of the racing surface, so the ribbon is ~2 units wide. */
 export const HALF_WIDTH = 1.0
 /** Where the start/finish line sits, part-way down the main straight. */
@@ -88,7 +94,7 @@ export function trackTangent(t, target = new THREE.Vector3()) {
   return curve.getTangentAt(u, target).normalize()
 }
 
-/** Glossy blue racing surface + red/white kerbs + start line + corner ticks. */
+/** Glossy racing surface + flag-coloured kerbs + start line + corner ticks. */
 export function createCircuit() {
   const group = new THREE.Group()
   group.name = 'circuit'
@@ -110,7 +116,7 @@ export function createCircuit() {
   )
 
   const ribbonMaterial = new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color(race.colors.VER),
+    color: new THREE.Color(race.colors.track ?? race.colors.VER),
     roughness: 0.42,
     metalness: 0,
     clearcoat: 0.85,
@@ -128,9 +134,9 @@ export function createCircuit() {
   // --- kerbs ----------------------------------------------------------------
   // Green / white / red, in the order of the Mexican flag.
   const kerbColors = [
-    new THREE.Color('#006847'),
-    new THREE.Color('#ffffff'),
-    new THREE.Color('#ce1126'),
+    new THREE.Color('#009C3B'),
+    new THREE.Color('#FFDF00'),
+    new THREE.Color('#002776'),
   ]
   // One colour change every ~1 unit of track, like real kerb blocks.
   const blockSize = 5

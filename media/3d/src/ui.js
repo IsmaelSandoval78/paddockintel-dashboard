@@ -11,7 +11,7 @@ import {
 } from './field.js'
 
 /** The three story drivers, in the order the tyre panel lists them. */
-const TYRE_DRIVERS = ['VER', 'ANT', 'HAM']
+const TYRE_DRIVERS = ['VER', 'NOR', 'ANT']
 const COMPOUND = {
   SOFT: { letter: 'S', name: 'soft' },
   MEDIUM: { letter: 'M', name: 'medium' },
@@ -77,7 +77,7 @@ function stewardHTML(e) {
 }
 
 /** Whose speedometer is shown. Needs telemetry (TELEMETRY in the extractor). */
-export const SPEEDO_DRIVER = 'VER'
+export const SPEEDO_DRIVER = 'NOR'
 /** Top speed the dial reads up to, in km/h. */
 const SPEED_MAX = 360
 /** The dial: a 240° arc, open at the bottom. */

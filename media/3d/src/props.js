@@ -75,16 +75,18 @@ export function createLapChart() {
   // labels clear the chapter title.
   group.position.z = 9
 
-  const LAST_LAP = 48
+  const LAST_LAP = 71
   const X_SPAN = 58
-  const Z_PER_POSITION = 6.4
+  // 21 position rows (Verstappen starts P21) instead of Mexico's 6, so each
+  // row is tighter to keep the whole chart inside the same top-down shot.
+  const Z_PER_POSITION = 2.1
   const HEIGHT = 24
 
   const lapToX = (lap) => -X_SPAN + ((lap - 1) / (LAST_LAP - 1)) * X_SPAN * 2
-  const positionToZ = (position) => (position - 3.5) * Z_PER_POSITION
+  const positionToZ = (position) => (position - 11) * Z_PER_POSITION
 
   const lines = []
-  for (const code of ['VER', 'ANT', 'HAM']) {
+  for (const code of ['VER', 'NOR', 'ANT']) {
     const laps = race.positions_by_lap[code].slice(0, LAST_LAP)
     const points = laps.map(
       (position, i) => new THREE.Vector3(lapToX(i + 1), 0, positionToZ(position))
@@ -110,17 +112,17 @@ export function createLapChart() {
     transparent: true,
     opacity: 0.3,
   })
-  for (let position = 1; position <= 6; position++) {
+  for (const position of [1, 5, 10, 15, 20]) {
     const rail = new THREE.Mesh(new THREE.BoxGeometry(X_SPAN * 2, 0.06, 0.12), railMaterial)
     rail.position.set(0, -0.4, positionToZ(position))
     group.add(rail)
   }
 
   group.add(label('P1', -X_SPAN - 9, positionToZ(1)))
-  group.add(label('P3', -X_SPAN - 9, positionToZ(3)))
-  group.add(label('LAP 1', lapToX(1) + 4, positionToZ(6) + 7))
-  group.add(label('LAP 48', lapToX(LAST_LAP) - 5, positionToZ(6) + 7))
-  for (const code of ['VER', 'ANT', 'HAM']) {
+  group.add(label('P21', -X_SPAN - 9, positionToZ(21)))
+  group.add(label('LAP 1', lapToX(1) + 4, positionToZ(21) + 7))
+  group.add(label('LAP 71', lapToX(LAST_LAP) - 5, positionToZ(21) + 7))
+  for (const code of ['VER', 'NOR', 'ANT']) {
     const laps = race.positions_by_lap[code]
     group.add(
       label(code, X_SPAN + 10, positionToZ(laps[LAST_LAP - 1]), race.colors[code])
@@ -216,8 +218,8 @@ export function createCircuitLabel() {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    line(lines[0], 180, 200, '#16244f')
-    if (lines[1]) line(lines[1], 360, 120, '#ce1126')
+    line(lines[0], 180, 200, race.colors.navy)
+    if (lines[1]) line(lines[1], 360, 120, '#b78b00')
   }
 
   draw()
@@ -266,7 +268,11 @@ export function createConfetti() {
   const COUNT = 280
   const SPREAD = 62
   const FALL_HEIGHT = 90
-  const COLORS = [new THREE.Color('#2B4AA0'), new THREE.Color('#E23A3A')]
+  const COLORS = [
+    new THREE.Color('#009C3B'),
+    new THREE.Color('#FFDF00'),
+    new THREE.Color('#002776'),
+  ]
 
   const geometry = new THREE.PlaneGeometry(0.55, 2.6)
   // Lit, so a strip catches the sun as it turns and goes dark edge-on.

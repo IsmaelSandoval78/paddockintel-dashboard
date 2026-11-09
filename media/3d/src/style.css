@@ -1,10 +1,12 @@
 :root {
   --cream: #f3ecdd;
-  --navy: #16244f;
+  --navy: #123b28;
   --blue: #2b4aa0;
   --red: #e23a3a;
   --teal: #00a19b;
   --yellow: #f5c518;
+  --green: #0b7a3c;
+  --gold: #d9a400;
 }
 
 * {
@@ -36,7 +38,7 @@ body {
 
 /* ?vertical=1 — a centred 9:16 stage for screen-recording a vertical video. */
 body.vertical {
-  background: #0e1530;
+  background: #0d2117;
 }
 
 body.vertical #frame {
@@ -720,14 +722,14 @@ body.vertical .chapter.low-left {
 .title .back {
   position: absolute;
   inset: 0;
-  color: var(--red);
+  color: var(--gold);
   transform: translate(0.055em, 0.05em);
   mix-blend-mode: multiply;
 }
 
 .title .front {
   position: relative;
-  color: var(--blue);
+  color: var(--green);
 }
 
 /* A faint paper halo keeps the type legible when it crosses the ribbon. */

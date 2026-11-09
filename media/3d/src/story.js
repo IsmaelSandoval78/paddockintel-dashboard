@@ -113,16 +113,16 @@ const SHOTS = [
     o.roll = 0
     o.fov = 46
   },
-  // 3 — LAP 28. KIMI LEADS. Low tracking shot running ahead of the teal
-  // trail and looking back, so Kimi is nearest and the others chase.
+  // 3 — LAP 20. NORRIS STRIKES BACK. Low tracking shot running ahead of the
+  // papaya trail and looking back, so Norris is nearest and the others chase.
   (o) => {
-    const t = driverT('ANT')
+    const t = driverT('NOR')
     trackPoint(t + 0.028, -7, 4, o.pos)
     trackPoint(t - 0.006, 0, 1, o.target)
     o.roll = 0
     o.fov = 42
   },
-  // 4 — RED FLAG. Dutch angle, everything frozen.
+  // 4 — THE CLIMB. Dutch angle on Verstappen carving through the spray.
   (o) => {
     const t = driverT('VER')
     trackPoint(t - 0.03, -14, 8, o.pos)
@@ -130,16 +130,16 @@ const SHOTS = [
     o.roll = 0.17
     o.fov = 46
   },
-  // 5 — LAP 48. P3. Steep top-down over the lap chart.
+  // 5 — P21 → P2. Steep top-down over the lap chart.
   (o) => {
     o.pos.set(-10, 206, 36)
     o.target.set(-10, 16, -20)
     o.roll = 0
     o.fov = 38
   },
-  // 6 — 0.799s. Chase cam behind Max, Hamilton right behind.
+  // 6 — 14.602s. Chase cam behind the winner on the run to the flag.
   (o) => {
-    const t = driverT('VER')
+    const t = driverT('NOR')
     // Nearly level, so the road fills the lower half and the sky above it
     // stays clear for the big number.
     trackPoint(t - 0.03, -0.3, 3.4, o.pos)
@@ -147,7 +147,7 @@ const SHOTS = [
     o.roll = 0
     o.fov = 50
   },
-  // 7 — CAMPIONE. Back out wide, slow orbit.
+  // 7 — NORRIS WINS. Back out wide, slow orbit.
   (o) => {
     const a = S.orbitB + orbitOffset()
     o.pos.set(Math.sin(a) * 112, 68, Math.cos(a) * 112)
@@ -280,7 +280,7 @@ export function createStory({ onChapter, autoplay = false }) {
   // The infield name clears out as the camera drops onto the grid.
   timeline.to(S, { circuitName: 0, duration: 0.3, ease: 'power2.in' }, 0.75)
 
-  // Chapter 2 — the five lights go on, then out, then Max attacks.
+  // Chapter 2 — the five lights go on, then out, then the lap-1 reshuffle.
   // The running order only settles once they have actually raced to turn 1.
   // All five stay lit for a decent stretch of scroll, so nobody races past
   // the moment they go out.
@@ -290,27 +290,23 @@ export function createStory({ onChapter, autoplay = false }) {
   timeline.to(S, { raceLap: 1, duration: 0.7, ease: 'power1.inOut' }, 1.56)
 
   // Chapter 3 — the laps fly by during the camera move, so the running order
-  // already reads "lap 28, Antonelli leading" when the title lands.
-  timeline.to(S, { raceLap: 28, duration: 0.5, ease: 'power1.inOut' }, 1.7)
+  // already reads "lap 20, Norris leading" when the title lands.
+  timeline.to(S, { raceLap: 20, duration: 0.5, ease: 'power1.inOut' }, 1.7)
   timeline.to(S, { lapT: 2.12, duration: 1.3, ease: 'power1.inOut' }, 1.9)
 
-  // Chapter 4 — the reshuffle IS the story here, so it plays out on screen:
-  // Kimi drops to 4th, Max inherits the lead, then everything freezes.
+  // Chapter 4 — the climb plays out on screen: the laps run to 25 and
+  // Verstappen is already P3 when the title lands. No red flag this race.
   timeline.to(S, { lapT: 2.36, duration: 0.55, ease: 'power1.out' }, 3.0)
-  // 44.85: a moment after the real red flag (lap 44.77), so the data and
-  // the red tint agree.
-  timeline.to(S, { raceLap: 44.85, duration: 0.4, ease: 'power2.inOut' }, 3.02)
-  timeline.to(S, { red: 1, duration: 0.25 }, 3.3)
-  timeline.to(S, { red: 0, duration: 0.4 }, 4.0)
+  timeline.to(S, { raceLap: 25, duration: 0.4, ease: 'power2.inOut' }, 3.02)
 
   // Chapter 5 — top-down, the real position lines rise off the ground.
-  timeline.to(S, { raceLap: 48, duration: 0.45, ease: 'power1.inOut' }, 3.7)
+  timeline.to(S, { raceLap: 55, duration: 0.45, ease: 'power1.inOut' }, 3.7)
   timeline.to(S, { trailOpacity: 0.3, duration: 0.4 }, 3.9)
   timeline.to(S, { chart: 1, duration: 0.7, ease: 'power2.out' }, 4.05)
   timeline.to(S, { chart: 0, duration: 0.35 }, 4.95)
   timeline.to(S, { trailOpacity: 1, duration: 0.35 }, 4.9)
 
-  // Chapter 6 — to the flag, Hamilton 0.799s behind.
+  // Chapter 6 — to the flag, Verstappen 14.602s behind.
   timeline.to(S, { raceLap: 71, duration: 0.6, ease: 'power1.inOut' }, 4.7)
   timeline.to(S, { lapT: 3.02, duration: 1.4, ease: 'power1.inOut' }, 4.95)
 
