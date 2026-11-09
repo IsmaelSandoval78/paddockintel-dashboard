@@ -10,6 +10,10 @@
 --   articles.corrections      [{ "date": "<ISO 8601>", "note": "<text in the row's locale>" }]
 --   digest_items.corrections  [{ "date": "<ISO 8601>", "note": "<EN>", "note_es": "<ES>" }]
 --
+-- Applied 2026-11-09 through the Supabase connector (Management API), a one-off the founder
+-- approved because the CLI can't reach Postgres from a cloud session and the founder has web-only
+-- access; the file is named after the version Supabase recorded, so `supabase db push` stays aligned.
+--
 -- Additive only: no existing column, policy or grant changes, and the default keeps every
 -- existing row valid.
 

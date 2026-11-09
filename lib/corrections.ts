@@ -1,7 +1,7 @@
 import { createClient } from './supabase/server';
 
 // Dated, public corrections and updates for an article or a Feed item (EEAT: "corrections are
-// visible", promised on /about; supabase/migrations/20261109150000_corrections.sql). Written from
+// visible", promised on /about; supabase/migrations/20261109150259_corrections.sql). Written from
 // the `corrections` frontmatter by the ingest scripts, shown under the byline, newest first.
 export type Correction = { date: string; note: string; note_es?: string };
 
