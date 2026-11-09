@@ -38,21 +38,21 @@
       "Started = grid position. Pit lane = the car started from the pit lane, behind the whole grid; it ranks as the deepest start.",
       "Finished = official classification. Sainz crossed the line fourth in 2019 and was promoted to third after Hamilton's five-second penalty.",
       "\"Started first\" counts the driver in first place on the grid, which can differ from the fastest qualifier when a penalty applies.",
-      "The 2026 result is the provisional classification from the race timing; two incidents were under investigation after the race."
+      "The 2026 result is the FIA's final classification (document 81), after the post-race penalties; none of them changed Verstappen's second place."
     ],
     "es": [
       "Todos los Grandes Premios del campeonato mundial disputados en Interlagos (Autódromo José Carlos Pace), 1973–2026, incluidas las carreras corridas como Gran Premio de São Paulo desde 2021. Los Grandes Premios de Brasil de 1978 y de 1981–1989 se corrieron en Jacarepaguá, Río de Janeiro, y no se incluyen; en 2020 no hubo carrera.",
       "Salida = posición en la parrilla. Pit lane = el auto salió desde el pit lane, detrás de toda la parrilla; cuenta como la salida más atrás.",
       "Llegada = clasificación oficial. Sainz cruzó la meta cuarto en 2019 y subió al tercer puesto tras la sanción de cinco segundos a Hamilton.",
       "\"Salió primero\" cuenta al piloto en el primer lugar de la parrilla, que puede no ser el más rápido de la clasificación si hubo una sanción.",
-      "El resultado de 2026 es la clasificación provisional del cronometraje de la carrera; dos incidentes quedaron bajo investigación después de la carrera."
+      "El resultado de 2026 es la clasificación final de la FIA (documento 81), después de las sanciones posteriores a la carrera; ninguna cambió el segundo puesto de Verstappen."
     ],
     "pt": [
       "Todos os GPs do campeonato mundial disputados em Interlagos (Autódromo José Carlos Pace), 1973–2026, incluindo as corridas realizadas como GP de São Paulo desde 2021. Os GPs do Brasil de 1978 e de 1981–1989 foram disputados em Jacarepaguá, no Rio de Janeiro, e não entram; em 2020 não houve corrida.",
       "Largada = posição no grid. Pit lane = o carro largou do pit lane, atrás de todo o grid; conta como a largada mais atrás.",
       "Chegada = classificação oficial. Sainz cruzou a linha em quarto em 2019 e subiu para terceiro após a punição de cinco segundos a Hamilton.",
       "\"Largou em primeiro\" conta o piloto no primeiro lugar do grid, que pode não ser o mais rápido da classificação quando há punição.",
-      "O resultado de 2026 é a classificação provisória da cronometragem da corrida; dois incidentes ficaram sob investigação após a corrida."
+      "O resultado de 2026 é a classificação final da FIA (documento 81), após as punições pós-corrida; nenhuma alterou o segundo lugar de Verstappen."
     ]
   },
   "alt": {
@@ -156,12 +156,16 @@
   ],
   "sources": [
     {
-      "name": "PaddockIntel database — Interlagos Grand Prix results and grid positions, 1973–2026 (Ergast/jolpica lineage + FastF1, 2026 from the race timing)",
+      "name": "PaddockIntel database — Interlagos Grand Prix results and grid positions, 1973–2026 (Ergast/jolpica lineage + FastF1, 2026 from the FIA final classification)",
       "url": "https://hub.paddockintel.com/circuits/interlagos/"
     },
     {
       "name": "Formula1.com — 2026 São Paulo Grand Prix race report",
       "url": "https://www.formula1.com/en/latest/article/norris-beats-verstappen-in-wet-sao-paulo-gp-thriller-as-mercedes-win-constructors-championship.7JN7MXLZf5lk5l0C3gfKGI"
+    },
+    {
+      "name": "FIA — 2026 São Paulo Grand Prix, final race classification (document 81)",
+      "url": "https://www.fia.com/system/files/decision-document/2026_sao_paulo_grand_prix_-_final_race_classification.pdf"
     }
   ],
   "relatedArticle": "sao-paulo-gp-2026-qualifying-norris-pole-rain-penalties",
