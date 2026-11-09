@@ -7,7 +7,7 @@ import { Link } from '@/lib/i18n/navigation';
 import { routing } from '@/lib/i18n/routing';
 import NewsletterBand from '@/components/home-dusk/NewsletterBand';
 import { SITE_URL, hubLocaleUrl, localeUrl } from '@/lib/site-url';
-import { localizedPageMeta } from '@/lib/seo';
+import { localizedPageMeta, PUBLISHER_LOGO } from '@/lib/seo';
 import {
   CARD_HEIGHT,
   CARD_WIDTH,
@@ -108,7 +108,7 @@ function jsonLd(card: DataCard, locale: ReturnType<typeof asCardLocale>, crumbs:
       datePublished: card.publishedAt,
       dateModified: card.updatedAt,
       author: { ...org, url: `${SITE_URL}/about/` },
-      publisher: { ...org, logo: { '@type': 'ImageObject', url: `${SITE_URL}/og-image.png` } },
+      publisher: { ...org, logo: PUBLISHER_LOGO },
       image,
       copyrightHolder: org,
       copyrightYear: Number(card.publishedAt.slice(0, 4)),

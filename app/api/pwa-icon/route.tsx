@@ -14,7 +14,8 @@ import type { NextRequest } from 'next/server';
 
 export async function GET(request: NextRequest) {
   const sizeParam = Number(request.nextUrl.searchParams.get('size'));
-  const size = [192, 512].includes(sizeParam) ? sizeParam : 512;
+  // 48 and 96: favicon sizes Google asks for (square, a multiple of 48 px); 180: apple-touch-icon.
+  const size = [48, 96, 180, 192, 512].includes(sizeParam) ? sizeParam : 512;
 
   return new ImageResponse(
     (

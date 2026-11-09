@@ -17,6 +17,8 @@ import {
   type HookDeliverFallbacks,
 } from '@/lib/hookDeliver';
 import { SITE_URL } from '@/lib/site-url';
+import { getCorrections } from '@/lib/corrections';
+import { PUBLISHER_LOGO } from '@/lib/seo';
 import { duskSans } from '../../../(blog)/dusk-font';
 import '../../../(blog)/dusk.css';
 
@@ -215,12 +217,19 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
   const inCountWindow = itemDayKey >= easternDateKey(new Date(now - 7 * DAY_MS));
 
   const hookSpec = hookDeliverSpecForItem(item);
-  const [hook, nearby, beagleCounts, briefLink] = await Promise.all([
+  const [hook, nearby, beagleCounts, briefLink, corrections] = await Promise.all([
     hookSpec ? resolveHookDeliver(hookSpec, locale, hookDeliverFallbacks(t)) : Promise.resolve(null),
     getNearby(item.published_at),
     inCountWindow ? getBeagleEntityCounts(createClient()) : Promise.resolve(new Map<string, number>()),
     item.internal_link_slug ? getBriefLink(item.internal_link_slug, locale) : Promise.resolve(null),
+    getCorrections('digest_items', item.id),
   ]);
+  // The Feed is EN/ES: an ES page shows the Spanish note, everything else the English one.
+  const correctionNote = (c: { note: string; note_es?: string }) => (locale === 'es' && c.note_es ? c.note_es : c.note);
+  const latestCorrection = corrections[0]?.date;
+  // Date and time in the editorial time zone (America/New_York, lib/i18n/request.ts).
+  const stamp = (iso: string) =>
+    format.dateTime(new Date(iso), { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
   const counts = inCountWindow ? mergeEntityCounts(weeklyEntityCounts(nearby), beagleCounts) : new Map<string, number>();
   const whoRows = item.entity_tags
     .map((name) => ({ name, count: counts.get(name) ?? 0 }))
@@ -246,8 +255,12 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
     headline: text.headline,
     description: text.meta_description ?? text.our_summary,
     datePublished: item.published_at,
-    // Re-ingesting an issue rewrites its rows, so created_at is the item's last edit.
-    dateModified: item.created_at > item.published_at ? item.created_at : item.published_at,
+    // A logged correction is the substantive change; otherwise re-ingesting an issue rewrites its
+    // rows, so created_at is the item's last edit.
+    dateModified:
+      latestCorrection && Date.parse(latestCorrection) > Date.parse(item.published_at)
+        ? latestCorrection
+        : item.created_at > item.published_at ? item.created_at : item.published_at,
     image: CARD_RATIOS.map((r) => cardUrl(locale, slug, r)),
     url: pageUrl,
     isBasedOn: item.source_url,
@@ -256,7 +269,7 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
       '@type': 'Organization',
       name: 'PaddockIntel',
       url: MAGAZINE_BASE,
-      logo: { '@type': 'ImageObject', url: `${MAGAZINE_BASE}/og-image.png` },
+      logo: PUBLISHER_LOGO,
     },
   };
 
@@ -321,12 +334,35 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
             )}
             <div className="flex flex-wrap items-center gap-x-[18px] gap-y-2 dusk-mono uppercase text-[11.5px] tracking-[0.05em] text-[#E2CEC6]">
               <Link href="/about" className="hover:text-[color:var(--dusk-peach)]">{t('editedBy')}</Link>
-              <time dateTime={item.published_at}>{format.dateTime(dayDate, { month: 'short', day: 'numeric', year: 'numeric' })}</time>
+              <time dateTime={item.published_at}>{stamp(item.published_at)}</time>
+              {latestCorrection && (
+                <span>
+                  {tArticle('updated')} <time dateTime={latestCorrection}>{stamp(latestCorrection)}</time>
+                </span>
+              )}
               <a href={item.source_url} target="_blank" rel="noopener noreferrer" className="text-[color:var(--dusk-peach)] hover:underline">
                 {t('originallyReportedBy', { source: item.source_name })} ↗
               </a>
               <ShareButton url={pageUrl} title={text.headline} />
             </div>
+            {/* Corrections and updates, dated and public (EEAT; promised on /about) */}
+            {corrections.length > 0 && (
+              <aside
+                aria-label={tArticle('correctionsTitle')}
+                className="max-w-[64ch] rounded-[var(--radius-sm)] border border-[color:var(--dusk-line)] px-4 py-3 text-[14px] leading-[1.5]"
+              >
+                <p className="dusk-label m-0 mb-1.5">{tArticle('correctionsTitle')}</p>
+                <ul className="m-0 p-0 list-none flex flex-col gap-1.5">
+                  {corrections.map((c) => (
+                    <li key={c.date}>
+                      <time dateTime={c.date} className="dusk-mono text-[12px] text-[color:var(--dusk-muted)]">{stamp(c.date)}</time>
+                      {' — '}
+                      {correctionNote(c)}
+                    </li>
+                  ))}
+                </ul>
+              </aside>
+            )}
           </header>
 
           {/* The numbers */}

@@ -26,7 +26,7 @@ import { getLatestRace, getRaceWeek, getTitleTrend } from './dusk-data';
 import { circuitTimeZone, hostPalette } from '@/lib/raceWeekHost';
 import { duskSans } from '../dusk-font';
 import '../dusk.css';
-import { openGraphFor } from '@/lib/seo';
+import { openGraphFor, siteJsonLd } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -878,6 +878,13 @@ export default async function MagazineHomePage({
       className={`theme-dusk ${duskSans.variable} min-h-screen`}
       data-host={isFrontPage && raceWeek ? (hostPalette(raceWeek.circuit.country) ?? undefined) : undefined}
     >
+      {/* Site name and publisher identity for Google (Search site names, Google News) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(siteJsonLd(HOME_URLS[locale as keyof typeof HOME_URLS] ?? HOME_URLS.en, locale)),
+        }}
+      />
       <h1 className="sr-only">{tMag('headline')}</h1>
       <div className="max-w-[1280px] mx-auto px-4 sm:px-5 pt-7 pb-16 flex flex-col gap-5">
         {isFrontPage && raceWeekStrip}

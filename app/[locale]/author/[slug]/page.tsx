@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { redirect } from '@/lib/i18n/navigation';
+import { permanentRedirect } from '@/lib/i18n/navigation';
 import type { Locale } from '@/lib/i18n/routing';
 
 // EEAT-EXPERT.md requires every article/digest issue link to a real author
@@ -24,5 +24,6 @@ export default async function AuthorPage({
 }) {
   const { locale, slug } = await params;
   if (!KNOWN_AUTHOR_SLUGS.includes(slug)) notFound();
-  redirect({ href: '/about', locale });
+  // Permanent (308) and to the slash-terminated URL, so crawlers consolidate on /about/ in one hop.
+  permanentRedirect({ href: '/about/', locale });
 }

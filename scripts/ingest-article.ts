@@ -18,6 +18,7 @@ function loadEnvLocal() {
 loadEnvLocal();
 
 import { createClient } from '../lib/supabase/server';
+import { validateCorrections, type Correction } from '../lib/corrections';
 
 type Stat = { value: string; label: string; unit?: string };
 type FAQ  = { q: string; a: string };
@@ -42,6 +43,9 @@ type Frontmatter = {
   voices?: string[];
   // Supabase races.id this piece is about; links it to that race's data figures.
   race_id?: number;
+  // Dated public corrections/updates shown under the byline (lib/corrections.ts):
+  // [{ date: ISO 8601, note }]. Add one whenever a published fact changes.
+  corrections?: Correction[];
 };
 
 function readArticle(filePath: string): { frontmatter: Frontmatter; body: string } {
@@ -152,6 +156,9 @@ async function main() {
         ...(frontmatter.sources  !== undefined ? { sources:   frontmatter.sources }   : {}),
         ...(frontmatter.charts   !== undefined ? { charts:    frontmatter.charts }    : {}),
         ...(frontmatter.race_id  !== undefined ? { race_id:   frontmatter.race_id }   : {}),
+        ...(frontmatter.corrections !== undefined
+          ? { corrections: validateCorrections(frontmatter.corrections, filePath, false) }
+          : {}),
         updated_at: new Date().toISOString(),
       },
       { onConflict: 'locale,slug' }

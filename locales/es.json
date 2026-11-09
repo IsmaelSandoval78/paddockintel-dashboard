@@ -1542,6 +1542,8 @@
     }
   },
   "articleDusk": {
+    "updated": "Actualizado",
+    "correctionsTitle": "Correcciones y actualizaciones",
     "crumbHome": "Inicio",
     "crumbsAria": "Ruta de navegación",
     "round": "Ronda {round}",

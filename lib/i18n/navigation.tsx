@@ -4,7 +4,7 @@ import { routing } from './routing';
 
 const navigation = createNavigation(routing);
 
-export const { redirect, usePathname, useRouter } = navigation;
+export const { redirect, permanentRedirect, usePathname, useRouter } = navigation;
 
 type LinkProps = ComponentProps<typeof navigation.Link>;
 

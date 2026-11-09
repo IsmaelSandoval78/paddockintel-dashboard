@@ -1538,6 +1538,8 @@
     }
   },
   "articleDusk": {
+    "updated": "Updated",
+    "correctionsTitle": "Corrections and updates",
     "crumbHome": "Home",
     "crumbsAria": "Breadcrumb",
     "round": "Round {round}",

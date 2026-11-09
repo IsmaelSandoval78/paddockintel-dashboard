@@ -10,6 +10,10 @@ translation_group_id: "351cdff0-5f32-4022-ad8e-ad26fe1c32f7"
 race_id: 1187
 tags: ["featured", "race-analysis", "data-desk"]
 
+corrections:
+  - date: "2026-11-09T00:59:00+00:00"
+    note: "Actualizado con la clasificación final de la FIA: Charles Leclerc recibió una sanción de cinco segundos por su toque con Liam Lawson y bajó del séptimo al octavo puesto; las sanciones de cinco segundos a Kimi Antonelli y Oliver Bearman no cambiaron sus posiciones. Se agregaron la clasificación del campeonato, el tiempo de carrera de Norris y declaraciones posteriores a la carrera."
+
 stats:
   - value: "21 → 2"
     label: "VERSTAPPEN, DE LA SALIDA A LA META"
