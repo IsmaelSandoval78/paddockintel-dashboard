@@ -19,7 +19,7 @@ import {
 } from '@/lib/hookDeliver';
 import { duskSans } from '../../(blog)/dusk-font';
 import '../../(blog)/dusk.css';
-import { openGraphFor } from '@/lib/seo';
+import { openGraphFor, PUBLISHER_LOGO } from '@/lib/seo';
 
 // Served from the ISR cache and re-rendered at most every five minutes, so an ingested
 // correction is live within that window (decided 2026-11-09, mobile LCP).
@@ -250,7 +250,7 @@ export default async function FeedPage({ params }: { params: Promise<{ locale: s
             '@type': 'Organization',
             name: 'PaddockIntel',
             url: SITE_URL,
-            logo: { '@type': 'ImageObject', url: `${SITE_URL}/og-image.png` },
+            logo: PUBLISHER_LOGO,
           },
         },
       };

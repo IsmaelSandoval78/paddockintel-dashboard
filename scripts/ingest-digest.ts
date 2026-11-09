@@ -13,6 +13,7 @@ function loadEnvLocal() {
 loadEnvLocal();
 
 import { createClient } from '../lib/supabase/server';
+import { validateCorrections, type Correction } from '../lib/corrections';
 
 type Stat = { value: string; label: string; label_es?: string | null; unit?: string | null; unit_es?: string | null };
 type Faq = { q: string; a: string; q_es?: string | null; a_es?: string | null };
@@ -37,6 +38,9 @@ type DigestItem = {
   faq?: Faq[] | null;
   meta_description?: string | null;
   meta_description_es?: string | null;
+  // Dated public corrections/updates shown under the byline (lib/corrections.ts):
+  // [{ date: ISO 8601, note, note_es }]. Add one whenever a published fact changes.
+  corrections?: Correction[];
 };
 
 type DigestIssue = {
@@ -111,6 +115,10 @@ async function main() {
     faq: item.faq ?? null,
     meta_description: item.meta_description ?? null,
     meta_description_es: item.meta_description_es ?? null,
+    // Only sent when present, so items without corrections still ingest before the column exists.
+    ...(item.corrections !== undefined
+      ? { corrections: validateCorrections(item.corrections, `item ${item.slug ?? item.headline}`, true) }
+      : {}),
   }));
 
   const { error: itemsErr } = await supabase.from('digest_items').insert(rows);

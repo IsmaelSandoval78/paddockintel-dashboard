@@ -1,6 +1,43 @@
 import type { Metadata } from 'next';
 import { routing } from '@/lib/i18n/routing';
-import { HUB_URL, hubLocaleUrl, localeUrl } from '@/lib/site-url';
+import { HUB_URL, SITE_URL, hubLocaleUrl, localeUrl } from '@/lib/site-url';
+
+// The publication's identity for Google (site name, publisher logo). Google News builds a
+// publication's page automatically, taking its name from the site name (WebSite structured data
+// on the home page) and its logo from the favicon; the same square mark is the publisher logo in
+// every NewsArticle, instead of the rectangular share image.
+export const SITE_NAME = 'PaddockIntel';
+export const PUBLISHER_LOGO = { '@type': 'ImageObject', url: `${SITE_URL}/api/pwa-icon/?size=512`, width: 512, height: 512 };
+export const ORGANIZATION_ID = `${SITE_URL}/#organization`;
+export const CONTACT_EMAIL = 'info@paddockintel.com';
+
+// WebSite + Organization for a home page (the magazine's, in each locale).
+export function siteJsonLd(homeUrl: string, locale: string): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        name: SITE_NAME,
+        alternateName: 'Paddock Intel',
+        url: homeUrl,
+        inLanguage: locale,
+        publisher: { '@id': ORGANIZATION_ID },
+      },
+      {
+        '@type': 'NewsMediaOrganization',
+        '@id': ORGANIZATION_ID,
+        name: SITE_NAME,
+        url: `${SITE_URL}/`,
+        logo: PUBLISHER_LOGO,
+        email: CONTACT_EMAIL,
+        publishingPrinciples: `${SITE_URL}/about/`,
+        correctionsPolicy: `${SITE_URL}/about/`,
+        founder: { '@type': 'Person', name: 'Ismael Sandoval', url: `${SITE_URL}/about/` },
+      },
+    ],
+  };
+}
 
 // Site-wide default share image (app/og-image.png/route.tsx), resolved against metadataBase.
 export const DEFAULT_OG_IMAGES = [{ url: '/og-image.png', width: 1200, height: 630, type: 'image/png' }];

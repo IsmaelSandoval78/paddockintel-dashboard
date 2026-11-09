@@ -10,6 +10,10 @@ translation_group_id: "351cdff0-5f32-4022-ad8e-ad26fe1c32f7"
 race_id: 1187
 tags: ["featured", "race-analysis", "data-desk"]
 
+corrections:
+  - date: "2026-11-09T00:59:00+00:00"
+    note: "Updated with the FIA's final classification: Charles Leclerc received a five-second penalty for his contact with Liam Lawson and dropped from seventh to eighth; Kimi Antonelli's and Oliver Bearman's five-second penalties did not change their positions. Standings, Norris's race time and post-race quotes added."
+
 stats:
   - value: "21 → 2"
     label: "VERSTAPPEN, GRID TO FINISH"

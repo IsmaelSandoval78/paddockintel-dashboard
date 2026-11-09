@@ -10,7 +10,17 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   openGraph: { images: DEFAULT_OG_IMAGES },
   twitter: { card: 'summary_large_image', images: ['/og-image.png'] },
-  icons: { icon: [{ url: '/icon.png', type: 'image/png', sizes: '32x32' }] },
+  // Google takes a site's favicon as its logo in Search and Google News and wants a square that is
+  // a multiple of 48 px; /favicon.ico (app/favicon.ico) is the fallback crawlers fetch directly.
+  icons: {
+    icon: [
+      { url: '/icon.png', type: 'image/png', sizes: '32x32' },
+      { url: '/api/pwa-icon/?size=48', type: 'image/png', sizes: '48x48' },
+      { url: '/api/pwa-icon/?size=96', type: 'image/png', sizes: '96x96' },
+      { url: '/api/pwa-icon/?size=192', type: 'image/png', sizes: '192x192' },
+    ],
+    apple: [{ url: '/api/pwa-icon/?size=180', type: 'image/png', sizes: '180x180' }],
+  },
   // Lets Google show large images in Discover and Top Stories. A page that sets its own robots
   // (noindex) replaces this whole object, which is fine: it isn't shown there anyway.
   robots: { index: true, follow: true, 'max-image-preview': 'large' },

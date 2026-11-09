@@ -54,6 +54,14 @@ Before stating any fact, number, or claim in an article or digest:
 without a cited source in the `sources` frontmatter array, that number is not verified and
 should not be published. The draft gets a `[VERIFY]` flag instead.
 
+**Corrections are visible, never silent (2026-11-09).** When a published fact changes (a
+provisional result replaced by the FIA's final classification, a wrong number, a stewards'
+decision), the re-ingest carries a dated entry in `corrections` that says what changed:
+`corrections: [{ date: "<ISO 8601>", note: "<what changed>" }]` in an article's frontmatter, and
+`{ date, note, note_es }` on a Feed item. It shows under the byline as "Updated …" with the full
+list, and it sets `dateModified`. Typo and style fixes don't get an entry; a changed fact always
+does. /about promises this, and Google News weighs it.
+
 ---
 
 ## The Line

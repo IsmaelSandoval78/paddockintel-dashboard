@@ -26,6 +26,8 @@ import { teamVar } from '@/components/home-dusk/StandingsCard';
 import { getRaceHighlightsFor } from '@/lib/raceHighlights';
 import { getCurrentAuthUser } from '@/lib/auth/getCurrentAuthUser';
 import { SITE_URL } from '@/lib/site-url';
+import { getCorrections } from '@/lib/corrections';
+import { PUBLISHER_LOGO } from '@/lib/seo';
 import { duskSans } from '../dusk-font';
 import '../dusk.css';
 
@@ -139,7 +141,7 @@ export async function renderArticle(locale: string, slug: string, members: boole
   // updated_at is stamped by every ingest, so it can sit a few seconds before a published_at
   // set in frontmatter; dateModified never goes earlier than the publish date.
   const updatedAt   = article.updated_at as string | null;
-  const modifiedAt  = updatedAt && Date.parse(updatedAt) > Date.parse(publishedAt) ? updatedAt : publishedAt;
+  const lastIngest  = updatedAt && Date.parse(updatedAt) > Date.parse(publishedAt) ? updatedAt : publishedAt;
   const raceId      = (article.race_id as number | null) ?? null;
   const allStats    = (article.stats as Stat[]) ?? [];
   const allFaqItems = (article.faq_items as FAQ[]) ?? [];
@@ -169,7 +171,7 @@ export async function renderArticle(locale: string, slug: string, members: boole
   // Independent reads (no shared inputs) — run concurrently so their
   // latency doesn't stack, which is what turns a single slow round trip
   // into several on a page far from Supabase's region.
-  const [t, tTerrain, tTags, format, tagSlugsMap, relatedArticles, voicesMap, race, glossaryTerms] = await Promise.all([
+  const [t, tTerrain, tTags, format, tagSlugsMap, relatedArticles, voicesMap, race, glossaryTerms, corrections] = await Promise.all([
     getTranslations('articleDusk'),
     getTranslations('homeDusk.terrain'),
     getTranslations('articleTags'),
@@ -179,7 +181,13 @@ export async function renderArticle(locale: string, slug: string, members: boole
     getArticleVoices(createClient(), [article.id as string]),
     raceId ? getArticleRace(createClient(), raceId) : Promise.resolve(null),
     getGlossaryTerms(locale),
+    getCorrections('articles', article.id as string),
   ]);
+  // A logged correction is the substantive change dateModified should report; without one, the
+  // last ingest as before.
+  const latestCorrection = corrections[0]?.date;
+  const modifiedAt =
+    latestCorrection && Date.parse(latestCorrection) > Date.parse(publishedAt) ? latestCorrection : lastIngest;
   // First mention of each glossary term links to its glossary page (lib/glossaryLinks.ts).
   const fullBody = linkGlossaryTerms(rawBody, glossaryTerms, locale);
   const body = isGated ? splitMarkdownAtSection(fullBody, FREE_SECTIONS).free : fullBody;
@@ -230,7 +238,7 @@ export async function renderArticle(locale: string, slug: string, members: boole
       '@type': 'Organization',
       name: 'PaddockIntel',
       url: SITE_URL,
-      logo: { '@type': 'ImageObject', url: `${SITE_URL}/og-image.png` },
+      logo: PUBLISHER_LOGO,
     },
     url: pageUrl,
     ...(article.meta_description ? { description: article.meta_description as string } : {}),
@@ -428,6 +436,11 @@ export async function renderArticle(locale: string, slug: string, members: boole
   ].filter(Boolean).join(' · ');
   const podium = raceRows.slice(0, 6);
   const shortDate = (iso: string) => format.dateTime(dayDate(iso), { month: 'short', day: 'numeric', year: 'numeric' });
+  // Date and time in the editorial time zone (America/New_York, lib/i18n/request.ts), so a fresh
+  // story shows when it was published and when it last changed, as news readers and Google News
+  // expect.
+  const stamp = (iso: string) =>
+    format.dateTime(new Date(iso), { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
 
   return (
     <>
@@ -475,10 +488,33 @@ export async function renderArticle(locale: string, slug: string, members: boole
                   {t('by')}{' '}
                   <Link href="/about" className="text-[color:var(--dusk-ink)] font-medium hover:text-[color:var(--dusk-peach)]">Ismael Sandoval</Link>
                 </span>
-                {publishedAt && <time dateTime={publishedAt}>{shortDate(publishedAt)}</time>}
+                {publishedAt && <time dateTime={publishedAt}>{stamp(publishedAt)}</time>}
+                {latestCorrection && (
+                  <span>
+                    {t('updated')} <time dateTime={latestCorrection}>{stamp(latestCorrection)}</time>
+                  </span>
+                )}
                 <span>{t('readTime', { n: readTime })}</span>
                 {sources.length > 0 && <span>{t('sources', { n: sources.length })}</span>}
               </div>
+              {/* Corrections and updates, dated and public (EEAT; promised on /about) */}
+              {corrections.length > 0 && (
+                <aside
+                  aria-label={t('correctionsTitle')}
+                  className="mt-4 max-w-[64ch] rounded-[var(--radius-sm)] border border-[color:var(--dusk-line)] px-4 py-3 text-[14px] leading-[1.5]"
+                >
+                  <p className="dusk-label m-0 mb-1.5">{t('correctionsTitle')}</p>
+                  <ul className="m-0 p-0 list-none flex flex-col gap-1.5">
+                    {corrections.map((c) => (
+                      <li key={c.date}>
+                        <time dateTime={c.date} className="dusk-mono text-[12px] text-[color:var(--dusk-muted)]">{stamp(c.date)}</time>
+                        {' — '}
+                        {c.note}
+                      </li>
+                    ))}
+                  </ul>
+                </aside>
+              )}
               <div className={`flex items-center gap-2 mt-5 ${terrain ? '' : 'pb-7 md:pb-9'}`}>
                 {articleCardData && <ArticleScorecardButton data={articleCardData} />}
                 <ShareButton url={pageUrl} title={title} />

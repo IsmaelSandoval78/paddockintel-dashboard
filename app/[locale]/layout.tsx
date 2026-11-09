@@ -113,6 +113,9 @@ export default async function LocaleLayout({
       className={`${display.variable} ${serif.variable} ${sans.variable} ${mono.variable} ${prose.variable}`}
     >
       <body>
+        {/* A page's openGraph metadata replaces the root object, so the site name rides here, once
+            for every page; React hoists the tag into <head>. */}
+        <meta property="og:site_name" content="PaddockIntel" />
         <a href="#main-content" className="skip-link">
           {t('skipToContent')}
         </a>

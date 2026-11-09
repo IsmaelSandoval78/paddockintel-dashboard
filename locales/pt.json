@@ -1533,6 +1533,8 @@
     }
   },
   "articleDusk": {
+    "updated": "Atualizado",
+    "correctionsTitle": "Correções e atualizações",
     "crumbHome": "Início",
     "crumbsAria": "Trilha de navegação",
     "round": "Etapa {round}",
