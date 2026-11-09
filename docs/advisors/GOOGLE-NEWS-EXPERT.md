@@ -67,13 +67,9 @@ news surfaces themselves.
 - [ ] `/about/` names who runs PaddockIntel, how stories are sourced and verified, and how to
       contact the newsroom (`CONTACT_EMAIL`, also in the organization schema). Author URLs resolve
       (today `/author/*` 308s to `/about/`, which is fine while the newsroom is one person).
-- [ ] The corrections policy and the methodology are reachable from `/about/` (see "Open gaps").
-
-## Open gaps (as of 2026-11-09)
-
-- `/about/` does not yet link to `/methodology/` or state the corrections policy in public, even
-  though corrections are logged on each story. Close it with a short "How we correct" block on
-  `/about/` (EN/ES/PT, through the message files) linking to the methodology page.
+- [ ] The corrections policy stays public at `/about/#corrections` (EN/ES/PT) and matches what
+      the templates do; the organization schema's `correctionsPolicy` points at that anchor. If
+      EDITORIAL.md's corrections rule changes, that block changes in the same PR.
 
 ## Per-publish checklist
 

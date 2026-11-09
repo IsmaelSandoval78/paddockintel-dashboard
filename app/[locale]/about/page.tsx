@@ -116,6 +116,7 @@ export default async function AboutPage({ params }: { params: PageParams }) {
   const principles = t.raw('how.principles') as Principle[];
   const readItems = t.raw('read.items') as ReadItem[];
   const pillars = t.raw('cover.pillars') as Principle[];
+  const corrections = t.raw('corrections.items') as Principle[];
 
   const stats = [
     { v: n(d.articlesEn), l: t('stats.articles'), u: t('stats.articlesUnit', { count: n(d.articlesAll) }) },
@@ -151,6 +152,7 @@ export default async function AboutPage({ params }: { params: PageParams }) {
       url: SITE_URL,
       email: CONTACT_EMAIL,
       contactPoint: { '@type': 'ContactPoint', contactType: 'editorial', email: CONTACT_EMAIL },
+      correctionsPolicy: `${localeUrl(locale, '/about/')}#corrections`,
     },
   };
 
@@ -244,6 +246,25 @@ export default async function AboutPage({ params }: { params: PageParams }) {
                       </li>
                     ))}
                   </ol>
+                </section>
+
+                {/* The public corrections policy (EDITORIAL.md "Corrections are visible, never silent");
+                    the organization schema's correctionsPolicy points at this anchor. */}
+                <section id="corrections" aria-labelledby="about-corrections" className="mt-10 scroll-mt-20">
+                  <h2 id="about-corrections" className="dusk-display m-0 mb-2 text-[clamp(1.35rem,2vw,1.6rem)] leading-tight tracking-[-0.01em]">{t('corrections.heading')}</h2>
+                  <p className="font-prose text-[clamp(17px,1.25vw,19px)] leading-[1.7] m-0 mb-3">{t('corrections.intro')}</p>
+                  <dl className="m-0">
+                    {corrections.map((c) => (
+                      <div key={c.title} className="py-3.5 border-t border-[color:var(--border)] first:border-t-0">
+                        <dt className="m-0 text-[16.5px] font-semibold">{c.title}</dt>
+                        <dd className="m-0 mt-1 text-[15.5px] leading-[1.55] text-[color:var(--text-2)]">{c.body}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                  <p className="m-0 mt-3 text-[15.5px] leading-[1.55]">
+                    {t('corrections.report')}{' '}
+                    <a href={`mailto:${CONTACT_EMAIL}`} className="inline-block whitespace-nowrap font-semibold text-[color:var(--accent)] hover:underline">{CONTACT_EMAIL}</a>
+                  </p>
                 </section>
               </div>
             </article>

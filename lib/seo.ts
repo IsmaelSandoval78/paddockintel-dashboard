@@ -37,7 +37,7 @@ export function siteJsonLd(homeUrl: string, locale: string): Record<string, unkn
         logo: PUBLISHER_LOGO,
         email: CONTACT_EMAIL,
         publishingPrinciples: `${SITE_URL}/about/`,
-        correctionsPolicy: `${SITE_URL}/about/`,
+        correctionsPolicy: `${SITE_URL}/about/#corrections`,
         founder: { '@type': 'Person', name: 'Ismael Sandoval', url: `${SITE_URL}/about/` },
       },
     ],

@@ -1136,6 +1136,25 @@
       "title": "Contact",
       "body": "Story tips, corrections and press enquiries."
     },
+    "corrections": {
+      "heading": "How we correct",
+      "intro": "When a fact we published turns out to be wrong, or changes after we published it, we fix it on the page and say so. We never change a number silently.",
+      "items": [
+        {
+          "title": "What gets a correction",
+          "body": "Any changed fact: a wrong number or name, a provisional result replaced by the FIA's final classification, or a stewards' decision that changes a result after publication."
+        },
+        {
+          "title": "What you will see",
+          "body": "An “Updated” line with the date and time under the byline, and a dated note under “Corrections and updates” saying what changed. The page's modified date changes with it."
+        },
+        {
+          "title": "What doesn't get one",
+          "body": "Typo and style fixes that don't change a fact are made without a note."
+        }
+      ],
+      "report": "Spotted an error? Write to us with the link and the fact. We check it, and if we were wrong, we fix it and log it on the page."
+    },
     "cover": {
       "heading": "What we cover",
       "pillars": [
