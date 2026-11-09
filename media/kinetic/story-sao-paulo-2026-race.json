@@ -1,0 +1,164 @@
+{
+  "title": "São Paulo GP 2026 — race recap",
+  "bpm": 106.06,
+  "seconds": 45,
+  "colors": {
+    "ink": "#0E0E0E", "paper": "#F4F2EE", "grey": "#BDB8AE",
+    "accent": "#00A19B", "silver": "#AEB6BC",
+    "red": "#E4002B", "blue": "#1E41FF", "green": "#00B140",
+    "br_green": "#009C3B", "br_yellow": "#FFDF00", "br_blue": "#002776"
+  },
+  "scenes": [
+    {
+      "beats": 5.5,
+      "float": 1,
+      "exit": { "type": "dive", "target": "p2", "char": 3, "aim": "ink", "zoom": 55, "beats": 1.8, "roll": 12 },
+      "elements": [
+        { "text": "SÃO PAULO GRAND PRIX · RACE", "size": 34, "weight": 500, "x": 64, "y": 170, "z": 140 },
+        { "text": "8 NOVEMBER 2026", "size": 30, "weight": 500, "x": 1016, "y": 170, "align": "right", "z": 140 },
+        { "text": "P21", "size": 380, "x": 60, "y": 780, "anim": { "from": "slam", "at": 0, "dur": 0.7 } },
+        { "id": "p2", "text": "→ P2.", "size": 380, "x": 60, "y": 1180, "anim": { "from": "flip", "at": 1.2, "dur": 0.8 } },
+        { "text": "VERSTAPPEN", "size": 90, "x": 64, "y": 1400, "z": 120, "anim": { "from": "left", "at": 1.9, "dur": 0.7 } },
+        { "text": "FROM THE BACK OF THE GRID", "size": 34, "weight": 500, "x": 64, "y": 1470, "z": 120, "anim": { "from": "fade", "at": 2.2 } },
+        { "text": "paddockintel.com", "size": 30, "weight": 500, "x": 1016, "y": 1790, "align": "right", "z": 140 }
+      ]
+    },
+    {
+      "beats": 8.5,
+      "float": 1.2,
+      "enter": { "type": "ink", "beats": 0.44 },
+      "camera": [ { "at": 0, "zoom": 0.95, "rx": 20 }, { "at": 3, "zoom": 1, "rx": 0, "ease": "out" } ],
+      "elements": [
+        { "text": "INTERLAGOS", "size": 150, "x": 60, "y": 300, "z": 160, "anim": { "from": "left", "at": 0.3, "dur": 0.8 } },
+        { "text": "Autódromo José Carlos Pace · São Paulo", "size": 34, "weight": 500, "x": 64, "y": 360, "z": 160 },
+        { "type": "track", "x": 70, "y": 520, "scale": 0.92,
+          "colors": ["br_green", "br_yellow", "br_blue"], "widths": [60, 36, 14], "at": 0.8, "dur": 3, "gap": 0.5,
+          "dot": { "at": 4.2, "lap": 4.5, "color": "accent", "r": 15 },
+          "points": [[820,120],[560,95],[300,80],[230,95],[205,150],[260,205],[230,265],[180,330],[150,450],[140,620],
+                     [170,720],[260,760],[330,700],[420,640],[520,650],[560,600],[520,520],[470,470],[520,410],[600,420],
+                     [650,480],[620,560],[700,600],[760,560],[720,480],[780,420],[860,450],[900,520],[950,460],[960,320],[920,180],[870,135]] },
+        { "text": "RAIN AT THE START. RAIN AT THE END.", "size": 48, "x": 60, "y": 1560, "z": 80, "anim": { "from": "flip", "at": 3.2, "dur": 0.8 } },
+        { "text": "0 SAFETY CARS · 71 LAPS", "size": 64, "x": 60, "y": 1660, "z": 80, "anim": { "from": "fade", "at": 4.2 } },
+        { "text": "RACE DAY · 8 NOVEMBER 2026", "size": 30, "weight": 500, "x": 64, "y": 1790, "z": 160 },
+        { "text": "paddockintel.com", "size": 30, "weight": 500, "x": 1016, "y": 1790, "align": "right", "z": 160 }
+      ]
+    },
+    {
+      "beats": 11,
+      "float": 1.2,
+      "enter": { "type": "settle", "from": 1.25, "beats": 1.2 },
+      "camera": [ { "at": 0, "zoom": 1 }, { "at": 11, "zoom": 1.04, "ease": "linear" } ],
+      "elements": [
+        { "text": "NORRIS", "size": 150, "x": 60, "y": 300, "z": 160, "anim": { "from": "left", "at": 0.3, "dur": 0.8 } },
+        { "text": "POLE — AND STILL HE HAD TO CHASE", "size": 34, "weight": 500, "x": 64, "y": 360, "z": 160 },
+        { "type": "rows", "x": 60, "y": 620, "step": 150, "size": 72,
+          "sub": { "size": 40, "dx": 430, "dy": -6 },
+          "from": "alternate", "at": 1.2, "every": 0.6, "dur": 0.8,
+          "items": [["TURN 1", "DROPS TO P3"], ["LAP 20", "TAKES THE LEAD BACK"]] },
+        { "text": "48", "size": 620, "x": 60, "y": 1560,
+          "trace": { "colors": ["accent", "silver"], "at": 2.8, "dur": 1.4, "gap": 0.35, "width": 18, "fillAt": 2.0, "fillDur": 0.6 } },
+        { "text": "LAPS LED", "size": 54, "weight": 500, "x": 60, "y": 1645, "z": 80, "anim": { "from": "fade", "at": 5.4 } },
+        { "text": "OF 71 · McLAREN", "size": 34, "weight": 500, "x": 64, "y": 1715, "z": 80, "anim": { "from": "fade", "at": 5.8 } },
+        { "text": "SÃO PAULO GP · RACE", "size": 30, "weight": 500, "x": 64, "y": 1790, "z": 160 },
+        { "text": "paddockintel.com", "size": 30, "weight": 500, "x": 1016, "y": 1790, "align": "right", "z": 160 }
+      ]
+    },
+    {
+      "beats": 13,
+      "float": 1,
+      "enter": { "type": "cube", "dir": "left", "beats": 1.5 },
+      "exit": { "type": "dive", "target": "duelo", "char": 1, "aim": "hole", "zoom": 45, "beats": 1.8, "tilt": 14 },
+      "elements": [
+        { "text": "THE LEAD", "size": 120, "x": 60, "y": 230, "z": 140, "anim": { "from": "left", "at": 0, "dur": 0.8 } },
+        { "text": "71 LAPS · TWO LEADERS", "size": 34, "weight": 500, "x": 64, "y": 290, "z": 140 },
+        { "id": "duelo", "type": "wheel", "x": 860, "y": 1000, "size": 54, "radius": 560, "spacing": 10,
+          "big": { "x": 50, "y": 1040, "size": 200, "subSize": 40, "subDy": 80,
+                   "trace": { "dur": 1.1, "width": 9 },
+                   "counter": { "x": 1016, "y": 290, "label": "LEAD ", "size": 30 } },
+          "items": [
+            ["LAP 1", "Antonelli snatches it"],
+            ["LAP 20", "Norris strikes back"],
+            ["LAP 50", "Antonelli again"],
+            ["LAP 54", "Norris, for good"]
+          ],
+          "steps": [
+            { "at": 1.6, "index": 0, "color": "red", "move": 0.5 },
+            { "at": 4.2, "index": 1, "color": "blue", "move": 0.5 },
+            { "at": 6.8, "index": 2, "color": "green", "move": 0.5 },
+            { "at": 9.4, "index": 3, "color": "accent", "move": 0.6 }
+          ] },
+        { "text": "LAPS LED — NORRIS 48 · ANTONELLI 23", "size": 30, "weight": 500, "x": 64, "y": 1790, "z": 140 },
+        { "text": "paddockintel.com", "size": 30, "weight": 500, "x": 1016, "y": 1790, "align": "right", "z": 140 }
+      ]
+    },
+    {
+      "beats": 9,
+      "float": 1.2,
+      "enter": { "type": "settle", "from": 1.3, "beats": 1.2 },
+      "camera": [ { "at": 0, "zoom": 0.95, "rx": 34 }, { "at": 3, "zoom": 1, "rx": 0, "ease": "out" } ],
+      "elements": [
+        { "text": "VERSTAPPEN", "size": 140, "x": 60, "y": 300, "z": 160, "anim": { "from": "left", "at": 0.4, "dur": 0.8 } },
+        { "text": "FROM P21 ON THE GRID", "size": 34, "weight": 500, "x": 64, "y": 360, "z": 160 },
+        { "type": "rows", "x": 60, "y": 620, "step": 150, "size": 72,
+          "sub": { "size": 40, "dx": 430, "dy": -6 },
+          "from": "alternate", "at": 1.2, "every": 0.7, "dur": 0.8,
+          "items": [["LAP 1", "P13"], ["LAP 5", "P7"], ["LAP 25", "P3"]] },
+        { "text": "P21", "size": 480, "x": 60, "y": 1600,
+          "trace": { "colors": ["blue", "silver"], "at": 2.6, "dur": 1.4, "gap": 0.35, "width": 16, "fill": false } },
+        { "text": "RED BULL RACING", "size": 34, "weight": 500, "x": 64, "y": 1700, "anim": { "from": "fade", "at": 4 } },
+        { "text": "paddockintel.com", "size": 30, "weight": 500, "x": 1016, "y": 1790, "align": "right", "z": 160 }
+      ]
+    },
+    {
+      "beats": 9,
+      "float": 1.2,
+      "enter": { "type": "tiles", "beats": 2.2, "cols": 3, "rows": 5 },
+      "camera": [ { "at": 0, "zoom": 1 }, { "at": 9, "zoom": 1.05, "ease": "linear" } ],
+      "elements": [
+        { "text": "VERSTAPPEN", "size": 140, "x": 60, "y": 300, "z": 220 },
+        { "text": "P21 ON THE GRID → P2 AT THE FLAG", "size": 34, "weight": 500, "x": 64, "y": 360, "z": 220 },
+        { "text": "P2.", "size": 560, "x": 60, "y": 1250,
+          "trace": { "colors": ["blue", "silver"], "at": 0.8, "dur": 1.6, "gap": 0.35, "width": 22, "fillAt": 2.2, "fillDur": 0.6 } },
+        { "text": "+19 POSITIONS", "size": 90, "x": 60, "y": 1560, "z": 140, "anim": { "from": "right", "at": 2.8, "dur": 0.8 } },
+        { "text": "14.602s BEHIND NORRIS", "size": 40, "weight": 500, "x": 64, "y": 1650, "z": 140, "anim": { "from": "fade", "at": 3.4 } },
+        { "text": "São Paulo · 8 November 2026", "size": 30, "weight": 500, "x": 64, "y": 1790, "z": 140 },
+        { "text": "paddockintel.com", "size": 30, "weight": 500, "x": 1016, "y": 1790, "align": "right", "z": 140 }
+      ]
+    },
+    {
+      "beats": 14,
+      "float": 1,
+      "enter": { "type": "flip", "beats": 1.5 },
+      "camera": [ { "at": 0, "zoom": 1 }, { "at": 14, "zoom": 1.04, "ease": "linear" } ],
+      "elements": [
+        { "text": "THE PODIUM", "size": 120, "x": 60, "y": 300, "z": 150, "anim": { "from": "left", "at": 0.3, "dur": 0.8 } },
+        { "text": "FINAL CLASSIFICATION", "size": 34, "weight": 500, "x": 64, "y": 360, "z": 150 },
+        { "type": "rows", "x": 60, "y": 620, "step": 170, "size": 92,
+          "sub": { "size": 36, "dx": 780, "dy": -6 },
+          "from": "alternate", "at": 1.4, "every": 0.6, "dur": 0.8,
+          "items": [["1 NORRIS", "McLAREN"], ["2 VERSTAPPEN", "+14.602"], ["3 HADJAR", "+24.485"]] },
+        { "text": "FASTEST LAP — ANTONELLI 1:12.689 · LAP 55", "size": 40, "weight": 500, "color": "accent", "x": 64, "y": 1300, "anim": { "from": "fade", "at": 4.5 } },
+        { "text": "WHOLE PODIUM: INTER → SOFT → SOFT → INTER", "size": 34, "weight": 500, "x": 64, "y": 1380, "anim": { "from": "fade", "at": 5.2 } },
+        { "text": "AFTER STEWARDS' PENALTIES", "size": 30, "weight": 500, "color": "grey", "x": 64, "y": 1560, "anim": { "from": "fade", "at": 6.5 } },
+        { "text": "LEC +5s → P8 · LAW P7 · ANT +5s STAYS P5", "size": 30, "weight": 500, "color": "grey", "x": 64, "y": 1610, "anim": { "from": "fade", "at": 6.8 } },
+        { "text": "São Paulo Grand Prix · 8 November 2026", "size": 30, "weight": 500, "x": 64, "y": 1790, "z": 150 },
+        { "text": "paddockintel.com", "size": 30, "weight": 500, "x": 1016, "y": 1790, "align": "right", "z": 150 }
+      ]
+    },
+    {
+      "beats": 9.5,
+      "float": 1.2,
+      "enter": { "type": "fly", "beats": 1.5, "twist": 8, "depth": 3200 },
+      "elements": [
+        { "text": "SÃO PAULO GP", "size": 120, "x": 60, "y": 300, "z": 220 },
+        { "text": "RACE · 8 NOVEMBER 2026", "size": 34, "weight": 500, "x": 64, "y": 360, "z": 220 },
+        { "text": "1", "size": 1500, "x": 300, "y": 1500,
+          "trace": { "colors": ["accent", "silver"], "at": 0, "dur": 1.8, "gap": 0.35, "width": 26, "fillAt": 2.4, "fillDur": 0.6 } },
+        { "text": "NORRIS WINS.", "size": 140, "x": 60, "y": 1660, "z": 140, "anim": { "from": "right", "at": 2.8, "dur": 0.8 } },
+        { "text": "Mercedes clinch the constructors' title", "size": 32, "weight": 500, "x": 64, "y": 1730, "z": 140, "anim": { "from": "fade", "at": 3.6 } },
+        { "text": "INTERLAGOS · 71 LAPS", "size": 30, "weight": 500, "x": 64, "y": 1790, "z": 140 },
+        { "text": "paddockintel.com", "size": 30, "weight": 500, "x": 1016, "y": 1790, "align": "right", "z": 140 }
+      ]
+    }
+  ]
+}
