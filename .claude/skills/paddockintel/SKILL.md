@@ -80,20 +80,21 @@ including external information. Digest items use the numbered-source format:
 paraphrase.
 
 **Advisor gate (required, not optional):** before publishing any article, digest issue, or data-vertical
-piece, read all ten advisor files in `docs/advisors/`: `SEO-EXPERT.md`, `DATA-EXPERT.md`,
+piece, read all eleven advisor files in `docs/advisors/`: `SEO-EXPERT.md`, `DATA-EXPERT.md`,
 `EEAT-EXPERT.md`, `SPORTS-JOURNALISM-EXPERT.md`, `CYBERSECURITY-EXPERT.md`, `PERFORMANCE-EXPERT.md`,
-`DIGITAL-PR-EXPERT.md`, `LEGAL-COMPLIANCE-EXPERT.md`, `GROWTH-EXPERT.md`, `FAN-PSYCHOLOGY-EXPERT.md`.
+`DIGITAL-PR-EXPERT.md`, `LEGAL-COMPLIANCE-EXPERT.md`, `GROWTH-EXPERT.md`, `FAN-PSYCHOLOGY-EXPERT.md`, `GOOGLE-NEWS-EXPERT.md`.
 They are an additional gate on top of this section and `EDITORIAL.md` — none of their requirements
 are waived by a redesign or a new content vertical. (This count goes stale every time an advisor is
 added — if it doesn't match `ls docs/advisors/ | wc -l`, fix this line first.)
 
-Four of the ten gate engineering work instead of content directly — `CYBERSECURITY-EXPERT.md`
+Four of the eleven gate engineering work instead of content directly — `CYBERSECURITY-EXPERT.md`
 (auth, user data, secrets/tokens, third-party content ingestion, dependency/infra changes, relevant
 to the user-accounts step in `docs/ROADMAP-SEMANA.md` and any RLS-touching migration),
 `PERFORMANCE-EXPERT.md` (page templates, dependencies, motion/visual effects), `DIGITAL-PR-EXPERT.md`
 (outreach pitches, syndication), and `GROWTH-EXPERT.md` (subscribe flow, paywall, CTAs, distribution
 decisions) — read the relevant one before that specific kind of change, on top of the content gate
-above.
+above. `GOOGLE-NEWS-EXPERT.md` gates both: every story publish, and any change to article/Feed
+templates, `lib/seo.ts`, the news sitemap, the favicon, bylines, timestamps or the corrections log.
 
 **EEAT signals (required, not optional):**
 - `/about` or `/author/ismael-sandoval` — real, verifiable background. Every article and digest issue
