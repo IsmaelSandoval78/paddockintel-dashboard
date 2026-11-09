@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getTranslations, getFormatter } from 'next-intl/server';
+import { getTranslations, getFormatter, setRequestLocale } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { easternDateKey } from '@/lib/dates';
 import { weeklyEntityCounts, significanceScore } from '@/lib/entityMentions';
@@ -21,7 +21,16 @@ import { duskSans } from '../../(blog)/dusk-font';
 import '../../(blog)/dusk.css';
 import { openGraphFor } from '@/lib/seo';
 
-export const revalidate = 3600;
+// Served from the ISR cache and re-rendered at most every five minutes, so an ingested
+// correction is live within that window (decided 2026-11-09, mobile LCP).
+export const revalidate = 300;
+
+// No paths at build time: each one renders on its first request and is then served from the
+// ISR cache (Next: an empty generateStaticParams opts a dynamic route into on-demand ISR;
+// without it the route is rendered per request).
+export function generateStaticParams() {
+  return [];
+}
 
 type FeedItem = {
   id: string;
@@ -72,7 +81,7 @@ const FEED_URLS = {
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations('feed');
+  const t = await getTranslations({ locale, namespace: 'feed' });
   const canonical = locale === 'es' ? FEED_URLS.es : FEED_URLS.en;
   return {
     title: `${t('title')} — PaddockIntel`,
@@ -110,6 +119,7 @@ const dayDate = (key: string) => new Date(`${key}T12:00:00Z`);
 
 export default async function FeedPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations('feed');
   const tCrumbs = await getTranslations('articleDusk');
   const format = await getFormatter();

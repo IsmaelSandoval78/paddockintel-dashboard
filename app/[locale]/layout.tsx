@@ -1,15 +1,11 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import { headers } from 'next/headers';
 import localFont from 'next/font/local';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, getTranslations } from 'next-intl/server';
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import Script from 'next/script';
 import { routing } from '@/lib/i18n/routing';
-import { siteModeForHost } from '@/lib/siteMode';
-import { getCurrentAuthUser } from '@/lib/auth/getCurrentAuthUser';
-import { getFollowedRefs } from '@/lib/follows/actions';
 import { AuthProvider } from '@/lib/auth/AuthContext';
 import Navbar from '@/components/nav/Navbar';
 import Footer from '@/components/nav/Footer';
@@ -103,23 +99,17 @@ export default async function LocaleLayout({
     notFound();
   }
 
+  // Nothing in this layout reads the request (headers, cookies, session): any such read makes
+  // every page under it render per request and bypass the ISR cache, which is what held the
+  // article group's mobile LCP at 4.0s (Search Console, 2026-11-09). The locale comes from the
+  // route; the signed-in state is fetched by AuthProvider in the browser (/api/auth/me).
+  setRequestLocale(locale);
   const messages = await getMessages();
   const t = await getTranslations('nav');
-  const host = (await headers()).get('host') ?? '';
-  const siteMode = siteModeForHost(host);
-
-  // One auth read per request, shared by Navbar (via prop) and every
-  // FollowButton/MiBoxIndicator/MiBoxStrip anywhere in the tree (via
-  // AuthContext) — see lib/auth/AuthContext.tsx. Follows are only fetched
-  // when there's actually a session; the anonymous majority of requests
-  // never touches driver_follows/constructor_follows at all.
-  const authUser = await getCurrentAuthUser();
-  const initialFollows = authUser ? await getFollowedRefs() : { drivers: [], constructors: [] };
 
   return (
     <html
       lang={locale}
-      data-mode={siteMode}
       className={`${display.variable} ${serif.variable} ${sans.variable} ${mono.variable} ${prose.variable}`}
     >
       <body>
@@ -127,8 +117,8 @@ export default async function LocaleLayout({
           {t('skipToContent')}
         </a>
         <NextIntlClientProvider messages={messages}>
-          <AuthProvider value={{ user: authUser, initialFollows }}>
-            <Navbar authUser={authUser} />
+          <AuthProvider>
+            <Navbar />
             <div id="main-content" tabIndex={-1} className="outline-none">
               {children}
             </div>

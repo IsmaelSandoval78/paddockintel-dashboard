@@ -8,9 +8,10 @@ import type { AuthUser } from '@/components/nav/AuthWidget';
 // session cookie at all, so this stays cheap for the anonymous majority of
 // requests.
 //
-// Called exactly once per request, from app/[locale]/layout.tsx — Navbar.tsx
-// receives the result as a prop instead of calling this itself, so it's
-// never fetched twice for the same request.
+// Called from app/api/auth/me/route.ts (fetched once per page load by
+// lib/auth/AuthContext.tsx) and from paywalled article pages. Never from a
+// layout or a free page: a session read there makes the page render per
+// request instead of coming from the ISR cache.
 export async function getCurrentAuthUser(): Promise<AuthUser | null> {
   const supabase = await createAuthServerClient();
   const { data: { user } } = await supabase.auth.getUser();
