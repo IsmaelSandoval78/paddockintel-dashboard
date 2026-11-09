@@ -115,10 +115,12 @@ async function main() {
     faq: item.faq ?? null,
     meta_description: item.meta_description ?? null,
     meta_description_es: item.meta_description_es ?? null,
-    // Only sent when present, so items without corrections still ingest before the column exists.
-    ...(item.corrections !== undefined
-      ? { corrections: validateCorrections(item.corrections, `item ${item.slug ?? item.headline}`, true) }
-      : {}),
+    // Always sent: a multi-row insert fills a key one row lacks with null, not the column default,
+    // and corrections is NOT NULL (2026-11-09: a batch where only some items had corrections failed).
+    corrections:
+      item.corrections !== undefined
+        ? validateCorrections(item.corrections, `item ${item.slug ?? item.headline}`, true)
+        : [],
   }));
 
   const { error: itemsErr } = await supabase.from('digest_items').insert(rows);
