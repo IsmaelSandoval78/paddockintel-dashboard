@@ -27,6 +27,10 @@ const CF_BEACON_TOKEN = process.env.NEXT_PUBLIC_CF_BEACON_TOKEN;
 // the production deploy twice (#153, #154). Same faces and weights as before; the variable files
 // are Google Fonts' own latin subsets, declared once per weight as Google's CSS did. Lora (a
 // Reserved Font Name) is the unmodified family from google/fonts, only converted to WOFF2.
+// Only the faces painted above the fold are preloaded (Archivo Black titles, Inter and JetBrains
+// Mono in the navbar, Instrument Sans on .theme-dusk pages via dusk-font.ts). DM Serif Display and
+// Lora (225 KB together) are used below the fold or on legacy surfaces, so they load on demand
+// instead of competing with the HTML, CSS and LCP image for bandwidth on a slow mobile connection.
 const display = localFont({
   src: [{ path: '../fonts/ArchivoBlack-Regular-latin.woff2', weight: '400', style: 'normal' }],
   variable: '--pi-display',
@@ -40,6 +44,7 @@ const serif = localFont({
   ],
   variable: '--pi-serif',
   display: 'swap',
+  preload: false,
   adjustFontFallback: 'Times New Roman',
 });
 
@@ -71,6 +76,7 @@ const prose = localFont({
   ],
   variable: '--pi-prose',
   display: 'swap',
+  preload: false,
   adjustFontFallback: 'Times New Roman',
 });
 
