@@ -1038,6 +1038,7 @@
     "deleteError": "Something went wrong. Try again, or email info@paddockintel.com."
   },
   "footer": {
+    "preferredSource": "Preferred source on Google",
     "disclaimer": "Independent publication. Not affiliated with Formula 1 or the FIA.",
     "data": "Data cards",
     "about": "About",
@@ -1536,6 +1537,10 @@
         "bottomAll": "Every edition here was won from pole."
       }
     }
+  },
+  "preferredSource": {
+    "pitch": "Want more PaddockIntel in your Google results? Add us as a preferred source and our stories will show up more often in Top Stories.",
+    "button": "Add on Google"
   },
   "articleDusk": {
     "updated": "Updated",

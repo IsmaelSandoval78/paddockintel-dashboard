@@ -1038,6 +1038,7 @@
     "deleteError": "Algo salió mal. Intentá de nuevo, o escribí a info@paddockintel.com."
   },
   "footer": {
+    "preferredSource": "Fuente preferida en Google",
     "disclaimer": "Publicación independiente. Sin afiliación con Formula 1 ni la FIA.",
     "data": "Tarjetas de datos",
     "about": "Acerca de",
@@ -1540,6 +1541,10 @@
         "bottomAll": "Todas las ediciones las ganó quien salió desde la pole."
       }
     }
+  },
+  "preferredSource": {
+    "pitch": "¿Quieres ver más PaddockIntel en tus resultados de Google? Agréganos como fuente preferida y nuestras notas aparecerán más seguido en las noticias destacadas.",
+    "button": "Agregar en Google"
   },
   "articleDusk": {
     "updated": "Actualizado",

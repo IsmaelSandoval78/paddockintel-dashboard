@@ -1,6 +1,7 @@
 import { getLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/lib/i18n/navigation';
 import { localeUrl } from '@/lib/site-url';
+import { PREFERRED_SOURCE_URL } from '@/components/blog/PreferredSourceLink';
 
 // Shared across the Hub and the magazine — the Hub home also keeps its own
 // animated KineticFooter above this one; this is the functional/legal
@@ -15,7 +16,7 @@ export default async function Footer() {
         <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-3 leading-relaxed">
           {t('disclaimer')}
         </p>
-        <nav className="flex items-center gap-5 shrink-0">
+        <nav className="flex flex-wrap items-center gap-x-5 gap-y-2 shrink-0">
           {/* Absolute: the data cards live on the magazine host, this footer also renders on the Hub. */}
           <a
             href={localeUrl(locale, '/data/')}
@@ -29,6 +30,14 @@ export default async function Footer() {
           >
             {t('about')}
           </Link>
+          <a
+            href={PREFERRED_SOURCE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-150"
+          >
+            {t('preferredSource')}
+          </a>
           <Link
             href="/privacy"
             className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-2 hover:text-text-1 transition-colors duration-150"

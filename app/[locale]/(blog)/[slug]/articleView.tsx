@@ -10,6 +10,7 @@ import { ArticleScorecardButton } from '@/components/scorecards/ArticleScorecard
 import ArticleTOC from '@/components/blog/ArticleTOC';
 import ArticleCharts, { type ChartSpec } from '@/components/blog/ArticleCharts';
 import NewsletterCard from '@/components/blog/NewsletterCard';
+import PreferredSourceLink from '@/components/blog/PreferredSourceLink';
 import ArticlePaywallGate from '@/components/blog/ArticlePaywallGate';
 import { extractTOC, markdownToHtml, estimateReadTime, splitMarkdownAtSection } from '@/lib/markdown';
 import { linkGlossaryTerms } from '@/lib/glossaryLinks';
@@ -556,6 +557,9 @@ export async function renderArticle(locale: string, slug: string, members: boole
                 ) : (
                   <NewsletterCard />
                 )}
+
+                {/* Google "preferred source" deeplink (Google News / Top Stories) */}
+                <PreferredSourceLink />
 
                 {/* Voices — curated expert_picks relevant to this article's topic */}
                 <ArticleVoices voices={voices} />
