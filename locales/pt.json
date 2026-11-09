@@ -1136,6 +1136,25 @@
       "title": "Contato",
       "body": "Dicas de pauta, correções e contatos de imprensa."
     },
+    "corrections": {
+      "heading": "Como corrigimos",
+      "intro": "Quando um dado que publicamos se mostra errado, ou muda depois da publicação, corrigimos na página e dizemos isso. Nunca mudamos um número em silêncio.",
+      "items": [
+        {
+          "title": "O que recebe uma correção",
+          "body": "Qualquer dado que mude: um número ou um nome errado, um resultado provisório substituído pela classificação final da FIA ou uma decisão dos comissários que muda um resultado depois da publicação."
+        },
+        {
+          "title": "O que você vai ver",
+          "body": "Uma linha “Atualizado” com a data e a hora abaixo da assinatura, e uma nota datada em “Correções e atualizações” dizendo o que mudou. A data de modificação da página muda junto."
+        },
+        {
+          "title": "O que não recebe",
+          "body": "Erros de digitação e ajustes de estilo que não mudam um dado são corrigidos sem nota."
+        }
+      ],
+      "report": "Encontrou um erro? Escreva para nós com o link e o dado. Verificamos e, se erramos, corrigimos e registramos na página."
+    },
     "cover": {
       "heading": "O que cobrimos",
       "pillars": [
