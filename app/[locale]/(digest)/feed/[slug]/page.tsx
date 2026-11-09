@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/lib/i18n/navigation';
 import ShareButton from '@/components/ui/ShareButton';
 import NewsletterBand from '@/components/home-dusk/NewsletterBand';
+import PreferredSourceLink from '@/components/blog/PreferredSourceLink';
 import HubContext from '@/components/feed-dusk/HubContext';
 import PressBars from '@/components/feed-dusk/PressBars';
 import { easternDateKey } from '@/lib/dates';
@@ -430,6 +431,9 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
                     {t('itemPage.inIssue', { n: issueVol })}
                   </Link>
                 )}
+
+                {/* Google "preferred source" deeplink (Google News / Top Stories) */}
+                <PreferredSourceLink />
 
                 {text.faq.length > 0 && (
                   <section aria-labelledby="feed-faq-title">

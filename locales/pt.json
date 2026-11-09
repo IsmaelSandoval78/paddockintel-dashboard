@@ -1034,6 +1034,7 @@
     "deleteError": "Algo deu errado. Tente novamente, ou escreva para info@paddockintel.com."
   },
   "footer": {
+    "preferredSource": "Fonte preferida no Google",
     "disclaimer": "Publicação independente. Sem afiliação com a Formula 1 ou a FIA.",
     "data": "Cartões de dados",
     "about": "Sobre",
@@ -1531,6 +1532,10 @@
         "bottomAll": "Todas as edições aqui foram vencidas por quem largou na pole."
       }
     }
+  },
+  "preferredSource": {
+    "pitch": "Quer ver mais PaddockIntel nos seus resultados do Google? Adicione-nos como fonte preferida e nossas matérias vão aparecer com mais frequência nas principais notícias.",
+    "button": "Adicionar no Google"
   },
   "articleDusk": {
     "updated": "Atualizado",
