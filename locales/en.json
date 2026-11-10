@@ -1366,7 +1366,7 @@
       "chipLaps": "{circuit} · {laps} laps"
     },
     "terrain": {
-      "caption": "The pole lap as a landscape · every peak a straight, every valley a corner · {driver} {lapTime} · {min}–{max} km/h · FastF1",
+      "caption": "The pole lap as a landscape · every peak a straight, every valley a corner · {driver} {lapTime} · {min}–{max} km/h · {source}",
       "aria": "{driver}'s pole lap speed drawn as a mountain range: every peak is a straight, every valley a corner. Speed ranges from {min} to {max} km/h."
     },
     "insights": {
@@ -1381,7 +1381,7 @@
       "speedUnit": "km/h",
       "speedBadge": "slowest {min} km/h",
       "speedAria": "Speed trace of {driver}'s pole lap, from {min} to {max} km/h",
-      "speedSource": "FastF1 car telemetry · 140 samples by distance",
+      "speedSource": "{source} car telemetry · 140 samples by distance",
       "ledTitle": "Laps led",
       "ledSubAll": "{driver}, every lap of the race",
       "ledSub": "{driver}, at the end of each lap",
@@ -1438,7 +1438,7 @@
       "slow": "Slow",
       "fast": "Flat out",
       "aria": "Map of {circuit} drawn from {driver}'s pole lap, coloured by speed: {max} km/h at the fastest point, {min} km/h at the slowest corner.",
-      "source": "FastF1 position + car data"
+      "source": "{source} position + car data"
     },
     "trend": {
       "title": "The title race, round by round",

@@ -285,6 +285,8 @@ export async function renderArticle(locale: string, slug: string, members: boole
           lapTime: pole.lapTime,
           min: format.number(pole.minSpeedKmh),
           max: format.number(pole.topSpeedKmh),
+          // The provider named in the file's own `source` (OpenF1 when FastF1's timing was unavailable).
+          source: pole.source.startsWith('OpenF1') ? 'OpenF1' : 'FastF1',
         }),
         ariaLabel: tTerrain('aria', {
           driver: surname(pole.driver),

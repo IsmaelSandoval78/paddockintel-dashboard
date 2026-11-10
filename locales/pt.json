@@ -1361,7 +1361,7 @@
       "chipLaps": "{circuit} · {laps} voltas"
     },
     "terrain": {
-      "caption": "A volta da pole como paisagem · cada pico é uma reta, cada vale uma curva · {driver} {lapTime} · {min}–{max} km/h · FastF1",
+      "caption": "A volta da pole como paisagem · cada pico é uma reta, cada vale uma curva · {driver} {lapTime} · {min}–{max} km/h · {source}",
       "aria": "A velocidade da volta da pole de {driver} desenhada como uma cordilheira: cada pico é uma reta, cada vale uma curva. A velocidade vai de {min} a {max} km/h."
     },
     "insights": {
@@ -1376,7 +1376,7 @@
       "speedUnit": "km/h",
       "speedBadge": "mínima {min} km/h",
       "speedAria": "Traço de velocidade da volta da pole de {driver}, de {min} a {max} km/h",
-      "speedSource": "Telemetria do FastF1 · 140 amostras por distância",
+      "speedSource": "Telemetria do {source} · 140 amostras por distância",
       "ledTitle": "Voltas lideradas",
       "ledSubAll": "{driver}, todas as voltas da corrida",
       "ledSub": "{driver}, ao fim de cada volta",
@@ -1433,7 +1433,7 @@
       "slow": "Lento",
       "fast": "Pé embaixo",
       "aria": "Mapa de {circuit} traçado com a volta da pole de {driver}, colorido conforme a velocidade: {max} km/h no ponto mais rápido, {min} km/h na curva mais lenta.",
-      "source": "Posição e telemetria do FastF1"
+      "source": "Posição e telemetria do {source}"
     },
     "trend": {
       "title": "A briga pelo título, etapa por etapa",
