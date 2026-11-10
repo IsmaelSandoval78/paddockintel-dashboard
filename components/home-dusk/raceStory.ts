@@ -16,10 +16,15 @@ export async function buildRaceStory(
   const t = await getTranslations('homeDusk.story');
 
   let mover: RaceStoryMover | null = null;
-  for (const d of trace.drivers.slice(1)) {
+  for (const [i, d] of trace.drivers.entries()) {
+    if (i === 0) continue;
     const later = d.positions.slice(1).filter((p): p is number => p !== null);
-    const final = d.positions[d.positions.length - 1];
-    if (!later.length || final === null) continue;
+    // Drivers come in the order of the official classification (both generators sort by the
+    // results' Position), so that order, not the road position on the flag lap, is where a driver
+    // "finished": a post-race penalty (Brazil 2026: Leclerc 7th on the road, 8th classified) would
+    // otherwise put the wrong number in the sentence.
+    const final = i + 1;
+    if (!later.length || d.positions[d.positions.length - 1] === null) continue;
     const peak = Math.min(...later);
     if (final - peak >= 2 && (!mover || final - peak > mover.final - mover.peakPos)) {
       mover = {
