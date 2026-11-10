@@ -261,6 +261,7 @@ export default async function MagazineHomePage({
           lapTime: pole.lapTime,
           min: format.number(pole.minSpeedKmh),
           max: format.number(pole.topSpeedKmh),
+          source: sourceName(pole.source),
         }),
         ariaLabel: t('terrain.aria', {
           driver: surname(pole.driver),
@@ -470,7 +471,7 @@ export default async function MagazineHomePage({
                 badge={t('kpi.speedBadge', { min: format.number(pole.minSpeedKmh) })}
                 speeds={pole.speedKmh}
                 ariaLabel={t('kpi.speedAria', { driver: surname(pole.driver), min: pole.minSpeedKmh, max: pole.topSpeedKmh })}
-                source={t('kpi.speedSource')}
+                source={t('kpi.speedSource', { source: sourceName(pole.source) })}
               />
       )}
       {led && ledByLap && (
@@ -586,7 +587,7 @@ export default async function MagazineHomePage({
                   map={highlights.trackMap}
                   topLabel={t('map.top', { speed: format.number(pole.topSpeedKmh) })}
                   minLabel={t('map.min', { speed: format.number(pole.minSpeedKmh) })}
-                  caption={t('map.source')}
+                  caption={t('map.source', { source: sourceName(highlights.trackMap.source) })}
                   ariaLabel={t('map.aria', {
                     circuit: latestRace.circuitName,
                     driver: surname(pole.driver),

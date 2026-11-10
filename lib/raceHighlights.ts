@@ -11,6 +11,7 @@ import r2025_19 from '@/content/race-highlights/2025-19.json';
 import r2026_17 from '@/content/race-highlights/2026-17.json';
 import r2026_18 from '@/content/race-highlights/2026-18.json';
 import r2026_19 from '@/content/race-highlights/2026-19.json';
+import r2026_20 from '@/content/race-highlights/2026-20.json';
 import p2026_18_fp2 from '@/content/race-highlights/2026-18-fp2.json';
 import p2026_18_fp3 from '@/content/race-highlights/2026-18-fp3.json';
 import p2026_18_q from '@/content/race-highlights/2026-18-q.json';
@@ -112,6 +113,7 @@ const REGISTRY: Record<string, RaceHighlights> = {
   '2026-17': r2026_17 as unknown as RaceHighlights,
   '2026-18': r2026_18 as unknown as RaceHighlights,
   '2026-19': r2026_19 as unknown as RaceHighlights,
+  '2026-20': r2026_20 as unknown as RaceHighlights,
 };
 
 export function getRaceHighlightsFor(year: number, round: number): RaceHighlights | null {
