@@ -23,8 +23,8 @@ export const S = {
   u: 0,
   /** The leader's position around the lap. Grows past 1 as laps go by. */
   lapT: 0.42,
-  /** Race lap. Picks the moment of the real race the 22 cars are shown at. */
-  raceLap: 0,
+  /** Race lap. Starts mid-race so the hook opens on a moving field. */
+  raceLap: 30,
   /** Orbit angles for the opening and closing wide shots. */
   orbitA: -0.5,
   orbitB: -0.8,
@@ -38,8 +38,8 @@ export const S = {
   lights: 0,
   /** 0-1 confetti. */
   confetti: 0,
-  /** 0-1 the circuit name painted on the infield. */
-  circuitName: 1,
+  /** 0-1 the circuit name painted on the infield (chapter 2 only). */
+  circuitName: 0,
   /** Index of the chapter currently on screen. */
   chapter: 0,
 }
@@ -98,44 +98,45 @@ function makePose() {
 }
 
 const SHOTS = [
-  // 1 — TWO WINNERS. Wide establishing shot, slow orbit.
-  (o) => {
-    const a = S.orbitA + orbitOffset()
-    o.pos.set(Math.sin(a) * 104, 74, Math.cos(a) * 104)
-    o.target.set(0, 11, 0)
-    o.roll = 0
-    o.fov = 42
-  },
-  // 2 — LIGHTS OUT. Crane down over the grid, looking along the straight.
-  (o) => {
-    trackPoint(0.996, -15, 9, o.pos)
-    trackPoint(1.046, -1, 3, o.target)
-    o.roll = 0
-    o.fov = 46
-  },
-  // 3 — LAP 20. NORRIS STRIKES BACK. Low tracking shot running ahead of the
-  // papaya trail and looking back, so Norris is nearest and the others chase.
-  (o) => {
-    const t = driverT('NOR')
-    trackPoint(t + 0.028, -7, 4, o.pos)
-    trackPoint(t - 0.006, 0, 1, o.target)
-    o.roll = 0
-    o.fov = 42
-  },
-  // 4 — THE CLIMB. Dutch angle on Verstappen carving through the spray.
+  // 1 — P21 → P2. The hook: glued to Verstappen mid-race, trail alive. Offset
+  // to the side so the ribbon runs up the right edge, clear of the title.
   (o) => {
     const t = driverT('VER')
-    trackPoint(t - 0.03, -14, 8, o.pos)
-    trackPoint(t + 0.004, 0, 1, o.target)
-    o.roll = 0.17
+    trackPoint(t - 0.05, -7, 5.5, o.pos)
+    trackPoint(t + 0.012, 1.5, 1.4, o.target)
+    o.roll = 0
+    o.fov = 50
+  },
+  // 2 — THE RAIN RACE. Wide establishing shot, slow orbit, field racing.
+  (o) => {
+    const a = S.orbitA + orbitOffset()
+    o.pos.set(Math.sin(a) * 76, 50, Math.cos(a) * 76)
+    o.target.set(0, 10, 0)
+    o.roll = 0
+    o.fov = 42
+  },
+  // 3 — LIGHTS OUT. Crane down over the grid, looking along the straight.
+  (o) => {
+    trackPoint(0.997, -11, 6.5, o.pos)
+    trackPoint(1.045, -1, 2.6, o.target)
+    o.roll = 0
     o.fov = 46
   },
-  // 5 — P21 → P2. Steep top-down over the lap chart.
+  // 4 — LAP 20. Low tracking shot running ahead of the papaya trail and
+  // looking back, so Norris is nearest and the others chase.
   (o) => {
-    o.pos.set(-10, 206, 36)
-    o.target.set(-10, 16, -20)
+    const t = driverT('NOR')
+    trackPoint(t + 0.024, -5.5, 3.2, o.pos)
+    trackPoint(t - 0.005, 0, 1, o.target)
     o.roll = 0
-    o.fov = 38
+    o.fov = 42
+  },
+  // 5 — THE CLIMB. Top-down over the lap chart, close enough to fill the frame.
+  (o) => {
+    o.pos.set(-8, 148, 30)
+    o.target.set(-8, 14, -14)
+    o.roll = 0
+    o.fov = 40
   },
   // 6 — 14.602s. Chase cam behind the winner on the run to the flag.
   (o) => {
@@ -150,8 +151,8 @@ const SHOTS = [
   // 7 — NORRIS WINS. Back out wide, slow orbit.
   (o) => {
     const a = S.orbitB + orbitOffset()
-    o.pos.set(Math.sin(a) * 112, 68, Math.cos(a) * 112)
-    o.target.set(0, 11, 0)
+    o.pos.set(Math.sin(a) * 78, 46, Math.cos(a) * 78)
+    o.target.set(0, 10, 0)
     o.roll = 0
     o.fov = 42
   },
@@ -264,6 +265,8 @@ export function createStory({ onChapter, autoplay = false }) {
           S.chapter = index
           onChapter(index)
         }
+        // The last ~second of scroll is the subscribe end card.
+        document.body.classList.toggle('outro', self.progress > 0.972)
       },
     },
   })
@@ -274,30 +277,32 @@ export function createStory({ onChapter, autoplay = false }) {
     timeline.to(S, { u: k + 1, duration: 0.42, ease: 'power2.inOut' }, k + 0.6)
   }
 
-  // Chapter 1 — cars cruise up to the grid (leader on the start line).
-  timeline.to(S, { orbitA: 0.45, duration: 2 }, 0)
-  timeline.to(S, { lapT: 1.055, duration: 1.4, ease: 'power1.out' }, 0)
-  // The infield name clears out as the camera drops onto the grid.
-  timeline.to(S, { circuitName: 0, duration: 0.3, ease: 'power2.in' }, 0.75)
+  // Chapter 1 — the hook: Verstappen's trail keeps moving under the title.
+  timeline.to(S, { lapT: 1.2, duration: 1.0, ease: 'none' }, 0)
 
-  // Chapter 2 — the five lights go on, then out, then the lap-1 reshuffle.
+  // Chapter 2 — wide shot, the field still racing in the rain. On the travel
+  // out, everything is pulled back to the grid for the lights: the infield
+  // name clears, the field parks, the leader sits on the start line.
+  timeline.to(S, { orbitA: 0.45, duration: 2 }, 1)
+  timeline.to(S, { lapT: 1.7, duration: 0.8, ease: 'power1.out' }, 1.05)
+  timeline.to(S, { circuitName: 1, duration: 0.25, ease: 'power2.out' }, 1.02)
+  timeline.to(S, { circuitName: 0, duration: 0.3, ease: 'power2.in' }, 1.75)
+  timeline.to(S, { raceLap: 0, duration: 0.45, ease: 'power2.inOut' }, 1.75)
+  timeline.to(S, { lapT: 2.055, duration: 0.5, ease: 'power1.inOut' }, 1.78)
+
+  // Chapter 3 — the five lights go on, then out, then the lap-1 reshuffle.
   // The running order only settles once they have actually raced to turn 1.
   // All five stay lit for a decent stretch of scroll, so nobody races past
   // the moment they go out.
-  timeline.to(S, { lights: 1, duration: 0.24 }, 1.02)
-  timeline.to(S, { lights: 0, duration: 0.04 }, 1.5)
-  timeline.to(S, { lapT: 1.4, duration: 1.0, ease: 'power2.in' }, 1.52)
-  timeline.to(S, { raceLap: 1, duration: 0.7, ease: 'power1.inOut' }, 1.56)
+  timeline.to(S, { lights: 1, duration: 0.24 }, 2.02)
+  timeline.to(S, { lights: 0, duration: 0.04 }, 2.5)
+  timeline.to(S, { lapT: 2.4, duration: 1.0, ease: 'power2.in' }, 2.52)
+  timeline.to(S, { raceLap: 1, duration: 0.7, ease: 'power1.inOut' }, 2.56)
 
-  // Chapter 3 — the laps fly by during the camera move, so the running order
+  // Chapter 4 — the laps fly by during the camera move, so the running order
   // already reads "lap 20, Norris leading" when the title lands.
-  timeline.to(S, { raceLap: 20, duration: 0.5, ease: 'power1.inOut' }, 1.7)
-  timeline.to(S, { lapT: 2.12, duration: 1.3, ease: 'power1.inOut' }, 1.9)
-
-  // Chapter 4 — the climb plays out on screen: the laps run to 25 and
-  // Verstappen is already P3 when the title lands. No red flag this race.
-  timeline.to(S, { lapT: 2.36, duration: 0.55, ease: 'power1.out' }, 3.0)
-  timeline.to(S, { raceLap: 25, duration: 0.4, ease: 'power2.inOut' }, 3.02)
+  timeline.to(S, { raceLap: 20, duration: 0.5, ease: 'power1.inOut' }, 2.7)
+  timeline.to(S, { lapT: 3.12, duration: 1.3, ease: 'power1.inOut' }, 2.9)
 
   // Chapter 5 — top-down, the real position lines rise off the ground.
   timeline.to(S, { raceLap: 55, duration: 0.45, ease: 'power1.inOut' }, 3.7)
@@ -308,19 +313,19 @@ export function createStory({ onChapter, autoplay = false }) {
 
   // Chapter 6 — to the flag, Verstappen 14.602s behind.
   timeline.to(S, { raceLap: 71, duration: 0.6, ease: 'power1.inOut' }, 4.7)
-  timeline.to(S, { lapT: 3.02, duration: 1.4, ease: 'power1.inOut' }, 4.95)
+  timeline.to(S, { lapT: 4.02, duration: 1.4, ease: 'power1.inOut' }, 4.95)
 
   // Chapter 7 — slow down, pull out, confetti.
-  timeline.to(S, { lapT: 3.26, duration: 1.3, ease: 'power2.out' }, 6.0)
+  timeline.to(S, { lapT: 4.26, duration: 1.3, ease: 'power2.out' }, 6.0)
   timeline.to(S, { orbitB: 0.35, duration: 1.5 }, 5.8)
   timeline.to(S, { confetti: 1, duration: 0.5 }, 6.15)
 
   if (autoplay) {
     const run = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight
-      lenis.scrollTo(max, { duration: 45, easing: (x) => x, lock: true })
+      lenis.scrollTo(max, { duration: 40, easing: (x) => x, lock: true })
     }
-    setTimeout(run, 1200)
+    setTimeout(run, 400)
   }
 
   return { lenis, timeline }

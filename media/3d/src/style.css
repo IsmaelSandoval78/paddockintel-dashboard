@@ -744,9 +744,54 @@ body.vertical .chapter.low-left {
   font-size: min(21cqw, 17cqh);
 }
 
+/* The hook: as big as the frame allows while "P21 → P2." stays on one line. */
+.chapter.hook .title {
+  font-size: min(15.5cqw, 12.5cqh);
+}
+
+/* Subscribe end card: a full-frame cream poster for the last second. */
+.outro-card {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 3cqh;
+  background: var(--cream);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  z-index: 30;
+}
+
+.outro-card .title {
+  font-size: min(11cqw, 8cqh);
+  white-space: pre-line;
+}
+
+.outro-card .o-sub {
+  font-size: max(16px, min(3.4cqw, 3.6cqh));
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--navy);
+  border: 2px solid var(--navy);
+  padding: 1.2cqh 2.4cqw;
+}
+
+body.outro .outro-card {
+  opacity: 1;
+}
+
+body.outro .chapter {
+  opacity: 0 !important;
+}
+
 .body {
   margin-top: 2.4cqh;
-  font-size: max(12px, min(1.75cqw, 2.9cqh));
+  /* Twice the old size: every line must read on a phone. */
+  font-size: max(16px, min(3.4cqw, 3.6cqh));
   line-height: 1.65;
   letter-spacing: 0.02em;
   max-width: 34ch;

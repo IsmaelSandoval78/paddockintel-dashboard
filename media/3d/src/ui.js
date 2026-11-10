@@ -142,7 +142,7 @@ function weatherHTML() {
 }
 
 /** Where each chapter's text block sits, so the layout keeps breathing. */
-const PLACEMENT = ['mid-left', 'low-left', 'low-left', 'top-left', 'top-left', 'top-center', 'center']
+const PLACEMENT = ['top-center', 'low-left', 'low-left', 'top-left', 'top-left', 'top-center', 'center']
 
 export function createUI(overlay) {
   overlay.innerHTML = `
@@ -160,7 +160,7 @@ export function createUI(overlay) {
     ${race.chapters
       .map(
         (chapter, i) => `
-      <article class="chapter ${PLACEMENT[i]}${chapter.id === 6 ? ' huge' : ''}" data-index="${i}">
+      <article class="chapter ${PLACEMENT[i]}${chapter.id === 6 ? ' huge' : ''}${chapter.id === 1 ? ' hook' : ''}" data-index="${i}">
         <div class="inner">
           <h2 class="title"><span class="back" aria-hidden="true"></span><span class="front"></span></h2>
           <p class="body"></p>
@@ -168,6 +168,12 @@ export function createUI(overlay) {
       </article>`
       )
       .join('')}
+    <div class="outro-card">
+      <h2 class="title"><span class="back" aria-hidden="true">EVERY F1 SESSION,
+IN DATA.</span><span class="front">EVERY F1 SESSION,
+IN DATA.</span></h2>
+      <p class="o-sub">SUBSCRIBE · PADDOCKINTEL.COM</p>
+    </div>
   `
 
   const counter = overlay.querySelector('#counter')
@@ -369,14 +375,22 @@ export function createUI(overlay) {
 
     gsap.set(block.root, { y: 0 })
     gsap.to(block.root, { autoAlpha: 1, duration: 0.3, overwrite: true })
-    block.tweens = [
-      scrambleTo(block.titleParts, block.chapter.title, { duration: 1.0, delay: 0.1 }),
-      gsap.fromTo(
-        block.body,
-        { autoAlpha: 0, y: 16 },
-        { autoAlpha: 1, y: 0, duration: 0.7, delay: 0.45, ease: 'power2.out' }
-      ),
-    ]
+    if (index === 0) {
+      // The hook must read complete on the very first frame: no scramble.
+      for (const el of block.titleParts) el.textContent = block.chapter.title
+      block.tweens = [
+        gsap.fromTo(block.body, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }),
+      ]
+    } else {
+      block.tweens = [
+        scrambleTo(block.titleParts, block.chapter.title, { duration: 1.0, delay: 0.1 }),
+        gsap.fromTo(
+          block.body,
+          { autoAlpha: 0, y: 16 },
+          { autoAlpha: 1, y: 0, duration: 0.7, delay: 0.45, ease: 'power2.out' }
+        ),
+      ]
+    }
     block.body.textContent = block.chapter.text
   }
 

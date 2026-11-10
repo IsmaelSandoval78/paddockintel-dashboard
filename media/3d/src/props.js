@@ -77,31 +77,33 @@ export function createLapChart() {
 
   const LAST_LAP = 71
   const X_SPAN = 58
-  // 21 position rows (Verstappen starts P21) instead of Mexico's 6, so each
-  // row is tighter to keep the whole chart inside the same top-down shot.
-  const Z_PER_POSITION = 2.1
+  // 21 position rows (Verstappen starts P21) instead of Mexico's 6; sized to
+  // fill the closer top-down shot — this chapter is the climax of the video.
+  const Z_PER_POSITION = 3.0
   const HEIGHT = 24
 
   const lapToX = (lap) => -X_SPAN + ((lap - 1) / (LAST_LAP - 1)) * X_SPAN * 2
   const positionToZ = (position) => (position - 11) * Z_PER_POSITION
 
   const lines = []
-  for (const code of ['VER', 'NOR', 'ANT']) {
+  for (const code of ['NOR', 'ANT', 'VER']) {
+    // Verstappen's line IS the story: thicker and drawn on top of the others.
+    const hero = code === 'VER'
     const laps = race.positions_by_lap[code].slice(0, LAST_LAP)
     const points = laps.map(
       (position, i) => new THREE.Vector3(lapToX(i + 1), 0, positionToZ(position))
     )
     const curve = new THREE.CatmullRomCurve3(points, false, 'catmullrom', 0.08)
-    const geometry = new THREE.TubeGeometry(curve, 420, 0.45, 8, false)
+    const geometry = new THREE.TubeGeometry(curve, 420, hero ? 1.5 : 0.8, 8, false)
     // Flat colour, poster-style: these are data, not objects in the world.
     const material = new THREE.MeshBasicMaterial({
       color: new THREE.Color(race.colors[code]),
       transparent: true,
-      opacity: 1,
+      opacity: hero ? 1 : 0.55,
       fog: false,
     })
     const mesh = new THREE.Mesh(geometry, material)
-    mesh.renderOrder = 4
+    mesh.renderOrder = hero ? 5 : 4
     group.add(mesh)
     lines.push({ mesh, material, total: geometry.index.count })
   }
@@ -182,8 +184,10 @@ export function createCircuitLabel() {
   // track and be read at the scale of the whole circuit.
   const CENTER_X = 6
   const CENTER_Z = -2
-  const WIDTH = 92
-  const DEPTH = 24
+  // Small enough that the lettering stays inside the infield, clear of both
+  // the ribbon and the chapter titles (it only shows on the wide chapter 2).
+  const WIDTH = 68
+  const DEPTH = 18
   // Lined up with the main straight rather than the world axes.
   const ANGLE = -0.122
 
