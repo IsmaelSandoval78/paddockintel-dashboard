@@ -1,0 +1,284 @@
+<!doctype html><html><head><meta charset="utf-8"><title>mural</title><style>
+@font-face{font-family:G;font-weight:900;src:url(inter-tight-latin-900-normal.woff2)}@font-face{font-family:G;font-weight:500;src:url(inter-tight-latin-500-normal.woff2)}
+html,body{margin:0;background:#060607;height:100%;display:grid;place-items:center}
+canvas{max-height:100vh;max-width:100vw}
+</style></head><body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+// ─── Mural: un solo póster gigante (2160×4800), la cámara cuenta la historia ───
+// Reglas del formato (docs/MEDIA-PIPELINE.md · Mural):
+//  · un dato protagonista por parada, COMPLETO en el encuadre con ≥60px de margen
+//  · palabras largas a dos líneas; cortes de palabra solo con la cámara en movimiento
+//  · texto legible ≥48px pantalla, secundario ≥36px · cada parada quieta ≥1.5s
+//  · zonas seguras 9:16: nada importante en los 320px de abajo ni los 160px de la derecha
+//  · cierre: mural completo quieto + barra CTA fuera de zonas seguras
+//  · frame 0 = portada: el gancho dentro de la franja central (crop 3:4 de Instagram)
+//  · window.checkStops() valida cada parada ANTES de renderizar (check_mural.py)
+const c=document.getElementById('c'),X=c.getContext('2d');
+let W=1080,H=1920;const PW=2160,PH=4800;
+const BG='#0B0B0D',INK='#F7C400',PAPER='#EDEAE2',DIM='#55524A',WALL='#060607';
+let S=null,T=null,BEAT=0.566,BAR=2.264,LEN=42,FMT='9x16',SAFE={r:160,b:320};
+let MEAS={};                                   // anchos medidos tras cargar fuentes
+
+const cl=(v,a,b)=>Math.min(b,Math.max(a,v)), lp=(a,b,k)=>a+(b-a)*k;
+const ss=k=>{k=cl(k,0,1);return k*k*k*(k*(k*6-15)+10);};
+const outExpo=k=>k>=1?1:1-Math.pow(2,-10*k);
+const seg=(t,a,b)=>cl((t-a)/(b-a),0,1);
+const fade=(t,t0,d=0.6)=>outExpo(seg(t,t0,t0+d));
+const hash=i=>{let x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x);};
+function F(w,px){return `${w} ${px}px G`;}
+
+// ─── Paradas: tiempos + caja del protagonista (en coords del póster) ───
+const STOPS=[
+ {name:'gancho',       t:[1.6,3.6],  box:()=>[620,1260,620+Math.max(MEAS.hook,MEAS.hookTo),1880]},
+ {name:'pista',        t:[9.4,11.4], box:()=>[200,2160,1160,3077]},
+ {name:'stats',        t:[12.6,15.4],box:()=>[860,2470,860+MEAS.stats,2820]},
+ {name:'escalada',     t:[16.6,21.4],box:()=>[210,3274,973,3844]},
+ {name:'liderato',     t:[22.6,25.8],box:()=>[1190,3352,1190+MEAS.lead,3668]},
+ {name:'ganador',      t:[27.2,29.2],box:()=>[120,4120-115,120+MEAS.winner,4290]},
+ {name:'clasificación',t:[30.2,33.4],box:()=>[1180,3954,2040,4428]},
+ {name:'cierre',       t:[38.6,41.9],box:()=>[0,0,PW,PH],m:40},
+];
+
+// ─── Cámara 9:16 (afinada a mano; pares idénticos = parada quieta) ───
+const CAM_V=[
+ {t:0.0, x:862, y:1472,s:0.715},  // portada: gancho completo en la franja central
+ {t:1.6, x:1108,y:1949,s:0.98},{t:3.6, x:1108,y:1949,s:0.98},
+ {t:6.4, x:900, y:2500,s:0.82},   // descenso
+ {t:9.4, x:736, y:3078,s:0.895},{t:11.4,x:736, y:3078,s:0.895},
+ {t:12.6,x:1195,y:2857,s:1.12},{t:15.4,x:1195,y:2857,s:1.12},
+ {t:16.6,x:636, y:3740,s:1.12},{t:21.4,x:636, y:3740,s:1.12},
+ {t:22.6,x:1440,y:3542,s:1.45},{t:25.8,x:1440,y:3542,s:1.45},
+ {t:27.2,x:449, y:4114,s:1.42},{t:29.2,x:449, y:4114,s:1.42},
+ {t:30.2,x:1660,y:3840,s:1.00},{t:33.4,x:1660,y:3840,s:1.00},
+ {t:38.6,x:1080,y:2968,s:0.283},{t:42.0,x:1080,y:2968,s:0.283},
+];
+let CAM=CAM_V;
+function buildWideCam(){                        // 16:9: auto-encuadre por parada
+  const fit=st=>{const b=st.box(),m=st.m||60;
+    const s=Math.min((W-2*m-SAFE.r)/(b[2]-b[0]),(H-2*m-SAFE.b)/(b[3]-b[1]),1.6*(W/1080));
+    return {x:(b[0]+b[2])/2,y:(b[1]+b[3])/2,s:s/(W/1080)};};
+  const ks=[{t:0,...fit(STOPS[0])}];
+  for(const st of STOPS){const k=fit(st);ks.push({t:st.t[0],...k},{t:st.t[1],...k});}
+  ks.push({t:LEN,...fit(STOPS[STOPS.length-1])});
+  return ks;
+}
+function cam(t){
+  let i=0; while(i<CAM.length-1&&CAM[i+1].t<=t)i++;
+  if(i>=CAM.length-1)return CAM[CAM.length-1];
+  const a=CAM[i],b=CAM[i+1],k=ss(seg(t,a.t,b.t));
+  return {x:lp(a.x,b.x,k),y:lp(a.y,b.y,k),s:lp(a.s,b.s,k)};
+}
+
+// ─── Utilidades ───
+function chip(x,y,txt,px,fill,pad=18,rot=0){
+  X.save();X.translate(x,y);X.rotate(rot);X.font=F(500,px);
+  const w=X.measureText(txt).width+pad*2,h=px+pad*1.2;
+  if(fill){X.fillStyle=INK;X.fillRect(0,-h/2,w,h);X.fillStyle=BG;}
+  else{X.strokeStyle=PAPER;X.lineWidth=2;X.strokeRect(0,-h/2,w,h);X.fillStyle=PAPER;}
+  X.textBaseline='middle';X.fillText(txt,pad,2);X.restore();return w;
+}
+function mono(x,y,txt,px,col,tracking=0.14){
+  X.font=F(500,px);X.fillStyle=col;X.textBaseline='alphabetic';
+  let cx=x;for(const ch of txt){X.fillText(ch,cx,y);cx+=X.measureText(ch).width+px*tracking;}
+  return cx-x;
+}
+function monoW(txt,px,tracking=0.14){X.font=F(500,px);let w=0;for(const ch of txt)w+=X.measureText(ch).width+px*tracking;return w;}
+function fitPx(txt,weight,px,maxW){X.font=F(weight,px);while(px>40&&X.measureText(txt).width>maxW){px-=5;X.font=F(weight,px);}return px;}
+function checker(x,y,n,sz){for(let i=0;i<n;i++)for(let j=0;j<2;j++)if((i+j)%2===0){X.fillStyle=PAPER;X.fillRect(x+i*sz,y+j*sz,sz,sz);}}
+function dots(x,y,cols,rows,gap,r,col){X.fillStyle=col;for(let i=0;i<cols;i++)for(let j=0;j<rows;j++){X.beginPath();X.arc(x+i*gap,y+j*gap,r,0,7);X.fill();}}
+function trackXY(p,bx,by,bw,bh){return [bx+p[0]*bw, by+p[1]*bh];}
+
+// ─── El póster (todo sale de STORY: texts + data) ───
+function drawPoster(t){
+  const bt=t/BEAT;
+  X.fillStyle=BG;X.fillRect(0,0,PW,PH);
+  X.save();X.beginPath();X.rect(0,0,PW,PH);X.clip();
+  X.textBaseline='alphabetic';
+
+  // ── Banda 1 · título (y 90–1070) ──
+  mono(112,180,T.header_left,40,DIM);
+  mono(1080,180,T.header_right,40,PAPER);
+  X.fillStyle=INK;
+  T.title_lines.forEach((ln,i)=>{const px=fitPx(ln,900,430,1900);X.font=F(900,px);X.fillText(ln,110,560+i*380);});
+  checker(110,1000,20,34);
+  dots(1980,120,4,10,26,5,DIM);
+
+  // ── Banda 2 · HOOK (y 1085–1975) — completo desde el frame 0 ──
+  chip(1335,1120,T.hook_chip,44,true,20,-0.06);
+  X.font=F(900,500);X.fillStyle=PAPER;X.fillText(T.hook_big,620,1620);
+  X.font=F(900,300);X.fillStyle=INK;X.fillText(T.hook_to,660,1880);
+  mono(620,1965,T.hook_sub,36,PAPER,0.06);
+
+  // ── Banda 3 · pista + stats (y 2160–3080) ──
+  mono(880,2240,T.race_label,40,DIM);
+  const tb={x:200,y:2160,w:580,h:580/S.track.aspect};
+  const drawK=ss(seg(t,6.6,9.8));
+  const pts=S.track.pts,n=Math.max(2,Math.floor(pts.length*drawK));
+  const pulse=Math.pow(1-(bt%1),2.2)*cl(seg(t,9.8,10.4),0,1);
+  X.save();X.lineJoin='round';X.lineCap='round';
+  for(const [lw,col,blur,al] of [[26,INK,42+pulse*38,0.16+pulse*0.1],[12,INK,18,0.55],[5,'#FFF4CC',0,1]]){
+    X.beginPath();for(let i=0;i<n;i++){const[px,py]=trackXY(pts[i],tb.x,tb.y,tb.w,tb.h);i?X.lineTo(px,py):X.moveTo(px,py);}
+    if(drawK>=1)X.closePath();
+    X.strokeStyle=col;X.lineWidth=lw;X.shadowColor=INK;X.shadowBlur=blur;X.globalAlpha=al;X.stroke();X.shadowBlur=0;X.globalAlpha=1;
+  }
+  if(drawK>=1){const f=(t/BAR)%1,i0=Math.floor(f*pts.length);   // cometa, un compás por vuelta
+    X.beginPath();for(let k=0;k<26;k++){const[px,py]=trackXY(pts[(i0+k)%pts.length],tb.x,tb.y,tb.w,tb.h);k?X.lineTo(px,py):X.moveTo(px,py);}
+    X.strokeStyle='#FFFFFF';X.lineWidth=9;X.shadowColor='#FFFFFF';X.shadowBlur=26;X.globalAlpha=0.9;X.stroke();X.shadowBlur=0;X.globalAlpha=1;}
+  X.restore();
+  // stats que rotan — un protagonista cada 3 beats
+  const stats=T.stats, statsT0=9.7, PER=BEAT*3;
+  const rel=t<statsT0?-1:(t-statsT0)/PER;
+  const sIdx=Math.min(stats.length-1,Math.floor(Math.max(0,rel)));
+  const roll=rel<0?0:(rel>=stats.length?1:cl((rel%1)*PER/0.4,0,1));
+  X.save();X.beginPath();X.rect(820,2290,1270,530);X.clip();
+  if(rel>=0)for(const[idx,prev]of [[sIdx,0],[sIdx-1,1]]){ if(idx<0||idx>=stats.length)continue; if(prev&&roll>=1)continue;
+    const off=prev? -420*ss(roll) : 420*(1-ss(roll));
+    const st=stats[idx];
+    X.font=F(900,250);X.fillStyle=INK;X.fillText(st[0],860,2650+off);
+    mono(870,2720+off,st[1],42,PAPER);
+    if(st[2])mono(870,2778+off,st[2],36,PAPER,0.02);
+  }
+  X.restore();
+  X.font=F(900,80);X.strokeStyle=DIM;X.lineWidth=3;X.strokeText(T.track_outline,850,2870);
+
+  // ── Banda 4 · escalada + liderato (y 3270–3900) ──
+  X.globalAlpha=fade(t,16.0);mono(260,3310,T.climb_label,40,PAPER);X.globalAlpha=1;
+  const rx=360,ry0=3380,ry1=3820;
+  const CL=S.climb,pmax=CL.pmax;
+  const climbK=seg(t,17.0,20.8), lap=Math.round(lp(0,S.data.total_laps,ss(climbK)));
+  const pos=lap<1?CL.grid:CL.positions[lap-1];
+  const posY=p=>lp(ry0,ry1,(p-1)/(pmax-1));
+  const ty=posY(pos);
+  X.strokeStyle=PAPER;X.lineWidth=4;X.beginPath();                      // regla con imán
+  for(let y=ry0-20;y<=ry1+20;y+=4){const d=(y-ty)/46,b=34*Math.exp(-d*d);y===ry0-20?X.moveTo(rx+b,y):X.lineTo(rx+b,y);}X.stroke();
+  for(let p=1;p<=pmax;p++){const yy=posY(p),Mj=p===1||p===5||p===10||p===15||p===pmax;
+    X.strokeStyle=Mj?PAPER:DIM;X.lineWidth=Mj?4:2;X.beginPath();X.moveTo(rx-(Mj?46:28),yy);X.lineTo(rx-12,yy);X.stroke();
+    if(Mj)mono(rx-150,yy+12,'P'+p,36,DIM,0.02);}
+  const kcl=fade(t,16.2);
+  if(kcl>0){X.globalAlpha=kcl;
+    X.beginPath();X.arc(rx+34,ty,24,0,7);X.fillStyle=INK;X.shadowColor=INK;X.shadowBlur=30;X.fill();X.shadowBlur=0;
+    X.font=F(900,260);X.fillStyle=INK;X.fillText('P'+pos,520,3620);
+    mono(530,3700,'LAP '+Math.max(1,lap)+' / '+S.data.total_laps,36,PAPER,0.06);
+    if(climbK>=1)mono(530,3770,T.climb_sub,36,DIM,0.06);
+    X.globalAlpha=1;}
+  // liderato
+  X.globalAlpha=fade(t,22.0);mono(1190,3310,T.lead_label,40,DIM);X.globalAlpha=1;
+  S.data.lead_changes.forEach((lc,i)=>{const k=fade(t,22.6+i*0.6,0.5); if(k<=0)return;
+    X.globalAlpha=k;chip(1190,3390+i*120,'LAP '+lc.lap+' → '+lc.to,52,i===S.data.lead_changes.length-1);X.globalAlpha=1;});
+  X.globalAlpha=fade(t,23.8);mono(1190,3770,T.led_line,38,PAPER);X.globalAlpha=1;
+  dots(1950,3900,3,6,30,5,DIM);
+
+  // ── Banda 5 · podio (y 3990–4460) ──
+  const kw=fade(t,26.6,0.7);
+  if(kw>0){X.globalAlpha=kw;X.font=F(900,160);
+    X.fillStyle=PAPER;X.fillText(T.winner_big[0],120,4120);
+    X.fillStyle=INK;X.fillText(T.winner_big[1],120,4290);
+    mono(120,4360,T.winner_sub,36,DIM,0.06);X.globalAlpha=1;}
+  S.data.podium.forEach((p,i)=>{const k=ss(seg(t,30.3+i*BEAT,30.3+i*BEAT+0.45));if(k<=0)return;const yy=4000+i*80;
+    X.save();X.translate(0,yy);X.scale(1,Math.max(0.02,k));             // flip de cubo
+    X.font=F(900,64);X.fillStyle=i===0?INK:PAPER;X.fillText(p.pos+'  '+p.name.toUpperCase(),1180,22);
+    X.font=F(500,52);X.fillStyle=i===0?PAPER:DIM;
+    X.textAlign='right';X.fillText(p.gap==null?'—':'+'+p.gap.toFixed(3),2040,22);X.textAlign='left';X.restore();});
+  if(T.chip_bottom){X.globalAlpha=fade(t,31.2);chip(1180,4250,T.chip_bottom,34,true);X.globalAlpha=1;}
+  X.globalAlpha=fade(t,31.5);
+  mono(1180,4330,T.fl_line,36,PAPER,0.06);
+  if(T.note)mono(1180,4390,T.note,36,DIM,0.06);
+  X.globalAlpha=1;
+
+  // ── Banda 6 · cierre del póster (y 4500–4780) ──
+  X.font=F(900,70);X.fillStyle=PAPER;
+  T.footer_lines.forEach((ln,i)=>X.fillText(ln,160,4560+i*100));
+  chip(1490,4630,T.footer_chip,40,true);
+  checker(160,4720,20,30);
+
+  X.restore();
+  X.strokeStyle=INK;X.lineWidth=6;X.strokeRect(3,3,PW-6,PH-6);
+}
+
+// ─── Lluvia (espacio de pantalla) ───
+function rain(t,amt){
+  if(amt<=0)return;
+  X.save();X.strokeStyle=PAPER;X.lineWidth=2;
+  for(let i=0;i<90;i++){
+    if(hash(i*3.7)>amt)continue;
+    const sx=hash(i)*W*1.2-W*0.1, len=90+hash(i+50)*160, sp=1400+hash(i+99)*900;
+    const y=((hash(i+7)*H*2+t*sp)%(H+len))-len;
+    X.globalAlpha=0.05+hash(i+13)*0.08;
+    X.beginPath();X.moveTo(sx,y);X.lineTo(sx-len*0.18,y+len);X.stroke();
+  }
+  X.restore();
+}
+
+// ─── CTA final (espacio de pantalla, fuera de zonas seguras) ───
+function outro(t){
+  if(t<40)return;
+  const k=fade(t,40,0.7);
+  X.save();X.globalAlpha=k;X.translate(0,(1-k)*50);X.textBaseline='middle';
+  const txt=T.closing_bar;
+  X.font=F(900,40);
+  const uw=W-SAFE.r, w=X.measureText(txt).width+48, x=(uw-w)/2, y=H-SAFE.b-56, h=72;
+  X.fillStyle=INK;X.fillRect(x,y-h/2,w,h);
+  X.fillStyle=BG;X.fillText(txt,x+24,y+2);
+  X.restore();X.textBaseline='alphabetic';
+}
+
+window.draw=function(t){
+  t=cl(t,0,LEN-0.001);
+  X.setTransform(1,0,0,1,0,0);X.fillStyle=WALL;X.fillRect(0,0,W,H);
+  const k=cam(t), s=k.s*(W/1080);
+  X.setTransform(s,0,0,s,W/2-k.x*s,H/2-k.y*s);
+  drawPoster(t);
+  X.setTransform(1,0,0,1,0,0);
+  rain(t, t<3.6?0.95:(t<33?0.4:0.18));
+  outro(t);
+};
+
+// ─── Comprobación automática de paradas (regla 4) ───
+window.checkStops=function(){
+  const fails=[];
+  STOPS.forEach((st,i)=>{
+    const t=(st.t[0]+st.t[1])/2, k=cam(t), s=k.s*(W/1080), m=st.m||60, b=st.box();
+    const x0=(b[0]-k.x)*s+W/2, x1=(b[2]-k.x)*s+W/2;
+    const y0=(b[1]-k.y)*s+H/2, y1=(b[3]-k.y)*s+H/2;
+    const xMax=W-Math.max(SAFE.r,m), yMax=H-Math.max(SAFE.b,m);
+    if(x0<m-1||x1>xMax+1||y0<m-1||y1>yMax+1)
+      fails.push({stop:st.name,t,box:[x0,y0,x1,y1].map(Math.round),limits:[m,m,xMax,yMax]});
+  });
+  return fails;
+};
+window.stopTimes=()=>STOPS.map(st=>(st.t[0]+st.t[1])/2);
+
+// ─── Still del mural completo (PNG 9:16, 4:5, …) ───
+window.still=function(w,h){
+  c.width=W=w; c.height=H=h;
+  X.setTransform(1,0,0,1,0,0);X.fillStyle=WALL;X.fillRect(0,0,w,h);
+  const s=Math.min(w/PW,h/PH)*0.96;
+  X.setTransform(s,0,0,s,(w-PW*s)/2,(h-PH*s)/2);
+  drawPoster(LEN);
+  X.setTransform(1,0,0,1,0,0);
+};
+
+function measure(){
+  X.font=F(900,500);MEAS.hook=X.measureText(T.hook_big).width;
+  X.font=F(900,300);MEAS.hookTo=X.measureText(T.hook_to).width+40;
+  X.font=F(900,160);MEAS.winner=Math.max(...T.winner_big.map(l=>X.measureText(l).width));
+  MEAS.stats=Math.max(...T.stats.map(st=>{X.font=F(900,250);
+    return Math.max(X.measureText(st[0]).width,10+monoW(st[1],42),st[2]?10+monoW(st[2],36,0.02):0);}));
+  X.font=F(500,52);MEAS.lead=Math.max(...S.data.lead_changes.map(lc=>X.measureText('LAP '+lc.lap+' → '+lc.to).width+36));
+}
+
+const fontsReady=Promise.all([F(900,100),F(500,30)].map(f=>document.fonts.load(f)));
+fontsReady.then(async()=>{
+  const qs=new URLSearchParams(location.search);
+  if(!window.STORY&&qs.get('story')){try{window.STORY=await(await fetch(qs.get('story'))).json();}catch(e){}}
+  if(!window.STORY){document.body.innerHTML='<p style="color:#888;font-family:sans-serif">Falta STORY (usa ?story=...json)</p>';return;}
+  S=window.STORY;T=S.texts;BEAT=60/(S.bpm||106.06);BAR=BEAT*4;LEN=S.seconds||42;
+  FMT=qs.get('fmt')||S.fmt||'9x16';
+  if(FMT==='16x9'){W=c.width=1920;H=c.height=1080;SAFE={r:0,b:0};}
+  measure();
+  if(FMT==='16x9')CAM=buildWideCam();
+  window.ready=true;draw(0);
+  if(qs.get('play')){const t0=performance.now();(function loop(){draw(((performance.now()-t0)/1000)%LEN);requestAnimationFrame(loop);})();}
+});
+</script></body></html>

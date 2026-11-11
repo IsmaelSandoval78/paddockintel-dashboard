@@ -1,0 +1,454 @@
+<!doctype html><html><head><meta charset="utf-8"><title>mural episodio</title><style>
+@font-face{font-family:G;font-weight:900;src:url(inter-tight-latin-900-normal.woff2)}@font-face{font-family:G;font-weight:500;src:url(inter-tight-latin-500-normal.woff2)}
+html,body{margin:0;background:#060607;height:100%;display:grid;place-items:center}
+canvas{max-height:100vh;max-width:100vw}
+</style></head><body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script>
+// ─── Mural episodio (16:9) — muro 2 filas × 5 zonas (7700×4330, aspecto 16:9) ───
+// La cámara lee el muro como un cómic: fila 1 → fila 2 → zoom-out (el muro ES el póster).
+// Cada dato aparece en el instante exacto en que la narración lo dice (story.episode.cues).
+// Reglas de encuadre (v2): el bloque protagonista llena ≥60% del ancho o ≥50% del alto;
+// la cifra protagonista ≥280px en pantalla; texto legible ≥44px; sin zonas negras vacías.
+// Cada capítulo usa un recurso de las referencias (ver docs/MEDIA-PIPELINE.md §3d).
+const c=document.getElementById('c'),X=c.getContext('2d');
+let W=1920,H=1080;const PW=7700,PH=4330;
+const BG='#0B0B0D',INK='#F7C400',PAPER='#EDEAE2',DIM='#55524A',WALL='#060607';
+const MARGIN=60,CAP_TOP=880;                    // CAP_TOP: techo de la banda de subtítulos
+let S=null,T=null,E=null,BEAT=0.566,BAR=2.264,LEN=148,MEAS={},LASTCAP=0;
+
+const cl=(v,a,b)=>Math.min(b,Math.max(a,v)), lp=(a,b,k)=>a+(b-a)*k;
+const ss=k=>{k=cl(k,0,1);return k*k*k*(k*(k*6-15)+10);};
+const outExpo=k=>k>=1?1:1-Math.pow(2,-10*k);
+const seg=(t,a,b)=>cl((t-a)/(b-a),0,1);
+const fade=(t,t0,d=0.5)=>t0==null?0:outExpo(seg(t,t0,t0+d));
+const hash=i=>{let x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x);};
+function F(w,px){return `${w} ${px}px G`;}
+function fitPx(txt,wt,maxW,cap){X.font=F(wt,cap);const w=X.measureText(txt).width;return w>maxW?Math.floor(cap*maxW/w):cap;}
+
+// ─── Geometría del muro ───
+const COL=c=>250+c*1480;                        // columnas de 950 de contenido
+const R0=770,R1=3090;
+// Parada por capítulo: cámara + caja del bloque protagonista + cifra + texto mínimo.
+// (cx,cy,s) encuadran la caja con márgenes ≥60px y libre de la banda de subtítulos.
+let STOPC=[];
+function buildStops(){
+  const wPx=MEAS.winnerPx,fPx=MEAS.footerPx;
+  STOPC=[
+    {cx:857, cy:796, s:1.12, box:[250,375,1200,1092],       big:380},
+    {cx:2205,cy:742, s:1.30, box:[1730,375,2680,995],       big:300},
+    {cx:3730,cy:783, s:1.15, box:[3210,375,4250,1070],      big:250},
+    {cx:5165,cy:778, s:1.15, box:[4690,375,5640,1060],      big:320},
+    {cx:6645,cy:778, s:1.15, box:[6170,375,7120,1060],      big:300},
+    {cx:835, cy:3130,s:1.15, box:[250,2715,1200,3425],      big:320},
+    {cx:2205,cy:3110,s:1.15, box:[1730,2700,2680,3400],     big:wPx},
+    {cx:3685,cy:3130,s:1.15, box:[3210,2715,4160,3425],     big:280},
+    {cx:5165,cy:3128,s:1.15, box:[4690,2715,5640,3420],     big:260},
+    {cx:6670,cy:3080,s:1.30, box:[6170,2770,6170+MEAS.footerW+30,3290],big:null},
+  ];
+}
+const MINTEXT=40;                               // px de muro del texto legible más chico
+const WALLK={x:PW/2,y:PH/2,s:Math.min(1920/PW,1080/PH)*0.957};
+
+let CAM=[],WIPES=[];
+// desvíos entre paradas: picados, arcos y golpes de zoom (nada de solo izquierda→derecha)
+const DETOUR=[{dy:650,ds:-0.20},{dy:0,ds:-0.28},{dy:420,ds:-0.10},{dy:250,ds:-0.05},
+              {dy:0,ds:-0.35},{dy:-550,ds:-0.15},{dy:0,ds:-0.24},{dy:-620,ds:-0.18},{dy:250,ds:-0.08}];
+const WIPE_AT=[1,6];                            // paneles que barren (ref canvas & frames)
+function buildCam(){
+  CAM=[];WIPES=[];
+  const holds=[];
+  E.chapters.forEach((ch,i)=>{
+    const k=STOPC[i];
+    const a={t:Math.max(0,ch.start-0.2),x:k.cx,y:k.cy,s:k.s},
+          b={t:i===9?ch.end-2.6:ch.end+0.5,x:k.cx,y:k.cy,s:k.s};
+    holds.push([a,b]);CAM.push(a,b);
+  });
+  for(let i=0;i<9;i++){const a=holds[i][1],b=holds[i+1][0],d=DETOUR[i];
+    CAM.push({t:(a.t+b.t)/2,x:(a.x+b.x)/2,y:(a.y+b.y)/2+d.dy,s:Math.min(a.s,b.s)+d.ds});
+    if(WIPE_AT.includes(i))WIPES.push([a.t+0.1,b.t-0.1]);}
+  CAM.push({t:E.chapters[9].end+0.4,...WALLK});
+  CAM.push({t:LEN,...WALLK});
+  CAM.sort((a,b)=>a.t-b.t);
+}
+function cam(t){
+  let i=0; while(i<CAM.length-1&&CAM[i+1].t<=t)i++;
+  if(i>=CAM.length-1)return CAM[CAM.length-1];
+  const a=CAM[i],b=CAM[i+1],k=ss(seg(t,a.t,b.t));
+  return {x:lp(a.x,b.x,k),y:lp(a.y,b.y,k),s:lp(a.s,b.s,k)};
+}
+
+// ─── Utilidades ───
+function chip(x,y,txt,px,fill,pad=16,rot=0){
+  X.save();X.translate(x,y);X.rotate(rot);X.font=F(500,px);
+  const w=X.measureText(txt).width+pad*2,h=px+pad*1.2;
+  if(fill){X.fillStyle=INK;X.fillRect(0,-h/2,w,h);X.fillStyle=BG;}
+  else{X.strokeStyle=PAPER;X.lineWidth=2;X.strokeRect(0,-h/2,w,h);X.fillStyle=PAPER;}
+  X.textBaseline='middle';X.fillText(txt,pad,2);X.restore();return w;
+}
+function mono(x,y,txt,px,col,tracking=0.1){
+  X.font=F(500,px);X.fillStyle=col;X.textBaseline='alphabetic';
+  let cx=x;for(const ch of txt){X.fillText(ch,cx,y);cx+=X.measureText(ch).width+px*tracking;}
+  return cx-x;
+}
+// letras una a una con opacidad escalonada (ref transiciones letras, "Now")
+function stagText(x,y,txt,px,wt,col,k,each=0.055){
+  X.font=F(wt,px);X.fillStyle=col;let cx=x;
+  for(let i=0;i<txt.length;i++){
+    X.globalAlpha=ss(seg(k,i*each,i*each+0.3));
+    X.fillText(txt[i],cx,y);cx+=X.measureText(txt[i]).width;
+  }X.globalAlpha=1;return cx-x;
+}
+function checker(x,y,n,sz){for(let i=0;i<n;i++)for(let j=0;j<2;j++)if((i+j)%2===0){X.fillStyle=PAPER;X.fillRect(x+i*sz,y+j*sz,sz,sz);}}
+function dots(x,y,cols,rows,gap,r,col){X.fillStyle=col;for(let i=0;i<cols;i++)for(let j=0;j<rows;j++){X.beginPath();X.arc(x+i*gap,y+j*gap,r,0,7);X.fill();}}
+function trackXY(p,bx,by,bw,bh){return [bx+p[0]*bw, by+p[1]*bh];}
+// guía punteada con manijas (ref canvas & frames): marca dónde aterrizará un dato
+function ghost(x,y,w,h,k){if(k<=0.01)return;
+  X.save();X.globalAlpha=k*0.55;X.strokeStyle=DIM;X.lineWidth=2;X.setLineDash([14,10]);
+  X.strokeRect(x,y,w,h);X.setLineDash([]);X.fillStyle=DIM;
+  for(const[hx,hy] of [[x,y],[x+w,y],[x,y+h],[x+w,y+h]])X.fillRect(hx-7,hy-7,14,14);
+  X.restore();}
+const cue=n=>E.cue[n];
+
+// ─── El muro ───
+function drawWall(t){
+  const bt=t/BEAT;
+  X.fillStyle=BG;X.fillRect(0,0,PW,PH);
+  X.save();X.beginPath();X.rect(0,0,PW,PH);X.clip();X.textBaseline='alphabetic';
+
+  // bandas globales (solo se ven en el reveal y las transiciones)
+  mono(250,190,'PADDOCKINTEL RACE REPORT',44,DIM);
+  mono(6480,190,T.header_right,44,PAPER);
+  X.font=F(900,520);X.strokeStyle=DIM;X.lineWidth=4;X.strokeText(T.deco_outline,1850,2080);
+  checker(250,1540,24,40);dots(7280,1500,4,8,30,6,DIM);
+  X.strokeStyle=DIM;X.lineWidth=2;X.beginPath();X.moveTo(250,2320);X.lineTo(7450,2320);X.stroke();
+  checker(250,3960,24,36);
+  mono(1400,3996,T.deco_footer,40,DIM);
+  // relleno de los pasillos entre zonas (que no quede negro vacío en las paradas)
+  for(const gx of [130,1465,2945,4425,5905,7410]){
+    dots(gx,470,1,12,60,5,DIM);dots(gx,2770,1,11,60,5,DIM);
+    X.strokeStyle=DIM;X.lineWidth=1;X.globalAlpha=0.5;
+    X.beginPath();X.moveTo(gx-40,440);X.lineTo(gx-40,1150);X.moveTo(gx+40,440);X.lineTo(gx+40,1150);
+    X.moveTo(gx-40,2740);X.lineTo(gx-40,3420);X.moveTo(gx+40,2740);X.lineTo(gx+40,3420);X.stroke();X.globalAlpha=1;
+  }
+
+  // ── Z1 · HOOK — ref storytelling: crop extremo como portada ──
+  let x0=COL(0);
+  mono(x0,400,T.z1_top,40,PAPER);
+  chip(x0+650,455,T.hook_chip,40,true,16,-0.05);
+  X.font=F(900,380);X.fillStyle=PAPER;X.fillText(T.hook_big,x0,800);
+  X.font=F(900,230);X.fillStyle=INK;X.globalAlpha=0.25+0.75*fade(t,cue('hook_p2'));X.fillText(T.hook_to,x0+20,1010);X.globalAlpha=1;
+  mono(x0,1040,T.hook_sub1,40,PAPER);
+  mono(x0,1092,T.hook_sub2,40,DIM);
+
+  // ── Z2 · THE RACE — ref track animation: pista neón al compás + stats rotando ──
+  x0=COL(1);
+  X.globalAlpha=fade(t,E.chapters[1].start-1.4);mono(x0,400,'THE RACE',40,DIM);X.globalAlpha=1;
+  const tb={x:x0,y:450,w:540*S.track.aspect,h:540};
+  const drawK=ss(seg(t,E.chapters[1].start-2.2,E.chapters[1].start+0.1));
+  const pts=S.track.pts,n=Math.max(2,Math.floor(pts.length*drawK));
+  const pulse=Math.pow(1-(bt%1),2.2)*(drawK>=1?1:0);
+  X.save();X.lineJoin='round';X.lineCap='round';
+  for(const [lw,col,blur,al] of [[22,INK,36+pulse*30,0.16+pulse*0.1],[10,INK,16,0.55],[4,'#FFF4CC',0,1]]){
+    X.beginPath();for(let i=0;i<n;i++){const[px,py]=trackXY(pts[i],tb.x,tb.y,tb.w,tb.h);i?X.lineTo(px,py):X.moveTo(px,py);}
+    if(drawK>=1)X.closePath();
+    X.strokeStyle=col;X.lineWidth=lw;X.shadowColor=INK;X.shadowBlur=blur;X.globalAlpha=al;X.stroke();X.shadowBlur=0;X.globalAlpha=1;}
+  if(drawK>=1){const f=(t/BAR)%1,i0=Math.floor(f*pts.length);
+    X.beginPath();for(let k=0;k<22;k++){const[px,py]=trackXY(pts[(i0+k)%pts.length],tb.x,tb.y,tb.w,tb.h);k?X.lineTo(px,py):X.moveTo(px,py);}
+    X.strokeStyle='#FFF';X.lineWidth=8;X.shadowColor='#FFF';X.shadowBlur=22;X.globalAlpha=0.9;X.stroke();X.shadowBlur=0;X.globalAlpha=1;}
+  X.restore();
+  // stats: avanzan con la voz (rotan como en el gráfico broadcast)
+  const sCues=[cue('s71'),cue('srain'),cue('ssc')];
+  let sIdx=-1;for(let i=0;i<3;i++)if(t>=sCues[i])sIdx=i;
+  if(sIdx>=0){const roll=ss(seg(t,sCues[sIdx],sCues[sIdx]+0.4));
+    X.save();X.beginPath();X.rect(x0+420,430,530,565);X.clip();
+    for(const[idx,prev]of [[sIdx,0],[sIdx-1,1]]){ if(idx<0)continue; if(prev&&roll>=1)continue;
+      const off=prev?-420*roll:420*(1-roll);
+      const st=T.stats[idx],vPx=st[0].length<=2?300:150;
+      X.font=F(900,vPx);X.fillStyle=INK;X.fillText(st[0],x0+440,750+off);
+      mono(x0+445,822+off,st[1],42,PAPER);
+      if(idx===2&&t>=cue('svsc'))mono(x0+445,877+off,T.stat_vsc,42,PAPER);
+    }
+    X.restore();}
+
+  // ── Z3 · THE START — ref cube transition: banner y tarjetas giran como caras de cubo ──
+  x0=COL(2);
+  X.globalAlpha=fade(t,E.chapters[2].start-0.6);mono(x0,400,'THE START · LAP 1',40,DIM);X.globalAlpha=1;
+  const kPole=fade(t,cue('pole')),kFlip=ss(seg(t,cue('p3'),cue('p3')+0.5));
+  if(kPole>0){X.save();X.globalAlpha=kPole;X.translate(x0,450);
+    const fl=Math.abs(1-2*kFlip);X.scale(1,Math.max(0.03,fl));
+    X.fillStyle=kFlip<0.5?INK:'#1A1A1E';X.fillRect(0,0,1040,128);
+    X.font=F(900,56);X.fillStyle=kFlip<0.5?BG:PAPER;X.textBaseline='middle';
+    X.fillText(kFlip<0.5?T.start_pole:T.start_fell,24,66);X.textBaseline='alphabetic';X.restore();}
+  const cards=[[T.start_c1,cue('c_ant'),true],[T.start_c2,cue('c_law'),false],[T.start_c3,cue('p3'),false]];
+  const g3=fade(t,E.chapters[2].start-0.6);
+  cards.forEach((cd,i)=>ghost(x0+i*355,630,330,440,g3*(1-ss(seg(t,cd[1],cd[1]+0.35)))));
+  cards.forEach(([txt,t0,hero],i)=>{const k=ss(seg(t,t0,t0+0.55));if(k<=0)return;
+    const cx=x0+i*355, cy=630;
+    X.save();X.translate(cx+165,cy+220);X.scale(Math.max(0.03,k),1);X.translate(-165,-220); // cara de cubo
+    if(hero){X.fillStyle=INK;X.fillRect(0,0,330,440);}else{X.strokeStyle=PAPER;X.lineWidth=3;X.strokeRect(0,0,330,440);}
+    const nPx=fitPx('P'+(i+1),900,302,250);
+    X.font=F(900,nPx);X.fillStyle=hero?BG:PAPER;X.fillText('P'+(i+1),14,290);
+    X.font=F(500,44);X.fillStyle=hero?BG:PAPER;X.fillText(txt,14,390);X.restore();});
+
+  // ── Z4 · THE LEAD — ref transiciones letras (texto escalonado) + filmstrip 1–71 ──
+  x0=COL(3);
+  X.globalAlpha=fade(t,E.chapters[3].start-0.6);mono(x0,400,'THE LEAD',40,DIM);X.globalAlpha=1;
+  const g4=fade(t,E.chapters[3].start-0.6);
+  T.lead_chips.forEach((lc,i)=>ghost(x0+(i%2)*500,465+Math.floor(i/2)*95-38,460,76,g4*(1-ss(seg(t,cue('lead'+i),cue('lead'+i)+0.35)))));
+  ghost(x0,700,430,265,g4*(1-ss(seg(t,cue('led48'),cue('led48')+0.35))));
+  ghost(x0,1000,950,60,g4*(1-ss(seg(t,cue('lead0'),cue('lead0')+0.35))));
+  T.lead_chips.forEach((lc,i)=>{const t0=cue('lead'+i),k=fade(t,t0,0.45);if(k<=0)return;
+    const cx=x0+(i%2)*500, cy=465+Math.floor(i/2)*95;
+    X.globalAlpha=k;X.save();X.translate(cx,cy);
+    X.font=F(500,46);const w=X.measureText(lc).width+32,h=46*1.65;
+    if(i===3){X.fillStyle=INK;X.fillRect(0,-h/2,w,h);}else{X.strokeStyle=PAPER;X.lineWidth=2;X.strokeRect(0,-h/2,w,h);}
+    X.textBaseline='middle';X.restore();
+    X.save();X.translate(cx+16,cy);X.textBaseline='middle';
+    stagText(0,2,lc,46,500,i===3?BG:PAPER,seg(t,t0,t0+0.9));
+    X.restore();X.textBaseline='alphabetic';X.globalAlpha=1;});
+  const kled=fade(t,cue('led48'));
+  if(kled>0){X.globalAlpha=kled;
+    X.font=F(900,320);X.fillStyle=INK;X.fillText(T.led_big,x0,950);
+    mono(x0+470,870,T.led_label,44,PAPER);X.globalAlpha=1;}
+  X.globalAlpha=fade(t,cue('led23'));mono(x0+470,935,T.led_small,44,DIM);X.globalAlpha=1;
+  // filmstrip del liderato (vueltas 1–71), un segmento por relevo
+  const segs=T.lead_segments;
+  const fsX=l=>x0+(l-1)/70*950;
+  segs.forEach((sg,i)=>{const k=fade(t,cue('lead'+i),0.5);if(k<=0)return;
+    const[a,b,code]=sg,xa=fsX(a),xb=fsX(b)+950/70;
+    X.globalAlpha=k;X.fillStyle=i%2?INK:'#1A1A1E';X.fillRect(xa,1000,xb-xa,60);
+    X.strokeStyle=BG;X.lineWidth=3;X.strokeRect(xa,1000,xb-xa,60);
+    if(xb-xa>130){X.font=F(500,40);X.fillStyle=i%2?BG:DIM;X.textBaseline='middle';X.fillText(code,xa+14,1032);X.textBaseline='alphabetic';}
+    X.globalAlpha=1;});
+  if(fade(t,cue('lead0'))>0){X.globalAlpha=fade(t,cue('lead0'));
+    mono(x0,1098,'L1',40,DIM,0.02);mono(x0+900,1098,'L71',40,DIM,0.02);X.globalAlpha=1;}
+
+  // ── Z5 · THE TYRES — ref canvas & frames: una tarjeta bento por stint ──
+  x0=COL(4);
+  X.globalAlpha=fade(t,E.chapters[4].start-0.6);mono(x0,400,'THE TYRES · PIT STOPS',40,DIM);X.globalAlpha=1;
+  const tyCues=[cue('ty1'),cue('ty17'),cue('ty63')];
+  const g5=fade(t,E.chapters[4].start-0.6);
+  tyCues.forEach((t0,i)=>ghost(x0+i*330,460,290,310,g5*(1-ss(seg(t,t0,t0+0.35)))));
+  T.stint_cards.forEach((sc,i)=>{const k=ss(seg(t,tyCues[i],tyCues[i]+0.55));if(k<=0)return;
+    const cx=x0+i*330, dir=i%2?1:-1;
+    X.save();X.globalAlpha=k;X.translate(cx+dir*220*(1-k),460);   // entran deslizando, alternadas
+    if(i===1){X.fillStyle=INK;X.fillRect(0,0,290,310);}else{X.strokeStyle=PAPER;X.lineWidth=3;X.strokeRect(0,0,290,310);}
+    X.font=F(900,60);X.fillStyle=i===1?BG:PAPER;X.fillText(sc[0],20,110);
+    X.font=F(500,40);X.fillStyle=i===1?BG:DIM;X.fillText(sc[1],20,180);
+    X.beginPath();X.arc(60,250,26,0,7);X.strokeStyle=i===1?BG:DIM;X.lineWidth=8;X.stroke();  // neumático
+    X.restore();});
+  // barra de vueltas con los cortes de stint (relleno, sin texto cortable)
+  const kbar=fade(t,cue('ty1'));
+  if(kbar>0){X.globalAlpha=kbar;X.strokeStyle=DIM;X.lineWidth=3;
+    X.beginPath();X.moveTo(x0,815);X.lineTo(x0+950,815);X.stroke();
+    for(const l of [1,17,63,71]){const lx=x0+(l-1)/70*950;
+      X.strokeStyle=t>=tyCues[l===1?0:l===17?1:l===63?2:2]?INK:DIM;X.lineWidth=4;
+      X.beginPath();X.moveTo(lx,800);X.lineTo(lx,830);X.stroke();}
+    X.globalAlpha=1;}
+  X.globalAlpha=fade(t,E.chapters[4].start+1.0);
+  X.font=F(900,300);X.fillStyle=INK;X.fillText(T.stops_big,x0,1050);
+  mono(x0+430,975,T.stops_label,42,PAPER);
+  mono(x0+430,1035,T.ty_labels[0]+' → '+T.ty_labels[1]+' → '+T.ty_labels[2],40,DIM);X.globalAlpha=1;
+
+  // ── Z6 · THE CLIMB — ref dates: regla magnética, el número acompaña al thumb ──
+  x0=COL(0);
+  X.globalAlpha=fade(t,E.chapters[5].start-0.6);mono(x0,2740,T.climb_label,40,PAPER);X.globalAlpha=1;
+  const rx=x0+150,ry0=2800,ry1=3400,pmax=S.climb.pmax;
+  const posY=p=>lp(ry0,ry1,(p-1)/(pmax-1));
+  const steps=E.climb_steps;
+  let pNow=S.climb.grid,lNow=0;
+  for(let i=0;i<steps.length;i++){if(t>=steps[i].t){const pv=i?steps[i-1].pos:S.climb.grid;
+    pNow=Math.round(lp(pv,steps[i].pos,ss(seg(t,steps[i].t,steps[i].t+0.5))));lNow=steps[i].lap;}}
+  const ty=posY(pNow);
+  X.strokeStyle=PAPER;X.lineWidth=4;X.beginPath();
+  for(let y=ry0-16;y<=ry1+16;y+=4){const d=(y-ty)/42,b=30*Math.exp(-d*d);y===ry0-16?X.moveTo(rx+b,y):X.lineTo(rx+b,y);}X.stroke();
+  for(let p=1;p<=pmax;p++){const yy=posY(p),Mj=p===1||p===5||p===10||p===15||p===pmax;
+    X.strokeStyle=Mj?PAPER:DIM;X.lineWidth=Mj?3:2;X.beginPath();X.moveTo(rx-(Mj?40:24),yy);X.lineTo(rx-10,yy);X.stroke();
+    if(Mj)mono(rx-140,yy+13,'P'+p,40,DIM,0.02);}
+  const kc=fade(t,E.chapters[5].start+0.2);
+  if(kc>0){X.globalAlpha=kc;
+    X.beginPath();X.arc(rx+30,ty,20,0,7);X.fillStyle=INK;X.shadowColor=INK;X.shadowBlur=26;X.fill();X.shadowBlur=0;
+    X.font=F(900,320);X.fillStyle=INK;X.fillText('P'+pNow,rx+140,3120);
+    mono(rx+150,3200,lNow?'LAP '+lNow+' / '+S.data.total_laps:'GRID',40,PAPER);
+    X.globalAlpha=1;}
+  X.globalAlpha=fade(t,cue('gap14'));X.font=F(900,130);X.fillStyle=PAPER;X.fillText(T.climb_gap,rx+140,3340);X.globalAlpha=1;
+  X.globalAlpha=fade(t,cue('places19'));chip(rx+140,3400,T.hook_chip,42,true);X.globalAlpha=1;
+
+  // ── Z7 · THE FLAG — ref transiciones letras: titular letra a letra + filas del podio ──
+  x0=COL(1);
+  if(t>=cue('wins')){
+    stagText(x0,2890,T.winner_big[0],MEAS.winnerPx,900,PAPER,seg(t,cue('wins'),cue('wins')+1.0));
+    stagText(x0,3110,T.winner_big[1],MEAS.winnerPx,900,INK,seg(t,cue('wins')+0.25,cue('wins')+1.25));}
+  S.data.podium.forEach((p,i)=>{const t0=[cue('wins'),cue('row2'),cue('row3')][i];
+    const k=ss(seg(t,t0,t0+0.45));if(k<=0)return;const yy=3186+i*72;
+    X.save();X.globalAlpha=k;X.translate(-40*(1-k)*(i%2?-1:1),0);     // filas alternadas
+    X.font=F(900,50);X.fillStyle=i===0?INK:PAPER;X.fillText(p.pos+'  '+p.name.toUpperCase(),x0,yy);
+    X.font=F(500,50);X.fillStyle=i===0?PAPER:DIM;
+    X.textAlign='right';X.fillText(p.gap==null?'—':'+'+p.gap.toFixed(3),x0+930,yy);X.textAlign='left';X.restore();X.globalAlpha=1;});
+  X.globalAlpha=fade(t,cue('fl'));mono(x0,3390,T.fl_line,40,PAPER,0.06);X.globalAlpha=1;
+  X.globalAlpha=fade(t,cue('fl55'));mono(x0+740,3390,T.fl_lap,40,INK,0.06);X.globalAlpha=1;
+
+  // ── Z8 · THE STEWARDS — ref cube transition: cada sanción es un tile que gira ──
+  x0=COL(2);
+  X.globalAlpha=fade(t,E.chapters[7].start-0.6);mono(x0,2740,'THE STEWARDS',40,DIM);X.globalAlpha=1;
+  X.globalAlpha=fade(t,cue('pen5'));X.font=F(900,280);X.fillStyle=INK;X.fillText(T.pen_big,x0,3010);X.globalAlpha=1;
+  const g8=fade(t,E.chapters[7].start-0.6);
+  [0,1,2].forEach(i=>ghost(x0,3070+i*116,950,96,g8*(1-ss(seg(t,cue('pen'+i),cue('pen'+i)+0.35)))));
+  T.pen_chips.forEach((pc,i)=>{const t0=cue('pen'+i),k=ss(seg(t,t0,t0+0.6));if(k<=0)return;
+    const yy=3070+i*116;
+    X.save();X.translate(x0,yy+48);const fl=Math.abs(1-2*Math.min(0.999,k));X.scale(1,Math.max(0.03,fl));X.translate(-x0,-(yy+48));
+    if(k<0.5){X.fillStyle=INK;X.fillRect(x0,yy,950,96);X.font=F(900,56);X.fillStyle=BG;X.textBaseline='middle';X.fillText(T.pen_big,x0+24,yy+50);X.textBaseline='alphabetic';}
+    else{X.fillStyle=i===2?INK:'#1A1A1E';X.fillRect(x0,yy,950,96);
+      X.font=F(500,46);X.fillStyle=i===2?BG:PAPER;X.textBaseline='middle';X.fillText(pc,x0+24,yy+50);X.textBaseline='alphabetic';}
+    X.restore();});
+  X.globalAlpha=fade(t,cue('pen2')+0.8);mono(x0,3415,T.note,40,DIM,0.06);X.globalAlpha=1;
+
+  // ── Z9 · THE CHAMPIONSHIP — ref presentación de número: el 9 se arma como Rubik ──
+  x0=COL(3);
+  X.globalAlpha=fade(t,E.chapters[8].start-0.6);mono(x0,2740,'THE CHAMPIONSHIP',40,DIM);X.globalAlpha=1;
+  const km=fade(t,cue('champ'),0.6);
+  if(km>0){X.globalAlpha=km;X.font=F(900,140);
+    X.fillStyle=PAPER;X.fillText(T.champ_1,x0,2890);
+    X.fillStyle=INK;X.fillText(T.champ_2,x0,3040);X.globalAlpha=1;}
+  const gx=x0,gy=3070,cs=115;
+  const g9=fade(t,E.chapters[8].start-0.6)*(1-ss(seg(t,cue('nine'),cue('nine')+0.35)));
+  if(g9>0.01){X.save();X.globalAlpha=g9*0.55;X.strokeStyle=DIM;X.lineWidth=2;X.setLineDash([14,10]);
+    for(let i=0;i<3;i++)for(let j=0;j<3;j++)X.strokeRect(gx+i*cs,gy+j*cs,cs,cs);
+    X.setLineDash([]);X.restore();}
+  const k9=seg(t,cue('nine'),cue('nine')+0.9);
+  if(k9>0){
+    for(let i=0;i<3;i++)for(let j=0;j<3;j++){const d=ss(seg(k9,(i*3+j)*0.07,(i*3+j)*0.07+0.5));
+      if(d<=0)continue;X.save();X.beginPath();X.rect(gx+i*cs,gy+j*cs,cs,cs);X.clip();
+      X.translate(gx+i*cs+cs/2,gy+j*cs+cs/2);X.rotate((1-d)*((i+j)%2?1:-1)*1.5708);X.globalAlpha=d;
+      X.translate(-(gx+i*cs+cs/2),-(gy+j*cs+cs/2));
+      X.font=F(900,260);X.fillStyle=INK;X.fillText('9',gx+95,gy+266);X.restore();}
+    X.strokeStyle=BG;X.lineWidth=3;for(let i=1;i<3;i++){X.beginPath();X.moveTo(gx+i*cs,gy);X.lineTo(gx+i*cs,gy+3*cs);X.stroke();
+      X.beginPath();X.moveTo(gx,gy+i*cs);X.lineTo(gx+3*cs,gy+i*cs);X.stroke();}}
+  X.globalAlpha=fade(t,cue('nine'));mono(x0+420,3200,T.champ_t1,42,PAPER);X.globalAlpha=1;
+  X.globalAlpha=fade(t,cue('y2021'));mono(x0+420,3270,T.champ_t2,42,DIM);X.globalAlpha=1;
+
+  // ── Z10 · CLOSE — ref storytelling (reveal) + typewriter (ref fechas) ──
+  x0=COL(4);
+  const kz=fade(t,E.chapters[9].start-0.8);
+  X.globalAlpha=kz;
+  X.font=F(900,MEAS.footerPx);X.fillStyle=PAPER;
+  X.fillText(T.footer_lines[0],x0,2890);X.fillText(T.footer_lines[1],x0,2890+MEAS.footerPx*1.1);
+  chip(x0,3160,T.footer_chip,48,true);
+  X.globalAlpha=1;
+  const kv=seg(t,cue('vegas'),cue('vegas')+1.3);
+  if(kv>0){const txt=T.vegas,nch=Math.floor(kv*txt.length);
+    const wtw=mono(x0,3260,txt.slice(0,nch),44,INK,0.06);
+    if(kv<1){X.fillStyle=INK;X.fillRect(x0+wtw+8,3224,22,44);}}   // caret del typewriter
+
+  X.restore();
+  X.strokeStyle=INK;X.lineWidth=8;X.strokeRect(4,4,PW-8,PH-8);
+}
+
+// ─── Lluvia + subtítulos + CTA + paneles (espacio de pantalla) ───
+function rain(t,amt){
+  if(amt<=0)return;
+  X.save();X.strokeStyle=PAPER;X.lineWidth=2;
+  for(let i=0;i<110;i++){
+    if(hash(i*3.7)>amt)continue;
+    const sx=hash(i)*W*1.2-W*0.1, len=80+hash(i+50)*150, sp=1300+hash(i+99)*900;
+    const y=((hash(i+7)*H*2+t*sp)%(H+len))-len;
+    X.globalAlpha=0.04+hash(i+13)*0.07;
+    X.beginPath();X.moveTo(sx,y);X.lineTo(sx-len*0.18,y+len);X.stroke();
+  }
+  X.restore();
+}
+function captions(t){
+  const cap=E.captions.find(cp=>t>=cp.t0&&t<cp.t1);
+  if(!cap)return;
+  X.save();let px=92;X.font=F(500,px);X.textBaseline='middle';
+  let w=X.measureText(cap.text).width;
+  if(w>W-140){px=Math.floor(92*(W-140)/w);X.font=F(500,px);w=X.measureText(cap.text).width;}
+  const x=(W-w)/2,y=H-105,bh=px*1.63;
+  X.globalAlpha=0.78;X.fillStyle=BG;X.fillRect(x-30,y-bh/2,w+60,bh);X.globalAlpha=1;
+  X.fillStyle=PAPER;X.fillText(cap.text,x,y+3);
+  X.restore();X.textBaseline='alphabetic';
+}
+function outro(t){
+  const k=fade(t,cue('cta'),0.7);if(k<=0)return;
+  X.save();X.globalAlpha=k;X.translate(0,(1-k)*40);X.textBaseline='middle';
+  X.font=F(900,48);
+  const drop=ss(seg(t,LASTCAP+0.2,LASTCAP+1.0));
+  const txt=T.closing_bar,w=X.measureText(txt).width+56,x=(W-w)/2,y=lp(H-252,H-150,drop),h=84;
+  X.fillStyle=INK;X.fillRect(x,y-h/2,w,h);
+  X.fillStyle=BG;X.fillText(txt,x+28,y+2);
+  X.restore();X.textBaseline='alphabetic';
+}
+// panel que barre y re-encuadra (ref canvas & frames)
+function wipes(t){
+  for(const [a,b] of WIPES){
+    if(t<=a||t>=b)continue;
+    const k=ss(seg(t,a,b));
+    const px=lp(W*1.25,-W*1.65,k);
+    X.save();X.translate(px+W*0.7,H/2);X.rotate(-0.055);
+    X.fillStyle=INK;
+    const pw=W*1.4,ph=H*1.3,r=70;
+    X.beginPath();X.moveTo(-pw/2+r,-ph/2);X.arcTo(pw/2,-ph/2,pw/2,ph/2,r);
+    X.arcTo(pw/2,ph/2,-pw/2,ph/2,r);X.arcTo(-pw/2,ph/2,-pw/2,-ph/2,r);X.arcTo(-pw/2,-ph/2,pw/2,-ph/2,r);
+    X.fill();
+    X.fillStyle=BG;X.beginPath();X.arc(-pw/2+170,0,46,0,7);X.fill();
+    X.restore();
+  }
+}
+
+window.draw=function(t){
+  t=cl(t,0,LEN-0.001);
+  X.setTransform(1,0,0,1,0,0);X.fillStyle=WALL;X.fillRect(0,0,W,H);
+  const k=cam(t), s=k.s*(W/1920);
+  X.setTransform(s,0,0,s,W/2-k.x*s,H/2-k.y*s);
+  drawWall(t);
+  X.setTransform(1,0,0,1,0,0);
+  rain(t, t<12?0.85:(t<140?0.3:0.15));
+  captions(t);outro(t);wipes(t);
+};
+
+// ─── Comprobación de paradas (v2: encuadre lleno + cifra ≥280 + texto ≥44) ───
+window.checkStops=function(){
+  const fails=[];
+  E.chapters.forEach((ch,i)=>{
+    const t=(Math.max(0,ch.start-0.2)+(i===9?ch.end-2.6:ch.end+0.5))/2;
+    const k=cam(t), s=k.s*(W/1920), m=MARGIN, st=STOPC[i], b=st.box;
+    const x0=(b[0]-k.x)*s+W/2, x1=(b[2]-k.x)*s+W/2;
+    const y0=(b[1]-k.y)*s+H/2, y1=(b[3]-k.y)*s+H/2;
+    const bw=x1-x0, bh=y1-y0;
+    const bad=why=>fails.push({stop:'cap'+(i+1),t:Math.round(t*10)/10,why});
+    if(x0<m-1||x1>W-m+1||y0<m-1)bad(`caja fuera de márgenes: [${[x0,y0,x1,y1].map(Math.round)}]`);
+    if(y1>CAP_TOP+1)bad(`caja invade la banda de subtítulos: y1=${Math.round(y1)} > ${CAP_TOP}`);
+    if(bw<W*0.6-1&&bh<H*0.5-1)bad(`bloque chico: ${Math.round(bw/W*100)}% ancho, ${Math.round(bh/H*100)}% alto (pide ≥60% o ≥50%)`);
+    if(st.big!=null&&st.big*s<280-0.5)bad(`cifra protagonista ${Math.round(st.big*s)}px < 280px`);
+    if(MINTEXT*s<44-0.5)bad(`texto mínimo ${Math.round(MINTEXT*s)}px < 44px`);
+  });
+  return fails;
+};
+window.stopTimes=()=>E.chapters.map((ch,i)=>(Math.max(0,ch.start-0.2)+(i===9?ch.end-2.6:ch.end+0.5))/2).concat([LEN-3]);
+
+window.still=function(w,h){
+  c.width=W=w;c.height=H=h;
+  X.setTransform(1,0,0,1,0,0);X.fillStyle=WALL;X.fillRect(0,0,w,h);
+  const s=Math.min(w/PW,h/PH)*0.96;
+  X.setTransform(s,0,0,s,(w-PW*s)/2,(h-PH*s)/2);
+  drawWall(LEN);
+  X.setTransform(1,0,0,1,0,0);
+};
+
+const fontsReady=Promise.all([F(900,100),F(500,30)].map(f=>document.fonts.load(f)));
+fontsReady.then(async()=>{
+  const qs=new URLSearchParams(location.search);
+  if(!window.STORY&&qs.get('story')){try{window.STORY=await(await fetch(qs.get('story'))).json();}catch(e){}}
+  if(!window.STORY){document.body.innerHTML='<p style="color:#888;font-family:sans-serif">Falta STORY</p>';return;}
+  S=window.STORY;T=S.texts;E=S.episode;BEAT=60/(S.bpm||106.06);BAR=BEAT*4;LEN=S.seconds;
+  LASTCAP=Math.max(...E.captions.map(cp=>cp.t1));
+  MEAS.winnerPx=Math.min(fitPx(T.winner_big[0],900,950,245),fitPx(T.winner_big[1],900,950,245));
+  MEAS.footerPx=Math.min(fitPx(T.footer_lines[0],900,1150,150),fitPx(T.footer_lines[1],900,1150,150));
+  X.font=F(900,MEAS.footerPx);
+  MEAS.footerW=Math.max(X.measureText(T.footer_lines[0]).width,X.measureText(T.footer_lines[1]).width);
+  buildStops();buildCam();
+  window.ready=true;draw(0);
+  if(qs.get('play')){const t0=performance.now();(function loop(){draw(((performance.now()-t0)/1000)%LEN);requestAnimationFrame(loop);})();}
+});
+</script></body></html>

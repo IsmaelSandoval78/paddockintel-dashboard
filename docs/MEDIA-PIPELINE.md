@@ -17,10 +17,18 @@ media/                          (en el repo — solo código)
 ~/PaddockIntel-Data/            (fuera del repo — datos)
   recordings/   grabaciones .txt del live timing
   sessions/     CSVs decodificados, zips y session.json de archivo
-  renders/      videos terminados (y renders/referencias/ con los clips de referencia)
+  renders/      videos terminados
+  references/   clips de referencia de motion + NOTES.md (catálogo y vocabulario de recursos)
   music/        PaddockIntel Decoded.wav y ediciones
+  audios/       narraciones por GP (un archivo por capítulo) + guion
   cache/        caché de FastF1 (se regenera solo, se puede borrar)
 ```
+
+**Regla fija de referencias:** todo video nuevo (o revisión de formato) empieza
+revisando `~/PaddockIntel-Data/references/` y su `NOTES.md` — ahí vive el catálogo
+de clips con el vocabulario de recursos visuales (qué mecánica aporta cada clip y
+cómo se aplica). Las nuevas referencias se agregan a esa carpeta y se catalogan en
+el `NOTES.md` antes de usarse.
 
 Para usar otra ubicación de datos: `export PI_DATA_DIR=/otra/ruta` antes de
 correr cualquier script. Sin la variable, todo usa `~/PaddockIntel-Data`.
@@ -107,6 +115,115 @@ python3.13 render.py kinetic.html ~/PaddockIntel-Data/renders/<nombre>.mp4 \
 
 Las historias (`story-*.json`) son el único archivo a editar por video — el
 motor `kinetic.html` no se toca. Guía del formato: `media/kinetic/GUIA-TEMPLATE.md`.
+
+## 3c. Mural de carrera (formato insignia)
+
+Un solo póster gigante (2160×4320, negro/blanco/amarillo) con TODA la carrera, y la
+cámara contando la historia: gancho en el frame 0, pista en neón al compás, la
+escalada en regla, podio, y zoom-out final que revela el mural completo. Motor:
+`media/kinetic/mural.html` (no se toca por carrera); datos: un story JSON generado
+desde el `race_story.json` de la grabación.
+
+```bash
+# 1. datos (tras decodificar la carrera y generar race_story.json + race.json 3D):
+cd media/kinetic
+python3 ../pipeline/build_mural_story.py \
+  ~/PaddockIntel-Data/sessions/<AÑO-gp>-R/race_story.json \
+  --track ../3d/data/race.json \
+  --title "LAS VEGAS" --circuit "LAS VEGAS" --year 2026 \
+  # líneas editoriales (opcionales, verificadas antes):
+  --hook-tag "..." --chip "..." --note "..." \
+  --out story-<gp>-mural.json
+
+# 2. OBLIGATORIO antes de renderizar — valida que el protagonista de cada parada
+#    quede completo dentro del área segura (falla con lista si no):
+python3 check_mural.py story-<gp>-mural.json            # 9:16 (por defecto)
+python3 check_mural.py story-<gp>-mural.json --fmt 16x9 # si va a YouTube/X
+
+# 3. video (42s, 9:16 por defecto; 16x9 con ?fmt=16x9 en la URL del story):
+python3.13 render.py mural.html ~/PaddockIntel-Data/renders/<gp>-mural.mp4 \
+  --story story-<gp>-mural.json \
+  --music ~/PaddockIntel-Data/music/"PaddockIntel Decoded.wav" --music-start 22.646
+
+# 4. póster estático (9:16 Stories/TikTok + 4:5 feed IG/X):
+python3 export_mural_still.py story-<gp>-mural.json ~/PaddockIntel-Data/renders/<gp>-mural
+```
+
+El builder calcula todo de los datos (gancho = mayor remontada, stats, estrategia,
+liderato, podio con gaps); los flags `--hook-tag/--chip/--note` son las únicas
+líneas editoriales y pasan por el gate de DATA-EXPERT como cualquier claim. Si el
+`race_story.json` trae sección `provisional`, el builder lo avisa: no marcar nada
+como final sin la clasificación FIA.
+
+**Reglas del formato (legibilidad móvil + zonas seguras):**
+
+- Un solo dato protagonista por parada de cámara, COMPLETO en el encuadre con
+  ≥60 px de margen a cada lado. Si no cabe, la cámara se aleja.
+- Palabras largas a dos líneas ("SÃO / PAULO", "NORRIS / WINS.", "EVERY F1
+  SESSION, / IN DATA."); los cortes de palabra solo se permiten con la cámara en
+  movimiento, nunca durante una pausa de lectura (los elementos de cada zona
+  aparecen cuando su cámara llega, para no quedar cortados en otras paradas).
+- Texto que debe leerse: ≥48 px de alto en pantalla (sobre 1080 de ancho);
+  etiquetas secundarias ≥36 px. Lo que no llegue, se quita o se agranda.
+- Cada parada de cámara se queda quieta ≥1.5 s.
+- Zonas seguras TikTok/Reels/Shorts (9:16): nada importante en los 320 px
+  inferiores ni en los 160 px de la derecha (`x<920, y<1600` en pantalla).
+  `window.checkStops()` en `mural.html` lo valida; `check_mural.py` lo corre.
+- Cierre: los últimos ~3 s el mural completo quieto + barra CTA
+  ("EVERY F1 SESSION, IN DATA · SUBSCRIBE") fuera de las zonas seguras.
+- El frame 0 es la portada: el gancho completo y legible dentro de la franja
+  central (Instagram recorta la cuadrícula a 3:4) — nunca un fundido.
+- Formatos: 9:16 (1080×1920, por defecto) para Shorts/TikTok/Reels; 16:9
+  (`?fmt=16x9`) para YouTube/X con cámara auto-encuadrada por parada. Pósters
+  estáticos en 9:16 y 4:5.
+
+## 3d. Episodio largo con narración (mural 16:9)
+
+Versión de ~2:30 del mural con la narración de Ismael: muro de 2 filas × 5 zonas
+(7700×4330, aspecto 16:9) leído como un cómic, cada dato aparece en el instante en
+que la voz lo dice, subtítulos grandes y zoom-out final (el muro es el póster).
+Motor: `media/kinetic/mural-episode.html`.
+
+**Las narraciones viven en `~/PaddockIntel-Data/audios/<GP>/` — un archivo por
+capítulo** (`1 - Hook.mp3`, `2 - …`), junto al guion (`*-voiceover-script.md`).
+Estructura de 10 capítulos: Hook, Circuito, Salida, Liderato, Neumáticos,
+Remontada, Bandera, Comisarios, Campeonato, Cierre.
+
+Flujo (cada cifra del guion se verifica contra la grabación antes de grabar):
+1. Normalizar capítulos a −16 LUFS + limitador −1 dB
+   (iterar ganancia + `alimiter`; ver sesión São Paulo).
+2. Transcribir con timestamps por palabra (`faster-whisper`, modelo base.en) y
+   corregir nombres propios en el builder (mapa FIXES).
+3. Plan de montaje: capítulos anclados al compás (106.06 BPM), gaps de 2–4 s para
+   las revelaciones, música en secciones cortadas en compás que terminan con el
+   final natural del track.
+4. `media/pipeline/build_episode_story.py --mural <story-mural> --plan <plan>
+   --transcripts <transcripts> --texts <texts-episodio.json> --out <story>`
+5. `check_mural.py <story> --page mural-episode.html` (obligatorio; checker v2,
+   ver reglas abajo).
+6. Mezcla: voz en offsets + música con ducking −12 dB (rampas 0.3 s) + mezcla
+   final a ~−14 LUFS con limitador a **−1 dBTP** (verificar con
+   `ebur128=peak=true`, no asumir que el limitador aterrizó donde se pidió).
+7. `render.py mural-episode.html <out>.mp4 --story <story> --music <mix>.wav
+   --music-start 0`
+
+**Reglas de encuadre del episodio (checker v2 — `window.checkStops()` las mide
+en un fotograma a mitad de cada parada y lista las que fallen):**
+
+- El bloque protagonista (dato + contexto) llena **≥60 % del ancho o ≥50 % del
+  alto** del encuadre; la cámara se acerca por parada hasta conseguirlo.
+- La cifra protagonista mide **≥280 px** de alto en 1920×1080; todo texto que
+  deba leerse, **≥44 px**.
+- Nada de zonas negras vacías en las paradas: los datos que aún no se dijeron
+  se marcan con guías punteadas (ref canvas & frames) que se desvanecen cuando
+  la voz llega al dato; los pasillos entre zonas llevan deco (puntos/reglas).
+- Subtítulos grandes (92 px, con auto-ajuste si la frase es larga), centrados
+  abajo con fondo semitransparente; el bloque protagonista no invade su banda.
+- **Cada capítulo usa al menos un recurso del vocabulario de referencias**
+  (`~/PaddockIntel-Data/references/NOTES.md`), sin repetir el mismo en dos
+  capítulos seguidos; las transiciones también salen de las referencias
+  (desvíos de cámara del one-canvas + paneles que barren y re-encuadran).
+  Antes de renderizar: tabla capítulo → recurso → clip → dato.
 
 ## 4. Publicar
 
