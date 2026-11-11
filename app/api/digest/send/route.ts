@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { render } from '@react-email/render';
-import { createClient } from '@/lib/supabase/server';
+// Fresh (uncached) reads: this route checks or changes state, see lib/supabase/server.ts.
+import { createFreshClient as createClient } from '@/lib/supabase/server';
 import DigestIssueEmail from '@/emails/DigestIssueEmail';
 import { SITE_URL } from '@/lib/site-url';
 

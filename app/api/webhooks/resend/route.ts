@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createHmac, timingSafeEqual } from 'crypto';
-import { createClient } from '@/lib/supabase/server';
+// Fresh (uncached) reads: this route checks or changes state, see lib/supabase/server.ts.
+import { createFreshClient as createClient } from '@/lib/supabase/server';
 
 // Resend signs webhook deliveries using Svix's scheme (Resend doesn't ship
 // its own SDK verifier in the `resend` package) -- verified here with Node's
