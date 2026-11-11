@@ -28,7 +28,10 @@ export function createClient(revalidate = 300) {
   const cachedFetch: typeof fetch = (input, init) => {
     const method = (init?.method ?? 'GET').toUpperCase();
     if (method !== 'GET' && method !== 'HEAD') return fetch(input, init);
-    return fetch(input, { ...init, next: { revalidate } });
+    // `next` is Next's extension of RequestInit; the cast keeps this file compiling under the
+    // scripts' tsconfig (ingest-*), which doesn't load Next's types. Outside Next, plain fetch
+    // ignores the option.
+    return fetch(input, { ...init, next: { revalidate } } as RequestInit);
   };
   return createSupabaseClient(url, key, { global: { fetch: cachedFetch } });
 }
