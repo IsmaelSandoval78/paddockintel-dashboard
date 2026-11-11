@@ -186,8 +186,11 @@ Motor: `media/kinetic/mural-episode.html`.
 
 **Las narraciones viven en `~/PaddockIntel-Data/audios/<GP>/` — un archivo por
 capítulo** (`1 - Hook.mp3`, `2 - …`), junto al guion (`*-voiceover-script.md`).
-Estructura de 10 capítulos: Hook, Circuito, Salida, Liderato, Neumáticos,
-Remontada, Bandera, Comisarios, Campeonato, Cierre.
+Estructura de 13 capítulos (muro de 3 filas × 5 zonas): Hook, Circuito, Salida,
+Liderato, Neumáticos, Remontada, Bandera, Movers (los que más ganaron/perdieron),
+Brazil's Day (locales/debuts), Abandonos, Comisarios, Campeonato, Cierre.
+La música es la canción completa (`PaddockIntel Decoded.wav`, 3:02) sin recortar:
+el video dura lo que el track y termina con su final natural.
 
 Flujo (cada cifra del guion se verifica contra la grabación antes de grabar):
 1. Normalizar capítulos a −16 LUFS + limitador −1 dB

@@ -36,6 +36,9 @@ CUE_NAMES = [
     ['ty1', 'ty17', 'ty63'],
     ['cl0', 'cl1', 'cl2', 'cl3', 'gap14', 'places19'],
     ['wins', 'row2', 'row3', 'fl', 'fl55'],
+    ['mv_ham', 'mv_lin', 'mv_bea'],
+    ['br_bor', 'br_cam', 'br_debut', 'br_res'],
+    ['ret2', 'ret_str', 'ret_bot'],
     ['pen5', 'pen0', 'pen1', 'pen2'],
     ['champ', 'nine', 'y2021'],
     ['cta', 'vegas'],
@@ -59,7 +62,11 @@ FIXES = [(r'Interlargos|[Ii]nto Lagos', 'Interlagos'),
          (r'Isaac Hadja\b', 'Isack Hadjar'),
          (r'a?\s*112\s*\.689', 'a 1:12.689'),
          (r'Ismail', 'Ismael'),
-         (r'Patek Intel', 'PaddockIntel')]
+         (r'Patek Intel', 'PaddockIntel'),
+         (r'Beerman', 'Bearman'),
+         (r'Bortolito', 'Bortoleto'),
+         (r'[Ll]and [Ss]troll', 'Lance Stroll'),
+         (r'\bCamara\b', 'Câmara')]
 def fix(text):
     for pat, rep in FIXES:
         text = __import__('re').sub(pat, rep, text)
@@ -67,7 +74,7 @@ def fix(text):
 
 # subtítulos: trocear palabras en frases cortas (≤38 caracteres)
 captions = []
-keys = sorted(tr.keys(), key=lambda k: int(k.split(' ')[0]))
+keys = [ch['file'] for ch in plan['chapters']]   # orden del plan (soporta 7B/7C/7D)
 for ch, key in zip(chapters, keys):
     words, chunk = tr[key], []
     for w in words:

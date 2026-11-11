@@ -5,17 +5,17 @@ canvas{max-height:100vh;max-width:100vw}
 </style></head><body>
 <canvas id="c" width="1920" height="1080"></canvas>
 <script>
-// ─── Mural episodio (16:9) — muro 2 filas × 5 zonas (7700×4330, aspecto 16:9) ───
-// La cámara lee el muro como un cómic: fila 1 → fila 2 → zoom-out (el muro ES el póster).
-// Cada dato aparece en el instante exacto en que la narración lo dice (story.episode.cues).
-// Reglas de encuadre (v2): el bloque protagonista llena ≥60% del ancho o ≥50% del alto;
-// la cifra protagonista ≥280px en pantalla; texto legible ≥44px; sin zonas negras vacías.
-// Cada capítulo usa un recurso de las referencias (ver docs/MEDIA-PIPELINE.md §3d).
+// ─── Mural episodio (16:9) — muro 3 filas × 5 celdas (7700×4330), capítulos REGADOS ───
+// El guion manda el orden temporal (13 capítulos), pero cada capítulo vive en una celda
+// distinta del muro (CELLS): la cámara salta en diagonales, arriba y abajo — nunca en
+// simple izquierda→derecha. Cada dato aparece cuando la narración lo dice (cues).
+// Reglas de encuadre (v2): bloque protagonista ≥60% ancho o ≥50% alto; cifra ≥280px;
+// texto legible ≥44px; sin zonas negras vacías. Recursos de referencia por capítulo.
 const c=document.getElementById('c'),X=c.getContext('2d');
 let W=1920,H=1080;const PW=7700,PH=4330;
 const BG='#0B0B0D',INK='#F7C400',PAPER='#EDEAE2',DIM='#55524A',WALL='#060607';
 const MARGIN=60,CAP_TOP=880;                    // CAP_TOP: techo de la banda de subtítulos
-let S=null,T=null,E=null,BEAT=0.566,BAR=2.264,LEN=148,MEAS={},LASTCAP=0;
+let S=null,T=null,E=null,BEAT=0.566,BAR=2.264,LEN=182,MEAS={},LASTCAP=0;
 
 const cl=(v,a,b)=>Math.min(b,Math.max(a,v)), lp=(a,b,k)=>a+(b-a)*k;
 const ss=k=>{k=cl(k,0,1);return k*k*k*(k*(k*6-15)+10);};
@@ -26,34 +26,43 @@ const hash=i=>{let x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x);}
 function F(w,px){return `${w} ${px}px G`;}
 function fitPx(txt,wt,maxW,cap){X.font=F(wt,cap);const w=X.measureText(txt).width;return w>maxW?Math.floor(cap*maxW/w):cap;}
 
-// ─── Geometría del muro ───
+// ─── Geometría: celdas y reparto de capítulos ───
 const COL=c=>250+c*1480;                        // columnas de 950 de contenido
-const R0=770,R1=3090;
-// Parada por capítulo: cámara + caja del bloque protagonista + cifra + texto mínimo.
-// (cx,cy,s) encuadran la caja con márgenes ≥60px y libre de la banda de subtítulos.
+const ROWY=[375,1565,2715];                     // techo de contenido de cada fila
+// celda [col,fila] de cada capítulo (deco en (2,0) y (3,2)):
+const CELLS=[[0,0],[3,1],[1,0],[4,2],[2,1],[0,2],[3,0],[1,2],[4,0],[0,1],[4,1],[1,1],[2,2]];
+const ORG=i=>[COL(CELLS[i][0]),ROWY[CELLS[i][1]]];
+// caja protagonista (offsets sobre la celda), zoom y cifra por capítulo:
+const ZSPEC=[
+  {s:1.12, off:[0,0,950,717],  big:380},
+  {s:1.30, off:[0,0,950,620],  big:300},
+  {s:1.15, off:[0,0,1040,695], big:250},
+  {s:1.15, off:[0,0,950,705],  big:320},
+  {s:1.15, off:[0,0,950,690],  big:300},
+  {s:1.15, off:[0,0,950,710],  big:320},
+  {s:1.15, off:[0,-15,950,685],big:0},          // big = winnerPx (medido)
+  {s:1.25, off:[0,0,950,650],  big:null},       // sankey
+  {s:1.25, off:[0,0,950,630],  big:null},
+  {s:1.25, off:[0,0,950,645],  big:340},
+  {s:1.15, off:[0,0,950,710],  big:280},
+  {s:1.15, off:[0,0,950,705],  big:260},
+  {s:1.30, off:[0,55,0,575],   big:null},       // cierre: ancho = footerW (medido)
+];
 let STOPC=[];
 function buildStops(){
-  const wPx=MEAS.winnerPx,fPx=MEAS.footerPx;
-  STOPC=[
-    {cx:857, cy:796, s:1.12, box:[250,375,1200,1092],       big:380},
-    {cx:2205,cy:742, s:1.30, box:[1730,375,2680,995],       big:300},
-    {cx:3730,cy:783, s:1.15, box:[3210,375,4250,1070],      big:250},
-    {cx:5165,cy:778, s:1.15, box:[4690,375,5640,1060],      big:320},
-    {cx:6645,cy:778, s:1.15, box:[6170,375,7120,1060],      big:300},
-    {cx:835, cy:3130,s:1.15, box:[250,2715,1200,3425],      big:320},
-    {cx:2205,cy:3110,s:1.15, box:[1730,2700,2680,3400],     big:wPx},
-    {cx:3685,cy:3130,s:1.15, box:[3210,2715,4160,3425],     big:280},
-    {cx:5165,cy:3128,s:1.15, box:[4690,2715,5640,3420],     big:260},
-    {cx:6670,cy:3080,s:1.30, box:[6170,2770,6170+MEAS.footerW+30,3290],big:null},
-  ];
+  STOPC=ZSPEC.map((z,i)=>{
+    const[x0,y0]=ORG(i), s=z.s;
+    const bx0=x0+z.off[0], by0=y0+z.off[1];
+    const bx1=i===12?x0+MEAS.footerW+30:x0+z.off[2], by1=y0+z.off[3];
+    const cx=cl((bx0+bx1)/2,960/s,PW-960/s);
+    const cy=((by1-(CAP_TOP-540)/s)+(by0+(540-MARGIN)/s))/2;
+    return {cx,cy,s,box:[bx0,by0,bx1,by1],big:i===6?MEAS.winnerPx:z.big};
+  });
 }
 const MINTEXT=40;                               // px de muro del texto legible más chico
 const WALLK={x:PW/2,y:PH/2,s:Math.min(1920/PW,1080/PH)*0.957};
 
 let CAM=[],WIPES=[];
-// desvíos entre paradas: picados, arcos y golpes de zoom (nada de solo izquierda→derecha)
-const DETOUR=[{dy:650,ds:-0.20},{dy:0,ds:-0.28},{dy:420,ds:-0.10},{dy:250,ds:-0.05},
-              {dy:0,ds:-0.35},{dy:-550,ds:-0.15},{dy:0,ds:-0.24},{dy:-620,ds:-0.18},{dy:250,ds:-0.08}];
 const WIPE_AT=[1,6];                            // paneles que barren (ref canvas & frames)
 function buildCam(){
   CAM=[];WIPES=[];
@@ -61,13 +70,20 @@ function buildCam(){
   E.chapters.forEach((ch,i)=>{
     const k=STOPC[i];
     const a={t:Math.max(0,ch.start-0.2),x:k.cx,y:k.cy,s:k.s},
-          b={t:i===9?ch.end-2.6:ch.end+0.5,x:k.cx,y:k.cy,s:k.s};
+          b={t:i===12?ch.end-2.6:ch.end+0.5,x:k.cx,y:k.cy,s:k.s};
     holds.push([a,b]);CAM.push(a,b);
   });
-  for(let i=0;i<9;i++){const a=holds[i][1],b=holds[i+1][0],d=DETOUR[i];
-    CAM.push({t:(a.t+b.t)/2,x:(a.x+b.x)/2,y:(a.y+b.y)/2+d.dy,s:Math.min(a.s,b.s)+d.ds});
+  // desvíos: arco perpendicular al salto + zoom-out según la distancia (todo desordenado)
+  for(let i=0;i<12;i++){const a=holds[i][1],b=holds[i+1][0];
+    const dx=b.x-a.x,dyv=b.y-a.y,d=Math.hypot(dx,dyv)||1;
+    const px=-dyv/d,py=dx/d;
+    const amp=(i%2?-1:1)*cl(d*0.13,80,420);
+    const s2=Math.min(a.s,b.s)-(0.10+Math.min(0.30,d/7500));
+    CAM.push({t:(a.t+b.t)/2,
+      x:cl((a.x+b.x)/2+px*amp,960/s2,PW-960/s2),
+      y:cl((a.y+b.y)/2+py*amp,540/s2,PH-540/s2), s:s2});
     if(WIPE_AT.includes(i))WIPES.push([a.t+0.1,b.t-0.1]);}
-  CAM.push({t:E.chapters[9].end+0.4,...WALLK});
+  CAM.push({t:E.chapters[12].end+0.4,...WALLK});
   CAM.push({t:LEN,...WALLK});
   CAM.sort((a,b)=>a.t-b.t);
 }
@@ -99,6 +115,16 @@ function stagText(x,y,txt,px,wt,col,k,each=0.055){
     X.fillText(txt[i],cx,y);cx+=X.measureText(txt[i]).width;
   }X.globalAlpha=1;return cx-x;
 }
+// caracteres que caen y se asientan en el dato (ref transiciones para las fechas)
+function rainText(x,y,txt,px,wt,col,k,each=0.05){
+  X.font=F(wt,px);X.fillStyle=col;let cx=x;
+  for(let i=0;i<txt.length;i++){
+    const ki=ss(seg(k,i*each,i*each+0.4));
+    X.globalAlpha=ki;
+    X.fillText(txt[i],cx,y-(1-ki)*(70+hash(i+x)*120));
+    cx+=X.measureText(txt[i]).width;
+  }X.globalAlpha=1;return cx-x;
+}
 function checker(x,y,n,sz){for(let i=0;i<n;i++)for(let j=0;j<2;j++)if((i+j)%2===0){X.fillStyle=PAPER;X.fillRect(x+i*sz,y+j*sz,sz,sz);}}
 function dots(x,y,cols,rows,gap,r,col){X.fillStyle=col;for(let i=0;i<cols;i++)for(let j=0;j<rows;j++){X.beginPath();X.arc(x+i*gap,y+j*gap,r,0,7);X.fill();}}
 function trackXY(p,bx,by,bw,bh){return [bx+p[0]*bw, by+p[1]*bh];}
@@ -116,35 +142,58 @@ function drawWall(t){
   X.fillStyle=BG;X.fillRect(0,0,PW,PH);
   X.save();X.beginPath();X.rect(0,0,PW,PH);X.clip();X.textBaseline='alphabetic';
 
-  // bandas globales (solo se ven en el reveal y las transiciones)
+  // bandas globales + celdas deco (solo se ven en el reveal y las transiciones)
   mono(250,190,'PADDOCKINTEL RACE REPORT',44,DIM);
   mono(6480,190,T.header_right,44,PAPER);
-  X.font=F(900,520);X.strokeStyle=DIM;X.lineWidth=4;X.strokeText(T.deco_outline,1850,2080);
-  checker(250,1540,24,40);dots(7280,1500,4,8,30,6,DIM);
-  X.strokeStyle=DIM;X.lineWidth=2;X.beginPath();X.moveTo(250,2320);X.lineTo(7450,2320);X.stroke();
+  X.strokeStyle=DIM;X.lineWidth=2;
+  X.beginPath();X.moveTo(250,1330);X.lineTo(7450,1330);X.stroke();
+  X.beginPath();X.moveTo(250,2500);X.lineTo(7450,2500);X.stroke();
+  checker(250,1235,24,36);dots(7280,1225,4,3,30,6,DIM);
+  checker(250,2405,24,36);dots(7280,2395,4,3,30,6,DIM);
+  // celda deco (2,0): el sello del GP
+  X.font=F(900,150);X.strokeStyle=DIM;X.lineWidth=3;X.strokeText(T.deco_outline,3140,830);
+  checker(3140,900,20,36);dots(4120,480,3,6,36,6,DIM);
+  // celda deco (3,2): textura
+  checker(4750,2850,24,40);dots(4750,3080,12,5,44,6,DIM);
+  X.strokeStyle=DIM;X.lineWidth=2;X.strokeRect(4750,3350,860,70);
   checker(250,3960,24,36);
   mono(1400,3996,T.deco_footer,40,DIM);
   // relleno de los pasillos entre zonas (que no quede negro vacío en las paradas)
   for(const gx of [130,1465,2945,4425,5905,7410]){
-    dots(gx,470,1,12,60,5,DIM);dots(gx,2770,1,11,60,5,DIM);
+    dots(gx,470,1,11,60,5,DIM);dots(gx,1640,1,10,60,5,DIM);dots(gx,2810,1,10,60,5,DIM);
     X.strokeStyle=DIM;X.lineWidth=1;X.globalAlpha=0.5;
     X.beginPath();X.moveTo(gx-40,440);X.lineTo(gx-40,1150);X.moveTo(gx+40,440);X.lineTo(gx+40,1150);
+    X.moveTo(gx-40,1610);X.lineTo(gx-40,2270);X.moveTo(gx+40,1610);X.lineTo(gx+40,2270);
     X.moveTo(gx-40,2740);X.lineTo(gx-40,3420);X.moveTo(gx+40,2740);X.lineTo(gx+40,3420);X.stroke();X.globalAlpha=1;
   }
 
+  // esqueleto del muro: cada celda marcada desde el frame 0 (blueprint que se llena)
+  E.chapters.forEach((ch,i)=>{
+    const[cx0,cy0]=ORG(i), z=ZSPEC[i];
+    const k=0.55*(1-ss(seg(t,ch.start-1.0,ch.start-0.3)));
+    if(k<=0.01)return;
+    X.save();X.globalAlpha=k;X.strokeStyle=DIM;X.lineWidth=2;X.setLineDash([18,14]);
+    X.strokeRect(cx0,cy0,i===12?MEAS.footerW+30:z.off[2],z.off[3]);
+    X.setLineDash([]);X.fillStyle=DIM;
+    X.fillRect(cx0-6,cy0-6,12,12);X.fillRect(cx0+(i===12?MEAS.footerW+30:z.off[2])-6,cy0+z.off[3]-6,12,12);
+    mono(cx0+24,cy0+86,String(i+1).padStart(2,'0'),60,DIM,0.08);
+    X.restore();
+  });
+
+  let x0,y0;
   // ── Z1 · HOOK — ref storytelling: crop extremo como portada ──
-  let x0=COL(0);
-  mono(x0,400,T.z1_top,40,PAPER);
-  chip(x0+650,455,T.hook_chip,40,true,16,-0.05);
-  X.font=F(900,380);X.fillStyle=PAPER;X.fillText(T.hook_big,x0,800);
-  X.font=F(900,230);X.fillStyle=INK;X.globalAlpha=0.25+0.75*fade(t,cue('hook_p2'));X.fillText(T.hook_to,x0+20,1010);X.globalAlpha=1;
-  mono(x0,1040,T.hook_sub1,40,PAPER);
-  mono(x0,1092,T.hook_sub2,40,DIM);
+  [x0,y0]=ORG(0);
+  mono(x0,y0+25,T.z1_top,40,PAPER);
+  chip(x0+650,y0+80,T.hook_chip,40,true,16,-0.05);
+  X.font=F(900,380);X.fillStyle=PAPER;X.fillText(T.hook_big,x0,y0+425);
+  X.font=F(900,230);X.fillStyle=INK;X.globalAlpha=0.25+0.75*fade(t,cue('hook_p2'));X.fillText(T.hook_to,x0+20,y0+635);X.globalAlpha=1;
+  mono(x0,y0+665,T.hook_sub1,40,PAPER);
+  mono(x0,y0+717,T.hook_sub2,40,DIM);
 
   // ── Z2 · THE RACE — ref track animation: pista neón al compás + stats rotando ──
-  x0=COL(1);
-  X.globalAlpha=fade(t,E.chapters[1].start-1.4);mono(x0,400,'THE RACE',40,DIM);X.globalAlpha=1;
-  const tb={x:x0,y:450,w:540*S.track.aspect,h:540};
+  [x0,y0]=ORG(1);
+  X.globalAlpha=fade(t,E.chapters[1].start-1.4);mono(x0,y0+25,'THE RACE',40,DIM);X.globalAlpha=1;
+  const tb={x:x0,y:y0+75,w:540*S.track.aspect,h:540};
   const drawK=ss(seg(t,E.chapters[1].start-2.2,E.chapters[1].start+0.1));
   const pts=S.track.pts,n=Math.max(2,Math.floor(pts.length*drawK));
   const pulse=Math.pow(1-(bt%1),2.2)*(drawK>=1?1:0);
@@ -157,34 +206,33 @@ function drawWall(t){
     X.beginPath();for(let k=0;k<22;k++){const[px,py]=trackXY(pts[(i0+k)%pts.length],tb.x,tb.y,tb.w,tb.h);k?X.lineTo(px,py):X.moveTo(px,py);}
     X.strokeStyle='#FFF';X.lineWidth=8;X.shadowColor='#FFF';X.shadowBlur=22;X.globalAlpha=0.9;X.stroke();X.shadowBlur=0;X.globalAlpha=1;}
   X.restore();
-  // stats: avanzan con la voz (rotan como en el gráfico broadcast)
   const sCues=[cue('s71'),cue('srain'),cue('ssc')];
   let sIdx=-1;for(let i=0;i<3;i++)if(t>=sCues[i])sIdx=i;
   if(sIdx>=0){const roll=ss(seg(t,sCues[sIdx],sCues[sIdx]+0.4));
-    X.save();X.beginPath();X.rect(x0+420,430,530,565);X.clip();
+    X.save();X.beginPath();X.rect(x0+420,y0+55,530,565);X.clip();
     for(const[idx,prev]of [[sIdx,0],[sIdx-1,1]]){ if(idx<0)continue; if(prev&&roll>=1)continue;
       const off=prev?-420*roll:420*(1-roll);
       const st=T.stats[idx],vPx=st[0].length<=2?300:150;
-      X.font=F(900,vPx);X.fillStyle=INK;X.fillText(st[0],x0+440,750+off);
-      mono(x0+445,822+off,st[1],42,PAPER);
-      if(idx===2&&t>=cue('svsc'))mono(x0+445,877+off,T.stat_vsc,42,PAPER);
+      X.font=F(900,vPx);X.fillStyle=INK;X.fillText(st[0],x0+440,y0+375+off);
+      mono(x0+445,y0+447+off,st[1],42,PAPER);
+      if(idx===2&&t>=cue('svsc'))mono(x0+445,y0+502+off,T.stat_vsc,42,PAPER);
     }
     X.restore();}
 
   // ── Z3 · THE START — ref cube transition: banner y tarjetas giran como caras de cubo ──
-  x0=COL(2);
-  X.globalAlpha=fade(t,E.chapters[2].start-0.6);mono(x0,400,'THE START · LAP 1',40,DIM);X.globalAlpha=1;
+  [x0,y0]=ORG(2);
+  X.globalAlpha=fade(t,E.chapters[2].start-0.6);mono(x0,y0+25,'THE START · LAP 1',40,DIM);X.globalAlpha=1;
   const kPole=fade(t,cue('pole')),kFlip=ss(seg(t,cue('p3'),cue('p3')+0.5));
-  if(kPole>0){X.save();X.globalAlpha=kPole;X.translate(x0,450);
+  if(kPole>0){X.save();X.globalAlpha=kPole;X.translate(x0,y0+75);
     const fl=Math.abs(1-2*kFlip);X.scale(1,Math.max(0.03,fl));
     X.fillStyle=kFlip<0.5?INK:'#1A1A1E';X.fillRect(0,0,1040,128);
     X.font=F(900,56);X.fillStyle=kFlip<0.5?BG:PAPER;X.textBaseline='middle';
     X.fillText(kFlip<0.5?T.start_pole:T.start_fell,24,66);X.textBaseline='alphabetic';X.restore();}
   const cards=[[T.start_c1,cue('c_ant'),true],[T.start_c2,cue('c_law'),false],[T.start_c3,cue('p3'),false]];
   const g3=fade(t,E.chapters[2].start-0.6);
-  cards.forEach((cd,i)=>ghost(x0+i*355,630,330,440,g3*(1-ss(seg(t,cd[1],cd[1]+0.35)))));
+  cards.forEach((cd,i)=>ghost(x0+i*355,y0+255,330,440,g3*(1-ss(seg(t,cd[1],cd[1]+0.35)))));
   cards.forEach(([txt,t0,hero],i)=>{const k=ss(seg(t,t0,t0+0.55));if(k<=0)return;
-    const cx=x0+i*355, cy=630;
+    const cx=x0+i*355, cy=y0+255;
     X.save();X.translate(cx+165,cy+220);X.scale(Math.max(0.03,k),1);X.translate(-165,-220); // cara de cubo
     if(hero){X.fillStyle=INK;X.fillRect(0,0,330,440);}else{X.strokeStyle=PAPER;X.lineWidth=3;X.strokeRect(0,0,330,440);}
     const nPx=fitPx('P'+(i+1),900,302,250);
@@ -192,14 +240,14 @@ function drawWall(t){
     X.font=F(500,44);X.fillStyle=hero?BG:PAPER;X.fillText(txt,14,390);X.restore();});
 
   // ── Z4 · THE LEAD — ref transiciones letras (texto escalonado) + filmstrip 1–71 ──
-  x0=COL(3);
-  X.globalAlpha=fade(t,E.chapters[3].start-0.6);mono(x0,400,'THE LEAD',40,DIM);X.globalAlpha=1;
+  [x0,y0]=ORG(3);
+  X.globalAlpha=fade(t,E.chapters[3].start-0.6);mono(x0,y0+25,'THE LEAD',40,DIM);X.globalAlpha=1;
   const g4=fade(t,E.chapters[3].start-0.6);
-  T.lead_chips.forEach((lc,i)=>ghost(x0+(i%2)*500,465+Math.floor(i/2)*95-38,460,76,g4*(1-ss(seg(t,cue('lead'+i),cue('lead'+i)+0.35)))));
-  ghost(x0,700,430,265,g4*(1-ss(seg(t,cue('led48'),cue('led48')+0.35))));
-  ghost(x0,1000,950,60,g4*(1-ss(seg(t,cue('lead0'),cue('lead0')+0.35))));
+  T.lead_chips.forEach((lc,i)=>ghost(x0+(i%2)*500,y0+90+Math.floor(i/2)*95-38,460,76,g4*(1-ss(seg(t,cue('lead'+i),cue('lead'+i)+0.35)))));
+  ghost(x0,y0+325,430,265,g4*(1-ss(seg(t,cue('led48'),cue('led48')+0.35))));
+  ghost(x0,y0+625,950,60,g4*(1-ss(seg(t,cue('lead0'),cue('lead0')+0.35))));
   T.lead_chips.forEach((lc,i)=>{const t0=cue('lead'+i),k=fade(t,t0,0.45);if(k<=0)return;
-    const cx=x0+(i%2)*500, cy=465+Math.floor(i/2)*95;
+    const cx=x0+(i%2)*500, cy=y0+90+Math.floor(i/2)*95;
     X.globalAlpha=k;X.save();X.translate(cx,cy);
     X.font=F(500,46);const w=X.measureText(lc).width+32,h=46*1.65;
     if(i===3){X.fillStyle=INK;X.fillRect(0,-h/2,w,h);}else{X.strokeStyle=PAPER;X.lineWidth=2;X.strokeRect(0,-h/2,w,h);}
@@ -209,52 +257,50 @@ function drawWall(t){
     X.restore();X.textBaseline='alphabetic';X.globalAlpha=1;});
   const kled=fade(t,cue('led48'));
   if(kled>0){X.globalAlpha=kled;
-    X.font=F(900,320);X.fillStyle=INK;X.fillText(T.led_big,x0,950);
-    mono(x0+470,870,T.led_label,44,PAPER);X.globalAlpha=1;}
-  X.globalAlpha=fade(t,cue('led23'));mono(x0+470,935,T.led_small,44,DIM);X.globalAlpha=1;
-  // filmstrip del liderato (vueltas 1–71), un segmento por relevo
+    X.font=F(900,320);X.fillStyle=INK;X.fillText(T.led_big,x0,y0+575);
+    mono(x0+470,y0+495,T.led_label,44,PAPER);X.globalAlpha=1;}
+  X.globalAlpha=fade(t,cue('led23'));mono(x0+470,y0+560,T.led_small,44,DIM);X.globalAlpha=1;
   const segs=T.lead_segments;
   const fsX=l=>x0+(l-1)/70*950;
   segs.forEach((sg,i)=>{const k=fade(t,cue('lead'+i),0.5);if(k<=0)return;
     const[a,b,code]=sg,xa=fsX(a),xb=fsX(b)+950/70;
-    X.globalAlpha=k;X.fillStyle=i%2?INK:'#1A1A1E';X.fillRect(xa,1000,xb-xa,60);
-    X.strokeStyle=BG;X.lineWidth=3;X.strokeRect(xa,1000,xb-xa,60);
-    if(xb-xa>130){X.font=F(500,40);X.fillStyle=i%2?BG:DIM;X.textBaseline='middle';X.fillText(code,xa+14,1032);X.textBaseline='alphabetic';}
+    X.globalAlpha=k;X.fillStyle=i%2?INK:'#1A1A1E';X.fillRect(xa,y0+625,xb-xa,60);
+    X.strokeStyle=BG;X.lineWidth=3;X.strokeRect(xa,y0+625,xb-xa,60);
+    if(xb-xa>130){X.font=F(500,40);X.fillStyle=i%2?BG:DIM;X.textBaseline='middle';X.fillText(code,xa+14,y0+657);X.textBaseline='alphabetic';}
     X.globalAlpha=1;});
   if(fade(t,cue('lead0'))>0){X.globalAlpha=fade(t,cue('lead0'));
-    mono(x0,1098,'L1',40,DIM,0.02);mono(x0+900,1098,'L71',40,DIM,0.02);X.globalAlpha=1;}
+    mono(x0,y0+703,'L1',38,DIM,0.02);mono(x0+900,y0+703,'L71',38,DIM,0.02);X.globalAlpha=1;}
 
   // ── Z5 · THE TYRES — ref canvas & frames: una tarjeta bento por stint ──
-  x0=COL(4);
-  X.globalAlpha=fade(t,E.chapters[4].start-0.6);mono(x0,400,'THE TYRES · PIT STOPS',40,DIM);X.globalAlpha=1;
+  [x0,y0]=ORG(4);
+  X.globalAlpha=fade(t,E.chapters[4].start-0.6);mono(x0,y0+25,'THE TYRES · PIT STOPS',40,DIM);X.globalAlpha=1;
   const tyCues=[cue('ty1'),cue('ty17'),cue('ty63')];
   const g5=fade(t,E.chapters[4].start-0.6);
-  tyCues.forEach((t0,i)=>ghost(x0+i*330,460,290,310,g5*(1-ss(seg(t,t0,t0+0.35)))));
+  tyCues.forEach((t0,i)=>ghost(x0+i*330,y0+85,290,310,g5*(1-ss(seg(t,t0,t0+0.35)))));
   T.stint_cards.forEach((sc,i)=>{const k=ss(seg(t,tyCues[i],tyCues[i]+0.55));if(k<=0)return;
     const cx=x0+i*330, dir=i%2?1:-1;
-    X.save();X.globalAlpha=k;X.translate(cx+dir*220*(1-k),460);   // entran deslizando, alternadas
+    X.save();X.globalAlpha=k;X.translate(cx+dir*220*(1-k),y0+85);   // entran deslizando, alternadas
     if(i===1){X.fillStyle=INK;X.fillRect(0,0,290,310);}else{X.strokeStyle=PAPER;X.lineWidth=3;X.strokeRect(0,0,290,310);}
     X.font=F(900,60);X.fillStyle=i===1?BG:PAPER;X.fillText(sc[0],20,110);
     X.font=F(500,40);X.fillStyle=i===1?BG:DIM;X.fillText(sc[1],20,180);
     X.beginPath();X.arc(60,250,26,0,7);X.strokeStyle=i===1?BG:DIM;X.lineWidth=8;X.stroke();  // neumático
     X.restore();});
-  // barra de vueltas con los cortes de stint (relleno, sin texto cortable)
   const kbar=fade(t,cue('ty1'));
   if(kbar>0){X.globalAlpha=kbar;X.strokeStyle=DIM;X.lineWidth=3;
-    X.beginPath();X.moveTo(x0,815);X.lineTo(x0+950,815);X.stroke();
+    X.beginPath();X.moveTo(x0,y0+440);X.lineTo(x0+950,y0+440);X.stroke();
     for(const l of [1,17,63,71]){const lx=x0+(l-1)/70*950;
       X.strokeStyle=t>=tyCues[l===1?0:l===17?1:l===63?2:2]?INK:DIM;X.lineWidth=4;
-      X.beginPath();X.moveTo(lx,800);X.lineTo(lx,830);X.stroke();}
+      X.beginPath();X.moveTo(lx,y0+425);X.lineTo(lx,y0+455);X.stroke();}
     X.globalAlpha=1;}
   X.globalAlpha=fade(t,E.chapters[4].start+1.0);
-  X.font=F(900,300);X.fillStyle=INK;X.fillText(T.stops_big,x0,1050);
-  mono(x0+430,975,T.stops_label,42,PAPER);
-  mono(x0+430,1035,T.ty_labels[0]+' → '+T.ty_labels[1]+' → '+T.ty_labels[2],40,DIM);X.globalAlpha=1;
+  X.font=F(900,300);X.fillStyle=INK;X.fillText(T.stops_big,x0,y0+675);
+  mono(x0+430,y0+600,T.stops_label,42,PAPER);
+  mono(x0+430,y0+660,T.ty_labels[0]+' → '+T.ty_labels[1]+' → '+T.ty_labels[2],40,DIM);X.globalAlpha=1;
 
   // ── Z6 · THE CLIMB — ref dates: regla magnética, el número acompaña al thumb ──
-  x0=COL(0);
-  X.globalAlpha=fade(t,E.chapters[5].start-0.6);mono(x0,2740,T.climb_label,40,PAPER);X.globalAlpha=1;
-  const rx=x0+150,ry0=2800,ry1=3400,pmax=S.climb.pmax;
+  [x0,y0]=ORG(5);
+  X.globalAlpha=fade(t,E.chapters[5].start-0.6);mono(x0,y0+25,T.climb_label,40,PAPER);X.globalAlpha=1;
+  const rx=x0+150,ry0=y0+85,ry1=y0+685,pmax=S.climb.pmax;
   const posY=p=>lp(ry0,ry1,(p-1)/(pmax-1));
   const steps=E.climb_steps;
   let pNow=S.climb.grid,lNow=0;
@@ -269,51 +315,133 @@ function drawWall(t){
   const kc=fade(t,E.chapters[5].start+0.2);
   if(kc>0){X.globalAlpha=kc;
     X.beginPath();X.arc(rx+30,ty,20,0,7);X.fillStyle=INK;X.shadowColor=INK;X.shadowBlur=26;X.fill();X.shadowBlur=0;
-    X.font=F(900,320);X.fillStyle=INK;X.fillText('P'+pNow,rx+140,3120);
-    mono(rx+150,3200,lNow?'LAP '+lNow+' / '+S.data.total_laps:'GRID',40,PAPER);
+    X.font=F(900,320);X.fillStyle=INK;X.fillText('P'+pNow,rx+140,y0+405);
+    mono(rx+150,y0+485,lNow?'LAP '+lNow+' / '+S.data.total_laps:'GRID',40,PAPER);
     X.globalAlpha=1;}
-  X.globalAlpha=fade(t,cue('gap14'));X.font=F(900,130);X.fillStyle=PAPER;X.fillText(T.climb_gap,rx+140,3340);X.globalAlpha=1;
-  X.globalAlpha=fade(t,cue('places19'));chip(rx+140,3400,T.hook_chip,42,true);X.globalAlpha=1;
+  X.globalAlpha=fade(t,cue('gap14'));X.font=F(900,130);X.fillStyle=PAPER;X.fillText(T.climb_gap,rx+140,y0+625);X.globalAlpha=1;
+  X.globalAlpha=fade(t,cue('places19'));chip(rx+140,y0+685,T.hook_chip,42,true);X.globalAlpha=1;
 
   // ── Z7 · THE FLAG — ref transiciones letras: titular letra a letra + filas del podio ──
-  x0=COL(1);
+  [x0,y0]=ORG(6);
   if(t>=cue('wins')){
-    stagText(x0,2890,T.winner_big[0],MEAS.winnerPx,900,PAPER,seg(t,cue('wins'),cue('wins')+1.0));
-    stagText(x0,3110,T.winner_big[1],MEAS.winnerPx,900,INK,seg(t,cue('wins')+0.25,cue('wins')+1.25));}
+    stagText(x0,y0+175,T.winner_big[0],MEAS.winnerPx,900,PAPER,seg(t,cue('wins'),cue('wins')+1.0));
+    stagText(x0,y0+395,T.winner_big[1],MEAS.winnerPx,900,INK,seg(t,cue('wins')+0.25,cue('wins')+1.25));}
   S.data.podium.forEach((p,i)=>{const t0=[cue('wins'),cue('row2'),cue('row3')][i];
-    const k=ss(seg(t,t0,t0+0.45));if(k<=0)return;const yy=3186+i*72;
+    const k=ss(seg(t,t0,t0+0.45));if(k<=0)return;const yy=y0+471+i*72;
     X.save();X.globalAlpha=k;X.translate(-40*(1-k)*(i%2?-1:1),0);     // filas alternadas
     X.font=F(900,50);X.fillStyle=i===0?INK:PAPER;X.fillText(p.pos+'  '+p.name.toUpperCase(),x0,yy);
     X.font=F(500,50);X.fillStyle=i===0?PAPER:DIM;
     X.textAlign='right';X.fillText(p.gap==null?'—':'+'+p.gap.toFixed(3),x0+930,yy);X.textAlign='left';X.restore();X.globalAlpha=1;});
-  X.globalAlpha=fade(t,cue('fl'));mono(x0,3390,T.fl_line,40,PAPER,0.06);X.globalAlpha=1;
-  X.globalAlpha=fade(t,cue('fl55'));mono(x0+740,3390,T.fl_lap,40,INK,0.06);X.globalAlpha=1;
+  X.globalAlpha=fade(t,cue('fl'));mono(x0,y0+675,T.fl_line,40,PAPER,0.06);X.globalAlpha=1;
+  X.globalAlpha=fade(t,cue('fl55'));mono(x0+740,y0+675,T.fl_lap,40,INK,0.06);X.globalAlpha=1;
 
-  // ── Z8 · THE STEWARDS — ref cube transition: cada sanción es un tile que gira ──
-  x0=COL(2);
-  X.globalAlpha=fade(t,E.chapters[7].start-0.6);mono(x0,2740,'THE STEWARDS',40,DIM);X.globalAlpha=1;
-  X.globalAlpha=fade(t,cue('pen5'));X.font=F(900,280);X.fillStyle=INK;X.fillText(T.pen_big,x0,3010);X.globalAlpha=1;
+  // ── Z8 · THE MOVERS — sankey dinámico: GRID → FINISH, cada cinta fluye al nombrarse ──
+  [x0,y0]=ORG(7);
+  X.globalAlpha=fade(t,E.chapters[7].start-0.6);mono(x0,y0+25,'THE MOVERS',40,DIM);X.globalAlpha=1;
   const g8=fade(t,E.chapters[7].start-0.6);
-  [0,1,2].forEach(i=>ghost(x0,3070+i*116,950,96,g8*(1-ss(seg(t,cue('pen'+i),cue('pen'+i)+0.35)))));
+  if(g8>0){X.globalAlpha=g8;
+    mono(x0,y0+95,'GRID',40,DIM,0.06);
+    mono(x0+770,y0+95,'FINISH',40,DIM,0.06);
+    X.globalAlpha=1;}
+  const skL=x0+250,skR=x0+700,skT=y0+140,skB=y0+620;
+  const skY=p=>lp(skT,skB,(p-1)/21);
+  const flowCue={VER:E.chapters[7].start-0.3,HAM:cue('mv_ham'),LIN:cue('mv_lin'),BEA:cue('mv_bea')};
+  if(g8>0){X.globalAlpha=g8*0.8;X.strokeStyle=DIM;X.lineWidth=3;
+    X.beginPath();X.moveTo(skL,skT-14);X.lineTo(skL,skB+14);X.moveTo(skR,skT-14);X.lineTo(skR,skB+14);X.stroke();
+    X.globalAlpha=1;}
+  T.mv_flows.forEach((fw,i)=>{const[code,gp,fp,delta,kind]=fw;
+    const t0=flowCue[code],k=ss(seg(t,t0,t0+0.9));if(k<=0)return;
+    const ctx=kind==='ctx',loss=kind==='loss';
+    const yA=skY(gp),yB=skY(fp),th=ctx?22:(code==='HAM'?44:34);
+    X.save();X.beginPath();X.rect(skL,y0,Math.max(0.01,(skR-skL)*k+2),720);X.clip(); // la cinta fluye
+    X.beginPath();
+    X.moveTo(skL,yA-th/2);
+    X.bezierCurveTo(skL+(skR-skL)*0.45,yA-th/2,skL+(skR-skL)*0.55,yB-th/2,skR,yB-th/2);
+    X.lineTo(skR,yB+th/2);
+    X.bezierCurveTo(skL+(skR-skL)*0.55,yB+th/2,skL+(skR-skL)*0.45,yA+th/2,skL,yA+th/2);
+    X.closePath();
+    if(ctx){X.fillStyle=DIM;X.globalAlpha=0.5;X.fill();X.globalAlpha=1;}
+    else if(loss){X.fillStyle='#1A1A1E';X.fill();X.strokeStyle=PAPER;X.lineWidth=2;X.stroke();}
+    else{X.fillStyle=INK;X.shadowColor=INK;X.shadowBlur=14;X.fill();X.shadowBlur=0;}
+    X.restore();
+    const ka=ctx?0:ss(seg(k,0.1,0.5)),kb=ss(seg(k,0.75,1));
+    if(ka>0){X.globalAlpha=ka;X.textAlign='right';
+      X.font=F(900,44);X.fillStyle=ctx?DIM:PAPER;X.fillText(code,x0+135,yA+15);
+      X.font=F(500,40);X.fillStyle=DIM;X.fillText('P'+gp,x0+235,yA+15);
+      X.textAlign='left';X.globalAlpha=1;}
+    if(kb>0){X.globalAlpha=kb;
+      X.beginPath();X.arc(skR+14,yB,ctx?8:12,0,7);X.fillStyle=ctx?DIM:INK;X.fill();
+      X.font=F(900,52);X.fillStyle=ctx?DIM:PAPER;X.fillText('P'+fp,x0+736,yB+17);
+      X.font=F(900,46);X.fillStyle=ctx?DIM:(loss?PAPER:INK);X.fillText(delta,x0+845,yB+16);
+      X.globalAlpha=1;}});
+
+  // ── Z9 · BRAZIL'S DAY — ref cube transition: la cara gigante se resuelve en el dato ──
+  [x0,y0]=ORG(8);
+  X.globalAlpha=fade(t,E.chapters[8].start-0.6);mono(x0,y0+25,"BRAZIL'S DAY",40,DIM);X.globalAlpha=1;
+  const g9=fade(t,E.chapters[8].start-0.6);
+  const brCues=[cue('br_bor'),cue('br_cam')];
+  T.br_cards.forEach((bc,i)=>ghost(x0+i*490,y0+65,460,560,g9*(1-ss(seg(t,brCues[i],brCues[i]+0.35)))));
+  T.br_cards.forEach((bc,i)=>{const t0=brCues[i],k=ss(seg(t,t0,t0+0.6));if(k<=0)return;
+    const cx=x0+i*490, cy=y0+65;
+    X.save();X.translate(cx+230,cy+280);const fl=Math.abs(1-2*Math.min(0.999,k));X.scale(Math.max(0.03,fl),1);X.translate(-(cx+230),-(cy+280));
+    if(k<0.5){X.fillStyle=INK;X.fillRect(cx,cy,460,560);          // cara A: el código gigante
+      X.font=F(900,190);X.fillStyle=BG;X.fillText(bc[0],cx+40,cy+360);}
+    else{X.fillStyle=i?'#1A1A1E':BG;X.fillRect(cx,cy,460,560);    // cara B: el dato
+      X.strokeStyle=i?INK:PAPER;X.lineWidth=3;X.strokeRect(cx,cy,460,560);
+      X.font=F(900,58);X.fillStyle=PAPER;X.fillText(bc[1],cx+28,cy+100);
+      mono(cx+28,cy+160,bc[2],40,DIM);
+      if(i===0||t>=cue('br_res')){X.font=F(900,86);X.fillStyle=INK;
+        X.globalAlpha=i?fade(t,cue('br_res')):1;X.fillText(bc[3],cx+28,cy+370);X.globalAlpha=1;}
+      if(bc[4]&&t>=cue('br_debut')){X.globalAlpha=fade(t,cue('br_debut'));chip(cx+28,cy+480,bc[4],36,true);X.globalAlpha=1;}}
+    X.restore();});
+
+  // ── Z10 · THE RETIREMENTS — ref fechas: los caracteres caen y se asientan ──
+  [x0,y0]=ORG(9);
+  X.globalAlpha=fade(t,E.chapters[9].start-0.6);mono(x0,y0+25,'THE RETIREMENTS',40,DIM);X.globalAlpha=1;
+  const g10=fade(t,E.chapters[9].start-0.6);
+  ghost(x0,y0+135,280,290,g10*(1-ss(seg(t,cue('ret2'),cue('ret2')+0.35))));
+  T.ret_rows.forEach((rr,i)=>ghost(x0,y0+465+i*100,950,80,g10*(1-ss(seg(t,cue(i?'ret_bot':'ret_str'),cue(i?'ret_bot':'ret_str')+0.35)))));
+  if(t>=cue('ret2')){
+    rainText(x0+30,y0+395,T.ret_big,340,900,INK,seg(t,cue('ret2'),cue('ret2')+0.8));
+    X.globalAlpha=fade(t,cue('ret2')+0.3);
+    mono(x0+320,y0+295,T.ret_label[0],44,PAPER);
+    mono(x0+320,y0+360,T.ret_label[1],44,DIM);X.globalAlpha=1;}
+  T.ret_rows.forEach((rr,i)=>{const t0=cue(i?'ret_bot':'ret_str');if(t<t0)return;
+    const yy=y0+465+i*100,k=seg(t,t0,t0+0.9);
+    X.globalAlpha=ss(seg(k,0,0.3))*0.9;X.fillStyle='#1A1A1E';X.fillRect(x0,yy,950,80);X.globalAlpha=1;
+    X.save();X.textBaseline='middle';
+    rainText(x0+24,yy+44,rr[0],46,900,PAPER,k,0.04);
+    rainText(x0+370,yy+44,rr[1],40,500,DIM,k,0.04);
+    rainText(x0+660,yy+44,rr[2],40,500,INK,k,0.04);
+    X.restore();X.textBaseline='alphabetic';
+    const kl=ss(seg(k,0.75,1));
+    if(kl>0){X.strokeStyle=DIM;X.lineWidth=3;X.beginPath();X.moveTo(x0+24,yy+40);X.lineTo(x0+24+kl*300,yy+40);X.stroke();}});
+
+  // ── Z11 · THE STEWARDS — ref cube transition: cada sanción es un tile que gira ──
+  [x0,y0]=ORG(10);
+  X.globalAlpha=fade(t,E.chapters[10].start-0.6);mono(x0,y0+25,'THE STEWARDS',40,DIM);X.globalAlpha=1;
+  X.globalAlpha=fade(t,cue('pen5'));X.font=F(900,280);X.fillStyle=INK;X.fillText(T.pen_big,x0,y0+295);X.globalAlpha=1;
+  const g11=fade(t,E.chapters[10].start-0.6);
+  [0,1,2].forEach(i=>ghost(x0,y0+355+i*116,950,96,g11*(1-ss(seg(t,cue('pen'+i),cue('pen'+i)+0.35)))));
   T.pen_chips.forEach((pc,i)=>{const t0=cue('pen'+i),k=ss(seg(t,t0,t0+0.6));if(k<=0)return;
-    const yy=3070+i*116;
+    const yy=y0+355+i*116;
     X.save();X.translate(x0,yy+48);const fl=Math.abs(1-2*Math.min(0.999,k));X.scale(1,Math.max(0.03,fl));X.translate(-x0,-(yy+48));
     if(k<0.5){X.fillStyle=INK;X.fillRect(x0,yy,950,96);X.font=F(900,56);X.fillStyle=BG;X.textBaseline='middle';X.fillText(T.pen_big,x0+24,yy+50);X.textBaseline='alphabetic';}
     else{X.fillStyle=i===2?INK:'#1A1A1E';X.fillRect(x0,yy,950,96);
       X.font=F(500,46);X.fillStyle=i===2?BG:PAPER;X.textBaseline='middle';X.fillText(pc,x0+24,yy+50);X.textBaseline='alphabetic';}
     X.restore();});
-  X.globalAlpha=fade(t,cue('pen2')+0.8);mono(x0,3415,T.note,40,DIM,0.06);X.globalAlpha=1;
+  X.globalAlpha=fade(t,cue('pen2')+0.8);mono(x0,y0+700,T.note,40,DIM,0.06);X.globalAlpha=1;
 
-  // ── Z9 · THE CHAMPIONSHIP — ref presentación de número: el 9 se arma como Rubik ──
-  x0=COL(3);
-  X.globalAlpha=fade(t,E.chapters[8].start-0.6);mono(x0,2740,'THE CHAMPIONSHIP',40,DIM);X.globalAlpha=1;
+  // ── Z12 · THE CHAMPIONSHIP — ref presentación de número: el 9 se arma como Rubik ──
+  [x0,y0]=ORG(11);
+  X.globalAlpha=fade(t,E.chapters[11].start-0.6);mono(x0,y0+25,'THE CHAMPIONSHIP',40,DIM);X.globalAlpha=1;
   const km=fade(t,cue('champ'),0.6);
   if(km>0){X.globalAlpha=km;X.font=F(900,140);
-    X.fillStyle=PAPER;X.fillText(T.champ_1,x0,2890);
-    X.fillStyle=INK;X.fillText(T.champ_2,x0,3040);X.globalAlpha=1;}
-  const gx=x0,gy=3070,cs=115;
-  const g9=fade(t,E.chapters[8].start-0.6)*(1-ss(seg(t,cue('nine'),cue('nine')+0.35)));
-  if(g9>0.01){X.save();X.globalAlpha=g9*0.55;X.strokeStyle=DIM;X.lineWidth=2;X.setLineDash([14,10]);
+    X.fillStyle=PAPER;X.fillText(T.champ_1,x0,y0+175);
+    X.fillStyle=INK;X.fillText(T.champ_2,x0,y0+325);X.globalAlpha=1;}
+  const gx=x0,gy=y0+355,cs=115;
+  const g12=fade(t,E.chapters[11].start-0.6)*(1-ss(seg(t,cue('nine'),cue('nine')+0.35)));
+  if(g12>0.01){X.save();X.globalAlpha=g12*0.55;X.strokeStyle=DIM;X.lineWidth=2;X.setLineDash([14,10]);
     for(let i=0;i<3;i++)for(let j=0;j<3;j++)X.strokeRect(gx+i*cs,gy+j*cs,cs,cs);
     X.setLineDash([]);X.restore();}
   const k9=seg(t,cue('nine'),cue('nine')+0.9);
@@ -325,21 +453,21 @@ function drawWall(t){
       X.font=F(900,260);X.fillStyle=INK;X.fillText('9',gx+95,gy+266);X.restore();}
     X.strokeStyle=BG;X.lineWidth=3;for(let i=1;i<3;i++){X.beginPath();X.moveTo(gx+i*cs,gy);X.lineTo(gx+i*cs,gy+3*cs);X.stroke();
       X.beginPath();X.moveTo(gx,gy+i*cs);X.lineTo(gx+3*cs,gy+i*cs);X.stroke();}}
-  X.globalAlpha=fade(t,cue('nine'));mono(x0+420,3200,T.champ_t1,42,PAPER);X.globalAlpha=1;
-  X.globalAlpha=fade(t,cue('y2021'));mono(x0+420,3270,T.champ_t2,42,DIM);X.globalAlpha=1;
+  X.globalAlpha=fade(t,cue('nine'));mono(x0+420,y0+485,T.champ_t1,42,PAPER);X.globalAlpha=1;
+  X.globalAlpha=fade(t,cue('y2021'));mono(x0+420,y0+555,T.champ_t2,42,DIM);X.globalAlpha=1;
 
-  // ── Z10 · CLOSE — ref storytelling (reveal) + typewriter (ref fechas) ──
-  x0=COL(4);
-  const kz=fade(t,E.chapters[9].start-0.8);
+  // ── Z13 · CLOSE — ref storytelling (reveal) + typewriter (ref fechas) ──
+  [x0,y0]=ORG(12);
+  const kz=fade(t,E.chapters[12].start-0.8);
   X.globalAlpha=kz;
   X.font=F(900,MEAS.footerPx);X.fillStyle=PAPER;
-  X.fillText(T.footer_lines[0],x0,2890);X.fillText(T.footer_lines[1],x0,2890+MEAS.footerPx*1.1);
-  chip(x0,3160,T.footer_chip,48,true);
+  X.fillText(T.footer_lines[0],x0,y0+175);X.fillText(T.footer_lines[1],x0,y0+175+MEAS.footerPx*1.1);
+  chip(x0,y0+445,T.footer_chip,48,true);
   X.globalAlpha=1;
   const kv=seg(t,cue('vegas'),cue('vegas')+1.3);
   if(kv>0){const txt=T.vegas,nch=Math.floor(kv*txt.length);
-    const wtw=mono(x0,3260,txt.slice(0,nch),44,INK,0.06);
-    if(kv<1){X.fillStyle=INK;X.fillRect(x0+wtw+8,3224,22,44);}}   // caret del typewriter
+    const wtw=mono(x0,y0+545,txt.slice(0,nch),44,INK,0.06);
+    if(kv<1){X.fillStyle=INK;X.fillRect(x0+wtw+8,y0+509,22,44);}}   // caret del typewriter
 
   X.restore();
   X.strokeStyle=INK;X.lineWidth=8;X.strokeRect(4,4,PW-8,PH-8);
@@ -403,7 +531,7 @@ window.draw=function(t){
   X.setTransform(s,0,0,s,W/2-k.x*s,H/2-k.y*s);
   drawWall(t);
   X.setTransform(1,0,0,1,0,0);
-  rain(t, t<12?0.85:(t<140?0.3:0.15));
+  rain(t, t<12?0.85:(t<174?0.3:0.15));
   captions(t);outro(t);wipes(t);
 };
 
@@ -411,7 +539,7 @@ window.draw=function(t){
 window.checkStops=function(){
   const fails=[];
   E.chapters.forEach((ch,i)=>{
-    const t=(Math.max(0,ch.start-0.2)+(i===9?ch.end-2.6:ch.end+0.5))/2;
+    const t=(Math.max(0,ch.start-0.2)+(i===12?ch.end-2.6:ch.end+0.5))/2;
     const k=cam(t), s=k.s*(W/1920), m=MARGIN, st=STOPC[i], b=st.box;
     const x0=(b[0]-k.x)*s+W/2, x1=(b[2]-k.x)*s+W/2;
     const y0=(b[1]-k.y)*s+H/2, y1=(b[3]-k.y)*s+H/2;
@@ -425,7 +553,7 @@ window.checkStops=function(){
   });
   return fails;
 };
-window.stopTimes=()=>E.chapters.map((ch,i)=>(Math.max(0,ch.start-0.2)+(i===9?ch.end-2.6:ch.end+0.5))/2).concat([LEN-3]);
+window.stopTimes=()=>E.chapters.map((ch,i)=>(Math.max(0,ch.start-0.2)+(i===12?ch.end-2.6:ch.end+0.5))/2).concat([LEN-2.5]);
 
 window.still=function(w,h){
   c.width=W=w;c.height=H=h;
