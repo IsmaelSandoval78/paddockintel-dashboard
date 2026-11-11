@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+// Fresh (uncached) reads: this route checks or changes state, see lib/supabase/server.ts.
+import { createFreshClient as createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 
 export async function GET(req: Request) {

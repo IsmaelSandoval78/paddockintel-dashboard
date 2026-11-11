@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+// Fresh (uncached) reads: this route checks or changes state, see lib/supabase/server.ts.
+import { createFreshClient as createClient } from '@/lib/supabase/server';
 import { judgeItems, loadWindowItems, RUBRIC_VERSION, upsertScoreRows } from '@/lib/beagleScoreV0.mjs';
 
 // Off by default. Not registered in wrangler.jsonc, vercel.json, or custom-worker.ts,

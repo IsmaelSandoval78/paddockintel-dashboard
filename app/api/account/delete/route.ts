@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createAuthServerClient } from '@/lib/supabase/authServerClient';
-import { createClient as createServiceRoleClient } from '@/lib/supabase/server';
+// Fresh (uncached) reads: account actions must see the database as it is, see lib/supabase/server.ts.
+import { createFreshClient as createServiceRoleClient } from '@/lib/supabase/server';
 
 // LEGAL-COMPLIANCE-EXPERT.md non-negotiable: the deletion path the privacy
 // policy promises must actually exist and work, not just be a documented

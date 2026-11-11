@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+// Fresh (uncached) reads: this route checks or changes state, see lib/supabase/server.ts.
+import { createFreshClient as createClient } from '@/lib/supabase/server';
 
 // Automated sibling of scripts/beagle.mjs (the manual, console-only editorial radar) --
 // that script never writes to Supabase and stays that way. This route is the pipeline that
