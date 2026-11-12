@@ -39,6 +39,11 @@ function rainText(x,y,txt,px,wt,col,k,each=0.05){
     X.globalAlpha=ki;X.fillText(txt[i],cx,y-(1-ki)*(60+hash(i+x)*110));
     cx+=X.measureText(txt[i]).width;}
   X.globalAlpha=1;return cx-x;}
+function ghost(x,y,w,h,k){if(k<=0.01)return;
+  X.save();X.globalAlpha=k*0.5;X.strokeStyle=DIM;X.lineWidth=2;X.setLineDash([14,10]);
+  X.strokeRect(x,y,w,h);X.setLineDash([]);X.fillStyle=DIM;
+  for(const[hx,hy] of [[x,y],[x+w,y],[x,y+h],[x+w,y+h]])X.fillRect(hx-7,hy-7,14,14);
+  X.restore();}
 function stagText(x,y,txt,px,wt,col,k,each=0.055){
   X.font=F(wt,px);X.fillStyle=col;let cx=x;
   for(let i=0;i<txt.length;i++){X.globalAlpha=ss(seg(k,i*each,i*each+0.3));
@@ -102,13 +107,15 @@ function drawWall(t){
   X.font=F(900,NAMEPX);X.fillStyle=PAPER;X.fillText(T.name[0],120,600);
   X.fillStyle=INK;X.fillText(T.name[1],120,600+NAMEPX*1.04);
   mono(120,1045,T.sub,60,DIM);
-  X.save();X.translate(130,1130);X.rotate(-0.04);X.fillStyle=INK;
+  const pch=1+0.04*Math.pow(1-((t/BEAT)%1),2);
+  X.save();X.translate(130,1130);X.rotate(-0.04);X.scale(pch,pch);X.fillStyle=INK;
   X.font=F(500,60);const wch=X.measureText(T.chip).width+36;
   X.fillRect(0,-48,wch,84);X.fillStyle=BG;X.textBaseline='middle';X.fillText(T.chip,18,-4);
   X.textBaseline='alphabetic';X.restore();
 
   // ── S2 · EL LIBRO DE RÉCORDS — stats rotando (ref track animation) ──
   X.globalAlpha=fade(t,5.6);mono(120,1320,'THE RECORD BOOK',56,DIM);X.globalAlpha=1;
+  ghost(120,1360,900,560,fade(t,5.9));
   const sIdx=cl(Math.floor(seg(t,6.6,10.8)*3),0,2);
   const roll=ss(seg(t,6.6+sIdx*1.4,6.6+sIdx*1.4+0.4));
   if(t>=6.2){X.save();X.beginPath();X.rect(120,1340,900,700);X.clip();
@@ -123,6 +130,8 @@ function drawWall(t){
 
   // ── S3 · LOS PIONEROS — caras de cubo que se resuelven (ref cube transition) ──
   X.globalAlpha=fade(t,12.0);mono(1220,1320,'THE PIONEERS',52,DIM);X.globalAlpha=1;
+  T.pioneers.forEach((pc,i)=>{const t0=13.0+i*1.8;
+    ghost(1220+i*450,1380,430,580,fade(t,12.2)*(1-ss(seg(t,t0,t0+0.4))));});
   T.pioneers.forEach((pc,i)=>{const t0=13.0+i*1.8,k=ss(seg(t,t0,t0+0.6));if(k<=0)return;
     const cx=1220+i*450, cy=1380;
     X.save();X.translate(cx+215,cy+290);const fl=Math.abs(1-2*Math.min(0.999,k));X.scale(Math.max(0.03,fl),1);X.translate(-(cx+215),-(cy+290));
@@ -138,7 +147,10 @@ function drawWall(t){
 
   // ── S4 · EL VACÍO — caracteres que caen (ref fechas) ──
   X.globalAlpha=fade(t,18.2);mono(120,2310,'THE VOID',56,DIM);X.globalAlpha=1;
-  if(t>=18.8)rainText(120,2680,T.void_big,340,900,INK,seg(t,18.8,19.8),0.1);
+  if(t>=18.8){const kset=seg(t,18.8,19.8);
+    if(kset>=1){X.save();X.shadowColor=INK;X.shadowBlur=18+26*Math.pow(1-((t/BEAT)%1),2);
+      X.font=F(900,340);X.fillStyle=INK;X.fillText(T.void_big,120,2680);X.restore();}
+    else rainText(120,2680,T.void_big,340,900,INK,kset,0.1);}
   X.globalAlpha=fade(t,19.8);mono(120,2780,T.void_1,56,PAPER);X.globalAlpha=1;
   X.globalAlpha=fade(t,20.4);mono(120,2855,T.void_2,56,DIM);X.globalAlpha=1;
 
@@ -150,7 +162,8 @@ function drawWall(t){
     if(rep){X.fillStyle=INK;X.fillRect(1220,yy,880,112);}
     else{X.fillStyle='#171224';X.fillRect(1220,yy,880,112);X.strokeStyle=DIM;X.lineWidth=2;X.strokeRect(1220,yy,880,112);}
     X.font=F(900,56);X.fillStyle=rep?BG:AC2;X.textBaseline='middle';X.fillText(er[0],1248,yy+58);
-    X.font=F(500,46);X.fillStyle=rep?BG:PAPER;X.fillText(er[1],1428,yy+58);
+    X.font=F(500,46);X.fillStyle=rep?BG:PAPER;
+    stagText(1428,yy+58,er[1],46,500,rep?BG:PAPER,seg(t,t0,t0+1.0),0.04);
     X.textBaseline='alphabetic';X.restore();X.globalAlpha=1;});
   X.globalAlpha=fade(t,27.6);chip(1220,2800,T.era_chip,52,true);X.globalAlpha=1;
   X.globalAlpha=fade(t,28.2);mono(1220,2866,T.era_poles,46,DIM);X.globalAlpha=1;
@@ -163,9 +176,11 @@ function drawWall(t){
   const thumbX=lp(x81,x23+3*step,kt);
   if(t>=30.6){
     X.strokeStyle=PAPER;X.lineWidth=4;
-    X.beginPath();for(let px=150;px<=xgA;px+=5){const d=(px-thumbX)/40,b=24*Math.exp(-d*d);px===150?X.moveTo(px,rY-b):X.lineTo(px,rY-b);}X.stroke();
+    X.beginPath();for(let px=150;px<=xgA;px+=5){const d=(px-thumbX)/38,b=28*Math.exp(-d*d);px===150?X.moveTo(px,rY-b):X.lineTo(px,rY-b);}X.stroke();
     X.setLineDash([12,14]);X.beginPath();X.moveTo(xgA+10,rY);X.lineTo(xgB-10,rY);X.stroke();X.setLineDash([]);
-    X.beginPath();for(let px=xgB;px<=1000;px+=5){const d=(px-thumbX)/40,b=24*Math.exp(-d*d);px===xgB?X.moveTo(px,rY-b):X.lineTo(px,rY-b);}X.stroke();
+    X.beginPath();for(let px=xgB;px<=1000;px+=5){const d=(px-thumbX)/38,b=28*Math.exp(-d*d);px===xgB?X.moveTo(px,rY-b):X.lineTo(px,rY-b);}X.stroke();
+    if(kt<1){const ty=rY-28;
+      X.save();X.beginPath();X.arc(thumbX,ty,16,0,7);X.fillStyle=INK;X.shadowColor=INK;X.shadowBlur=24;X.fill();X.restore();}
     X.globalAlpha=fade(t,31.6);
     X.font=F(900,110);X.fillStyle=INK;X.fillText(T.tl_gap,xgA-18,rY-120);
     mono(xgA-10,rY-60,T.tl_gap2,44,DIM);X.globalAlpha=1;
@@ -196,12 +211,17 @@ function drawWall(t){
     if(kf>0){X.save();X.beginPath();X.rect(bx-8,by-capH*kf,bw+16,capH*kf+12);X.clip();
       X.fillStyle=INK;X.fillText(T.fin_big,bx,by);X.restore();}
   }
-  X.globalAlpha=fade(t,38.8);mono(120,4290,T.fin_sub,52,PAPER);X.globalAlpha=1;
+  if(t>=38.8){const kv=seg(t,38.8,40.0),nch=Math.floor(kv*T.fin_sub.length);
+    const wtw=mono(120,4290,T.fin_sub.slice(0,nch),52,PAPER);
+    if(kv<1){X.fillStyle=INK;X.fillRect(120+wtw+8,4248,24,52);}}
 
   // ── S8 · CIERRE ──
   const k8=fade(t,41.4);
+  const cpx=fitPx(T.close[0],900,850,250);
+  for(let e=3;e>=1;e--){X.globalAlpha=k8*0.10*e;
+    X.font=F(900,cpx);X.fillStyle=PAPER;X.fillText(T.close[0],1220-e*10,4020-e*52);}
   X.globalAlpha=k8;
-  X.font=F(900,fitPx(T.close[0],900,850,250));X.fillStyle=PAPER;X.fillText(T.close[0],1220,4020);
+  X.font=F(900,cpx);X.fillStyle=PAPER;X.fillText(T.close[0],1220,4020);
   X.font=F(900,fitPx(T.close[1],900,860,130));X.fillStyle=INK;X.fillText(T.close[1],1220,4160);
   mono(1220,4250,T.close_sub,52,DIM);
   X.globalAlpha=1;
