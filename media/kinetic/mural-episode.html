@@ -286,12 +286,17 @@ function drawWall(t){
     X.beginPath();X.arc(60,250,26,0,7);X.strokeStyle=i===1?BG:DIM;X.lineWidth=8;X.stroke();  // neumático
     X.restore();});
   const kbar=fade(t,cue('ty1'));
-  if(kbar>0){X.globalAlpha=kbar;X.strokeStyle=DIM;X.lineWidth=3;
-    X.beginPath();X.moveTo(x0,y0+440);X.lineTo(x0+950,y0+440);X.stroke();
+  if(kbar>0){X.save();X.globalAlpha=kbar;
+    // el camino fluye (ref opus 15 · flowing paths): guiones en movimiento entre stints
+    X.strokeStyle=DIM;X.lineWidth=3;X.setLineDash([16,13]);X.lineDashOffset=-((t*120)%29);
+    X.beginPath();X.moveTo(x0,y0+440);X.lineTo(x0+950,y0+440);X.stroke();X.setLineDash([]);
     for(const l of [1,17,63,71]){const lx=x0+(l-1)/70*950;
       X.strokeStyle=t>=tyCues[l===1?0:l===17?1:l===63?2:2]?INK:DIM;X.lineWidth=4;
       X.beginPath();X.moveTo(lx,y0+425);X.lineTo(lx,y0+455);X.stroke();}
-    X.globalAlpha=1;}
+    // punto de flujo que recorre L1→L71 al compás
+    if(t>=tyCues[0]){const fp=((t/ (BEAT*8))%1);
+      X.beginPath();X.arc(x0+fp*950,y0+440,9,0,7);X.fillStyle=INK;X.shadowColor=INK;X.shadowBlur=16;X.fill();}
+    X.restore();X.globalAlpha=1;}
   X.globalAlpha=fade(t,E.chapters[4].start+1.0);
   X.font=F(900,300);X.fillStyle=INK;X.fillText(T.stops_big,x0,y0+675);
   mono(x0+430,y0+600,T.stops_label,42,PAPER);
@@ -349,16 +354,19 @@ function drawWall(t){
   if(g8>0){X.globalAlpha=g8*0.8;X.strokeStyle=DIM;X.lineWidth=3;
     X.beginPath();X.moveTo(skL,skT-14);X.lineTo(skL,skB+14);X.moveTo(skR,skT-14);X.lineTo(skR,skB+14);X.stroke();
     X.globalAlpha=1;}
+  const kmorph=ss(seg(t,cue('mv_bea')+1.1,cue('mv_bea')+2.0));   // sankey → barras (ref opus 05)
   T.mv_flows.forEach((fw,i)=>{const[code,gp,fp,delta,kind]=fw;
     const t0=flowCue[code],k=ss(seg(t,t0,t0+0.9));if(k<=0)return;
     const ctx=kind==='ctx',loss=kind==='loss';
-    const yA=skY(gp),yB=skY(fp),th=ctx?22:(code==='HAM'?44:34);
+    const yA0=skY(gp),yB=skY(fp),th=ctx?22:(code==='HAM'?44:34);
+    const yA=lp(yA0,yB,kmorph);                                    // la cinta se aplana
+    const xR=lp(skR,skL+Math.abs(gp-fp)/19*(skR-skL),kmorph);      // y se vuelve barra de |Δ|
     X.save();X.beginPath();X.rect(skL,y0,Math.max(0.01,(skR-skL)*k+2),720);X.clip(); // la cinta fluye
     X.beginPath();
     X.moveTo(skL,yA-th/2);
-    X.bezierCurveTo(skL+(skR-skL)*0.45,yA-th/2,skL+(skR-skL)*0.55,yB-th/2,skR,yB-th/2);
-    X.lineTo(skR,yB+th/2);
-    X.bezierCurveTo(skL+(skR-skL)*0.55,yB+th/2,skL+(skR-skL)*0.45,yA+th/2,skL,yA+th/2);
+    X.bezierCurveTo(skL+(xR-skL)*0.45,yA-th/2,skL+(xR-skL)*0.55,yB-th/2,xR,yB-th/2);
+    X.lineTo(xR,yB+th/2);
+    X.bezierCurveTo(skL+(xR-skL)*0.55,yB+th/2,skL+(xR-skL)*0.45,yA+th/2,skL,yA+th/2);
     X.closePath();
     if(ctx){X.fillStyle=DIM;X.globalAlpha=0.5;X.fill();X.globalAlpha=1;}
     else if(loss){X.fillStyle='#1A1A1E';X.fill();X.strokeStyle=PAPER;X.lineWidth=2;X.stroke();}
@@ -430,6 +438,18 @@ function drawWall(t){
     else{X.fillStyle=i===2?INK:'#1A1A1E';X.fillRect(x0,yy,950,96);
       X.font=F(500,46);X.fillStyle=i===2?BG:PAPER;X.textBaseline='middle';X.fillText(pc,x0+24,yy+50);X.textBaseline='alphabetic';}
     X.restore();});
+  // lupa de vidrio sobre el tile activo (ref opus 14 · glass focus)
+  let ai=-1;for(let i=0;i<3;i++)if(t>=cue('pen'+i)+0.3)ai=i;
+  if(ai>=0){
+    let ly=y0+355+ai*116;
+    if(ai>0){const kg=ss(seg(t,cue('pen'+ai)+0.3,cue('pen'+ai)+0.8));
+      ly=lp(y0+355+(ai-1)*116,y0+355+ai*116,kg);}
+    X.save();X.globalAlpha=0.1;X.fillStyle=PAPER;X.fillRect(x0-16,ly-8,982,112);X.globalAlpha=0.6;
+    X.strokeStyle=PAPER;X.lineWidth=2.5;X.strokeRect(x0-16,ly-8,982,112);
+    X.globalAlpha=0.35;X.strokeStyle='#FFFFFF';X.lineWidth=2;
+    X.beginPath();X.moveTo(x0+4,ly+2);X.lineTo(x0+150,ly+2);X.stroke();
+    X.fillStyle=INK;X.fillRect(x0-16,ly-8,8,112);
+    X.restore();X.globalAlpha=1;}
   X.globalAlpha=fade(t,cue('pen2')+0.8);mono(x0,y0+700,T.note,40,DIM,0.06);X.globalAlpha=1;
 
   // ── Z12 · THE CHAMPIONSHIP — ref presentación de número: el 9 se arma como Rubik ──
