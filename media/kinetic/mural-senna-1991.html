@@ -1,0 +1,319 @@
+<!doctype html><html><head><meta charset="utf-8"><title>mural senna 1991</title><style>
+@font-face{font-family:G;font-weight:900;src:url(inter-tight-latin-900-normal.woff2)}@font-face{font-family:G;font-weight:500;src:url(inter-tight-latin-500-normal.woff2)}
+html,body{margin:0;background:#050706;height:100%;display:grid;place-items:center}
+canvas{max-height:100vh;max-width:100vw}
+</style></head><body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+// ─── Mural de historia (9:16, 45s): Senna · GP de Brasil 1991 · "la victoria en 6.ª" ───
+// Un solo póster 2160×4800 en verde/amarillo de Brasil; la cámara cuenta la historia.
+// Reglas del mural: un protagonista por parada, palabras enteras, zonas seguras
+// (x<920, y<1600 en pantalla), checkStops() antes de renderizar. Cada parada usa un
+// recurso de ~/PaddockIntel-Data/references/NOTES.md, sin repetir en paradas seguidas.
+const c=document.getElementById('c'),X=c.getContext('2d');
+let W=1080,H=1920;const PW=2160,PH=4800;
+const BG='#0A0F0B',INK='#FFDF00',GRN='#00A859',PAPER='#EDEAE2',DIM='#49514A',WALL='#050706';
+const M=60,SAFE_X=920,SAFE_Y=1600;
+let S=null,T=null,BEAT=0.566,BAR=2.264,LEN=45,CV=null;
+
+const cl=(v,a,b)=>Math.min(b,Math.max(a,v)), lp=(a,b,k)=>a+(b-a)*k;
+const ss=k=>{k=cl(k,0,1);return k*k*k*(k*(k*6-15)+10);};
+const outExpo=k=>k>=1?1:1-Math.pow(2,-10*k);
+const seg=(t,a,b)=>cl((t-a)/(b-a),0,1);
+const hash=i=>{let x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x);};
+function F(w,px){return `${w} ${px}px G`;}
+function fitPx(txt,wt,maxW,cap){X.font=F(wt,cap);const w=X.measureText(txt).width;return w>maxW?Math.floor(cap*maxW/w):cap;}
+function mono(x,y,txt,px,col,tr=0.08){X.font=F(500,px);X.fillStyle=col;let cx=x;
+  for(const ch of txt){X.fillText(ch,cx,y);cx+=X.measureText(ch).width+px*tr;}return cx-x;}
+function chip(x,y,txt,px,fill,pad=16,rot=0){
+  X.save();X.translate(x,y);X.rotate(rot);X.font=F(500,px);
+  const w=X.measureText(txt).width+pad*2,h=px+pad*1.2;
+  if(fill){X.fillStyle=INK;X.fillRect(0,-h/2,w,h);X.fillStyle=BG;}
+  else{X.strokeStyle=PAPER;X.lineWidth=2;X.strokeRect(0,-h/2,w,h);X.fillStyle=PAPER;}
+  X.textBaseline='middle';X.fillText(txt,pad,2);X.restore();return w;}
+function checker(x,y,n,sz){for(let i=0;i<n;i++)for(let j=0;j<2;j++)if((i+j)%2===0){X.fillStyle=PAPER;X.fillRect(x+i*sz,y+j*sz,sz,sz);}}
+function dots(x,y,cols,rows,gap,r,col){X.fillStyle=col;for(let i=0;i<cols;i++)for(let j=0;j<rows;j++){X.beginPath();X.arc(x+i*gap,y+j*gap,r,0,7);X.fill();}}
+function trackXY(p,bx,by,bw,bh){return [bx+p[0]*bw, by+p[1]*bh];}
+// caracteres que caen y se asientan (ref transiciones para las fechas)
+function rainText(x,y,txt,px,wt,col,k,each=0.05){
+  X.font=F(wt,px);X.fillStyle=col;let cx=x;
+  for(let i=0;i<txt.length;i++){const ki=ss(seg(k,i*each,i*each+0.4));
+    X.globalAlpha=ki;X.fillText(txt[i],cx,y-(1-ki)*(60+hash(i+x)*110));
+    cx+=X.measureText(txt[i]).width;}
+  X.globalAlpha=1;return cx-x;}
+
+// ─── Paradas: [t0,t1, cx,cy,s, caja protagonista, cifra, texto mínimo] ───
+const STOPS=[
+  {t0:0.0, t1:5.0, cx:686, cy:1190,s:0.82, box:[120,280,1130,1185], big:205, mt:60},
+  {t0:6.2, t1:11.2,cx:622, cy:1700,s:0.95, box:[120,1250,1020,2150],big:240, mt:52},
+  {t0:12.4,t1:17.6,cx:622, cy:2560,s:0.95, box:[120,2240,1020,2890],big:235, mt:52},
+  {t0:18.6,t1:22.4,cx:1700,cy:1670,s:0.95, box:[1220,1285,2100,1945],big:190,mt:52},
+  {t0:23.4,t1:27.2,cx:1700,cy:2960,s:0.95, box:[1220,2240,2100,2880],big:300,mt:50},
+  {t0:28.2,t1:32.8,cx:622, cy:3345,s:0.95, box:[120,2990,1020,3680], big:null,mt:50},
+  {t0:34.4,t1:40.6,cx:622, cy:4080,s:0.95, box:[120,3800,1020,4356], big:280,mt:52},
+  {t0:40.9,t1:42.4,cx:1700,cy:4030,s:0.95, box:[1220,3800,2100,4316],big:260,mt:52},
+];
+const WALLK={x:1080,y:2920,s:0.285};
+let CAM=[];
+function buildCam(){
+  CAM=[];const holds=[];
+  STOPS.forEach(st=>{const a={t:st.t0,x:st.cx,y:st.cy,s:st.s},b={t:st.t1,x:st.cx,y:st.cy,s:st.s};
+    holds.push([a,b]);CAM.push(a,b);});
+  for(let i=0;i<7;i++){const a=holds[i][1],b=holds[i+1][0];
+    if(i===0){CAM.push({t:(a.t+b.t)/2,x:300,y:800,s:1.25});continue;}  // zambullida por el "6"
+    const dx=b.x-a.x,dyv=b.y-a.y,d=Math.hypot(dx,dyv)||1;
+    const px=-dyv/d,py=dx/d,amp=(i%2?-1:1)*cl(d*0.16,70,330);
+    const s2=Math.min(a.s,b.s)-(0.08+Math.min(0.24,d/5200));
+    CAM.push({t:(a.t+b.t)/2,
+      x:cl((a.x+b.x)/2+px*amp,540/s2,PW-540/s2),
+      y:cl((a.y+b.y)/2+py*amp,960/s2,PH-960/s2),s:s2});}
+  CAM.push({t:43.2,...WALLK});CAM.push({t:LEN,...WALLK});
+  CAM.sort((a,b)=>a.t-b.t);
+}
+function cam(t){let i=0;while(i<CAM.length-1&&CAM[i+1].t<=t)i++;
+  if(i>=CAM.length-1)return CAM[CAM.length-1];
+  const a=CAM[i],b=CAM[i+1],k=ss(seg(t,a.t,b.t));
+  return {x:lp(a.x,b.x,k),y:lp(a.y,b.y,k),s:lp(a.s,b.s,k)};}
+
+// ─── El póster ───
+function drawWall(t){
+  const bt=t/BEAT;
+  X.fillStyle=BG;X.fillRect(0,0,PW,PH);
+  X.save();X.beginPath();X.rect(0,0,PW,PH);X.clip();X.textBaseline='alphabetic';
+
+  // deco global
+  mono(120,190,'PADDOCKINTEL · RACE HISTORY',40,DIM);
+  dots(1900,140,4,3,30,6,DIM);
+  checker(1340,330,16,34);dots(1360,480,10,4,40,5,DIM);
+  X.font=F(900,250);X.strokeStyle=DIM;X.lineWidth=3;X.strokeText('1991',1380,760);
+  // deco columna derecha B4
+  X.font=F(900,230);X.strokeStyle=DIM;X.lineWidth=3;X.strokeText('SENNA',1250,3180);
+  checker(1250,3260,18,38);dots(1250,3440,12,4,44,5,DIM);
+  checker(120,4420,22,36);
+  mono(120,4560,T.deco_footer,38,DIM);
+  mono(120,4622,T.deco_footer2,38,DIM);
+  dots(1760,4440,6,4,40,5,DIM);
+  X.strokeStyle=DIM;X.lineWidth=2;
+  X.beginPath();X.moveTo(120,1218);X.lineTo(2040,1218);X.stroke();
+  X.beginPath();X.moveTo(120,2178);X.lineTo(2040,2178);X.stroke();
+  X.beginPath();X.moveTo(120,2944);X.lineTo(2040,2944);X.stroke();
+  X.beginPath();X.moveTo(120,3730);X.lineTo(2040,3730);X.stroke();
+
+  // ── S1 · HOOK (portada, ref storytelling) ──
+  mono(120,370,T.top,60,PAPER);
+  const hn=fitPx(T.hook_name,900,1010,220),hg=fitPx(T.hook[0],900,1010,240),h7=fitPx(T.hook[1],900,1010,86);
+  X.font=F(900,hn);X.fillStyle=PAPER;X.fillText(T.hook_name,120,600);
+  X.font=F(900,hg);X.fillStyle=INK;X.fillText(T.hook[0],120,845);
+  X.font=F(900,h7);X.fillStyle=PAPER;X.fillText(T.hook[1],120,965);
+  chip(130,1055,T.hook_chip,60,true,16,-0.04);
+  mono(120,1145,T.hook_sub,60,DIM);
+
+  // ── S2 · PISTA + STATS (ref track animation: neón verde + stats rotando) ──
+  const k2=ss(seg(t,4.6,6.4));
+  X.globalAlpha=fade2(t,5.4);mono(120,1320,'INTERLAGOS · THE RACE',56,DIM);X.globalAlpha=1;
+  const tb={x:140,y:1380,w:600*S.track.aspect,h:600};
+  const n=Math.max(2,Math.floor(S.track.pts.length*k2));
+  const pulse=Math.pow(1-(bt%1),2.2)*(k2>=1?1:0);
+  X.save();X.lineJoin='round';X.lineCap='round';
+  for(const[lw,col,blur,al] of [[20,GRN,34+pulse*28,0.2+pulse*0.12],[9,GRN,15,0.6],[4,'#CFF5DF',0,1]]){
+    X.beginPath();for(let i=0;i<n;i++){const[px,py]=trackXY(S.track.pts[i],tb.x,tb.y,tb.w,tb.h);i?X.lineTo(px,py):X.moveTo(px,py);}
+    if(k2>=1)X.closePath();
+    X.strokeStyle=col;X.lineWidth=lw;X.shadowColor=GRN;X.shadowBlur=blur;X.globalAlpha=al;X.stroke();X.shadowBlur=0;X.globalAlpha=1;}
+  if(k2>=1){const f=(t/BAR)%1,i0=Math.floor(f*S.track.pts.length);
+    X.beginPath();for(let k=0;k<18;k++){const[px,py]=trackXY(S.track.pts[(i0+k)%S.track.pts.length],tb.x,tb.y,tb.w,tb.h);k?X.lineTo(px,py):X.moveTo(px,py);}
+    X.strokeStyle='#FFF';X.lineWidth=7;X.shadowColor='#FFF';X.shadowBlur=20;X.globalAlpha=0.9;X.stroke();X.shadowBlur=0;X.globalAlpha=1;}
+  X.restore();
+  // stats rotando al compás (una por ~1.6s de la parada)
+  const sIdx=cl(Math.floor(seg(t,6.4,11.0)*3),0,2);
+  const roll=ss(seg(t,6.4+sIdx*1.53,6.4+sIdx*1.53+0.4));
+  if(t>=6.0){X.save();X.beginPath();X.rect(560,1300,460,780);X.clip();
+    for(const[idx,prev] of [[sIdx,0],[sIdx-1,1]]){ if(idx<0)continue; if(prev&&roll>=1)continue;
+      const off=prev?-430*roll:430*(1-roll);
+      const st=T.stats[idx];
+      X.font=F(900,fitPx(st[0],900,440,240));X.fillStyle=INK;X.fillText(st[0],580,1740+off);
+      const words=st[1].split(' · ');
+      words.forEach((wd,j)=>mono(585,1820+j*66+off,wd,52,j?DIM:PAPER));
+    }X.restore();}
+
+  // ── S5 · LA VENTAJA (ref presentación de número: 40.5s se arma como Rubik) ──
+  X.globalAlpha=fade2(t,23.0);mono(1220,2310,T.gap_label[0]+' · '+T.gap_label[1],56,DIM);X.globalAlpha=1;
+  const k5=seg(t,23.6,24.8);
+  if(k5>0){const gx=1220,gy=2380,cw=284,ch=170;
+    for(let i=0;i<3;i++)for(let j=0;j<2;j++){const d=ss(seg(k5,(j*3+i)*0.09,(j*3+i)*0.09+0.5));
+      if(d<=0)continue;X.save();X.beginPath();X.rect(gx+i*cw,gy+j*ch,cw,ch);X.clip();
+      X.translate(gx+i*cw+cw/2,gy+j*ch+ch/2);X.rotate((1-d)*((i+j)%2?1:-1)*1.5708);X.globalAlpha=d;
+      X.translate(-(gx+i*cw+cw/2),-(gy+j*ch+ch/2));
+      X.font=F(900,300);X.fillStyle=INK;X.fillText(T.gap_big,gx+20,gy+265);X.restore();}
+    X.strokeStyle=BG;X.lineWidth=3;
+    for(let i=1;i<3;i++){X.beginPath();X.moveTo(gx+i*cw,gy);X.lineTo(gx+i*cw,gy+2*ch);X.stroke();}
+    X.beginPath();X.moveTo(gx,gy+ch);X.lineTo(gx+3*cw,gy+ch);X.stroke();}
+  X.globalAlpha=fade2(t,24.6);mono(1220,2790,'OVER PATRESE · MANSELL OUT',50,PAPER);X.globalAlpha=1;
+  X.globalAlpha=fade2(t,25.2);mono(1220,2858,'11 LAPS TO GO',50,DIM);X.globalAlpha=1;
+
+  // ── S3 · LA AMENAZA (ref dates: regla magnética horizontal) ──
+  X.globalAlpha=fade2(t,12.0);mono(120,2310,T.threat_label,56,DIM);X.globalAlpha=1;
+  const rX=140,rW=860,rY=2560;
+  const lapX=l=>rX+(l-1)/70*rW;
+  const thSteps=[[24,13.0],[42,14.8]];
+  let thumbL=1;
+  for(const[l,t0] of thSteps){if(t>=t0){const prev=l===24?1:24;thumbL=lp(prev,l,ss(seg(t,t0,t0+0.7)));}}
+  if(t>=12.2){
+    const tx=lapX(thumbL);
+    X.strokeStyle=PAPER;X.lineWidth=4;X.beginPath();
+    for(let px=rX-10;px<=rX+rW+10;px+=5){const d=(px-tx)/40,b=24*Math.exp(-d*d);px===rX-10?X.moveTo(px,rY-b):X.lineTo(px,rY-b);}X.stroke();
+    for(const l of [1,24,42,59,71]){X.strokeStyle=DIM;X.lineWidth=2;
+      X.beginPath();X.moveTo(lapX(l),rY+10);X.lineTo(lapX(l),rY+26);X.stroke();
+      mono(lapX(l)-20,rY+72,'L'+l,52,DIM,0.02);}
+    X.beginPath();X.arc(tx,rY-24,18,0,7);X.fillStyle=INK;X.shadowColor=INK;X.shadowBlur=22;X.fill();X.shadowBlur=0;
+    T.threat_chips.forEach((tc,i)=>{const k=fade2(t,thSteps[i][1]);if(k<=0)return;
+      X.globalAlpha=k;chip(lapX(thSteps[i][0])-(i?360:30),rY-(i?196:112),tc,52,i===1);X.globalAlpha=1;});}
+  X.globalAlpha=fade2(t,15.6);
+  X.font=F(900,fitPx(T.threat_big,900,870,235));X.fillStyle=PAPER;X.fillText(T.threat_big,120,2860);
+
+  // ── S4 · MANSELL OUT (ref fechas: caracteres que caen + tachado) ──
+  X.globalAlpha=fade2(t,18.4);mono(1220,1355,'THE RIVAL, GONE · '+T.out_label,56,DIM);X.globalAlpha=1;
+  if(t>=19.0){const k=seg(t,19.0,20.2);
+    rainText(1220,1590,T.out_row[0],fitPx(T.out_row[0],900,850,200),900,PAPER,k,0.05);
+    const kl=ss(seg(k,0.8,1));
+    if(kl>0){X.strokeStyle=INK;X.lineWidth=8;X.beginPath();X.moveTo(1220,1525);X.lineTo(1220+kl*820,1525);X.stroke();}}
+  if(t>=20.4){const k=seg(t,20.4,21.4);
+    rainText(1220,1820,T.out_row[1],fitPx(T.out_row[1],900,850,200),900,INK,k,0.05);}
+  X.globalAlpha=fade2(t,21.2);mono(1220,1920,'AFTER 59 LAPS IN THE FIGHT',52,DIM);X.globalAlpha=1;
+
+  // ── S6 · LA AVERÍA (ref canvas & frames: filas que entran alternadas) ──
+  X.globalAlpha=fade2(t,28.0);mono(120,3060,T.gears_label,56,DIM);X.globalAlpha=1;
+  T.gears.forEach((g,i)=>{const t0=28.6+i*0.75,k=ss(seg(t,t0,t0+0.5));if(k<=0)return;
+    const yy=3110+i*128, dir=i%2?1:-1, last=i===3;
+    X.save();X.globalAlpha=k;X.translate(dir*170*(1-k),0);
+    if(last){X.fillStyle=INK;X.fillRect(120,yy,880,112);}
+    else{X.fillStyle='#142016';X.fillRect(120,yy,880,112);X.strokeStyle=DIM;X.lineWidth=2;X.strokeRect(120,yy,880,112);}
+    X.font=F(900,64);X.fillStyle=last?BG:PAPER;X.textBaseline='middle';X.fillText(g[0],150,yy+58);
+    X.font=F(500,52);X.fillStyle=last?BG:DIM;X.textAlign='right';X.fillText(g[1],970,yy+58);
+    X.textAlign='left';X.textBaseline='alphabetic';X.restore();X.globalAlpha=1;});
+  X.globalAlpha=fade2(t,31.8);mono(120,3660,T.gears_times,52,PAPER);X.globalAlpha=1;
+
+  // ── S7 · EL CLÍMAX: la ventaja derritiéndose (v54–71, un paso por medio-beat)
+  //    + 2.991s gigante con contorno que se rellena (ref transiciones letras) ──
+  X.globalAlpha=fade2(t,34.0);mono(120,3862,T.melt_label,52,DIM);X.globalAlpha=1;
+  const ca={x:320,y:3900,w:680,h:180},gmax=43,L0=54;
+  const gx2=l=>ca.x+(l-L0)/(71-L0)*ca.w, gy2=g=>ca.y+ca.h-(g/gmax)*ca.h;
+  const HALF=BEAT/2;
+  const nst=cl(1+Math.floor((t-34.6)/HALF),1,18);           // una vuelta por medio-beat
+  if(t>=34.4){
+    X.strokeStyle=DIM;X.lineWidth=2;X.beginPath();X.moveTo(ca.x,ca.y+ca.h);X.lineTo(ca.x+ca.w,ca.y+ca.h);X.stroke();
+    X.setLineDash([10,8]);X.beginPath();X.moveTo(ca.x,gy2(40.5));X.lineTo(ca.x+ca.w,gy2(40.5));X.stroke();X.setLineDash([]);
+    mono(330,3904,'40.5s · L60',52,DIM,0.02);
+    mono(905,4040,'L71',52,DIM,0.02);
+    X.save();
+    X.beginPath();X.moveTo(gx2(L0),ca.y+ca.h);
+    for(let i=0;i<nst;i++)X.lineTo(gx2(L0+i),gy2(CV[L0-1+i]));
+    X.lineTo(gx2(L0+nst-1),ca.y+ca.h);X.closePath();
+    X.fillStyle=GRN;X.globalAlpha=0.3;X.fill();X.globalAlpha=1;
+    X.beginPath();for(let i=0;i<nst;i++){const px=gx2(L0+i),py=gy2(CV[L0-1+i]);i?X.lineTo(px,py):X.moveTo(px,py);}
+    X.strokeStyle=INK;X.lineWidth=6;X.shadowColor=INK;X.shadowBlur=12;X.stroke();X.shadowBlur=0;
+    X.beginPath();X.arc(gx2(L0+nst-1),gy2(CV[L0-2+nst]),14,0,7);X.fillStyle=INK;X.shadowColor=INK;X.shadowBlur=20;X.fill();X.shadowBlur=0;
+    X.restore();
+  }
+  X.globalAlpha=fade2(t,39.2);mono(120,4126,T.melt_sub,52,PAPER);X.globalAlpha=1;
+  if(t>=39.4){
+    const px9=fitPx(T.melt_big,900,880,240);
+    X.font=F(900,px9);
+    const bx=120,by=4336,bw=X.measureText(T.melt_big).width,capH9=px9*0.78;
+    X.strokeStyle=INK;X.lineWidth=3;X.strokeText(T.melt_big,bx,by);
+    const kf=ss(seg(t,39.7,40.5));
+    if(kf>0){X.save();X.beginPath();X.rect(bx-8,by-capH9*kf,bw+16,capH9*kf+12);X.clip();
+      X.fillStyle=INK;X.fillText(T.melt_big,bx,by);X.restore();}
+  }
+
+  // ── S8 · CIERRE (ref storytelling: y el zoom-out revela el póster) ──
+  const k8=fade2(t,40.6);
+  X.globalAlpha=k8;
+  X.font=F(900,fitPx(T.close[0],900,850,260));X.fillStyle=PAPER;X.fillText(T.close[0],1220,4020);
+  X.font=F(900,fitPx(T.close[1],900,860,120));X.fillStyle=INK;X.fillText(T.close[1],1220,4150);
+  mono(1220,4240,T.close_sub[0],52,DIM);
+  mono(1220,4304,T.close_sub[1],52,DIM);
+  X.globalAlpha=1;
+
+  X.restore();
+  X.strokeStyle=INK;X.lineWidth=8;X.strokeRect(4,4,PW-8,PH-8);
+  X.strokeStyle=GRN;X.lineWidth=3;X.strokeRect(18,18,PW-36,PH-36);
+}
+const fade2=(t,t0,d=0.5)=>outExpo(seg(t,t0,t0+d));
+
+// lluvia sutil + CTA (pantalla)
+function rainFx(t,amt){
+  if(amt<=0)return;
+  X.save();X.strokeStyle=PAPER;X.lineWidth=2;
+  for(let i=0;i<70;i++){if(hash(i*3.7)>amt)continue;
+    const sx=hash(i)*W*1.2-W*0.1,len=70+hash(i+50)*130,sp=1200+hash(i+99)*800;
+    const y=((hash(i+7)*H*2+t*sp)%(H+len))-len;
+    X.globalAlpha=0.03+hash(i+13)*0.05;
+    X.beginPath();X.moveTo(sx,y);X.lineTo(sx-len*0.15,y+len);X.stroke();}
+  X.restore();}
+function outro(t){
+  const k=fade2(t,43.0,0.7);if(k<=0)return;
+  X.save();X.globalAlpha=k;X.textBaseline='middle';X.font=F(900,40);
+  const txt=T.closing_bar,w=X.measureText(txt).width+48,x=(W-w)/2,y=1560+ (1-k)*30,h=72;
+  X.fillStyle=INK;X.fillRect(x,y-h/2,w,h);X.fillStyle=BG;X.fillText(txt,x+24,y+2);
+  X.restore();X.textBaseline='alphabetic';}
+// panel verde que barre (ref canvas & frames) — ventaja → avería
+function wipes(t){
+  const a=STOPS[4].t1+0.1,b=STOPS[5].t0-0.1;
+  if(t<=a||t>=b)return;
+  const k=ss(seg(t,a,b));
+  X.save();X.translate(lp(W*1.3,-W*1.9,k)+W*0.75,H/2);X.rotate(0.05);
+  X.fillStyle=GRN;
+  const pw=W*1.5,ph=H*1.3,r=60;
+  X.beginPath();X.moveTo(-pw/2+r,-ph/2);X.arcTo(pw/2,-ph/2,pw/2,ph/2,r);
+  X.arcTo(pw/2,ph/2,-pw/2,ph/2,r);X.arcTo(-pw/2,ph/2,-pw/2,-ph/2,r);X.arcTo(-pw/2,-ph/2,pw/2,-ph/2,r);
+  X.fill();X.fillStyle=INK;X.beginPath();X.arc(-pw/2+140,0,38,0,7);X.fill();
+  X.restore();}
+
+window.draw=function(t){
+  t=cl(t,0,LEN-0.001);
+  X.setTransform(1,0,0,1,0,0);X.fillStyle=WALL;X.fillRect(0,0,W,H);
+  const k=cam(t), s=k.s*(W/1080);
+  X.setTransform(s,0,0,s,W/2-k.x*s,H/2-k.y*s);
+  drawWall(t);
+  X.setTransform(1,0,0,1,0,0);
+  rainFx(t, t<5?0.7:0.25);
+  outro(t);wipes(t);
+};
+
+// ─── Comprobación de paradas ───
+window.checkStops=function(){
+  const fails=[];
+  STOPS.forEach((st,i)=>{
+    const t=(st.t0+st.t1)/2, k=cam(t), s=k.s*(W/1080), b=st.box;
+    const x0=(b[0]-k.x)*s+W/2, x1=(b[2]-k.x)*s+W/2;
+    const y0=(b[1]-k.y)*s+H/2, y1=(b[3]-k.y)*s+H/2;
+    const bad=why=>fails.push({stop:'p'+(i+1),t:Math.round(t*10)/10,why});
+    if(x0<M-1||y0<M-1)bad(`caja fuera de margen sup/izq: [${[x0,y0].map(Math.round)}]`);
+    if(x1>SAFE_X+1||y1>SAFE_Y+1)bad(`caja invade zona segura: x1=${Math.round(x1)}>920 o y1=${Math.round(y1)}>1600`);
+    if(st.big!=null&&st.big*s<160-0.5)bad(`cifra ${Math.round(st.big*s)}px < 160px`);
+    if(st.mt*s<48-0.5)bad(`texto mínimo ${Math.round(st.mt*s)}px < 48px`);
+  });
+  return fails;
+};
+window.stopTimes=()=>STOPS.map(st=>(st.t0+st.t1)/2).concat([LEN-1.0]);
+
+window.still=function(w,h){
+  c.width=W=w;c.height=H=h;
+  X.setTransform(1,0,0,1,0,0);X.fillStyle=WALL;X.fillRect(0,0,w,h);
+  const s=Math.min(w/PW,h/PH)*0.96;
+  X.setTransform(s,0,0,s,(w-PW*s)/2,(h-PH*s)/2);
+  drawWall(LEN);
+  X.setTransform(1,0,0,1,0,0);
+};
+
+const fontsReady=Promise.all([F(900,100),F(500,30)].map(f=>document.fonts.load(f)));
+fontsReady.then(async()=>{
+  const qs=new URLSearchParams(location.search);
+  if(!window.STORY&&qs.get('story')){try{window.STORY=await(await fetch(qs.get('story'))).json();}catch(e){}}
+  if(!window.STORY){document.body.innerHTML='<p style="color:#888;font-family:sans-serif">Falta STORY</p>';return;}
+  S=window.STORY;T=S.texts;CV=S.curve.gap2;BEAT=60/(S.bpm||106.06);BAR=BEAT*4;LEN=S.seconds;
+  buildCam();
+  window.ready=true;draw(0);
+  if(qs.get('play')){const t0=performance.now();(function loop(){draw(((performance.now()-t0)/1000)%LEN);requestAnimationFrame(loop);})();}
+});
+</script></body></html>

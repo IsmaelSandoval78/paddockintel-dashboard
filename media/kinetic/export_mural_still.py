@@ -1,14 +1,18 @@
-"""Export the full mural poster as still PNG(s) from mural.html + a story JSON.
+"""Export the full mural poster as still PNG(s) from a mural engine + a story JSON.
 
-Usage: python3 export_mural_still.py <story.json> <out_prefix> [WxH ...]
-Default sizes: 1080x1920 (Stories/TikTok) and 1080x1350 (Instagram/X).
+Usage: python3 export_mural_still.py <story.json> <out_prefix> [--page <engine.html>] [WxH ...]
+Default page: mural.html. Default sizes: 1080x1920 (Stories/TikTok) y 1080x1350 (feed 4:5).
 """
 import base64, json, pathlib, sys
 from playwright.sync_api import sync_playwright
 
-story_path = pathlib.Path(sys.argv[1]); prefix = sys.argv[2]
-sizes = [tuple(map(int, s.split('x'))) for s in (sys.argv[3:] or ['1080x1920', '1080x1350'])]
-page_path = pathlib.Path(__file__).parent / 'mural.html'
+args = sys.argv[1:]
+page_name = 'mural.html'
+if '--page' in args:
+    i = args.index('--page'); page_name = args[i + 1]; del args[i:i + 2]
+story_path = pathlib.Path(args[0]); prefix = args[1]
+sizes = [tuple(map(int, s.split('x'))) for s in (args[2:] or ['1080x1920', '1080x1350'])]
+page_path = pathlib.Path(__file__).parent / page_name
 story = json.load(open(story_path, encoding='utf-8'))
 
 with sync_playwright() as p:

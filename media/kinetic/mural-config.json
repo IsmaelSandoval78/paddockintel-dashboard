@@ -1,0 +1,58 @@
+{
+  "_": "Configuración del formato mural (insignia). Paletas por sede sobre base negra + estructura de paradas por defecto de cada variante. Los motores leen la paleta desde story.palette (el builder la inyecta desde aquí con --venue).",
+
+  "rules": [
+    "El nombre protagonista va en el gancho, completo desde el fotograma 0",
+    "El clímax ocupa (casi) todo el ancho de su parada",
+    "La cifra final queda quieta 2–3 s antes del cierre",
+    "Palabras enteras en las pausas; cortes solo con la cámara en movimiento",
+    "Zonas seguras 9:16: x<920, y<1600 en pantalla; texto legible ≥48 px",
+    "check_mural.py OBLIGATORIO antes de renderizar",
+    "Audio máster −14 LUFS, pico real bajo −1 dB",
+    "Ningún dato sin verificar (gate DATA-EXPERT.md); editorial solo vía flags/texts"
+  ],
+
+  "palettes": {
+    "default":   { "bg": "#0B0B0D", "ink": "#F7C400", "accent2": "#EDEAE2", "paper": "#EDEAE2", "dim": "#55524A", "wall": "#060607" },
+    "brasil":    { "bg": "#0A0F0B", "ink": "#FFDF00", "accent2": "#00A859", "paper": "#EDEAE2", "dim": "#49514A", "wall": "#050706" },
+    "las-vegas": { "bg": "#0C0A12", "ink": "#FF2D87", "accent2": "#D4AF37", "paper": "#F2EDE4", "dim": "#5A4D63", "wall": "#070610" },
+    "red-bull":  { "bg": "#070E26", "ink": "#FFC906", "accent2": "#E10A2E", "paper": "#F2EEE3", "dim": "#5A648C", "wall": "#04060F" },
+    "mexico":    { "bg": "#0B0D0A", "ink": "#D4AF37", "accent2": "#006847", "paper": "#EDEAE2", "dim": "#52564C", "wall": "#060705" },
+    "monaco":    { "bg": "#0A0C10", "ink": "#F7C400", "accent2": "#CE1126", "paper": "#EDEAE2", "dim": "#4F5560", "wall": "#05070A" }
+  },
+
+  "variants": {
+    "race": {
+      "page": "mural.html",
+      "stops": ["gancho (remontada o ganador)", "pista neón + stats", "salida L1", "liderato",
+                "neumáticos/estrategia", "clímax a todo el ancho (escalada o gap)", "podio + cifra final quieta", "cierre CTA"]
+    },
+    "quali": {
+      "page": "(pendiente: mural-quali.html)",
+      "stops": ["gancho (poleman, nombre)", "pista neón", "eliminados Q1/Q2", "el top 5",
+                "clímax: la vuelta de pole vs P2 a todo el ancho", "cifra final (gap de pole) quieta", "cierre CTA"]
+    },
+    "history": {
+      "page": "mural-senna-1991.html (referencia de la variante)",
+      "stops": ["gancho (nombre + el dato-leyenda)", "contexto (pista + stats)", "la amenaza",
+                "el giro", "el dato grande", "la avería/el drama", "clímax: gráfica a todo el ancho + cifra final quieta", "cierre"]
+    },
+    "preview": {
+      "page": "mural-preview.html",
+      "stops": ["gancho (sede + fecha, nombre completo frame 0)", "el libro de récords (ediciones, primera vez)",
+                "los pioneros", "el dato dramático", "la era actual (ganadores/poles)",
+                "clímax: línea de tiempo de ganadores a todo el ancho", "cifra final (fecha) quieta", "cierre CTA"]
+    },
+    "season": {
+      "page": "(pendiente: mural-season.html)",
+      "stops": ["gancho (campeón, nombre)", "el calendario como mapa", "victorias por carrera",
+                "stats de temporada", "clímax: evolución de puntos a todo el ancho", "cifra final quieta", "cierre CTA"]
+    }
+  },
+
+  "outputs": {
+    "short":   "9:16 1080×1920 MP4 (siempre)",
+    "episode": "16:9 1920×1080 MP4 con narración (solo si hay audios en ~/PaddockIntel-Data/audios/<GP>/)",
+    "posters": ["1080x1920", "1080x1350"]
+  }
+}

@@ -177,6 +177,39 @@ como final sin la clasificación FIA.
   (`?fmt=16x9`) para YouTube/X con cámara auto-encuadrada por parada. Pósters
   estáticos en 9:16 y 4:5.
 
+### El mural como línea de producción (formato insignia)
+
+**Config única:** `media/kinetic/mural-config.json` — paletas por sede sobre base negra
+(default, brasil, las-vegas, red-bull, mexico, monaco…), estructura de paradas por
+defecto de las **cinco variantes** (race, quali, history, preview, season) y las reglas
+fijas del formato. El builder inyecta la paleta en el story (`story.palette`); el motor
+nunca lleva colores de sede hardcodeados.
+
+**Reglas fijas (lecciones aprendidas — no negociables):**
+1. El nombre protagonista va en el gancho, completo desde el fotograma 0.
+2. El clímax ocupa (casi) todo el ancho de su parada.
+3. La cifra final queda quieta 2–3 s antes del cierre.
+4. Palabras enteras en pausas; cortes solo con la cámara en movimiento.
+5. Zonas seguras + texto ≥48 px + `check_mural.py` SIEMPRE antes de renderizar.
+6. Audio máster −14 LUFS, pico real bajo −1 dB (verificar con `ebur128=peak=true`).
+7. Ningún dato sin verificar (gate DATA-EXPERT); lo editorial solo vía texts/flags.
+
+La música puede variar por sede (pendiente: tema propio para Las Vegas); el máster
+siempre a −14 LUFS con pico real bajo −1 dB, sea cual sea el track.
+
+**Las tres salidas por render** (`mural_run.py` las encadena y aborta si falla el check):
+
+```bash
+python3 mural_run.py <motor.html> <story.json> ~/PaddockIntel-Data/renders/<gp>-<variante> \
+  --music <master.wav> --music-start 0 \
+  [--episode mural-episode.html <story-episodio.json> <mix-episodio.wav>]
+# → Short 9:16 (.mp4) + pósters 1080×1920 y 1080×1350 (.png) [+ episodio 16:9 si hay narración]
+```
+
+Motores existentes por variante: race = `mural.html` (+ `mural-episode.html` 16:9),
+history = `mural-senna-1991.html` (referencia), preview = `mural-preview.html`;
+quali y season pendientes (estructura por defecto ya definida en el config).
+
 ## 3d. Episodio largo con narración (mural 16:9)
 
 Versión de ~2:30 del mural con la narración de Ismael: muro de 2 filas × 5 zonas

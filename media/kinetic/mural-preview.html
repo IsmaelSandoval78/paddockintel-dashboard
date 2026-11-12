@@ -1,0 +1,289 @@
+<!doctype html><html><head><meta charset="utf-8"><title>mural preview</title><style>
+@font-face{font-family:G;font-weight:900;src:url(inter-tight-latin-900-normal.woff2)}@font-face{font-family:G;font-weight:500;src:url(inter-tight-latin-500-normal.woff2)}
+html,body{margin:0;background:#070610;height:100%;display:grid;place-items:center}
+canvas{max-height:100vh;max-width:100vw}
+</style></head><body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+// ─── Mural PREVIEW (9:16, 45s) — variante de la plantilla insignia ───
+// Póster 2160×4800; paleta por sede desde story.palette (mural-config.json).
+// Reglas fijas: nombre en el gancho desde el frame 0, clímax a todo el ancho de la
+// parada, cifra final quieta 2–3 s, palabras enteras, zonas seguras, checkStops().
+const c=document.getElementById('c'),X=c.getContext('2d');
+let W=1080,H=1920;const PW=2160,PH=4800;
+let BG,INK,AC2,PAPER,DIM,WALL;
+const M=60,SAFE_X=920,SAFE_Y=1600;
+let S=null,T=null,BEAT=0.566,LEN=45;
+
+const cl=(v,a,b)=>Math.min(b,Math.max(a,v)), lp=(a,b,k)=>a+(b-a)*k;
+const ss=k=>{k=cl(k,0,1);return k*k*k*(k*(k*6-15)+10);};
+const outExpo=k=>k>=1?1:1-Math.pow(2,-10*k);
+const seg=(t,a,b)=>cl((t-a)/(b-a),0,1);
+const fade=(t,t0,d=0.5)=>outExpo(seg(t,t0,t0+d));
+const hash=i=>{let x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x);};
+function F(w,px){return `${w} ${px}px G`;}
+function fitPx(txt,wt,maxW,cap){X.font=F(wt,cap);const w=X.measureText(txt).width;return w>maxW?Math.floor(cap*maxW/w):cap;}
+function mono(x,y,txt,px,col,tr=0.08){X.font=F(500,px);X.fillStyle=col;let cx=x;
+  for(const ch of txt){X.fillText(ch,cx,y);cx+=X.measureText(ch).width+px*tr;}return cx-x;}
+function chip(x,y,txt,px,fill,pad=16,rot=0){
+  X.save();X.translate(x,y);X.rotate(rot);X.font=F(500,px);
+  const w=X.measureText(txt).width+pad*2,h=px+pad*1.2;
+  if(fill){X.fillStyle=INK;X.fillRect(0,-h/2,w,h);X.fillStyle=BG;}
+  else{X.strokeStyle=PAPER;X.lineWidth=2;X.strokeRect(0,-h/2,w,h);X.fillStyle=PAPER;}
+  X.textBaseline='middle';X.fillText(txt,pad,2);X.restore();return w;}
+function checker(x,y,n,sz){for(let i=0;i<n;i++)for(let j=0;j<2;j++)if((i+j)%2===0){X.fillStyle=PAPER;X.fillRect(x+i*sz,y+j*sz,sz,sz);}}
+function dots(x,y,cols,rows,gap,r,col){X.fillStyle=col;for(let i=0;i<cols;i++)for(let j=0;j<rows;j++){X.beginPath();X.arc(x+i*gap,y+j*gap,r,0,7);X.fill();}}
+function rainText(x,y,txt,px,wt,col,k,each=0.05){
+  X.font=F(wt,px);X.fillStyle=col;let cx=x;
+  for(let i=0;i<txt.length;i++){const ki=ss(seg(k,i*each,i*each+0.4));
+    X.globalAlpha=ki;X.fillText(txt[i],cx,y-(1-ki)*(60+hash(i+x)*110));
+    cx+=X.measureText(txt[i]).width;}
+  X.globalAlpha=1;return cx-x;}
+function stagText(x,y,txt,px,wt,col,k,each=0.055){
+  X.font=F(wt,px);X.fillStyle=col;let cx=x;
+  for(let i=0;i<txt.length;i++){X.globalAlpha=ss(seg(k,i*each,i*each+0.3));
+    X.fillText(txt[i],cx,y);cx+=X.measureText(txt[i]).width;}
+  X.globalAlpha=1;return cx-x;}
+
+// ─── Paradas (misma geometría validada del mural history) ───
+const STOPS=[
+  {t0:0.0, t1:5.0, cx:686, cy:1190,s:0.82, box:[120,280,1130,1185], big:0,  mt:60},
+  {t0:6.2, t1:11.0,cx:622, cy:1925,s:0.95, box:[120,1250,1020,2150],big:300,mt:52},
+  {t0:12.2,t1:17.4,cx:1700,cy:1700,s:0.95, box:[1220,1250,2100,2000],big:260,mt:52},
+  {t0:18.4,t1:23.0,cx:622, cy:2560,s:0.95, box:[120,2240,1020,2890],big:340, mt:52},
+  {t0:24.0,t1:29.4,cx:1700,cy:2960,s:0.95, box:[1220,2240,2100,2880],big:null,mt:50},
+  {t0:30.4,t1:36.4,cx:622, cy:3345,s:0.95, box:[120,2990,1020,3680], big:null,mt:50},
+  {t0:37.4,t1:41.2,cx:622, cy:4080,s:0.95, box:[120,3800,1020,4356], big:0,  mt:52},
+  {t0:41.6,t1:43.0,cx:1700,cy:4030,s:0.95, box:[1220,3800,2100,4316],big:260,mt:52},
+];
+const WALLK={x:1080,y:2920,s:0.285};
+let CAM=[],NAMEPX=283,FINPX=229;
+function buildCam(){
+  CAM=[];const holds=[];
+  STOPS.forEach(st=>{const a={t:st.t0,x:st.cx,y:st.cy,s:st.s},b={t:st.t1,x:st.cx,y:st.cy,s:st.s};
+    holds.push([a,b]);CAM.push(a,b);});
+  for(let i=0;i<7;i++){const a=holds[i][1],b=holds[i+1][0];
+    const dx=b.x-a.x,dyv=b.y-a.y,d=Math.hypot(dx,dyv)||1;
+    const px=-dyv/d,py=dx/d,amp=(i%2?-1:1)*cl(d*0.16,70,330);
+    const s2=Math.min(a.s,b.s)-(0.08+Math.min(0.24,d/5200));
+    CAM.push({t:(a.t+b.t)/2,
+      x:cl((a.x+b.x)/2+px*amp,540/s2,PW-540/s2),
+      y:cl((a.y+b.y)/2+py*amp,960/s2,PH-960/s2),s:s2});}
+  CAM.push({t:43.6,...WALLK});CAM.push({t:LEN,...WALLK});
+  CAM.sort((a,b)=>a.t-b.t);
+}
+function cam(t){let i=0;while(i<CAM.length-1&&CAM[i+1].t<=t)i++;
+  if(i>=CAM.length-1)return CAM[CAM.length-1];
+  const a=CAM[i],b=CAM[i+1],k=ss(seg(t,a.t,b.t));
+  return {x:lp(a.x,b.x,k),y:lp(a.y,b.y,k),s:lp(a.s,b.s,k)};}
+
+// ─── El póster ───
+function drawWall(t){
+  X.fillStyle=BG;X.fillRect(0,0,PW,PH);
+  X.save();X.beginPath();X.rect(0,0,PW,PH);X.clip();X.textBaseline='alphabetic';
+
+  // deco global
+  mono(120,190,'PADDOCKINTEL · GP PREVIEW',40,DIM);
+  dots(1900,140,4,3,30,6,DIM);
+  checker(1340,330,16,34);dots(1360,480,10,4,40,5,DIM);
+  X.font=F(900,250);X.strokeStyle=DIM;X.lineWidth=3;X.strokeText(T.deco_year,1380,760);
+  X.font=F(900,230);X.strokeStyle=DIM;X.lineWidth=3;X.strokeText(T.deco_word,1250,3180);
+  checker(1250,3260,18,38);dots(1250,3440,12,4,44,5,DIM);
+  checker(120,4420,22,36);
+  mono(120,4560,T.deco_footer,38,DIM);
+  mono(120,4622,T.deco_footer2,38,DIM);
+  dots(1760,4440,6,4,40,5,DIM);
+  X.strokeStyle=DIM;X.lineWidth=2;
+  for(const yy of [1218,2178,2944,3730]){X.beginPath();X.moveTo(120,yy);X.lineTo(2040,yy);X.stroke();}
+
+  // ── S1 · GANCHO: el nombre completo desde el frame 0 ──
+  mono(120,370,T.top,60,PAPER);
+  NAMEPX=Math.min(fitPx(T.name[0],900,1010,300),fitPx(T.name[1],900,1010,300));
+  X.font=F(900,NAMEPX);X.fillStyle=PAPER;X.fillText(T.name[0],120,600);
+  X.fillStyle=INK;X.fillText(T.name[1],120,600+NAMEPX*1.04);
+  mono(120,1045,T.sub,60,DIM);
+  X.save();X.translate(130,1130);X.rotate(-0.04);X.fillStyle=INK;
+  X.font=F(500,60);const wch=X.measureText(T.chip).width+36;
+  X.fillRect(0,-48,wch,84);X.fillStyle=BG;X.textBaseline='middle';X.fillText(T.chip,18,-4);
+  X.textBaseline='alphabetic';X.restore();
+
+  // ── S2 · EL LIBRO DE RÉCORDS — stats rotando (ref track animation) ──
+  X.globalAlpha=fade(t,5.6);mono(120,1320,'THE RECORD BOOK',56,DIM);X.globalAlpha=1;
+  const sIdx=cl(Math.floor(seg(t,6.6,10.8)*3),0,2);
+  const roll=ss(seg(t,6.6+sIdx*1.4,6.6+sIdx*1.4+0.4));
+  if(t>=6.2){X.save();X.beginPath();X.rect(120,1340,900,700);X.clip();
+    for(const[idx,prev] of [[sIdx,0],[sIdx-1,1]]){ if(idx<0)continue; if(prev&&roll>=1)continue;
+      const off=prev?-520*roll:520*(1-roll);
+      const st=T.rec[idx];
+      X.font=F(900,fitPx(st[0],900,860,300));X.fillStyle=AC2;X.fillText(st[0],130,1720+off);
+      mono(135,1820+off,st[1],56,PAPER);
+    }X.restore();}
+  X.globalAlpha=fade(t,10.0);mono(120,2020,T.rec_sub[0],48,DIM);
+  mono(120,2086,T.rec_sub[1],48,DIM);X.globalAlpha=1;
+
+  // ── S3 · LOS PIONEROS — caras de cubo que se resuelven (ref cube transition) ──
+  X.globalAlpha=fade(t,12.0);mono(1220,1320,'THE PIONEERS',52,DIM);X.globalAlpha=1;
+  T.pioneers.forEach((pc,i)=>{const t0=13.0+i*1.8,k=ss(seg(t,t0,t0+0.6));if(k<=0)return;
+    const cx=1220+i*450, cy=1380;
+    X.save();X.translate(cx+215,cy+290);const fl=Math.abs(1-2*Math.min(0.999,k));X.scale(Math.max(0.03,fl),1);X.translate(-(cx+215),-(cy+290));
+    if(k<0.5){X.fillStyle=INK;X.fillRect(cx,cy,430,580);
+      X.font=F(900,200);X.fillStyle=BG;X.fillText(pc[0],cx+60,cy+370);}
+    else{X.fillStyle=i?'#171224':BG;X.fillRect(cx,cy,430,580);
+      X.strokeStyle=i?AC2:PAPER;X.lineWidth=3;X.strokeRect(cx,cy,430,580);
+      X.font=F(900,fitPx(pc[1],900,370,64));X.fillStyle=PAPER;X.fillText(pc[1],cx+28,cy+110);
+      mono(cx+28,cy+180,pc[2],40,DIM);
+      X.font=F(900,150);X.fillStyle=AC2;X.fillText(pc[3],cx+28,cy+420);
+      mono(cx+28,cy+500,pc[4],36,PAPER);}
+    X.restore();});
+
+  // ── S4 · EL VACÍO — caracteres que caen (ref fechas) ──
+  X.globalAlpha=fade(t,18.2);mono(120,2310,'THE VOID',56,DIM);X.globalAlpha=1;
+  if(t>=18.8)rainText(120,2680,T.void_big,340,900,INK,seg(t,18.8,19.8),0.1);
+  X.globalAlpha=fade(t,19.8);mono(120,2780,T.void_1,56,PAPER);X.globalAlpha=1;
+  X.globalAlpha=fade(t,20.4);mono(120,2855,T.void_2,56,DIM);X.globalAlpha=1;
+
+  // ── S5 · LA ERA DEL STRIP — filas alternadas (ref canvas & frames) ──
+  X.globalAlpha=fade(t,23.8);mono(1220,2310,'THE STRIP ERA',56,DIM);X.globalAlpha=1;
+  T.era.forEach((er,i)=>{const t0=24.6+i*1.1,k=ss(seg(t,t0,t0+0.5));if(k<=0)return;
+    const yy=2360+i*130, dir=i%2?1:-1, rep=er[2];
+    X.save();X.globalAlpha=k;X.translate(dir*170*(1-k),0);
+    if(rep){X.fillStyle=INK;X.fillRect(1220,yy,880,112);}
+    else{X.fillStyle='#171224';X.fillRect(1220,yy,880,112);X.strokeStyle=DIM;X.lineWidth=2;X.strokeRect(1220,yy,880,112);}
+    X.font=F(900,56);X.fillStyle=rep?BG:AC2;X.textBaseline='middle';X.fillText(er[0],1248,yy+58);
+    X.font=F(500,46);X.fillStyle=rep?BG:PAPER;X.fillText(er[1],1428,yy+58);
+    X.textBaseline='alphabetic';X.restore();X.globalAlpha=1;});
+  X.globalAlpha=fade(t,27.6);chip(1220,2800,T.era_chip,52,true);X.globalAlpha=1;
+  X.globalAlpha=fade(t,28.2);mono(1220,2866,T.era_poles,46,DIM);X.globalAlpha=1;
+
+  // ── S6 · CLÍMAX — la línea de tiempo a todo el ancho (ref dates, eje roto marcado) ──
+  X.globalAlpha=fade(t,30.2);mono(120,3060,T.tl_label,52,DIM);X.globalAlpha=1;
+  const rY=3330, x81=170, x82=330, xgA=410, xgB=610, x23=680, step=100;
+  const kt=ss(seg(t,30.8,34.6));                        // el thumb recorre 1981 → 2026
+  const xs=[x81,x82,x23,x23+step,x23+2*step,x23+2*step+85];
+  const thumbX=lp(x81,x23+3*step,kt);
+  if(t>=30.6){
+    X.strokeStyle=PAPER;X.lineWidth=4;
+    X.beginPath();for(let px=150;px<=xgA;px+=5){const d=(px-thumbX)/40,b=24*Math.exp(-d*d);px===150?X.moveTo(px,rY-b):X.lineTo(px,rY-b);}X.stroke();
+    X.setLineDash([12,14]);X.beginPath();X.moveTo(xgA+10,rY);X.lineTo(xgB-10,rY);X.stroke();X.setLineDash([]);
+    X.beginPath();for(let px=xgB;px<=1000;px+=5){const d=(px-thumbX)/40,b=24*Math.exp(-d*d);px===xgB?X.moveTo(px,rY-b):X.lineTo(px,rY-b);}X.stroke();
+    X.globalAlpha=fade(t,31.6);
+    X.font=F(900,110);X.fillStyle=INK;X.fillText(T.tl_gap,xgA-18,rY-120);
+    mono(xgA-10,rY-60,T.tl_gap2,44,DIM);X.globalAlpha=1;
+    T.tl.forEach((m,i)=>{const mx=xs[i],on=thumbX>=mx-8,last=i===T.tl.length-1;
+      if(!on)return;
+      X.save();
+      if(last){const pulse=0.55+0.45*Math.pow(1-((t/BEAT)%1),2);
+        X.globalAlpha=pulse;X.setLineDash([10,8]);X.strokeStyle=INK;X.lineWidth=3;
+        X.strokeRect(mx-44,rY+40,96,120);X.setLineDash([]);
+        X.font=F(900,64);X.fillStyle=INK;X.fillText('?',mx-12,rY+126);}
+      else{X.beginPath();X.arc(mx,rY,14,0,7);X.fillStyle=AC2;X.shadowColor=AC2;X.shadowBlur=18;X.fill();X.shadowBlur=0;
+        X.font=F(900,44);X.fillStyle=PAPER;X.fillText(m[1],mx-40,rY+(i%2?92:-92));}
+      X.font=F(500,44);X.fillStyle=last?INK:DIM;
+      const yw=X.measureText(m[0]).width;
+      X.fillText(m[0],mx-yw/2,last?rY+220:(i%2?rY+156:rY-150));
+      X.restore();});
+  }
+  X.globalAlpha=fade(t,35.0);mono(120,3620,T.tl_sub,52,PAPER);X.globalAlpha=1;
+
+  // ── S7 · LA CIFRA FINAL — contorno que se rellena y se queda quieta (ref letras) ──
+  X.globalAlpha=fade(t,37.2);mono(120,3880,T.fin_label,52,DIM);X.globalAlpha=1;
+  if(t>=37.6){
+    FINPX=fitPx(T.fin_big,900,880,300);
+    X.font=F(900,FINPX);
+    const bx=120,by=4180,bw=X.measureText(T.fin_big).width,capH=FINPX*0.78;
+    X.strokeStyle=INK;X.lineWidth=3;X.strokeText(T.fin_big,bx,by);
+    const kf=ss(seg(t,37.9,38.7));
+    if(kf>0){X.save();X.beginPath();X.rect(bx-8,by-capH*kf,bw+16,capH*kf+12);X.clip();
+      X.fillStyle=INK;X.fillText(T.fin_big,bx,by);X.restore();}
+  }
+  X.globalAlpha=fade(t,38.8);mono(120,4290,T.fin_sub,52,PAPER);X.globalAlpha=1;
+
+  // ── S8 · CIERRE ──
+  const k8=fade(t,41.4);
+  X.globalAlpha=k8;
+  X.font=F(900,fitPx(T.close[0],900,850,250));X.fillStyle=PAPER;X.fillText(T.close[0],1220,4020);
+  X.font=F(900,fitPx(T.close[1],900,860,130));X.fillStyle=INK;X.fillText(T.close[1],1220,4160);
+  mono(1220,4250,T.close_sub,52,DIM);
+  X.globalAlpha=1;
+
+  X.restore();
+  X.strokeStyle=INK;X.lineWidth=8;X.strokeRect(4,4,PW-8,PH-8);
+  X.strokeStyle=AC2;X.lineWidth=3;X.strokeRect(18,18,PW-36,PH-36);
+}
+
+// destello de neón (en vez de lluvia): polvo dorado/rosa parpadeando
+function sparkle(t){
+  X.save();
+  for(let i=0;i<46;i++){
+    const sx=hash(i)*W, sy=hash(i+50)*H;
+    const tw=0.5+0.5*Math.sin(t*(1.5+hash(i+9))+i);
+    X.globalAlpha=0.05+0.1*tw;
+    X.fillStyle=i%3?AC2:INK;
+    X.beginPath();X.arc(sx,sy,1.6+hash(i+3)*2.2,0,7);X.fill();
+  }
+  X.restore();X.globalAlpha=1;
+}
+function outro(t){
+  const k=fade(t,43.4,0.7);if(k<=0)return;
+  X.save();X.globalAlpha=k;X.textBaseline='middle';X.font=F(900,40);
+  const txt=T.cta,w=X.measureText(txt).width+48,x=(W-w)/2,y=1560+(1-k)*30,h=72;
+  X.fillStyle=INK;X.fillRect(x,y-h/2,w,h);X.fillStyle=BG;X.fillText(txt,x+24,y+2);
+  X.restore();X.textBaseline='alphabetic';}
+
+window.draw=function(t){
+  t=cl(t,0,LEN-0.001);
+  X.setTransform(1,0,0,1,0,0);X.fillStyle=WALL;X.fillRect(0,0,W,H);
+  const k=cam(t), s=k.s*(W/1080);
+  X.setTransform(s,0,0,s,W/2-k.x*s,H/2-k.y*s);
+  drawWall(t);
+  X.setTransform(1,0,0,1,0,0);
+  sparkle(t);
+  outro(t);
+};
+
+// ─── Comprobación de paradas ───
+window.checkStops=function(){
+  const fails=[];
+  STOPS.forEach((st,i)=>{
+    const t=(st.t0+st.t1)/2, k=cam(t), s=k.s*(W/1080), b=st.box;
+    const x0=(b[0]-k.x)*s+W/2, x1=(b[2]-k.x)*s+W/2;
+    const y0=(b[1]-k.y)*s+H/2, y1=(b[3]-k.y)*s+H/2;
+    const bad=why=>fails.push({stop:'p'+(i+1),t:Math.round(t*10)/10,why});
+    if(x0<M-1||y0<M-1)bad(`caja fuera de margen sup/izq: [${[x0,y0].map(Math.round)}]`);
+    if(x1>SAFE_X+1||y1>SAFE_Y+1)bad(`caja invade zona segura: x1=${Math.round(x1)}>920 o y1=${Math.round(y1)}>1600`);
+    const big=st.big===0?(i===0?NAMEPX:FINPX):st.big;
+    if(big!=null&&big*s<160-0.5)bad(`cifra ${Math.round(big*s)}px < 160px`);
+    if(st.mt*s<48-0.5)bad(`texto mínimo ${Math.round(st.mt*s)}px < 48px`);
+  });
+  // regla: la cifra final queda quieta ≥2 s tras rellenarse
+  if(STOPS[6].t1-38.7<2)fails.push({stop:'p7',t:38.7,why:'cifra final quieta <2s'});
+  return fails;
+};
+window.stopTimes=()=>STOPS.map(st=>(st.t0+st.t1)/2).concat([LEN-1.0]);
+window.still=function(w,h){
+  c.width=W=w;c.height=H=h;
+  X.setTransform(1,0,0,1,0,0);X.fillStyle=WALL;X.fillRect(0,0,w,h);
+  const s=Math.min(w/PW,h/PH)*0.96;
+  X.setTransform(s,0,0,s,(w-PW*s)/2,(h-PH*s)/2);
+  drawWall(LEN);
+  X.setTransform(1,0,0,1,0,0);
+};
+
+const fontsReady=Promise.all([F(900,100),F(500,30)].map(f=>document.fonts.load(f)));
+fontsReady.then(async()=>{
+  const qs=new URLSearchParams(location.search);
+  if(!window.STORY&&qs.get('story')){try{window.STORY=await(await fetch(qs.get('story'))).json();}catch(e){}}
+  if(!window.STORY){document.body.innerHTML='<p style="color:#888;font-family:sans-serif">Falta STORY</p>';return;}
+  S=window.STORY;T=S.texts;BEAT=60/(S.bpm||106.06);LEN=S.seconds;
+  const P=S.palette||{};
+  BG=P.bg||'#0B0B0D';INK=P.ink||'#F7C400';AC2=P.accent2||'#EDEAE2';
+  PAPER=P.paper||'#EDEAE2';DIM=P.dim||'#55524A';WALL=P.wall||'#060607';
+  document.body.style.background=WALL;
+  // medir las cifras ajustadas antes del check
+  NAMEPX=Math.min(fitPx(T.name[0],900,1010,300),fitPx(T.name[1],900,1010,300));
+  FINPX=fitPx(T.fin_big,900,880,300);
+  buildCam();
+  window.ready=true;draw(0);
+  if(qs.get('play')){const t0=performance.now();(function loop(){draw(((performance.now()-t0)/1000)%LEN);requestAnimationFrame(loop);})();}
+});
+</script></body></html>
