@@ -115,6 +115,8 @@ function stagText(x,y,txt,px,wt,col,k,each=0.055){
     X.fillText(txt[i],cx,y);cx+=X.measureText(txt[i]).width;
   }X.globalAlpha=1;return cx-x;
 }
+// zoom de dashboard con rebote (ref opus 06): el KPI crece hasta protagonista
+const popS=k=>{k=ss(cl(k,0,1));return 0.6+0.4*k+0.12*Math.sin(k*Math.PI);};
 // caracteres que caen y se asientan en el dato (ref transiciones para las fechas)
 function rainText(x,y,txt,px,wt,col,k,each=0.05){
   X.font=F(wt,px);X.fillStyle=col;let cx=x;
@@ -246,18 +248,25 @@ function drawWall(t){
   T.lead_chips.forEach((lc,i)=>ghost(x0+(i%2)*500,y0+90+Math.floor(i/2)*95-38,460,76,g4*(1-ss(seg(t,cue('lead'+i),cue('lead'+i)+0.35)))));
   ghost(x0,y0+325,430,265,g4*(1-ss(seg(t,cue('led48'),cue('led48')+0.35))));
   ghost(x0,y0+625,950,60,g4*(1-ss(seg(t,cue('lead0'),cue('lead0')+0.35))));
+  let act=-1;for(let i=0;i<4;i++)if(t>=cue('lead'+i))act=i;        // dock magnético (ref opus 08)
   T.lead_chips.forEach((lc,i)=>{const t0=cue('lead'+i),k=fade(t,t0,0.45);if(k<=0)return;
     const cx=x0+(i%2)*500, cy=y0+90+Math.floor(i/2)*95;
-    X.globalAlpha=k;X.save();X.translate(cx,cy);
-    X.font=F(500,46);const w=X.measureText(lc).width+32,h=46*1.65;
+    const ktr=act>=0?ss(seg(t,cue('lead'+act),cue('lead'+act)+0.45)):0;
+    const prev=act-1;
+    const mag=(i===act?0.96+0.16*ktr:(i===prev?1.12-0.16*ktr:0.96));
+    X.globalAlpha=k*(i===act?1:0.85);
+    X.save();X.font=F(500,46);const w=X.measureText(lc).width+32,h=46*1.65;
+    X.translate(cx+w/2,cy);X.scale(mag,mag);X.translate(-(cx+w/2),-cy);
+    X.translate(cx,cy);
     if(i===3){X.fillStyle=INK;X.fillRect(0,-h/2,w,h);}else{X.strokeStyle=PAPER;X.lineWidth=2;X.strokeRect(0,-h/2,w,h);}
-    X.textBaseline='middle';X.restore();
-    X.save();X.translate(cx+16,cy);X.textBaseline='middle';
+    X.textBaseline='middle';X.translate(16,0);
     stagText(0,2,lc,46,500,i===3?BG:PAPER,seg(t,t0,t0+0.9));
     X.restore();X.textBaseline='alphabetic';X.globalAlpha=1;});
   const kled=fade(t,cue('led48'));
   if(kled>0){X.globalAlpha=kled;
-    X.font=F(900,320);X.fillStyle=INK;X.fillText(T.led_big,x0,y0+575);
+    X.save();const kp=popS(seg(t,cue('led48'),cue('led48')+0.55));   // dashboard zoom
+    X.translate(x0,y0+575);X.scale(kp,kp);
+    X.font=F(900,320);X.fillStyle=INK;X.fillText(T.led_big,0,0);X.restore();
     mono(x0+470,y0+495,T.led_label,44,PAPER);X.globalAlpha=1;}
   X.globalAlpha=fade(t,cue('led23'));mono(x0+470,y0+560,T.led_small,44,DIM);X.globalAlpha=1;
   const segs=T.lead_segments;
@@ -320,7 +329,10 @@ function drawWall(t){
   const kc=fade(t,E.chapters[5].start+0.2);
   if(kc>0){X.globalAlpha=kc;
     X.beginPath();X.arc(rx+30,ty,20,0,7);X.fillStyle=INK;X.shadowColor=INK;X.shadowBlur=26;X.fill();X.shadowBlur=0;
-    X.font=F(900,320);X.fillStyle=INK;X.fillText('P'+pNow,rx+140,y0+405);
+    let lastT=null;for(const st2 of steps)if(t>=st2.t)lastT=st2.t;
+    const beatP=lastT==null?1:1+0.16*Math.sin(ss(seg(t,lastT,lastT+0.4))*Math.PI);
+    X.save();X.translate(rx+140,y0+405);X.scale(beatP,beatP);
+    X.font=F(900,320);X.fillStyle=INK;X.fillText('P'+pNow,0,0);X.restore();
     mono(rx+150,y0+485,lNow?'LAP '+lNow+' / '+S.data.total_laps:'GRID',40,PAPER);
     X.globalAlpha=1;}
   X.globalAlpha=fade(t,cue('gap14'));X.font=F(900,130);X.fillStyle=PAPER;X.fillText(T.climb_gap,rx+140,y0+625);X.globalAlpha=1;
@@ -428,7 +440,10 @@ function drawWall(t){
   // ── Z11 · THE STEWARDS — ref cube transition: cada sanción es un tile que gira ──
   [x0,y0]=ORG(10);
   X.globalAlpha=fade(t,E.chapters[10].start-0.6);mono(x0,y0+25,'THE STEWARDS',40,DIM);X.globalAlpha=1;
-  X.globalAlpha=fade(t,cue('pen5'));X.font=F(900,280);X.fillStyle=INK;X.fillText(T.pen_big,x0,y0+295);X.globalAlpha=1;
+  X.globalAlpha=fade(t,cue('pen5'));
+  X.save();const kp5=popS(seg(t,cue('pen5'),cue('pen5')+0.55));
+  X.translate(x0,y0+295);X.scale(kp5,kp5);
+  X.font=F(900,280);X.fillStyle=INK;X.fillText(T.pen_big,0,0);X.restore();X.globalAlpha=1;
   const g11=fade(t,E.chapters[10].start-0.6);
   [0,1,2].forEach(i=>ghost(x0,y0+355+i*116,950,96,g11*(1-ss(seg(t,cue('pen'+i),cue('pen'+i)+0.35)))));
   T.pen_chips.forEach((pc,i)=>{const t0=cue('pen'+i),k=ss(seg(t,t0,t0+0.6));if(k<=0)return;
@@ -513,9 +528,20 @@ function captions(t){
   let w=X.measureText(cap.text).width;
   if(w>W-140){px=Math.floor(92*(W-140)/w);X.font=F(500,px);w=X.measureText(cap.text).width;}
   const x=(W-w)/2,y=H-105,bh=px*1.63;
-  X.globalAlpha=0.78;X.fillStyle=BG;X.fillRect(x-30,y-bh/2,w+60,bh);X.globalAlpha=1;
-  X.fillStyle=PAPER;X.fillText(cap.text,x,y+3);
-  X.restore();X.textBaseline='alphabetic';
+  const kout=seg(t,cap.t1-0.26,cap.t1-0.02);
+  X.globalAlpha=0.78*Math.min(1,fade(t,cap.t0,0.25)*2)*(1-kout);
+  X.fillStyle=BG;X.fillRect(x-30,y-bh/2,w+60,bh);X.globalAlpha=1;
+  // las palabras entran escalonadas y vuelan al salir (ref opus 11 · text→layout)
+  const words=cap.text.split(' '),sw=X.measureText(' ').width;
+  let cx=x;
+  words.forEach((wd,j)=>{
+    const kin=ss(seg(t,cap.t0+j*0.035,cap.t0+j*0.035+0.22));
+    const dy=(1-kin)*18 - kout*(16+j*3);
+    X.globalAlpha=kin*(1-kout);
+    X.fillStyle=PAPER;X.fillText(wd,cx,y+3+dy);
+    cx+=X.measureText(wd).width+sw;
+  });
+  X.restore();X.globalAlpha=1;X.textBaseline='alphabetic';
 }
 function outro(t){
   const k=fade(t,cue('cta'),0.7);if(k<=0)return;
