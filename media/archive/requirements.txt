@@ -1,0 +1,5 @@
+# Entorno SOLO para exportar sesiones pasadas del archivo de F1 (que exige login
+# F1 TV desde el 15-oct-2026, FastF1 issue #978). La 3.8.x no envía el token al
+# archivo; esta alfa sí. Fijada EXACTA y aislada: el grabador (media/recorder/.venv,
+# fastf1 estable) no se toca — lo necesita el directo.
+fastf1==3.9.0a0

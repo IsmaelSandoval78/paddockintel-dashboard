@@ -82,9 +82,29 @@ python3 media/pipeline/decode_recording.py \
 ```
 
 Deja CSVs (laps, results, telemetry, race control, weather) + un zip en
-`~/PaddockIntel-Data/sessions/`. Alternativa cuando la sesión ya terminó y F1
-ya publicó los datos: `export_session.py <año> <gp> <sesión>` (descarga vía
-FastF1, mismo destino).
+`~/PaddockIntel-Data/sessions/`.
+
+**Sesiones pasadas del archivo de F1** (desde el 15-oct-2026 exigen login F1 TV,
+FastF1 issue #978 — por eso `export_session.py` con la 3.8.x devuelve vacío/401):
+
+```bash
+cd media/archive       # entorno APARTE con fastf1==3.9.0a0 fijado exacto
+.venv/bin/python export_archive.py 2025 "Las Vegas" R          # mismos CSVs + zip
+.venv/bin/python export_archive.py 2025 "Las Vegas" Q --timeout 900
+```
+
+- Cada descarga corre con límite de tiempo (la alfa a veces se cuelga); si falta
+  el login, el script lo dice claro y cómo renovarlo.
+- **El token de F1 TV dura ~4 días: renovarlo el JUEVES antes de cada Gran
+  Premio.** Renovación (la contraseña nunca en el chat ni en el historial —
+  teclear con `read -rs` en una terminal propia):
+  `F1_USERNAME/F1_PASSWORD` en el entorno y
+  `.venv/bin/python -m fastf1 auth f1tv --authenticate` (el método `browser`
+  de la alfa se cuelga; usar `password`).
+- El entorno del grabador (`media/recorder/.venv`, fastf1 estable) NO se toca:
+  es el del directo. Caché separada en `~/PaddockIntel-Data/cache-archive/`.
+- Plan B si la alfa falla: API de OpenF1 (gratis, sesiones desde 2023) con el
+  mismo formato de CSV — pendiente de construir, solo si hace falta.
 
 ## 3a. Video 3D (clasificación)
 
