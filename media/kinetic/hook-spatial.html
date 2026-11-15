@@ -1,0 +1,140 @@
+<!doctype html><html><head><meta charset="utf-8"><title>hook espacial</title><style>
+@font-face{font-family:G;font-weight:900;src:url(inter-tight-latin-900-normal.woff2)}@font-face{font-family:G;font-weight:500;src:url(inter-tight-latin-500-normal.woff2)}
+html,body{margin:0;background:#060607;height:100%;display:grid;place-items:center}
+canvas{max-height:100vh;max-width:100vw}
+</style></head><body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script src="file:///private/tmp/claude-501/-Users-ismaelsandoval-Documents-GitHub-paddockintel-dashboard/12d5a36f-4a15-4cfa-a0cd-431001d9497b/scratchpad/hook-landing.data.js"></script>
+<script>
+// ─── Hook espacial (demo, 6s) — ref spatial.mov: tipografía como planos flotantes en 3D ───
+// La cámara vuela a través de tres frases y ATERRIZA en el fotograma exacto donde arranca
+// el episodio (imagen extraída del render), para que el corte al muro sea invisible.
+// Contrato del motor: window.draw(t) determinista, window.ready, canvas #c.
+const c=document.getElementById('c'),X=c.getContext('2d');
+const W=1920,H=1080;
+const BG='#0B0B0D',INK='#F7C400',PAPER='#EDEAE2',DIM='#55524A';
+const FOC=1150;                                  // distancia focal (px)
+// window.LANDING (data-URI del fotograma t=0 del episodio) lo inyecta el script previo;
+// data-URI = mismo origen = el canvas no se taintea al exportar fotogramas.
+
+const cl=(v,a,b)=>Math.min(b,Math.max(a,v)), lp=(a,b,k)=>a+(b-a)*k;
+const ss=k=>{k=cl(k,0,1);return k*k*k*(k*(k*6-15)+10);};
+const hash=i=>{let x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x);};
+function kf(t,pts){for(let i=0;i<pts.length-1;i++){const[a,va]=pts[i],[b,vb]=pts[i+1];
+  if(t<=b)return lp(va,vb,ss((t-a)/(b-a||1)));}return pts[pts.length-1][1];}
+function F(w,px){return `${w} ${px}px G`;}
+
+// ─── Planos de texto (canvas aparte, pintado una vez: determinista) ───
+function mk(w,h,fn){const q=document.createElement('canvas');q.width=w;q.height=h;
+  const g=q.getContext('2d');g.textBaseline='alphabetic';fn(g);return q;}
+function fitG(g,txt,wt,maxW,cap){g.font=`${wt} ${cap}px G`;const w=g.measureText(txt).width;
+  return w>maxW?Math.floor(cap*maxW/w):cap;}
+
+let PLANES=[];
+function buildPlanes(img){
+  const p1=mk(1600,900,g=>{
+    const px=fitG(g,'SÃO PAULO',900,1520,330);
+    g.font=`900 ${px}px G`;g.fillStyle=PAPER;g.fillText('SÃO PAULO',40,380);
+    g.font='900 300px G';g.fillStyle=INK;g.fillText('2026',44,700);
+    g.font='500 54px G';g.fillStyle=DIM;g.fillText('RACE REPORT',1060,660);
+    g.strokeStyle=DIM;g.setLineDash([10,10]);g.lineWidth=3;
+    g.strokeRect(20,120,1560,620);
+  });
+  const p2=mk(2000,640,g=>{
+    let px=420;g.font=`900 ${px}px G`;
+    let w=g.measureText('71 LAPS.').width;
+    if(60+w>1940){px=Math.floor(px*1880/w);g.font=`900 ${px}px G`;}
+    g.fillStyle=INK;g.fillText('71',60,450);
+    g.fillStyle=PAPER;g.fillText('LAPS.',88+g.measureText('71 ').width,450);
+    g.font='500 54px G';g.fillStyle=DIM;g.fillText('INTERLAGOS · 4.309 KM',66,570);
+  });
+  const p3=mk(1800,860,g=>{
+    let px=330;g.font=`900 ${px}px G`;
+    const w=g.measureText('FROM THE').width;
+    if(50+w>1750){px=Math.floor(px*1700/w);g.font=`900 ${px}px G`;}
+    g.fillStyle=PAPER;
+    g.fillText('FROM THE',50,330);g.fillText('BACK.',50,650);
+    g.font='500 54px G';g.fillStyle=DIM;g.fillText('ONE CAR · ONE SUNDAY',56,800);
+  });
+  const side=(txt,ink)=>mk(900,160,g=>{g.font='500 92px G';g.fillStyle=ink;g.fillText(txt,10,110);});
+  // laterales: solo visibles EN VUELO (su z queda fuera de la ventana de niebla en las pausas)
+  PLANES=[
+    {z:1300,x:0,   y:0,   yaw:-0.10,w:1600,h:900,img:p1,n:48},
+    {z:2700,x:-700,y:-270,yaw: 0.50,w:760, h:76, img:side('INTERLAGOS',PAPER),n:14},
+    {z:3900,x:360, y:0,   yaw:-0.30,w:1500,h:480,img:p2,n:48},
+    {z:4700,x:-760,y:280, yaw:-0.34,w:760, h:76, img:side('WET RACE',DIM),n:14},
+    {z:5300,x:700, y:-300,yaw: 0.42,w:760, h:76, img:side('MAX VERSTAPPEN',PAPER),n:14},
+    {z:6500,x:-300,y:0,   yaw: 0.26,w:1460,h:698,img:p3,n:48},
+    {z:9200,x:0,   y:0,   yaw: 0,   w:1920,h:1080,img,  n:64,landing:true},
+  ].sort((a,b)=>b.z-a.z);                        // pintor: lejos → cerca
+}
+
+// ─── Cámara: vuelo con micro-pausas de lectura en cada frase ───
+const CZ=[[0,0],[1.00,0],[2.05,2600],[2.45,2600],[3.45,5200],[3.85,5200],[5.30,8050],[6.0,8050]];
+const CX=[[0,0],[1.00,0],[2.05,240],[2.45,240],[3.45,-200],[3.85,-200],[5.30,0],[6.0,0]];
+const CY=[[0,0],[2.05,-40],[3.45,46],[5.30,0],[6.0,0]];
+
+function drawPlane(p,cz,cx,cy){
+  const d0=p.z-cz-Math.abs(Math.sin(p.yaw))*p.w/2;      // esquina más cercana
+  if(d0<42)return;
+  const dc=p.z-cz;
+  // jerarquía de profundidad (ref): lo que viene se intuye como fantasma y gana
+  // opacidad al acercarse; el aterrizaje queda oculto hasta el final (es la revelación)
+  const ghost=p.landing?0:0.14*cl((7000-dc)/2500,0,1);
+  const far=Math.max(cl((2600-dc)/600,0,1),ghost);
+  const near=p.landing?1:cl((dc-260)/320,0,1);           // se desvanece al atravesarlo
+  const a=far*near;
+  if(a<=0.01)return;
+  const rx=Math.cos(p.yaw),rz=Math.sin(p.yaw),w2=p.w/2,h2=p.h/2;
+  const pt=u=>[p.x+rx*(u*p.w-w2),p.z+rz*(u*p.w-w2)];     // punto 3D del borde a fracción u
+  const prj=(x,y,z)=>{const k=FOC/(z-cz);return [960+(x-cx)*k,540+(y-cy)*k];};
+  const cw=p.img.width,ch=p.img.height,N=p.n,sw=cw/N;
+  X.save();X.globalAlpha=a;
+  for(let i=0;i<N;i++){
+    const [xa,za]=pt(i/N),[xb,zb]=pt((i+1)/N);
+    if(za-cz<42||zb-cz<42)continue;
+    const t0=prj(xa,p.y-h2,za),t1=prj(xb,p.y-h2,zb),b0=prj(xa,p.y+h2,za);
+    X.setTransform((t1[0]-t0[0])/sw,(t1[1]-t0[1])/sw,(b0[0]-t0[0])/ch,(b0[1]-t0[1])/ch,t0[0],t0[1]);
+    X.drawImage(p.img,i*sw,0,sw,ch,0,0,sw+1.2,ch);
+  }
+  X.setTransform(1,0,0,1,0,0);X.restore();
+}
+
+// ─── Grano (capa de materiales, mismo algoritmo que el episodio) ───
+let GRAIN=null;
+function makeGrain(){const g=document.createElement('canvas');g.width=g.height=512;
+  const gx=g.getContext('2d'),im=gx.createImageData(512,512);
+  let sd=1234>>>0;const rnd=()=>{sd=(sd*1664525+1013904223)>>>0;return sd/4294967296;};
+  for(let i=0;i<im.data.length;i+=4){const lum=rnd()<0.5?0:255;
+    im.data[i]=im.data[i+1]=im.data[i+2]=lum;
+    im.data[i+3]=rnd()<0.18?Math.floor(10+rnd()*22):0;}
+  gx.putImageData(im,0,0);GRAIN=g;}
+function grain(){if(!GRAIN)makeGrain();X.save();X.globalAlpha=0.5;
+  for(let y=0;y<H;y+=512)for(let x=0;x<W;x+=512)X.drawImage(GRAIN,x,y);X.restore();}
+
+window.draw=function(t){
+  // deriva continua (ref spatial.mov): la cámara nunca se detiene del todo;
+  // se amortigua antes del aterrizaje para que el empalme con el episodio sea exacto
+  const dk=cl((5.2-t)/0.5,0,1);
+  const cz=kf(t,CZ),
+        cx=kf(t,CX)+dk*(30*Math.sin(t*0.9+1.3)+12*Math.sin(t*1.7+0.5)),
+        cy=kf(t,CY)+dk*(20*Math.sin(t*0.7+4.0)+8*Math.sin(t*1.3+2.0));
+  X.setTransform(1,0,0,1,0,0);X.globalAlpha=1;
+  X.fillStyle=BG;X.fillRect(0,0,W,H);
+  // polvo de profundidad (paralaje entre planos)
+  X.fillStyle=DIM;
+  for(let i=0;i<70;i++){
+    const x=(hash(i)-0.5)*4400,y=(hash(i+99)-0.5)*2400,z=200+hash(i+7)*8600;
+    const d=z-cz;if(d<70)continue;const k=FOC/d;
+    X.globalAlpha=0.55*cl((d-180)/420,0,1)*cl(1-(d-5200)/3800,0.25,1);
+    X.beginPath();X.arc(960+(x-cx)*k,540+(y-cy)*k,cl(2.6*k*3,0.8,5),0,7);X.fill();
+  }
+  X.globalAlpha=1;
+  for(const p of PLANES)drawPlane(p,cz,cx,cy);
+  grain();
+};
+
+const img=new Image();img.src=window.LANDING;
+Promise.all([document.fonts.load(F(900,100)),document.fonts.load(F(500,30)),img.decode()])
+ .then(()=>{buildPlanes(img);window.ready=true;draw(0);});
+</script></body></html>

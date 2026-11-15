@@ -28,11 +28,33 @@ function mono(x,y,txt,px,col,tr=0.08){X.font=F(500,px);X.fillStyle=col;let cx=x;
 function chip(x,y,txt,px,fill,pad=16,rot=0){
   X.save();X.translate(x,y);X.rotate(rot);X.font=F(500,px);
   const w=X.measureText(txt).width+pad*2,h=px+pad*1.2;
-  if(fill){X.fillStyle=INK;X.fillRect(0,-h/2,w,h);X.fillStyle=BG;}
+  if(fill){stickerShadow(0,-h/2,w,h);X.fillStyle=INK;X.fillRect(0,-h/2,w,h);X.fillStyle=BG;}
   else{X.strokeStyle=PAPER;X.lineWidth=2;X.strokeRect(0,-h/2,w,h);X.fillStyle=PAPER;}
   X.textBaseline='middle';X.fillText(txt,pad,2);X.restore();return w;}
 function checker(x,y,n,sz){for(let i=0;i<n;i++)for(let j=0;j<2;j++)if((i+j)%2===0){X.fillStyle=PAPER;X.fillRect(x+i*sz,y+j*sz,sz,sz);}}
 function dots(x,y,cols,rows,gap,r,col){X.fillStyle=col;for(let i=0;i<cols;i++)for(let j=0;j<rows;j++){X.beginPath();X.arc(x+i*gap,y+j*gap,r,0,7);X.fill();}}
+// ─── acabados (ref effects.png) ───
+let GRAIN=null;
+function makeGrain(){                             // 10 · texture overlay: grano de papel determinista
+  const g=document.createElement('canvas');g.width=g.height=512;
+  const gx=g.getContext('2d'),im=gx.createImageData(512,512);
+  let sd=1234>>>0;const rnd=()=>{sd=(sd*1664525+1013904223)>>>0;return sd/4294967296;};
+  for(let i=0;i<im.data.length;i+=4){const lum=rnd()<0.5?0:255;
+    im.data[i]=im.data[i+1]=im.data[i+2]=lum;
+    im.data[i+3]=rnd()<0.18?Math.floor(10+rnd()*22):0;}
+  gx.putImageData(im,0,0);GRAIN=g;}
+function grain(){if(!GRAIN)makeGrain();
+  X.save();X.globalAlpha=0.5;
+  for(let yy=0;yy<H;yy+=512)for(let xx=0;xx<W;xx+=512)X.drawImage(GRAIN,xx,yy);
+  X.restore();}
+function stickerShadow(x,y,w,h){X.save();X.fillStyle='rgba(0,0,0,0.45)';X.fillRect(x+9,y+11,w,h);X.restore();}  // 03
+function innerTop(x,y,w,h=20){const g=X.createLinearGradient(0,y,0,y+h);     // 07
+  g.addColorStop(0,'rgba(0,0,0,0.5)');g.addColorStop(1,'rgba(0,0,0,0)');
+  X.fillStyle=g;X.fillRect(x,y,w,h);}
+function stamp(x,y,txt,px){                        // 08 · sello en relieve
+  mono(x+2.5,y+2.5,txt,px,'rgba(0,0,0,0.85)');
+  mono(x-1.5,y-1.5,txt,px,'rgba(255,255,255,0.14)');
+  mono(x,y,txt,px,DIM);}
 function rainText(x,y,txt,px,wt,col,k,each=0.05){
   X.font=F(wt,px);X.fillStyle=col;let cx=x;
   for(let i=0;i<txt.length;i++){const ki=ss(seg(k,i*each,i*each+0.4));
@@ -88,7 +110,7 @@ function drawWall(t){
   X.save();X.beginPath();X.rect(0,0,PW,PH);X.clip();X.textBaseline='alphabetic';
 
   // deco global
-  mono(120,190,'PADDOCKINTEL · GP PREVIEW',40,DIM);
+  stamp(120,190,'PADDOCKINTEL · GP PREVIEW',40);
   dots(1900,140,4,3,30,6,DIM);
   checker(1340,330,16,34);dots(1360,480,10,4,40,5,DIM);
   X.font=F(900,250);X.strokeStyle=DIM;X.lineWidth=3;X.strokeText(T.deco_year,1380,760);
@@ -110,7 +132,7 @@ function drawWall(t){
   const pch=1+0.04*Math.pow(1-((t/BEAT)%1),2);
   X.save();X.translate(130,1130);X.rotate(-0.04);X.scale(pch,pch);X.fillStyle=INK;
   X.font=F(500,60);const wch=X.measureText(T.chip).width+36;
-  X.fillRect(0,-48,wch,84);X.fillStyle=BG;X.textBaseline='middle';X.fillText(T.chip,18,-4);
+  stickerShadow(0,-48,wch,84);X.fillStyle=INK;X.fillRect(0,-48,wch,84);X.fillStyle=BG;X.textBaseline='middle';X.fillText(T.chip,18,-4);
   X.textBaseline='alphabetic';X.restore();
 
   // ── S2 · EL LIBRO DE RÉCORDS — stats rotando (ref track animation) ──
@@ -135,9 +157,9 @@ function drawWall(t){
   T.pioneers.forEach((pc,i)=>{const t0=13.0+i*1.8,k=ss(seg(t,t0,t0+0.6));if(k<=0)return;
     const cx=1220+i*450, cy=1380;
     X.save();X.translate(cx+215,cy+290);const fl=Math.abs(1-2*Math.min(0.999,k));X.scale(Math.max(0.03,fl),1);X.translate(-(cx+215),-(cy+290));
-    if(k<0.5){X.fillStyle=INK;X.fillRect(cx,cy,430,580);
+    if(k<0.5){stickerShadow(cx,cy,430,580);X.fillStyle=INK;X.fillRect(cx,cy,430,580);
       X.font=F(900,200);X.fillStyle=BG;X.fillText(pc[0],cx+60,cy+370);}
-    else{X.fillStyle=i?'#171224':BG;X.fillRect(cx,cy,430,580);
+    else{stickerShadow(cx,cy,430,580);X.fillStyle=i?'#171224':BG;X.fillRect(cx,cy,430,580);if(i)innerTop(cx,cy,430);
       X.strokeStyle=i?AC2:PAPER;X.lineWidth=3;X.strokeRect(cx,cy,430,580);
       X.font=F(900,fitPx(pc[1],900,370,64));X.fillStyle=PAPER;X.fillText(pc[1],cx+28,cy+110);
       mono(cx+28,cy+180,pc[2],40,DIM);
@@ -159,8 +181,8 @@ function drawWall(t){
   T.era.forEach((er,i)=>{const t0=24.6+i*1.1,k=ss(seg(t,t0,t0+0.5));if(k<=0)return;
     const yy=2360+i*130, dir=i%2?1:-1, rep=er[2];
     X.save();X.globalAlpha=k;X.translate(dir*170*(1-k),0);
-    if(rep){X.fillStyle=INK;X.fillRect(1220,yy,880,112);}
-    else{X.fillStyle='#171224';X.fillRect(1220,yy,880,112);X.strokeStyle=DIM;X.lineWidth=2;X.strokeRect(1220,yy,880,112);}
+    if(rep){stickerShadow(1220,yy,880,112);X.fillStyle=INK;X.fillRect(1220,yy,880,112);}
+    else{stickerShadow(1220,yy,880,112);X.fillStyle='#171224';X.fillRect(1220,yy,880,112);innerTop(1220,yy,880,16);X.strokeStyle=DIM;X.lineWidth=2;X.strokeRect(1220,yy,880,112);}
     X.font=F(900,56);X.fillStyle=rep?BG:AC2;X.textBaseline='middle';X.fillText(er[0],1248,yy+58);
     X.font=F(500,46);X.fillStyle=rep?BG:PAPER;
     stagText(1428,yy+58,er[1],46,500,rep?BG:PAPER,seg(t,t0,t0+1.0),0.04);
@@ -247,7 +269,7 @@ function outro(t){
   const k=fade(t,43.4,0.7);if(k<=0)return;
   X.save();X.globalAlpha=k;X.textBaseline='middle';X.font=F(900,40);
   const txt=T.cta,w=X.measureText(txt).width+48,x=(W-w)/2,y=1560+(1-k)*30,h=72;
-  X.fillStyle=INK;X.fillRect(x,y-h/2,w,h);X.fillStyle=BG;X.fillText(txt,x+24,y+2);
+  stickerShadow(x,y-h/2,w,h);X.fillStyle=INK;X.fillRect(x,y-h/2,w,h);X.fillStyle=BG;X.fillText(txt,x+24,y+2);
   X.restore();X.textBaseline='alphabetic';}
 
 window.draw=function(t){
@@ -259,6 +281,7 @@ window.draw=function(t){
   X.setTransform(1,0,0,1,0,0);
   sparkle(t);
   outro(t);
+  grain();
 };
 
 // ─── Comprobación de paradas ───
@@ -287,6 +310,7 @@ window.still=function(w,h){
   X.setTransform(s,0,0,s,(w-PW*s)/2,(h-PH*s)/2);
   drawWall(LEN);
   X.setTransform(1,0,0,1,0,0);
+  grain();
 };
 
 const fontsReady=Promise.all([F(900,100),F(500,30)].map(f=>document.fonts.load(f)));
