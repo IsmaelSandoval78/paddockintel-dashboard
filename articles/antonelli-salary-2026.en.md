@@ -1,43 +1,53 @@
 ---
 slug: "antonelli-salary-2026"
-title: "Kimi Antonelli's Salary: $2M vs. Verstappen's €92M"
+title: "Kimi Antonelli's Salary 2026: What the Champion Earns"
 locale: en
-meta_description: "Antonelli's reported $2M Mercedes base vs. Red Bull's ~€92M Verstappen deal — the real 2026 F1 pay gap, in one number."
+meta_description: "Antonelli's 2026 Mercedes pay is unconfirmed: reports range from $2M to $5M plus up to €12M in bonuses. What the champion earns and what changes."
 status: published
 translation_group_id: "b1dbf5c6-ad14-4a94-8f80-b3e80231da1a"
 paywalled: false
 tags: ["driver-finance", "mercedes-amg-f1", "red-bull"]
 
+corrections:
+  - date: "2026-11-16T20:53:00+00:00"
+    note: "Updated after Antonelli clinched the 2026 title: added the salary figures reported in November by BILD (€4 million) and Forbes, via PlanetF1 ($5 million), Toto Wolff's comments on a 2027 contract and a reward for the champion, a new section on what changes after the title, and the standings after round 20."
+
 stats:
-  - value: "8"
+  - value: "9"
     label: "WINS — 2026 SEASON"
-    unit: "through round 17"
-  - value: "102"
-    label: "PTS LEAD OVER RUSSELL"
-    unit: "340 vs. 238, after Singapore"
-  - value: "119"
+    unit: "20 rounds, title clinched in Mexico"
+  - value: "128"
+    label: "PTS AHEAD OF RUSSELL"
+    unit: "390 vs. 262, after São Paulo"
+  - value: "111"
     label: "PTS AHEAD OF VERSTAPPEN"
-    unit: "340 vs. 221, after Singapore"
-  - value: "$2M"
+    unit: "390 vs. 279, after São Paulo"
+  - value: "$2M-5M"
     label: "REPORTED BASE SALARY"
-    unit: "disputed — see below"
+    unit: "unconfirmed — see table"
   - value: "€92M"
     label: "VERSTAPPEN'S NEW RED BULL BASE"
     unit: "reported, from 2027"
 
 faq:
   - q: "How much does Kimi Antonelli earn at Mercedes in 2026?"
-    a: "Reports disagree: Spotrac, The National and most English-language trackers cite a $2 million base salary, Gazzetta dello Sport reported £2.6 million in July 2026 and QuiFinanza estimates $2-3 million. Mercedes has not confirmed any figure. On top of the base, performance bonuses are estimated at up to $7.5 million (QuiFinanza) or $12 million (F1 Salaries) for 2026."
+    a: "Reports disagree: Spotrac, The National and most English-language trackers cite a $2 million base salary, Gazzetta dello Sport reported £2.6 million in July 2026, QuiFinanza estimates $2-3 million, BILD reported €4 million in November 2026 and Forbes, as cited by PlanetF1, $5 million. Mercedes has not confirmed any figure. Bonuses are estimated at up to $7.5 million (QuiFinanza), $12 million (F1 Salaries) or €10-12 million (PlanetF1)."
+  - q: "Will Antonelli get a pay rise after winning the 2026 title?"
+    a: "Toto Wolff told BILD that Antonelli has a contract for 2027 and that Mercedes knows its world champion must be rewarded accordingly, but did not give figures. Mercedes has not announced a new deal or a raise."
   - q: "Is Kimi Antonelli underpaid compared to other F1 drivers?"
-    a: "By output, yes: after 17 rounds he leads the championship by 102 points over teammate George Russell and by 119 points over Max Verstappen, on a reported base roughly 1/13th to 1/40th of what Red Bull just committed to Verstappen for 2027. His contract was priced before he'd started a race, not after eight wins."
+    a: "By output, yes: he clinched the 2026 title with four races to spare and has 390 points after 20 rounds, 128 more than teammate George Russell, on a reported base that is a fraction of Russell's and of what Red Bull committed to Verstappen for 2027. His contract was priced before he'd started a race, not after nine wins."
   - q: "How long is Kimi Antonelli's Mercedes contract?"
-    a: "Confirmed publicly only through 2026 — Mercedes' October 2025 announcement covered just the 2026 line-up. Multiple outlets report Mercedes has tied him through 2029, but the team has never confirmed contract length itself."
+    a: "Toto Wolff has said Antonelli has a contract for 2027, but Mercedes has not confirmed how long it runs. Multiple outlets report Mercedes has tied him through 2029."
   - q: "How much more does George Russell earn than Kimi Antonelli?"
-    a: "Reports vary here too: Spotrac lists Russell's base at $34 million, while RacingNews365, Motorsport.com and PlanetF1 report a guaranteed $40 million plus up to $8 million in bonuses. Either figure is a double-digit multiple of Antonelli's reported $2 million base."
+    a: "Reports vary: PlanetF1 puts Russell's 2026 earnings at $26 million, Spotrac lists his base at $34 million, and RacingNews365, Motorsport.com and PlanetF1 have reported a guaranteed $40 million plus up to $8 million in bonuses. Every figure is several times Antonelli's reported base."
   - q: "Why did Mercedes give Antonelli such a low base salary?"
     a: "It's a standard rookie-contract structure — a conservative base with bonus potential loaded on top, so pay tracks results rather than promise. Mercedes locked in a young driver cheaply before his market value was proven, the same playbook Red Bull ran with a young Verstappen a decade earlier."
 
 sources:
+  - name: "PlanetF1 — Kimi Antonelli Mercedes salary in spotlight after Russell defeated, citing Forbes (November 16, 2026)"
+    url: "https://www.planetf1.com/news/kimi-antonelli-mercedes-salary-george-russell"
+  - name: "F1Mania, citing BILD — Wolff on a reward for Antonelli after the title (November 2026)"
+    url: "https://www.f1mania.net/f1/f1-wolff-minimiza-sobre-aumento-de-antonelli-apos-titulo-sabemos-que-deve-ser-recompensado/"
   - name: "Spotrac — Andrea Kimi Antonelli Formula 1 Contracts & Salaries"
     url: "https://www.spotrac.com/formula1/player/_/id/95994/andrea-kimi-antonelli?ref=paddockintel.com"
   - name: "GiveMeSport, citing Gazzetta dello Sport — Kimi Antonelli's True Mercedes Salary Has Been \"Leaked\""
@@ -72,11 +82,11 @@ sources:
     url: "https://hub.paddockintel.com/drivers/"
 ---
 
-*Update, October 24, 2026: The section below now lists every reported salary figure with its source and date, ahead of the US Grand Prix, where Antonelli can clinch the title. The stat boxes and the FAQ use the standings after round 17, the Singapore Grand Prix: Antonelli 340 points, Russell 238, Verstappen 221. The analysis sections were written after round 14, when the gaps were 81 and 147 points; the salary and contract figures in them are unchanged.*
+*Update, November 16, 2026: Antonelli clinched the title at the Mexico City Grand Prix on November 1. The salary table now includes the figures reported after the title, and a new section covers what Mercedes has said since. The stat boxes and the FAQ use the standings after round 20, the São Paulo Grand Prix: Antonelli 390 points, Verstappen 279, Russell 262. The analysis sections from "What Happened" onwards were written after round 14, when the gaps were 81 and 147 points; the salary and contract figures in them are unchanged.*
 
 ## Kimi Antonelli's Salary in 2026: The Short Answer
 
-Kimi Antonelli's 2026 Mercedes salary is not public. Reported base figures range from $2 million to £2.6 million, with performance bonuses estimated at up to $7.5 million to $12 million on top. Mercedes has confirmed none of them. Every figure below is an estimate published by the outlet named, not a number from Mercedes or Antonelli.
+Kimi Antonelli's 2026 Mercedes salary is not public. Reported base figures range from $2 million to $5 million, with performance bonuses estimated at up to $7.5 million to $12 million, or €10 million to €12 million, on top. Mercedes has confirmed none of them. Every figure below is an estimate published by the outlet named, not a number from Mercedes or Antonelli.
 
 | Source | Published | Base salary | Bonuses and total |
 |---|---|---|---|
@@ -85,8 +95,16 @@ Kimi Antonelli's 2026 Mercedes salary is not public. Reported base figures range
 | The National, from f1salaries.com and RacingNews365 data | September 10, 2026 | $2M | Bonuses not included |
 | F1 Salaries | Salary tracker | $2M | Up to $12M in bonuses |
 | QuiFinanza | September 23, 2026 | $2M-3M | Up to $7.5M in bonuses; with prizes and sponsorship, total could pass $15M |
+| BILD, via F1Mania | November 2026 | €4M | Not listed |
+| Forbes, via PlanetF1 | November 16, 2026 | $5M for 2026, up from an estimated $2M in 2025 | €10M-12M in bonuses, per varying reports |
 
-The spread has two causes: some outlets quote base pay only and others add bonuses and sponsorship, and the Gazzetta figure is in pounds. What no source disputes is the order of magnitude. In [PaddockIntel's full 2026 salary grid](/how-much-do-f1-drivers-make-2026/), only four of the 22 drivers have a lower reported base than Antonelli, who leads the championship by 102 points after 17 rounds. QuiFinanza reports that his bonuses are tied to race wins and championship position, so a title this season would put him at the top of the bonus range; the exact terms have not been published.
+The spread has three causes: some outlets quote base pay only and others add bonuses and sponsorship; the figures come in dollars, pounds and euros; and the newest reports may reflect a 2026 rise from his 2025 rookie base, which PlanetF1 puts at $2 million. What no source disputes is the order of magnitude: on any of these figures, the champion earns a fraction of George Russell, whose 2026 earnings PlanetF1 puts at $26 million and other outlets at a $34 million to $40 million base. In [PaddockIntel's full 2026 salary grid](/how-much-do-f1-drivers-make-2026/), only four of the 22 drivers have a lower reported base than the $2 million figure for Antonelli. QuiFinanza reports that his bonuses are tied to race wins and championship position, so the title puts him at the top of the bonus range; the exact terms have not been published.
+
+## After the Title: Will Mercedes Pay More?
+
+Antonelli clinched the 2026 title at the Mexico City Grand Prix on November 1, with four races to spare, and leaves São Paulo on 390 points, 128 clear of Russell, with 9 wins from 20 rounds in PaddockIntel's database. Asked about his pay, Toto Wolff told BILD, as reported by F1Mania, that Antonelli has a contract for next year and that he would not discuss figures, but that Mercedes knows it has a world champion who must be rewarded accordingly. What matters most to Antonelli and his family, Wolff added, is a competitive car.
+
+That answers one open question in this article: Mercedes has now said publicly that a 2027 contract exists, though not how long it runs or what it pays. A raise under an existing contract would be Mercedes' choice, not an obligation, which fits the framework below: the team, not the driver, decides when the renegotiation happens. The difference is that it is now a champion's renegotiation, and every rival team principal has seen the figure reported for Verstappen's Red Bull deal.
 
 ## What Happened
 
