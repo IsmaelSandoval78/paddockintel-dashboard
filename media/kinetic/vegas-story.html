@@ -1,0 +1,278 @@
+<!doctype html><html><head><meta charset="utf-8"><title>vegas story 9:16</title><style>
+@font-face{font-family:G;font-weight:900;src:url(inter-tight-latin-900-normal.woff2)}@font-face{font-family:G;font-weight:500;src:url(inter-tight-latin-500-normal.woff2)}
+html,body{margin:0;background:#060607;height:100%;display:grid;place-items:center}
+canvas{max-height:100vh;max-width:100vw}
+</style></head><body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script src="file:///private/tmp/claude-501/-Users-ismaelsandoval-Documents-GitHub-paddockintel-dashboard/12d5a36f-4a15-4cfa-a0cd-431001d9497b/scratchpad/vegas-landing.data.js"></script>
+<script src="file:///private/tmp/claude-501/-Users-ismaelsandoval-Documents-GitHub-paddockintel-dashboard/12d5a36f-4a15-4cfa-a0cd-431001d9497b/scratchpad/vegas-track.data.js"></script>
+<script src="lib/vegas-kinetic.js"></script>
+<script>
+// ─── LAS VEGAS: THE STORY SO FAR (9:16, 46.5s) — cámara ORBITAL ───
+// 2023 (caos) → 2024 (corona) → 2025 (martillo), con las nueve escenas
+// repartidas por la superficie de una ESFERA (acimut y altura). La cámara
+// nunca atraviesa: orbita por fuera con saltos que alternan dirección
+// (izquierda/derecha, subidas/picadas, lejos/rozando), mirando siempre a la
+// escena objetivo. Datos verificados de sessions/ (laps, results, race
+// control, weather) y trazado real de telemetría. Aterriza en el preview.
+const c=document.getElementById('c'),X=c.getContext('2d');
+const W=1080,H=1920;
+const BG='#0C0A12',INK='#FF2D87',GOLD='#D4AF37',PAPER='#F2EDE4',DIM='#5A4D63';
+const FOC=1150,R=2800,BEAT=60/106;
+
+const cl=(v,a,b)=>Math.min(b,Math.max(a,v)), lp=(a,b,k)=>a+(b-a)*k;
+const ss=k=>{k=cl(k,0,1);return k*k*k*(k*(k*6-15)+10);};
+const hash=i=>{let x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x);};
+function kf(t,pts){for(let i=0;i<pts.length-1;i++){const[a,va]=pts[i],[b,vb]=pts[i+1];
+  if(t<=b)return lp(va,vb,ss((t-a)/(b-a||1)));}return pts[pts.length-1][1];}
+function F(w,px){return `${w} ${px}px G`;}
+function mk(w,h,fn){const q=document.createElement('canvas');q.width=w;q.height=h;
+  const g=q.getContext('2d');g.textBaseline='alphabetic';fn(g);return q;}
+function fitG(g,txt,wt,maxW,cap){g.font=`${wt} ${cap}px G`;const w=g.measureText(txt).width;
+  const px=w>maxW?Math.floor(cap*maxW/w):cap;g.font=`${wt} ${px}px G`;return px;}
+const VKO={ink:INK,accent:GOLD,paper:'#16121F',font:'G'};
+
+// ─── Escenas sobre la esfera: t0/t1 (ventana de lectura), acimut, altura,
+// d (sentido de llegada) y bump (radio del salto previo: lejos o rozando) ───
+const SC=[
+  {t0:0,   t1:2.6, az:0.0, y:0,    d: 1},             // intro
+  {t0:4.4, t1:6.4, az:1.6, y:-600, d: 1, bump:2100},  // 2023 marquesina
+  {t0:8.2, t1:11.8,az:0.7, y:500,  d:-1, bump:1000},  // trazado + lead changes
+  {t0:13.6,t1:16.8,az:2.3, y:-200, d: 1, bump:1900},  // last lap
+  {t0:18.6,t1:20.6,az:3.6, y:-700, d: 1, bump:2200},  // 2024 marquesina
+  {t0:22.4,t1:26.2,az:2.9, y:600,  d:-1, bump:1050},  // RUS + título
+  {t0:28.0,t1:30.8,az:4.4, y:-500, d: 1, bump:2000},  // 2025 marquesina
+  {t0:32.6,t1:36.4,az:5.4, y:400,  d: 1, bump:1100},  // 50/50 + DSQ
+  {t0:38.2,t1:41.6,az:4.7, y:-300, d:-1, bump:1900},  // 4 winners slot
+];
+const AL=6.0,TLAND=44.4,TEND=46.5;
+const HOLDS=SC.map(s=>s.t0);
+const CA=[],CR=[],CYK=[],TA=[],TY=[];
+SC.forEach((s,i)=>{
+  if(i>0){const mid=(SC[i-1].t1+s.t0)/2;CR.push([mid,R+s.bump]);}
+  CA.push([s.t0,s.az-0.08*s.d],[s.t1,s.az+0.08*s.d]);
+  CR.push([s.t0,R+1250],[s.t1,R+1250]);
+  CYK.push([s.t0,s.y],[s.t1,s.y]);
+  TA.push([s.t0,s.az],[s.t1,s.az]);
+  TY.push([s.t0,s.y],[s.t1,s.y]);
+});
+CR.push([43.0,R+1500],[TLAND,R+1150],[TEND,R+1150]);
+CA.push([TLAND,AL],[TEND,AL]);CYK.push([TLAND,0],[TEND,0]);
+TA.push([TLAND,AL],[TEND,AL]);TY.push([TLAND,0],[TEND,0]);
+
+// coloca un plano sobre la esfera (+π: mira hacia afuera, se lee desde la órbita)
+const put=(az,r,L,y,tw)=>({x:r*Math.sin(az)+L*Math.cos(az),z:r*Math.cos(az)-L*Math.sin(az),y,yaw:-az+Math.PI+tw});
+
+// ─── Pintores dinámicos (se repintan por fotograma, puros en t) ───
+let PLANES=[];
+const SLOT9={value:'4',delay:0,spin:1.3};let SET9=0,SL9=null;
+function buildPlanes(img){
+  SET9=VegasKinetic.duration('slotreel',SLOT9);
+  const bx=VegasKinetic.box('slotreel',SLOT9);
+  const sz9=Math.min(420*220/bx.h,900*220/bx.w);
+  const cv=fn=>mk(1100,1300,fn||(g=>{}));
+
+  const s1=cv(g=>{
+    g.font='500 56px G';g.fillStyle=DIM;g.fillText('FORMULA 1 · LAS VEGAS',56,120);
+    fitG(g,'3 NIGHTS.','900',1000,290);g.fillStyle=INK;g.fillText('3 NIGHTS.',40,480);
+    fitG(g,'3 STORIES.','900',1000,290);g.fillStyle=PAPER;g.fillText('3 STORIES.',40,800);
+    g.font='500 56px G';g.fillStyle=DIM;g.fillText('2023 → 2025 · THE STRIP',56,990);
+    g.strokeStyle=DIM;g.setLineDash([10,10]);g.lineWidth=3;g.strokeRect(20,30,1060,1080);
+  });
+
+  const yearPlane=(year,word,sub,t0)=>(g,t)=>{
+    g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,1100,1300);g.textBaseline='alphabetic';
+    VegasKinetic.draw(g,'marquee',Object.assign({x:550,y:430,size:300,w:640,h:360,
+      t:Math.max(0,t-t0)},VKO));
+    g.textAlign='center';
+    fitG(g,year,'900',620,250);g.fillStyle=GOLD;g.fillText(year,550,520);
+    g.textAlign='left';
+    fitG(g,word,'900',1000,230);g.fillStyle=PAPER;g.fillText(word,40,990);
+    g.font='500 56px G';g.fillStyle=DIM;g.fillText(sub,48,1120);
+  };
+
+  const trackPaint=(g,t)=>{
+    g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,1100,1300);g.textBaseline='alphabetic';
+    const T=window.TRACK,N=T.length/2,ox=50,oy=130;
+    g.beginPath();
+    for(let i=0;i<N;i++){const x=ox+T[i*2],y=oy+T[i*2+1];i?g.lineTo(x,y):g.moveTo(x,y);}
+    g.closePath();
+    g.lineJoin='round';g.lineCap='round';
+    const w=(1-Math.cos(2*Math.PI*(t/BEAT%1)))/2;      // pulso 106 BPM
+    g.strokeStyle=INK;g.globalAlpha=0.10+0.10*w;g.lineWidth=26;g.stroke();
+    g.globalAlpha=0.30+0.12*w;g.lineWidth=11;g.stroke();
+    g.globalAlpha=0.95;g.lineWidth=4;g.stroke();
+    const u=(t/7)%1,i0=Math.floor(u*N);               // luz viajera
+    g.beginPath();
+    for(let k=0;k<=14;k++){const i=(i0+k)%N,x=ox+T[i*2],y=oy+T[i*2+1];
+      k?g.lineTo(x,y):g.moveTo(x,y);}
+    g.strokeStyle=PAPER;g.globalAlpha=0.9;g.lineWidth=6;g.stroke();
+    g.globalAlpha=1;
+    fitG(g,'6 LEAD CHANGES.','900',1020,150);
+    g.fillStyle=INK;g.fillText('6 ',40,1080);
+    g.fillStyle=PAPER;g.fillText('LEAD CHANGES.',40+g.measureText('6 ').width,1080);
+    g.font='500 54px G';g.fillStyle=DIM;g.fillText('VER · LEC · PER · 2 SAFETY CARS',48,1190);
+  };
+
+  const s4=cv(g=>{
+    fitG(g,'LAST LAP.','900',1000,240);g.fillStyle=PAPER;g.fillText('LAST LAP.',40,420);
+    fitG(g,'P3 → P2','900',1000,240);g.fillStyle=INK;g.fillText('P3 → P2',40,730);
+    g.font='500 56px G';g.fillStyle=DIM;
+    g.fillText('LECLERC PASSES PÉREZ',56,900);
+    g.fillText('GAP 2.07S',56,1000);
+  });
+
+  const t6=HOLDS[5]-0.5;
+  const s6paint=(g,t)=>{
+    g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,1100,1300);g.textBaseline='alphabetic';
+    VegasKinetic.draw(g,'cardflip',Object.assign({x:300,y:330,size:470,text:'RUS',
+      angle:-6,t:Math.max(0,t-t6)},VKO));
+    g.fillStyle=INK;g.font='900 150px G';g.fillText('POLE →',545,300);
+    g.fillStyle=PAPER;g.fillText('WIN.',545,460);
+    fitG(g,'MERCEDES 1-2.','900',1000,180);g.fillStyle=PAPER;g.fillText('MERCEDES 1-2.',40,840);
+    g.font='500 56px G';g.fillStyle=DIM;g.fillText('HAMILTON P10 → P2',48,970);
+    g.font='500 56px G';g.fillStyle=GOLD;g.fillText('VER SEALS TITLE Nº4 · IN P5',48,1080);
+  };
+
+  const s8=cv(g=>{
+    fitG(g,'50/50','900',1000,300);g.fillStyle=INK;g.fillText('50/50',40,440);
+    fitG(g,'LAPS LED.','900',1000,200);g.fillStyle=PAPER;g.fillText('LAPS LED.',40,700);
+    g.font='500 56px G';g.fillStyle=DIM;g.fillText('VERSTAPPEN WINS BY +23.5S',48,850);
+    g.font='500 56px G';g.fillStyle=GOLD;g.fillText('ANTONELLI P17 → P3',48,950);
+    g.save();g.translate(780,1130);g.rotate(-0.12);          // sello DSQ
+    g.strokeStyle=INK;g.lineWidth=7;g.strokeRect(-190,-80,380,160);
+    g.fillStyle=INK;g.font='900 96px G';g.textAlign='center';g.fillText('DSQ',0,34);
+    g.restore();
+    g.font='500 50px G';g.fillStyle=DIM;g.fillText('BOTH McLARENS',48,1110);
+    g.fillText('AFTER THE RACE',48,1180);
+  });
+
+  const t9=HOLDS[8]-1.7;
+  const s9paint=(g,t)=>{
+    g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,1100,1300);g.textBaseline='alphabetic';
+    const o=Object.assign({x:550,y:300,size:sz9},VKO,{ink:GOLD,accent:INK});
+    VegasKinetic.draw(g,'slotreel',Object.assign({t:Math.max(0,t-t9)},SLOT9,o));
+    VegasKinetic.draw(g,'jackpot',Object.assign({t:t-t9-SET9},o));
+    fitG(g,'WINNERS.','900',1000,210);g.fillStyle=PAPER;g.fillText('WINNERS.',40,760);
+    fitG(g,'A 5TH?','900',1000,230);g.fillStyle=INK;g.fillText('A 5TH?',40,1040);
+    g.font='500 56px G';g.fillStyle=DIM;g.fillText('IN 5 RACES · NOV 21, 2026',48,1180);
+  };
+
+  const side=(txt,ink)=>mk(900,160,g=>{g.font='500 92px G';g.fillStyle=ink;g.fillText(txt,10,110);});
+  // L=-120: con la cámara mirando hacia adentro, -L cae a la DERECHA en
+  // pantalla — lado seguro para contenido alineado a la izquierda del lienzo
+  const stop=(i,tw,img,paint)=>Object.assign(put(SC[i].az,R,-120,SC[i].y,tw),
+    {w:900,h:1064,img,n:40},paint?{paint}:{});
+  const fly=(az,y,L,tw,img)=>Object.assign(put(az,R+150,L,y,tw),
+    {w:620,h:110,nf:950,img,n:14});
+
+  PLANES=[
+    stop(0,-0.08,s1),
+    stop(1, 0.10,cv(),yearPlane('2023','CHAOS.','NIGHT RACE · 50 LAPS',HOLDS[1]-1.8)),
+    stop(2,-0.12,cv(),trackPaint),
+    stop(3, 0.10,s4),
+    stop(4,-0.10,cv(),yearPlane('2024','THE CROWN.','NIGHT RACE · 50 LAPS',HOLDS[4]-1.8)),
+    stop(5, 0.12,cv(),s6paint),
+    stop(6,-0.10,cv(),yearPlane('2025','THE HAMMER.','POLE IN THE RAIN · NOR 1:47.9',HOLDS[6]-1.8)),
+    stop(7, 0.10,s8),
+    stop(8,-0.08,cv(),s9paint),
+    fly(0.8, -280,-300, 0.46,side('CAESARS PALACE · 1982',PAPER)),
+    fly(1.15, -80, 300,-0.34,side('41 YEARS',DIM)),
+    fly(1.5,  180,-300, 0.40,side('OCON P16 → P4',PAPER)),
+    fly(2.95,-430, 300,-0.30,side('STROLL P19 → P5',DIM)),
+    fly(3.25, -80,-300, 0.40,side('ZERO SAFETY CARS',PAPER)),
+    fly(3.65,  80, 300,-0.34,side('THE STRIP',DIM)),
+    fly(4.9,  -60,-300, 0.42,side('TRACK TEMP 12°C',PAPER)),
+    fly(5.05,  60, 300,-0.30,side('VER · RUS · VER',PAPER)),
+    fly(5.35,-160,-280, 0.36,side('NOV 21 · 2026',GOLD)),
+    Object.assign(put(AL,R,0,0,0),{w:1080,h:1920,img,n:54,landing:true}),
+  ];
+}
+
+function drawPlane(p,prj){
+  const qc=prj(p.x,p.y,p.z);
+  if(!qc)return;
+  const dc=qc[2];
+  const ghost=p.landing?0:0.12*cl((9500-dc)/3500,0,1);
+  const far=p.landing?cl((6500-dc)/2200,0,1):Math.max(cl((4700-dc)/1600,0,1),ghost);
+  // nf: rótulos de vuelo se disuelven antes de poder recortarse en los bordes
+  const near=p.landing?1:p.nf?cl((dc-p.nf)/420,0,1):cl((dc-260)/320,0,1);
+  // el aterrizaje solo existe cuando la cámara ya va hacia él (revelación)
+  const gate=p.landing?cl((TT-42.0)/1.4,0,1):1;
+  const a=far*near*gate*(p.amul||1);
+  if(a<=0.01)return;
+  const rx=Math.cos(p.yaw),rz=Math.sin(p.yaw),w2=p.w/2,h2=p.h/2;
+  const pt=u=>[p.x+rx*(u*p.w-w2),p.z+rz*(u*p.w-w2)];
+  const cw=p.img.width,ch=p.img.height,N=p.n,sw=cw/N;
+  const ov=p.amul?0.1:1.2;
+  X.save();X.globalAlpha=a;
+  for(let i=0;i<N;i++){
+    const [xa,za]=pt(i/N),[xb,zb]=pt((i+1)/N);
+    const t0=prj(xa,p.y-h2,za),t1=prj(xb,p.y-h2,zb),b0=prj(xa,p.y+h2,za);
+    if(!t0||!t1||!b0)continue;
+    X.setTransform((t1[0]-t0[0])/sw,(t1[1]-t0[1])/sw,(b0[0]-t0[0])/ch,(b0[1]-t0[1])/ch,t0[0],t0[1]);
+    X.drawImage(p.img,i*sw,0,sw,ch,0,0,sw+ov,ch);
+  }
+  X.setTransform(1,0,0,1,0,0);X.restore();
+}
+
+let GRAIN=null;
+function makeGrain(){const g=document.createElement('canvas');g.width=g.height=512;
+  const gx=g.getContext('2d'),im=gx.createImageData(512,512);
+  let sd=1234>>>0;const rnd=()=>{sd=(sd*1664525+1013904223)>>>0;return sd/4294967296;};
+  for(let i=0;i<im.data.length;i+=4){const lum=rnd()<0.5?0:255;
+    im.data[i]=im.data[i+1]=im.data[i+2]=lum;
+    im.data[i+3]=rnd()<0.18?Math.floor(10+rnd()*22):0;}
+  gx.putImageData(im,0,0);GRAIN=g;}
+function grain(){if(!GRAIN)makeGrain();X.save();X.globalAlpha=0.5;
+  for(let y=0;y<H;y+=512)for(let x=0;x<W;x+=512)X.drawImage(GRAIN,x,y);X.restore();}
+
+let TT=0;
+window.draw=function(t){
+  TT=t;
+  const dk=cl((TLAND-t)/0.8,0,1);
+  const ca=kf(t,CA),Rc=kf(t,CR);
+  const dLat=dk*(26*Math.sin(t*0.9+1.3)+10*Math.sin(t*1.7+0.5)),
+        dVer=dk*(30*Math.sin(t*0.7+4.0)+12*Math.sin(t*1.3+2.0));
+  const cx=Rc*Math.sin(ca)+dLat*Math.cos(ca),
+        cz=Rc*Math.cos(ca)-dLat*Math.sin(ca),
+        cy=kf(t,CYK)+dVer;
+  // la mirada apunta a la escena objetivo, con adelanto y micro-vaivén
+  const ta=kf(t,TA),ty=kf(t,TY);
+  const tx=R*Math.sin(ta),tz=R*Math.cos(ta);
+  const ldx=tx-cx,ldy=ty-cy,ldz=tz-cz;
+  const va=(kf(t+0.06,CA)-kf(t-0.06,CA))/0.12;
+  let hy=Math.atan2(ldx,ldz)+dk*(cl(va*0.3,-0.1,0.1)+0.010*Math.sin(t*0.6+1.0));
+  const hdist=ldx*Math.sin(hy)+ldz*Math.cos(hy);
+  const hp=Math.atan2(ldy,Math.max(hdist,60))+dk*0.008*Math.sin(t*0.8+2.3);
+  const CH=Math.cos(hy),SH=Math.sin(hy),CP=Math.cos(hp),SP=Math.sin(hp);
+  const prj=(x,y,z)=>{
+    const dx=x-cx,dy=y-cy,dz=z-cz;
+    const dx2=dx*CH-dz*SH,dz2=dx*SH+dz*CH;
+    const dy2=dy*CP-dz2*SP,dz3=dy*SP+dz2*CP;
+    if(dz3<42)return null;
+    const k=FOC/dz3;return[540+dx2*k,960+dy2*k,dz3];};
+  const roll=dk*(0.022*Math.sin(t*0.5+0.7)+0.012*Math.sin(t*1.1+2.1)-va*0.02);
+  X.setTransform(1,0,0,1,0,0);X.globalAlpha=1;
+  X.fillStyle=BG;X.fillRect(0,0,W,H);
+  X.save();X.translate(540,960);X.rotate(roll);X.translate(-540,-960);
+  X.fillStyle=DIM;
+  for(let i=0;i<110;i++){
+    const x=(hash(i)-0.5)*9000,y=(hash(i+99)-0.5)*4600,z=(hash(i+7)-0.5)*9000;
+    const q=prj(x,y,z);if(!q)continue;const d=q[2];if(d<70)continue;
+    X.globalAlpha=0.55*cl((d-180)/420,0,1)*cl(1-(d-6000)/4500,0.25,1);
+    X.beginPath();X.arc(q[0],q[1],cl(2.6*(FOC/d)*3,0.8,5),0,7);X.fill();
+  }
+  X.globalAlpha=1;
+  for(const p of PLANES){
+    if(p.paint){const q=prj(p.x,p.y,p.z);if(q&&q[2]<7000)p.paint(p.img.getContext('2d'),t);}
+    drawPlane(p,prj);
+  }
+  X.restore();
+  grain();
+};
+
+const img=new Image();img.src=window.LANDING;
+Promise.all([document.fonts.load(F(900,100)),document.fonts.load(F(500,30)),img.decode()])
+ .then(()=>{buildPlanes(img);window.ready=true;draw(0);});
+</script></body></html>

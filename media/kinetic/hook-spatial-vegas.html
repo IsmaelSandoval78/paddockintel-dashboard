@@ -7,14 +7,20 @@ canvas{max-height:100vh;max-width:100vw}
 <script src="file:///private/tmp/claude-501/-Users-ismaelsandoval-Documents-GitHub-paddockintel-dashboard/12d5a36f-4a15-4cfa-a0cd-431001d9497b/scratchpad/vegas-landing.data.js"></script>
 <script src="lib/vegas-kinetic.js"></script>
 <script>
-// ─── Teaser espacial Las Vegas (9:16, 6s) — ref spatial.mov ───
-// Vuelo por frases-plano con datos verificados (41 años 1982→2023; 4 ganadores en
-// 5 carreras: Jones, Alboreto, Verstappen, Russell) y aterrizaje exacto en el
-// fotograma 0 del preview mural, para empalmar con él. Paleta las-vegas.
+// ─── Teaser espacial Las Vegas v3 (9:16, 18s) — cámara ORBITAL ───
+// Modelo de esfera: las escenas viven en la superficie de una esfera (radio R),
+// cada una mirando hacia afuera en su acimut/altura. La cámara nunca atraviesa:
+// ORBITA por fuera (acimut 0° → 115° → 229° → 338°), siempre mirando hacia el
+// centro, con adelanto de mirada y banqueo hacia donde gira. Desde una escena
+// se ven, al fondo cruzando la esfera, los textos lejanos de las otras (en
+// espejo, como en la referencia). El aterrizaje empalma exacto con el preview.
 const c=document.getElementById('c'),X=c.getContext('2d');
 const W=1080,H=1920;
 const BG='#0C0A12',INK='#FF2D87',GOLD='#D4AF37',PAPER='#F2EDE4',DIM='#5A4D63';
-const FOC=1150;
+const FOC=1150,R=2800;
+// escenas repartidas en la esfera: acimut Y altura — los saltos alternan
+// dirección (izq-arriba → der-abajo → izq-arriba con flyby sobre la escena 2)
+const A1=0,A2=2.2,A3=1.0,AL=3.1;               // acimuts de las escenas (rad)
 
 const cl=(v,a,b)=>Math.min(b,Math.max(a,v)), lp=(a,b,k)=>a+(b-a)*k;
 const ss=k=>{k=cl(k,0,1);return k*k*k*(k*(k*6-15)+10);};
@@ -22,89 +28,108 @@ const hash=i=>{let x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x);}
 function kf(t,pts){for(let i=0;i<pts.length-1;i++){const[a,va]=pts[i],[b,vb]=pts[i+1];
   if(t<=b)return lp(va,vb,ss((t-a)/(b-a||1)));}return pts[pts.length-1][1];}
 function F(w,px){return `${w} ${px}px G`;}
-
 function mk(w,h,fn){const q=document.createElement('canvas');q.width=w;q.height=h;
   const g=q.getContext('2d');g.textBaseline='alphabetic';fn(g);return q;}
+function fitG(g,txt,wt,maxW,cap){g.font=`${wt} ${cap}px G`;const w=g.measureText(txt).width;
+  const px=w>maxW?Math.floor(cap*maxW/w):cap;g.font=`${wt} ${px}px G`;return px;}
+
+// ─── Órbita: acimut (CA), radio de cámara (CR) y altura (CYK) ───
+// Lectura: radio fijo y deriva de acimut ±0.09 (la cámara nunca se detiene).
+// Vuelo: la cámara se aleja un poco (ve más esfera) y rueda al siguiente acimut.
+// salto 1: izquierda+arriba alejándose · salto 2: DERECHA+abajo rozando la
+// esfera (radio menor) · salto 3: izquierda+arriba con flyby sobre la escena 2
+const CA=[[0,-0.09],[3.0,0.09],[5.0,A2-0.09],[8.6,A2+0.09],[10.4,A3+0.09],[13.8,A3-0.09],[16.4,AL],[18,AL]];
+const CR=[[0,R+1250],[3.0,R+1250],[4.0,R+2100],[5.0,R+1250],[8.6,R+1250],[9.5,R+1000],[10.4,R+1250],[13.8,R+1250],[15.1,R+1500],[16.4,R+1150],[18,R+1150]];
+const CYK=[[0,0],[3.0,0],[4.0,-380],[5.0,-650],[8.6,-650],[9.5,150],[10.4,750],[13.8,750],[15.1,250],[16.4,0],[18,0]];
+// a qué escena MIRA la cámara (acimut y altura del objetivo): cambia a mitad
+// de vuelo — barrido lateral de la escena saliente a la entrante
+const TA=[[0,A1],[3.0,A1],[3.9,A2],[8.6,A2],[9.4,A3],[13.8,A3],[14.6,AL],[18,AL]];
+const TY=[[0,0],[3.0,0],[3.9,-650],[8.6,-650],[9.4,750],[13.8,750],[14.6,0],[18,0]];
+const TLAND=16.4;
 
 let PLANES=[];
-// slotreel «41» (vegas-kinetic): spin alargado para que gire durante el vuelo y
-// se asiente justo al abrir la pausa de lectura (t≈2.05); el jackpot se encadena
-// con duration() en el instante exacto en que cae el último rodillo
-let P2C=null,SL=null,SET=0;
-const SLOT={value:'41',delay:0,spin:1.3};
-function paintP2(t){
-  const g=P2C.getContext('2d');
+const SLOT={value:'41',delay:0,spin:1.3};let SET=0;const TSLOT=5.0;
+let SLC=null,SLSZ=null;
+function paintSlot(g,t){
   g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,1100,1300);g.textBaseline='alphabetic';
-  const o={x:SL.cx,y:SL.cy,size:SL.size,ink:GOLD,accent:INK,paper:'#16121F',font:'G'};
-  VegasKinetic.draw(g,'slotreel',Object.assign({t},SLOT,o));
-  VegasKinetic.draw(g,'jackpot',Object.assign({t:t-SET},o));
-  g.font='900 290px G';g.fillStyle=PAPER;g.fillText('YEARS.',40,900);
-  g.font='500 64px G';g.fillStyle=DIM;g.fillText('1982 → 2023',48,1030);
+  const o={x:SLSZ.cx,y:SLSZ.cy,size:SLSZ.size,ink:GOLD,accent:INK,paper:'#16121F',font:'G'};
+  VegasKinetic.draw(g,'slotreel',Object.assign({t:Math.max(0,t-TSLOT)},SLOT,o));
+  VegasKinetic.draw(g,'jackpot',Object.assign({t:t-TSLOT-SET},o));
+  fitG(g,'YEARS.','900',940,250);g.fillStyle=PAPER;g.fillText('YEARS.',80,1010);
+  g.font='500 56px G';g.fillStyle=DIM;g.fillText('1982 → 2023',90,1130);
 }
+// coloca un plano sobre la esfera: acimut, radio, corrimiento lateral, altura, giro propio
+// (+π: el plano mira hacia AFUERA de la esfera, para leerse derecho desde la órbita)
+const put=(az,r,L,y,tw)=>({x:r*Math.sin(az)+L*Math.cos(az),z:r*Math.cos(az)-L*Math.sin(az),y,yaw:-az+Math.PI+tw});
 function buildPlanes(img){
-  const p1=mk(1100,1300,g=>{
-    g.font='500 64px G';g.fillStyle=DIM;g.fillText('FORMULA 1 · 2026',56,120);
-    let px=360;g.font=`900 ${px}px G`;
-    const w=g.measureText('VEGAS').width;
-    if(40+w>1060){px=Math.floor(px*1020/w);g.font=`900 ${px}px G`;}
-    g.fillStyle=INK;g.fillText('VEGAS',40,500);
-    g.fillStyle=PAPER;g.fillText('WEEK.',40,860);
-    g.strokeStyle=DIM;g.setLineDash([10,10]);g.lineWidth=3;
-    g.strokeRect(20,30,1060,1080);
-  });
-  // p2 se repinta cada fotograma (paintP2): el 41 es un slotreel de VegasKinetic
-  // que gira durante el vuelo y clava la cifra al llegar la pausa de lectura
-  const p2=mk(1100,1300,g=>{});
-  P2C=p2;
-  const bx=VegasKinetic.box('slotreel',SLOT);
-  const size=Math.min(500*220/bx.h,1020*220/bx.w);
-  SL={size,cx:40+bx.w*size/440,cy:110+bx.h*size/440};
   SET=VegasKinetic.duration('slotreel',SLOT);
-  const p3=mk(1100,1300,g=>{
-    g.font='900 620px G';g.fillStyle=INK;g.fillText('4',40,600);
-    let px=250;g.font=`900 ${px}px G`;
-    const w=g.measureText('WINNERS.').width;
-    if(40+w>1060){px=Math.floor(px*1020/w);g.font=`900 ${px}px G`;}
-    g.fillStyle=PAPER;g.fillText('WINNERS.',40,880);
-    g.font='500 64px G';g.fillStyle=DIM;g.fillText('IN 5 RACES',48,1010);
+  const bx=VegasKinetic.box('slotreel',SLOT);
+  const size=Math.min(560*220/bx.h,940*220/bx.w);
+  SLSZ={size,cx:550,cy:120+bx.h*size/440};
+  SLC=mk(1100,1300,g=>{});
+
+  const giant=txt=>mk(2600,780,g=>{
+    fitG(g,txt,'900',2540,640);g.fillStyle=INK;g.fillText(txt,30,640);});
+  const d1=mk(1100,1300,g=>{
+    g.font='500 56px G';g.fillStyle=DIM;g.fillText('FORMULA 1 · 2026',90,160);
+    fitG(g,'GP','900',940,330);g.fillStyle=INK;g.fillText('GP',80,560);
+    fitG(g,'WEEK.','900',940,330);g.fillStyle=PAPER;g.fillText('WEEK.',80,900);
+    g.font='500 56px G';g.fillStyle=DIM;g.fillText('NOV 21, 2026 · THE STRIP',90,1080);
+  });
+  const d3=mk(1100,1300,g=>{
+    fitG(g,'4','900',940,420);g.fillStyle=INK;g.fillText('4',80,600);
+    fitG(g,'WINNERS.','900',940,250);g.fillStyle=PAPER;g.fillText('WINNERS.',80,950);
+    g.font='500 56px G';g.fillStyle=DIM;g.fillText('IN 5 RACES',90,1100);
   });
   const side=(txt,ink)=>mk(900,160,g=>{g.font='500 92px G';g.fillStyle=ink;g.fillText(txt,10,110);});
-  // laterales: solo visibles en vuelo (fuera de la ventana de niebla en las pausas)
+
   PLANES=[
-    {z:1300,x:0,   y:0,   yaw:-0.08,w:950,h:1123,img:p1,n:40},
-    {z:2700,x:-420,y:-520,yaw: 0.46,w:560,h:100, img:side('CAESARS PALACE',PAPER),n:14},
-    {z:3900,x:180, y:-60, yaw:-0.28,w:900,h:1064,img:p2,n:40},
-    {z:4700,x:420, y:560, yaw:-0.34,w:560,h:100, img:side('THE STRIP',DIM),n:14},
-    {z:5300,x:-430,y:-560,yaw: 0.40,w:620,h:110, img:side('VER · RUS · VER',PAPER),n:14},
-    {z:6500,x:-180,y:60,  yaw: 0.24,w:900,h:1064,img:p3,n:40},
-    {z:9200,x:0,   y:0,   yaw: 0,   w:1080,h:1920,img,  n:54,landing:true},
-  ].sort((a,b)=>b.z-a.z);
+    // escena 1 · acimut 0: GP WEEK (gigante al fondo = más cerca del centro)
+    Object.assign(put(A1,R-280,-120,-140, 0.05),{w:2600,h:780, img:giant('VEGAS.'),n:48,amul:0.22}),
+    Object.assign(put(A1,R,      0,   0,-0.07),{w:900, h:1064,img:d1,n:40}),
+    Object.assign(put(A1,R+180, 150,-430,-0.20),{w:520,h:92,  nf:950,img:side('PADDOCKINTEL · GP WEEK',PAPER),n:14}),
+    // vuelo 1 (acimut 1.1, de camino arriba)
+    Object.assign(put(1.1,R+150,-300,-330, 0.46),{w:560,h:100,nf:950,img:side('THE STRIP',DIM),n:14}),
+    // escena 2 · acimut 2.2, altura -650: el 41
+    Object.assign(put(A2,R-280, 140,-810,-0.05),{w:2400,h:780, img:giant('41'),n:48,amul:0.22}),
+    Object.assign(put(A2,R,      0,-650, 0.07),{w:900, h:1064,img:SLC,n:40,paint:paintSlot}),
+    Object.assign(put(A2,R+180,-150,-210, 0.24),{w:560,h:100, nf:950,img:side('CAESARS PALACE · 1982',PAPER),n:14}),
+    // vuelo 2 (acimut 1.6, en la bajada en picada)
+    Object.assign(put(1.6,R+150, 300,  50,-0.34),{w:560,h:100,nf:950,img:side('NIGHT RACE',DIM),n:14}),
+    // escena 3 · acimut 1.0, altura +750: 4 winners
+    Object.assign(put(A3,R-280,-140, 600, 0.06),{w:2600,h:780, img:giant('WINNERS.'),n:48,amul:0.22}),
+    Object.assign(put(A3,R,      0, 750,-0.06),{w:900, h:1064,img:d3,n:40}),
+    Object.assign(put(A3,R+180, 150, 310,-0.22),{w:560,h:100, nf:950,img:side('VER · RUS · VER',PAPER),n:14}),
+    // vuelo 3 (acimut 2.1, en el flyby de subida)
+    Object.assign(put(2.1,R+150,-260, 350, 0.40),{w:620,h:110,nf:950,img:side('NOV 21 · 20:00 LOCAL',PAPER),n:14}),
+    // aterrizaje · acimut 5.9: fotograma 0 del preview
+    Object.assign(put(AL,R,0,0,0),{w:1080,h:1920,img,n:54,landing:true}),
+  ];
 }
 
-const CZ=[[0,0],[1.00,0],[2.05,2600],[2.45,2600],[3.45,5200],[3.85,5200],[5.30,8050],[6.0,8050]];
-const CX=[[0,0],[1.00,0],[2.05,120],[2.45,120],[3.45,-120],[3.85,-120],[5.30,0],[6.0,0]];
-const CY=[[0,0],[2.05,-50],[3.45,55],[5.30,0],[6.0,0]];
-
-function drawPlane(p,cz,cx,cy){
-  const d0=p.z-cz-Math.abs(Math.sin(p.yaw))*p.w/2;
-  if(d0<42)return;
-  const dc=p.z-cz;
-  const ghost=p.landing?0:0.14*cl((7000-dc)/2500,0,1);
-  const far=Math.max(cl((2600-dc)/600,0,1),ghost);
-  const near=p.landing?1:cl((dc-260)/320,0,1);
-  const a=far*near;
+function drawPlane(p,prj){
+  const qc=prj(p.x,p.y,p.z);
+  if(!qc)return;
+  const dc=qc[2];
+  const ghost=p.landing?0:0.12*cl((9500-dc)/3500,0,1);
+  const far=p.landing?cl((6500-dc)/2200,0,1):Math.max(cl((4700-dc)/1600,0,1),ghost);
+  // nf: créditos y rótulos se disuelven antes de poder recortarse en los bordes
+  const near=p.landing?1:p.nf?cl((dc-p.nf)/420,0,1):cl((dc-260)/320,0,1);
+  // el aterrizaje solo existe cuando la cámara ya va hacia él (protege la revelación)
+  const gate=p.landing?cl((TT-13.2)/1.4,0,1):1;
+  const a=far*near*gate*(p.amul||1);
   if(a<=0.01)return;
   const rx=Math.cos(p.yaw),rz=Math.sin(p.yaw),w2=p.w/2,h2=p.h/2;
   const pt=u=>[p.x+rx*(u*p.w-w2),p.z+rz*(u*p.w-w2)];
-  const prj=(x,y,z)=>{const k=FOC/(z-cz);return [540+(x-cx)*k,960+(y-cy)*k];};
   const cw=p.img.width,ch=p.img.height,N=p.n,sw=cw/N;
+  const ov=p.amul?0.1:1.2;   // con alpha<1 el solape de tiras raya; sin él no se nota el hueco
   X.save();X.globalAlpha=a;
   for(let i=0;i<N;i++){
     const [xa,za]=pt(i/N),[xb,zb]=pt((i+1)/N);
-    if(za-cz<42||zb-cz<42)continue;
     const t0=prj(xa,p.y-h2,za),t1=prj(xb,p.y-h2,zb),b0=prj(xa,p.y+h2,za);
+    if(!t0||!t1||!b0)continue;
     X.setTransform((t1[0]-t0[0])/sw,(t1[1]-t0[1])/sw,(b0[0]-t0[0])/ch,(b0[1]-t0[1])/ch,t0[0],t0[1]);
-    X.drawImage(p.img,i*sw,0,sw,ch,0,0,sw+1.2,ch);
+    X.drawImage(p.img,i*sw,0,sw,ch,0,0,sw+ov,ch);
   }
   X.setTransform(1,0,0,1,0,0);X.restore();
 }
@@ -120,23 +145,49 @@ function makeGrain(){const g=document.createElement('canvas');g.width=g.height=5
 function grain(){if(!GRAIN)makeGrain();X.save();X.globalAlpha=0.5;
   for(let y=0;y<H;y+=512)for(let x=0;x<W;x+=512)X.drawImage(GRAIN,x,y);X.restore();}
 
+let TT=0;
 window.draw=function(t){
-  const dk=cl((5.2-t)/0.5,0,1);
-  const cz=kf(t,CZ),
-        cx=kf(t,CX)+dk*(22*Math.sin(t*0.9+1.3)+9*Math.sin(t*1.7+0.5)),
-        cy=kf(t,CY)+dk*(26*Math.sin(t*0.7+4.0)+10*Math.sin(t*1.3+2.0));
+  TT=t;
+  const dk=cl((TLAND-t)/0.8,0,1);
+  const ca=kf(t,CA),Rc=kf(t,CR);
+  // deriva posicional en el marco local de la cámara (lateral y vertical)
+  const dLat=dk*(26*Math.sin(t*0.9+1.3)+10*Math.sin(t*1.7+0.5)),
+        dVer=dk*(30*Math.sin(t*0.7+4.0)+12*Math.sin(t*1.3+2.0));
+  const cx=Rc*Math.sin(ca)+dLat*Math.cos(ca),
+        cz=Rc*Math.cos(ca)-dLat*Math.sin(ca),
+        cy=kf(t,CYK)+dVer;
+  // la mirada apunta a la escena objetivo (look-at), con adelanto y micro-vaivén
+  const ta=kf(t,TA),ty=kf(t,TY);
+  const tx=R*Math.sin(ta),tz=R*Math.cos(ta);
+  const ldx=tx-cx,ldy=ty-cy,ldz=tz-cz;
+  const va=(kf(t+0.06,CA)-kf(t-0.06,CA))/0.12;
+  let hy=Math.atan2(ldx,ldz)+dk*(cl(va*0.3,-0.1,0.1)+0.010*Math.sin(t*0.6+1.0));
+  const hdist=ldx*Math.sin(hy)+ldz*Math.cos(hy);
+  const hp=Math.atan2(ldy,Math.max(hdist,60))+dk*0.008*Math.sin(t*0.8+2.3);
+  const CH=Math.cos(hy),SH=Math.sin(hy),CP=Math.cos(hp),SP=Math.sin(hp);
+  const prj=(x,y,z)=>{
+    const dx=x-cx,dy=y-cy,dz=z-cz;
+    const dx2=dx*CH-dz*SH,dz2=dx*SH+dz*CH;
+    const dy2=dy*CP-dz2*SP,dz3=dy*SP+dz2*CP;
+    if(dz3<42)return null;
+    const k=FOC/dz3;return[540+dx2*k,960+dy2*k,dz3];};
+  const roll=dk*(0.022*Math.sin(t*0.5+0.7)+0.012*Math.sin(t*1.1+2.1)-va*0.02);
   X.setTransform(1,0,0,1,0,0);X.globalAlpha=1;
   X.fillStyle=BG;X.fillRect(0,0,W,H);
+  X.save();X.translate(540,960);X.rotate(roll);X.translate(-540,-960);
   X.fillStyle=DIM;
-  for(let i=0;i<70;i++){
-    const x=(hash(i)-0.5)*2600,y=(hash(i+99)-0.5)*4400,z=200+hash(i+7)*8600;
-    const d=z-cz;if(d<70)continue;const k=FOC/d;
-    X.globalAlpha=0.55*cl((d-180)/420,0,1)*cl(1-(d-5200)/3800,0.25,1);
-    X.beginPath();X.arc(540+(x-cx)*k,960+(y-cy)*k,cl(2.6*k*3,0.8,5),0,7);X.fill();
+  for(let i=0;i<110;i++){
+    const x=(hash(i)-0.5)*9000,y=(hash(i+99)-0.5)*4200,z=(hash(i+7)-0.5)*9000;
+    const q=prj(x,y,z);if(!q)continue;const d=q[2];if(d<70)continue;
+    X.globalAlpha=0.55*cl((d-180)/420,0,1)*cl(1-(d-6000)/4500,0.25,1);
+    X.beginPath();X.arc(q[0],q[1],cl(2.6*(FOC/d)*3,0.8,5),0,7);X.fill();
   }
   X.globalAlpha=1;
-  if(P2C)paintP2(t);
-  for(const p of PLANES)drawPlane(p,cz,cx,cy);
+  for(const p of PLANES){
+    if(p.paint){const q=prj(p.x,p.y,p.z);if(q&&q[2]<7000)p.paint(p.img.getContext('2d'),t);}
+    drawPlane(p,prj);
+  }
+  X.restore();
   grain();
 };
 
