@@ -15,8 +15,9 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
     rules: {
       userAgent: '*',
       // /api/og/ serves the per-article share images; Twitterbot honors robots.txt and drops
-      // the image from a card it isn't allowed to fetch.
-      allow: ['/', '/api/og/'],
+      // the image from a card it isn't allowed to fetch. /api/pwa-icon/ is the favicon set and
+      // the NewsArticle publisher logo, which Google must be able to fetch to show our icon.
+      allow: ['/', '/api/og/', '/api/pwa-icon/'],
       disallow: ['/api/'],
     },
     // The image and news sitemaps only list magazine pages, so the Hub doesn't advertise them.

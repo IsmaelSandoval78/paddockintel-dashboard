@@ -13,7 +13,8 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
   const isMagazine = MAGAZINE_HOSTS.has(host);
 
   return {
-    name: isMagazine ? 'PaddockIntel Magazine' : 'PaddockIntel Hub',
+    // One spelling of the publication name wherever a crawler reads it (GOOGLE-NEWS-EXPERT.md).
+    name: isMagazine ? 'PaddockIntel' : 'PaddockIntel Hub',
     short_name: 'PaddockIntel',
     description: isMagazine
       ? 'F1 economics and data journalism, sourced and verified.'
