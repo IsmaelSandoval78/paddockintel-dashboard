@@ -19,7 +19,7 @@ import {
 } from '@/lib/hookDeliver';
 import { SITE_URL } from '@/lib/site-url';
 import { getCorrections } from '@/lib/corrections';
-import { PUBLISHER_LOGO } from '@/lib/seo';
+import { ORGANIZATION_ID, PUBLISHER_LOGO, SITE_NAME } from '@/lib/seo';
 import { duskSans } from '../../../(blog)/dusk-font';
 import '../../../(blog)/dusk.css';
 
@@ -266,9 +266,11 @@ export default async function FeedItemPage({ params }: { params: PageParams }) {
     url: pageUrl,
     isBasedOn: item.source_url,
     author: { '@type': 'Person', name: 'Ismael Sandoval', url: `${MAGAZINE_BASE}/about/` },
+    // Same @id as the home page's NewsMediaOrganization, so Google reads one publisher.
     publisher: {
-      '@type': 'Organization',
-      name: 'PaddockIntel',
+      '@type': 'NewsMediaOrganization',
+      '@id': ORGANIZATION_ID,
+      name: SITE_NAME,
       url: MAGAZINE_BASE,
       logo: PUBLISHER_LOGO,
     },

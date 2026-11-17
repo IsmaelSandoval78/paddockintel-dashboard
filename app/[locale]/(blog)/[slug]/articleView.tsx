@@ -28,7 +28,7 @@ import { getRaceHighlightsFor } from '@/lib/raceHighlights';
 import { getCurrentAuthUser } from '@/lib/auth/getCurrentAuthUser';
 import { SITE_URL } from '@/lib/site-url';
 import { getCorrections } from '@/lib/corrections';
-import { PUBLISHER_LOGO } from '@/lib/seo';
+import { ORGANIZATION_ID, PUBLISHER_LOGO, SITE_NAME } from '@/lib/seo';
 import { duskSans } from '../dusk-font';
 import '../dusk.css';
 
@@ -235,9 +235,11 @@ export async function renderArticle(locale: string, slug: string, members: boole
       (article.cover_image_url as string | null) ??
       ['16x9', '4x3', '1x1'].map((r) => `${SITE_URL}/api/og/article/${locale}/${slug}?ratio=${r}`),
     author: { '@type': 'Person', name: 'Ismael Sandoval', url: `${SITE_URL}/about/` },
+    // Same @id as the home page's NewsMediaOrganization, so Google reads one publisher.
     publisher: {
-      '@type': 'Organization',
-      name: 'PaddockIntel',
+      '@type': 'NewsMediaOrganization',
+      '@id': ORGANIZATION_ID,
+      name: SITE_NAME,
       url: SITE_URL,
       logo: PUBLISHER_LOGO,
     },
