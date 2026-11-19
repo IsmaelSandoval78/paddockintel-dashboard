@@ -1,0 +1,428 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Max has a huge problem in Vegas</title>
+<style>
+@font-face{font-family:G;src:url("inter-tight-latin-900-normal.woff2") format("woff2");font-weight:900}
+@font-face{font-family:G;src:url("inter-tight-latin-500-normal.woff2") format("woff2");font-weight:500}
+html,body{margin:0;background:#000}
+canvas{display:block}
+</style></head><body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script src="file:///private/tmp/claude-501/-Users-ismaelsandoval-Documents-GitHub-paddockintel-dashboard/12d5a36f-4a15-4cfa-a0cd-431001d9497b/scratchpad/mural/mural-data.js"></script>
+<script>
+// ============================================================
+// "Max has a huge problem in Vegas" — mural 9:16 · 49.2 s
+// Datos verificados: Supabase (Vegas 23/24/25, Brasil 2026,
+// standings tras Brasil), GPblog (media blandos 1:14.658,
+// P2 no asegurable), RacingNews365 (pista 10–12 °C).
+// Grid musical: 106.06 BPM · drop del track en 69.035 s
+// → --music-start 40.183 para que caiga en S5 (28.852).
+// ============================================================
+const C=document.getElementById('c'),X=C.getContext('2d');
+const BG='#0C0A12',PINK='#FF3FAE',GOLD='#F2AE4C',PAPER='#F2EDE4',WHITE='#FFFFFF',DIM='#5A4D63',PANEL='#16121F';
+const cl=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,u)=>a+(b-a)*u;
+const ss=u=>{u=cl(u);return u*u*(3-2*u);};
+const BEAT=60/106.06;
+
+// escenas apretadas a las voces: fin de última palabra + 0.3 s de respiro
+// (voz entra en S+0.10) · drop del track (69.035) cae en S[4] → --music-start 43.435
+const S=[0,5.48,13.18,19.14,25.6,34.96,37.56], END=43.04;
+
+// ---- assets ----
+const JF=[],CF=[]; const MPim={};
+let need=window.MJ.frames.length+window.MC.frames.length+Object.keys(window.MP).length;
+let loaded=0; window.ready=false; let fontsOK=false;
+const chk=()=>{if(loaded===need&&fontsOK)window.ready=true;};
+document.fonts.load('900 100px G').then(()=>document.fonts.load('500 48px G')).then(()=>{fontsOK=true;chk();});
+for(const s of window.MJ.frames){const im=new Image();im.onload=()=>{loaded++;chk();};im.src=s;JF.push(im);}
+for(const s of window.MC.frames){const im=new Image();im.onload=()=>{loaded++;chk();};im.src=s;CF.push(im);}
+for(const k in window.MP){const im=new Image();im.onload=()=>{loaded++;chk();};im.src=window.MP[k].src;MPim[k]=im;}
+
+// grano de papel determinista
+const GR=document.createElement('canvas');GR.width=540;GR.height=960;
+{const g=GR.getContext('2d');let a=913;const rnd=()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};
+ const id=g.createImageData(540,960);
+ for(let i=0;i<id.data.length;i+=4){const v=200+rnd()*55;id.data[i]=id.data[i+1]=id.data[i+2]=v;id.data[i+3]=rnd()<0.5?14:0;}
+ g.putImageData(id,0,0);}
+
+// ---- sprites (pies como ancla) ----
+function jump(idx,fx,fy,rot=0){
+  const M=window.MJ,im=JF[cl(idx,0,JF.length-1)];
+  X.save();X.translate(fx,fy);if(rot)X.rotate(rot);
+  X.drawImage(im,-M.cx,-M.feetY);X.restore();
+}
+function pose(n,fx,fy,sc=1){
+  const P=window.MP[n];
+  X.save();X.translate(fx,fy);X.scale(sc,sc);
+  X.drawImage(MPim[n],-P.cx,-P.feetY);X.restore();
+}
+function ring(bx,by,age,col=GOLD){
+  if(age<0||age>0.55)return;
+  const u=age/0.55,r=28+220*(1-Math.pow(1-u,3)),a=1-u;
+  X.save();
+  X.strokeStyle=col;X.globalAlpha=0.9*a;X.lineWidth=5*(1-u)+1;
+  X.beginPath();X.ellipse(bx,by,r,r*0.36,0,0,6.283);X.stroke();
+  X.strokeStyle=PINK;X.globalAlpha=0.5*a;X.lineWidth=2;
+  X.beginPath();X.ellipse(bx,by,r*0.7,r*0.26,0,0,6.283);X.stroke();
+  X.restore();
+}
+// texto con entrada (pop + rise)
+function txt(str,x,y,size,col,t0,t,w=900,align='center',pop=0){
+  const u=ss((t-t0)/0.35); if(u<=0)return;
+  X.save();X.globalAlpha=u;X.textAlign=align;X.fillStyle=col;
+  let f=size;X.font=`${w} ${f}px G`;
+  const tw=X.measureText(str).width;
+  // zona segura: centrado dentro de [60,920]; alineado a un borde, hasta 920
+  const maxw=align==='center'?2*Math.min(x-60,920-x):(align==='left'?920-x:x-60);
+  if(tw>maxw){f=size*maxw/tw;X.font=`${w} ${f}px G`;}
+  let sc=1;
+  if(pop>0){const pu=(t-pop); if(pu>=0&&pu<0.35){sc=1+0.16*Math.sin(Math.PI*cl(pu/0.35));}}
+  X.translate(x,y+24*(1-u));X.scale(sc,sc);
+  X.fillText(str,0,0);X.restore();
+}
+function pulse(t){return Math.exp(-3.2*((t/BEAT)%1));}
+
+// barra/columna con glow rosa
+function column(cx,top,w,h,t,k){
+  X.fillStyle=PANEL;X.fillRect(cx-w/2,top,w,h);
+  X.save();X.shadowColor=PINK;X.shadowBlur=24*k;
+  X.strokeStyle=`rgba(255,63,174,${0.3+0.7*k})`;X.lineWidth=3;
+  X.strokeRect(cx-w/2,top,w,h);X.restore();
+  X.fillStyle=k>0.4?PINK:'#3A2F44';X.fillRect(cx-w/2,top-6,w,6);
+}
+
+// salto parametrizado: clip comprimido a dur d, de (x0,y0) a (x1,y1)
+// despegue 0.5/2·d, toque 1.542/2·d dentro del tramo
+function hop(ct,d,x0,y0,x1,y1){
+  const u=ct/d, cu=u*2;           // tiempo de clip equivalente (0..2)
+  const air0=0.54, air1=1.542;
+  const p=ss((cu-air0)/(air1-air0));
+  return {idx:Math.floor(cu*24), x:lerp(x0,x1,p), base:lerp(y0,y1,p)};
+}
+
+// ============ ESCENA 1 · hook ============
+function s1(t){
+  // TODO visible desde el frame 0: sin entradas (t0=-1), solo el pop de "problem"
+  const POP=4.72;
+  txt('MAX HAS A',540,350,118,PAPER,-1,t);
+  txt('HUGE',540,580,236,GOLD,-1,t);
+  {X.save();X.textAlign='center';
+    let f=206;X.font=`900 ${f}px G`;const tw=X.measureText('PROBLEM').width;
+    if(tw>700){f=f*700/tw;X.font=`900 ${f}px G`;}
+    let sc=1;const pu=t-POP;
+    if(pu>=0&&pu<0.4)sc=1+0.18*Math.sin(Math.PI*cl(pu/0.4));
+    X.translate(540,800);X.scale(sc,sc);
+    X.fillStyle=PINK;
+    if(pu>=0&&pu<0.4){X.shadowColor=PINK;X.shadowBlur=60*Math.sin(Math.PI*cl(pu/0.4));}
+    X.fillText('PROBLEM',0,0);X.restore();}
+  txt('IN VEGAS',540,1000,160,PAPER,-1,t);
+  // tubeMax base, visible desde frame 0, mini bote en el pop
+  const dy=(t>POP&&t<POP+0.4)?-14*Math.sin(Math.PI*(t-POP)/0.4):0;
+  pose('base',700,1680+dy);
+}
+
+// ============ ESCENA 2 · podio ============
+// 2023 y 2025 en el escalón P1; 2024 en el suelo, fuera del podio
+const POD={fl:1560, p1:{x0:310,w:220,h:440}, p2:{x0:90,w:220,h:300}, p3:{x0:530,w:220,h:240}, gx:860};
+const P1TOP=POD.fl-POD.p1.h, CX1=POD.p1.x0+POD.p1.w/2;
+// aterrizajes en el grid de beats (fase anclada al drop en S[4]):
+// "first" 8.76→8.628 · "fifth" 10.4→10.326 · "first again" 12.26→12.023
+const L2=[8.628-S[1],10.326-S[1],12.023-S[1]];
+const H2=[{st:7.703-S[1],d:1.2},
+          {st:9.224-S[1],d:1.43},
+          {st:10.921-S[1],d:1.43}];
+// trofeo dibujado (dorado, mismo trazo del mural — sin emoji de sistema)
+function trophy(x,y,s){
+  X.save();X.translate(x,y);X.scale(s/100,s/100);
+  X.strokeStyle=GOLD;X.fillStyle=GOLD;X.lineWidth=9;X.lineCap='round';
+  X.beginPath();X.arc(-34,-58,17,Math.PI*0.55,Math.PI*1.45,true);X.stroke();   // asa izq
+  X.beginPath();X.arc(34,-58,17,Math.PI*0.45,Math.PI*-0.45,false);X.stroke();  // asa der
+  X.beginPath();X.moveTo(-28,-80);X.lineTo(28,-80);X.lineTo(20,-36);
+  X.quadraticCurveTo(0,-16,-20,-36);X.closePath();X.fill();                    // copa
+  X.fillRect(-5,-20,10,12);                                                    // tallo
+  X.beginPath();X.roundRect(-20,-8,40,10,3);X.fill();                          // base
+  X.restore();
+}
+function s2(t){
+  txt('TWO WINS IN THREE YEARS',540,330,78,PAPER,0.1,t);
+  const u=ss((t-0.15)/0.45);
+  if(u>0){
+    X.save();X.globalAlpha=u;
+    for(const [st,kk] of [[POD.p2,0.1],[POD.p3,0.1],[POD.p1,0.28]]){
+      const top=POD.fl-st.h;
+      X.fillStyle=PANEL;X.fillRect(st.x0,top,st.w,st.h);
+      X.save();X.shadowColor=PINK;X.shadowBlur=24*(kk+0.15*pulse(t));
+      X.strokeStyle=`rgba(255,63,174,${0.35+0.5*(kk+0.15*pulse(t))})`;X.lineWidth=3;
+      X.strokeRect(st.x0,top,st.w,st.h);X.restore();
+    }
+    X.textAlign='center';
+    X.fillStyle=GOLD;X.font='900 72px G';X.fillText('P1',CX1,P1TOP+92);
+    X.fillStyle=WHITE;X.font='900 56px G';
+    X.fillText('2023',CX1-36,P1TOP+178); trophy(CX1+72,P1TOP+186,68);
+    X.fillText('2025',CX1-36,P1TOP+262); trophy(CX1+72,P1TOP+270,68);
+    X.restore();
+  }
+  X.fillStyle='rgba(90,77,99,0.4)';X.fillRect(60,POD.fl,960,3);
+  // 2024 fuera del podio: leyenda arriba a la derecha + guía punteada al punto
+  const u2=ss((t-(9.46-S[1]))/0.4);
+  if(u2>0){
+    X.save();X.globalAlpha=u2;
+    X.textAlign='right';
+    X.fillStyle=WHITE;X.font='900 64px G';X.fillText('2024 · P5',920,640);
+    X.fillStyle=DIM;X.font='500 48px G';X.fillText('OFF THE PODIUM',920,700);
+    X.strokeStyle='rgba(90,77,99,0.6)';X.setLineDash([4,9]);X.lineWidth=2;
+    X.beginPath();X.moveTo(POD.gx,734);X.lineTo(POD.gx,POD.fl-34);X.stroke();X.setLineDash([]);
+    X.beginPath();X.ellipse(POD.gx,POD.fl,120,24,0,0,6.283);X.stroke();
+    X.restore();
+  }
+  ring(CX1,P1TOP,t-L2[0]);
+  ring(POD.gx,POD.fl,t-L2[1]);
+  ring(CX1,P1TOP,t-L2[2]);
+  // personaje: sube al P1, baja al suelo (tropiezo), vuelve a subir
+  if(t<H2[0].st){pose('base',120,POD.fl);}
+  else if(t<H2[0].st+H2[0].d){const p=hop(t-H2[0].st,H2[0].d,120,POD.fl,CX1,P1TOP);jump(p.idx,p.x,p.base);}
+  else if(t<H2[1].st){ // celebra en el P1: pose erguida con pop
+    const uu=ss((t-(H2[0].st+H2[0].d))/0.18);
+    pose('D',CX1,P1TOP,0.9+0.1*uu);}
+  else if(t<H2[1].st+H2[1].d){const p=hop(t-H2[1].st,H2[1].d,CX1,P1TOP,POD.gx,POD.fl);jump(p.idx,p.x,p.base);}
+  else if(t<H2[2].st){ // tropiezo en el suelo 2024
+    const a=t-L2[1];const rot=a<0.6?0.14*Math.sin(a*21)*(1-a/0.6):0;
+    jump(47,POD.gx,POD.fl,rot);}
+  else if(t<H2[2].st+H2[2].d){const p=hop(t-H2[2].st,H2[2].d,POD.gx,POD.fl,CX1,P1TOP);jump(p.idx,p.x,p.base);}
+  else if(t<12.58-S[1]){jump(47,CX1,P1TOP);}
+  else {pose('D',CX1,P1TOP);}
+}
+
+// ============ ESCENA 3 · Brasil, escalones de datos ============
+// Verificado contra laps.csv / race_story.json (sesión 2026-sao-paulo-R):
+// grid P21 · v1 P13 · v5 P7 · v25 P3 · bandera (v71) P2
+// altura = posición en la misma escala desde cero: h=(22-pos)*27
+const GND3=1600;
+const ST3=[{cx:170,pos:21,lab:'GRID'},{cx:345,pos:13,lab:'LAP 1'},
+           {cx:520,pos:7,lab:'LAP 5'},{cx:695,pos:3,lab:'LAP 25'},
+           {cx:870,pos:2,lab:'FLAG'}].map(s=>({...s,top:GND3-(22-s.pos)*27}));
+// saltos acelerando con aterrizajes en el grid: 14.851 · 15.983 · 16.831 · 17.397
+const D3=[1.2,1.0,0.72,0.5];
+const T3=[13.926,15.212,16.276,17.011].map((st,i)=>({st:st-S[2],d:D3[i]}));
+function s3(t){
+  // columna de texto a la izquierda; el personaje vuela por la derecha
+  txt('BRAZIL · NOV 8',80,250,52,DIM,0.12,t,500,'left');
+  txt('21 → 2',80,400,165,GOLD,14.96-S[2],t,900,'left',15.68-S[2]);
+  // el bloque del promedio entra cuando ya aterrizó en P2
+  txt('FASTEST AVG ON SOFTS',80,560,52,PAPER,17.55-S[2],t,900,'left');
+  txt('1:14.658*',80,680,108,PINK,17.6-S[2],t,900,'left');
+  txt('*among drivers',80,750,48,DIM,17.75-S[2],t,500,'left');
+  txt('analysed (GPblog)',80,806,48,DIM,17.75-S[2],t,500,'left');
+  // escalones
+  for(let i=0;i<5;i++){
+    const u=ss((t-0.3-i*0.08)/0.35);if(u<=0)continue;
+    const s3i=ST3[i];
+    X.globalAlpha=u;
+    column(s3i.cx,s3i.top,150,GND3-s3i.top,t,0.12+0.12*pulse(t));
+    X.globalAlpha=1;
+  }
+  X.fillStyle='rgba(90,77,99,0.4)';X.fillRect(60,GND3,960,3);
+  // etiquetas apiladas sobre cada escalón (posición + vuelta)
+  for(let i=0;i<5;i++){
+    const u=ss((t-0.55-i*0.08)/0.3);if(u<=0)continue;
+    let a=u;
+    if(i===4){a=u*(1-ss((t-(T3[3].st+0.771*T3[3].d-0.1))/0.3));} // P2 cede el sitio al aterrizar
+    if(a<=0)continue;
+    X.globalAlpha=a;X.textAlign='center';
+    X.fillStyle=WHITE;X.font='900 56px G';X.fillText('P'+ST3[i].pos,ST3[i].cx,ST3[i].top-80);
+    X.fillStyle=DIM;X.font='500 48px G';X.fillText(ST3[i].lab,ST3[i].cx,ST3[i].top-28);
+    X.globalAlpha=1;
+  }
+  // aterrizajes
+  for(let i=0;i<4;i++)ring(ST3[i+1].cx,ST3[i+1].top,t-(T3[i].st+0.771*T3[i].d));
+  // personaje acelerando escalón a escalón
+  if(t<T3[0].st){pose('base',ST3[0].cx,ST3[0].top);}
+  else{
+    let done=true;
+    for(let i=0;i<4;i++){
+      if(t<T3[i].st+T3[i].d){
+        const p=hop(t-T3[i].st,T3[i].d,ST3[i].cx,ST3[i].top,ST3[i+1].cx,ST3[i+1].top);
+        jump(p.idx,p.x,p.base);done=false;break;
+      }else if(i<3&&t<T3[i+1].st){jump(47,ST3[i+1].cx,ST3[i+1].top);done=false;break;}
+    }
+    if(done){ if(t<17.85-S[2])jump(47,ST3[4].cx,ST3[4].top); else pose('D',ST3[4].cx+22,ST3[4].top); }
+  }
+}
+
+// ============ ESCENA 4 · el frío ============
+const ZST=22.54-S[3], ZEND=23.19-S[3], SH0=24.89-S[3], SH1=25.49-S[3];
+function coldFrame(t){ return cl(Math.floor((t-ZST)*24),0,window.MC.n-1); }
+let _f10=0;
+function F10v(){ // tamaño del 10 °C gigante, ajustado a zona segura (≤760 de ancho)
+  if(!_f10){X.font='900 340px G';const w=X.measureText('10 °C').width;_f10=w>760?340*760/w:340;}
+  return _f10;
+}
+function zeroCenter(){ // centro del hueco del 0
+  const F=F10v();X.font=`900 ${F}px G`;
+  const w1=X.measureText('1').width, w0=X.measureText('0').width, tot=X.measureText('10 °C').width;
+  return {x:540-tot/2+w1+w0/2, y:1160-F*0.36, rx:w0*0.26, ry:F*0.26};
+}
+function s4poster(t,m=0){
+  // m: 0..1 desplaza el 10 °C hacia la izquierda y lo reduce (fase panel)
+  txt('THE PROBLEM?',540,480,92,PAPER,0.12,t);
+  txt('THE COLD.',540,680,150,PINK,20.26-S[3],t,900,'center',20.26-S[3]);
+  const u=ss((t-(21.4-S[3]))/0.3);
+  if(u>0){
+    let sc2=1;const pu=t-(21.4-S[3]);
+    if(pu>=0&&pu<0.4)sc2=1+0.14*Math.sin(Math.PI*cl(pu/0.4));
+    const tx=lerp(540,320,m), ty=lerp(1160,1120,m), fs=lerp(F10v(),170,m);
+    X.save();X.globalAlpha=u;X.translate(tx,ty);X.scale(sc2,sc2);
+    X.textAlign='center';X.fillStyle=WHITE;X.font=`900 ${fs}px G`;
+    X.fillText('10 °C',0,0);X.restore();
+  }
+}
+function s4(t){
+  if(t<ZST){ s4poster(t); return; }
+  const zi=coldFrame(t);
+  if(t<ZEND){
+    // zoom a través del 0: clip detrás, póster con hueco creciendo
+    X.drawImage(CF[zi],0,0,1080,1920);
+    const zu=ss((t-ZST)/(ZEND-ZST));
+    const Z=zeroCenter(), sc=1+Math.pow(zu,1.6)*34;
+    const off=document.createElement('canvas');off.width=1080;off.height=1920;
+    const o=off.getContext('2d');
+    o.fillStyle=BG;o.fillRect(0,0,1080,1920);
+    const sv=X; // pintar el póster en off
+    {const XX=o;XX.textAlign='center';
+     XX.fillStyle=PAPER;XX.font='900 92px G';XX.fillText('THE PROBLEM?',540,480);
+     XX.fillStyle=PINK;XX.font='900 150px G';XX.fillText('THE COLD.',540,680);
+     XX.fillStyle=WHITE;XX.font=`900 ${F10v()}px G`;XX.fillText('10 °C',540,1160);}
+    o.globalCompositeOperation='destination-out';
+    o.beginPath();o.ellipse(Z.x,Z.y,Z.rx,Z.ry,0,0,6.283);o.fill();
+    X.save();X.translate(Z.x,Z.y);X.scale(sc,sc);X.translate(-Z.x,-Z.y);
+    X.globalAlpha=1-Math.pow(zu,3);
+    X.drawImage(off,0,0);X.restore();
+  }else if(t<SH0){
+    X.drawImage(CF[zi],0,0,1080,1920);
+    txt('TYRES NEED HEAT',540,250,64,WHITE,23.39-S[3],t);
+    txt('VEGAS HAS NONE.',540,370,76,PINK,24.34-S[3],t);
+  }else{
+    // el clip encoge a panel a la derecha; el póster reaparece solo cuando
+    // el panel ya está en su sitio (nunca texto bajo el panel)
+    const u=ss((t-SH0)/(SH1-SH0));
+    const pa=ss((u-0.8)/0.2);
+    if(pa>0){X.save();X.globalAlpha=pa;s4poster(t,1);X.restore();}
+    const w=lerp(1080,330,u), h=w*1920/1080;
+    const x=lerp(0,650,u), y=lerp(0,870,u);
+    if(u>0.05){X.strokeStyle=GOLD;X.lineWidth=6;X.strokeRect(x-3,y-3,w+6,h+6);}
+    X.drawImage(CF[zi],x,y,w,h);
+  }
+}
+
+// ============ ESCENA 5 · qué hay en juego ============
+// alturas = puntos, misma escala desde cero (279/262/261)
+// las tres columnas suben juntas en la línea; cada cifra hace pop al pronunciarse
+const RISE5=1.9;
+const B5=[{cx:270,p:279,code:'MAX',say:29.4-S[4]},
+          {cx:540,p:262,code:'RUS',say:32.28-S[4]},
+          {cx:810,p:261,code:'HAM',say:34.42-S[4]}];
+const GND5=1680,PT5=1.55,BW5=220;
+function s5(t){
+  // golpe del drop
+  if(t<0.12){X.fillStyle=`rgba(255,255,255,${0.5*(1-t/0.12)})`;X.fillRect(0,0,1080,1920);}
+  const shake=t<0.35?Math.sin(t*60)*6*(1-t/0.35):0;
+  X.save();X.translate(shake,0);
+  // en el golpe del drop: WHAT'S AT STAKE? (la voz lo dice aquí); cede al titular
+  {const a=ss((t-0.12)/0.3)*(1-ss((t-1.72)/0.3));
+   if(a>0){X.save();X.globalAlpha=a;X.textAlign='center';
+    const pu=t-0.12, sc=(pu<0.4)?1+0.14*Math.sin(Math.PI*cl(pu/0.4)):1;
+    let f=108;X.font=`900 ${f}px G`;
+    const tw=X.measureText("WHAT'S AT STAKE?").width;
+    if(tw>700){f=f*700/tw;X.font=`900 ${f}px G`;}
+    X.translate(540,930);X.scale(sc,sc);
+    X.fillStyle=PINK;X.shadowColor=PINK;X.shadowBlur=40*a;
+    X.fillText("WHAT'S AT STAKE?",0,0);X.restore();}}
+  txt('SECOND IN THE',540,340,86,PAPER,1.8,t);
+  txt('CHAMPIONSHIP',540,450,96,GOLD,1.9,t);
+  for(const b of B5){
+    const u=ss((t-RISE5)/0.5);if(u<=0)continue;
+    const h=b.p*PT5*u, top=GND5-h;
+    column(b.cx,top,BW5,h,t,0.15+0.25*pulse(t));
+    X.textAlign='center';
+    if(u>0.95){
+      X.fillStyle=WHITE;X.font='900 64px G';X.fillText(b.code,b.cx,top+84);
+      const pu=ss((t-b.say)/0.25);
+      if(pu>0){const sc=1+0.18*Math.sin(Math.PI*cl((t-b.say)/0.35));
+        X.save();X.globalAlpha=pu;X.translate(b.cx,top+190);X.scale(sc,sc);
+        X.fillStyle=GOLD;X.font='900 88px G';X.fillText(String(b.p),0,0);X.restore();}
+    }
+    if(b.code==='MAX'){pose('C',b.cx,top);}
+  }
+  X.fillStyle='rgba(90,77,99,0.4)';X.fillRect(60,GND5,960,3);
+  X.restore();
+}
+
+// ============ ESCENA 6 · candado ============
+function s6(t){
+  const cx=560,cy=1060;
+  txt("EVEN A WIN CAN'T LOCK IT",540,560,64,PAPER,0.12,t);
+  // intenta cerrar dos veces y rebota ("lock" se dice en 36.76)
+  let lift=90;
+  const try1=0.5,try2=36.76-S[5];
+  function att(t0){const a=t-t0;
+    if(a<0)return null;
+    if(a<0.3)return lerp(90,8,ss(a/0.3));          // baja
+    if(a<0.75)return lerp(8,74,ss((a-0.3)/0.45));  // rebota
+    return 74;}
+  const l1=att(try1),l2=att(try2);
+  if(l2!==null)lift=l2; else if(l1!==null)lift=l1;
+  // tubeMax (pose B) empuja el arco y este rebota abierto
+  function lunge(t0){const a=t-t0;if(a<0||a>0.75)return 0;
+    return a<0.3?ss(a/0.3):1-ss((a-0.3)/0.45);}
+  const lg=Math.max(lunge(try1-0.15),lunge(try2-0.15));
+  X.save();X.translate(225+lg*30,1280);X.rotate(0.05+lg*0.13);
+  X.translate(-225,-1280);pose('B',225,1280);X.restore();
+  const wob=(t>try1+0.28&&t<try1+0.6)||(t>try2+0.28&&t<try2+0.6)?Math.sin(t*50)*5:0;
+  X.save();X.translate(cx+wob,0);
+  // arco
+  X.strokeStyle=GOLD;X.lineWidth=34;X.lineCap='round';
+  X.beginPath();X.arc(0,cy-110-lift,120,Math.PI,0,false);
+  X.moveTo(-120,cy-110-lift);X.lineTo(-120,cy-40-lift);
+  X.moveTo(120,cy-110-lift);X.lineTo(120,cy-70);
+  X.stroke();
+  // cuerpo
+  X.fillStyle=GOLD;
+  X.beginPath();X.roundRect(-190,cy-80,380,300,22);X.fill();
+  X.fillStyle=PANEL;X.font='900 120px G';X.textAlign='center';
+  X.fillText('P2',0,cy+120);
+  X.restore();
+  // flash rosa en cada rebote
+  for(const t0 of [try1,try2]){const a=t-(t0+0.3);
+    if(a>0&&a<0.3){X.fillStyle=`rgba(255,63,174,${0.25*(1-a/0.3)})`;X.fillRect(0,0,1080,1920);}}
+}
+
+// ============ ESCENA 7 · cierre ============
+function s7(t){
+  txt('CAN THE VEGAS KING',540,360,88,PAPER,0.35,t);
+  txt('BEAT THE COLD?',540,480,96,PINK,0.5,t);
+  // sello fecha
+  const u=ss((t-(40.0-S[6]))/0.3);
+  if(u>0){
+    X.save();X.globalAlpha=u;X.translate(540,660);X.rotate(-0.045);
+    const sc=1+0.3*(1-u);X.scale(sc,sc);
+    X.strokeStyle=GOLD;X.lineWidth=6;X.strokeRect(-330,-86,660,128);
+    X.fillStyle=GOLD;X.font='900 108px G';X.textAlign='center';
+    X.fillText('SAT NOV 21',0,16);X.restore();
+  }
+  pose('D',540,1500);
+}
+
+// ============ master ============
+window.draw=function(t){
+  X.setTransform(1,0,0,1,0,0);X.globalAlpha=1;
+  X.fillStyle=BG;X.fillRect(0,0,1080,1920);
+  const fns=[s1,s2,s3,s4,s5,s6,s7];
+  let i=fns.length-1;while(i>0&&t<S[i])i--;
+  fns[i](t-S[i]);   // cortes duros entre escenas, sin fundido
+  // grano + viñeta en todo
+  X.globalAlpha=0.5;X.drawImage(GR,0,0,1080,1920);X.globalAlpha=1;
+  const g=X.createRadialGradient(540,960,520,540,960,1250);
+  g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,0.4)');
+  X.fillStyle=g;X.fillRect(0,0,1080,1920);
+};
+</script></body></html>
