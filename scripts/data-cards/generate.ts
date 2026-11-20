@@ -233,16 +233,19 @@ async function youngestChampions(supabase: Supabase, highlightRef: string, size:
     .in('driver_id', ranked.map((t) => t.driverId));
   const { data: cons } = await supabase.from('constructors').select('id, name');
   const teamName = new Map((cons ?? []).map((c) => [c.id as number, c.name as string]));
-  // A preview's title race has no result yet, so its team comes from the driver's latest race.
-  const { data: latest } = await supabase
+  // A preview's title race has no result yet, so its team comes from the driver's latest race, by
+  // calendar order: ids aren't (2026 Bahrain R16 is id 1191, Singapore R17 is 1184).
+  const { data: own } = await supabase
     .from('results')
-    .select('constructor_id')
-    .eq('driver_id', highlight.driverId)
-    .order('race_id', { ascending: false })
-    .limit(1);
+    .select('race_id, constructor_id')
+    .eq('driver_id', highlight.driverId);
+  const calendarIndex = new Map(races.map((r, i) => [r.id, i]));
+  const latest = ((own ?? []) as { race_id: number; constructor_id: number }[]).reduce<
+    { race_id: number; constructor_id: number } | undefined
+  >((best, r) => (best && (calendarIndex.get(best.race_id) ?? -1) >= (calendarIndex.get(r.race_id) ?? -1) ? best : r), undefined);
   const teamOf = (t: (typeof ranked)[number]) => {
     const own = (wins ?? []).find((w) => w.race_id === t.race.id && w.driver_id === t.driverId)?.constructor_id;
-    const id = own ?? (t.preview ? latest?.[0]?.constructor_id : undefined);
+    const id = own ?? (t.preview ? latest?.constructor_id : undefined);
     const name = teamName.get(id as number);
     if (!name) throw new Error(`no team for ${who.get(t.driverId)?.surname} at ${t.race.name} ${t.year}`);
     return name;
