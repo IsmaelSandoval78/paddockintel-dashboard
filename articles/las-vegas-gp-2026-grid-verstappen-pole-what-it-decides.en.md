@@ -9,6 +9,10 @@ published_at: "2026-11-21T05:51:00+00:00"
 translation_group_id: "81e300c7-6352-4f38-bae8-42ca9875e5f4"
 tags: ["featured", "race-intel", "data-desk"]
 
+corrections:
+  - date: "2026-11-21T19:43:00+00:00"
+    note: "Corrected: the article said Russell's request for a tow from Antonelli was not taken up. Mercedes's plan was for Antonelli to tow Russell, but it fell apart in traffic and Antonelli backed off on his own decision, as he and Toto Wolff explained after qualifying. Also updated: the stewards fined Racing Bulls €5,000 for Lindblad's unsafe release with no grid change, so the grid is no longer provisional."
+
 stats:
   - value: "~82%"
     label: "VERSTAPPEN KEEPS SECOND"
@@ -51,6 +55,10 @@ sources:
     url: "https://www.crash.net/f1/news/1110155/1/why-george-russell-wont-get-mercedes-f1-engine-upgrade-las-vegas-gp"
   - name: "Motorsport.com — Qualifying Vegas: Antonelli sensationell, Mercedes verweigert Russell Hilfe (November 21, 2026)"
     url: "https://de.motorsport.com/f1/news/qualifying-vegas-antonelli-sensationell-mercedes-verweigert-russell-hilfe-26112107/3457528/"
+  - name: "Motorsport.com — Why Mercedes' tow plan for George Russell fell apart in Las Vegas (November 21, 2026)"
+    url: "https://www.motorsport.com/f1/news/why-mercedes-tow-plan-for-george-russell-fell-apart-in-las-vegas/10876341/"
+  - name: "Motorsport.com — Unsafe Release von Arvid Lindblad: Geldstrafe für Racing Bulls (November 21, 2026)"
+    url: "https://de.motorsport.com/f1/news/unsafe-release-von-arvid-lindblad-geldstrafe-fuer-racing-bulls-26112120/3457573/"
   - name: "Formula1.it — Ferrari: disastro a Las Vegas (November 21, 2026)"
     url: "https://www.formula1.it/news/34115/1/ferrari-disastro-a-las-vegas-leclerc-furioso-hamilton-senza-energia-"
   - name: "RaceFans — Beating Red Bull to third place matters, says Norris: it's a hell of a lot of money (November 19, 2026)"
@@ -63,15 +71,15 @@ sources:
 
 ## What happened
 
-Kimi Antonelli was fastest in qualifying for the Las Vegas Grand Prix, but Max Verstappen starts the race on pole. Antonelli's 1m33.893s beat Verstappen by 0.258s, and his five-place penalty for new power unit components drops him to sixth on the provisional grid published by RaceFans. George Russell starts alongside Verstappen, with Lando Norris, Isack Hadjar and Arvid Lindblad behind.
+Kimi Antonelli was fastest in qualifying for the Las Vegas Grand Prix, but Max Verstappen starts the race on pole. Antonelli's 1m33.893s beat Verstappen by 0.258s, and his five-place penalty for new power unit components drops him to sixth on the grid published by RaceFans. George Russell starts alongside Verstappen, with Lando Norris, Isack Hadjar and Arvid Lindblad behind.
 
 The penalties reshape the rest of the order. Oscar Piastri, seventh fastest, starts 17th; Carlos Sainz starts 20th, Lance Stroll 21st and Oliver Bearman last. Both Ferraris went out in Q2 and start 10th and 11th, Charles Leclerc ahead of Lewis Hamilton. In PaddockIntel's database it is the first time this season that neither Ferrari reached Q3.
 
-Lindblad still faced an unsafe release investigation at the end of qualifying, so the grid is provisional until the FIA confirms it. The race runs on Saturday night, local time.
+The stewards fined Racing Bulls €5,000 for releasing Lindblad unsafely in Q2, with no grid penalty, Motorsport.com reports, so the order stands. The race runs on Saturday night, local time.
 
 ## Why it happened
 
-Mercedes chose speed over grid position. It fitted its new ADUO turbo to Antonelli, who is already champion and can afford five places, and not to Russell, Crash.net reported earlier this week, who is fighting for second in the drivers' championship. Antonelli then used other cars' slipstream on his final lap, while Russell's request for a tow from his team-mate was not taken up, The Race reports. Russell missed pole by 0.073s.
+Mercedes chose speed over grid position. It fitted its new ADUO turbo to Antonelli, who is already champion and can afford five places, and not to Russell, who is fighting for second in the drivers' championship, Crash.net reported earlier this week. The plan was then for Antonelli to give Russell a tow on the final Q3 runs, but it fell apart when both cars got caught in a pack, Motorsport.com reports: Antonelli backed off at Turn 5, a decision he said was "fully on me", and used other cars' slipstream to go fastest. Toto Wolff said Russell still "had the perfect position". Russell missed pole by 0.073s.
 
 Ferrari's problem was tyre temperature: both drivers struggled to warm the tyres in FP3 and qualifying, Motorsport.com reports. Leclerc then made an error at Turn 7 on his last Q2 lap, The Race reports, and Hamilton's side of the garage reported a lack of energy at the end of his lap, according to Formula1.it. Verstappen, who complained of the "same problem as Brazil" on Thursday, took pole after receiving a driver warning from the stewards for an incident with Russell in final practice.
 

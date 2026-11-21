@@ -9,6 +9,10 @@ published_at: "2026-11-21T05:51:00+00:00"
 translation_group_id: "81e300c7-6352-4f38-bae8-42ca9875e5f4"
 tags: ["featured", "race-intel", "data-desk"]
 
+corrections:
+  - date: "2026-11-21T19:43:00+00:00"
+    note: "Corregido: el artículo decía que no se atendió el pedido de Russell de recibir el rebufo de Antonelli. El plan de Mercedes era que Antonelli le diera rebufo a Russell, pero se vino abajo en el tráfico y Antonelli levantó el pie por decisión propia, como explicaron él y Toto Wolff tras la clasificación. También se actualizó que los comisarios multaron a Racing Bulls con 5.000 euros por la salida insegura de Lindblad sin cambios en la parrilla, así que la parrilla ya no es provisional."
+
 stats:
   - value: "~82%"
     label: "VERSTAPPEN MANTIENE EL 2.º PUESTO"
@@ -51,6 +55,10 @@ sources:
     url: "https://www.crash.net/f1/news/1110155/1/why-george-russell-wont-get-mercedes-f1-engine-upgrade-las-vegas-gp"
   - name: "Motorsport.com — Qualifying Vegas: Antonelli sensationell, Mercedes verweigert Russell Hilfe (21 de noviembre de 2026)"
     url: "https://de.motorsport.com/f1/news/qualifying-vegas-antonelli-sensationell-mercedes-verweigert-russell-hilfe-26112107/3457528/"
+  - name: "Motorsport.com — Why Mercedes' tow plan for George Russell fell apart in Las Vegas (21 de noviembre de 2026)"
+    url: "https://www.motorsport.com/f1/news/why-mercedes-tow-plan-for-george-russell-fell-apart-in-las-vegas/10876341/"
+  - name: "Motorsport.com — Unsafe Release von Arvid Lindblad: Geldstrafe für Racing Bulls (21 de noviembre de 2026)"
+    url: "https://de.motorsport.com/f1/news/unsafe-release-von-arvid-lindblad-geldstrafe-fuer-racing-bulls-26112120/3457573/"
   - name: "Formula1.it — Ferrari: disastro a Las Vegas (21 de noviembre de 2026)"
     url: "https://www.formula1.it/news/34115/1/ferrari-disastro-a-las-vegas-leclerc-furioso-hamilton-senza-energia-"
   - name: "RaceFans — Beating Red Bull to third place matters, says Norris: it's a hell of a lot of money (19 de noviembre de 2026)"
@@ -63,15 +71,15 @@ sources:
 
 ## Qué pasó
 
-Kimi Antonelli fue el más rápido en la clasificación del Gran Premio de Las Vegas, pero Max Verstappen sale desde la pole. El 1:33.893 de Antonelli superó a Verstappen por 0,258 segundos, y su penalización de cinco puestos por nuevos componentes de motor lo deja sexto en la parrilla provisional publicada por RaceFans. George Russell sale junto a Verstappen, con Lando Norris, Isack Hadjar y Arvid Lindblad detrás.
+Kimi Antonelli fue el más rápido en la clasificación del Gran Premio de Las Vegas, pero Max Verstappen sale desde la pole. El 1:33.893 de Antonelli superó a Verstappen por 0,258 segundos, y su penalización de cinco puestos por nuevos componentes de motor lo deja sexto en la parrilla publicada por RaceFans. George Russell sale junto a Verstappen, con Lando Norris, Isack Hadjar y Arvid Lindblad detrás.
 
 Las penalizaciones reordenan el resto. Oscar Piastri, séptimo más rápido, sale 17.º; Carlos Sainz sale 20.º, Lance Stroll 21.º y Oliver Bearman último. Los dos Ferrari quedaron fuera en la Q2 y salen 10.º y 11.º, Charles Leclerc delante de Lewis Hamilton. En la base de datos de PaddockIntel, es la primera vez esta temporada que ningún Ferrari llega a la Q3.
 
-Lindblad todavía tenía una investigación por una salida insegura al terminar la clasificación, así que la parrilla es provisional hasta que la FIA la confirme. La carrera se disputa el sábado por la noche, hora local.
+Los comisarios multaron a Racing Bulls con 5.000 euros por la salida insegura de Lindblad en la Q2, sin penalización en la parrilla, informa Motorsport.com, así que el orden se mantiene. La carrera se disputa el sábado por la noche, hora local.
 
 ## Por qué pasó
 
-Mercedes eligió velocidad antes que posición de salida. Montó el nuevo turbo del ADUO en el auto de Antonelli, que ya es campeón y puede permitirse perder cinco puestos, y no en el de Russell, que pelea por el segundo puesto del campeonato de pilotos, como informó Crash.net esta semana. Después, Antonelli aprovechó el rebufo de otros autos en su última vuelta, mientras que el pedido de Russell de salir detrás de su compañero no se atendió, informa The Race. A Russell le faltaron 0,073 segundos para la pole.
+Mercedes eligió velocidad antes que posición de salida. Montó el nuevo turbo del ADUO en el auto de Antonelli, que ya es campeón y puede permitirse perder cinco puestos, y no en el de Russell, que pelea por el segundo puesto del campeonato de pilotos, como informó Crash.net esta semana. Después, el plan era que Antonelli le diera rebufo a Russell en los últimos intentos de la Q3, pero se vino abajo cuando los dos autos quedaron atrapados en un grupo, informa Motorsport.com: Antonelli levantó el pie en la curva 5, una decisión que dijo que fue "completamente" suya, y aprovechó el rebufo de otros autos para ser el más rápido. Toto Wolff dijo que Russell igualmente "tenía la posición perfecta". A Russell le faltaron 0,073 segundos para la pole.
 
 El problema de Ferrari fue la temperatura de los neumáticos: a los dos pilotos les costó calentarlos en los libres 3 y en la clasificación, informa Motorsport.com. Después, Leclerc cometió un error en la curva 7 en su última vuelta de la Q2, informa The Race, y en el lado de Hamilton avisaron de falta de energía al final de la vuelta, según Formula1.it. Verstappen, que el jueves se quejó del "mismo problema que en Brasil", se llevó la pole después de recibir una advertencia de los comisarios por un incidente con Russell en los últimos libres.
 
