@@ -603,7 +603,8 @@ export default async function MagazineHomePage({
   ) : null;
   const trendEl = trend && trendSeries.length > 0 && latestRace ? (
               <TitleTrend
-                className={`md:col-span-6 ${raceMode ? 'lg:col-span-6' : 'lg:col-span-8'}`}
+                // Race mode rows it with the sector duel (3) and the map (3); without a duel it takes the duel's columns.
+                className={`md:col-span-6 ${raceMode ? (duelEl || !mapBlock ? 'lg:col-span-6' : 'lg:col-span-9') : 'lg:col-span-8'}`}
                 title={t('trend.title')}
                 sub={t('trend.sub', { n: trend.rounds.length })}
                 roundLabel={t('trend.round', { n: '{n}' })}

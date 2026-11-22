@@ -6,7 +6,7 @@ gets that from FastF1, whose official timing source answers 401 from some enviro
 script produces the same two blocks (`poleLap`, `trackMap`, same shapes) from OpenF1's car and
 location data, so a circuit's last edition can be added without FastF1.
 
-The pole-sitter and event name come from jolpica-f1 (Ergast successor); the fastest qualifying
+The pole-sitter (the car starting first on the grid) and event name come from jolpica-f1; the fastest qualifying
 lap of that car comes from OpenF1 `laps`, its speed from `car_data` and its X/Y from `location`.
 Speeds are resampled by distance (distance integrated from speed over time). OpenF1 has no
 circuit rotation, so the map keeps OpenF1's own orientation (stated in `source`).
@@ -67,6 +67,12 @@ def main() -> None:
     race = get(f"{JOLPICA}/{args.year}/{args.round_num}/qualifying.json")["MRData"]["RaceTable"]["Races"][0]
     event = race["raceName"]
     pole = next(q for q in race["QualifyingResults"] if q["position"] == "1")
+    # Pole is the car that starts from the front of the grid, after grid penalties, as in
+    # `results.pole` (supabase/migrations/20261027130000_*): Las Vegas 2026, Antonelli was fastest
+    # but started sixth. Once the race is classified, take that car's best qualifying lap.
+    raced = get(f"{JOLPICA}/{args.year}/{args.round_num}/results.json")["MRData"]["RaceTable"]["Races"]
+    front = next((r["number"] for r in (raced[0]["Results"] if raced else []) if r["grid"] == "1"), None)
+    pole = next((q for q in race["QualifyingResults"] if q["number"] == front), pole)
     car_number = int(pole["number"])
     code = pole["Driver"]["code"]
     race_day = datetime.fromisoformat(race["date"])

@@ -6,6 +6,7 @@ meta_description: "Verstappen won a record 352-overtake Las Vegas GP. Our timing
 status: published
 paywalled: false
 published_at: "2026-11-22T13:56:00+00:00"
+race_id: 1188
 translation_group_id: "7d8e195e-1a1a-4fcd-a27f-d55a37df913d"
 tags: ["featured", "race-intel", "data-desk"]
 
@@ -28,7 +29,7 @@ stats:
 
 faq:
   - q: "How many overtakes were there in the 2026 Las Vegas Grand Prix?"
-    a: "352, with 35 of them for the lead, according to figures reported by PlanetF1 and ESPN, against 17 in the 2025 edition. The 2023 Dutch Grand Prix, with 186, had been cited as the previous record. PaddockIntel's own analysis of the timing feed found 16 occasions when a rival took the lead from Max Verstappen, who retook it every time."
+    a: "352, with 35 of them for the lead, according to Formula 1's figures reported by The Race, against 17 in the 2025 edition. The 2023 Dutch Grand Prix, with 186, had been cited as the previous record. PaddockIntel's own analysis of the timing feed found 16 occasions when a rival took the lead from Max Verstappen, who retook it every time."
   - q: "Who won the 2026 Las Vegas Grand Prix?"
     a: "Max Verstappen won from pole for Red Bull, ahead of Lando Norris and Oscar Piastri, who started 17th. It was Verstappen's 75th career win and his third in four editions of the Las Vegas Grand Prix."
   - q: "Can Max Verstappen still lose second place in the 2026 championship?"
@@ -43,6 +44,8 @@ sources:
     url: "https://racingnews365.com/2026-f1-las-vegas-grand-prix-results"
   - name: "RaceFans — 2026 Las Vegas Grand Prix race result and championship points (November 22, 2026)"
     url: "https://www.racefans.net/2026/11/22/2026-las-vegas-grand-prix-race-result-and-championship-points/"
+  - name: "The Race — 'This is not F1' - Verstappen criticises Las Vegas overtaking frenzy (November 22, 2026)"
+    url: "https://www.the-race.com/formula-1/this-is-not-f1-verstappen-criticises-las-vegas-overtaking-frenzy/"
   - name: "PlanetF1 — Lando Norris makes bold Las Vegas claim after insane overtake stat emerges (November 22, 2026)"
     url: "https://www.planetf1.com/news/lando-norris-las-vegas-overtakes-stat"
   - name: "Motorsport.com — George Russell explains late-race crash in Las Vegas F1 victory bid (November 22, 2026)"
@@ -67,7 +70,7 @@ sources:
 
 Max Verstappen won the Las Vegas Grand Prix from pole, 0.639s ahead of Lando Norris, with Oscar Piastri third after starting 17th. Behind them came Kimi Antonelli, the Alpines of Pierre Gasly and Franco Colapinto, Lewis Hamilton, Carlos Sainz, George Russell and Charles Leclerc. It was Verstappen's 75th career win and, in PaddockIntel's database, his third in four editions of the race.
 
-On the figures reported, it was also the busiest race on record: PlanetF1 and ESPN report 352 overtakes, 35 of them for the lead, against 17 in the whole 2025 edition; the 2023 Dutch Grand Prix, with 186, had been cited as the record. Our own analysis of the official timing feed, counting position changes at the timing points outside the safety car, found 16 occasions when a rival moved ahead of Verstappen: Russell nine times, Antonelli five, Isack Hadjar and Norris once each. Verstappen took the lead back every time and led about 45 of the 50 laps at the finish line.
+By Formula 1's own figures, reported by The Race, it was also the busiest race on record: 352 overtakes, 35 of them for the lead, against 17 in the whole 2025 edition; the 2023 Dutch Grand Prix, with 186, had been cited as the record. Our own analysis of the official timing feed, counting position changes at the timing points outside the safety car, found 16 occasions when a rival moved ahead of Verstappen: Russell nine times, Antonelli five, Isack Hadjar and Norris once each. Verstappen took the lead back every time and led about 45 of the 50 laps at the finish line.
 
 The stewards' decisions after the race did not change the points. Hadjar received a 10-second penalty for slowing the field under the safety car before Red Bull's double stop, dropping from 14th to 15th, and Sergio Pérez a five-place grid penalty for Qatar for the collision with Rafael Câmara that caused it, Autosport reports. No penalty was announced for Piastri, who had been noted for a possible yellow flag infringement on the last lap.
 
