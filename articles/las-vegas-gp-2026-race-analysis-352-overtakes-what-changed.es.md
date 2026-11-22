@@ -6,6 +6,7 @@ meta_description: "Verstappen ganó en Las Vegas con un récord de 352 adelantam
 status: published
 paywalled: false
 published_at: "2026-11-22T13:56:00+00:00"
+race_id: 1188
 translation_group_id: "7d8e195e-1a1a-4fcd-a27f-d55a37df913d"
 tags: ["featured", "race-intel", "data-desk"]
 
@@ -28,7 +29,7 @@ stats:
 
 faq:
   - q: "¿Cuántos adelantamientos hubo en el Gran Premio de Las Vegas 2026?"
-    a: "352, 35 de ellos por el liderato, según las cifras publicadas por PlanetF1 y ESPN, frente a 17 en la edición de 2025. El Gran Premio de los Países Bajos 2023, con 186, se citaba como el récord anterior. El análisis propio de PaddockIntel del cronometraje encontró 16 ocasiones en que un rival le quitó el liderato a Max Verstappen, que lo recuperó todas las veces."
+    a: "352, 35 de ellos por el liderato, según las cifras de la Fórmula 1 publicadas por The Race, frente a 17 en la edición de 2025. El Gran Premio de los Países Bajos 2023, con 186, se citaba como el récord anterior. El análisis propio de PaddockIntel del cronometraje encontró 16 ocasiones en que un rival le quitó el liderato a Max Verstappen, que lo recuperó todas las veces."
   - q: "¿Quién ganó el Gran Premio de Las Vegas 2026?"
     a: "Max Verstappen ganó desde la pole con Red Bull, por delante de Lando Norris y Oscar Piastri, que salió 17.º. Fue la victoria número 75 de Verstappen y la tercera en cuatro ediciones del Gran Premio de Las Vegas."
   - q: "¿Puede Max Verstappen perder todavía el segundo puesto del campeonato 2026?"
@@ -43,6 +44,8 @@ sources:
     url: "https://racingnews365.com/2026-f1-las-vegas-grand-prix-results"
   - name: "RaceFans — 2026 Las Vegas Grand Prix race result and championship points (22 de noviembre de 2026)"
     url: "https://www.racefans.net/2026/11/22/2026-las-vegas-grand-prix-race-result-and-championship-points/"
+  - name: "The Race — 'This is not F1' - Verstappen criticises Las Vegas overtaking frenzy (22 de noviembre de 2026)"
+    url: "https://www.the-race.com/formula-1/this-is-not-f1-verstappen-criticises-las-vegas-overtaking-frenzy/"
   - name: "PlanetF1 — Lando Norris makes bold Las Vegas claim after insane overtake stat emerges (22 de noviembre de 2026)"
     url: "https://www.planetf1.com/news/lando-norris-las-vegas-overtakes-stat"
   - name: "Motorsport.com — George Russell explains late-race crash in Las Vegas F1 victory bid (22 de noviembre de 2026)"
@@ -67,7 +70,7 @@ sources:
 
 Max Verstappen ganó el Gran Premio de Las Vegas desde la pole, 0,639 segundos por delante de Lando Norris, con Oscar Piastri tercero tras salir 17.º. Detrás llegaron Kimi Antonelli, los Alpine de Pierre Gasly y Franco Colapinto, Lewis Hamilton, Carlos Sainz, George Russell y Charles Leclerc. Fue la victoria número 75 de Verstappen y, en la base de datos de PaddockIntel, la tercera en cuatro ediciones de la carrera.
 
-Según las cifras publicadas, también fue la carrera más movida de la que hay registro: PlanetF1 y ESPN cuentan 352 adelantamientos, 35 de ellos por el liderato, frente a 17 en toda la edición de 2025; el Gran Premio de los Países Bajos 2023, con 186, se citaba como el récord. Nuestro propio análisis del cronometraje oficial, que cuenta los cambios de posición en los puntos de cronometraje fuera del auto de seguridad, encontró 16 ocasiones en que un rival se puso delante de Verstappen: Russell nueve veces, Antonelli cinco, Isack Hadjar y Norris una cada uno. Verstappen recuperó el liderato todas las veces y lideró cerca de 45 de las 50 vueltas en la línea de meta.
+Según las cifras de la propia Fórmula 1, publicadas por The Race, también fue la carrera más movida de la que hay registro: 352 adelantamientos, 35 de ellos por el liderato, frente a 17 en toda la edición de 2025; el Gran Premio de los Países Bajos 2023, con 186, se citaba como el récord. Nuestro propio análisis del cronometraje oficial, que cuenta los cambios de posición en los puntos de cronometraje fuera del auto de seguridad, encontró 16 ocasiones en que un rival se puso delante de Verstappen: Russell nueve veces, Antonelli cinco, Isack Hadjar y Norris una cada uno. Verstappen recuperó el liderato todas las veces y lideró cerca de 45 de las 50 vueltas en la línea de meta.
 
 Las decisiones de los comisarios tras la carrera no cambiaron los puntos. Hadjar recibió diez segundos de penalización por frenar al grupo con el auto de seguridad antes de la doble parada de Red Bull, y bajó del 14.º al 15.º puesto, y Sergio Pérez cinco puestos de penalización para la parrilla de Qatar por el choque con Rafael Câmara que lo provocó, informa Autosport. No se anunció ninguna sanción para Piastri, al que se había señalado por una posible infracción de bandera amarilla en la última vuelta.
 
