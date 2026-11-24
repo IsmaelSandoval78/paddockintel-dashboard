@@ -10,6 +10,10 @@ race_id: 1188
 translation_group_id: "7d8e195e-1a1a-4fcd-a27f-d55a37df913d"
 tags: ["featured", "race-intel", "data-desk"]
 
+corrections:
+  - date: "2026-11-24T00:41:00+00:00"
+    note: "Corregido: el artículo decía que Verstappen asegura el segundo puesto en Qatar salvo que un rival le saque allí 12 puntos o más. Si le sacaran exactamente 12, seguiría 25 puntos por delante con 25 en juego y ganaría un empate por desempate, así que el umbral es de 13 puntos para Hamilton y de 16 para Russell o Norris."
+
 stats:
   - value: "352"
     label: "ADELANTAMIENTOS EN LA CARRERA"
@@ -33,7 +37,7 @@ faq:
   - q: "¿Quién ganó el Gran Premio de Las Vegas 2026?"
     a: "Max Verstappen ganó desde la pole con Red Bull, por delante de Lando Norris y Oscar Piastri, que salió 17.º. Fue la victoria número 75 de Verstappen y la tercera en cuatro ediciones del Gran Premio de Las Vegas."
   - q: "¿Puede Max Verstappen perder todavía el segundo puesto del campeonato 2026?"
-    a: "Muy difícilmente. Le saca 37 puntos a Lewis Hamilton y 40 a George Russell y Lando Norris, con 50 puntos en juego por piloto. Asegura el segundo puesto en Qatar salvo que un rival le saque allí 12 puntos o más. Nuestra simulación le da el segundo puesto en más del 99% de los casos."
+    a: "Muy difícilmente. Le saca 37 puntos a Lewis Hamilton y 40 a George Russell y Lando Norris, con 50 puntos en juego por piloto. Asegura el segundo puesto en Qatar salvo que Hamilton le saque allí 13 puntos o más, o Russell o Norris 16 o más. Nuestra simulación le da el segundo puesto en más del 99% de los casos."
   - q: "¿Quién terminará tercero en el campeonato de constructores 2026?"
     a: "Red Bull le saca nueve puntos a McLaren tras el doble podio de McLaren en Las Vegas. En nuestra simulación, que sortea Qatar y Abu Dabi entre las 21 carreras de esta temporada, Red Bull mantiene el tercer puesto en cerca del 75% de los casos y McLaren se lo queda en cerca del 24%."
   - q: "¿Por qué hubo tantos adelantamientos en Las Vegas?"
@@ -90,7 +94,7 @@ Más abajo, Alpine sumó 18 puntos con su mejor resultado del año, el quinto pu
 
 Repetimos nuestra simulación para las dos últimas carreras. Qatar y Abu Dabi se sortean cada una entre los 21 Grandes Premios de 2026, Las Vegas incluido, con los puntos reales de cada equipo y piloto en esa carrera, y el proceso se repite 100.000 veces. Es el mismo método de antes del fin de semana, ahora con el resultado real de Las Vegas en lugar de una estimación a partir de la parrilla.
 
-Los resultados: Verstappen mantiene el segundo puesto en más del 99% de los casos; lo asegura en Qatar salvo que un rival le saque allí 12 puntos o más. La pelea por el tercero está abierta: Hamilton se lo queda en cerca del 42% de los casos, Norris en el 30% y Russell en el 27%, con cerca de un 3% de empates. Red Bull mantiene el tercer puesto de constructores en cerca del 75% de los casos, frente al 93% antes de la carrera, y McLaren se lo queda en el 24%. Haas conserva el séptimo en cerca del 67%, Audi se lo queda en el 26% y el 8% termina en empate. Ferrari mantiene el segundo puesto en prácticamente todas las simulaciones y lo asegura en Qatar salvo que Red Bull le saque allí 34 puntos o más.
+Los resultados: Verstappen mantiene el segundo puesto en más del 99% de los casos; lo asegura en Qatar salvo que Hamilton le saque allí 13 puntos o más, o Russell o Norris 16 o más; en un empate a puntos ganaría por desempate. La pelea por el tercero está abierta: Hamilton se lo queda en cerca del 42% de los casos, Norris en el 30% y Russell en el 27%, con cerca de un 3% de empates. Red Bull mantiene el tercer puesto de constructores en cerca del 75% de los casos, frente al 93% antes de la carrera, y McLaren se lo queda en el 24%. Haas conserva el séptimo en cerca del 67%, Audi se lo queda en el 26% y el 8% termina en empate. Ferrari mantiene el segundo puesto en prácticamente todas las simulaciones y lo asegura en Qatar salvo que Red Bull le saque allí 34 puntos o más.
 
 El récord hay que leerlo con cuidado. Los conteos de adelantamientos incluyen pasadas que las reglas de energía hicieron temporales, y nuestros 16 cambios de líder se cuentan en los puntos de cronometraje, así que un adelantamiento en la recta y la respuesta en la frenada cuentan los dos. Contando en la línea de meta, el liderato cambió de manos solo unas pocas veces. El modelo no tiene en cuenta el ritmo propio de cada circuito: Qatar se decidirá por los neumáticos, con Pirelli limitando los stints a 27 vueltas.
 

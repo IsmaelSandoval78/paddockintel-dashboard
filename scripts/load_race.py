@@ -15,14 +15,21 @@ After running, refresh driver_stats / constructor_stats via the Supabase SQL Edi
   REFRESH MATERIALIZED VIEW driver_stats;
   REFRESH MATERIALIZED VIEW constructor_stats;
 (If they are plain tables, run scripts/refresh_stats.sql instead.)
+
+Without an F1TV login (F1_USERNAME / F1_PASSWORD) FastF1 gets no lap data. The race's fastest
+laps and pit stops then come from OpenF1's laps and pit endpoints instead (offline, never on a
+request path), and pit-lane starters, which neither source flags reliably, are passed by hand from
+the FIA's document: --pit-lane LAW (Las Vegas 2026: Lawson, fuel leak).
 """
 
 import argparse
+import json
 import os
 import sys
 from collections import defaultdict
 from datetime import date, timedelta
 from pathlib import Path
+import urllib.request
 
 from dotenv import load_dotenv
 import fastf1
@@ -85,6 +92,23 @@ def td_to_str(td) -> str | None:
     minutes = int(total_s // 60)
     seconds = total_s % 60
     return f"{minutes}:{seconds:06.3f}"
+
+
+def openf1_race(year: int, race_date: str) -> tuple[list[dict], list[dict]] | None:
+    """OpenF1 laps and pit stops of the Grand Prix run on race_date (UTC date of the start)."""
+    def get(path: str):
+        req = urllib.request.Request(f"https://api.openf1.org/v1/{path}", headers={"User-Agent": "paddockintel-loader"})
+        with urllib.request.urlopen(req, timeout=60) as r:
+            return json.load(r)
+    try:
+        sessions = [s for s in get(f"sessions?year={year}&session_name=Race") if s["date_start"][:10] == race_date]
+        if len(sessions) != 1:
+            return None
+        key = sessions[0]["session_key"]
+        return get(f"laps?session_key={key}"), get(f"pit?session_key={key}")
+    except Exception as exc:
+        print(f"  WARN: OpenF1 fallback failed — {exc}")
+        return None
 
 
 def safe_int(val, default=0) -> int:
@@ -174,6 +198,8 @@ def main() -> None:
     parser.add_argument("--auto", action="store_true", help="Auto-detect the oldest past race with no results loaded yet, ignoring --year/--round")
     parser.add_argument("--dry-run", action="store_true", help="Print what would be inserted, write nothing")
     parser.add_argument("--skip-quali", action="store_true")
+    parser.add_argument("--pit-lane", nargs="*", default=[], metavar="CODE",
+                        help="Driver codes that started from the pit lane, from the FIA document (grid 0)")
     parser.add_argument("--skip-race", action="store_true")
     parser.add_argument("--skip-sprint", action="store_true")
     parser.add_argument("--skip-results", action="store_true",
@@ -264,7 +290,7 @@ def main() -> None:
     # ── Find race in Supabase ────────────────────────────────────────
     race_res = (
         sb.table("races")
-        .select("id, name, circuit_id, sprint_date")
+        .select("id, name, circuit_id, sprint_date, date")
         .eq("year", year)
         .eq("round", round_num)
         .single()
@@ -357,13 +383,28 @@ def main() -> None:
             except Exception:
                 pass
 
+            # No FastF1 lap data (no F1TV login): best laps from OpenF1, keyed back to the codes.
+            openf1 = None
+            if not best_lap_by_code:
+                openf1 = openf1_race(year, race_res.data["date"])
+                if openf1:
+                    code_by_number = {str(safe_int(r.get("DriverNumber"))): r.get("Abbreviation") for _, r in race_session.results.iterrows()}
+                    for lap in openf1[0]:
+                        code = code_by_number.get(str(lap.get("driver_number")))
+                        secs = lap.get("lap_duration")
+                        if code and secs and (code not in best_lap_by_code or secs < best_lap_by_code[code].total_seconds()):
+                            best_lap_by_code[code] = pd.Timedelta(seconds=secs)
+                    if best_lap_by_code:
+                        fastest_lap_code = min(best_lap_by_code, key=lambda c: best_lap_by_code[c])
+                        print(f"  Fastest laps from OpenF1 ({fastest_lap_code} {td_to_str(best_lap_by_code[fastest_lap_code])})")
+
             # Pit-lane starters: FastF1's GridPosition can carry the slot the car left empty
             # (Austin 2026: Stroll came through as 22), while results keep the Ergast convention
             # of grid 0. A pit-lane starter's first lap is an out-lap, so lap 1 has a PitOutTime.
-            pit_lane_starters: set[str] = set()
+            pit_lane_starters: set[str] = set(args.pit_lane)
             try:
                 first_laps = race_session.laps[race_session.laps["LapNumber"] == 1]
-                pit_lane_starters = {str(d) for d in first_laps[first_laps["PitOutTime"].notna()]["Driver"]}
+                pit_lane_starters |= {str(d) for d in first_laps[first_laps["PitOutTime"].notna()]["Driver"]}
                 for code in sorted(pit_lane_starters):
                     print(f"  {code} started from the pit lane (grid 0)")
             except Exception:
@@ -453,6 +494,25 @@ def main() -> None:
                 print(f"  {len(pit_rows)} pit stop rows extracted")
             except Exception as exc:
                 print(f"  WARN: pit stop extraction failed — {exc}")
+            # OpenF1's pit_duration is the pit-lane time, the same Ergast convention as above.
+            if not pit_rows and openf1:
+                stops_by_driver: dict[int, int] = defaultdict(int)
+                for stop in sorted(openf1[1], key=lambda s: s.get("date") or ""):
+                    # Race numbers via this race's own results (Norris ran 1 in 2026, not his usual 4).
+                    driver = resolve_driver(code=code_by_number.get(str(stop.get("driver_number"))))
+                    secs = stop.get("pit_duration") or stop.get("lane_duration")
+                    if not driver or not secs or not 1.5 < secs < 180:
+                        continue
+                    stops_by_driver[driver["id"]] += 1
+                    pit_rows.append({
+                        "race_id": race_id,
+                        "driver_id": driver["id"],
+                        "stop": stops_by_driver[driver["id"]],
+                        "lap": safe_int(stop.get("lap_number")),
+                        "duration": f"{secs:.3f}",
+                        "milliseconds": int(round(secs * 1000)),
+                    })
+                print(f"  {len(pit_rows)} pit stop rows from OpenF1")
 
             # ── Lap times ────────────────────────────────────────────
             print("\n── Lap times ───────────────────────────────────────")
