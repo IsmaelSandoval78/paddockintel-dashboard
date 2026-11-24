@@ -51,6 +51,24 @@ type DigestIssue = {
   items: DigestItem[];
 };
 
+// The numbers an item features ("23 of 31" -> 23, 31; "$18M" -> 18), and whether one of them leads.
+function dataLeadProblems(item: DigestItem): string[] {
+  const name = item.slug ?? item.headline;
+  // Separators stripped, so "2.927" (EN) and "2,927" (ES) count as the same number.
+  const digits = (text: string) => (text.match(/\d+(?:[.,]\d+)*/g) ?? []).map((n) => n.replace(/[.,]/g, ''));
+  const numbers = new Set((item.stats ?? []).flatMap((s) => digits(s.value)));
+  if (!numbers.size) return [`${name}: no stats; a Feed item needs at least one number of its own`];
+  const firstSentence = (text: string | null | undefined) => (text ?? '').split(/(?<=[.!?]["”]?)\s+/)[0];
+  const leads = (headline: string | null | undefined, summary: string | null | undefined) => {
+    const tokens = new Set(digits(`${headline ?? ''} ${firstSentence(summary)}`));
+    return [...numbers].some((n) => tokens.has(n));
+  };
+  const out: string[] = [];
+  if (!leads(item.headline, item.our_summary)) out.push(`${name}: no stat number (${[...numbers].join(', ')}) in the EN headline or first sentence`);
+  if (!leads(item.headline_es, item.our_summary_es)) out.push(`${name}: no stat number (${[...numbers].join(', ')}) in the ES headline or first sentence`);
+  return out;
+}
+
 async function main() {
   const filePath = process.argv[2];
   if (!filePath) {
@@ -60,6 +78,19 @@ async function main() {
 
   const raw = fs.readFileSync(path.resolve(filePath), 'utf-8');
   const issue: DigestIssue = JSON.parse(raw);
+
+  // Data-first Feed format (EDITORIAL.md, "The Feed", decided 2026-11-24): from that date every item
+  // features at least one stat, and one of those numbers appears in the headline or the first sentence
+  // of the summary, in EN and in ES. Issues published earlier are exempt so they can still be
+  // re-ingested for corrections.
+  if (issue.published_at >= '2026-11-24') {
+    const problems = issue.items.flatMap((item) => dataLeadProblems(item));
+    if (problems.length) {
+      console.error('Data-first check failed (EDITORIAL.md, "The Feed"):\n' + problems.map((p) => `  - ${p}`).join('\n'));
+      process.exit(1);
+    }
+  }
+
   const supabase = createClient();
 
   // Upsert issue
