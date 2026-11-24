@@ -41,7 +41,9 @@ news surfaces themselves.
 - [ ] The story leads with something that is ours: a number from our own database, a comparison
       nobody else ran, or our reading of what a quote means. A Feed item that only restates the
       source with a link is aggregation, and Google News demotes aggregation. Every Feed item
-      carries `editor_note` (our data) and `editor_take` (our view), not just `our_summary`.
+      carries `editor_note` (our data) and `editor_take` (our view), not just `our_summary`, and
+      since 2026-11-24 one of its `stats` numbers sits in the headline or the summary's first
+      sentence (EDITORIAL.md, "Data-first format"; enforced by `scripts/ingest-digest.ts`).
 - [ ] The source is named and linked in the first paragraph; quotes are attributed to the outlet
       that got them. Never present another outlet's interview as our reporting.
 
@@ -84,6 +86,9 @@ news surfaces themselves.
 
 ## Measuring it
 
+- The Search Console bulk export in BigQuery (`paddockintel.searchconsole`, ~2 days behind) has every
+  search type: rows with `search_type` NEWS, DISCOVER or GOOGLE_NEWS are the news surfaces. Baseline
+  9–21 Nov 2026: none at all. A weekly report from it runs on Mondays (scheduled 2026-11-24).
 - Search Console → Performance → "Google News" (traffic from news.google.com and the News app) and
   Performance → Search results with search type "News" (the News tab). Discover has its own
   report. Look weekly, after the Monday Feed, and compare race weeks with the weeks between races.

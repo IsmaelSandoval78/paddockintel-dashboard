@@ -107,6 +107,21 @@ more career race wins, who has the worse DNF record this season. Same drama ever
 covering; only PaddockIntel brings the data. That's the SEO/EEAT wedge — a distinctive,
 numbers-first take on a trending story, not a generic aggregator blurb.
 
+**Data-first format (decided 2026-11-24).** Our number leads, not the source's quote. Search
+Console's export for 9–21 Nov 2026 showed why: zero impressions in Google News, Discover or the
+News tab; Feed pages averaged about 10 impressions each against about 145 for articles; and the
+Feed items that did rank were the ones built on our own data or a primary filing (Stroll's 2026
+finishes, Red Bull Racing's accounts), found through data questions ("has Stroll finished a race in
+2026"), never through the quote everyone else ran. So, from vol-108:
+- The headline or the first sentence of the summary carries one of the item's `stats` numbers, in
+  EN and ES (`scripts/ingest-digest.ts` refuses the issue otherwise). The first sentence still says
+  what happened and names the source; it adds our number to it, it doesn't replace the news.
+- A story with no number of our own to add doesn't run. Fewer items (about three or four a day) with
+  real data beat seven restatements.
+- When a primary source exists (an FIA document, a team statement, a filing), link it as the
+  source rather than the outlet that wrote it up, and publish from it as soon as it appears.
+- Already-indexed headlines are not rewritten to the new format (GOOGLE-NEWS-EXPERT.md, "Never").
+
 **Explicit exclusion.** Personal-life content — weddings, engagements, relationships — stays out
 of the Feed regardless of how much coverage it gets. Not on-track, not competitive, not our lane.
 On-track/competitive conflict (penalties, contract disputes, team orders, sporting incidents) is
