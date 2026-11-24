@@ -10,6 +10,10 @@ race_id: 1188
 translation_group_id: "7d8e195e-1a1a-4fcd-a27f-d55a37df913d"
 tags: ["featured", "race-intel", "data-desk"]
 
+corrections:
+  - date: "2026-11-24T00:41:00+00:00"
+    note: "Corrected: the article said Verstappen clinches second in Qatar unless a rival outscores him there by 12 points or more. Outscored by exactly 12, he would still lead by 25 with 25 points left and win a tie on countback, so the threshold is 13 points for Hamilton and 16 for Russell or Norris."
+
 stats:
   - value: "352"
     label: "OVERTAKES IN THE RACE"
@@ -33,7 +37,7 @@ faq:
   - q: "Who won the 2026 Las Vegas Grand Prix?"
     a: "Max Verstappen won from pole for Red Bull, ahead of Lando Norris and Oscar Piastri, who started 17th. It was Verstappen's 75th career win and his third in four editions of the Las Vegas Grand Prix."
   - q: "Can Max Verstappen still lose second place in the 2026 championship?"
-    a: "Only just. He leads Lewis Hamilton by 37 points and George Russell and Lando Norris by 40, with 50 points left per driver. He clinches second in Qatar unless a rival outscores him there by 12 points or more. Our simulation gives him second in more than 99% of runs."
+    a: "Only just. He leads Lewis Hamilton by 37 points and George Russell and Lando Norris by 40, with 50 points left per driver. He clinches second in Qatar unless Hamilton outscores him there by 13 points or more, or Russell or Norris by 16 or more. Our simulation gives him second in more than 99% of runs."
   - q: "Who will finish third in the 2026 constructors' championship?"
     a: "Red Bull leads McLaren by nine points after McLaren's double podium in Las Vegas. In our simulation, which draws Qatar and Abu Dhabi from this season's 21 races, Red Bull keeps third in about 75% of runs and McLaren takes it in about 24%."
   - q: "Why were there so many overtakes in Las Vegas?"
@@ -90,7 +94,7 @@ Lower down, Alpine scored 18 points with its best result of the year, Gasly's fi
 
 We reran our simulation for the last two races. Qatar and Abu Dhabi are each drawn at random from the 21 Grands Prix of 2026, Las Vegas included, using every team's and driver's actual points in that race, and the process is repeated 100,000 times. It is the same method as before the weekend, now with the real Las Vegas result instead of a grid-based estimate.
 
-The results: Verstappen keeps second in more than 99% of runs; he clinches it in Qatar unless a rival outscores him there by 12 points or more. The fight for third is open: Hamilton takes it in about 42% of runs, Norris in 30% and Russell in 27%, with about 3% ending level. Red Bull keeps third in the constructors' table in about 75% of runs, down from 93% before the race, and McLaren takes it in 24%. Haas keeps seventh in about 67%, Audi takes it in 26% and 8% end level. Ferrari keeps second in practically every run and clinches it in Qatar unless Red Bull outscores it there by 34 points or more.
+The results: Verstappen keeps second in more than 99% of runs; he clinches it in Qatar unless Hamilton outscores him there by 13 points or more, or Russell or Norris by 16 or more; in a tie on points he would win on countback. The fight for third is open: Hamilton takes it in about 42% of runs, Norris in 30% and Russell in 27%, with about 3% ending level. Red Bull keeps third in the constructors' table in about 75% of runs, down from 93% before the race, and McLaren takes it in 24%. Haas keeps seventh in about 67%, Audi takes it in 26% and 8% end level. Ferrari keeps second in practically every run and clinches it in Qatar unless Red Bull outscores it there by 34 points or more.
 
 The record should be read with care. Overtake counts include passes that the energy rules made temporary, and our 16 lead changes are counted at the timing points, so a pass on a straight and the re-pass under braking both register. Counting at the finish line, the lead changed hands only a handful of times. The model ignores track-specific pace: Qatar will be decided on tyres, with Pirelli limiting stints to 27 laps.
 
