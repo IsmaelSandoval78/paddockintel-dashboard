@@ -9,6 +9,16 @@ i18n: EN / ES / PT. Default locale: `en`.
 
 ---
 
+## Language with the founder
+
+Always reply to the founder in neutral Spanish (tuteo, never voseo, same rules as EDITORIAL.md's ES
+section) — every chat answer, proposal, evaluation, summary and question, including after a context
+reset and when the material read was in English. Repository artifacts keep their existing
+conventions: code, commit messages, PR bodies and these docs stay in English, and published content
+follows EDITORIAL.md per locale.
+
+---
+
 ## Karpathy Principles (always apply)
 
 ### 1. Think Before Coding
