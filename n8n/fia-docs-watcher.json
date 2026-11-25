@@ -66,16 +66,15 @@
     },
     {
       "parameters": {
-        "sendTo": "SET_YOUR_EMAIL_HERE",
+        "fromEmail": "SET_SENDER_EMAIL",
+        "toEmail": "SET_YOUR_EMAIL_HERE",
         "subject": "={{ $json.subject }}",
-        "emailType": "html",
-        "message": "={{ $json.html }}",
-        "options": {
-          "appendAttribution": false
-        }
+        "emailFormat": "html",
+        "html": "={{ $json.html }}",
+        "options": {}
       },
       "name": "Email alert",
-      "type": "n8n-nodes-base.gmail",
+      "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
         660,
