@@ -1,0 +1,219 @@
+{
+  "name": "PaddockIntel · F1 trends alert (Google Trends, every 15 min)",
+  "nodes": [
+    {
+      "id": "c",
+      "name": "Every 15 min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "*/15 * * * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "k",
+      "name": "Countries",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Google Trends \"Trending now\" RSS for PaddockIntel's markets (EN: US, GB; ES: MX, ES, AR; PT: BR).\nreturn ['US', 'GB', 'MX', 'ES', 'AR', 'BR'].map((geo) => ({ json: { geo, url: `https://trends.google.com/trending/rss?geo=${geo}` } }));"
+      }
+    },
+    {
+      "id": "Trending now",
+      "name": "Trending now",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (compatible; PaddockIntel monitor)"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "text"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "f",
+      "name": "F1 trends",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Keeps the trending searches that are about F1. Distinctive names count on their own; names that are\n// common outside F1 (Hamilton, Russell, Norris, Ferrari, Qatar...) count only if one of the news stories\n// Google shows next to the trend mentions F1. Each country+search is reported once per 24 hours.\nconst STRONG = ['f1', 'formula 1', 'formula one', 'fórmula 1', 'formule 1', 'grand prix', 'gran premio', 'grande prêmio',\n  'verstappen', 'leclerc', 'piastri', 'antonelli', 'hadjar', 'bearman', 'colapinto', 'gasly', 'hulkenberg', 'hülkenberg',\n  'albon', 'bortoleto', 'tsunoda', 'bottas', 'ocon', 'fia', 'liberty media', 'toto wolff', 'horner', 'vasseur', 'lusail', 'yas marina'];\nconst CONTEXT_NEEDED = ['hamilton', 'russell', 'norris', 'alonso', 'sainz', 'perez', 'pérez', 'checo', 'stroll', 'lawson',\n  'ferrari', 'mercedes', 'mclaren', 'red bull', 'williams', 'alpine', 'haas', 'aston martin', 'cadillac', 'racing bulls',\n  'qatar', 'catar', 'abu dhabi', 'abu dabi', 'las vegas'];\nconst F1_CONTEXT = /\\bf1\\b|formula (1|one)|fórmula 1|fórmula uno|grand prix|gran premio|grande prêmio|\\bgp\\b/i;\nconst has = (text, k) => new RegExp(`(^|[^\\\\p{L}\\\\p{N}])${k.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}($|[^\\\\p{L}\\\\p{N}])`, 'iu').test(text);\nconst dec = (s) => (s || '').replace(/<!\\[CDATA\\[([\\s\\S]*?)\\]\\]>/g, '$1').replace(/&amp;/g, '&').replace(/&quot;/g, '\"').replace(/&apos;/g, \"'\").replace(/&#39;/g, \"'\").replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();\nconst countries = $('Countries').all().map((i) => i.json);\nconst state = $getWorkflowStaticData('global');\nstate.seen = state.seen || {};\nconst now = Date.now();\nfor (const k of Object.keys(state.seen)) if (now - state.seen[k] > 24 * 36e5) delete state.seen[k];\nconst hits = [];\n$input.all().forEach((r, i) => {\n  const geo = countries[i]?.geo ?? '?';\n  const body = String(r.json.body ?? r.json.data ?? '');\n  for (const [, s] of body.matchAll(/<item>([\\s\\S]*?)<\\/item>/g)) {\n    const title = dec((s.match(/<title>([\\s\\S]*?)<\\/title>/) || [])[1]);\n    const traffic = dec((s.match(/<ht:approx_traffic>([\\s\\S]*?)<\\/ht:approx_traffic>/) || [])[1]);\n    const started = dec((s.match(/<pubDate>([\\s\\S]*?)<\\/pubDate>/) || [])[1]);\n    const news = [...s.matchAll(/<ht:news_item>([\\s\\S]*?)<\\/ht:news_item>/g)].map(([, n]) => ({\n      title: dec((n.match(/<ht:news_item_title>([\\s\\S]*?)<\\/ht:news_item_title>/) || [])[1]),\n      source: dec((n.match(/<ht:news_item_source>([\\s\\S]*?)<\\/ht:news_item_source>/) || [])[1]),\n      url: dec((n.match(/<ht:news_item_url>([\\s\\S]*?)<\\/ht:news_item_url>/) || [])[1]),\n    }));\n    const newsText = news.map((n) => n.title).join(' | ');\n    const strong = STRONG.filter((k) => has(title, k));\n    const weak = CONTEXT_NEEDED.filter((k) => has(title, k));\n    const isF1 = strong.length > 0 || (weak.length > 0 && F1_CONTEXT.test(newsText));\n    if (!isF1) continue;\n    const key = `${geo}|${title.toLowerCase()}`;\n    if (state.seen[key]) continue;\n    state.seen[key] = now;\n    hits.push({ geo, title, traffic, started, news, terms: [...strong, ...weak] });\n  }\n});\nif (!hits.length) return [];\nreturn [{ json: { hits, url: 'https://www.paddockintel.com/sitemap.xml' } }];"
+      }
+    },
+    {
+      "id": "Our sitemap",
+      "name": "Our sitemap",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (compatible; PaddockIntel monitor)"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "text"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "b",
+      "name": "Build email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Adds what PaddockIntel already has on each trending topic (from our sitemap: recent pages whose\n// address contains the name, in the country's language when it exists) and builds the email.\nconst { hits } = $('F1 trends').first().json;\nconst xml = String($input.first().json.body ?? $input.first().json.data ?? '');\nconst pages = [...xml.matchAll(/<url>\\s*<loc>([^<]+)<\\/loc>\\s*<lastmod>([^<]+)<\\/lastmod>/g)].map(([, loc, mod]) => ({ loc, mod: Date.parse(mod) || 0 }));\nconst LANG = { US: 'en', GB: 'en', MX: 'es', ES: 'es', AR: 'es', BR: 'pt' };\nconst GENERIC = new Set(['f1', 'formula 1', 'formula one', 'fórmula 1', 'formule 1', 'grand prix', 'gran premio', 'grande prêmio', 'fia']);\nconst slugify = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');\nconst langOf = (u) => (/paddockintel\\.com\\/es\\//.test(u) ? 'es' : /paddockintel\\.com\\/pt\\//.test(u) ? 'pt' : 'en');\nconst ours = (h) => {\n  const keys = h.terms.filter((t) => !GENERIC.has(t)).map(slugify).filter(Boolean);\n  if (!keys.length) return [];\n  const since = Date.now() - 21 * 864e5;\n  const found = pages.filter((p) => p.mod >= since && keys.some((k) => p.loc.includes(k)));\n  const want = LANG[h.geo] || 'en';\n  const pick = found.filter((p) => langOf(p.loc) === want);\n  return (pick.length ? pick : found.filter((p) => langOf(p.loc) === 'en')).sort((a, b) => b.mod - a.mod).slice(0, 3);\n};\nconst esc = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;');\nconst FLAG = { US: '🇺🇸', GB: '🇬🇧', MX: '🇲🇽', ES: '🇪🇸', AR: '🇦🇷', BR: '🇧🇷' };\nconst cards = hits.map((h) => {\n  const o = ours(h);\n  const news = h.news.slice(0, 3).map((n) => `<li>${esc(n.source)}: <a href=\"${esc(n.url)}\">${esc(n.title)}</a></li>`).join('');\n  const mine = o.length\n    ? `<p style=\"margin:6px 0 0\"><b>Lo nuestro:</b></p><ul>${o.map((p) => `<li><a href=\"${esc(p.loc)}\">${esc(p.loc.replace('https://www.paddockintel.com', ''))}</a> (${new Date(p.mod).toISOString().slice(0, 10)})</li>`).join('')}</ul>`\n    : `<p style=\"margin:6px 0 0;color:#b45309\"><b>No tenemos nada de los últimos 21 días sobre esto.</b></p>`;\n  return `<div style=\"border:1px solid #ddd;border-radius:10px;padding:12px 14px;margin:0 0 12px\">\n    <div style=\"font:600 16px Arial,sans-serif\">${FLAG[h.geo] || ''} ${esc(h.geo)} · “${esc(h.title)}” · ${esc(h.traffic)} búsquedas</div>\n    <div style=\"font:12px Arial,sans-serif;color:#666\">tendencia desde ${esc(h.started)}</div>\n    <p style=\"margin:8px 0 0\"><b>Lo que Google muestra al lado:</b></p><ul>${news}</ul>${mine}</div>`;\n}).join('');\nconst top = hits[0];\nreturn [{ json: {\n  subject: `Tendencia F1: “${top.title}” en ${top.geo} (${top.traffic})${hits.length > 1 ? ` y ${hits.length - 1} más` : ''}`,\n  html: `<div style=\"max-width:660px;font-family:Arial,sans-serif\">${cards}<p style=\"color:#888\">Google Trends, “Trending now”. El volumen es aproximado; la tendencia suele durar horas.</p></div>`,\n} }];"
+      }
+    },
+    {
+      "id": "e",
+      "name": "Email alert",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1320,
+        0
+      ],
+      "parameters": {
+        "fromEmail": "SET_SENDER_EMAIL",
+        "toEmail": "SET_YOUR_EMAIL_HERE",
+        "subject": "={{ $json.subject }}",
+        "emailFormat": "html",
+        "html": "={{ $json.html }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Every 15 min": {
+      "main": [
+        [
+          {
+            "node": "Countries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Countries": {
+      "main": [
+        [
+          {
+            "node": "Trending now",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trending now": {
+      "main": [
+        [
+          {
+            "node": "F1 trends",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "F1 trends": {
+      "main": [
+        [
+          {
+            "node": "Our sitemap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Our sitemap": {
+      "main": [
+        [
+          {
+            "node": "Build email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build email": {
+      "main": [
+        [
+          {
+            "node": "Email alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
