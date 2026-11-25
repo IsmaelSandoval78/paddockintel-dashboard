@@ -1,0 +1,151 @@
+{
+  "name": "PaddockIntel · Google News watcher (hourly)",
+  "nodes": [
+    {
+      "id": "c",
+      "name": "Every hour",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "20 * * * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "q",
+      "name": "Queries",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Google News search for our domain, one query per edition (EN, ES, PT).\nconst Q = 'site:paddockintel.com';\nreturn [\n  { json: { ed: 'EN', url: `https://news.google.com/rss/search?q=${encodeURIComponent(Q)}&hl=en-US&gl=US&ceid=US:en` } },\n  { json: { ed: 'ES', url: `https://news.google.com/rss/search?q=${encodeURIComponent(Q)}&hl=es-419&gl=US&ceid=US:es-419` } },\n  { json: { ed: 'PT', url: `https://news.google.com/rss/search?q=${encodeURIComponent(Q)}&hl=pt-BR&gl=BR&ceid=BR:pt-419` } },\n];"
+      }
+    },
+    {
+      "id": "Google News search",
+      "name": "Google News search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (compatible; PaddockIntel monitor)"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "text"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "n",
+      "name": "New appearances",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Reports the paddockintel.com stories that appear in Google News search for the first time. The first\n// active run sends one baseline email with what is already there. \"Lag\" is the time from the story's own\n// publication date (as Google News shows it) to the hourly run that first saw it, so it is approximate.\nconst queries = $('Queries').all().map((i) => i.json);\nconst state = $getWorkflowStaticData('global');\nconst firstRun = !state.seen;\nstate.seen = state.seen || {};\nconst decode = (s) => (s || '').replace(/<!\\[CDATA\\[([\\s\\S]*?)\\]\\]>/g, '$1').replace(/&amp;/g, '&').replace(/&quot;/g, '\"').replace(/&#39;/g, \"'\").replace(/&lt;/g, '<').replace(/&gt;/g, '>');\nconst pick = (s, re) => { const m = s.match(re); return m ? decode(m[1]).trim() : ''; };\nconst fresh = []; const counts = {}; const errors = [];\n$input.all().forEach((r, i) => {\n  const ed = queries[i]?.ed ?? '?';\n  const body = String(r.json.body ?? r.json.data ?? '');\n  if (r.json.statusCode !== 200 || !body.includes('<rss')) { errors.push(`${ed}: HTTP ${r.json.statusCode ?? r.json.error?.message ?? '?'}`); return; }\n  const items = [...body.matchAll(/<item>([\\s\\S]*?)<\\/item>/g)].map(([, s]) => ({\n    ed, guid: pick(s, /<guid[^>]*>([\\s\\S]*?)<\\/guid>/), title: pick(s, /<title>([\\s\\S]*?)<\\/title>/).replace(/ - paddockintel\\.com$/, ''),\n    link: pick(s, /<link>([\\s\\S]*?)<\\/link>/), pub: pick(s, /<pubDate>([\\s\\S]*?)<\\/pubDate>/),\n  })).filter((x) => x.guid);\n  counts[ed] = items.length;\n  for (const it of items) {\n    if (state.seen[it.guid]) continue;\n    state.seen[it.guid] = Date.now();\n    fresh.push(it);\n  }\n});\nconst keys = Object.keys(state.seen);\nif (keys.length > 5000) keys.sort((a, b) => state.seen[a] - state.seen[b]).slice(0, keys.length - 5000).forEach((k) => delete state.seen[k]);\nconst esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');\nconst tally = Object.entries(counts).map(([k, v]) => `${k} ${v}`).join(' · ');\nif (firstRun) {\n  return [{ json: {\n    subject: `Google News · línea base: ${tally}`,\n    html: `<p>Desde ahora te aviso cada vez que una nota de paddockintel.com aparece por primera vez en la búsqueda de Google News.</p><p>Ya aparecen: <b>${tally}</b> (resultados de la búsqueda site:paddockintel.com; Google muestra un máximo de 100 por edición).</p>${errors.length ? `<p>Errores: ${esc(errors.join('; '))}</p>` : ''}`,\n  } }];\n}\nif (!fresh.length) return [];\nconst rows = fresh.sort((a, b) => new Date(b.pub) - new Date(a.pub)).map((x) => {\n  const lagH = x.pub ? Math.max(0, (Date.now() - new Date(x.pub)) / 36e5) : null;\n  return `<li><b>[${x.ed}]</b> <a href=\"${esc(x.link)}\">${esc(x.title)}</a><br><span style=\"color:#666\">publicada ${esc(x.pub)} · vista en Google News ${lagH === null ? '' : lagH < 48 ? '~' + lagH.toFixed(1) + ' h después' : '~' + (lagH / 24).toFixed(1) + ' días después'}</span></li>`;\n}).join('');\nreturn [{ json: {\n  subject: `Google News · ${fresh.length} nota${fresh.length === 1 ? '' : 's'} nueva${fresh.length === 1 ? '' : 's'}: ${fresh[0].title}`.slice(0, 160),\n  html: `<p>Primera aparición en la búsqueda de Google News:</p><ul>${rows}</ul><p style=\"color:#888\">Total ahora: ${tally}. Aparecer en la búsqueda no garantiza Top Stories ni tráfico; el informe semanal de Search Console mide eso.</p>`,\n} }];"
+      }
+    },
+    {
+      "id": "e",
+      "name": "Email alert",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        880,
+        0
+      ],
+      "parameters": {
+        "fromEmail": "SET_SENDER_EMAIL",
+        "toEmail": "SET_YOUR_EMAIL_HERE",
+        "subject": "={{ $json.subject }}",
+        "emailFormat": "html",
+        "html": "={{ $json.html }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Every hour": {
+      "main": [
+        [
+          {
+            "node": "Queries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Queries": {
+      "main": [
+        [
+          {
+            "node": "Google News search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google News search": {
+      "main": [
+        [
+          {
+            "node": "New appearances",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "New appearances": {
+      "main": [
+        [
+          {
+            "node": "Email alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
