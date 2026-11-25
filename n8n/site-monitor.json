@@ -1,0 +1,151 @@
+{
+  "name": "PaddockIntel · Site monitor (every 10 min)",
+  "nodes": [
+    {
+      "id": "c",
+      "name": "Every 10 min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "*/10 * * * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "t",
+      "name": "Targets",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// What \"the site is up\" means: each page must answer 200 with its expected content, and the news\n// sitemap must have a story from the last 48 hours (Google News reads it).\nreturn [\n  { json: { name: 'Portada', url: 'https://www.paddockintel.com/', must: '</html>' } },\n  { json: { name: 'Feed', url: 'https://www.paddockintel.com/feed/', must: '</html>' } },\n  { json: { name: 'Sitemap de noticias', url: 'https://www.paddockintel.com/sitemap-news.xml', must: '<urlset', freshHours: 48 } },\n  { json: { name: 'Hub', url: 'https://hub.paddockintel.com/', must: '</html>' } },\n];"
+      }
+    },
+    {
+      "id": "Check",
+      "name": "Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (compatible; PaddockIntel uptime monitor)"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "text"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "v",
+      "name": "Evaluate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Emails only on a change: a check that fails twice in a row (about 20 minutes, so a single blip\n// does not wake you up), and again when it recovers.\nconst targets = $('Targets').all().map((i) => i.json);\nconst state = $getWorkflowStaticData('global');\nstate.fails = state.fails || {}; state.down = state.down || {};\nconst nowIso = new Date().toISOString();\nconst newlyDown = []; const recovered = [];\n$input.all().forEach((r, i) => {\n  const t = targets[i]; if (!t) return;\n  const body = String(r.json.body ?? r.json.data ?? '');\n  let problem = '';\n  if (r.json.error) problem = `sin respuesta (${r.json.error.message || r.json.error})`;\n  else if (r.json.statusCode !== 200) problem = `HTTP ${r.json.statusCode}`;\n  else if (!body.includes(t.must)) problem = 'responde 200 pero el contenido no está completo';\n  else if (t.freshHours) {\n    const dates = [...body.matchAll(/<news:publication_date>([^<]+)</g)].map((m) => Date.parse(m[1])).filter(Boolean);\n    const newest = dates.length ? Math.max(...dates) : 0;\n    const age = (Date.now() - newest) / 36e5;\n    if (!newest) problem = 'el sitemap no tiene ninguna nota';\n    else if (age > t.freshHours) problem = `la nota más reciente del sitemap tiene ${Math.round(age)} h`;\n  }\n  if (problem) {\n    state.fails[t.name] = (state.fails[t.name] || 0) + 1;\n    if (state.fails[t.name] === 2 && !state.down[t.name]) { state.down[t.name] = nowIso; newlyDown.push({ ...t, problem }); }\n  } else {\n    if (state.down[t.name]) { recovered.push({ ...t, since: state.down[t.name] }); delete state.down[t.name]; }\n    state.fails[t.name] = 0;\n  }\n});\nif (!newlyDown.length && !recovered.length) return [];\nconst esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');\nconst li = (x) => `<li><b>${esc(x.name)}</b> (<a href=\"${esc(x.url)}\">${esc(x.url)}</a>)${x.problem ? ': ' + esc(x.problem) : ' · caído desde ' + esc(x.since) + ' UTC'}</li>`;\nconst subject = newlyDown.length\n  ? `⚠️ PaddockIntel: falla ${newlyDown.map((x) => x.name).join(', ')}`\n  : `✅ PaddockIntel: recuperado ${recovered.map((x) => x.name).join(', ')}`;\nreturn [{ json: { subject, html:\n  (newlyDown.length ? `<p>Falló dos revisiones seguidas:</p><ul>${newlyDown.map(li).join('')}</ul>` : '') +\n  (recovered.length ? `<p>Volvió a funcionar:</p><ul>${recovered.map(li).join('')}</ul>` : '') +\n  `<p style=\"color:#888\">Revisión cada 10 minutos desde el servidor de n8n.</p>` } }];"
+      }
+    },
+    {
+      "id": "e",
+      "name": "Email alert",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        880,
+        0
+      ],
+      "parameters": {
+        "fromEmail": "SET_SENDER_EMAIL",
+        "toEmail": "SET_YOUR_EMAIL_HERE",
+        "subject": "={{ $json.subject }}",
+        "emailFormat": "html",
+        "html": "={{ $json.html }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Every 10 min": {
+      "main": [
+        [
+          {
+            "node": "Targets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Targets": {
+      "main": [
+        [
+          {
+            "node": "Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check": {
+      "main": [
+        [
+          {
+            "node": "Evaluate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluate": {
+      "main": [
+        [
+          {
+            "node": "Email alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
