@@ -1,0 +1,126 @@
+{
+  "name": "PaddockIntel · FIA documents watcher (every 2 min, Thu-Mon)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "*/2 * * * 0,1,4,5,6"
+            }
+          ]
+        }
+      },
+      "name": "Every 2 min, Thu-Mon",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a1"
+    },
+    {
+      "parameters": {
+        "url": "https://www.fia.com/documents/championships/fia-formula-one-world-championship-14/season/season-2026-2072",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (compatible; PaddockIntel FIA docs watcher)"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "name": "FIA documents page",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "a2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parses the FIA's 2026 F1 documents page and returns only the newsworthy documents not seen\n// before (same parsing and filter as scripts/fia-docs.mjs). Seen URLs live in the workflow's\n// static data, which n8n only saves on production (active) runs, not on manual test runs.\nconst NEWSWORTHY = /infringement|decision|offence|summons|penalt|pit lane|grid|reprimand|disqualif|appeal|right of review|classification/i;\nconst html = String($input.first().json.data ?? '');\nconst event = (html.match(/event-title active\">([^<]+)</) || [])[1]?.trim() ?? '(unknown event)';\nconst re = /<a href=\"(\\/system\\/files\\/decision-document\\/[^\"]+)\"[\\s\\S]*?<div class=\"title\">\\s*([\\s\\S]*?)\\s*<\\/div>[\\s\\S]*?date-display-single\">([^<]+)</g;\nconst docs = [...html.matchAll(re)].map(([, href, title, published]) => ({\n  url: `https://www.fia.com${href}`,\n  title: title.replace(/\\s+/g, ' ').trim(),\n  published: `${published.trim()} CET`,\n}));\nif (!docs.length) throw new Error('No FIA documents parsed: the page layout may have changed');\n\nconst state = $getWorkflowStaticData('global');\nconst firstRun = !Array.isArray(state.seen);\nconst seen = new Set(state.seen ?? []);\nstate.seen = docs.map((d) => d.url);\nif (firstRun) return []; // first production run only records what is already there\n\nconst fresh = docs.filter((d) => !seen.has(d.url) && NEWSWORTHY.test(d.title));\nif (!fresh.length) return [];\nconst list = fresh.map((d) => `<li><b>${d.title}</b><br>${d.published} · <a href=\"${d.url}\">PDF</a></li>`).join('');\nreturn [{ json: {\n  subject: `FIA ${event}: ${fresh.length === 1 ? fresh[0].title : fresh.length + ' new documents'}`,\n  html: `<p>${event} · ${fresh.length} new FIA document(s)</p><ul>${list}</ul><p>Source: fia.com decision documents. Read the PDF before publishing.</p>`,\n} }];"
+      },
+      "name": "New newsworthy documents",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "a3"
+    },
+    {
+      "parameters": {
+        "sendTo": "SET_YOUR_EMAIL_HERE",
+        "subject": "={{ $json.subject }}",
+        "emailType": "html",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Email alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        660,
+        0
+      ],
+      "id": "a4"
+    }
+  ],
+  "connections": {
+    "Every 2 min, Thu-Mon": {
+      "main": [
+        [
+          {
+            "node": "FIA documents page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FIA documents page": {
+      "main": [
+        [
+          {
+            "node": "New newsworthy documents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "New newsworthy documents": {
+      "main": [
+        [
+          {
+            "node": "Email alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "UTC"
+  }
+}
