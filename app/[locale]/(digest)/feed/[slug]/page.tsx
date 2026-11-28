@@ -76,6 +76,7 @@ type PageParams = Promise<{ locale: string; slug: string }>;
 
 const MAGAZINE_BASE = SITE_URL;
 const DAY_MS = 86_400_000;
+const HOUR_MS = 3_600_000;
 // Request time for the day windows below (a server component renders once per revalidation).
 const requestTime = () => Date.now();
 
@@ -163,7 +164,10 @@ async function getBriefLink(target: string, locale: string): Promise<{ href: str
 // for this week's mention counts and for the other stories of the same editorial day.
 async function getNearby(publishedAt: string): Promise<NearbyItem[]> {
   const supabase = createClient();
-  const from = new Date(Math.min(Date.now() - 7 * DAY_MS, new Date(publishedAt).getTime() - 2 * DAY_MS)).toISOString();
+  // Floored to the hour so the query URL repeats and createClient()'s read cache can serve it
+  // (a millisecond cutoff missed it on every render). Callers filter the rows by exact time or day.
+  const fromMs = Math.min(Date.now() - 7 * DAY_MS, new Date(publishedAt).getTime() - 2 * DAY_MS);
+  const from = new Date(Math.floor(fromMs / HOUR_MS) * HOUR_MS).toISOString();
   const { data } = await supabase
     .from('digest_items')
     .select('id, slug, source_name, source_url, headline, headline_es, entity_tags, published_at, digest_issues!inner(status, series)')

@@ -16,11 +16,16 @@ type BeagleRow = { entity_tags: string[]; published_at: string | null; fetched_a
 // once the pool outgrows the cap. Ordered by the `id` primary key because a whole cron
 // run shares one fetched_at, which is not a stable order to page through.
 const PAGE_SIZE = 1000;
+const HOUR_MS = 60 * 60 * 1000;
 
 export async function getBeagleEntityCounts(supabase: SupabaseClient): Promise<Map<string, number>> {
   const now = Date.now();
   const windowStart = now - 7 * 24 * 60 * 60 * 1000;
-  const cutoff = new Date(windowStart).toISOString();
+  // The query cutoff is floored to the hour so its URL is the same for an hour: createClient()
+  // caches reads by URL, and a millisecond cutoff made every page render miss that cache and hit
+  // Postgres (three paged selects per render -- the 2026-11-28 outage traffic). The few extra
+  // rows it fetches are dropped by entityCountsInWindow, which still uses the exact windowStart.
+  const cutoff = new Date(Math.floor(windowStart / HOUR_MS) * HOUR_MS).toISOString();
 
   const rows: BeagleRow[] = [];
   for (let from = 0; ; from += PAGE_SIZE) {
